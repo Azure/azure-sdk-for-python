@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, IO, Literal, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -66,8 +66,8 @@ class BlobServicesOperations:
     ) -> AsyncItemPaged["_models.BlobServiceProperties"]:
         """List blob services of storage account. It returns a collection of one object named default.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -128,7 +128,7 @@ class BlobServicesOperations:
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -141,11 +141,79 @@ class BlobServicesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get_service_properties(
+        self, resource_group_name: str, account_name: str, **kwargs: Any
+    ) -> _models.BlobServiceProperties:
+        """Gets the properties of a storage account’s Blob service, including properties for Storage
+        Analytics and CORS (Cross-Origin Resource Sharing) rules.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :return: BlobServiceProperties or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.models.BlobServiceProperties
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.BlobServiceProperties] = kwargs.pop("cls", None)
+
+        _request = build_get_service_properties_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("BlobServiceProperties", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def set_service_properties(
@@ -160,8 +228,8 @@ class BlobServicesOperations:
         """Sets the properties of a storage account’s Blob service, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -191,8 +259,8 @@ class BlobServicesOperations:
         """Sets the properties of a storage account’s Blob service, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -220,8 +288,8 @@ class BlobServicesOperations:
         """Sets the properties of a storage account’s Blob service, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -247,7 +315,6 @@ class BlobServicesOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        blob_services_name: Literal["default"] = kwargs.pop("blob_services_name", "default")
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BlobServiceProperties] = kwargs.pop("cls", None)
 
@@ -264,7 +331,6 @@ class BlobServicesOperations:
             account_name=account_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            blob_services_name=blob_services_name,
             content_type=content_type,
             json=_json,
             content=_content,
@@ -282,69 +348,11 @@ class BlobServicesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("BlobServiceProperties", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_service_properties(
-        self, resource_group_name: str, account_name: str, **kwargs: Any
-    ) -> _models.BlobServiceProperties:
-        """Gets the properties of a storage account’s Blob service, including properties for Storage
-        Analytics and CORS (Cross-Origin Resource Sharing) rules.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :return: BlobServiceProperties or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.models.BlobServiceProperties
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        blob_services_name: Literal["default"] = kwargs.pop("blob_services_name", "default")
-        cls: ClsType[_models.BlobServiceProperties] = kwargs.pop("cls", None)
-
-        _request = build_get_service_properties_request(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            blob_services_name=blob_services_name,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("BlobServiceProperties", pipeline_response.http_response)
 

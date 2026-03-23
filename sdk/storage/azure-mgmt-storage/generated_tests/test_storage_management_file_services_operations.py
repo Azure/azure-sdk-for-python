@@ -32,6 +32,18 @@ class TestStorageManagementFileServicesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_file_services_get_service_properties(self, resource_group):
+        response = self.client.file_services.get_service_properties(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            api_version="2025-06-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_file_services_set_service_properties(self, resource_group):
         response = self.client.file_services.set_service_properties(
             resource_group_name=resource_group.name,
@@ -63,23 +75,17 @@ class TestStorageManagementFileServicesOperations(AzureMgmtRecordedTestCase):
                 },
                 "shareDeleteRetentionPolicy": {"allowPermanentDelete": bool, "days": 0, "enabled": bool},
                 "sku": {"name": "str", "tier": "str"},
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "type": "str",
             },
             api_version="2025-06-01",
-            file_services_name="default",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_file_services_get_service_properties(self, resource_group):
-        response = self.client.file_services.get_service_properties(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            api_version="2025-06-01",
-            file_services_name="default",
         )
 
         # please add some check logic here by yourself
@@ -92,7 +98,6 @@ class TestStorageManagementFileServicesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             api_version="2025-06-01",
-            file_services_name="default",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -105,8 +110,6 @@ class TestStorageManagementFileServicesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             api_version="2025-06-01",
-            file_services_name="default",
-            file_service_usages_name="default",
         )
 
         # please add some check logic here by yourself

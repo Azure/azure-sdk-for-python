@@ -28,10 +28,10 @@ from azure.mgmt.storage import StorageManagementClient
 def main():
     client = StorageManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="{subscription-id}",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.table.create(
+    response = client.table.update(
         resource_group_name="res3376",
         account_name="sto328",
         table_name="table6185",

@@ -31,6 +31,39 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_storage_accounts_list(self, resource_group):
+        response = self.client.storage_accounts.list(
+            api_version="2025-06-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_storage_accounts_list_by_resource_group(self, resource_group):
+        response = self.client.storage_accounts.list_by_resource_group(
+            resource_group_name=resource_group.name,
+            api_version="2025-06-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_storage_accounts_get_properties(self, resource_group):
+        response = self.client.storage_accounts.get_properties(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            api_version="2025-06-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_storage_accounts_begin_create(self, resource_group):
         response = self.client.storage_accounts.begin_create(
             resource_group_name=resource_group.name,
@@ -128,30 +161,6 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
             },
             api_version="2025-06-01",
         ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_storage_accounts_delete(self, resource_group):
-        response = self.client.storage_accounts.delete(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            api_version="2025-06-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_storage_accounts_get_properties(self, resource_group):
-        response = self.client.storage_accounts.get_properties(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            api_version="2025-06-01",
-        )
 
         # please add some check logic here by yourself
         # ...
@@ -257,29 +266,8 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_storage_accounts_list(self, resource_group):
-        response = self.client.storage_accounts.list(
-            api_version="2025-06-01",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_storage_accounts_list_by_resource_group(self, resource_group):
-        response = self.client.storage_accounts.list_by_resource_group(
-            resource_group_name=resource_group.name,
-            api_version="2025-06-01",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_storage_accounts_list_keys(self, resource_group):
-        response = self.client.storage_accounts.list_keys(
+    def test_storage_accounts_delete(self, resource_group):
+        response = self.client.storage_accounts.delete(
             resource_group_name=resource_group.name,
             account_name="str",
             api_version="2025-06-01",
@@ -290,13 +278,50 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_storage_accounts_regenerate_key(self, resource_group):
-        response = self.client.storage_accounts.regenerate_key(
+    def test_storage_accounts_begin_abort_hierarchical_namespace_migration(self, resource_group):
+        response = self.client.storage_accounts.begin_abort_hierarchical_namespace_migration(
             resource_group_name=resource_group.name,
             account_name="str",
-            regenerate_key={"keyName": "str"},
+            api_version="2025-06-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_storage_accounts_get_customer_initiated_migration(self, resource_group):
+        response = self.client.storage_accounts.get_customer_initiated_migration(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            migration_name="str",
             api_version="2025-06-01",
         )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_storage_accounts_begin_failover(self, resource_group):
+        response = self.client.storage_accounts.begin_failover(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            api_version="2025-06-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_storage_accounts_begin_hierarchical_namespace_migration(self, resource_group):
+        response = self.client.storage_accounts.begin_hierarchical_namespace_migration(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            request_type="str",
+            api_version="2025-06-01",
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
@@ -317,6 +342,18 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
                 "signedProtocol": "str",
                 "signedStart": "2020-02-20 00:00:00",
             },
+            api_version="2025-06-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_storage_accounts_list_keys(self, resource_group):
+        response = self.client.storage_accounts.list_keys(
+            resource_group_name=resource_group.name,
+            account_name="str",
             api_version="2025-06-01",
         )
 
@@ -357,69 +394,11 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_storage_accounts_begin_failover(self, resource_group):
-        response = self.client.storage_accounts.begin_failover(
+    def test_storage_accounts_regenerate_key(self, resource_group):
+        response = self.client.storage_accounts.regenerate_key(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-06-01",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_storage_accounts_begin_hierarchical_namespace_migration(self, resource_group):
-        response = self.client.storage_accounts.begin_hierarchical_namespace_migration(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            request_type="str",
-            api_version="2025-06-01",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_storage_accounts_begin_abort_hierarchical_namespace_migration(self, resource_group):
-        response = self.client.storage_accounts.begin_abort_hierarchical_namespace_migration(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            api_version="2025-06-01",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_storage_accounts_begin_customer_initiated_migration(self, resource_group):
-        response = self.client.storage_accounts.begin_customer_initiated_migration(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            parameters={
-                "targetSkuName": "str",
-                "id": "str",
-                "migrationFailedDetailedReason": "str",
-                "migrationFailedReason": "str",
-                "migrationStatus": "str",
-                "name": "str",
-                "type": "str",
-            },
-            api_version="2025-06-01",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_storage_accounts_get_customer_initiated_migration(self, resource_group):
-        response = self.client.storage_accounts.get_customer_initiated_migration(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            migration_name="str",
+            regenerate_key={"keyName": "str"},
             api_version="2025-06-01",
         )
 
@@ -450,6 +429,35 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
             account_name="str",
             api_version="2025-06-01",
         )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_storage_accounts_begin_customer_initiated_migration(self, resource_group):
+        response = self.client.storage_accounts.begin_customer_initiated_migration(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            parameters={
+                "targetSkuName": "str",
+                "id": "str",
+                "migrationFailedDetailedReason": "str",
+                "migrationFailedReason": "str",
+                "migrationStatus": "str",
+                "name": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "type": "str",
+            },
+            api_version="2025-06-01",
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

@@ -123,7 +123,10 @@ class DeletedAccountsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -131,13 +134,13 @@ class DeletedAccountsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get(self, deleted_account_name: str, location: str, **kwargs: Any) -> _models.DeletedAccount:
+    async def get(self, location: str, deleted_account_name: str, **kwargs: Any) -> _models.DeletedAccount:
         """Get properties of specified deleted account resource.
 
+        :param location: The name of the Azure region. Required.
+        :type location: str
         :param deleted_account_name: Name of the deleted storage account. Required.
         :type deleted_account_name: str
-        :param location: The location of the deleted storage account. Required.
-        :type location: str
         :return: DeletedAccount or the result of cls(response)
         :rtype: ~azure.mgmt.storage.models.DeletedAccount
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -157,8 +160,8 @@ class DeletedAccountsOperations:
         cls: ClsType[_models.DeletedAccount] = kwargs.pop("cls", None)
 
         _request = build_get_request(
-            deleted_account_name=deleted_account_name,
             location=location,
+            deleted_account_name=deleted_account_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -175,7 +178,10 @@ class DeletedAccountsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("DeletedAccount", pipeline_response.http_response)

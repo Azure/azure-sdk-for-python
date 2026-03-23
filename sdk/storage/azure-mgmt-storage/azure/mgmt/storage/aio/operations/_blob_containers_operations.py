@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterator, Callable, IO, Literal, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -89,8 +89,8 @@ class BlobContainersOperations:
         """Lists all containers and does not support a prefix like data plane. Also SRP today does not
         return continuation token.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -174,11 +174,84 @@ class BlobContainersOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get(
+        self, resource_group_name: str, account_name: str, container_name: str, **kwargs: Any
+    ) -> _models.BlobContainer:
+        """Gets properties of a specified container.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param container_name: The name of the blob container within the specified storage account.
+         Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
+         letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
+         by a letter or number. Required.
+        :type container_name: str
+        :return: BlobContainer or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.models.BlobContainer
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.BlobContainer] = kwargs.pop("cls", None)
+
+        _request = build_get_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            container_name=container_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("BlobContainer", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def create(
@@ -195,8 +268,8 @@ class BlobContainersOperations:
         resource includes metadata and properties for that container. It does not include a list of the
         blobs contained by the container.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -232,8 +305,8 @@ class BlobContainersOperations:
         resource includes metadata and properties for that container. It does not include a list of the
         blobs contained by the container.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -267,8 +340,8 @@ class BlobContainersOperations:
         resource includes metadata and properties for that container. It does not include a list of the
         blobs contained by the container.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -332,7 +405,11 @@ class BlobContainersOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("BlobContainer", pipeline_response.http_response)
 
@@ -355,8 +432,8 @@ class BlobContainersOperations:
         """Updates container properties as specified in request body. Properties not mentioned in the
         request will be unchanged. Update fails if the specified container doesn't already exist.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -391,8 +468,8 @@ class BlobContainersOperations:
         """Updates container properties as specified in request body. Properties not mentioned in the
         request will be unchanged. Update fails if the specified container doesn't already exist.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -425,8 +502,8 @@ class BlobContainersOperations:
         """Updates container properties as specified in request body. Properties not mentioned in the
         request will be unchanged. Update fails if the specified container doesn't already exist.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -490,72 +567,11 @@ class BlobContainersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("BlobContainer", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get(
-        self, resource_group_name: str, account_name: str, container_name: str, **kwargs: Any
-    ) -> _models.BlobContainer:
-        """Gets properties of a specified container.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :param container_name: The name of the blob container within the specified storage account.
-         Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
-         letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
-         by a letter or number. Required.
-        :type container_name: str
-        :return: BlobContainer or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.models.BlobContainer
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.BlobContainer] = kwargs.pop("cls", None)
-
-        _request = build_get_request(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            container_name=container_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("BlobContainer", pipeline_response.http_response)
 
@@ -568,8 +584,8 @@ class BlobContainersOperations:
     async def delete(self, resource_group_name: str, account_name: str, container_name: str, **kwargs: Any) -> None:
         """Deletes specified container under its account.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -618,173 +634,16 @@ class BlobContainersOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def set_legal_hold(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        container_name: str,
-        legal_hold: _models.LegalHold,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.LegalHold:
-        """Sets legal hold tags. Setting the same tag results in an idempotent operation. SetLegalHold
-        follows an append pattern and does not clear out the existing tags that are not specified in
-        the request.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :param container_name: The name of the blob container within the specified storage account.
-         Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
-         letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
-         by a letter or number. Required.
-        :type container_name: str
-        :param legal_hold: The LegalHold property that will be set to a blob container. Required.
-        :type legal_hold: ~azure.mgmt.storage.models.LegalHold
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: LegalHold or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.models.LegalHold
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def set_legal_hold(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        container_name: str,
-        legal_hold: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.LegalHold:
-        """Sets legal hold tags. Setting the same tag results in an idempotent operation. SetLegalHold
-        follows an append pattern and does not clear out the existing tags that are not specified in
-        the request.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :param container_name: The name of the blob container within the specified storage account.
-         Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
-         letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
-         by a letter or number. Required.
-        :type container_name: str
-        :param legal_hold: The LegalHold property that will be set to a blob container. Required.
-        :type legal_hold: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: LegalHold or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.models.LegalHold
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def set_legal_hold(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        container_name: str,
-        legal_hold: Union[_models.LegalHold, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.LegalHold:
-        """Sets legal hold tags. Setting the same tag results in an idempotent operation. SetLegalHold
-        follows an append pattern and does not clear out the existing tags that are not specified in
-        the request.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :param container_name: The name of the blob container within the specified storage account.
-         Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
-         letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
-         by a letter or number. Required.
-        :type container_name: str
-        :param legal_hold: The LegalHold property that will be set to a blob container. Is either a
-         LegalHold type or a IO[bytes] type. Required.
-        :type legal_hold: ~azure.mgmt.storage.models.LegalHold or IO[bytes]
-        :return: LegalHold or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.models.LegalHold
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.LegalHold] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(legal_hold, (IOBase, bytes)):
-            _content = legal_hold
-        else:
-            _json = self._serialize.body(legal_hold, "LegalHold")
-
-        _request = build_set_legal_hold_request(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            container_name=container_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("LegalHold", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
     async def clear_legal_hold(
         self,
         resource_group_name: str,
@@ -798,8 +657,8 @@ class BlobContainersOperations:
         """Clears legal hold tags. Clearing the same or non-existent tag results in an idempotent
         operation. ClearLegalHold clears out only the specified tags in the request.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -834,8 +693,8 @@ class BlobContainersOperations:
         """Clears legal hold tags. Clearing the same or non-existent tag results in an idempotent
         operation. ClearLegalHold clears out only the specified tags in the request.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -868,8 +727,8 @@ class BlobContainersOperations:
         """Clears legal hold tags. Clearing the same or non-existent tag results in an idempotent
         operation. ClearLegalHold clears out only the specified tags in the request.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -933,12 +792,99 @@ class BlobContainersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("LegalHold", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_immutability_policy(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        container_name: str,
+        if_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.ImmutabilityPolicy:
+        """Gets the existing immutability policy along with the corresponding ETag in response headers and
+        body.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param container_name: The name of the blob container within the specified storage account.
+         Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
+         letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
+         by a letter or number. Required.
+        :type container_name: str
+        :param if_match: The entity state (ETag) version of the immutability policy to update must be
+         returned to the server for all update operations. The ETag value must include the leading and
+         trailing double quotes as returned by the service. Default value is None.
+        :type if_match: str
+        :return: ImmutabilityPolicy or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.models.ImmutabilityPolicy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.ImmutabilityPolicy] = kwargs.pop("cls", None)
+
+        _request = build_get_immutability_policy_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            container_name=container_name,
+            subscription_id=self._config.subscription_id,
+            if_match=if_match,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        deserialized = self._deserialize("ImmutabilityPolicy", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -957,8 +903,8 @@ class BlobContainersOperations:
         """Creates or updates an unlocked immutability policy. ETag in If-Match is honored if given but
         not required for this operation.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -999,8 +945,8 @@ class BlobContainersOperations:
         """Creates or updates an unlocked immutability policy. ETag in If-Match is honored if given but
         not required for this operation.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -1039,8 +985,8 @@ class BlobContainersOperations:
         """Creates or updates an unlocked immutability policy. ETag in If-Match is honored if given but
         not required for this operation.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -1073,7 +1019,6 @@ class BlobContainersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        immutability_policy_name: Literal["default"] = kwargs.pop("immutability_policy_name", "default")
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if parameters else None
@@ -1096,7 +1041,6 @@ class BlobContainersOperations:
             container_name=container_name,
             subscription_id=self._config.subscription_id,
             if_match=if_match,
-            immutability_policy_name=immutability_policy_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -1115,88 +1059,11 @@ class BlobContainersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-
-        deserialized = self._deserialize("ImmutabilityPolicy", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_immutability_policy(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        container_name: str,
-        if_match: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.ImmutabilityPolicy:
-        """Gets the existing immutability policy along with the corresponding ETag in response headers and
-        body.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :param container_name: The name of the blob container within the specified storage account.
-         Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
-         letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
-         by a letter or number. Required.
-        :type container_name: str
-        :param if_match: The entity state (ETag) version of the immutability policy to update must be
-         returned to the server for all update operations. The ETag value must include the leading and
-         trailing double quotes as returned by the service. Default value is None.
-        :type if_match: str
-        :return: ImmutabilityPolicy or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.models.ImmutabilityPolicy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        immutability_policy_name: Literal["default"] = kwargs.pop("immutability_policy_name", "default")
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ImmutabilityPolicy] = kwargs.pop("cls", None)
-
-        _request = build_get_immutability_policy_request(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            container_name=container_name,
-            subscription_id=self._config.subscription_id,
-            if_match=if_match,
-            immutability_policy_name=immutability_policy_name,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
@@ -1217,8 +1084,8 @@ class BlobContainersOperations:
         operation. Deleting a locked immutability policy is not allowed, the only way is to delete the
         container after deleting all expired blobs inside the policy locked container.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -1248,7 +1115,6 @@ class BlobContainersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        immutability_policy_name: Literal["default"] = kwargs.pop("immutability_policy_name", "default")
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ImmutabilityPolicy] = kwargs.pop("cls", None)
 
@@ -1258,7 +1124,6 @@ class BlobContainersOperations:
             container_name=container_name,
             subscription_id=self._config.subscription_id,
             if_match=if_match,
-            immutability_policy_name=immutability_policy_name,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -1274,81 +1139,11 @@ class BlobContainersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-
-        deserialized = self._deserialize("ImmutabilityPolicy", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def lock_immutability_policy(
-        self, resource_group_name: str, account_name: str, container_name: str, if_match: str, **kwargs: Any
-    ) -> _models.ImmutabilityPolicy:
-        """Sets the ImmutabilityPolicy to Locked state. The only action allowed on a Locked policy is
-        ExtendImmutabilityPolicy action. ETag in If-Match is required for this operation.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :param container_name: The name of the blob container within the specified storage account.
-         Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
-         letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
-         by a letter or number. Required.
-        :type container_name: str
-        :param if_match: The entity state (ETag) version of the immutability policy to update must be
-         returned to the server for all update operations. The ETag value must include the leading and
-         trailing double quotes as returned by the service. Required.
-        :type if_match: str
-        :return: ImmutabilityPolicy or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.models.ImmutabilityPolicy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ImmutabilityPolicy] = kwargs.pop("cls", None)
-
-        _request = build_lock_immutability_policy_request(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            container_name=container_name,
-            subscription_id=self._config.subscription_id,
-            if_match=if_match,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
@@ -1376,8 +1171,8 @@ class BlobContainersOperations:
         action allowed on a Locked policy will be this action. ETag in If-Match is required for this
         operation.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -1392,8 +1187,7 @@ class BlobContainersOperations:
          returned to the server for all update operations. The ETag value must include the leading and
          trailing double quotes as returned by the service. Required.
         :type if_match: str
-        :param parameters: The ImmutabilityPolicy Properties that will be extended for a blob
-         container. Default value is None.
+        :param parameters: The content of the action request. Default value is None.
         :type parameters: ~azure.mgmt.storage.models.ImmutabilityPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1419,8 +1213,8 @@ class BlobContainersOperations:
         action allowed on a Locked policy will be this action. ETag in If-Match is required for this
         operation.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -1435,8 +1229,7 @@ class BlobContainersOperations:
          returned to the server for all update operations. The ETag value must include the leading and
          trailing double quotes as returned by the service. Required.
         :type if_match: str
-        :param parameters: The ImmutabilityPolicy Properties that will be extended for a blob
-         container. Default value is None.
+        :param parameters: The content of the action request. Default value is None.
         :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1460,8 +1253,8 @@ class BlobContainersOperations:
         action allowed on a Locked policy will be this action. ETag in If-Match is required for this
         operation.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -1476,8 +1269,8 @@ class BlobContainersOperations:
          returned to the server for all update operations. The ETag value must include the leading and
          trailing double quotes as returned by the service. Required.
         :type if_match: str
-        :param parameters: The ImmutabilityPolicy Properties that will be extended for a blob
-         container. Is either a ImmutabilityPolicy type or a IO[bytes] type. Default value is None.
+        :param parameters: The content of the action request. Is either a ImmutabilityPolicy type or a
+         IO[bytes] type. Default value is None.
         :type parameters: ~azure.mgmt.storage.models.ImmutabilityPolicy or IO[bytes]
         :return: ImmutabilityPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.storage.models.ImmutabilityPolicy
@@ -1534,7 +1327,89 @@ class BlobContainersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        deserialized = self._deserialize("ImmutabilityPolicy", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def lock_immutability_policy(
+        self, resource_group_name: str, account_name: str, container_name: str, if_match: str, **kwargs: Any
+    ) -> _models.ImmutabilityPolicy:
+        """Sets the ImmutabilityPolicy to Locked state. The only action allowed on a Locked policy is
+        ExtendImmutabilityPolicy action. ETag in If-Match is required for this operation.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param container_name: The name of the blob container within the specified storage account.
+         Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
+         letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
+         by a letter or number. Required.
+        :type container_name: str
+        :param if_match: The entity state (ETag) version of the immutability policy to update must be
+         returned to the server for all update operations. The ETag value must include the leading and
+         trailing double quotes as returned by the service. Required.
+        :type if_match: str
+        :return: ImmutabilityPolicy or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.models.ImmutabilityPolicy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.ImmutabilityPolicy] = kwargs.pop("cls", None)
+
+        _request = build_lock_immutability_policy_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            container_name=container_name,
+            subscription_id=self._config.subscription_id,
+            if_match=if_match,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
@@ -1560,8 +1435,8 @@ class BlobContainersOperations:
         """The Lease Container operation establishes and manages a lock on a container for delete
         operations. The lock duration can be 15 to 60 seconds, or can be infinite.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -1572,7 +1447,7 @@ class BlobContainersOperations:
          letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
          by a letter or number. Required.
         :type container_name: str
-        :param parameters: Lease Container request body. Default value is None.
+        :param parameters: The content of the action request. Default value is None.
         :type parameters: ~azure.mgmt.storage.models.LeaseContainerRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1596,8 +1471,8 @@ class BlobContainersOperations:
         """The Lease Container operation establishes and manages a lock on a container for delete
         operations. The lock duration can be 15 to 60 seconds, or can be infinite.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -1608,7 +1483,7 @@ class BlobContainersOperations:
          letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
          by a letter or number. Required.
         :type container_name: str
-        :param parameters: Lease Container request body. Default value is None.
+        :param parameters: The content of the action request. Default value is None.
         :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1630,8 +1505,8 @@ class BlobContainersOperations:
         """The Lease Container operation establishes and manages a lock on a container for delete
         operations. The lock duration can be 15 to 60 seconds, or can be infinite.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -1642,8 +1517,8 @@ class BlobContainersOperations:
          letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
          by a letter or number. Required.
         :type container_name: str
-        :param parameters: Lease Container request body. Is either a LeaseContainerRequest type or a
-         IO[bytes] type. Default value is None.
+        :param parameters: The content of the action request. Is either a LeaseContainerRequest type or
+         a IO[bytes] type. Default value is None.
         :type parameters: ~azure.mgmt.storage.models.LeaseContainerRequest or IO[bytes]
         :return: LeaseContainerResponse or the result of cls(response)
         :rtype: ~azure.mgmt.storage.models.LeaseContainerResponse
@@ -1699,7 +1574,11 @@ class BlobContainersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("LeaseContainerResponse", pipeline_response.http_response)
 
@@ -1752,10 +1631,15 @@ class BlobContainersOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -1768,8 +1652,8 @@ class BlobContainersOperations:
         or unlocked state, Account level versioning must be enabled and there should be no Legal hold
         on the container.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -1826,3 +1710,168 @@ class BlobContainersOperations:
                 deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @overload
+    async def set_legal_hold(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        container_name: str,
+        legal_hold: _models.LegalHold,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.LegalHold:
+        """Sets legal hold tags. Setting the same tag results in an idempotent operation. SetLegalHold
+        follows an append pattern and does not clear out the existing tags that are not specified in
+        the request.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param container_name: The name of the blob container within the specified storage account.
+         Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
+         letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
+         by a letter or number. Required.
+        :type container_name: str
+        :param legal_hold: The LegalHold property that will be set to a blob container. Required.
+        :type legal_hold: ~azure.mgmt.storage.models.LegalHold
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: LegalHold or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.models.LegalHold
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def set_legal_hold(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        container_name: str,
+        legal_hold: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.LegalHold:
+        """Sets legal hold tags. Setting the same tag results in an idempotent operation. SetLegalHold
+        follows an append pattern and does not clear out the existing tags that are not specified in
+        the request.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param container_name: The name of the blob container within the specified storage account.
+         Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
+         letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
+         by a letter or number. Required.
+        :type container_name: str
+        :param legal_hold: The LegalHold property that will be set to a blob container. Required.
+        :type legal_hold: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: LegalHold or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.models.LegalHold
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def set_legal_hold(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        container_name: str,
+        legal_hold: Union[_models.LegalHold, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.LegalHold:
+        """Sets legal hold tags. Setting the same tag results in an idempotent operation. SetLegalHold
+        follows an append pattern and does not clear out the existing tags that are not specified in
+        the request.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param container_name: The name of the blob container within the specified storage account.
+         Blob container names must be between 3 and 63 characters in length and use numbers, lower-case
+         letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
+         by a letter or number. Required.
+        :type container_name: str
+        :param legal_hold: The LegalHold property that will be set to a blob container. Is either a
+         LegalHold type or a IO[bytes] type. Required.
+        :type legal_hold: ~azure.mgmt.storage.models.LegalHold or IO[bytes]
+        :return: LegalHold or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.models.LegalHold
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.LegalHold] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(legal_hold, (IOBase, bytes)):
+            _content = legal_hold
+        else:
+            _json = self._serialize.body(legal_hold, "LegalHold")
+
+        _request = build_set_legal_hold_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            container_name=container_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("LegalHold", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore

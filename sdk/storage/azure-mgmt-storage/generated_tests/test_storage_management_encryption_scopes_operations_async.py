@@ -21,6 +21,31 @@ class TestStorageManagementEncryptionScopesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_encryption_scopes_list(self, resource_group):
+        response = self.client.encryption_scopes.list(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            api_version="2025-06-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_encryption_scopes_get(self, resource_group):
+        response = await self.client.encryption_scopes.get(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            encryption_scope_name="str",
+            api_version="2025-06-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_encryption_scopes_put(self, resource_group):
         response = await self.client.encryption_scopes.put(
             resource_group_name=resource_group.name,
@@ -39,6 +64,14 @@ class TestStorageManagementEncryptionScopesOperationsAsync(AzureMgmtRecordedTest
                 "requireInfrastructureEncryption": bool,
                 "source": "str",
                 "state": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "type": "str",
             },
             api_version="2025-06-01",
@@ -67,35 +100,18 @@ class TestStorageManagementEncryptionScopesOperationsAsync(AzureMgmtRecordedTest
                 "requireInfrastructureEncryption": bool,
                 "source": "str",
                 "state": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "type": "str",
             },
             api_version="2025-06-01",
         )
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_encryption_scopes_get(self, resource_group):
-        response = await self.client.encryption_scopes.get(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            encryption_scope_name="str",
-            api_version="2025-06-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_encryption_scopes_list(self, resource_group):
-        response = self.client.encryption_scopes.list(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            api_version="2025-06-01",
-        )
-        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

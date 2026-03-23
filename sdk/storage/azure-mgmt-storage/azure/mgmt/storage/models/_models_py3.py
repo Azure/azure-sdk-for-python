@@ -7,7 +7,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from collections.abc import MutableMapping
 import datetime
 from typing import Any, Literal, Optional, TYPE_CHECKING, Union
 
@@ -15,7 +14,6 @@ from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
-JSON = MutableMapping[str, Any]
 
 
 class AccessPolicy(_serialization.Model):
@@ -267,8 +265,6 @@ class AccountUsage(_serialization.Model):
     """Usage of provisioned storage, IOPS, bandwidth and number of file shares across all live shares
     and soft-deleted shares in the account.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar live_shares: Usage of provisioned storage, IOPS, bandwidth and number of file shares
      across all live shares or soft-deleted shares in the account.
     :vartype live_shares: ~azure.mgmt.storage.models.AccountUsageElements
@@ -277,21 +273,29 @@ class AccountUsage(_serialization.Model):
     :vartype soft_deleted_shares: ~azure.mgmt.storage.models.AccountUsageElements
     """
 
-    _validation = {
-        "live_shares": {"readonly": True},
-        "soft_deleted_shares": {"readonly": True},
-    }
-
     _attribute_map = {
         "live_shares": {"key": "liveShares", "type": "AccountUsageElements"},
         "soft_deleted_shares": {"key": "softDeletedShares", "type": "AccountUsageElements"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(
+        self,
+        *,
+        live_shares: Optional["_models.AccountUsageElements"] = None,
+        soft_deleted_shares: Optional["_models.AccountUsageElements"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword live_shares: Usage of provisioned storage, IOPS, bandwidth and number of file shares
+         across all live shares or soft-deleted shares in the account.
+        :paramtype live_shares: ~azure.mgmt.storage.models.AccountUsageElements
+        :keyword soft_deleted_shares: Usage of provisioned storage, IOPS, bandwidth and number of file
+         shares across all live shares or soft-deleted shares in the account.
+        :paramtype soft_deleted_shares: ~azure.mgmt.storage.models.AccountUsageElements
+        """
         super().__init__(**kwargs)
-        self.live_shares: Optional["_models.AccountUsageElements"] = None
-        self.soft_deleted_shares: Optional["_models.AccountUsageElements"] = None
+        self.live_shares = live_shares
+        self.soft_deleted_shares = soft_deleted_shares
 
 
 class AccountUsageElements(_serialization.Model):
@@ -461,26 +465,31 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -489,6 +498,7 @@ class Resource(_serialization.Model):
         self.id: Optional[str] = None
         self.name: Optional[str] = None
         self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class AzureEntityResource(Resource):
@@ -496,14 +506,17 @@ class AzureEntityResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar etag: Resource Etag.
     :vartype etag: str
     """
@@ -512,6 +525,7 @@ class AzureEntityResource(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "etag": {"readonly": True},
     }
 
@@ -519,6 +533,7 @@ class AzureEntityResource(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "etag": {"key": "etag", "type": "str"},
     }
 
@@ -593,19 +608,42 @@ class AzureFilesIdentityBasedAuthentication(_serialization.Model):
         self.smb_o_auth_settings = smb_o_auth_settings
 
 
-class BlobContainer(AzureEntityResource):
-    """Properties of the blob container, including Id, resource name, resource type, Etag.
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
+    """
+
+
+class BlobContainer(ProxyResource):
+    """Properties of the blob container, including Id, resource name, resource type, Etag.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar etag: Resource Etag.
     :vartype etag: str
     :ivar version: The version of the deleted blob container.
@@ -666,6 +704,7 @@ class BlobContainer(AzureEntityResource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "etag": {"readonly": True},
         "version": {"readonly": True},
         "deleted": {"readonly": True},
@@ -685,6 +724,7 @@ class BlobContainer(AzureEntityResource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "etag": {"key": "etag", "type": "str"},
         "version": {"key": "properties.version", "type": "str"},
         "deleted": {"key": "properties.deleted", "type": "bool"},
@@ -745,6 +785,7 @@ class BlobContainer(AzureEntityResource):
         :paramtype enable_nfs_v3_all_squash: bool
         """
         super().__init__(**kwargs)
+        self.etag: Optional[str] = None
         self.version: Optional[str] = None
         self.deleted: Optional[bool] = None
         self.deleted_time: Optional[datetime.datetime] = None
@@ -793,20 +834,21 @@ class BlobInventoryCreationTime(_serialization.Model):
         self.last_n_days = last_n_days
 
 
-class BlobInventoryPolicy(Resource):
+class BlobInventoryPolicy(ProxyResource):
     """The storage account blob inventory policy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar last_modified_time: Returns the last modified date and time of the blob inventory policy.
     :vartype last_modified_time: ~datetime.datetime
@@ -838,7 +880,6 @@ class BlobInventoryPolicy(Resource):
         :paramtype policy: ~azure.mgmt.storage.models.BlobInventoryPolicySchema
         """
         super().__init__(**kwargs)
-        self.system_data: Optional["_models.SystemData"] = None
         self.last_modified_time: Optional[datetime.datetime] = None
         self.policy = policy
 
@@ -1278,6 +1319,8 @@ class BlobServiceItems(_serialization.Model):
 
     :ivar value: List of blob services returned.
     :vartype value: list[~azure.mgmt.storage.models.BlobServiceProperties]
+    :ivar next_link:
+    :vartype next_link: str
     """
 
     _validation = {
@@ -1286,27 +1329,35 @@ class BlobServiceItems(_serialization.Model):
 
     _attribute_map = {
         "value": {"key": "value", "type": "[BlobServiceProperties]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link:
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
         self.value: Optional[list["_models.BlobServiceProperties"]] = None
+        self.next_link = next_link
 
 
-class BlobServiceProperties(Resource):
+class BlobServiceProperties(ProxyResource):
     """The properties of a storage account’s Blob service.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar sku: Sku name and tier.
     :vartype sku: ~azure.mgmt.storage.models.Sku
     :ivar cors: Specifies CORS rules for the Blob service. You can include up to five CorsRule
@@ -1339,6 +1390,7 @@ class BlobServiceProperties(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "sku": {"readonly": True},
     }
 
@@ -1346,6 +1398,7 @@ class BlobServiceProperties(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "sku": {"key": "sku", "type": "Sku"},
         "cors": {"key": "properties.cors", "type": "CorsRules"},
         "default_service_version": {"key": "properties.defaultServiceVersion", "type": "str"},
@@ -1727,8 +1780,8 @@ class DateAfterCreation(_serialization.Model):
     """
 
     _validation = {
-        "days_after_creation_greater_than": {"required": True, "minimum": 0, "multiple": 1},
-        "days_after_last_tier_change_greater_than": {"minimum": 0, "multiple": 1},
+        "days_after_creation_greater_than": {"required": True, "minimum": 0},
+        "days_after_last_tier_change_greater_than": {"minimum": 0},
     }
 
     _attribute_map = {
@@ -1782,10 +1835,10 @@ class DateAfterModification(_serialization.Model):
     """
 
     _validation = {
-        "days_after_modification_greater_than": {"minimum": 0, "multiple": 1},
-        "days_after_last_access_time_greater_than": {"minimum": 0, "multiple": 1},
-        "days_after_last_tier_change_greater_than": {"minimum": 0, "multiple": 1},
-        "days_after_creation_greater_than": {"minimum": 0, "multiple": 1},
+        "days_after_modification_greater_than": {"minimum": 0},
+        "days_after_last_access_time_greater_than": {"minimum": 0},
+        "days_after_last_tier_change_greater_than": {"minimum": 0},
+        "days_after_creation_greater_than": {"minimum": 0},
     }
 
     _attribute_map = {
@@ -1828,36 +1881,22 @@ class DateAfterModification(_serialization.Model):
         self.days_after_creation_greater_than = days_after_creation_greater_than
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
-    tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-
 class DeletedAccount(ProxyResource):
     """Deleted storage account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar storage_account_resource_id: Full resource id of the original storage account.
     :vartype storage_account_resource_id: str
     :ivar location: Location of the deleted account.
@@ -1875,6 +1914,7 @@ class DeletedAccount(ProxyResource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "storage_account_resource_id": {"readonly": True},
         "location": {"readonly": True},
         "restore_reference": {"readonly": True},
@@ -1886,6 +1926,7 @@ class DeletedAccount(ProxyResource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "storage_account_resource_id": {"key": "properties.storageAccountResourceId", "type": "str"},
         "location": {"key": "properties.location", "type": "str"},
         "restore_reference": {"key": "properties.restoreReference", "type": "str"},
@@ -1904,20 +1945,18 @@ class DeletedAccount(ProxyResource):
 
 
 class DeletedAccountListResult(_serialization.Model):
-    """The response from the List Deleted Accounts operation.
+    """The response of a DeletedAccount list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to server.
 
-    :ivar value: Gets the list of deleted accounts and their properties.
+    :ivar value: The DeletedAccount items on this page. Required.
     :vartype value: list[~azure.mgmt.storage.models.DeletedAccount]
-    :ivar next_link: Request URL that can be used to query next page of deleted accounts. Returned
-     when total number of requested deleted accounts exceed maximum page size.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
@@ -1925,11 +1964,18 @@ class DeletedAccountListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(
+        self, *, value: list["_models.DeletedAccount"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The DeletedAccount items on this page. Required.
+        :paramtype value: list[~azure.mgmt.storage.models.DeletedAccount]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
-        self.value: Optional[list["_models.DeletedAccount"]] = None
-        self.next_link: Optional[str] = None
+        self.value = value
+        self.next_link = next_link
 
 
 class DeletedShare(_serialization.Model):
@@ -2183,19 +2229,22 @@ class EncryptionInTransit(_serialization.Model):
         self.required = required
 
 
-class EncryptionScope(Resource):
+class EncryptionScope(ProxyResource):
     """The Encryption Scope resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar source: The provider for the encryption scope. Possible values (case-insensitive):
      Microsoft.Storage, Microsoft.KeyVault. Known values are: "Microsoft.Storage" and
      "Microsoft.KeyVault".
@@ -2220,6 +2269,7 @@ class EncryptionScope(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "creation_time": {"readonly": True},
         "last_modified_time": {"readonly": True},
     }
@@ -2228,6 +2278,7 @@ class EncryptionScope(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "source": {"key": "properties.source", "type": "str"},
         "state": {"key": "properties.state", "type": "str"},
         "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
@@ -2311,21 +2362,18 @@ class EncryptionScopeKeyVaultProperties(_serialization.Model):
 
 
 class EncryptionScopeListResult(_serialization.Model):
-    """List of encryption scopes requested, and if paging is required, a URL to the next page of
-    encryption scopes.
+    """The response of a EncryptionScope list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to server.
 
-    :ivar value: List of encryption scopes requested.
+    :ivar value: The EncryptionScope items on this page. Required.
     :vartype value: list[~azure.mgmt.storage.models.EncryptionScope]
-    :ivar next_link: Request URL that can be used to query next page of encryption scopes. Returned
-     when total number of requested encryption scopes exceeds the maximum page size.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
@@ -2333,11 +2381,18 @@ class EncryptionScopeListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(
+        self, *, value: list["_models.EncryptionScope"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The EncryptionScope items on this page. Required.
+        :paramtype value: list[~azure.mgmt.storage.models.EncryptionScope]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
-        self.value: Optional[list["_models.EncryptionScope"]] = None
-        self.next_link: Optional[str] = None
+        self.value = value
+        self.next_link = next_link
 
 
 class EncryptionService(_serialization.Model):
@@ -2506,77 +2561,6 @@ class Endpoints(_serialization.Model):
         self.ipv6_endpoints = ipv6_endpoints
 
 
-class ErrorAdditionalInfo(_serialization.Model):
-    """The resource management error additional info.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar type: The additional info type.
-    :vartype type: str
-    :ivar info: The additional info.
-    :vartype info: JSON
-    """
-
-    _validation = {
-        "type": {"readonly": True},
-        "info": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "info": {"key": "info", "type": "object"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.type: Optional[str] = None
-        self.info: Optional[JSON] = None
-
-
-class ErrorDetail(_serialization.Model):
-    """The error detail.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.storage.models.ErrorDetail]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~azure.mgmt.storage.models.ErrorAdditionalInfo]
-    """
-
-    _validation = {
-        "code": {"readonly": True},
-        "message": {"readonly": True},
-        "target": {"readonly": True},
-        "details": {"readonly": True},
-        "additional_info": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "target": {"key": "target", "type": "str"},
-        "details": {"key": "details", "type": "[ErrorDetail]"},
-        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.code: Optional[str] = None
-        self.message: Optional[str] = None
-        self.target: Optional[str] = None
-        self.details: Optional[list["_models.ErrorDetail"]] = None
-        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
-
-
 class ErrorResponse(_serialization.Model):
     """An error response from the storage resource provider.
 
@@ -2592,27 +2576,6 @@ class ErrorResponse(_serialization.Model):
         """
         :keyword error: Azure Storage Resource Provider error response body.
         :paramtype error: ~azure.mgmt.storage.models.ErrorResponseBody
-        """
-        super().__init__(**kwargs)
-        self.error = error
-
-
-class ErrorResponseAutoGenerated(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations. (This also follows the OData error response format.).
-
-    :ivar error: The error object.
-    :vartype error: ~azure.mgmt.storage.models.ErrorDetail
-    """
-
-    _attribute_map = {
-        "error": {"key": "error", "type": "ErrorDetail"},
-    }
-
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
-        """
-        :keyword error: The error object.
-        :paramtype error: ~azure.mgmt.storage.models.ErrorDetail
         """
         super().__init__(**kwargs)
         self.error = error
@@ -2807,19 +2770,22 @@ class FileServiceItems(_serialization.Model):
         self.value: Optional[list["_models.FileServiceProperties"]] = None
 
 
-class FileServiceProperties(Resource):
+class FileServiceProperties(ProxyResource):
     """The properties of File services in storage account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar sku: Sku name and tier.
     :vartype sku: ~azure.mgmt.storage.models.Sku
     :ivar cors: Specifies CORS rules for the File service. You can include up to five CorsRule
@@ -2836,6 +2802,7 @@ class FileServiceProperties(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "sku": {"readonly": True},
     }
 
@@ -2843,6 +2810,7 @@ class FileServiceProperties(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "sku": {"key": "sku", "type": "Sku"},
         "cors": {"key": "properties.cors", "type": "CorsRules"},
         "share_delete_retention_policy": {
@@ -2877,19 +2845,22 @@ class FileServiceProperties(Resource):
         self.protocol_settings = protocol_settings
 
 
-class FileServiceUsage(Resource):
+class FileServiceUsage(ProxyResource):
     """The usage of file service in storage account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar properties: File service usage in storage account including account limits, file share
      limits and constants used in recommendations and bursting formula.
     :vartype properties: ~azure.mgmt.storage.models.FileServiceUsageProperties
@@ -2899,20 +2870,25 @@ class FileServiceUsage(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "properties": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "FileServiceUsageProperties"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, properties: Optional["_models.FileServiceUsageProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: File service usage in storage account including account limits, file share
+         limits and constants used in recommendations and bursting formula.
+        :paramtype properties: ~azure.mgmt.storage.models.FileServiceUsageProperties
+        """
         super().__init__(**kwargs)
-        self.properties: Optional["_models.FileServiceUsageProperties"] = None
+        self.properties = properties
 
 
 class FileServiceUsageProperties(_serialization.Model):
@@ -2969,16 +2945,16 @@ class FileServiceUsages(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: List of file service usages returned.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The FileServiceUsage items on this page. Required.
     :vartype value: list[~azure.mgmt.storage.models.FileServiceUsage]
-    :ivar next_link: Request URL that can be used to query next page of file service usages.
-     Returned when total number of requested file service usages exceed maximum page size.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
+        "value": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
@@ -2986,26 +2962,32 @@ class FileServiceUsages(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
         self.value: Optional[list["_models.FileServiceUsage"]] = None
-        self.next_link: Optional[str] = None
+        self.next_link = next_link
 
 
-class FileShare(AzureEntityResource):
+class FileShare(ProxyResource):
     """Properties of the file share, including Id, resource name, resource type, Etag.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar etag: Resource Etag.
     :vartype etag: str
     :ivar last_modified_time: Returns the date and time the share was last modified.
@@ -3035,15 +3017,15 @@ class FileShare(AzureEntityResource):
     :ivar next_allowed_quota_downgrade_time: Returns the next allowed provisioned storage size
      downgrade time for the share. This property is only for file shares created under Files
      Provisioned v1 SSD and Files Provisioned v2 account type.
-    :vartype next_allowed_quota_downgrade_time: ~datetime.datetime
+    :vartype next_allowed_quota_downgrade_time: str
     :ivar next_allowed_provisioned_iops_downgrade_time: Returns the next allowed provisioned IOPS
      downgrade time for the share. This property is only for file shares created under Files
      Provisioned v2 account type.
-    :vartype next_allowed_provisioned_iops_downgrade_time: ~datetime.datetime
+    :vartype next_allowed_provisioned_iops_downgrade_time: str
     :ivar next_allowed_provisioned_bandwidth_downgrade_time: Returns the next allowed provisioned
      bandwidth downgrade time for the share. This property is only for file shares created under
      Files Provisioned v2 account type.
-    :vartype next_allowed_provisioned_bandwidth_downgrade_time: ~datetime.datetime
+    :vartype next_allowed_provisioned_bandwidth_downgrade_time: str
     :ivar enabled_protocols: The authentication protocol that is used for the file share. Can only
      be specified when creating a share. Known values are: "SMB" and "NFS".
     :vartype enabled_protocols: str or ~azure.mgmt.storage.models.EnabledProtocols
@@ -3091,6 +3073,7 @@ class FileShare(AzureEntityResource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "etag": {"readonly": True},
         "last_modified_time": {"readonly": True},
         "included_burst_iops": {"readonly": True},
@@ -3115,6 +3098,7 @@ class FileShare(AzureEntityResource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "etag": {"key": "etag", "type": "str"},
         "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
         "metadata": {"key": "properties.metadata", "type": "{str}"},
@@ -3123,14 +3107,14 @@ class FileShare(AzureEntityResource):
         "provisioned_bandwidth_mibps": {"key": "properties.provisionedBandwidthMibps", "type": "int"},
         "included_burst_iops": {"key": "properties.includedBurstIops", "type": "int"},
         "max_burst_credits_for_iops": {"key": "properties.maxBurstCreditsForIops", "type": "int"},
-        "next_allowed_quota_downgrade_time": {"key": "properties.nextAllowedQuotaDowngradeTime", "type": "rfc-1123"},
+        "next_allowed_quota_downgrade_time": {"key": "properties.nextAllowedQuotaDowngradeTime", "type": "str"},
         "next_allowed_provisioned_iops_downgrade_time": {
             "key": "properties.nextAllowedProvisionedIopsDowngradeTime",
-            "type": "rfc-1123",
+            "type": "str",
         },
         "next_allowed_provisioned_bandwidth_downgrade_time": {
             "key": "properties.nextAllowedProvisionedBandwidthDowngradeTime",
-            "type": "rfc-1123",
+            "type": "str",
         },
         "enabled_protocols": {"key": "properties.enabledProtocols", "type": "str"},
         "root_squash": {"key": "properties.rootSquash", "type": "str"},
@@ -3201,6 +3185,7 @@ class FileShare(AzureEntityResource):
          ~azure.mgmt.storage.models.FileSharePropertiesFileSharePaidBursting
         """
         super().__init__(**kwargs)
+        self.etag: Optional[str] = None
         self.last_modified_time: Optional[datetime.datetime] = None
         self.metadata = metadata
         self.share_quota = share_quota
@@ -3208,9 +3193,9 @@ class FileShare(AzureEntityResource):
         self.provisioned_bandwidth_mibps = provisioned_bandwidth_mibps
         self.included_burst_iops: Optional[int] = None
         self.max_burst_credits_for_iops: Optional[int] = None
-        self.next_allowed_quota_downgrade_time: Optional[datetime.datetime] = None
-        self.next_allowed_provisioned_iops_downgrade_time: Optional[datetime.datetime] = None
-        self.next_allowed_provisioned_bandwidth_downgrade_time: Optional[datetime.datetime] = None
+        self.next_allowed_quota_downgrade_time: Optional[str] = None
+        self.next_allowed_provisioned_iops_downgrade_time: Optional[str] = None
+        self.next_allowed_provisioned_bandwidth_downgrade_time: Optional[str] = None
         self.enabled_protocols = enabled_protocols
         self.root_squash = root_squash
         self.version: Optional[str] = None
@@ -3234,14 +3219,17 @@ class FileShareItem(AzureEntityResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar etag: Resource Etag.
     :vartype etag: str
     :ivar last_modified_time: Returns the date and time the share was last modified.
@@ -3271,15 +3259,15 @@ class FileShareItem(AzureEntityResource):
     :ivar next_allowed_quota_downgrade_time: Returns the next allowed provisioned storage size
      downgrade time for the share. This property is only for file shares created under Files
      Provisioned v1 SSD and Files Provisioned v2 account type.
-    :vartype next_allowed_quota_downgrade_time: ~datetime.datetime
+    :vartype next_allowed_quota_downgrade_time: str
     :ivar next_allowed_provisioned_iops_downgrade_time: Returns the next allowed provisioned IOPS
      downgrade time for the share. This property is only for file shares created under Files
      Provisioned v2 account type.
-    :vartype next_allowed_provisioned_iops_downgrade_time: ~datetime.datetime
+    :vartype next_allowed_provisioned_iops_downgrade_time: str
     :ivar next_allowed_provisioned_bandwidth_downgrade_time: Returns the next allowed provisioned
      bandwidth downgrade time for the share. This property is only for file shares created under
      Files Provisioned v2 account type.
-    :vartype next_allowed_provisioned_bandwidth_downgrade_time: ~datetime.datetime
+    :vartype next_allowed_provisioned_bandwidth_downgrade_time: str
     :ivar enabled_protocols: The authentication protocol that is used for the file share. Can only
      be specified when creating a share. Known values are: "SMB" and "NFS".
     :vartype enabled_protocols: str or ~azure.mgmt.storage.models.EnabledProtocols
@@ -3327,6 +3315,7 @@ class FileShareItem(AzureEntityResource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "etag": {"readonly": True},
         "last_modified_time": {"readonly": True},
         "included_burst_iops": {"readonly": True},
@@ -3351,6 +3340,7 @@ class FileShareItem(AzureEntityResource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "etag": {"key": "etag", "type": "str"},
         "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
         "metadata": {"key": "properties.metadata", "type": "{str}"},
@@ -3359,14 +3349,14 @@ class FileShareItem(AzureEntityResource):
         "provisioned_bandwidth_mibps": {"key": "properties.provisionedBandwidthMibps", "type": "int"},
         "included_burst_iops": {"key": "properties.includedBurstIops", "type": "int"},
         "max_burst_credits_for_iops": {"key": "properties.maxBurstCreditsForIops", "type": "int"},
-        "next_allowed_quota_downgrade_time": {"key": "properties.nextAllowedQuotaDowngradeTime", "type": "rfc-1123"},
+        "next_allowed_quota_downgrade_time": {"key": "properties.nextAllowedQuotaDowngradeTime", "type": "str"},
         "next_allowed_provisioned_iops_downgrade_time": {
             "key": "properties.nextAllowedProvisionedIopsDowngradeTime",
-            "type": "rfc-1123",
+            "type": "str",
         },
         "next_allowed_provisioned_bandwidth_downgrade_time": {
             "key": "properties.nextAllowedProvisionedBandwidthDowngradeTime",
-            "type": "rfc-1123",
+            "type": "str",
         },
         "enabled_protocols": {"key": "properties.enabledProtocols", "type": "str"},
         "root_squash": {"key": "properties.rootSquash", "type": "str"},
@@ -3444,9 +3434,9 @@ class FileShareItem(AzureEntityResource):
         self.provisioned_bandwidth_mibps = provisioned_bandwidth_mibps
         self.included_burst_iops: Optional[int] = None
         self.max_burst_credits_for_iops: Optional[int] = None
-        self.next_allowed_quota_downgrade_time: Optional[datetime.datetime] = None
-        self.next_allowed_provisioned_iops_downgrade_time: Optional[datetime.datetime] = None
-        self.next_allowed_provisioned_bandwidth_downgrade_time: Optional[datetime.datetime] = None
+        self.next_allowed_quota_downgrade_time: Optional[str] = None
+        self.next_allowed_provisioned_iops_downgrade_time: Optional[str] = None
+        self.next_allowed_provisioned_bandwidth_downgrade_time: Optional[str] = None
         self.enabled_protocols = enabled_protocols
         self.root_squash = root_squash
         self.version: Optional[str] = None
@@ -3471,16 +3461,16 @@ class FileShareItems(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: List of file shares returned.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The FileShareItem items on this page. Required.
     :vartype value: list[~azure.mgmt.storage.models.FileShareItem]
-    :ivar next_link: Request URL that can be used to query next page of shares. Returned when total
-     number of requested shares exceed maximum page size.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
+        "value": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
@@ -3488,11 +3478,14 @@ class FileShareItems(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
         self.value: Optional[list["_models.FileShareItem"]] = None
-        self.next_link: Optional[str] = None
+        self.next_link = next_link
 
 
 class FileShareLimits(_serialization.Model):
@@ -3782,20 +3775,23 @@ class Identity(_serialization.Model):
         self.user_assigned_identities = user_assigned_identities
 
 
-class ImmutabilityPolicy(AzureEntityResource):
+class ImmutabilityPolicy(ProxyResource):
     """The ImmutabilityPolicy property of a blob container, including Id, resource name, resource
     type, Etag.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar etag: Resource Etag.
     :vartype etag: str
     :ivar immutability_period_since_creation_in_days: The immutability period for the blobs in the
@@ -3823,6 +3819,7 @@ class ImmutabilityPolicy(AzureEntityResource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "etag": {"readonly": True},
         "state": {"readonly": True},
     }
@@ -3831,6 +3828,7 @@ class ImmutabilityPolicy(AzureEntityResource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "etag": {"key": "etag", "type": "str"},
         "immutability_period_since_creation_in_days": {
             "key": "properties.immutabilityPeriodSinceCreationInDays",
@@ -3868,6 +3866,7 @@ class ImmutabilityPolicy(AzureEntityResource):
         :paramtype allow_protected_append_writes_all: bool
         """
         super().__init__(**kwargs)
+        self.etag: Optional[str] = None
         self.immutability_period_since_creation_in_days = immutability_period_since_creation_in_days
         self.state: Optional[Union[str, "_models.ImmutabilityPolicyState"]] = None
         self.allow_protected_append_writes = allow_protected_append_writes
@@ -4254,8 +4253,8 @@ class LeaseContainerRequest(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar action: Specifies the lease action. Can be one of the available actions. Required. Known
-     values are: "Acquire", "Renew", "Change", "Release", "Break", and "Break".
-    :vartype action: str or ~azure.mgmt.storage.models.LeaseContainerRequestEnum
+     values are: "Acquire", "Renew", "Change", "Release", and "Break".
+    :vartype action: str or ~azure.mgmt.storage.models.LeaseContainerRequestAction
     :ivar lease_id: Identifies the lease. Can be specified in any valid GUID string format.
     :vartype lease_id: str
     :ivar break_period: Optional. For a break action, proposed duration the lease should continue
@@ -4284,7 +4283,7 @@ class LeaseContainerRequest(_serialization.Model):
     def __init__(
         self,
         *,
-        action: Union[str, "_models.LeaseContainerRequestEnum"],
+        action: Union[str, "_models.LeaseContainerRequestAction"],
         lease_id: Optional[str] = None,
         break_period: Optional[int] = None,
         lease_duration: Optional[int] = None,
@@ -4293,8 +4292,8 @@ class LeaseContainerRequest(_serialization.Model):
     ) -> None:
         """
         :keyword action: Specifies the lease action. Can be one of the available actions. Required.
-         Known values are: "Acquire", "Renew", "Change", "Release", "Break", and "Break".
-        :paramtype action: str or ~azure.mgmt.storage.models.LeaseContainerRequestEnum
+         Known values are: "Acquire", "Renew", "Change", "Release", and "Break".
+        :paramtype action: str or ~azure.mgmt.storage.models.LeaseContainerRequestAction
         :keyword lease_id: Identifies the lease. Can be specified in any valid GUID string format.
         :paramtype lease_id: str
         :keyword break_period: Optional. For a break action, proposed duration the lease should
@@ -4351,7 +4350,7 @@ class LeaseShareRequest(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar action: Specifies the lease action. Can be one of the available actions. Required. Known
-     values are: "Acquire", "Renew", "Change", "Release", "Break", and "Break".
+     values are: "Acquire", "Renew", "Change", "Release", and "Break".
     :vartype action: str or ~azure.mgmt.storage.models.LeaseShareAction
     :ivar lease_id: Identifies the lease. Can be specified in any valid GUID string format.
     :vartype lease_id: str
@@ -4390,7 +4389,7 @@ class LeaseShareRequest(_serialization.Model):
     ) -> None:
         """
         :keyword action: Specifies the lease action. Can be one of the available actions. Required.
-         Known values are: "Acquire", "Renew", "Change", "Release", "Break", and "Break".
+         Known values are: "Acquire", "Renew", "Change", "Release", and "Break".
         :paramtype action: str or ~azure.mgmt.storage.models.LeaseShareAction
         :keyword lease_id: Identifies the lease. Can be specified in any valid GUID string format.
         :paramtype lease_id: str
@@ -4572,6 +4571,8 @@ class ListBlobInventoryPolicy(_serialization.Model):
 
     :ivar value: List of blob inventory policies.
     :vartype value: list[~azure.mgmt.storage.models.BlobInventoryPolicy]
+    :ivar next_link:
+    :vartype next_link: str
     """
 
     _validation = {
@@ -4580,12 +4581,17 @@ class ListBlobInventoryPolicy(_serialization.Model):
 
     _attribute_map = {
         "value": {"key": "value", "type": "[BlobInventoryPolicy]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link:
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
         self.value: Optional[list["_models.BlobInventoryPolicy"]] = None
+        self.next_link = next_link
 
 
 class ListContainerItem(AzureEntityResource):
@@ -4593,14 +4599,17 @@ class ListContainerItem(AzureEntityResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar etag: Resource Etag.
     :vartype etag: str
     :ivar version: The version of the deleted blob container.
@@ -4661,6 +4670,7 @@ class ListContainerItem(AzureEntityResource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "etag": {"readonly": True},
         "version": {"readonly": True},
         "deleted": {"readonly": True},
@@ -4680,6 +4690,7 @@ class ListContainerItem(AzureEntityResource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "etag": {"key": "etag", "type": "str"},
         "version": {"key": "properties.version", "type": "str"},
         "deleted": {"key": "properties.deleted", "type": "bool"},
@@ -4767,16 +4778,16 @@ class ListContainerItems(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: List of blobs containers returned.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The ListContainerItem items on this page. Required.
     :vartype value: list[~azure.mgmt.storage.models.ListContainerItem]
-    :ivar next_link: Request URL that can be used to query next page of containers. Returned when
-     total number of requested containers exceed maximum page size.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
+        "value": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
@@ -4784,11 +4795,14 @@ class ListContainerItems(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
         self.value: Optional[list["_models.ListContainerItem"]] = None
-        self.next_link: Optional[str] = None
+        self.next_link = next_link
 
 
 class ListQueue(Resource):
@@ -4796,14 +4810,17 @@ class ListQueue(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar metadata: A name-value pair that represents queue metadata.
     :vartype metadata: dict[str, str]
     """
@@ -4812,12 +4829,14 @@ class ListQueue(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "metadata": {"key": "properties.metadata", "type": "{str}"},
     }
 
@@ -4835,15 +4854,16 @@ class ListQueueResource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: List of queues returned.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The ListQueue items on this page. Required.
     :vartype value: list[~azure.mgmt.storage.models.ListQueue]
-    :ivar next_link: Request URL that can be used to list next page of queues.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
+        "value": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
@@ -4851,11 +4871,14 @@ class ListQueueResource(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
         self.value: Optional[list["_models.ListQueue"]] = None
-        self.next_link: Optional[str] = None
+        self.next_link = next_link
 
 
 class ListQueueServices(_serialization.Model):
@@ -4909,15 +4932,16 @@ class ListTableResource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: List of tables returned.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The Table items on this page. Required.
     :vartype value: list[~azure.mgmt.storage.models.Table]
-    :ivar next_link: Request URL that can be used to query next page of tables.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
+        "value": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
@@ -4925,11 +4949,14 @@ class ListTableResource(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
         self.value: Optional[list["_models.Table"]] = None
-        self.next_link: Optional[str] = None
+        self.next_link = next_link
 
 
 class ListTableServices(_serialization.Model):
@@ -4955,20 +4982,21 @@ class ListTableServices(_serialization.Model):
         self.value: Optional[list["_models.TableServiceProperties"]] = None
 
 
-class LocalUser(Resource):
+class LocalUser(ProxyResource):
     """The local user associated with the storage accounts.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar permission_scopes: The permission scopes of the local user.
     :vartype permission_scopes: list[~azure.mgmt.storage.models.PermissionScope]
@@ -5073,7 +5101,6 @@ class LocalUser(Resource):
         :paramtype is_nf_sv3_enabled: bool
         """
         super().__init__(**kwargs)
-        self.system_data: Optional["_models.SystemData"] = None
         self.permission_scopes = permission_scopes
         self.home_directory = home_directory
         self.ssh_authorized_keys = ssh_authorized_keys
@@ -5146,17 +5173,16 @@ class LocalUsers(_serialization.Model):
     """List of local users requested, and if paging is required, a URL to the next page of local
     users.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to server.
 
-    :ivar value: The list of local users associated with the storage account.
+    :ivar value: The LocalUser items on this page. Required.
     :vartype value: list[~azure.mgmt.storage.models.LocalUser]
-    :ivar next_link: Request URL that can be used to query next page of local users. Returned when
-     total number of requested local users exceeds the maximum page size.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "next_link": {"readonly": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
@@ -5164,29 +5190,34 @@ class LocalUsers(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[list["_models.LocalUser"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.LocalUser"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: The list of local users associated with the storage account.
+        :keyword value: The LocalUser items on this page. Required.
         :paramtype value: list[~azure.mgmt.storage.models.LocalUser]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link: Optional[str] = None
+        self.next_link = next_link
 
 
-class ManagementPolicy(Resource):
+class ManagementPolicy(ProxyResource):
     """The Get Storage Account ManagementPolicies operation response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar last_modified_time: Returns the date and time the ManagementPolicies was last modified.
     :vartype last_modified_time: ~datetime.datetime
     :ivar policy: The Storage Account ManagementPolicy, in JSON format. See more details in:
@@ -5198,6 +5229,7 @@ class ManagementPolicy(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "last_modified_time": {"readonly": True},
     }
 
@@ -5205,6 +5237,7 @@ class ManagementPolicy(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
         "policy": {"key": "properties.policy", "type": "ManagementPolicySchema"},
     }
@@ -5822,68 +5855,7 @@ class NetworkSecurityPerimeter(_serialization.Model):
         self.location = location
 
 
-class ResourceAutoGenerated(_serialization.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.storage.models.SystemData
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
-        self.system_data: Optional["_models.SystemData"] = None
-
-
-class ProxyResourceAutoGenerated(ResourceAutoGenerated):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
-    tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.storage.models.SystemData
-    """
-
-
-class NetworkSecurityPerimeterConfiguration(ProxyResourceAutoGenerated):
+class NetworkSecurityPerimeterConfiguration(ProxyResource):
     """The Network Security Perimeter configuration resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5964,14 +5936,16 @@ class NetworkSecurityPerimeterConfigurationList(_serialization.Model):  # pylint
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: A collection of Network Security Perimeter configurations.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The NetworkSecurityPerimeterConfiguration items on this page. Required.
     :vartype value: list[~azure.mgmt.storage.models.NetworkSecurityPerimeterConfiguration]
-    :ivar next_link: The URI that can be used to request the next set of paged results.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "value": {"readonly": True},
+        "value": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
@@ -5981,7 +5955,7 @@ class NetworkSecurityPerimeterConfigurationList(_serialization.Model):  # pylint
 
     def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword next_link: The URI that can be used to request the next set of paged results.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -6209,35 +6183,50 @@ class ObjectReplicationPolicies(_serialization.Model):
 
     :ivar value: The replication policy between two storage accounts.
     :vartype value: list[~azure.mgmt.storage.models.ObjectReplicationPolicy]
+    :ivar next_link:
+    :vartype next_link: str
     """
 
     _attribute_map = {
         "value": {"key": "value", "type": "[ObjectReplicationPolicy]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[list["_models.ObjectReplicationPolicy"]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        value: Optional[list["_models.ObjectReplicationPolicy"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The replication policy between two storage accounts.
         :paramtype value: list[~azure.mgmt.storage.models.ObjectReplicationPolicy]
+        :keyword next_link:
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
+        self.next_link = next_link
 
 
-class ObjectReplicationPolicy(Resource):
+class ObjectReplicationPolicy(ProxyResource):
     """The replication policy between two storage accounts. Multiple rules can be defined in one
     policy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar policy_id: A unique id for object replication policy.
     :vartype policy_id: str
     :ivar enabled_time: Indicates when the policy is enabled on the source account.
@@ -6262,6 +6251,7 @@ class ObjectReplicationPolicy(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "policy_id": {"readonly": True},
         "enabled_time": {"readonly": True},
     }
@@ -6270,6 +6260,7 @@ class ObjectReplicationPolicy(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "policy_id": {"key": "properties.policyId", "type": "str"},
         "enabled_time": {"key": "properties.enabledTime", "type": "iso-8601"},
         "source_account": {"key": "properties.sourceAccount", "type": "str"},
@@ -6543,24 +6534,31 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """Result of the request to list Storage operations. It contains a list of operations and a URL
-    link to get the next set of results.
+    """The list of available operations.
 
-    :ivar value: List of Storage operations supported by the Storage resource provider.
+    :ivar value: List of operations supported by the resource provider.
     :vartype value: list[~azure.mgmt.storage.models.Operation]
+    :ivar next_link:
+    :vartype next_link: str
     """
 
     _attribute_map = {
         "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[list["_models.Operation"]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: Optional[list["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword value: List of Storage operations supported by the Storage resource provider.
+        :keyword value: List of operations supported by the resource provider.
         :paramtype value: list[~azure.mgmt.storage.models.Operation]
+        :keyword next_link:
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
+        self.next_link = next_link
 
 
 class PermissionScope(_serialization.Model):
@@ -6656,19 +6654,22 @@ class PrivateEndpoint(_serialization.Model):
         self.id: Optional[str] = None
 
 
-class PrivateEndpointConnection(Resource):
+class PrivateEndpointConnection(ProxyResource):
     """The Private Endpoint Connection resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar private_endpoint: The resource of private end point.
     :vartype private_endpoint: ~azure.mgmt.storage.models.PrivateEndpoint
     :ivar private_link_service_connection_state: A collection of information about the state of the
@@ -6685,6 +6686,7 @@ class PrivateEndpointConnection(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
 
@@ -6692,6 +6694,7 @@ class PrivateEndpointConnection(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpoint"},
         "private_link_service_connection_state": {
             "key": "properties.privateLinkServiceConnectionState",
@@ -6726,19 +6729,31 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
 
     :ivar value: Array of private endpoint connections.
     :vartype value: list[~azure.mgmt.storage.models.PrivateEndpointConnection]
+    :ivar next_link:
+    :vartype next_link: str
     """
 
     _attribute_map = {
         "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[list["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        value: Optional[list["_models.PrivateEndpointConnection"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Array of private endpoint connections.
         :paramtype value: list[~azure.mgmt.storage.models.PrivateEndpointConnection]
+        :keyword next_link:
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
+        self.next_link = next_link
 
 
 class PrivateLinkResource(Resource):
@@ -6746,14 +6761,17 @@ class PrivateLinkResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar group_id: The private link resource group id.
     :vartype group_id: str
     :ivar required_members: The private link resource required member names.
@@ -6766,6 +6784,7 @@ class PrivateLinkResource(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "group_id": {"readonly": True},
         "required_members": {"readonly": True},
     }
@@ -6774,6 +6793,7 @@ class PrivateLinkResource(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "group_id": {"key": "properties.groupId", "type": "str"},
         "required_members": {"key": "properties.requiredMembers", "type": "[str]"},
         "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
@@ -6987,19 +7007,22 @@ class ProvisioningIssueProperties(_serialization.Model):
         self.description = description
 
 
-class QueueServiceProperties(Resource):
+class QueueServiceProperties(ProxyResource):
     """The properties of a storage account’s Queue service.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar cors: Specifies CORS rules for the Queue service. You can include up to five CorsRule
      elements in the request. If no CorsRule elements are included in the request body, all CORS
      rules will be deleted, and CORS will be disabled for the Queue service.
@@ -7010,12 +7033,14 @@ class QueueServiceProperties(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "cors": {"key": "properties.cors", "type": "CorsRules"},
     }
 
@@ -7054,6 +7079,41 @@ class ResourceAccessRule(_serialization.Model):
         super().__init__(**kwargs)
         self.tenant_id = tenant_id
         self.resource_id = resource_id
+
+
+class ResourceAutoGenerated(_serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
 
 
 class RestorePolicyProperties(_serialization.Model):
@@ -7769,14 +7829,17 @@ class TrackedResource(Resource):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -7787,6 +7850,7 @@ class TrackedResource(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
     }
 
@@ -7794,6 +7858,7 @@ class TrackedResource(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
     }
@@ -7817,14 +7882,17 @@ class StorageAccount(TrackedResource):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -7838,15 +7906,12 @@ class StorageAccount(TrackedResource):
     :vartype identity: ~azure.mgmt.storage.models.Identity
     :ivar extended_location: The extendedLocation of the resource.
     :vartype extended_location: ~azure.mgmt.storage.models.ExtendedLocation
-    :ivar zones: Optional. Gets or sets the pinned logical availability zone for the storage
-     account.
+    :ivar zones: The availability zones.
     :vartype zones: list[str]
     :ivar placement: Optional. Gets or sets the zonal placement details for the storage account.
     :vartype placement: ~azure.mgmt.storage.models.Placement
     :ivar provisioning_state: Gets the status of the storage account at the time the operation was
-     called. Known values are: "Creating", "ResolvingDNS", "Succeeded",
-     "ValidateSubscriptionQuotaBegin", "ValidateSubscriptionQuotaEnd", "Accepted", "Deleting",
-     "Canceled", and "Failed".
+     called. Known values are: "Creating", "ResolvingDNS", and "Succeeded".
     :vartype provisioning_state: str or ~azure.mgmt.storage.models.ProvisioningState
     :ivar primary_endpoints: Gets the URLs that are used to perform a retrieval of a public blob,
      queue, or table object. Note that Standard_ZRS and Premium_LRS accounts only return the blob
@@ -7986,6 +8051,7 @@ class StorageAccount(TrackedResource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
         "sku": {"readonly": True},
         "kind": {"readonly": True},
@@ -8017,6 +8083,7 @@ class StorageAccount(TrackedResource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "sku": {"key": "sku", "type": "Sku"},
@@ -8129,8 +8196,7 @@ class StorageAccount(TrackedResource):
         :paramtype identity: ~azure.mgmt.storage.models.Identity
         :keyword extended_location: The extendedLocation of the resource.
         :paramtype extended_location: ~azure.mgmt.storage.models.ExtendedLocation
-        :keyword zones: Optional. Gets or sets the pinned logical availability zone for the storage
-         account.
+        :keyword zones: The availability zones.
         :paramtype zones: list[str]
         :keyword placement: Optional. Gets or sets the zonal placement details for the storage account.
         :paramtype placement: ~azure.mgmt.storage.models.Placement
@@ -8832,20 +8898,18 @@ class StorageAccountListKeysResult(_serialization.Model):
 
 
 class StorageAccountListResult(_serialization.Model):
-    """The response from the List Storage Accounts operation.
+    """The response of a StorageAccount list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to server.
 
-    :ivar value: Gets the list of storage accounts and their properties.
+    :ivar value: The StorageAccount items on this page. Required.
     :vartype value: list[~azure.mgmt.storage.models.StorageAccount]
-    :ivar next_link: Request URL that can be used to query next page of storage accounts. Returned
-     when total number of requested storage accounts exceed maximum page size.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
@@ -8853,11 +8917,18 @@ class StorageAccountListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(
+        self, *, value: list["_models.StorageAccount"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The StorageAccount items on this page. Required.
+        :paramtype value: list[~azure.mgmt.storage.models.StorageAccount]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
-        self.value: Optional[list["_models.StorageAccount"]] = None
-        self.next_link: Optional[str] = None
+        self.value = value
+        self.next_link = next_link
 
 
 class StorageAccountMicrosoftEndpoints(_serialization.Model):
@@ -8909,7 +8980,7 @@ class StorageAccountMicrosoftEndpoints(_serialization.Model):
         self.dfs: Optional[str] = None
 
 
-class StorageAccountMigration(_serialization.Model):
+class StorageAccountMigration(ProxyResource):
     """The parameters or status associated with an ongoing or enqueued storage account migration in
     order to update its current SKU or region.
 
@@ -8917,12 +8988,17 @@ class StorageAccountMigration(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Migration Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: current value is 'default' for customer initiated migration.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: SrpAccountMigrationType in ARM contract which is 'accountMigrations'.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar target_sku_name: Target sku name for the account. Required. Known values are:
      "Standard_LRS", "Standard_GRS", "Standard_RAGRS", "Standard_ZRS", "Premium_LRS", "Premium_ZRS",
      "Standard_GZRS", "Standard_RAGZRS", "StandardV2_LRS", "StandardV2_GRS", "StandardV2_ZRS",
@@ -8939,6 +9015,9 @@ class StorageAccountMigration(_serialization.Model):
 
     _validation = {
         "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "target_sku_name": {"required": True},
         "migration_status": {"readonly": True},
         "migration_failed_reason": {"readonly": True},
@@ -8949,25 +9028,15 @@ class StorageAccountMigration(_serialization.Model):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "target_sku_name": {"key": "properties.targetSkuName", "type": "str"},
         "migration_status": {"key": "properties.migrationStatus", "type": "str"},
         "migration_failed_reason": {"key": "properties.migrationFailedReason", "type": "str"},
         "migration_failed_detailed_reason": {"key": "properties.migrationFailedDetailedReason", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        target_sku_name: Union[str, "_models.SkuName"],
-        name: Optional[str] = None,
-        type: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, target_sku_name: Union[str, "_models.SkuName"], **kwargs: Any) -> None:
         """
-        :keyword name: current value is 'default' for customer initiated migration.
-        :paramtype name: str
-        :keyword type: SrpAccountMigrationType in ARM contract which is 'accountMigrations'.
-        :paramtype type: str
         :keyword target_sku_name: Target sku name for the account. Required. Known values are:
          "Standard_LRS", "Standard_GRS", "Standard_RAGRS", "Standard_ZRS", "Premium_LRS", "Premium_ZRS",
          "Standard_GZRS", "Standard_RAGZRS", "StandardV2_LRS", "StandardV2_GRS", "StandardV2_ZRS",
@@ -8975,9 +9044,6 @@ class StorageAccountMigration(_serialization.Model):
         :paramtype target_sku_name: str or ~azure.mgmt.storage.models.SkuName
         """
         super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name = name
-        self.type = type
         self.target_sku_name = target_sku_name
         self.migration_status: Optional[Union[str, "_models.MigrationStatus"]] = None
         self.migration_failed_reason: Optional[str] = None
@@ -9385,19 +9451,23 @@ class StorageAccountUpdateParameters(_serialization.Model):
         self.geo_priority_replication_status = geo_priority_replication_status
 
 
-class StorageQueue(Resource):
-    """StorageQueue.
+class StorageQueue(ProxyResource):
+    """Concrete proxy resource types can be created by aliasing this type using a specific property
+    type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar metadata: A name-value pair that represents queue metadata.
     :vartype metadata: dict[str, str]
     :ivar approximate_message_count: Integer indicating an approximate number of messages in the
@@ -9410,6 +9480,7 @@ class StorageQueue(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "approximate_message_count": {"readonly": True},
     }
 
@@ -9417,6 +9488,7 @@ class StorageQueue(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "metadata": {"key": "properties.metadata", "type": "{str}"},
         "approximate_message_count": {"key": "properties.approximateMessageCount", "type": "int"},
     }
@@ -9438,6 +9510,8 @@ class StorageSkuListResult(_serialization.Model):
 
     :ivar value: Get the list result of storage SKUs and their properties.
     :vartype value: list[~azure.mgmt.storage.models.SkuInformation]
+    :ivar next_link:
+    :vartype next_link: str
     """
 
     _validation = {
@@ -9446,15 +9520,20 @@ class StorageSkuListResult(_serialization.Model):
 
     _attribute_map = {
         "value": {"key": "value", "type": "[SkuInformation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link:
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
         self.value: Optional[list["_models.SkuInformation"]] = None
+        self.next_link = next_link
 
 
-class StorageTaskAssignment(Resource):
+class StorageTaskAssignment(ResourceAutoGenerated):
     """The storage task assignment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9548,9 +9627,10 @@ class StorageTaskAssignmentProperties(_serialization.Model):
     :ivar report: The storage task assignment report. Required.
     :vartype report: ~azure.mgmt.storage.models.StorageTaskAssignmentReport
     :ivar provisioning_state: Represents the provisioning state of the storage task assignment.
-     Known values are: "Creating", "ResolvingDNS", "Succeeded", "ValidateSubscriptionQuotaBegin",
-     "ValidateSubscriptionQuotaEnd", "Accepted", "Deleting", "Canceled", and "Failed".
-    :vartype provisioning_state: str or ~azure.mgmt.storage.models.ProvisioningState
+     Known values are: "ValidateSubscriptionQuotaBegin", "ValidateSubscriptionQuotaEnd", "Accepted",
+     "Creating", "Succeeded", "Deleting", "Canceled", and "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.storage.models.StorageTaskAssignmentProvisioningState
     :ivar run_status: Run status of storage task assignment.
     :vartype run_status: ~azure.mgmt.storage.models.StorageTaskReportProperties
     """
@@ -9605,7 +9685,7 @@ class StorageTaskAssignmentProperties(_serialization.Model):
         self.description = description
         self.execution_context = execution_context
         self.report = report
-        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.provisioning_state: Optional[Union[str, "_models.StorageTaskAssignmentProvisioningState"]] = None
         self.run_status = run_status
 
 
@@ -9642,16 +9722,16 @@ class StorageTaskAssignmentsList(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: Gets the list of storage task assignments and their properties.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The StorageTaskAssignment items on this page. Required.
     :vartype value: list[~azure.mgmt.storage.models.StorageTaskAssignment]
-    :ivar next_link: Request URL that can be used to query next page of storage task assignments.
-     Returned when total number of requested storage task assignments exceed maximum page size.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
+        "value": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
@@ -9659,11 +9739,14 @@ class StorageTaskAssignmentsList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
         self.value: Optional[list["_models.StorageTaskAssignment"]] = None
-        self.next_link: Optional[str] = None
+        self.next_link = next_link
 
 
 class StorageTaskAssignmentUpdateExecutionContext(_serialization.Model):  # pylint: disable=name-too-long
@@ -9737,9 +9820,10 @@ class StorageTaskAssignmentUpdateProperties(_serialization.Model):
     :ivar report: The storage task assignment report.
     :vartype report: ~azure.mgmt.storage.models.StorageTaskAssignmentUpdateReport
     :ivar provisioning_state: Represents the provisioning state of the storage task assignment.
-     Known values are: "Creating", "ResolvingDNS", "Succeeded", "ValidateSubscriptionQuotaBegin",
-     "ValidateSubscriptionQuotaEnd", "Accepted", "Deleting", "Canceled", and "Failed".
-    :vartype provisioning_state: str or ~azure.mgmt.storage.models.ProvisioningState
+     Known values are: "ValidateSubscriptionQuotaBegin", "ValidateSubscriptionQuotaEnd", "Accepted",
+     "Creating", "Succeeded", "Deleting", "Canceled", and "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.storage.models.StorageTaskAssignmentProvisioningState
     :ivar run_status: Run status of storage task assignment.
     :vartype run_status: ~azure.mgmt.storage.models.StorageTaskReportProperties
     """
@@ -9788,7 +9872,7 @@ class StorageTaskAssignmentUpdateProperties(_serialization.Model):
         self.description = description
         self.execution_context = execution_context
         self.report = report
-        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.provisioning_state: Optional[Union[str, "_models.StorageTaskAssignmentProvisioningState"]] = None
         self.run_status = run_status
 
 
@@ -9817,14 +9901,17 @@ class StorageTaskReportInstance(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar properties: Storage task execution report for a run instance.
     :vartype properties: ~azure.mgmt.storage.models.StorageTaskReportProperties
     """
@@ -9833,12 +9920,14 @@ class StorageTaskReportInstance(ProxyResource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "StorageTaskReportProperties"},
     }
 
@@ -9968,17 +10057,16 @@ class StorageTaskReportSummary(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: Gets storage tasks run result summary.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The StorageTaskReportInstance items on this page. Required.
     :vartype value: list[~azure.mgmt.storage.models.StorageTaskReportInstance]
-    :ivar next_link: Request URL that can be used to query next page of storage task run results
-     summary. Returned when the number of run instances and summary reports exceed maximum page
-     size.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
+        "value": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
@@ -9986,11 +10074,14 @@ class StorageTaskReportSummary(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
         self.value: Optional[list["_models.StorageTaskReportInstance"]] = None
-        self.next_link: Optional[str] = None
+        self.next_link = next_link
 
 
 class SystemData(_serialization.Model):
@@ -10057,19 +10148,22 @@ class SystemData(_serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class Table(Resource):
+class Table(ProxyResource):
     """Properties of the table, including Id, resource name, resource type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar table_name: Table name under the specified account.
     :vartype table_name: str
     :ivar signed_identifiers: List of stored access policies specified on the table.
@@ -10080,6 +10174,7 @@ class Table(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "table_name": {"readonly": True},
     }
 
@@ -10087,6 +10182,7 @@ class Table(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "table_name": {"key": "properties.tableName", "type": "str"},
         "signed_identifiers": {"key": "properties.signedIdentifiers", "type": "[TableSignedIdentifier]"},
     }
@@ -10150,19 +10246,22 @@ class TableAccessPolicy(_serialization.Model):
         self.permission = permission
 
 
-class TableServiceProperties(Resource):
+class TableServiceProperties(ProxyResource):
     """The properties of a storage account’s Table service.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
     :ivar cors: Specifies CORS rules for the Table service. You can include up to five CorsRule
      elements in the request. If no CorsRule elements are included in the request body, all CORS
      rules will be deleted, and CORS will be disabled for the Table service.
@@ -10173,12 +10272,14 @@ class TableServiceProperties(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "cors": {"key": "properties.cors", "type": "CorsRules"},
     }
 
@@ -10604,19 +10705,27 @@ class UsageListResult(_serialization.Model):
 
     :ivar value: Gets or sets the list of Storage Resource Usages.
     :vartype value: list[~azure.mgmt.storage.models.Usage]
+    :ivar next_link:
+    :vartype next_link: str
     """
 
     _attribute_map = {
         "value": {"key": "value", "type": "[Usage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[list["_models.Usage"]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: Optional[list["_models.Usage"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets or sets the list of Storage Resource Usages.
         :paramtype value: list[~azure.mgmt.storage.models.Usage]
+        :keyword next_link:
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
+        self.next_link = next_link
 
 
 class UsageName(_serialization.Model):
@@ -10678,6 +10787,8 @@ class UserAssignedIdentity(_serialization.Model):
 class VirtualNetworkRule(_serialization.Model):
     """Virtual Network rule.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to server.
 
     :ivar virtual_network_resource_id: Resource ID of a subnet, for example:
@@ -10693,6 +10804,7 @@ class VirtualNetworkRule(_serialization.Model):
 
     _validation = {
         "virtual_network_resource_id": {"required": True},
+        "state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -10702,12 +10814,7 @@ class VirtualNetworkRule(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        virtual_network_resource_id: str,
-        action: Optional[Literal["Allow"]] = None,
-        state: Optional[Union[str, "_models.State"]] = None,
-        **kwargs: Any
+        self, *, virtual_network_resource_id: str, action: Optional[Literal["Allow"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword virtual_network_resource_id: Resource ID of a subnet, for example:
@@ -10716,11 +10823,8 @@ class VirtualNetworkRule(_serialization.Model):
         :paramtype virtual_network_resource_id: str
         :keyword action: The action of virtual network rule. Default value is "Allow".
         :paramtype action: str
-        :keyword state: Gets the state of virtual network rule. Known values are: "Provisioning",
-         "Deprovisioning", "Succeeded", "Failed", and "NetworkSourceDeleted".
-        :paramtype state: str or ~azure.mgmt.storage.models.State
         """
         super().__init__(**kwargs)
         self.virtual_network_resource_id = virtual_network_resource_id
         self.action = action
-        self.state = state
+        self.state: Optional[Union[str, "_models.State"]] = None

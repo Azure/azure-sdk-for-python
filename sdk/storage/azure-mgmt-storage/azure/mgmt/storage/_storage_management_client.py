@@ -55,66 +55,66 @@ if TYPE_CHECKING:
 class StorageManagementClient:  # pylint: disable=too-many-instance-attributes
     """The Azure Storage Management API.
 
-    :ivar blob_services: BlobServicesOperations operations
-    :vartype blob_services: azure.mgmt.storage.operations.BlobServicesOperations
-    :ivar blob_containers: BlobContainersOperations operations
-    :vartype blob_containers: azure.mgmt.storage.operations.BlobContainersOperations
-    :ivar file_services: FileServicesOperations operations
-    :vartype file_services: azure.mgmt.storage.operations.FileServicesOperations
-    :ivar file_shares: FileSharesOperations operations
-    :vartype file_shares: azure.mgmt.storage.operations.FileSharesOperations
-    :ivar queue_services: QueueServicesOperations operations
-    :vartype queue_services: azure.mgmt.storage.operations.QueueServicesOperations
-    :ivar queue: QueueOperations operations
-    :vartype queue: azure.mgmt.storage.operations.QueueOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.storage.operations.Operations
-    :ivar skus: SkusOperations operations
-    :vartype skus: azure.mgmt.storage.operations.SkusOperations
     :ivar storage_accounts: StorageAccountsOperations operations
     :vartype storage_accounts: azure.mgmt.storage.operations.StorageAccountsOperations
     :ivar deleted_accounts: DeletedAccountsOperations operations
     :vartype deleted_accounts: azure.mgmt.storage.operations.DeletedAccountsOperations
     :ivar usages: UsagesOperations operations
     :vartype usages: azure.mgmt.storage.operations.UsagesOperations
-    :ivar management_policies: ManagementPoliciesOperations operations
-    :vartype management_policies: azure.mgmt.storage.operations.ManagementPoliciesOperations
+    :ivar skus: SkusOperations operations
+    :vartype skus: azure.mgmt.storage.operations.SkusOperations
+    :ivar blob_services: BlobServicesOperations operations
+    :vartype blob_services: azure.mgmt.storage.operations.BlobServicesOperations
+    :ivar blob_containers: BlobContainersOperations operations
+    :vartype blob_containers: azure.mgmt.storage.operations.BlobContainersOperations
+    :ivar encryption_scopes: EncryptionScopesOperations operations
+    :vartype encryption_scopes: azure.mgmt.storage.operations.EncryptionScopesOperations
+    :ivar file_services: FileServicesOperations operations
+    :vartype file_services: azure.mgmt.storage.operations.FileServicesOperations
+    :ivar file_shares: FileSharesOperations operations
+    :vartype file_shares: azure.mgmt.storage.operations.FileSharesOperations
     :ivar blob_inventory_policies: BlobInventoryPoliciesOperations operations
     :vartype blob_inventory_policies: azure.mgmt.storage.operations.BlobInventoryPoliciesOperations
+    :ivar local_users: LocalUsersOperations operations
+    :vartype local_users: azure.mgmt.storage.operations.LocalUsersOperations
+    :ivar management_policies: ManagementPoliciesOperations operations
+    :vartype management_policies: azure.mgmt.storage.operations.ManagementPoliciesOperations
+    :ivar network_security_perimeter_configurations:
+     NetworkSecurityPerimeterConfigurationsOperations operations
+    :vartype network_security_perimeter_configurations:
+     azure.mgmt.storage.operations.NetworkSecurityPerimeterConfigurationsOperations
+    :ivar object_replication_policies: ObjectReplicationPoliciesOperations operations
+    :vartype object_replication_policies:
+     azure.mgmt.storage.operations.ObjectReplicationPoliciesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections:
      azure.mgmt.storage.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources: azure.mgmt.storage.operations.PrivateLinkResourcesOperations
-    :ivar object_replication_policies: ObjectReplicationPoliciesOperations operations
-    :vartype object_replication_policies:
-     azure.mgmt.storage.operations.ObjectReplicationPoliciesOperations
-    :ivar local_users: LocalUsersOperations operations
-    :vartype local_users: azure.mgmt.storage.operations.LocalUsersOperations
-    :ivar encryption_scopes: EncryptionScopesOperations operations
-    :vartype encryption_scopes: azure.mgmt.storage.operations.EncryptionScopesOperations
-    :ivar table_services: TableServicesOperations operations
-    :vartype table_services: azure.mgmt.storage.operations.TableServicesOperations
-    :ivar table: TableOperations operations
-    :vartype table: azure.mgmt.storage.operations.TableOperations
-    :ivar network_security_perimeter_configurations:
-     NetworkSecurityPerimeterConfigurationsOperations operations
-    :vartype network_security_perimeter_configurations:
-     azure.mgmt.storage.operations.NetworkSecurityPerimeterConfigurationsOperations
-    :ivar storage_task_assignments: StorageTaskAssignmentsOperations operations
-    :vartype storage_task_assignments:
-     azure.mgmt.storage.operations.StorageTaskAssignmentsOperations
+    :ivar queue_services: QueueServicesOperations operations
+    :vartype queue_services: azure.mgmt.storage.operations.QueueServicesOperations
+    :ivar queue: QueueOperations operations
+    :vartype queue: azure.mgmt.storage.operations.QueueOperations
     :ivar storage_task_assignments_instances_report:
      StorageTaskAssignmentsInstancesReportOperations operations
     :vartype storage_task_assignments_instances_report:
      azure.mgmt.storage.operations.StorageTaskAssignmentsInstancesReportOperations
+    :ivar storage_task_assignments: StorageTaskAssignmentsOperations operations
+    :vartype storage_task_assignments:
+     azure.mgmt.storage.operations.StorageTaskAssignmentsOperations
     :ivar storage_task_assignment_instances_report: StorageTaskAssignmentInstancesReportOperations
      operations
     :vartype storage_task_assignment_instances_report:
      azure.mgmt.storage.operations.StorageTaskAssignmentInstancesReportOperations
+    :ivar table_services: TableServicesOperations operations
+    :vartype table_services: azure.mgmt.storage.operations.TableServicesOperations
+    :ivar table: TableOperations operations
+    :vartype table: azure.mgmt.storage.operations.TableOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is None.
     :type base_url: str
@@ -174,14 +174,7 @@ class StorageManagementClient:  # pylint: disable=too-many-instance-attributes
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.blob_services = BlobServicesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.blob_containers = BlobContainersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.file_services = FileServicesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.file_shares = FileSharesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.queue_services = QueueServicesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.queue = QueueOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)
         self.storage_accounts = StorageAccountsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -189,10 +182,25 @@ class StorageManagementClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.blob_services = BlobServicesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.blob_containers = BlobContainersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.encryption_scopes = EncryptionScopesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.file_services = FileServicesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.file_shares = FileSharesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.blob_inventory_policies = BlobInventoryPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.local_users = LocalUsersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.management_policies = ManagementPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.blob_inventory_policies = BlobInventoryPoliciesOperations(
+        self.network_security_perimeter_configurations = NetworkSecurityPerimeterConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.object_replication_policies = ObjectReplicationPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
@@ -201,27 +209,19 @@ class StorageManagementClient:  # pylint: disable=too-many-instance-attributes
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.object_replication_policies = ObjectReplicationPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.local_users = LocalUsersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.encryption_scopes = EncryptionScopesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.table_services = TableServicesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.table = TableOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.network_security_perimeter_configurations = NetworkSecurityPerimeterConfigurationsOperations(
+        self.queue_services = QueueServicesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.queue = QueueOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.storage_task_assignments_instances_report = StorageTaskAssignmentsInstancesReportOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.storage_task_assignments = StorageTaskAssignmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.storage_task_assignments_instances_report = StorageTaskAssignmentsInstancesReportOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.storage_task_assignment_instances_report = StorageTaskAssignmentInstancesReportOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.table_services = TableServicesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.table = TableOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

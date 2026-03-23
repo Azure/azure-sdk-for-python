@@ -33,8 +33,8 @@ class TestStorageManagementDeletedAccountsOperationsAsync(AzureMgmtRecordedTestC
     @recorded_by_proxy_async
     async def test_deleted_accounts_get(self, resource_group):
         response = await self.client.deleted_accounts.get(
-            deleted_account_name="str",
             location="str",
+            deleted_account_name="str",
             api_version="2025-06-01",
         )
 

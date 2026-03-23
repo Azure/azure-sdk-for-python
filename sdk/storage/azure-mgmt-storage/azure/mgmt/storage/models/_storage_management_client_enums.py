@@ -11,9 +11,9 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Required for storage accounts where kind = BlobStorage. The access tier is used for billing.
-    The 'Premium' access tier is the default value for premium block blobs storage account type and
-    it cannot be changed for the premium block blobs storage account type.
+    """The default access tier for block blobs in the storage account. Required for storage accounts
+    where kind = BlobStorage. See more details in:
+    https://learn.microsoft.com/azure/storage/blobs/access-tiers-overview.
     """
 
     HOT = "Hot"
@@ -313,7 +313,7 @@ class LargeFileSharesState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ENABLED = "Enabled"
 
 
-class LeaseContainerRequestEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class LeaseContainerRequestAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the lease action. Can be one of the available actions."""
 
     ACQUIRE = "Acquire"
@@ -321,7 +321,6 @@ class LeaseContainerRequestEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CHANGE = "Change"
     RELEASE = "Release"
     BREAK = "Break"
-    BREAK_ENUM = "Break"
 
 
 class LeaseDuration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -341,7 +340,6 @@ class LeaseShareAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CHANGE = "Change"
     RELEASE = "Release"
     BREAK = "Break"
-    BREAK_ENUM = "Break"
 
 
 class LeaseState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -429,7 +427,9 @@ class Name(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ACCESS_TIME_TRACKING = "AccessTimeTracking"
 
 
-class NetworkSecurityPerimeterConfigurationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class NetworkSecurityPerimeterConfigurationProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Provisioning state of Network Security Perimeter configuration propagation."""
 
     ACCEPTED = "Accepted"
@@ -486,7 +486,9 @@ class PostPlannedFailoverRedundancy(str, Enum, metaclass=CaseInsensitiveEnumMeta
     STANDARD_RAGZRS = "Standard_RAGZRS"
 
 
-class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PrivateEndpointConnectionProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
@@ -509,12 +511,6 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CREATING = "Creating"
     RESOLVING_DNS = "ResolvingDNS"
     SUCCEEDED = "Succeeded"
-    VALIDATE_SUBSCRIPTION_QUOTA_BEGIN = "ValidateSubscriptionQuotaBegin"
-    VALIDATE_SUBSCRIPTION_QUOTA_END = "ValidateSubscriptionQuotaEnd"
-    ACCEPTED = "Accepted"
-    DELETING = "Deleting"
-    CANCELED = "Canceled"
-    FAILED = "Failed"
 
 
 class PublicAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -708,6 +704,19 @@ class StorageAccountExpand(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     GEO_REPLICATION_STATS = "geoReplicationStats"
     BLOB_RESTORE_STATUS = "blobRestoreStatus"
+
+
+class StorageTaskAssignmentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets the status of the storage account at the time the operation was called."""
+
+    VALIDATE_SUBSCRIPTION_QUOTA_BEGIN = "ValidateSubscriptionQuotaBegin"
+    VALIDATE_SUBSCRIPTION_QUOTA_END = "ValidateSubscriptionQuotaEnd"
+    ACCEPTED = "Accepted"
+    CREATING = "Creating"
+    SUCCEEDED = "Succeeded"
+    DELETING = "Deleting"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
 
 
 class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

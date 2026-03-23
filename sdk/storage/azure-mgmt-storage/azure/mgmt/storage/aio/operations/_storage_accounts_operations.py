@@ -90,9 +90,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.CheckNameAvailabilityResult:
         """Checks that the storage account name is valid and is not already in use.
 
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
+        :param account_name: The request body. Required.
         :type account_name: ~azure.mgmt.storage.models.StorageAccountCheckNameAvailabilityParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -108,9 +106,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.CheckNameAvailabilityResult:
         """Checks that the storage account name is valid and is not already in use.
 
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
+        :param account_name: The request body. Required.
         :type account_name: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -126,10 +122,8 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.CheckNameAvailabilityResult:
         """Checks that the storage account name is valid and is not already in use.
 
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Is either a StorageAccountCheckNameAvailabilityParameters type or a
-         IO[bytes] type. Required.
+        :param account_name: The request body. Is either a
+         StorageAccountCheckNameAvailabilityParameters type or a IO[bytes] type. Required.
         :type account_name: ~azure.mgmt.storage.models.StorageAccountCheckNameAvailabilityParameters or
          IO[bytes]
         :return: CheckNameAvailabilityResult or the result of cls(response)
@@ -179,497 +173,13 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("CheckNameAvailabilityResult", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    async def _create_initial(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        parameters: Union[_models.StorageAccountCreateParameters, IO[bytes]],
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _json = self._serialize.body(parameters, "StorageAccountCreateParameters")
-
-        _request = build_create_request(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def begin_create(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        parameters: _models.StorageAccountCreateParameters,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.StorageAccount]:
-        """Asynchronously creates a new storage account with the specified parameters. If an account is
-        already created and a subsequent create request is issued with different properties, the
-        account properties will be updated. If an account is already created and a subsequent create or
-        update request is issued with the exact same set of properties, the request will succeed.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :param parameters: The parameters to provide for the created account. Required.
-        :type parameters: ~azure.mgmt.storage.models.StorageAccountCreateParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns either StorageAccount or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.storage.models.StorageAccount]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_create(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.StorageAccount]:
-        """Asynchronously creates a new storage account with the specified parameters. If an account is
-        already created and a subsequent create request is issued with different properties, the
-        account properties will be updated. If an account is already created and a subsequent create or
-        update request is issued with the exact same set of properties, the request will succeed.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :param parameters: The parameters to provide for the created account. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns either StorageAccount or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.storage.models.StorageAccount]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def begin_create(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        parameters: Union[_models.StorageAccountCreateParameters, IO[bytes]],
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.StorageAccount]:
-        """Asynchronously creates a new storage account with the specified parameters. If an account is
-        already created and a subsequent create request is issued with different properties, the
-        account properties will be updated. If an account is already created and a subsequent create or
-        update request is issued with the exact same set of properties, the request will succeed.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :param parameters: The parameters to provide for the created account. Is either a
-         StorageAccountCreateParameters type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.storage.models.StorageAccountCreateParameters or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns either StorageAccount or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.storage.models.StorageAccount]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.StorageAccount] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._create_initial(
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                parameters=parameters,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("StorageAccount", pipeline_response.http_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[_models.StorageAccount].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[_models.StorageAccount](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @distributed_trace_async
-    async def delete(self, resource_group_name: str, account_name: str, **kwargs: Any) -> None:
-        """Deletes a storage account in Microsoft Azure.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_delete_request(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace_async
-    async def get_properties(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        expand: Optional[Union[str, _models.StorageAccountExpand]] = None,
-        **kwargs: Any
-    ) -> _models.StorageAccount:
-        """Returns the properties for the specified storage account including but not limited to name, SKU
-        name, location, and account status. The ListKeys operation should be used to retrieve storage
-        keys.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :param expand: May be used to expand the properties within account's properties. By default,
-         data is not included when fetching properties. Currently we only support geoReplicationStats
-         and blobRestoreStatus. Known values are: "geoReplicationStats" and "blobRestoreStatus". Default
-         value is None.
-        :type expand: str or ~azure.mgmt.storage.models.StorageAccountExpand
-        :return: StorageAccount or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.models.StorageAccount
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.StorageAccount] = kwargs.pop("cls", None)
-
-        _request = build_get_properties_request(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            subscription_id=self._config.subscription_id,
-            expand=expand,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("StorageAccount", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def update(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        parameters: _models.StorageAccountUpdateParameters,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.StorageAccount:
-        """The update operation can be used to update the SKU, encryption, access tier, or tags for a
-        storage account. It can also be used to map the account to a custom domain. Only one custom
-        domain is supported per storage account; the replacement/change of custom domain is not
-        supported. In order to replace an old custom domain, the old value must be cleared/unregistered
-        before a new value can be set. The update of multiple properties is supported. This call does
-        not change the storage keys for the account. If you want to change the storage account keys,
-        use the regenerate keys operation. The location and name of the storage account cannot be
-        changed after creation.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :param parameters: The parameters to provide for the updated account. Required.
-        :type parameters: ~azure.mgmt.storage.models.StorageAccountUpdateParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: StorageAccount or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.models.StorageAccount
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.StorageAccount:
-        """The update operation can be used to update the SKU, encryption, access tier, or tags for a
-        storage account. It can also be used to map the account to a custom domain. Only one custom
-        domain is supported per storage account; the replacement/change of custom domain is not
-        supported. In order to replace an old custom domain, the old value must be cleared/unregistered
-        before a new value can be set. The update of multiple properties is supported. This call does
-        not change the storage keys for the account. If you want to change the storage account keys,
-        use the regenerate keys operation. The location and name of the storage account cannot be
-        changed after creation.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :param parameters: The parameters to provide for the updated account. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: StorageAccount or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.models.StorageAccount
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def update(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        parameters: Union[_models.StorageAccountUpdateParameters, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.StorageAccount:
-        """The update operation can be used to update the SKU, encryption, access tier, or tags for a
-        storage account. It can also be used to map the account to a custom domain. Only one custom
-        domain is supported per storage account; the replacement/change of custom domain is not
-        supported. In order to replace an old custom domain, the old value must be cleared/unregistered
-        before a new value can be set. The update of multiple properties is supported. This call does
-        not change the storage keys for the account. If you want to change the storage account keys,
-        use the regenerate keys operation. The location and name of the storage account cannot be
-        changed after creation.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :param parameters: The parameters to provide for the updated account. Is either a
-         StorageAccountUpdateParameters type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.storage.models.StorageAccountUpdateParameters or IO[bytes]
-        :return: StorageAccount or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.models.StorageAccount
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.StorageAccount] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _json = self._serialize.body(parameters, "StorageAccountUpdateParameters")
-
-        _request = build_update_request(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("StorageAccount", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -745,7 +255,11 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -758,8 +272,8 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         """Lists all the storage accounts available under the given resource group. Note that storage keys
         are not returned; use the ListKeys operation for this.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :return: An iterator like instance of either StorageAccount or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.storage.models.StorageAccount]
@@ -826,31 +340,42 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def list_keys(
-        self, resource_group_name: str, account_name: str, expand: Literal["kerb"] = "kerb", **kwargs: Any
-    ) -> _models.StorageAccountListKeysResult:
-        """Lists the access keys or Kerberos keys (if active directory enabled) for the specified storage
-        account.
+    async def get_properties(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        expand: Optional[Union[str, _models.StorageAccountExpand]] = None,
+        **kwargs: Any
+    ) -> _models.StorageAccount:
+        """Returns the properties for the specified storage account including but not limited to name, SKU
+        name, location, and account status. The ListKeys operation should be used to retrieve storage
+        keys.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :param expand: Specifies type of the key to be listed. Possible value is kerb. Known values are
-         "kerb" and None. Default value is "kerb".
-        :type expand: str
-        :return: StorageAccountListKeysResult or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.models.StorageAccountListKeysResult
+        :param expand: May be used to expand the properties within account's properties. By default,
+         data is not included when fetching properties. Currently we only support geoReplicationStats
+         and blobRestoreStatus. Known values are: "geoReplicationStats" and "blobRestoreStatus". Default
+         value is None.
+        :type expand: str or ~azure.mgmt.storage.models.StorageAccountExpand
+        :return: StorageAccount or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.models.StorageAccount
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -865,9 +390,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.StorageAccountListKeysResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.StorageAccount] = kwargs.pop("cls", None)
 
-        _request = build_list_keys_request(
+        _request = build_get_properties_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             subscription_id=self._config.subscription_id,
@@ -887,101 +412,26 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("StorageAccountListKeysResult", pipeline_response.http_response)
+        deserialized = self._deserialize("StorageAccount", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    @overload
-    async def regenerate_key(
+    async def _create_initial(
         self,
         resource_group_name: str,
         account_name: str,
-        regenerate_key: _models.StorageAccountRegenerateKeyParameters,
-        *,
-        content_type: str = "application/json",
+        parameters: Union[_models.StorageAccountCreateParameters, IO[bytes]],
         **kwargs: Any
-    ) -> _models.StorageAccountListKeysResult:
-        """Regenerates one of the access keys or Kerberos keys for the specified storage account.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :param regenerate_key: Specifies name of the key which should be regenerated -- key1, key2,
-         kerb1, kerb2. Required.
-        :type regenerate_key: ~azure.mgmt.storage.models.StorageAccountRegenerateKeyParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: StorageAccountListKeysResult or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.models.StorageAccountListKeysResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def regenerate_key(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        regenerate_key: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.StorageAccountListKeysResult:
-        """Regenerates one of the access keys or Kerberos keys for the specified storage account.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :param regenerate_key: Specifies name of the key which should be regenerated -- key1, key2,
-         kerb1, kerb2. Required.
-        :type regenerate_key: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: StorageAccountListKeysResult or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.models.StorageAccountListKeysResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def regenerate_key(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        regenerate_key: Union[_models.StorageAccountRegenerateKeyParameters, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.StorageAccountListKeysResult:
-        """Regenerates one of the access keys or Kerberos keys for the specified storage account.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :param regenerate_key: Specifies name of the key which should be regenerated -- key1, key2,
-         kerb1, kerb2. Is either a StorageAccountRegenerateKeyParameters type or a IO[bytes] type.
-         Required.
-        :type regenerate_key: ~azure.mgmt.storage.models.StorageAccountRegenerateKeyParameters or
-         IO[bytes]
-        :return: StorageAccountListKeysResult or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.models.StorageAccountListKeysResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -995,145 +445,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.StorageAccountListKeysResult] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(regenerate_key, (IOBase, bytes)):
-            _content = regenerate_key
-        else:
-            _json = self._serialize.body(regenerate_key, "StorageAccountRegenerateKeyParameters")
-
-        _request = build_regenerate_key_request(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("StorageAccountListKeysResult", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def list_account_sas(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        parameters: _models.AccountSasParameters,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.ListAccountSasResponse:
-        """List SAS credentials of a storage account.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :param parameters: The parameters to provide to list SAS credentials for the storage account.
-         Required.
-        :type parameters: ~azure.mgmt.storage.models.AccountSasParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ListAccountSasResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.models.ListAccountSasResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def list_account_sas(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.ListAccountSasResponse:
-        """List SAS credentials of a storage account.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :param parameters: The parameters to provide to list SAS credentials for the storage account.
-         Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ListAccountSasResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.models.ListAccountSasResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def list_account_sas(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        parameters: Union[_models.AccountSasParameters, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.ListAccountSasResponse:
-        """List SAS credentials of a storage account.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :param parameters: The parameters to provide to list SAS credentials for the storage account.
-         Is either a AccountSasParameters type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.storage.models.AccountSasParameters or IO[bytes]
-        :return: ListAccountSasResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.models.ListAccountSasResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ListAccountSasResponse] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1141,9 +453,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         if isinstance(parameters, (IOBase, bytes)):
             _content = parameters
         else:
-            _json = self._serialize.body(parameters, "AccountSasParameters")
+            _json = self._serialize.body(parameters, "StorageAccountCreateParameters")
 
-        _request = build_list_account_sas_request(
+        _request = build_create_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             subscription_id=self._config.subscription_id,
@@ -1156,55 +468,73 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         )
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ListAccountSasResponse", pipeline_response.http_response)
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
-    async def list_service_sas(
+    async def begin_create(
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: _models.ServiceSasParameters,
+        parameters: _models.StorageAccountCreateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ListServiceSasResponse:
-        """List service SAS credentials of a specific resource.
+    ) -> AsyncLROPoller[_models.StorageAccount]:
+        """Asynchronously creates a new storage account with the specified parameters. If an account is
+        already created and a subsequent create request is issued with different properties, the
+        account properties will be updated. If an account is already created and a subsequent create or
+        update request is issued with the exact same set of properties, the request will succeed.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :param parameters: The parameters to provide to list service SAS credentials. Required.
-        :type parameters: ~azure.mgmt.storage.models.ServiceSasParameters
+        :param parameters: The parameters to provide for the created account. Required.
+        :type parameters: ~azure.mgmt.storage.models.StorageAccountCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ListServiceSasResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.models.ListServiceSasResponse
+        :return: An instance of AsyncLROPoller that returns either StorageAccount or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.storage.models.StorageAccount]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def list_service_sas(
+    async def begin_create(
         self,
         resource_group_name: str,
         account_name: str,
@@ -1212,48 +542,208 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ListServiceSasResponse:
-        """List service SAS credentials of a specific resource.
+    ) -> AsyncLROPoller[_models.StorageAccount]:
+        """Asynchronously creates a new storage account with the specified parameters. If an account is
+        already created and a subsequent create request is issued with different properties, the
+        account properties will be updated. If an account is already created and a subsequent create or
+        update request is issued with the exact same set of properties, the request will succeed.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :param parameters: The parameters to provide to list service SAS credentials. Required.
+        :param parameters: The parameters to provide for the created account. Required.
         :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ListServiceSasResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.models.ListServiceSasResponse
+        :return: An instance of AsyncLROPoller that returns either StorageAccount or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.storage.models.StorageAccount]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def list_service_sas(
+    async def begin_create(
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.ServiceSasParameters, IO[bytes]],
+        parameters: Union[_models.StorageAccountCreateParameters, IO[bytes]],
         **kwargs: Any
-    ) -> _models.ListServiceSasResponse:
-        """List service SAS credentials of a specific resource.
+    ) -> AsyncLROPoller[_models.StorageAccount]:
+        """Asynchronously creates a new storage account with the specified parameters. If an account is
+        already created and a subsequent create request is issued with different properties, the
+        account properties will be updated. If an account is already created and a subsequent create or
+        update request is issued with the exact same set of properties, the request will succeed.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :param parameters: The parameters to provide to list service SAS credentials. Is either a
-         ServiceSasParameters type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.storage.models.ServiceSasParameters or IO[bytes]
-        :return: ListServiceSasResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.models.ListServiceSasResponse
+        :param parameters: The parameters to provide for the created account. Is either a
+         StorageAccountCreateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.storage.models.StorageAccountCreateParameters or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either StorageAccount or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.storage.models.StorageAccount]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.StorageAccount] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                parameters=parameters,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("StorageAccount", pipeline_response.http_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.StorageAccount].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.StorageAccount](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        parameters: _models.StorageAccountUpdateParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.StorageAccount:
+        """The update operation can be used to update the SKU, encryption, access tier, or tags for a
+        storage account. It can also be used to map the account to a custom domain. Only one custom
+        domain is supported per storage account; the replacement/change of custom domain is not
+        supported. In order to replace an old custom domain, the old value must be cleared/unregistered
+        before a new value can be set. The update of multiple properties is supported. This call does
+        not change the storage keys for the account. If you want to change the storage account keys,
+        use the regenerate keys operation. The location and name of the storage account cannot be
+        changed after creation.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param parameters: The parameters to provide for the updated account. Required.
+        :type parameters: ~azure.mgmt.storage.models.StorageAccountUpdateParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: StorageAccount or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.models.StorageAccount
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.StorageAccount:
+        """The update operation can be used to update the SKU, encryption, access tier, or tags for a
+        storage account. It can also be used to map the account to a custom domain. Only one custom
+        domain is supported per storage account; the replacement/change of custom domain is not
+        supported. In order to replace an old custom domain, the old value must be cleared/unregistered
+        before a new value can be set. The update of multiple properties is supported. This call does
+        not change the storage keys for the account. If you want to change the storage account keys,
+        use the regenerate keys operation. The location and name of the storage account cannot be
+        changed after creation.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param parameters: The parameters to provide for the updated account. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: StorageAccount or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.models.StorageAccount
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        parameters: Union[_models.StorageAccountUpdateParameters, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.StorageAccount:
+        """The update operation can be used to update the SKU, encryption, access tier, or tags for a
+        storage account. It can also be used to map the account to a custom domain. Only one custom
+        domain is supported per storage account; the replacement/change of custom domain is not
+        supported. In order to replace an old custom domain, the old value must be cleared/unregistered
+        before a new value can be set. The update of multiple properties is supported. This call does
+        not change the storage keys for the account. If you want to change the storage account keys,
+        use the regenerate keys operation. The location and name of the storage account cannot be
+        changed after creation.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param parameters: The parameters to provide for the updated account. Is either a
+         StorageAccountUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.storage.models.StorageAccountUpdateParameters or IO[bytes]
+        :return: StorageAccount or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.models.StorageAccount
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1269,7 +759,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ListServiceSasResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.StorageAccount] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1277,9 +767,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         if isinstance(parameters, (IOBase, bytes)):
             _content = parameters
         else:
-            _json = self._serialize.body(parameters, "ServiceSasParameters")
+            _json = self._serialize.body(parameters, "StorageAccountUpdateParameters")
 
-        _request = build_list_service_sas_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             subscription_id=self._config.subscription_id,
@@ -1301,9 +791,259 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ListServiceSasResponse", pipeline_response.http_response)
+        deserialized = self._deserialize("StorageAccount", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete(self, resource_group_name: str, account_name: str, **kwargs: Any) -> None:
+        """Deletes a storage account in Microsoft Azure.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_delete_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    async def _abort_hierarchical_namespace_migration_initial(  # pylint: disable=name-too-long
+        self, resource_group_name: str, account_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_abort_hierarchical_namespace_migration_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def begin_abort_hierarchical_namespace_migration(  # pylint: disable=name-too-long
+        self, resource_group_name: str, account_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Abort live Migration of storage account to enable Hns.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._abort_hierarchical_namespace_migration_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace_async
+    async def get_customer_initiated_migration(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        migration_name: Union[str, _models.MigrationName],
+        **kwargs: Any
+    ) -> _models.StorageAccountMigration:
+        """Gets the status of the ongoing migration for the specified storage account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param migration_name: The name of the Storage Account Migration. It should always be
+         'default'. "default" Required.
+        :type migration_name: str or ~azure.mgmt.storage.models.MigrationName
+        :return: StorageAccountMigration or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.models.StorageAccountMigration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.StorageAccountMigration] = kwargs.pop("cls", None)
+
+        _request = build_get_customer_initiated_migration_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            migration_name=migration_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("StorageAccountMigration", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1352,12 +1092,21 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -1377,8 +1126,8 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         failover options here-
         https://learn.microsoft.com/azure/storage/common/storage-disaster-recovery-guidance.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -1476,13 +1225,21 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -1492,8 +1249,8 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[None]:
         """Live Migration of storage account to enable Hns.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -1551,123 +1308,90 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _abort_hierarchical_namespace_migration_initial(  # pylint: disable=name-too-long
-        self, resource_group_name: str, account_name: str, **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+    @overload
+    async def list_account_sas(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        parameters: _models.AccountSasParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ListAccountSasResponse:
+        """List SAS credentials of a storage account.
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_abort_hierarchical_namespace_migration_request(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def begin_abort_hierarchical_namespace_migration(  # pylint: disable=name-too-long
-        self, resource_group_name: str, account_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Abort live Migration of storage account to enable Hns.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :param parameters: The parameters to provide to list SAS credentials for the storage account.
+         Required.
+        :type parameters: ~azure.mgmt.storage.models.AccountSasParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ListAccountSasResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.models.ListAccountSasResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._abort_hierarchical_namespace_migration_initial(
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                api_version=api_version,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    async def _customer_initiated_migration_initial(
+    @overload
+    async def list_account_sas(
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.StorageAccountMigration, IO[bytes]],
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncIterator[bytes]:
+    ) -> _models.ListAccountSasResponse:
+        """List SAS credentials of a storage account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param parameters: The parameters to provide to list SAS credentials for the storage account.
+         Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ListAccountSasResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.models.ListAccountSasResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def list_account_sas(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        parameters: Union[_models.AccountSasParameters, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.ListAccountSasResponse:
+        """List SAS credentials of a storage account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param parameters: The parameters to provide to list SAS credentials for the storage account.
+         Is either a AccountSasParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.storage.models.AccountSasParameters or IO[bytes]
+        :return: ListAccountSasResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.models.ListAccountSasResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1681,7 +1405,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ListAccountSasResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1689,9 +1413,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         if isinstance(parameters, (IOBase, bytes)):
             _content = parameters
         else:
-            _json = self._serialize.body(parameters, "StorageAccountMigration")
+            _json = self._serialize.body(parameters, "AccountSasParameters")
 
-        _request = build_customer_initiated_migration_request(
+        _request = build_list_account_sas_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             subscription_id=self._config.subscription_id,
@@ -1704,197 +1428,47 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         )
         _request.url = self._client.format_url(_request.url)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponseAutoGenerated, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+        deserialized = self._deserialize("ListAccountSasResponse", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    @overload
-    async def begin_customer_initiated_migration(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        parameters: _models.StorageAccountMigration,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Account Migration request can be triggered for a storage account to change its redundancy
-        level. The migration updates the non-zonal redundant storage account to a zonal redundant
-        account or vice-versa in order to have better reliability and availability. Zone-redundant
-        storage (ZRS) replicates your storage account synchronously across three Azure availability
-        zones in the primary region.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :param parameters: The request parameters required to perform storage account migration.
-         Required.
-        :type parameters: ~azure.mgmt.storage.models.StorageAccountMigration
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_customer_initiated_migration(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Account Migration request can be triggered for a storage account to change its redundancy
-        level. The migration updates the non-zonal redundant storage account to a zonal redundant
-        account or vice-versa in order to have better reliability and availability. Zone-redundant
-        storage (ZRS) replicates your storage account synchronously across three Azure availability
-        zones in the primary region.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :param parameters: The request parameters required to perform storage account migration.
-         Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace_async
-    async def begin_customer_initiated_migration(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        parameters: Union[_models.StorageAccountMigration, IO[bytes]],
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Account Migration request can be triggered for a storage account to change its redundancy
-        level. The migration updates the non-zonal redundant storage account to a zonal redundant
-        account or vice-versa in order to have better reliability and availability. Zone-redundant
-        storage (ZRS) replicates your storage account synchronously across three Azure availability
-        zones in the primary region.
+    async def list_keys(
+        self, resource_group_name: str, account_name: str, expand: Literal["kerb"] = "kerb", **kwargs: Any
+    ) -> _models.StorageAccountListKeysResult:
+        """Lists the access keys or Kerberos keys (if active directory enabled) for the specified storage
+        account.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :param parameters: The request parameters required to perform storage account migration. Is
-         either a StorageAccountMigration type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.storage.models.StorageAccountMigration or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._customer_initiated_migration_initial(
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                parameters=parameters,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    @distributed_trace_async
-    async def get_customer_initiated_migration(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        migration_name: Union[str, _models.MigrationName],
-        **kwargs: Any
-    ) -> _models.StorageAccountMigration:
-        """Gets the status of the ongoing migration for the specified storage account.
-
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Required.
-        :type account_name: str
-        :param migration_name: The name of the Storage Account Migration. It should always be
-         'default'. "default" Required.
-        :type migration_name: str or ~azure.mgmt.storage.models.MigrationName
-        :return: StorageAccountMigration or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.models.StorageAccountMigration
+        :param expand: Specifies type of the key to be listed. Possible value is kerb. Known values are
+         "kerb" and None. Default value is "kerb".
+        :type expand: str
+        :return: StorageAccountListKeysResult or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.models.StorageAccountListKeysResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1909,13 +1483,13 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.StorageAccountMigration] = kwargs.pop("cls", None)
+        cls: ClsType[_models.StorageAccountListKeysResult] = kwargs.pop("cls", None)
 
-        _request = build_get_customer_initiated_migration_request(
+        _request = build_list_keys_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            migration_name=migration_name,
             subscription_id=self._config.subscription_id,
+            expand=expand,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -1931,10 +1505,297 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponseAutoGenerated, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("StorageAccountMigration", pipeline_response.http_response)
+        deserialized = self._deserialize("StorageAccountListKeysResult", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def list_service_sas(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        parameters: _models.ServiceSasParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ListServiceSasResponse:
+        """List service SAS credentials of a specific resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param parameters: The parameters to provide to list service SAS credentials. Required.
+        :type parameters: ~azure.mgmt.storage.models.ServiceSasParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ListServiceSasResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.models.ListServiceSasResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def list_service_sas(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ListServiceSasResponse:
+        """List service SAS credentials of a specific resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param parameters: The parameters to provide to list service SAS credentials. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ListServiceSasResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.models.ListServiceSasResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def list_service_sas(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        parameters: Union[_models.ServiceSasParameters, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.ListServiceSasResponse:
+        """List service SAS credentials of a specific resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param parameters: The parameters to provide to list service SAS credentials. Is either a
+         ServiceSasParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.storage.models.ServiceSasParameters or IO[bytes]
+        :return: ListServiceSasResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.models.ListServiceSasResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ListServiceSasResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "ServiceSasParameters")
+
+        _request = build_list_service_sas_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("ListServiceSasResponse", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def regenerate_key(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        regenerate_key: _models.StorageAccountRegenerateKeyParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.StorageAccountListKeysResult:
+        """Regenerates one of the access keys or Kerberos keys for the specified storage account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param regenerate_key: Specifies name of the key which should be regenerated -- key1, key2,
+         kerb1, kerb2. Required.
+        :type regenerate_key: ~azure.mgmt.storage.models.StorageAccountRegenerateKeyParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: StorageAccountListKeysResult or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.models.StorageAccountListKeysResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def regenerate_key(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        regenerate_key: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.StorageAccountListKeysResult:
+        """Regenerates one of the access keys or Kerberos keys for the specified storage account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param regenerate_key: Specifies name of the key which should be regenerated -- key1, key2,
+         kerb1, kerb2. Required.
+        :type regenerate_key: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: StorageAccountListKeysResult or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.models.StorageAccountListKeysResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def regenerate_key(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        regenerate_key: Union[_models.StorageAccountRegenerateKeyParameters, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.StorageAccountListKeysResult:
+        """Regenerates one of the access keys or Kerberos keys for the specified storage account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param regenerate_key: Specifies name of the key which should be regenerated -- key1, key2,
+         kerb1, kerb2. Is either a StorageAccountRegenerateKeyParameters type or a IO[bytes] type.
+         Required.
+        :type regenerate_key: ~azure.mgmt.storage.models.StorageAccountRegenerateKeyParameters or
+         IO[bytes]
+        :return: StorageAccountListKeysResult or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.models.StorageAccountListKeysResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.StorageAccountListKeysResult] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(regenerate_key, (IOBase, bytes)):
+            _content = regenerate_key
+        else:
+            _json = self._serialize.body(regenerate_key, "StorageAccountRegenerateKeyParameters")
+
+        _request = build_regenerate_key_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("StorageAccountListKeysResult", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1998,12 +1859,21 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -2019,8 +1889,8 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.BlobRestoreStatus]:
         """Restore blobs in the specified blob ranges.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -2049,8 +1919,8 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.BlobRestoreStatus]:
         """Restore blobs in the specified blob ranges.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -2077,8 +1947,8 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.BlobRestoreStatus]:
         """Restore blobs in the specified blob ranges.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -2145,8 +2015,8 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
     async def revoke_user_delegation_keys(self, resource_group_name: str, account_name: str, **kwargs: Any) -> None:
         """Revoke user delegation keys.
 
-        :param resource_group_name: The name of the resource group within the user's subscription. The
-         name is case insensitive. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
@@ -2189,7 +2059,227 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
+
+    async def _customer_initiated_migration_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        parameters: Union[_models.StorageAccountMigration, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "StorageAccountMigration")
+
+        _request = build_customer_initiated_migration_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_customer_initiated_migration(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        parameters: _models.StorageAccountMigration,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Account Migration request can be triggered for a storage account to change its redundancy
+        level. The migration updates the non-zonal redundant storage account to a zonal redundant
+        account or vice-versa in order to have better reliability and availability. Zone-redundant
+        storage (ZRS) replicates your storage account synchronously across three Azure availability
+        zones in the primary region.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param parameters: The request parameters required to perform storage account migration.
+         Required.
+        :type parameters: ~azure.mgmt.storage.models.StorageAccountMigration
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_customer_initiated_migration(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Account Migration request can be triggered for a storage account to change its redundancy
+        level. The migration updates the non-zonal redundant storage account to a zonal redundant
+        account or vice-versa in order to have better reliability and availability. Zone-redundant
+        storage (ZRS) replicates your storage account synchronously across three Azure availability
+        zones in the primary region.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param parameters: The request parameters required to perform storage account migration.
+         Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_customer_initiated_migration(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        parameters: Union[_models.StorageAccountMigration, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Account Migration request can be triggered for a storage account to change its redundancy
+        level. The migration updates the non-zonal redundant storage account to a zonal redundant
+        account or vice-versa in order to have better reliability and availability. Zone-redundant
+        storage (ZRS) replicates your storage account synchronously across three Azure availability
+        zones in the primary region.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param parameters: The request parameters required to perform storage account migration. Is
+         either a StorageAccountMigration type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.storage.models.StorageAccountMigration or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._customer_initiated_migration_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                parameters=parameters,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
