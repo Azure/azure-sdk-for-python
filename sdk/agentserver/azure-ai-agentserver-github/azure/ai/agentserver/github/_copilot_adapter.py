@@ -1,0 +1,605 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# ---------------------------------------------------------
+# pylint: disable=logging-fstring-interpolation,broad-exception-caught
+"""Core adapter bridging the GitHub Copilot SDK to Azure AI Agent Server.
+
+Two classes are exported:
+
+``CopilotAdapter``
+    Low-level adapter extending ``FoundryCBAgent``.  Handles BYOK auth,
+    session management, Tool ACL, OTel traces, and n:n Copilot-to-RAPI
+    event mapping.
+
+``GitHubCopilotAdapter``
+    Convenience subclass that adds skill directory discovery and
+    conversation history bootstrap for cold starts.  This is the class
+    most developers should use.
+"""
+import asyncio
+import dataclasses
+import json
+import logging as _logging
+import os
+import pathlib
+import time
+import uuid
+from typing import Any, AsyncGenerator, Dict, Optional, Union
+
+from copilot import CopilotClient
+from copilot.generated.session_events import SessionEventType
+from copilot.types import PermissionRequestResult, ProviderConfig
+from opentelemetry import context as otel_context, trace
+
+from azure.ai.agentserver.core.constants import Constants
+from azure.ai.agentserver.core.logger import get_logger
+from azure.ai.agentserver.core.models import Response as OpenAIResponse
+from azure.ai.agentserver.core.models.projects import (
+    ResponseCompletedEvent,
+    ResponseContentPartAddedEvent,
+    ResponseContentPartDoneEvent,
+    ResponseCreatedEvent,
+    ResponseInProgressEvent,
+    ResponseOutputItemAddedEvent,
+    ResponseOutputItemDoneEvent,
+    ResponseStreamEvent,
+    ResponseTextDeltaEvent,
+    ResponseTextDoneEvent,
+)
+from azure.ai.agentserver.core.server.base import FoundryCBAgent
+from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
+
+from ._copilot_request_converter import ConvertedAttachments, CopilotRequestConverter
+from ._copilot_response_converter import CopilotResponseConverter, CopilotStreamingResponseConverter
+from ._tool_acl import ToolAcl
+
+logger = get_logger()
+
+# Suppress noisy OTel detach warnings from async generator context switches.
+_logging.getLogger("opentelemetry.context").setLevel(_logging.CRITICAL)
+
+_COGNITIVE_SERVICES_SCOPE = "https://cognitiveservices.azure.com/.default"
+
+
+# ---------------------------------------------------------------------------
+# Health-check log filter
+# ---------------------------------------------------------------------------
+
+class _HealthCheckFilter(_logging.Filter):
+    """Drop health-check access-log records so they don't pollute App Insights."""
+
+    _PATHS = ("/liveness", "/readiness")
+
+    def filter(self, record: _logging.LogRecord) -> bool:  # noqa: A003
+        msg = record.getMessage()
+        return not any(p in msg for p in self._PATHS)
+
+
+# ---------------------------------------------------------------------------
+# Session config builder
+# ---------------------------------------------------------------------------
+
+def _build_session_config() -> Dict[str, Any]:
+    """Build a session config dict from environment variables.
+
+    Returns a plain dict whose keys match ``CopilotClient.create_session()``
+    keyword arguments.  The dict is ``**``-unpacked at the call site.
+
+    When ``AZURE_AI_FOUNDRY_RESOURCE_URL`` is set the adapter runs in
+    **BYOK mode** against Azure AI Foundry models via Managed Identity
+    or a static API key.
+    """
+    foundry_url = os.getenv("AZURE_AI_FOUNDRY_RESOURCE_URL")
+    model = os.getenv("COPILOT_MODEL", "gpt-4.1")
+
+    if foundry_url:
+        base_url = foundry_url.rstrip("/") + "/openai/v1/"
+        api_key = os.getenv("AZURE_AI_FOUNDRY_API_KEY")
+
+        if api_key:
+            logger.info(f"BYOK mode (API key): {base_url}")
+            return {
+                "model": model,
+                "provider": ProviderConfig(
+                    type="openai",
+                    base_url=base_url,
+                    bearer_token=api_key,
+                    wire_api="responses",
+                ),
+            }
+
+        logger.info(f"BYOK mode (Managed Identity): {base_url}")
+        return {
+            "model": model,
+            "provider": ProviderConfig(
+                type="openai",
+                base_url=base_url,
+                bearer_token="placeholder",  # refreshed before first use
+                wire_api="responses",
+            ),
+        }
+
+    # Fallback: default GitHub Copilot models
+    return {"model": os.getenv("COPILOT_MODEL", "gpt-5")}
+
+
+# ---------------------------------------------------------------------------
+# CopilotAdapter — core adapter
+# ---------------------------------------------------------------------------
+
+class CopilotAdapter(FoundryCBAgent):
+    """Adapter bridging a GitHub Copilot SDK session to Azure AI Agent Server.
+
+    Handles BYOK authentication, n:n event mapping, Tool ACL, OTel traces,
+    streaming/non-streaming modes, and multi-turn session management.
+
+    :param session_config: Override for the Copilot session config (dict).
+        When *None* the config is built automatically from environment variables.
+    :param acl: Explicit tool ACL.  When *None*, loaded from ``TOOL_ACL_PATH``.
+    """
+
+    def __init__(
+        self,
+        session_config: Optional[dict] = None,
+        acl: Optional[ToolAcl] = None,
+    ):
+        super().__init__()
+
+        @self.app.on_event("startup")
+        async def _suppress_health_check_logs():
+            _hc_filter = _HealthCheckFilter()
+            for _name in ("uvicorn", "uvicorn.access", "uvicorn.error"):
+                _logging.getLogger(_name).addFilter(_hc_filter)
+
+        # Build default config (handles BYOK provider setup from env vars)
+        default_config = _build_session_config()
+
+        if session_config is not None:
+            merged = dict(default_config)
+            for key, value in session_config.items():
+                if value is not None:
+                    merged[key] = value
+            self._session_config = merged
+        else:
+            self._session_config = default_config
+
+        self._client: Optional[CopilotClient] = None
+        self._credential = None
+
+        # Tool ACL
+        if acl is not None:
+            self._acl: Optional[ToolAcl] = acl
+        else:
+            self._acl = ToolAcl.from_env("TOOL_ACL_PATH")
+            if self._acl is None:
+                logger.warning(
+                    "No tool ACL configured (TOOL_ACL_PATH not set). "
+                    "All tool requests will be auto-approved."
+                )
+
+        # Multi-turn: conversation_id -> live CopilotSession
+        self._sessions: Dict[str, Any] = {}
+
+        # Credential for BYOK token refresh
+        if os.getenv("AZURE_AI_FOUNDRY_RESOURCE_URL") and not os.getenv("AZURE_AI_FOUNDRY_API_KEY"):
+            from azure.identity import DefaultAzureCredential
+            self._credential = DefaultAzureCredential()
+
+    def _refresh_token_if_needed(self) -> Dict[str, Any]:
+        """Return the session config, refreshing the bearer token if using Foundry."""
+        if self._credential is None or "provider" not in self._session_config:
+            return self._session_config
+        token = self._credential.get_token(_COGNITIVE_SERVICES_SCOPE).token
+        self._session_config["provider"]["bearer_token"] = token
+        return self._session_config
+
+    async def _ensure_client(self) -> CopilotClient:
+        """Lazily start the CopilotClient."""
+        if self._client is None:
+            self._client = CopilotClient()
+            await self._client.start()
+            logger.info("CopilotClient started")
+        return self._client
+
+    # ------------------------------------------------------------------
+    # agent_run — main entry point called by FoundryCBAgent
+    # ------------------------------------------------------------------
+
+    async def agent_run(
+        self, context: AgentRunContext
+    ) -> Union[OpenAIResponse, AsyncGenerator[ResponseStreamEvent, None]]:
+
+        req_converter = CopilotRequestConverter(context.request)
+        prompt = req_converter.convert()
+        converted_attachments = req_converter.convert_attachments()
+
+        client = await self._ensure_client()
+        config = self._refresh_token_if_needed()
+
+        acl = self._acl
+
+        def _on_permission(req, _ctx):
+            kind = getattr(req, "kind", "unknown")
+            if acl is None:
+                logger.info(f"Auto-approving tool request (no ACL): kind={kind}")
+                return PermissionRequestResult(kind="approved")
+            req_dict = vars(req) if not isinstance(req, dict) else req
+            if acl.is_allowed(req_dict):
+                logger.info(f"ACL allowed tool request: kind={kind}")
+                return PermissionRequestResult(kind="approved")
+            logger.warning(f"ACL denied tool request: kind={kind}")
+            return PermissionRequestResult(kind="denied-by-rules", rules=[])
+
+        conversation_id = context.conversation_id
+        session = self._sessions.get(conversation_id) if conversation_id else None
+
+        if session is None:
+            logger.info(
+                f"Creating new Copilot session"
+                + (f" for conversation {conversation_id!r}" if conversation_id else "")
+            )
+            session = await client.create_session(**config, on_permission_request=_on_permission)
+            if conversation_id:
+                self._sessions[conversation_id] = session
+        else:
+            logger.info(f"Reusing session for conversation {conversation_id!r}")
+
+        if not context.stream:
+            # Non-streaming: collect events, extract final text.
+            text = ""
+            try:
+                async for event in _iter_copilot_events(session, prompt, attachments=converted_attachments.attachments):
+                    if event.type == SessionEventType.ASSISTANT_MESSAGE and event.data and event.data.content:
+                        text = event.data.content
+            finally:
+                converted_attachments.cleanup()
+            return CopilotResponseConverter.to_response(text, context)
+
+        # Streaming
+        return self._run_streaming(session, prompt, converted_attachments, context)
+
+    # ------------------------------------------------------------------
+    # Streaming
+    # ------------------------------------------------------------------
+
+    async def _run_streaming(
+        self,
+        session: Any,
+        prompt: str,
+        converted_attachments: ConvertedAttachments,
+        context: AgentRunContext,
+    ) -> AsyncGenerator[ResponseStreamEvent, None]:
+        """Async generator: emits RAPI SSE events from Copilot SDK events.
+
+        Uses dict-based event construction matching the proven pattern from
+        the hosted-agent-cli skills template.
+        """
+        response_id = context.response_id
+        item_id = context.id_generator.generate_message_id()
+        created_at = int(time.time())
+        seq = -1
+
+        def _seq():
+            nonlocal seq
+            seq += 1
+            return seq
+
+        def _resp(status, output=None, usage=None):
+            resp = {
+                "object": "response",
+                "id": response_id,
+                "status": status,
+                "created_at": created_at,
+            }
+            agent_id = context.get_agent_id_object()
+            if agent_id is not None:
+                resp["agent_id"] = agent_id
+            conversation = context.get_conversation_object()
+            if conversation is not None:
+                resp["conversation"] = conversation
+            if output is not None:
+                resp["output"] = output
+            if usage is not None:
+                resp["usage"] = usage
+            return resp
+
+        def _item(text, status="completed"):
+            return {
+                "type": "message", "id": item_id, "role": "assistant",
+                "status": status,
+                "content": [{"type": "output_text", "text": text, "annotations": []}],
+            }
+
+        # 1. Lifecycle
+        yield ResponseCreatedEvent({
+            "type": "response.created",
+            "sequence_number": _seq(),
+            "response": _resp("in_progress"),
+        })
+        yield ResponseInProgressEvent({
+            "type": "response.in_progress",
+            "sequence_number": _seq(),
+            "response": _resp("in_progress"),
+        })
+
+        # 2. Output item + content part
+        yield ResponseOutputItemAddedEvent({
+            "type": "response.output_item.added",
+            "sequence_number": _seq(),
+            "output_index": 0,
+            "item": _item("", status="in_progress"),
+        })
+        yield ResponseContentPartAddedEvent({
+            "type": "response.content_part.added",
+            "sequence_number": _seq(),
+            "item_id": item_id,
+            "output_index": 0,
+            "content_index": 0,
+            "part": {"type": "output_text", "text": "", "annotations": []},
+        })
+
+        # 3. Stream text from Copilot SDK
+        full_text = ""
+        try:
+            async for event in _iter_copilot_events(session, prompt, attachments=converted_attachments.attachments):
+                if event.type == SessionEventType.ASSISTANT_MESSAGE_DELTA and event.data and event.data.content:
+                    chunk = event.data.content
+                    full_text += chunk
+                    yield ResponseTextDeltaEvent({
+                        "type": "response.output_text.delta",
+                        "sequence_number": _seq(),
+                        "item_id": item_id,
+                        "output_index": 0,
+                        "content_index": 0,
+                        "delta": chunk,
+                    })
+                elif event.type == SessionEventType.ASSISTANT_MESSAGE and event.data and event.data.content:
+                    if not full_text:
+                        full_text = event.data.content
+                        yield ResponseTextDeltaEvent({
+                            "type": "response.output_text.delta",
+                            "sequence_number": _seq(),
+                            "item_id": item_id,
+                            "output_index": 0,
+                            "content_index": 0,
+                            "delta": full_text,
+                        })
+        except Exception as exc:
+            logger.exception("Agent streaming failed")
+            full_text = f"Error: {exc}"
+        finally:
+            converted_attachments.cleanup()
+
+        # 4. Finalize
+        final_item = _item(full_text)
+        yield ResponseTextDoneEvent({
+            "type": "response.output_text.done",
+            "sequence_number": _seq(),
+            "item_id": item_id,
+            "output_index": 0,
+            "content_index": 0,
+            "text": full_text,
+        })
+        yield ResponseContentPartDoneEvent({
+            "type": "response.content_part.done",
+            "sequence_number": _seq(),
+            "item_id": item_id,
+            "output_index": 0,
+            "content_index": 0,
+            "part": {"type": "output_text", "text": full_text, "annotations": []},
+        })
+        yield ResponseOutputItemDoneEvent({
+            "type": "response.output_item.done",
+            "sequence_number": _seq(),
+            "output_index": 0,
+            "item": final_item,
+        })
+        yield ResponseCompletedEvent({
+            "type": "response.completed",
+            "sequence_number": _seq(),
+            "response": _resp("completed", output=[final_item]),
+        })
+
+    # ------------------------------------------------------------------
+    # Identifiers
+    # ------------------------------------------------------------------
+
+    def get_trace_attributes(self):
+        attrs = super().get_trace_attributes()
+        attrs["service.namespace"] = "azure.ai.agentserver.github"
+        return attrs
+
+    def get_agent_identifier(self) -> str:
+        agent_name = os.getenv(Constants.AGENT_NAME)
+        if agent_name:
+            return agent_name
+        agent_id = os.getenv(Constants.AGENT_ID)
+        if agent_id:
+            return agent_id
+        return "HostedAgent-GitHubCopilot"
+
+
+# ---------------------------------------------------------------------------
+# GitHubCopilotAdapter — convenience subclass
+# ---------------------------------------------------------------------------
+
+class GitHubCopilotAdapter(CopilotAdapter):
+    """CopilotAdapter with skill directory discovery and history bootstrap.
+
+    This is the recommended class for most developers.  It automatically
+    discovers skill directories (``skills/*/SKILL.md`` or
+    ``.github/skills/*/SKILL.md``) and bootstraps conversation history
+    on cold starts so multi-turn context is preserved across container
+    restarts.
+
+    :param skill_directories: Explicit skill directory paths.  When *None*,
+        auto-discovered from the project root.
+    :param project_root: Root directory of the agent project.  Defaults to
+        the current working directory.
+    """
+
+    def __init__(
+        self,
+        skill_directories: Optional[list[str]] = None,
+        project_root: Optional[str] = None,
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+        root = pathlib.Path(project_root or os.getcwd())
+        if skill_directories:
+            self._session_config["skill_directories"] = skill_directories
+        else:
+            discovered = self._discover_skill_directories(root)
+            if discovered:
+                self._session_config["skill_directories"] = discovered
+                logger.info("Discovered skill directories: %s", discovered)
+
+    @staticmethod
+    def _discover_skill_directories(project_root: pathlib.Path) -> list[str]:
+        """Find skill directories containing SKILL.md files."""
+        # Check .github/skills/ first (Copilot SDK convention)
+        skills_dir = project_root / ".github" / "skills"
+        if skills_dir.exists() and any(skills_dir.glob("*/SKILL.md")):
+            return [str(skills_dir.resolve())]
+        # Fallback: flat layout at project root
+        if any(project_root.glob("*/SKILL.md")):
+            return [str(project_root.resolve())]
+        return []
+
+    @classmethod
+    def from_project(cls, project_path: str = ".", **kwargs) -> "GitHubCopilotAdapter":
+        """Create an adapter from a project directory.
+
+        Discovers skills, loads ``.env``, and configures the adapter
+        automatically.
+
+        :param project_path: Path to the agent project root.
+        :param kwargs: Additional keyword arguments passed to the constructor.
+        :return: A configured adapter ready to ``run()``.
+        """
+        root = pathlib.Path(project_path).resolve()
+        return cls(project_root=str(root), **kwargs)
+
+    async def _load_conversation_history(self, conversation_id: str) -> Optional[str]:
+        """Load prior conversation turns from Foundry for cold-start bootstrap."""
+        if not self._project_endpoint:
+            return None
+        try:
+            openai_client = await self._create_openai_client()
+            items = []
+            async for item in openai_client.conversations.items.list(conversation_id):
+                items.append(item)
+            items.reverse()  # API returns reverse chronological
+
+            if not items:
+                return None
+
+            lines = []
+            for item in items:
+                role = getattr(item, "role", None)
+                content = getattr(item, "content", None)
+                if isinstance(content, str):
+                    text = content
+                elif isinstance(content, list):
+                    text_parts = []
+                    for part in content:
+                        if isinstance(part, dict):
+                            text_parts.append(part.get("text", ""))
+                        elif hasattr(part, "text"):
+                            text_parts.append(part.text)
+                    text = " ".join(p for p in text_parts if p)
+                else:
+                    continue
+                if not text:
+                    continue
+                label = "User" if role == "user" else "Assistant"
+                lines.append(f"{label}: {text}")
+
+            return "\n".join(lines) if lines else None
+        except Exception:
+            logger.warning("Failed to load conversation history for %s", conversation_id, exc_info=True)
+            return None
+
+    async def agent_run(self, context: AgentRunContext):
+        conversation_id = context.conversation_id
+
+        # Cold-start bootstrap: pre-create session with history
+        if conversation_id and conversation_id not in self._sessions:
+            history = await self._load_conversation_history(conversation_id)
+            if history:
+                client = await self._ensure_client()
+                config = self._refresh_token_if_needed()
+                session = await client.create_session(
+                    **config,
+                    on_permission_request=lambda req, _ctx: PermissionRequestResult(kind="approved"),
+                )
+                preamble = (
+                    "The following is the prior conversation history. "
+                    "Use it as context for the user's next message.\n\n"
+                    f"{history}"
+                )
+                await session.send_and_wait(preamble, timeout=120.0)
+                self._sessions[conversation_id] = session
+                logger.info("Bootstrapped session %s with %d chars of history", conversation_id, len(history))
+
+        return await super().agent_run(context)
+
+
+# ---------------------------------------------------------------------------
+# Copilot event iterator
+# ---------------------------------------------------------------------------
+
+async def _iter_copilot_events(
+    session, prompt: str, attachments: Optional[list] = None, timeout: int = 120
+):
+    """Send *prompt* to *session* and yield each ``SessionEvent`` as it arrives.
+
+    True async generator — yields events immediately as the Copilot SDK
+    emits them.  Consecutive duplicate events are silently dropped.  Stops
+    after ``SESSION_IDLE``.
+    """
+    queue: asyncio.Queue = asyncio.Queue()
+    last_key = None
+    event_count = 0
+
+    def on_event(event):
+        nonlocal last_key, event_count
+        text = ""
+        if event.data and hasattr(event.data, "content") and event.data.content:
+            text = event.data.content
+        key = (event.type, text)
+        if key == last_key:
+            return
+        last_key = key
+
+        event_count += 1
+        event_name = event.type.name if event.type else "UNKNOWN"
+        if text:
+            logger.info(f"Copilot event #{event_count:03d}: {event_name} content_len={len(text)}")
+        else:
+            logger.info(f"Copilot event #{event_count:03d}: {event_name}")
+
+        if event.type == SessionEventType.SESSION_ERROR and event.data:
+            error_msg = getattr(event.data, "message", None) or getattr(event.data, "content", None) or repr(event.data)
+            logger.warning(f"SESSION_ERROR details: {error_msg}")
+
+        queue.put_nowait(event)
+        if event.type == SessionEventType.SESSION_IDLE:
+            queue.put_nowait(None)  # sentinel
+
+    unsubscribe = session.on(on_event)
+    try:
+        await session.send(prompt, attachments=attachments or None)
+        loop = asyncio.get_running_loop()
+        deadline = loop.time() + timeout
+        while True:
+            remaining = deadline - loop.time()
+            if remaining <= 0:
+                raise asyncio.TimeoutError(f"Copilot session idle timeout after {timeout}s")
+            event = await asyncio.wait_for(queue.get(), timeout=remaining)
+            if event is None:
+                return
+            yield event
+    finally:
+        unsubscribe()
