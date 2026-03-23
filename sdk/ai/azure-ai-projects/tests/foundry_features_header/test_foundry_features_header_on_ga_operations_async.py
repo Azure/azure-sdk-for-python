@@ -71,26 +71,26 @@ def _print_report_optional_async() -> Iterator[None]:
     one for the allow_preview=True test and one for the allow_preview-unset test.
     """
     yield
-    present_report = TestFoundryFeaturesHeaderOptionalAsync._report
+    present_report = TestFoundryFeaturesHeaderOnGaOperationsAsync._report
     if present_report:
-        max_len = TestFoundryFeaturesHeaderOptionalAsync._report_max_label_len
+        max_len = TestFoundryFeaturesHeaderOnGaOperationsAsync._report_max_label_len
         print(
-            "\n\nFoundry-Features optional header report (async) — test_optional_header_present_when_preview_enabled_async:"
+            "\n\nFoundry-Features header report on GA operations (async) — test_foundry_features_header_present_on_ga_operations_when_preview_enabled_async:"
         )
         for label, header_value in sorted(present_report):
             print(f'{label:<{max_len}}  |  "{header_value}"')
 
-    absent_report = TestFoundryFeaturesHeaderOptionalAsync._report_absent
+    absent_report = TestFoundryFeaturesHeaderOnGaOperationsAsync._report_absent
     if absent_report:
-        max_len = TestFoundryFeaturesHeaderOptionalAsync._report_absent_max_label_len
+        max_len = TestFoundryFeaturesHeaderOnGaOperationsAsync._report_absent_max_label_len
         print(
-            "\n\nFoundry-Features optional header report (async) — test_optional_header_absent_when_preview_not_enabled_async:"
+            "\n\nFoundry-Features header report on GA operations (async) — test_foundry_features_header_absent_on_ga_operations_when_preview_not_enabled_async:"
         )
         for label, header_value in sorted(absent_report):
             print(f'{label:<{max_len}}  |  "{header_value}"')
 
 
-class TestFoundryFeaturesHeaderOptionalAsync(FoundryFeaturesHeaderTestBase):
+class TestFoundryFeaturesHeaderOnGaOperationsAsync(FoundryFeaturesHeaderTestBase):
     """Async tests for optional Foundry-Features header behavior on non-beta methods."""
 
     _report: ClassVar[List[Tuple[str, str]]] = []
@@ -132,7 +132,7 @@ class TestFoundryFeaturesHeaderOptionalAsync(FoundryFeaturesHeaderTestBase):
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("method_name,expected_header_value", _NON_BETA_OPTIONAL_TEST_CASES)
-    async def test_optional_header_present_when_preview_enabled_async(
+    async def test_foundry_features_header_present_on_ga_operations_when_preview_enabled_async(
         self,
         async_client_preview_enabled: AsyncAIProjectClient,
         method_name: str,
@@ -145,7 +145,7 @@ class TestFoundryFeaturesHeaderOptionalAsync(FoundryFeaturesHeaderTestBase):
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("method_name,_expected_header_value", _NON_BETA_OPTIONAL_TEST_CASES)
-    async def test_optional_header_absent_when_preview_not_enabled_async(
+    async def test_foundry_features_header_absent_on_ga_operations_when_preview_not_enabled_async(
         self,
         async_client_preview_disabled: AsyncAIProjectClient,
         method_name: str,

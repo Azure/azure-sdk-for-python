@@ -72,24 +72,24 @@ def _print_report_optional() -> Iterator[None]:
     one for the allow_preview=True test and one for the allow_preview-unset test.
     """
     yield
-    present_report = TestFoundryFeaturesHeaderOptional._report
+    present_report = TestFoundryFeaturesHeaderOnGaOperations._report
     if present_report:
-        max_len = TestFoundryFeaturesHeaderOptional._report_max_label_len
-        print("\n\nFoundry-Features optional header report (sync) — test_optional_header_present_when_preview_enabled:")
+        max_len = TestFoundryFeaturesHeaderOnGaOperations._report_max_label_len
+        print("\n\nFoundry-Features header report on GA operations (sync) — test_foundry_features_header_present_on_ga_operations_when_preview_enabled:")
         for label, header_value in sorted(present_report):
             print(f'{label:<{max_len}}  |  "{header_value}"')
 
-    absent_report = TestFoundryFeaturesHeaderOptional._report_absent
+    absent_report = TestFoundryFeaturesHeaderOnGaOperations._report_absent
     if absent_report:
-        max_len = TestFoundryFeaturesHeaderOptional._report_absent_max_label_len
+        max_len = TestFoundryFeaturesHeaderOnGaOperations._report_absent_max_label_len
         print(
-            "\n\nFoundry-Features optional header report (sync) — test_optional_header_absent_when_preview_not_enabled:"
+            "\n\nFoundry-Features header report on GA operations (sync) — test_foundry_features_header_absent_on_ga_operations_when_preview_not_enabled:"
         )
         for label, header_value in sorted(absent_report):
             print(f'{label:<{max_len}}  |  "{header_value}"')
 
 
-class TestFoundryFeaturesHeaderOptional(FoundryFeaturesHeaderTestBase):
+class TestFoundryFeaturesHeaderOnGaOperations(FoundryFeaturesHeaderTestBase):
     """Sync tests for optional Foundry-Features header behavior on non-beta methods."""
 
     _report: ClassVar[List[Tuple[str, str]]] = []
@@ -125,7 +125,7 @@ class TestFoundryFeaturesHeaderOptional(FoundryFeaturesHeaderTestBase):
         cls._record_header_absence_assertion(label, request)
 
     @pytest.mark.parametrize("method_name,expected_header_value", _NON_BETA_OPTIONAL_TEST_CASES)
-    def test_optional_header_present_when_preview_enabled(
+    def test_foundry_features_header_present_on_ga_operations_when_preview_enabled(
         self,
         client_preview_enabled: AIProjectClient,
         method_name: str,
@@ -137,7 +137,7 @@ class TestFoundryFeaturesHeaderOptional(FoundryFeaturesHeaderTestBase):
         self._assert_header_present(method_name, self._make_fake_call(method), expected_header_value)
 
     @pytest.mark.parametrize("method_name,_expected_header_value", _NON_BETA_OPTIONAL_TEST_CASES)
-    def test_optional_header_absent_when_preview_not_enabled(
+    def test_foundry_features_header_absent_on_ga_operations_when_preview_not_enabled(
         self,
         client_preview_disabled: AIProjectClient,
         method_name: str,

@@ -4,10 +4,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-Test that every public async method on AIProjectClient.beta sub-clients sends the
+Test that every public method on AIProjectClient.beta sub-clients sends the
 'Foundry-Features' HTTP request header.
 
-This test does NOT make real network calls. It uses a custom async transport that
+This test does NOT make real network calls. It uses a custom transport that
 captures the outgoing HttpRequest and raises a sentinel exception, so no
 actual HTTP traffic occurs.
 
@@ -16,16 +16,14 @@ introspection, so the test automatically covers new methods added to .beta and
 stops covering methods that are removed — no manual updates needed.
 
 Discovery strategy:
-  - Non-callable public attributes of async `client.beta` are sub-clients
+  - Non-callable public attributes of `client.beta` are sub-clients
     (e.g. evaluation_taxonomies, memory_stores, …).
   - Public bound methods on each sub-client are the API methods to test.
-    Both ``async def`` coroutine methods and regular ``def`` methods that
-    return an ``AsyncItemPaged`` are discovered.
   - Fake arguments are inferred from each method's signature: required
     parameters (those with no default, or whose default is the _Unset sentinel)
     receive a type-appropriate placeholder value.
 
-Run with:  pytest tests/foundry_features_header/test_required_header_async.py -s
+Run with:  pytest tests/foundry_features_header/test_required_header.py -s
 The -s flag (or --capture=no) is required to see the printed report.
 
 NOTE: This does not test follow up paging calls for "list" operations. It only
@@ -36,38 +34,38 @@ import inspect
 from typing import Any, ClassVar, Iterator, List, Tuple
 
 import pytest
-from azure.core.pipeline.transport import AsyncHttpTransport
-from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
+from azure.core.pipeline.transport import HttpTransport
+from azure.ai.projects import AIProjectClient
 
 from foundry_features_header_test_base import (
     EXPECTED_FOUNDRY_FEATURES,
     FAKE_ENDPOINT,
-    AsyncFakeCredential,
+    FakeCredential,
     FoundryFeaturesHeaderTestBase,
     _RequestCaptured,
 )
 
 # ---------------------------------------------------------------------------
-# Async-specific transport
+# Sync-specific transport
 # ---------------------------------------------------------------------------
 
 
-class CapturingAsyncTransport(AsyncHttpTransport):
-    """Async transport that captures the outgoing request and raises _RequestCaptured."""
+class CapturingTransport(HttpTransport):
+    """Sync transport that captures the outgoing request and raises _RequestCaptured."""
 
-    async def send(self, request: Any, **kwargs: Any) -> Any:  # type: ignore[override]
+    def send(self, request: Any, **kwargs: Any) -> Any:  # type: ignore[override]
         raise _RequestCaptured(request)
 
-    async def open(self) -> None:
+    def open(self) -> None:
         pass
 
-    async def close(self) -> None:
+    def close(self) -> None:
         pass
 
-    async def __aenter__(self) -> "CapturingAsyncTransport":
+    def __enter__(self) -> "CapturingTransport":
         return self
 
-    async def __aexit__(self, *args: Any) -> None:
+    def __exit__(self, *args: Any) -> None:
         pass
 
 
@@ -76,21 +74,18 @@ class CapturingAsyncTransport(AsyncHttpTransport):
 # ---------------------------------------------------------------------------
 
 
-def _discover_async_test_cases() -> list[pytest.param]:
-    """Introspect async AIProjectClient.beta and yield one pytest.param per public method.
+def _discover_test_cases() -> list[pytest.param]:
+    """Introspect AIProjectClient.beta and yield one pytest.param per public method.
 
     Steps:
-      1. Instantiate a temporary async client (no network calls are made here;
-         the constructor is synchronous).
+      1. Instantiate a temporary client (no network calls are made here).
       2. Non-callable public attributes of client.beta are sub-clients.
       3. Public bound methods on each sub-client are the API methods to test.
-         Both coroutine methods (async def) and regular methods returning
-         AsyncItemPaged satisfy inspect.ismethod() and are both included.
     """
-    temp = AsyncAIProjectClient(
+    temp = AIProjectClient(
         endpoint=FAKE_ENDPOINT,
-        credential=AsyncFakeCredential(),  # type: ignore[arg-type]
-        transport=CapturingAsyncTransport(),
+        credential=FakeCredential(),  # type: ignore[arg-type]
+        transport=CapturingTransport(),
     )
 
     cases: list[pytest.param] = []
@@ -109,21 +104,26 @@ def _discover_async_test_cases() -> list[pytest.param]:
             f"base_test.py."
         )
 
-        for m_name in sorted(dir(sc)):
+        # Use the underlying operation's dir() for method discovery.
+        # The proxy may not implement __dir__ in older installs, causing dir(sc) to
+        # return no public methods. Methods are still fetched via getattr(sc, ...) so
+        # the header-injecting proxy wrapper is exercised.
+        _underlying_op = getattr(sc, "_operation", sc)
+        for m_name in sorted(dir(_underlying_op)):
             if m_name.startswith("_"):
                 continue
             method = getattr(sc, m_name)
-            if not inspect.ismethod(method):
+            if not callable(method):
                 continue
 
-            label = f".beta.{sc_name}.{m_name}() [async]"
+            label = f".beta.{sc_name}.{m_name}()"
             expected = EXPECTED_FOUNDRY_FEATURES[sc_name]
             cases.append(pytest.param(label, sc_name, m_name, expected, id=label))
 
     return cases
 
 
-_ASYNC_TEST_CASES = _discover_async_test_cases()
+_TEST_CASES = _discover_test_cases()
 
 
 # ---------------------------------------------------------------------------
@@ -132,28 +132,23 @@ _ASYNC_TEST_CASES = _discover_async_test_cases()
 
 
 @pytest.fixture(scope="module")
-def async_client() -> Iterator[AsyncAIProjectClient]:
-    """Provide a module-scoped async client backed by the capturing transport.
-
-    The AIProjectClient constructor is synchronous, so no async fixture is
-    needed.  Because the transport never performs real I/O, there is nothing
-    to clean up after the tests.
-    """
-    yield AsyncAIProjectClient(
+def client() -> Iterator[AIProjectClient]:
+    with AIProjectClient(
         endpoint=FAKE_ENDPOINT,
-        credential=AsyncFakeCredential(),  # type: ignore[arg-type]
-        transport=CapturingAsyncTransport(),
-    )
+        credential=FakeCredential(),  # type: ignore[arg-type]
+        transport=CapturingTransport(),
+    ) as c:
+        yield c
 
 
 @pytest.fixture(scope="module", autouse=True)
-def _print_report_async() -> Iterator[None]:
-    """Print the full Foundry-Features header report after all async tests finish."""
+def _print_report() -> Iterator[None]:
+    """Print the full Foundry-Features header report after all tests finish."""
     yield
-    report = TestFoundryFeaturesHeaderAsync._report
-    max_len = TestFoundryFeaturesHeaderAsync._report_max_label_len
+    report = TestFoundryFeaturesHeaderOnBetaOperations._report
+    max_len = TestFoundryFeaturesHeaderOnBetaOperations._report_max_label_len
     if report:
-        print("\n\nFoundry-Features header report (async):")
+        print("\n\nFoundry-Features header report (sync):")
         for label, header_value in sorted(report):
             print(f'{label:<{max_len}}  |  "{header_value}"')
 
@@ -163,69 +158,59 @@ def _print_report_async() -> Iterator[None]:
 # ---------------------------------------------------------------------------
 
 
-class TestFoundryFeaturesHeaderAsync(FoundryFeaturesHeaderTestBase):
-    """Async tests: assert every public async .beta method sends the Foundry-Features header."""
+class TestFoundryFeaturesHeaderOnBetaOperations(FoundryFeaturesHeaderTestBase):
+    """Sync tests: assert every public .beta method sends the Foundry-Features header."""
 
     _report: ClassVar[List[Tuple[str, str]]] = []
     _report_max_label_len: ClassVar[int] = 0
 
     # ------------------------------------------------------------------
-    # Async capture
+    # Sync capture
     # ------------------------------------------------------------------
 
     @staticmethod
-    async def _capture_async(call: Any) -> Any:
-        """Invoke *call()* and return the captured HttpRequest.
+    def _capture(call: Any) -> Any:
+        """Call *call()* and return the captured HttpRequest.
 
-        Two cases are handled:
-          1. ``async def`` methods: calling them returns an awaitable (coroutine).
-             Awaiting it will hit the transport and raise _RequestCaptured.
-          2. Regular ``def`` methods returning ``AsyncItemPaged``: calling them
-             returns an async iterable.  Advancing to the first item triggers
-             the transport and raises _RequestCaptured.
+        Most methods raise _RequestCaptured immediately (transport is hit
+        synchronously).  Lazy methods that return an ItemPaged only call the
+        transport when the first item is fetched, so we trigger that with next().
         """
-        result = call()
-
-        if inspect.isawaitable(result):
-            # Coroutine path (async def method)
-            try:
-                await result
-            except _RequestCaptured as exc:
-                return exc.request
-            raise AssertionError("Transport was never called (awaitable completed without raising)")
-
-        # AsyncItemPaged path — advance to the first page to trigger the transport.
-        ai = result.__aiter__()
         try:
-            await ai.__anext__()
+            result = call()
         except _RequestCaptured as exc:
             return exc.request
-        except StopAsyncIteration:
+
+        # call() returned without raising -> lazy iterable (ItemPaged)
+        try:
+            next(iter(result))
+        except _RequestCaptured as exc:
+            return exc.request
+        except StopIteration:
             raise AssertionError("Iterator exhausted without the transport being called") from None
 
         raise AssertionError("Transport was never called")
 
     @classmethod
-    async def _assert_header_async(cls, label: str, call: Any, expected_value: str) -> str:
+    def _assert_header(cls, label: str, call: Any, expected_value: str) -> str:
         """Invoke *call*, capture the request, and assert the header is present and correct."""
-        request = await cls._capture_async(call)
+        request = cls._capture(call)
         return cls._record_header_assertion(label, request, expected_value)
 
     # ------------------------------------------------------------------
     # Parametrized test
     # ------------------------------------------------------------------
 
-    @pytest.mark.asyncio
-    @pytest.mark.parametrize("label,subclient_name,method_name,expected_header_value", _ASYNC_TEST_CASES)
-    async def test_foundry_features_header_async(
+    @pytest.mark.parametrize("label,subclient_name,method_name,expected_header_value", _TEST_CASES)
+    def test_foundry_features_header_on_beta_operations(
         self,
-        async_client: AsyncAIProjectClient,
+        client: AIProjectClient,
         label: str,
         subclient_name: str,
         method_name: str,
         expected_header_value: str,
     ) -> None:
-        """Assert that *method_name* on async .beta.<subclient_name> sends the expected Foundry-Features value."""
-        sc = getattr(async_client.beta, subclient_name)
+        """Assert that *method_name* on .beta.<subclient_name> sends the expected Foundry-Features value."""
+        sc = getattr(client.beta, subclient_name)
         method = getattr(sc, method_name)
-        await self._assert_header_async(label, self._make_fake_call(method), expected_header_value)
+        self._assert_header(label, self._make_fake_call(method), expected_header_value)
