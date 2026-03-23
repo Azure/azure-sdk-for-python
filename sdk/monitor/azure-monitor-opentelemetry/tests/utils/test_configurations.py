@@ -425,7 +425,7 @@ class TestConfigurations(TestCase):
         "os.environ",
         {
             OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask,requests,fastapi,azure_sdk",
-            OTEL_TRACES_SAMPLER: "always_offk",  # cSpell:disable
+            OTEL_TRACES_SAMPLER: "always_offk",  # cSpell: ignore offk
             OTEL_TRACES_EXPORTER: "None",
             OTEL_LOGS_EXPORTER: "none",
             OTEL_METRICS_EXPORTER: "NONE",
