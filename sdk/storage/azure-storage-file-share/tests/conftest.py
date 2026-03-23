@@ -16,6 +16,7 @@ from devtools_testutils import (
     add_oauth_response_sanitizer,
     add_uri_string_sanitizer,
     set_custom_default_matcher,
+    add_remove_header_sanitizer,
     test_proxy,
 )
 
@@ -38,3 +39,5 @@ def add_sanitizers(test_proxy):
 
     # TypeSpec-generated code may order query parameters differently than AutoRest
     set_custom_default_matcher(ignore_query_ordering=True)
+
+    add_remove_header_sanitizer(headers="Accept")
