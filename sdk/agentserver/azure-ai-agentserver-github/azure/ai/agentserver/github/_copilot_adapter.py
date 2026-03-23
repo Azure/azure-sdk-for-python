@@ -146,11 +146,13 @@ class CopilotAdapter(FoundryCBAgent):
     ):
         super().__init__()
 
-        @self.app.on_event("startup")
-        async def _suppress_health_check_logs():
-            _hc_filter = _HealthCheckFilter()
-            for _name in ("uvicorn", "uvicorn.access", "uvicorn.error"):
-                _logging.getLogger(_name).addFilter(_hc_filter)
+        # Suppress noisy health-check access logs from App Insights.
+        # Applied directly rather than via Starlette on_event (removed in 1.0).
+        # If uvicorn resets loggers at startup, the filter may be lost — this
+        # is cosmetic (health-check noise), not a functional issue.
+        _hc_filter = _HealthCheckFilter()
+        for _name in ("uvicorn", "uvicorn.access", "uvicorn.error"):
+            _logging.getLogger(_name).addFilter(_hc_filter)
 
         # Build default config (handles BYOK provider setup from env vars)
         default_config = _build_session_config()
