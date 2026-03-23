@@ -224,9 +224,9 @@ class _VoiceLiveInstrumentorPreview:
         :param exc: The exception that occurred.
         :type exc: BaseException
         """
-        if isinstance(span.span_instance, Span):  # pyright: ignore[reportPossiblyUnboundVariable]
+        if isinstance(span.span_instance, Span):  # pyright: ignore[reportArgumentType]
             span.span_instance.set_status(
-                StatusCode.ERROR,  # pyright: ignore[reportPossiblyUnboundVariable]
+                StatusCode.ERROR,  # pyright: ignore[reportOptionalMemberAccess]
                 description=str(exc),
             )
         module = getattr(exc, "__module__", "")
@@ -285,11 +285,17 @@ class _VoiceLiveInstrumentorPreview:
     # ------------------------------------------------------------------ #
 
     def _trace_connect(self, original_aenter: Callable) -> Callable:
-        """Wrap ``_VoiceLiveConnectionManager.__aenter__``."""
+        """Wrap ``_VoiceLiveConnectionManager.__aenter__``.
+
+        :param original_aenter: The original ``__aenter__`` method to wrap.
+        :type original_aenter: Callable
+        :return: The wrapped method.
+        :rtype: Callable
+        """
         instrumentor = self
 
         @functools.wraps(original_aenter)
-        async def wrapper(mgr_self, *args, **kwargs):
+        async def wrapper(mgr_self, *args, **kwargs):  # pylint: disable=protected-access
             span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
             if span_impl_type is None:
                 return await original_aenter(mgr_self, *args, **kwargs)
@@ -333,19 +339,25 @@ class _VoiceLiveInstrumentorPreview:
                 # send/recv/close spans are automatically parented under it.
                 # We bypass azure-core's _SuppressionContextManager to avoid
                 # suppressing child CLIENT spans.
-                ctx = set_span_in_context(span.span_instance)
-                result._telemetry_context_token = otel_context.attach(ctx)
+                ctx = set_span_in_context(span.span_instance)  # pyright: ignore[reportOptionalCall]
+                result._telemetry_context_token = otel_context.attach(ctx)  # pyright: ignore[reportOptionalMemberAccess]
                 return result
             except Exception as exc:
                 instrumentor.record_error(span, exc)
                 span.__exit__(type(exc), exc, exc.__traceback__)
                 raise
 
-        wrapper._original = original_aenter  # type: ignore[attr-defined]
+        wrapper._original = original_aenter  # type: ignore[attr-defined]  # pylint: disable=protected-access
         return wrapper
 
     def _trace_aexit(self, original_aexit: Callable) -> Callable:
-        """Wrap ``_VoiceLiveConnectionManager.__aexit__``."""
+        """Wrap ``_VoiceLiveConnectionManager.__aexit__``.
+
+        :param original_aexit: The original ``__aexit__`` method to wrap.
+        :type original_aexit: Callable
+        :return: The wrapped method.
+        :rtype: Callable
+        """
         instrumentor = self
 
         @functools.wraps(original_aexit)
@@ -360,7 +372,7 @@ class _VoiceLiveInstrumentorPreview:
                 # the active span after the session closes.
                 context_token = getattr(conn, "_telemetry_context_token", None)
                 if context_token is not None:
-                    otel_context.detach(context_token)
+                    otel_context.detach(context_token)  # pyright: ignore[reportOptionalMemberAccess]
 
                 # Record session-level counters on the connect span
                 turn_count = getattr(conn, "_telemetry_turn_count", 0)
@@ -383,7 +395,7 @@ class _VoiceLiveInstrumentorPreview:
                 except Exception:  # pylint: disable=broad-except
                     pass
 
-        wrapper._original = original_aexit  # type: ignore[attr-defined]
+        wrapper._original = original_aexit  # type: ignore[attr-defined]  # pylint: disable=protected-access
         return wrapper
 
     # ------------------------------------------------------------------ #
@@ -391,11 +403,17 @@ class _VoiceLiveInstrumentorPreview:
     # ------------------------------------------------------------------ #
 
     def _trace_send(self, original_send: Callable) -> Callable:
-        """Wrap ``VoiceLiveConnection.send``."""
+        """Wrap ``VoiceLiveConnection.send``.
+
+        :param original_send: The original ``send`` method to wrap.
+        :type original_send: Callable
+        :return: The wrapped method.
+        :rtype: Callable
+        """
         instrumentor = self
 
         @functools.wraps(original_send)
-        async def wrapper(conn_self, event, *args, **kwargs):
+        async def wrapper(conn_self, event, *args, **kwargs):  # pylint: disable=too-many-branches,too-many-statements,protected-access
             span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
             if span_impl_type is None:
                 return await original_send(conn_self, event, *args, **kwargs)
@@ -484,15 +502,21 @@ class _VoiceLiveInstrumentorPreview:
                 instrumentor.record_error(span, exc)
                 raise
 
-        wrapper._original = original_send  # type: ignore[attr-defined]
+        wrapper._original = original_send  # type: ignore[attr-defined]  # pylint: disable=protected-access
         return wrapper
 
     def _trace_recv(self, original_recv: Callable) -> Callable:
-        """Wrap ``VoiceLiveConnection.recv``."""
+        """Wrap ``VoiceLiveConnection.recv``.
+
+        :param original_recv: The original ``recv`` method to wrap.
+        :type original_recv: Callable
+        :return: The wrapped method.
+        :rtype: Callable
+        """
         instrumentor = self
 
         @functools.wraps(original_recv)
-        async def wrapper(conn_self, *args, **kwargs):
+        async def wrapper(conn_self, *args, **kwargs):  # pylint: disable=too-many-branches,too-many-statements,protected-access
             span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
             if span_impl_type is None:
                 return await original_recv(conn_self, *args, **kwargs)
@@ -588,7 +612,7 @@ class _VoiceLiveInstrumentorPreview:
                         conn_self._telemetry_turn_count = current + 1
 
                     # --- Rate limit / error events ---
-                    if event_type_str == "error" or event_type_str == "rate_limits.updated":
+                    if event_type_str in ("error", "rate_limits.updated"):
                         instrumentor._add_rate_limit_event(span, event_type_str, result)
 
                     # Capture token usage if present on the event
@@ -615,11 +639,17 @@ class _VoiceLiveInstrumentorPreview:
                 instrumentor.record_error(span, exc)
                 raise
 
-        wrapper._original = original_recv  # type: ignore[attr-defined]
+        wrapper._original = original_recv  # type: ignore[attr-defined]  # pylint: disable=protected-access
         return wrapper
 
     def _trace_close(self, original_close: Callable) -> Callable:
-        """Wrap ``VoiceLiveConnection.close``."""
+        """Wrap ``VoiceLiveConnection.close``.
+
+        :param original_close: The original ``close`` method to wrap.
+        :type original_close: Callable
+        :return: The wrapped method.
+        :rtype: Callable
+        """
         instrumentor = self
 
         @functools.wraps(original_close)
@@ -644,7 +674,7 @@ class _VoiceLiveInstrumentorPreview:
                 instrumentor.record_error(span, exc)
                 raise
 
-        wrapper._original = original_close  # type: ignore[attr-defined]
+        wrapper._original = original_close  # type: ignore[attr-defined]  # pylint: disable=protected-access
         return wrapper
 
     # ------------------------------------------------------------------ #
