@@ -291,7 +291,9 @@ class AzureAppConfigurationClient:
         :keyword fields: Specify which fields to include in the results. If not specified, will include all fields.
             Available fields see :class:`~azure.appconfiguration.ConfigurationSettingFields`.
         :paramtype fields: list[str] or list[~azure.appconfiguration.ConfigurationSettingFields] or None
-        :return: An async iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
+        :return: An async pager intended for :meth:`by_page` iteration to inspect page headers (for example, ``etag``)
+            and detect changed pages. This operation issues HEAD requests and does not return full
+            :class:`~azure.appconfiguration.ConfigurationSetting` bodies when iterated item by item.
         :rtype: ~azure.appconfiguration.ConfigurationSettingPagedAsync
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
             :class:`~azure.core.exceptions.ClientAuthenticationError`

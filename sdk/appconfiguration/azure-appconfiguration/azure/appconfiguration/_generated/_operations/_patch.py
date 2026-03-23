@@ -330,7 +330,7 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
         response = pipeline_response.http_response
 
         valid_status_codes = [200]
-        if etag is not None and match_condition is MatchConditions.IfModified:
+        if etag is not None and match_condition == MatchConditions.IfModified:
             valid_status_codes.append(304)
 
         if response.status_code not in valid_status_codes:
