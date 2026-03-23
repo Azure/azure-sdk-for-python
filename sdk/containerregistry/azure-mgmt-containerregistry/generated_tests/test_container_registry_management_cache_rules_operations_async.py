@@ -41,6 +41,12 @@ class TestContainerRegistryManagementCacheRulesOperationsAsync(AzureMgmtRecorded
                 cache_rule_name="str",
                 cache_rule_create_parameters={
                     "id": "str",
+                    "identity": {
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "type": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
                     "name": "str",
                     "properties": {
                         "creationDate": "2020-02-20 00:00:00",
@@ -73,7 +79,15 @@ class TestContainerRegistryManagementCacheRulesOperationsAsync(AzureMgmtRecorded
                 resource_group_name=resource_group.name,
                 registry_name="str",
                 cache_rule_name="str",
-                cache_rule_update_parameters={"properties": {"credentialSetResourceId": "str"}},
+                cache_rule_update_parameters={
+                    "identity": {
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "type": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
+                    "properties": {"credentialSetResourceId": "str"},
+                },
             )
         ).result()  # call '.result()' to poll until service return final result
 
