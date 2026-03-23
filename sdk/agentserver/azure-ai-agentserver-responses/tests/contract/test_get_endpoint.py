@@ -195,3 +195,87 @@ def test_get_replay__starting_after_returns_events_after_cursor() -> None:
         "response.incomplete",
     }
     assert any(event["type"] in terminal_events for event in replay_events)
+
+
+def test_get_replay__rejects_bg_non_stream_response() -> None:
+    """B2 — SSE replay requires stream=true at creation. background=true, stream=false → 400."""
+    client = _build_client()
+
+    create_response = client.post(
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": False,
+            "store": True,
+            "background": True,
+        },
+    )
+    assert create_response.status_code == 200
+    response_id = create_response.json()["id"]
+
+    replay_response = client.get(f"/responses/{response_id}?stream=true")
+    assert replay_response.status_code == 400
+    payload = replay_response.json()
+    assert payload["error"]["type"] == "invalid_request_error"
+
+
+# ══════════════════════════════════════════════════════════
+# B-5: SSE replay rejection message text
+# ══════════════════════════════════════════════════════════
+
+
+def test_get_replay__rejection_message_hints_at_background_true() -> None:
+    """B-5 — SSE replay rejection error message contains 'background=true' hint so clients know how to fix their request."""
+    client = _build_client()
+
+    create_response = client.post(
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": False,
+            "store": True,
+            "background": False,
+        },
+    )
+    assert create_response.status_code == 200
+    response_id = create_response.json()["id"]
+
+    replay_response = client.get(f"/responses/{response_id}?stream=true")
+    assert replay_response.status_code == 400
+    payload = replay_response.json()
+    error_message = payload["error"].get("message", "")
+    assert "background=true" in error_message, (
+        f"Error message should hint at 'background=true' to guide the client, but got: {error_message!r}"
+    )
+
+
+# ════════════════════════════════════════════════════════
+# N-6: GET ?stream=true SSE response headers
+# ════════════════════════════════════════════════════════
+
+
+def test_get_replay__sse_response_headers_are_correct() -> None:
+    """SSE headers contract — GET ?stream=true replay must return required SSE response headers."""
+    client = _build_client()
+
+    response_id = _create_background_streaming_and_get_response_id(client)
+
+    with client.stream("GET", f"/responses/{response_id}?stream=true") as replay_response:
+        assert replay_response.status_code == 200
+        headers = replay_response.headers
+
+    content_type = headers.get("content-type", "")
+    assert "text/event-stream" in content_type, (
+        f"SSE replay Content-Type must be text/event-stream, got: {content_type!r}"
+    )
+    assert headers.get("cache-control") == "no-cache", (
+        f"SSE replay Cache-Control must be no-cache, got: {headers.get('cache-control')!r}"
+    )
+    assert headers.get("connection", "").lower() == "keep-alive", (
+        f"SSE replay Connection must be keep-alive, got: {headers.get('connection')!r}"
+    )
+    assert headers.get("x-accel-buffering") == "no", (
+        f"SSE replay X-Accel-Buffering must be no, got: {headers.get('x-accel-buffering')!r}"
+    )

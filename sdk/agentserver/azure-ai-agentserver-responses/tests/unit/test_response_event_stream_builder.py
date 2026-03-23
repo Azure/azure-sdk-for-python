@@ -161,7 +161,7 @@ def test_event_stream_builder__emit_failed_accepts_error_and_usage() -> None:
     assert failed["payload"]["error"]["code"] == "server_error"
     assert failed["payload"]["error"]["message"] == "boom"
     assert failed["payload"]["usage"]["total_tokens"] == 9
-    assert isinstance(failed["payload"]["completed_at"], int)
+    assert failed["payload"].get("completed_at") is None
 
 
 def test_event_stream_builder__emit_incomplete_accepts_reason_and_usage() -> None:
@@ -182,7 +182,7 @@ def test_event_stream_builder__emit_incomplete_accepts_reason_and_usage() -> Non
     assert incomplete["payload"]["status"] == "incomplete"
     assert incomplete["payload"]["incomplete_details"]["reason"] == "max_output_tokens"
     assert incomplete["payload"]["usage"]["total_tokens"] == 5
-    assert isinstance(incomplete["payload"]["completed_at"], int)
+    assert incomplete["payload"].get("completed_at") is None
 
 
 def test_event_stream_builder__add_output_item_generic_emits_added_and_done() -> None:

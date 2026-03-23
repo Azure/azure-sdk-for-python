@@ -26,11 +26,19 @@ def parse_create_response(payload: Mapping[str, Any]) -> CreateResponse:
 
     validation_errors = validate_CreateResponse(payload)
     if validation_errors:
+        details = [
+            {
+                "code": "invalid_value",
+                "message": e.get("message", ""),
+                "param": e.get("path", "").lstrip("."),
+            }
+            for e in validation_errors
+        ]
         raise RequestValidationError(
             "request body failed schema validation",
-                code="invalid_request",
-                debug_info={"errors": validation_errors},
-            )
+            code="invalid_request",
+            details=details,
+        )
 
     try:
         return CreateResponse(payload)
@@ -59,7 +67,9 @@ def normalize_create_response(
         request.model = options.default_model
 
     if isinstance(request.model, str):
-        request.model = request.model.strip() or None
+        request.model = request.model.strip() or ""
+    elif request.model is None:
+        request.model = ""
 
     return request
 
@@ -76,8 +86,8 @@ def validate_create_response(request: CreateResponse) -> None:
     if request.background and not store_enabled:
         raise RequestValidationError(
             "background=true requires store=true",
-            code="invalid_mode",
-            param="store",
+            code="unsupported_parameter",
+            param="background",
         )
 
     if request.stream_options is not None and request.stream is not True:
@@ -87,12 +97,30 @@ def validate_create_response(request: CreateResponse) -> None:
             param="stream",
         )
 
-    if request.model is None:
-        raise RequestValidationError(
-            "model is required",
-            code="missing_required",
-            param="model",
-        )
+    # B22: model is optional — resolved to default in normalize_create_response()
+
+    # Metadata constraints: ≤16 keys, key ≤64 chars, value ≤512 chars
+    metadata = getattr(request, "metadata", None)
+    if metadata is not None and hasattr(metadata, "items"):
+        if len(metadata) > 16:
+            raise RequestValidationError(
+                "metadata must have at most 16 key-value pairs",
+                code="invalid_request",
+                param="metadata",
+            )
+        for key, value in metadata.items():
+            if isinstance(key, str) and len(key) > 64:
+                raise RequestValidationError(
+                    f"metadata key '{key[:64]}...' exceeds maximum length of 64 characters",
+                    code="invalid_request",
+                    param="metadata",
+                )
+            if isinstance(value, str) and len(value) > 512:
+                raise RequestValidationError(
+                    f"metadata value for key '{key}' exceeds maximum length of 512 characters",
+                    code="invalid_request",
+                    param="metadata",
+                )
 
 
 def parse_and_validate_create_response(

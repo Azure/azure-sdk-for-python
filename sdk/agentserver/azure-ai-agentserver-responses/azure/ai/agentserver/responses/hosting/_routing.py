@@ -122,6 +122,12 @@ def map_responses_server(  # pylint: disable=too-many-statements
     runtime_options = options or ResponsesServerOptions()
     runtime_state = _RuntimeState()
     response_headers = {"x-platform-server": _platform_header(runtime_options)}
+    sse_headers = {
+        **response_headers,
+        "connection": "keep-alive",
+        "cache-control": "no-cache",
+        "x-accel-buffering": "no",
+    }
     shutdown_requested = asyncio.Event()
     runtime_is_draining = False
 
@@ -253,6 +259,8 @@ def map_responses_server(  # pylint: disable=too-many-statements
                             "status": "failed",
                             "model": model,
                             "output": [],
+                            "created_at": context.created_at,
+                            "error": {"code": "server_error", "message": "An internal server error occurred."},
                         }
                     else:
                         response_payload = _extract_response_snapshot_from_events(
@@ -324,11 +332,25 @@ def map_responses_server(  # pylint: disable=too-many-statements
                 finally:
                     await _finalize_stream()
 
-            return StreamingResponse(_fallback_stream(), media_type="text/event-stream", headers=response_headers)
+            return StreamingResponse(_fallback_stream(), media_type="text/event-stream", headers=sse_headers)
         except Exception as exc:  # pylint: disable=broad-exception-caught
             captured_error = exc
-            span.end(captured_error)
-            return _error_response(exc, response_headers)
+            # B8: Pre-creation error → emit a standalone `error` SSE event only.
+            # No response.created precedes it; this is the contract-mandated shape.
+            # Note: do NOT include "type" in payload — encode_sse_payload uses the first
+            # argument as the SSE event type; a "type" key in payload would override it.
+            pre_error_encoded = encode_sse_payload(
+                EVENT_TYPE.ERROR.value,
+                {"message": "An internal server error occurred.", "param": None, "code": None},
+            )
+
+            async def _pre_creation_error_stream() -> AsyncIterator[str]:
+                try:
+                    yield pre_error_encoded
+                finally:
+                    await _finalize_stream()
+
+            return StreamingResponse(_pre_creation_error_stream(), media_type="text/event-stream", headers=sse_headers)
 
         first_normalized = _apply_stream_event_defaults(
             _coerce_handler_event(first_handler_event),
@@ -367,6 +389,37 @@ def map_responses_server(  # pylint: disable=too-many-statements
             )
             await runtime_state.add(bg_record)
 
+        _TERMINAL_SSE_TYPES = {
+            EVENT_TYPE.RESPONSE_COMPLETED.value,
+            EVENT_TYPE.RESPONSE_FAILED.value,
+            EVENT_TYPE.RESPONSE_INCOMPLETE.value,
+        }
+
+        def _has_terminal_event() -> bool:
+            return any(e["type"] in _TERMINAL_SSE_TYPES for e in handler_events)
+
+        def _cancel_terminal_sse() -> str:
+            cancel_event = {
+                "type": EVENT_TYPE.RESPONSE_FAILED.value,
+                "payload": {
+                    "id": response_id,
+                    "object": "response",
+                    "status": "cancelled",
+                    "output": [],
+                },
+            }
+            normalized = _apply_stream_event_defaults(
+                cancel_event,
+                response_id=response_id,
+                agent_reference=agent_reference,
+                model=model,
+                sequence_number=len(handler_events),
+            )
+            handler_events.append(normalized)
+            if bg_record is not None and bg_record.status != "cancelled":
+                bg_record.events.append(deepcopy(normalized))
+            return encode_sse_payload(normalized["type"], normalized["payload"])
+
         async def _live_stream() -> AsyncIterator[str]:  # pylint: disable=too-many-statements
             nonlocal captured_error
 
@@ -377,8 +430,24 @@ def map_responses_server(  # pylint: disable=too-many-statements
                     async for handler_event in handler_iterator:
                         normalized = _normalize_and_append(handler_event)
                         yield encode_sse_payload(normalized["type"], normalized["payload"])
+                    if cancellation_signal.is_set() and not _has_terminal_event():
+                        yield _cancel_terminal_sse()
                 except Exception as exc:  # pylint: disable=broad-exception-caught
                     captured_error = exc
+                    # B-13: emit response.failed when handler raises after response.created
+                    if not _has_terminal_event():
+                        failed_event = {
+                            "type": EVENT_TYPE.RESPONSE_FAILED.value,
+                            "payload": {
+                                "id": response_id,
+                                "object": "response",
+                                "status": "failed",
+                                "output": [],
+                                "error": {"code": "server_error", "message": "An internal server error occurred."},
+                            },
+                        }
+                        normalized_failed = _normalize_and_append(failed_event)
+                        yield encode_sse_payload(normalized_failed["type"], normalized_failed["payload"])
                     return
                 finally:
                     await _finalize_stream()
@@ -422,6 +491,22 @@ def map_responses_server(  # pylint: disable=too-many-statements
                     yield item  # type: ignore[misc]
                 if handler_error:
                     captured_error = handler_error[0]
+                    # B-13: emit response.failed when handler raises after response.created
+                    if not _has_terminal_event():
+                        failed_event = {
+                            "type": EVENT_TYPE.RESPONSE_FAILED.value,
+                            "payload": {
+                                "id": response_id,
+                                "object": "response",
+                                "status": "failed",
+                                "output": [],
+                                "error": {"code": "server_error", "message": "An internal server error occurred."},
+                            },
+                        }
+                        normalized_failed = _normalize_and_append(failed_event)
+                        yield encode_sse_payload(normalized_failed["type"], normalized_failed["payload"])
+                elif cancellation_signal.is_set() and not _has_terminal_event():
+                    yield _cancel_terminal_sse()
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 captured_error = exc
             finally:
@@ -440,7 +525,7 @@ def map_responses_server(  # pylint: disable=too-many-statements
 
                 await _finalize_stream()
 
-        return StreamingResponse(_live_stream(), media_type="text/event-stream", headers=response_headers)
+        return StreamingResponse(_live_stream(), media_type="text/event-stream", headers=sse_headers)
 
     async def _create_sync(
         *,
@@ -760,7 +845,7 @@ def map_responses_server(  # pylint: disable=too-many-statements
         if stream_replay:
             if not record.replay_enabled:
                 return _invalid_mode(
-                    "stream replay is not available for this response",
+                    "stream replay is not available for this response; to enable SSE replay, create the response with background=true",
                     response_headers,
                     param="stream",
                 )
@@ -782,7 +867,7 @@ def map_responses_server(  # pylint: disable=too-many-statements
                 if event["payload"]["sequence_number"] > starting_after
             ]
             return StreamingResponse(
-                _encode_sse(replay_events), media_type="text/event-stream", headers=response_headers
+                _encode_sse(replay_events), media_type="text/event-stream", headers=sse_headers
             )
 
         if not record.visible_via_get:

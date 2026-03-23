@@ -96,6 +96,34 @@ def _coerce_handler_event(handler_event: Any) -> dict[str, Any]:
     return {"type": event_type, "payload": normalized_payload}
 
 
+def _stamp_output_items(
+    response_payload: dict[str, Any],
+    *,
+    response_id: str,
+    agent_reference: dict[str, Any],
+) -> None:
+    """Stamp B20/B21 fields on each item in the ``output`` array of a response snapshot.
+
+    For every item in ``output[]``, sets ``response_id`` (B20) and
+    ``agent_reference`` (B21) using ``setdefault`` so handler-supplied
+    values are not overwritten.
+
+    :param response_payload: The mutable response snapshot dict (modified in-place).
+    :type response_payload: dict[str, Any]
+    :keyword response_id: The response ID to stamp on each output item.
+    :keyword type response_id: str
+    :keyword agent_reference: The agent reference dict to stamp on each output item.
+    :keyword type agent_reference: dict[str, Any]
+    """
+    output = response_payload.get("output")
+    if not isinstance(output, list):
+        return
+    for item in output:
+        if isinstance(item, dict):
+            item.setdefault("response_id", response_id)
+            item.setdefault("agent_reference", deepcopy(agent_reference))
+
+
 def _apply_stream_event_defaults(
     event: dict[str, Any],
     *,
@@ -131,6 +159,7 @@ def _apply_stream_event_defaults(
     payload.setdefault("agent_reference", deepcopy(agent_reference))
     if model is not None:
         payload.setdefault("model", model)
+    _stamp_output_items(payload, response_id=response_id, agent_reference=agent_reference)
 
     if sequence_number is not None:
         payload["sequence_number"] = sequence_number
@@ -178,6 +207,7 @@ def _extract_response_snapshot_from_events(
             snapshot.setdefault("output", [])
             if model is not None:
                 snapshot.setdefault("model", model)
+            _stamp_output_items(snapshot, response_id=response_id, agent_reference=agent_reference)
             if remove_sequence_number:
                 snapshot.pop("sequence_number", None)
             return snapshot

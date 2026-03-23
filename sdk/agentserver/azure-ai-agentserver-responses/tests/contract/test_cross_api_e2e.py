@@ -380,8 +380,8 @@ class TestEphemeralStoreFalse:
             response_id = r.json()["id"]
 
         result = client.post(f"/responses/{response_id}/cancel")
-        # Python SDK: store=false not persisted → 404; .NET SDK: checks non-bg first → 400
-        assert result.status_code in (400, 404)
+        # Contract: store=false responses are never persisted → cancel always 404
+        assert result.status_code == 404
 
 
 # ════════════════════════════════════════════════════════════
@@ -494,11 +494,9 @@ class TestC1SyncStored:
         started, _ = started_gate.wait(timeout_s=5.0)
         assert started
 
-        # Cancel during in-flight non-bg → 400
+        # Cancel during in-flight non-bg → 404 (not yet stored, S7)
         cancel_resp = client.post(f"/responses/{response_id}/cancel")
-        assert cancel_resp.status_code in (400, 404)
-        # The cancel endpoint may return 404 (not found b/c not persisted yet) or 400
-        # depending on implementation; both reject the cancel.
+        assert cancel_resp.status_code == 404, "S7: non-background in-flight cancel must return 404 (not yet stored)"
 
         release_gate.set()
         t.join(timeout=5.0)
@@ -594,8 +592,8 @@ class TestC3BgPollStored:
         assert r.status_code == 200
         create_payload = r.json()
         response_id = create_payload["id"]
-        # Create should return queued/in_progress, but TestClient may finish fast
-        assert create_payload["status"] in {"queued", "in_progress", "completed"}
+        # Contract (C3): background POST must return immediately with queued or in_progress
+        assert create_payload["status"] in {"queued", "in_progress"}
 
         get_resp = client.get(f"/responses/{response_id}")
         assert get_resp.status_code == 200
@@ -683,11 +681,11 @@ class TestC3BgPollStored:
         assert get_resp.status_code == 200
         snapshot = get_resp.json()
         assert snapshot["status"] == "failed"
-        # B6: failed → error should be present (may be omitted when null in Python SDK)
+        # B6: failed → error must be non-null
         error = snapshot.get("error")
-        if error is not None:
-            assert "code" in error
-            assert "message" in error
+        assert error is not None, "B6: error must be non-null for status=failed"
+        assert "code" in error
+        assert "message" in error
 
     def test_e37_bg_handler_incomplete_then_get_returns_incomplete(self) -> None:
         """B5, B6 — incomplete status invariants."""
@@ -868,11 +866,11 @@ class TestC4BgStreamStored:
         assert get_resp.status_code == 200
         snapshot = get_resp.json()
         assert snapshot["status"] == "failed"
-        # Error may be present or omitted depending on Python SDK serialization
+        # B6: failed → error must be non-null
         error = snapshot.get("error")
-        if error is not None:
-            assert "code" in error
-            assert "message" in error
+        assert error is not None, "B6: error must be non-null for status=failed"
+        assert "code" in error
+        assert "message" in error
 
     def test_e41_bg_stream_handler_incomplete_get_and_sse_replay_returns_incomplete(self) -> None:
         """B5, B6 — incomplete status invariants; B26 — terminal event."""

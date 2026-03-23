@@ -12,6 +12,7 @@ from starlette.applications import Starlette
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.responses.hosting import map_responses_server
+from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
 
 class _NoopResponseHandler:
@@ -29,6 +30,38 @@ def _build_client() -> TestClient:
     app = Starlette()
     map_responses_server(app, _NoopResponseHandler())
     return TestClient(app)
+
+
+class _ThrowingBeforeYieldHandler:
+    """Handler that raises before yielding any event.
+
+    Used to test pre-creation error handling in SSE streaming mode.
+    """
+
+    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            raise RuntimeError("Simulated pre-creation failure")
+            if False:  # pragma: no cover - keep async generator shape.
+                yield None
+
+        return _events()
+
+
+class _ThrowingAfterCreatedHandler:
+    """Handler that emits response.created then raises.
+
+    Used to test post-creation error handling in SSE streaming mode.
+    """
+
+    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            stream = ResponseEventStream(
+                response_id=context.response_id, model=getattr(request, "model", None)
+            )
+            yield stream.emit_created()
+            raise RuntimeError("Simulated post-creation failure")
+
+        return _events()
 
 
 def _collect_stream_events(response: Any) -> list[dict[str, Any]]:
@@ -79,6 +112,10 @@ def test_streaming__first_event_is_response_created() -> None:
 
     assert events, "Expected at least one SSE event"
     assert events[0]["type"] == "response.created"
+    # Contract (B8): response.created event status must be queued or in_progress
+    assert events[0]["data"].get("status") in {"queued", "in_progress"}, (
+        f"response.created status must be queued or in_progress per B8, got: {events[0]['data'].get('status')}"
+    )
 
 
 def test_streaming__sequence_number_is_monotonic_and_contiguous() -> None:
@@ -197,3 +234,183 @@ def test_streaming__forwards_emitted_event_before_late_handler_failure() -> None
                 break
 
     assert first_event_line == "event: response.created"
+
+
+def test_streaming__sse_response_headers_per_contract() -> None:
+    """SSE Response Headers: Content-Type with charset, Connection, Cache-Control, X-Accel-Buffering."""
+    client = _build_client()
+
+    with client.stream(
+        "POST",
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": True,
+            "store": True,
+            "background": False,
+        },
+    ) as response:
+        assert response.status_code == 200
+        content_type = response.headers.get("content-type", "")
+        assert content_type == "text/event-stream; charset=utf-8", (
+            f"Expected Content-Type with charset per SSE headers contract, got: {content_type}"
+        )
+        assert response.headers.get("connection") == "keep-alive", "Missing Connection: keep-alive"
+        assert response.headers.get("cache-control") == "no-cache", "Missing Cache-Control: no-cache"
+        assert response.headers.get("x-accel-buffering") == "no", "Missing X-Accel-Buffering: no"
+        list(response.iter_lines())
+
+
+def test_streaming__wire_format_has_no_sse_id_field() -> None:
+    """B27 — SSE wire format must not contain id: lines. Sequence number is in JSON payload."""
+    client = _build_client()
+
+    with client.stream(
+        "POST",
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": True,
+            "store": True,
+            "background": False,
+        },
+    ) as response:
+        assert response.status_code == 200
+        raw_lines = list(response.iter_lines())
+
+    id_lines = [line for line in raw_lines if line.startswith("id:")]
+    assert id_lines == [], f"SSE stream must not contain id: lines per B27, found: {id_lines}"
+
+
+def test_streaming__background_stream_may_include_response_queued_event() -> None:
+    """B8 — response.queued is optional in background mode SSE streams."""
+    client = _build_client()
+
+    with client.stream(
+        "POST",
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": True,
+            "store": True,
+            "background": True,
+        },
+    ) as response:
+        assert response.status_code == 200
+        events = _collect_stream_events(response)
+
+    assert events, "Expected at least one SSE event"
+    event_types = [e["type"] for e in events]
+    # response.created must be first
+    assert event_types[0] == "response.created"
+    # If response.queued is present, it must be right after response.created
+    if "response.queued" in event_types:
+        queued_idx = event_types.index("response.queued")
+        assert queued_idx == 1, "response.queued should be the second event if present"
+
+
+# ══════════════════════════════════════════════════════════
+# B-4, B-10, B-13: Handler failure and in_progress event
+# ══════════════════════════════════════════════════════════
+
+
+def test_streaming__pre_creation_handler_failure_produces_terminal_event() -> None:
+    """B-4 — Handler raising before any yield in streaming mode → SSE stream terminates with a proper terminal event."""
+    handler = _ThrowingBeforeYieldHandler()
+    app = Starlette()
+    map_responses_server(app, handler)
+    client = TestClient(app, raise_server_exceptions=False)
+
+    with client.stream(
+        "POST",
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": True,
+            "store": True,
+            "background": False,
+        },
+    ) as response:
+        assert response.status_code == 200
+        events = _collect_stream_events(response)
+
+    event_types = [e["type"] for e in events]
+    # B8: pre-creation error → standalone `error` SSE event only.
+    # No response.created must precede it.
+    assert "error" in event_types, (
+        f"SSE stream must emit standalone 'error' event for pre-creation failure, got: {event_types}"
+    )
+    assert "response.created" not in event_types, (
+        f"Pre-creation error must NOT emit response.created before 'error' event, got: {event_types}"
+    )
+
+
+def test_streaming__response_in_progress_event_is_in_stream() -> None:
+    """B-10 — response.in_progress must appear in the SSE stream between response.created and the terminal event."""
+    client = _build_client()
+
+    with client.stream(
+        "POST",
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": True,
+            "store": True,
+            "background": False,
+        },
+    ) as response:
+        assert response.status_code == 200
+        events = _collect_stream_events(response)
+
+    event_types = [e["type"] for e in events]
+    assert "response.in_progress" in event_types, (
+        f"Expected response.in_progress in SSE stream, got: {event_types}"
+    )
+    created_idx = event_types.index("response.created")
+    in_progress_idx = event_types.index("response.in_progress")
+    terminal_set = {"response.completed", "response.failed", "response.incomplete"}
+    terminal_idx = next(
+        (i for i, t in enumerate(event_types) if t in terminal_set), None
+    )
+    assert terminal_idx is not None, f"No terminal event found in: {event_types}"
+    assert created_idx < in_progress_idx < terminal_idx, (
+        f"response.in_progress must appear after response.created and before terminal event. "
+        f"Order was: {event_types}"
+    )
+
+
+def test_streaming__post_creation_error_yields_response_failed_not_error_event() -> None:
+    """B-13 — Handler raising after response.created → terminal is response.failed, NOT a standalone error event."""
+    handler = _ThrowingAfterCreatedHandler()
+    app = Starlette()
+    map_responses_server(app, handler)
+    client = TestClient(app, raise_server_exceptions=False)
+
+    with client.stream(
+        "POST",
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": True,
+            "store": True,
+            "background": False,
+        },
+    ) as response:
+        assert response.status_code == 200
+        events = _collect_stream_events(response)
+
+    event_types = [e["type"] for e in events]
+    assert "response.failed" in event_types, (
+        f"Expected response.failed terminal event after post-creation error, got: {event_types}"
+    )
+    # After response.created has been emitted, no standalone 'error' event should appear.
+    # The failure must be surfaced as response.failed, not a raw error event.
+    assert "error" not in event_types, (
+        f"Standalone 'error' event must not appear after response.created. Events: {event_types}"
+    )

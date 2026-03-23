@@ -330,3 +330,180 @@ def test_create__background_non_stream_get_eventually_returns_output_items() -> 
     assert latest_snapshot["output"][0].get("content", [])[0].get("type") == "output_text"
     assert latest_snapshot["output"][0].get("content", [])[0].get("text") == "hello"
     assert "sequence_number" not in latest_snapshot
+
+
+def test_create__model_is_optional_and_resolved_to_empty_or_default() -> None:
+    """B22 — model can be omitted. Resolution: request.model → default_model → empty string."""
+    client = _build_client()
+
+    response = client.post(
+        "/responses",
+        json={
+            "input": "hello",
+            "stream": False,
+            "store": True,
+            "background": False,
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    # B22: model should be present (possibly empty string or server default)
+    assert "model" in payload
+    assert isinstance(payload["model"], str)
+
+
+def test_create__metadata_rejects_more_than_16_keys() -> None:
+    """Metadata constraints: max 16 key-value pairs."""
+    client = _build_client()
+
+    metadata = {f"key_{i}": f"value_{i}" for i in range(17)}
+    response = client.post(
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "metadata": metadata,
+            "stream": False,
+            "store": True,
+            "background": False,
+        },
+    )
+
+    assert response.status_code == 400
+    payload = response.json()
+    assert payload["error"]["type"] == "invalid_request_error"
+
+
+def test_create__metadata_rejects_key_longer_than_64_chars() -> None:
+    """Metadata constraints: key max 64 characters."""
+    client = _build_client()
+
+    metadata = {"a" * 65: "value"}
+    response = client.post(
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "metadata": metadata,
+            "stream": False,
+            "store": True,
+            "background": False,
+        },
+    )
+
+    assert response.status_code == 400
+    payload = response.json()
+    assert payload["error"]["type"] == "invalid_request_error"
+
+
+def test_create__metadata_rejects_value_longer_than_512_chars() -> None:
+    """Metadata constraints: value max 512 characters."""
+    client = _build_client()
+
+    metadata = {"key": "v" * 513}
+    response = client.post(
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "metadata": metadata,
+            "stream": False,
+            "store": True,
+            "background": False,
+        },
+    )
+
+    assert response.status_code == 400
+    payload = response.json()
+    assert payload["error"]["type"] == "invalid_request_error"
+
+
+def test_create__validation_error_includes_details_array() -> None:
+    """B29 — Invalid request returns 400 with details[] array."""
+    client = _build_client()
+
+    response = client.post(
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": "not-a-bool",
+            "store": True,
+            "background": False,
+        },
+    )
+
+    assert response.status_code == 400
+    payload = response.json()
+    error = payload.get("error")
+    assert error is not None
+    assert error.get("type") == "invalid_request_error"
+    # B29: should have details[] array
+    details = error.get("details")
+    assert isinstance(details, list), f"Expected details[] array per B29, got: {type(details)}"
+    assert len(details) >= 1
+    for detail in details:
+        assert detail.get("type") == "invalid_request_error"
+        assert detail.get("code") == "invalid_value"
+        assert "param" in detail
+        assert "message" in detail
+
+
+# ══════════════════════════════════════════════════════════
+# B-1, B-2, B-3: Request body edge cases
+# ══════════════════════════════════════════════════════════
+
+
+def test_create__returns_400_for_empty_body() -> None:
+    """B-1 — Empty request body → HTTP 400, error.type: invalid_request_error."""
+    client = _build_client()
+
+    response = client.post(
+        "/responses",
+        content=b"",
+        headers={"Content-Type": "application/json"},
+    )
+
+    assert response.status_code == 400
+    payload = response.json()
+    assert isinstance(payload.get("error"), dict)
+    assert payload["error"].get("type") == "invalid_request_error"
+
+
+def test_create__returns_400_for_invalid_json_body() -> None:
+    """B-2 — Malformed JSON body → HTTP 400, error.type: invalid_request_error."""
+    client = _build_client()
+
+    response = client.post(
+        "/responses",
+        content=b"{invalid json",
+        headers={"Content-Type": "application/json"},
+    )
+
+    assert response.status_code == 400
+    payload = response.json()
+    assert isinstance(payload.get("error"), dict)
+    assert payload["error"].get("type") == "invalid_request_error"
+
+
+def test_create__ignores_unknown_fields_in_request_body() -> None:
+    """B-3 — Unknown fields are ignored for forward compatibility → HTTP 200."""
+    client = _build_client()
+
+    response = client.post(
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": False,
+            "store": True,
+            "background": False,
+            "foo": "bar",
+            "unknown_nested": {"key": "value"},
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload.get("object") == "response"

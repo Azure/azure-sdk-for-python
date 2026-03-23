@@ -187,6 +187,33 @@ async def _ensure_task_done(
                 pass
 
 
+def _parse_sse_events(text: str) -> list[dict[str, Any]]:
+    """Parse SSE events from raw text."""
+    events: list[dict[str, Any]] = []
+    current_type: str | None = None
+    current_data: str | None = None
+
+    for line in text.splitlines():
+        if not line:
+            if current_type is not None:
+                payload = _json.loads(current_data) if current_data else {}
+                events.append({"type": current_type, "data": payload})
+            current_type = None
+            current_data = None
+            continue
+
+        if line.startswith("event:"):
+            current_type = line.split(":", 1)[1].strip()
+        elif line.startswith("data:"):
+            current_data = line.split(":", 1)[1].strip()
+
+    if current_type is not None:
+        payload = _json.loads(current_data) if current_data else {}
+        events.append({"type": current_type, "data": payload})
+
+    return events
+
+
 # ════════════════════════════════════════════════════════════
 # Handler factories  (asyncio.Event gating — same event loop as test)
 # ════════════════════════════════════════════════════════════
@@ -321,9 +348,9 @@ class TestC2StreamStoredAsync:
         try:
             await asyncio.wait_for(handler.started.wait(), timeout=5.0)
 
-            # Cancel non-bg → rejected (400 or 404)
+            # Cancel non-bg in-flight → 404 (not yet stored, S7)
             cancel_resp = await client.post(f"/responses/{response_id}/cancel")
-            assert cancel_resp.status_code in (400, 404)
+            assert cancel_resp.status_code == 404, "S7: non-background in-flight cancel must return 404 (not yet stored)"
 
             handler.release.set()
             await asyncio.wait_for(post_task, timeout=5.0)
@@ -461,3 +488,54 @@ class TestC4BgStreamStoredAsync:
         get_after = await client.get(f"/responses/{response_id}")
         assert get_after.status_code == 200
         assert get_after.json()["status"] == "completed"
+
+    async def test_bg_stream_cancel_terminal_sse_is_response_failed_with_cancelled(self) -> None:
+        """B11, B26 — cancel mid-stream → terminal SSE event is response.failed with status cancelled."""
+        handler = _GatedStreamHandler()
+        client = _build_client(handler)
+        response_id = IdGenerator.new_response_id()
+
+        post_task = asyncio.create_task(
+            client.post(
+                "/responses",
+                json_body={
+                    "response_id": response_id,
+                    "model": "gpt-4o-mini",
+                    "input": "hello",
+                    "stream": True,
+                    "store": True,
+                    "background": True,
+                },
+            )
+        )
+        try:
+            await asyncio.wait_for(handler.started.wait(), timeout=5.0)
+
+            # Cancel bg in-flight → 200
+            cancel_resp = await client.post(f"/responses/{response_id}/cancel")
+            assert cancel_resp.status_code == 200
+
+            post_resp = await asyncio.wait_for(post_task, timeout=5.0)
+            assert post_resp.status_code == 200
+
+            # Parse SSE events from the response body
+            events = _parse_sse_events(post_resp.body.decode())
+
+            # Find terminal events
+            terminal_types = {"response.completed", "response.failed", "response.incomplete"}
+            terminal_events = [e for e in events if e["type"] in terminal_types]
+            assert len(terminal_events) == 1, (
+                f"Expected exactly one terminal event, got: {[e['type'] for e in terminal_events]}"
+            )
+
+            terminal = terminal_events[0]
+            # B26: cancelled responses emit response.failed
+            assert terminal["type"] == "response.failed", (
+                f"Expected response.failed for cancel per B26, got: {terminal['type']}"
+            )
+            # B11: status inside is "cancelled"
+            assert terminal["data"].get("status") == "cancelled"
+            # B11: output cleared
+            assert terminal["data"].get("output") == []
+        finally:
+            await _ensure_task_done(post_task, handler)

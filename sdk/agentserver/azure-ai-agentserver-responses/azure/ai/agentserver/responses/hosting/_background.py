@@ -82,6 +82,8 @@ async def _run_background_non_stream(
                 "status": "failed",
                 "model": model,
                 "output": [],
+                "created_at": context.created_at,
+                "error": {"code": "server_error", "message": "An internal server error occurred."},
             }
         return
 

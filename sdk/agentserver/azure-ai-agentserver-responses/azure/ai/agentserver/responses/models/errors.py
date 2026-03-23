@@ -19,6 +19,7 @@ class RequestValidationError(ValueError):
     param: str | None = None
     error_type: str = "invalid_request_error"
     debug_info: dict[str, Any] | None = None
+    details: list[dict[str, str]] | None = None
 
     def __post_init__(self) -> None:
         """Initialize the parent :class:`ValueError` message.
@@ -34,12 +35,24 @@ class RequestValidationError(ValueError):
         :returns: An ``Error`` instance populated from this validation error's fields.
         :rtype: Error
         """
+        detail_errors: list[Error] | None = None
+        if self.details:
+            detail_errors = [
+                Error(
+                    code=d.get("code", "invalid_value"),
+                    message=d.get("message", ""),
+                    param=d.get("param"),
+                    type="invalid_request_error",
+                )
+                for d in self.details
+            ]
         return Error(
             code=self.code,
             message=self.message,
             param=self.param,
             type=self.error_type,
             debug_info=self.debug_info,
+            details=detail_errors,
         )
 
     def to_api_error_response(self) -> ApiErrorResponse:

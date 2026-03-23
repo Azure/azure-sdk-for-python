@@ -198,6 +198,11 @@ def test_create_mode_matrix__http_and_content_type(case: _CreateModeCase) -> Non
 
     assert response.status_code == case.expected_http
     assert response.headers.get("content-type", "").startswith(case.expected_content_prefix)
+    # Contract: C7/C8 (store=false, background=true) → error.code="unsupported_parameter", error.param="background"
+    if case.id in {"C7", "C8"}:
+        error = response.json().get("error", {})
+        assert error.get("code") == "unsupported_parameter"
+        assert error.get("param") == "background"
 
     if case.expected_http == 400:
         body = response.json()

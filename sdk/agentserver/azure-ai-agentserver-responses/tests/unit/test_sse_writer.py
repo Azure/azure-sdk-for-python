@@ -39,11 +39,25 @@ def test_sse_writer__keep_alive_comment_frame_format() -> None:
 
 
 def test_sse_writer__injects_monotonic_sequence_numbers() -> None:
+    import json as _json
+    import re
+
     first_event = _FakeEvent(type="response.created", sequence_number=-1, text="a")
     second_event = _FakeEvent(type="response.in_progress", sequence_number=-1, text="b")
 
     encoded_first = _sse.encode_sse_event(first_event)  # type: ignore[arg-type]
     encoded_second = _sse.encode_sse_event(second_event)  # type: ignore[arg-type]
 
-    assert '"sequence_number": 0' in encoded_first
-    assert '"sequence_number": 1' in encoded_second
+    def _extract_sequence_number(encoded: str) -> int:
+        data_line = next(line for line in encoded.splitlines() if line.startswith("data:"))
+        payload = _json.loads(data_line[len("data:"):].strip())
+        return int(payload["sequence_number"])
+
+    seq_first = _extract_sequence_number(encoded_first)
+    seq_second = _extract_sequence_number(encoded_second)
+
+    assert seq_first >= 0, f"sequence_number must be non-negative, got {seq_first}"
+    assert seq_second == seq_first + 1, (
+        f"sequence_numbers must be consecutive monotonic integers; "
+        f"got {seq_first} then {seq_second}"
+    )

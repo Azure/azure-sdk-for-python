@@ -23,8 +23,8 @@ def test_parse_create_response_rejects_invalid_payload() -> None:
 
     error = exc_info.value
     assert error.code == "invalid_request"
-    assert error.debug_info is not None
-    assert any("$.model" in e["path"] for e in error.debug_info["errors"])
+    assert error.details is not None
+    assert any(d["param"] == "$.model" for d in error.details)
 
 
 def test_parse_create_response_allows_valid_payload() -> None:

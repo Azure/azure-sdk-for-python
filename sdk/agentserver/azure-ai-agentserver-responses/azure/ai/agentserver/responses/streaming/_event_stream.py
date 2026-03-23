@@ -85,6 +85,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
                     "id": self._response_id,
                     "object": "response",
                     "output": [],
+                    "created_at": datetime.now(timezone.utc),
                 }
             )
             if request_mapping is not None:
@@ -553,6 +554,10 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :keyword type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any] | None
         :rtype: None
         """
-        self._response.completed_at = datetime.now(timezone.utc)
+        # B6: completed_at is non-null only for completed status
+        if self._response.status == "completed":
+            self._response.completed_at = datetime.now(timezone.utc)
+        else:
+            self._response.completed_at = None  # type: ignore[assignment]
         self._response.usage = _internals.coerce_usage(usage)
         self._response.output_text = _internals.compute_output_text(self._response)

@@ -362,3 +362,41 @@ def test_cancel__returns_404_for_unknown_response_id() -> None:
         expected_status=404,
         expected_type="invalid_request_error",
     )
+
+
+# ══════════════════════════════════════════════════════════
+# B-11: Cancel from queued / early in_progress state
+# ══════════════════════════════════════════════════════════
+
+
+def test_cancel__from_queued_or_early_in_progress_succeeds() -> None:
+    """B-11 — Cancel issued immediately after creation (queued/early in_progress) returns HTTP 200,
+    status=cancelled, and output=[]."""
+    client = _build_client(_DelayedResponseHandler())
+
+    create_response = client.post(
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": False,
+            "store": True,
+            "background": True,
+        },
+    )
+    assert create_response.status_code == 200
+    response_id = create_response.json()["id"]
+
+    # Cancel immediately — response is likely queued or very early in_progress.
+    cancel_response = client.post(f"/responses/{response_id}/cancel")
+    assert cancel_response.status_code == 200
+
+    _wait_for_status(client, response_id, "cancelled")
+
+    get_response = client.get(f"/responses/{response_id}")
+    assert get_response.status_code == 200
+    payload = get_response.json()
+    assert payload["status"] == "cancelled"
+    assert payload.get("output") == [], (
+        f"output must be cleared for a cancelled response, got: {payload.get('output')}"
+    )

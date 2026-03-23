@@ -5,12 +5,15 @@
 from __future__ import annotations
 
 import asyncio
+import threading
 from typing import Any
 
 from starlette.applications import Starlette
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.responses.hosting import map_responses_server
+from azure.ai.agentserver.responses._id_generator import IdGenerator
+from tests._helpers import EventGate, poll_until
 
 
 class _NoopResponseHandler:
@@ -44,6 +47,29 @@ def _build_client(handler: Any | None = None) -> TestClient:
     app = Starlette()
     map_responses_server(app, handler or _NoopResponseHandler())
     return TestClient(app)
+
+
+class _ThrowingBgHandler:
+    """Background handler that raises immediately — produces status=failed."""
+
+    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            raise RuntimeError("Simulated handler failure")
+            if False:  # pragma: no cover - keep async generator shape.
+                yield None
+
+        return _events()
+
+
+class _IncompleteBgHandler:
+    """Background handler that emits an incomplete terminal event."""
+
+    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            yield {"type": "response.created", "payload": {"status": "in_progress", "output": []}}
+            yield {"type": "response.incomplete", "payload": {"status": "incomplete", "output": []}}
+
+        return _events()
 
 
 def test_delete__deletes_stored_completed_response() -> None:
@@ -172,4 +198,211 @@ def test_delete__cancel_returns_404_after_deletion() -> None:
     cancel_response = client.post(f"/responses/{response_id}/cancel")
     assert cancel_response.status_code == 404
     payload = cancel_response.json()
+    assert payload["error"].get("type") == "invalid_request_error"
+
+
+class _BlockingSyncResponseHandler:
+    """Handler that holds a sync request in-flight for concurrent operation tests."""
+
+    def __init__(self, started_gate: EventGate, release_gate: threading.Event) -> None:
+        self._started_gate = started_gate
+        self._release_gate = release_gate
+
+    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            self._started_gate.signal(True)
+            while not self._release_gate.is_set():
+                if cancellation_signal.is_set():
+                    return
+                await asyncio.sleep(0.01)
+            if False:  # pragma: no cover
+                yield None
+
+        return _events()
+
+
+def test_delete__returns_404_for_non_bg_in_flight_response() -> None:
+    """FR-024 — Non-background in-flight responses are not findable → DELETE 404."""
+    started_gate = EventGate()
+    release_gate = threading.Event()
+    handler = _BlockingSyncResponseHandler(started_gate, release_gate)
+    app = Starlette()
+    map_responses_server(app, handler)
+    client = TestClient(app)
+    response_id = IdGenerator.new_response_id()
+
+    create_result: dict[str, Any] = {}
+
+    def _do_create() -> None:
+        try:
+            create_result["response"] = client.post(
+                "/responses",
+                json={
+                    "response_id": response_id,
+                    "model": "gpt-4o-mini",
+                    "input": "hello",
+                    "stream": False,
+                    "store": True,
+                    "background": False,
+                },
+            )
+        except Exception as exc:  # pragma: no cover
+            create_result["error"] = exc
+
+    t = threading.Thread(target=_do_create, daemon=True)
+    t.start()
+
+    started, _ = started_gate.wait(timeout_s=2.0)
+    assert started, "Expected sync create to enter handler before DELETE"
+
+    delete_response = client.delete(f"/responses/{response_id}")
+    assert delete_response.status_code == 404
+
+    release_gate.set()
+    t.join(timeout=2.0)
+    assert not t.is_alive()
+
+
+# ══════════════════════════════════════════════════════════
+# B-6: DELETE on terminal statuses (failed / incomplete / cancelled)
+# ══════════════════════════════════════════════════════════
+
+
+def test_delete__deletes_stored_failed_response() -> None:
+    """B-6 — DELETE on a failed (terminal) stored response returns 200 with deleted=True."""
+    client = _build_client(_ThrowingBgHandler())
+
+    create_response = client.post(
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": False,
+            "store": True,
+            "background": True,
+        },
+    )
+    assert create_response.status_code == 200
+    response_id = create_response.json()["id"]
+
+    ok, failure = poll_until(
+        lambda: client.get(f"/responses/{response_id}").json().get("status") == "failed",
+        timeout_s=5.0,
+        interval_s=0.05,
+        context_provider=lambda: client.get(f"/responses/{response_id}").json().get("status"),
+        label=f"status=failed for {response_id}",
+    )
+    assert ok, failure
+
+    delete_response = client.delete(f"/responses/{response_id}")
+    assert delete_response.status_code == 200
+    payload = delete_response.json()
+    assert payload.get("id") == response_id
+    assert payload.get("object") == "response.deleted"
+    assert payload.get("deleted") is True
+
+
+def test_delete__deletes_stored_incomplete_response() -> None:
+    """B-6 — DELETE on an incomplete (terminal) stored response returns 200 with deleted=True."""
+    client = _build_client(_IncompleteBgHandler())
+
+    create_response = client.post(
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": False,
+            "store": True,
+            "background": True,
+        },
+    )
+    assert create_response.status_code == 200
+    response_id = create_response.json()["id"]
+
+    ok, failure = poll_until(
+        lambda: client.get(f"/responses/{response_id}").json().get("status") == "incomplete",
+        timeout_s=5.0,
+        interval_s=0.05,
+        context_provider=lambda: client.get(f"/responses/{response_id}").json().get("status"),
+        label=f"status=incomplete for {response_id}",
+    )
+    assert ok, failure
+
+    delete_response = client.delete(f"/responses/{response_id}")
+    assert delete_response.status_code == 200
+    payload = delete_response.json()
+    assert payload.get("id") == response_id
+    assert payload.get("object") == "response.deleted"
+    assert payload.get("deleted") is True
+
+
+def test_delete__deletes_stored_cancelled_response() -> None:
+    """B-6 — DELETE on a cancelled (terminal) stored response returns 200 with deleted=True."""
+    client = _build_client(_DelayedResponseHandler())
+
+    create_response = client.post(
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": False,
+            "store": True,
+            "background": True,
+        },
+    )
+    assert create_response.status_code == 200
+    response_id = create_response.json()["id"]
+
+    cancel_response = client.post(f"/responses/{response_id}/cancel")
+    assert cancel_response.status_code == 200
+
+    ok, failure = poll_until(
+        lambda: client.get(f"/responses/{response_id}").json().get("status") == "cancelled",
+        timeout_s=5.0,
+        interval_s=0.05,
+        context_provider=lambda: client.get(f"/responses/{response_id}").json().get("status"),
+        label=f"status=cancelled for {response_id}",
+    )
+    assert ok, failure
+
+    delete_response = client.delete(f"/responses/{response_id}")
+    assert delete_response.status_code == 200
+    payload = delete_response.json()
+    assert payload.get("id") == response_id
+    assert payload.get("object") == "response.deleted"
+    assert payload.get("deleted") is True
+
+
+# ══════════════════════════════════════════════════════════
+# N-5: Second DELETE on already-deleted response → 404
+# ══════════════════════════════════════════════════════════
+
+
+def test_delete__second_delete_returns_404() -> None:
+    """FR-024 — Deletion is permanent; a second DELETE on an already-deleted ID returns 404."""
+    client = _build_client()
+
+    create_response = client.post(
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": False,
+            "store": True,
+            "background": False,
+        },
+    )
+    assert create_response.status_code == 200
+    response_id = create_response.json()["id"]
+
+    # First DELETE – should succeed
+    first_delete = client.delete(f"/responses/{response_id}")
+    assert first_delete.status_code == 200
+
+    # Second DELETE – response is gone, must return 404
+    second_delete = client.delete(f"/responses/{response_id}")
+    assert second_delete.status_code == 404, (
+        "Second DELETE on an already-deleted response must return 404 (response no longer exists)"
+    )
+    payload = second_delete.json()
     assert payload["error"].get("type") == "invalid_request_error"
