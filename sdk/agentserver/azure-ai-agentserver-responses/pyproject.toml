@@ -22,6 +22,7 @@ dependencies = [
     "starlette>=1.0.0rc1,<2.0.0",
     "uvicorn>=0.31.0",
 ]
+keywords = ["azure", "azure sdk"]
 
 [project.urls]
 repository = "https://github.com/Azure/azure-sdk-for-python"
