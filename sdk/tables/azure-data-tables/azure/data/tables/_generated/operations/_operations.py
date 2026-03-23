@@ -43,6 +43,7 @@ from .._utils.model_base import (
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import prep_if_match, prep_if_none_match
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -98,8 +99,8 @@ def build_table_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     data_service_version: Literal["3.0"] = kwargs.pop("data_service_version", _headers.pop("DataServiceVersion", "3.0"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/json;odata=minimalmetadata")
 
@@ -111,7 +112,8 @@ def build_table_create_request(
         _params["$format"] = _SERIALIZER.query("format", format, "str")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["DataServiceVersion"] = _SERIALIZER.header("data_service_version", data_service_version, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
     if response_preference is not None:
@@ -245,7 +247,6 @@ def build_table_update_entity_request(
     row_key: str,
     *,
     timeout: Optional[int] = None,
-    format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
     etag: Optional[str] = None,
     match_condition: Optional[MatchConditions] = None,
     **kwargs: Any
@@ -271,8 +272,6 @@ def build_table_update_entity_request(
     # Construct parameters
     if timeout is not None:
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-    if format is not None:
-        _params["$format"] = _SERIALIZER.query("format", format, "str")
 
     # Construct headers
     _headers["DataServiceVersion"] = _SERIALIZER.header("data_service_version", data_service_version, "str")
@@ -296,7 +295,6 @@ def build_table_merge_entity_request(
     row_key: str,
     *,
     timeout: Optional[int] = None,
-    format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
     etag: Optional[str] = None,
     match_condition: Optional[MatchConditions] = None,
     **kwargs: Any
@@ -322,8 +320,6 @@ def build_table_merge_entity_request(
     # Construct parameters
     if timeout is not None:
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-    if format is not None:
-        _params["$format"] = _SERIALIZER.query("format", format, "str")
 
     # Construct headers
     _headers["DataServiceVersion"] = _SERIALIZER.header("data_service_version", data_service_version, "str")
@@ -349,7 +345,6 @@ def build_table_delete_entity_request(
     etag: str,
     match_condition: MatchConditions,
     timeout: Optional[int] = None,
-    format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -357,7 +352,7 @@ def build_table_delete_entity_request(
 
     data_service_version: Literal["3.0"] = kwargs.pop("data_service_version", _headers.pop("DataServiceVersion", "3.0"))
     api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
-    accept = _headers.pop("Accept", "application/json;odata=minimalmetadata")
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
@@ -372,8 +367,6 @@ def build_table_delete_entity_request(
     # Construct parameters
     if timeout is not None:
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-    if format is not None:
-        _params["$format"] = _SERIALIZER.query("format", format, "str")
 
     # Construct headers
     _headers["DataServiceVersion"] = _SERIALIZER.header("data_service_version", data_service_version, "str")
@@ -400,8 +393,8 @@ def build_table_insert_entity_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     data_service_version: Literal["3.0"] = kwargs.pop("data_service_version", _headers.pop("DataServiceVersion", "3.0"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/json;odata=minimalmetadata")
 
@@ -420,7 +413,8 @@ def build_table_insert_entity_request(
         _params["$format"] = _SERIALIZER.query("format", format, "str")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["DataServiceVersion"] = _SERIALIZER.header("data_service_version", data_service_version, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
     if response_preference is not None:
@@ -661,11 +655,12 @@ class TableOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    @distributed_trace
+    @overload
     def create(
         self,
         table_properties: _models.TableProperties,
         *,
+        content_type: str = "application/json",
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
         response_preference: Optional[Union[str, _models.ResponseFormat]] = None,
         **kwargs: Any
@@ -674,6 +669,100 @@ class TableOperations:
 
         :param table_properties: The table properties to create. Required.
         :type table_properties: ~azure.data.tables._generated.models.TableProperties
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword format: Specifies the metadata format for the response. Known values are:
+         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
+         "application/json;odata=fullmetadata". Default value is None.
+        :paramtype format: str or ~azure.data.tables.models.OdataMetadataFormat
+        :keyword response_preference: Specifies whether the response should include the created table
+         in the
+         payload. Possible values are return-no-content and return-content. Known values are:
+         "return-no-content" and "return-content". Default value is None.
+        :paramtype response_preference: str or ~azure.data.tables.models.ResponseFormat
+        :return: TableResponse or None. The TableResponse is compatible with MutableMapping
+        :rtype: ~azure.data.tables._generated.models.TableResponse or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(
+        self,
+        table_properties: JSON,
+        *,
+        content_type: str = "application/json",
+        format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
+        response_preference: Optional[Union[str, _models.ResponseFormat]] = None,
+        **kwargs: Any
+    ) -> Optional[_models.TableResponse]:
+        """Creates a new table under the given account.
+
+        :param table_properties: The table properties to create. Required.
+        :type table_properties: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword format: Specifies the metadata format for the response. Known values are:
+         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
+         "application/json;odata=fullmetadata". Default value is None.
+        :paramtype format: str or ~azure.data.tables.models.OdataMetadataFormat
+        :keyword response_preference: Specifies whether the response should include the created table
+         in the
+         payload. Possible values are return-no-content and return-content. Known values are:
+         "return-no-content" and "return-content". Default value is None.
+        :paramtype response_preference: str or ~azure.data.tables.models.ResponseFormat
+        :return: TableResponse or None. The TableResponse is compatible with MutableMapping
+        :rtype: ~azure.data.tables._generated.models.TableResponse or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(
+        self,
+        table_properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
+        response_preference: Optional[Union[str, _models.ResponseFormat]] = None,
+        **kwargs: Any
+    ) -> Optional[_models.TableResponse]:
+        """Creates a new table under the given account.
+
+        :param table_properties: The table properties to create. Required.
+        :type table_properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword format: Specifies the metadata format for the response. Known values are:
+         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
+         "application/json;odata=fullmetadata". Default value is None.
+        :paramtype format: str or ~azure.data.tables.models.OdataMetadataFormat
+        :keyword response_preference: Specifies whether the response should include the created table
+         in the
+         payload. Possible values are return-no-content and return-content. Known values are:
+         "return-no-content" and "return-content". Default value is None.
+        :paramtype response_preference: str or ~azure.data.tables.models.ResponseFormat
+        :return: TableResponse or None. The TableResponse is compatible with MutableMapping
+        :rtype: ~azure.data.tables._generated.models.TableResponse or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create(
+        self,
+        table_properties: Union[_models.TableProperties, JSON, IO[bytes]],
+        *,
+        format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
+        response_preference: Optional[Union[str, _models.ResponseFormat]] = None,
+        **kwargs: Any
+    ) -> Optional[_models.TableResponse]:
+        """Creates a new table under the given account.
+
+        :param table_properties: The table properties to create. Is one of the following types:
+         TableProperties, JSON, IO[bytes] Required.
+        :type table_properties: ~azure.data.tables._generated.models.TableProperties or JSON or
+         IO[bytes]
         :keyword format: Specifies the metadata format for the response. Known values are:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
@@ -701,18 +790,21 @@ class TableOperations:
         data_service_version: Literal["3.0"] = kwargs.pop(
             "data_service_version", _headers.pop("DataServiceVersion", "3.0")
         )
-        content_type: str = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", "application/json;odata=nometadata")
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.TableResponse]] = kwargs.pop("cls", None)
 
-        _content = json.dumps(table_properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(table_properties, (IOBase, bytes)):
+            _content = table_properties
+        else:
+            _content = json.dumps(table_properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_table_create_request(
             format=format,
             response_preference=response_preference,
-            content_type=content_type,
             data_service_version=data_service_version,
+            content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
             headers=_headers,
@@ -1088,7 +1180,6 @@ class TableOperations:
         table_entity_properties: Optional[dict[str, Any]] = None,
         *,
         timeout: Optional[int] = None,
-        format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
         content_type: str = "application/json",
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -1106,10 +1197,6 @@ class TableOperations:
         :type table_entity_properties: dict[str, any]
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
-        :keyword format: Specifies the metadata format for the response. Known values are:
-         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
-         "application/json;odata=fullmetadata". Default value is None.
-        :paramtype format: str or ~azure.data.tables.models.OdataMetadataFormat
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1132,7 +1219,6 @@ class TableOperations:
         table_entity_properties: Optional[IO[bytes]] = None,
         *,
         timeout: Optional[int] = None,
-        format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
         content_type: str = "application/json",
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -1150,10 +1236,6 @@ class TableOperations:
         :type table_entity_properties: IO[bytes]
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
-        :keyword format: Specifies the metadata format for the response. Known values are:
-         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
-         "application/json;odata=fullmetadata". Default value is None.
-        :paramtype format: str or ~azure.data.tables.models.OdataMetadataFormat
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1176,7 +1258,6 @@ class TableOperations:
         table_entity_properties: Optional[Union[dict[str, Any], IO[bytes]]] = None,
         *,
         timeout: Optional[int] = None,
-        format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -1194,10 +1275,6 @@ class TableOperations:
         :type table_entity_properties: dict[str, any] or IO[bytes]
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
-        :keyword format: Specifies the metadata format for the response. Known values are:
-         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
-         "application/json;odata=fullmetadata". Default value is None.
-        :paramtype format: str or ~azure.data.tables.models.OdataMetadataFormat
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -1246,7 +1323,6 @@ class TableOperations:
             partition_key=partition_key,
             row_key=row_key,
             timeout=timeout,
-            format=format,
             etag=etag,
             match_condition=match_condition,
             data_service_version=data_service_version,
@@ -1297,7 +1373,6 @@ class TableOperations:
         table_entity_properties: Optional[dict[str, Any]] = None,
         *,
         timeout: Optional[int] = None,
-        format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
         content_type: str = "application/json",
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -1315,10 +1390,6 @@ class TableOperations:
         :type table_entity_properties: dict[str, any]
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
-        :keyword format: Specifies the metadata format for the response. Known values are:
-         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
-         "application/json;odata=fullmetadata". Default value is None.
-        :paramtype format: str or ~azure.data.tables.models.OdataMetadataFormat
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1341,7 +1412,6 @@ class TableOperations:
         table_entity_properties: Optional[IO[bytes]] = None,
         *,
         timeout: Optional[int] = None,
-        format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
         content_type: str = "application/json",
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -1359,10 +1429,6 @@ class TableOperations:
         :type table_entity_properties: IO[bytes]
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
-        :keyword format: Specifies the metadata format for the response. Known values are:
-         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
-         "application/json;odata=fullmetadata". Default value is None.
-        :paramtype format: str or ~azure.data.tables.models.OdataMetadataFormat
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1385,7 +1451,6 @@ class TableOperations:
         table_entity_properties: Optional[Union[dict[str, Any], IO[bytes]]] = None,
         *,
         timeout: Optional[int] = None,
-        format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -1403,10 +1468,6 @@ class TableOperations:
         :type table_entity_properties: dict[str, any] or IO[bytes]
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
-        :keyword format: Specifies the metadata format for the response. Known values are:
-         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
-         "application/json;odata=fullmetadata". Default value is None.
-        :paramtype format: str or ~azure.data.tables.models.OdataMetadataFormat
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -1455,7 +1516,6 @@ class TableOperations:
             partition_key=partition_key,
             row_key=row_key,
             timeout=timeout,
-            format=format,
             etag=etag,
             match_condition=match_condition,
             data_service_version=data_service_version,
@@ -1507,7 +1567,6 @@ class TableOperations:
         etag: str,
         match_condition: MatchConditions,
         timeout: Optional[int] = None,
-        format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
         **kwargs: Any
     ) -> None:
         """Deletes the specified entity in a table.
@@ -1524,10 +1583,6 @@ class TableOperations:
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
-        :keyword format: Specifies the metadata format for the response. Known values are:
-         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
-         "application/json;odata=fullmetadata". Default value is None.
-        :paramtype format: str or ~azure.data.tables.models.OdataMetadataFormat
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1561,7 +1616,6 @@ class TableOperations:
             etag=etag,
             match_condition=match_condition,
             timeout=timeout,
-            format=format,
             data_service_version=data_service_version,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1598,12 +1652,13 @@ class TableOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace
+    @overload
     def insert_entity(
         self,
         table: str,
         table_entity_properties: Optional[dict[str, Any]] = None,
         *,
+        content_type: str = "application/json",
         timeout: Optional[int] = None,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
         response_preference: Optional[Union[str, _models.ResponseFormat]] = None,
@@ -1615,6 +1670,80 @@ class TableOperations:
         :type table: str
         :param table_entity_properties: The entity properties to insert. Default value is None.
         :type table_entity_properties: dict[str, any]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword format: Specifies the metadata format for the response. Known values are:
+         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
+         "application/json;odata=fullmetadata". Default value is None.
+        :paramtype format: str or ~azure.data.tables.models.OdataMetadataFormat
+        :keyword response_preference: Specifies whether the response should include the inserted entity
+         in the
+         payload. Possible values are return-no-content and return-content. Known values are:
+         "return-no-content" and "return-content". Default value is None.
+        :paramtype response_preference: str or ~azure.data.tables.models.ResponseFormat
+        :return: dict mapping str to any or None
+        :rtype: dict[str, any] or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def insert_entity(
+        self,
+        table: str,
+        table_entity_properties: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        timeout: Optional[int] = None,
+        format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
+        response_preference: Optional[Union[str, _models.ResponseFormat]] = None,
+        **kwargs: Any
+    ) -> Optional[dict[str, Any]]:
+        """Insert entity in a table.
+
+        :param table: The name of the table. Required.
+        :type table: str
+        :param table_entity_properties: The entity properties to insert. Default value is None.
+        :type table_entity_properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword format: Specifies the metadata format for the response. Known values are:
+         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
+         "application/json;odata=fullmetadata". Default value is None.
+        :paramtype format: str or ~azure.data.tables.models.OdataMetadataFormat
+        :keyword response_preference: Specifies whether the response should include the inserted entity
+         in the
+         payload. Possible values are return-no-content and return-content. Known values are:
+         "return-no-content" and "return-content". Default value is None.
+        :paramtype response_preference: str or ~azure.data.tables.models.ResponseFormat
+        :return: dict mapping str to any or None
+        :rtype: dict[str, any] or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def insert_entity(
+        self,
+        table: str,
+        table_entity_properties: Optional[Union[dict[str, Any], IO[bytes]]] = None,
+        *,
+        timeout: Optional[int] = None,
+        format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
+        response_preference: Optional[Union[str, _models.ResponseFormat]] = None,
+        **kwargs: Any
+    ) -> Optional[dict[str, Any]]:
+        """Insert entity in a table.
+
+        :param table: The name of the table. Required.
+        :type table: str
+        :param table_entity_properties: The entity properties to insert. Is either a {str: Any} type or
+         a IO[bytes] type. Default value is None.
+        :type table_entity_properties: dict[str, any] or IO[bytes]
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword format: Specifies the metadata format for the response. Known values are:
@@ -1644,24 +1773,27 @@ class TableOperations:
         data_service_version: Literal["3.0"] = kwargs.pop(
             "data_service_version", _headers.pop("DataServiceVersion", "3.0")
         )
-        content_type: Optional[str] = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", "application/json;odata=nometadata")
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if table_entity_properties else None
         cls: ClsType[Optional[dict[str, Any]]] = kwargs.pop("cls", None)
 
-        if table_entity_properties is not None:
-            _content = json.dumps(table_entity_properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        content_type = content_type or "application/json" if table_entity_properties else None
+        _content = None
+        if isinstance(table_entity_properties, (IOBase, bytes)):
+            _content = table_entity_properties
         else:
-            _content = None
+            if table_entity_properties is not None:
+                _content = json.dumps(table_entity_properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
 
         _request = build_table_insert_entity_request(
             table=table,
             timeout=timeout,
             format=format,
             response_preference=response_preference,
-            content_type=content_type,
             data_service_version=data_service_version,
+            content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
             headers=_headers,
