@@ -89,8 +89,8 @@ async def main() -> None:
             toolsets.append(item.name)
         print(f"Found {len(toolsets)} toolsets")
 
-        deleted = await project_client.beta.toolsets.delete(toolset_name)
-        print(f"Deleted toolset: {deleted.deleted}")
+        await project_client.beta.toolsets.delete(toolset_name)
+        print("Toolset deleted")
 
 
 if __name__ == "__main__":

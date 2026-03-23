@@ -85,5 +85,5 @@ with (
     for item in toolsets:
         print(f"  - {item.name} ({item.id})")
 
-    deleted = project_client.beta.toolsets.delete(toolset_name)
-    print(f"Deleted toolset: {deleted.deleted}")
+    project_client.beta.toolsets.delete(toolset_name)
+    print("Toolset deleted")
