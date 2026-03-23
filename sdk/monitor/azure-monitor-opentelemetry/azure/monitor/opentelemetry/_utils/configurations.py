@@ -314,7 +314,7 @@ def _get_sampler_from_name(sampler_type):
 
         if sampler_value < 0.0 or sampler_value > 1.0:
             _logger.error(
-                "Invalid sampler argument for %s. " "It should be a value between 0 and 1. Defaulting to %s.",
+                "Invalid sampler argument for %s. It should be a value between 0 and 1. Defaulting to %s.",
                 sampler_type,
                 default_value,
             )
