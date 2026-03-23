@@ -23,6 +23,7 @@ from ..models import ResponseModeFlags
 from ._background import _refresh_background_status, _run_background_non_stream, _try_execute_background_runner
 from ..streaming._helpers import (
     EVENT_TYPE,
+    _RESPONSE_SNAPSHOT_EVENT_TYPES,
     _apply_stream_event_defaults,
     _build_events,
     _coerce_handler_event,
@@ -183,6 +184,7 @@ def map_responses_server(  # pylint: disable=too-many-statements
         :rtype: Response
         """
         handler_events: list[dict[str, Any]] = []
+        bg_record: _ExecutionRecord | None = None
 
         def _normalize_and_append(handler_event: Any) -> dict[str, Any]:
             coerced = _coerce_handler_event(handler_event)
@@ -194,9 +196,79 @@ def map_responses_server(  # pylint: disable=too-many-statements
                 sequence_number=len(handler_events),
             )
             handler_events.append(normalized)
+            if bg_record is not None and bg_record.status != "cancelled":
+                bg_record.events.append(deepcopy(normalized))
+                event_type = normalized.get("type")
+                payload = normalized.get("payload", {})
+                if event_type in _RESPONSE_SNAPSHOT_EVENT_TYPES:
+                    # response.* lifecycle event: replace the entire snapshot (S-013)
+                    bg_record.response_payload = _extract_response_snapshot_from_events(
+                        handler_events,
+                        response_id=response_id,
+                        agent_reference=agent_reference,
+                        model=model,
+                    )
+                    resolved = bg_record.response_payload.get("status")
+                    if isinstance(resolved, str):
+                        bg_record.status = resolved
+                elif event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value:
+                    # Accumulate output items between response.* events (S-014)
+                    item = payload.get("item")
+                    if isinstance(item, dict) and isinstance(bg_record.response_payload, dict):
+                        output = bg_record.response_payload.setdefault("output", [])
+                        output.append(deepcopy(item))
+                elif event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value:
+                    # Update tracked output item at its index
+                    item = payload.get("item")
+                    output_index = payload.get("output_index")
+                    if (
+                        isinstance(item, dict)
+                        and isinstance(output_index, int)
+                        and isinstance(bg_record.response_payload, dict)
+                    ):
+                        output = bg_record.response_payload.get("output", [])
+                        if 0 <= output_index < len(output):
+                            output[output_index] = deepcopy(item)
             return normalized
 
         async def _finalize_stream() -> None:
+            if bg_record is not None:
+                # Background+stream: record was created at response.created
+                # time.  Update terminal state unless cancel endpoint already
+                # set the final state.
+                if bg_record.status != "cancelled":
+                    events = handler_events if handler_events else _build_events(
+                        response_id,
+                        include_progress=True,
+                        agent_reference=agent_reference,
+                        model=model,
+                    )
+                    if captured_error is not None:
+                        bg_record.status = "failed"
+                        bg_record.response_payload = {
+                            "id": response_id,
+                            "response_id": response_id,
+                            "agent_reference": deepcopy(agent_reference),
+                            "object": "response",
+                            "status": "failed",
+                            "model": model,
+                            "output": [],
+                        }
+                    else:
+                        response_payload = _extract_response_snapshot_from_events(
+                            events,
+                            response_id=response_id,
+                            agent_reference=agent_reference,
+                            model=model,
+                        )
+                        resolved_status = response_payload.get("status")
+                        status = resolved_status if isinstance(resolved_status, str) else "in_progress"
+                        bg_record.response_payload = response_payload
+                        bg_record.status = status
+                    bg_record.events = deepcopy(handler_events) if handler_events else []
+                span.end(captured_error)
+                return
+
             events = handler_events if handler_events else _build_events(
                 response_id,
                 include_progress=True,
@@ -266,6 +338,34 @@ def map_responses_server(  # pylint: disable=too-many-statements
             sequence_number=0,
         )
         handler_events.append(first_normalized)
+
+        if background and store:
+            initial_payload = _extract_response_snapshot_from_events(
+                handler_events,
+                response_id=response_id,
+                agent_reference=agent_reference,
+                model=model,
+            )
+            initial_status = initial_payload.get("status")
+            if not isinstance(initial_status, str):
+                initial_status = "in_progress"
+            bg_record = _ExecutionRecord(
+                response_id=response_id,
+                agent_reference=deepcopy(agent_reference),
+                stream=True,
+                store=True,
+                background=True,
+                replay_enabled=True,
+                visible_via_get=True,
+                status=initial_status,
+                model=model,
+                response_payload=initial_payload,
+                events=[deepcopy(first_normalized)],
+                input_items=deepcopy(input_items),
+                previous_response_id=previous_response_id,
+                cancel_signal=cancellation_signal,
+            )
+            await runtime_state.add(bg_record)
 
         async def _live_stream() -> AsyncIterator[str]:  # pylint: disable=too-many-statements
             nonlocal captured_error
