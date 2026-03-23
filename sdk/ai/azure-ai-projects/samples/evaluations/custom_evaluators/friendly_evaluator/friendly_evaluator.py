@@ -59,4 +59,6 @@ class FriendlyEvaluator:
         )
 
         raw_result = completion.choices[0].message.content
+        if raw_result is None:
+            raise ValueError("No content in completion response")
         return parse_evaluation_result(raw_result)

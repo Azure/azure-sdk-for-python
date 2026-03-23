@@ -239,9 +239,9 @@ class TestEvaluatorsUploadAsync:
             )
 
             mock_container.upload_blob.assert_called_once()
-            blob_name = mock_container.upload_blob.call_args.kwargs.get(
-                "name"
-            ) or mock_container.upload_blob.call_args[1].get("name")
+            blob_name = mock_container.upload_blob.call_args.kwargs.get("name") or mock_container.upload_blob.call_args[
+                1
+            ].get("name")
             assert blob_name == "evaluator.py"
 
     @pytest.mark.asyncio
@@ -308,9 +308,9 @@ class TestEvaluatorsUploadAsync:
             )
 
             assert mock_container.upload_blob.call_count == 1
-            blob_name = mock_container.upload_blob.call_args.kwargs.get(
-                "name"
-            ) or mock_container.upload_blob.call_args[1].get("name")
+            blob_name = mock_container.upload_blob.call_args.kwargs.get("name") or mock_container.upload_blob.call_args[
+                1
+            ].get("name")
             assert blob_name == "evaluator.py"
 
     # ---------------------------------------------------------------
