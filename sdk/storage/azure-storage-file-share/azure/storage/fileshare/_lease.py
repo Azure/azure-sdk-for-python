@@ -49,12 +49,15 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         self.id = lease_id or str(uuid.uuid4())
         self.last_modified = None
         self.etag = None
+        self._file_request_intent = getattr(client, "file_request_intent", None)
         if hasattr(client, "file_name"):
             self._client = client._client.file  # type: ignore
             self._snapshot = None
+            self._allow_trailing_dot = getattr(client, "allow_trailing_dot", None)
         elif hasattr(client, "share_name"):
             self._client = client._client.share
             self._snapshot = client.snapshot
+            self._allow_trailing_dot = None
         else:
             raise TypeError("Lease must use ShareFileClient or ShareClient.")
 
@@ -93,10 +96,13 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
             lease_duration = kwargs.pop("lease_duration", -1)
             if self._snapshot:
                 kwargs["sharesnapshot"] = self._snapshot
+            if self._allow_trailing_dot is not None:
+                kwargs["allow_trailing_dot"] = self._allow_trailing_dot
             response = self._client.acquire_lease(
                 timeout=kwargs.pop("timeout", None),
                 lease_duration=lease_duration,
                 proposed_lease_id=self.id,
+                file_request_intent=self._file_request_intent,
                 cls=return_response_headers,
                 **kwargs
             )
@@ -133,6 +139,7 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
                 lease_id=self.id,
                 timeout=kwargs.pop("timeout", None),
                 sharesnapshot=self._snapshot,
+                file_request_intent=self._file_request_intent,
                 cls=return_response_headers,
                 **kwargs
             )
@@ -159,8 +166,14 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         try:
             if self._snapshot:
                 kwargs["sharesnapshot"] = self._snapshot
+            if self._allow_trailing_dot is not None:
+                kwargs["allow_trailing_dot"] = self._allow_trailing_dot
             response = self._client.release_lease(
-                lease_id=self.id, timeout=kwargs.pop("timeout", None), cls=return_response_headers, **kwargs
+                lease_id=self.id,
+                timeout=kwargs.pop("timeout", None),
+                file_request_intent=self._file_request_intent,
+                cls=return_response_headers,
+                **kwargs
             )
         except HttpResponseError as error:
             process_storage_error(error)
@@ -187,10 +200,13 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         try:
             if self._snapshot:
                 kwargs["sharesnapshot"] = self._snapshot
+            if self._allow_trailing_dot is not None:
+                kwargs["allow_trailing_dot"] = self._allow_trailing_dot
             response = self._client.change_lease(
                 lease_id=self.id,
                 proposed_lease_id=proposed_lease_id,
                 timeout=kwargs.pop("timeout", None),
+                file_request_intent=self._file_request_intent,
                 cls=return_response_headers,
                 **kwargs
             )
@@ -241,8 +257,14 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
             if isinstance(self._client, FileOperations) and lease_break_period:
                 raise TypeError("Setting a lease break period is only applicable to Share leases.")
 
+            if self._allow_trailing_dot is not None:
+                kwargs["allow_trailing_dot"] = self._allow_trailing_dot
+
             response = self._client.break_lease(
-                timeout=kwargs.pop("timeout", None), cls=return_response_headers, **kwargs
+                timeout=kwargs.pop("timeout", None),
+                file_request_intent=self._file_request_intent,
+                cls=return_response_headers,
+                **kwargs
             )
         except HttpResponseError as error:
             process_storage_error(error)

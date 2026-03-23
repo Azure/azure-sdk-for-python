@@ -26,7 +26,7 @@ from .._parser import _datetime_to_str, _get_file_permission, _parse_snapshot
 from .._serialize import get_api_version, get_dest_access_conditions, get_rename_smb_properties
 from .._shared.base_client import parse_query, StorageAccountHostsMixin
 from .._shared.base_client_async import parse_connection_str, AsyncStorageAccountHostsMixin, AsyncTransportWrapper
-from .._shared.base_client import _NoOpCredential, _patch_generated_client
+from .._client_helpers import _NoOpCredential, _strip_snapshot_from_url
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers
 from .._shared.response_handlers import process_storage_error, return_response_headers
@@ -139,16 +139,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         self.allow_source_trailing_dot = kwargs.pop("allow_source_trailing_dot", None)
         self.file_request_intent = token_intent
         self._client = AzureFileStorage(
-            url=self._base_url,
+            url=_strip_snapshot_from_url(self.url),
             credential=_NoOpCredential(),
             version=get_api_version(kwargs),
             pipeline=self._pipeline,
         )
-        self._client._config.allow_trailing_dot = self.allow_trailing_dot
-        self._client._config.allow_source_trailing_dot = self.allow_source_trailing_dot
-        self._client._config.file_request_intent = self.file_request_intent
-        self._client._config.sharesnapshot = self.snapshot
-        _patch_generated_client(self._client)
 
     async def __aenter__(self) -> Self:
         await self._client.__aenter__()
@@ -429,6 +424,8 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                     timeout=timeout,
                     cls=return_response_headers,
                     headers=headers,
+                    allow_trailing_dot=self.allow_trailing_dot,
+                    file_request_intent=self.file_request_intent,
                     **kwargs,
                 ),
             )
@@ -459,7 +456,12 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         """
         timeout = kwargs.pop("timeout", None)
         try:
-            await self._client.directory.delete(timeout=timeout, **kwargs)
+            await self._client.directory.delete(
+                timeout=timeout,
+                allow_trailing_dot=self.allow_trailing_dot,
+                file_request_intent=self.file_request_intent,
+                **kwargs,
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -567,6 +569,9 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                 replace_if_exists=overwrite,
                 destination_lease_id=destination_access_conditions,
                 headers=headers,
+                allow_trailing_dot=self.allow_trailing_dot,
+                allow_source_trailing_dot=self.allow_source_trailing_dot,
+                file_request_intent=self.file_request_intent,
                 **kwargs,
             )
 
@@ -622,6 +627,8 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
             self._client.directory.list_files_and_directories_segment,
             sharesnapshot=self.snapshot,
             timeout=timeout,
+            allow_trailing_dot=self.allow_trailing_dot,
+            file_request_intent=self.file_request_intent,
             **kwargs,
         )
         return AsyncItemPaged(
@@ -654,6 +661,8 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
             sharesnapshot=self.snapshot,
             timeout=timeout,
             recursive=recursive,
+            allow_trailing_dot=self.allow_trailing_dot,
+            file_request_intent=self.file_request_intent,
             **kwargs,
         )
         return AsyncItemPaged(command, results_per_page=results_per_page, page_iterator_class=HandlesPaged)
@@ -673,7 +682,12 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         :rtype: bool
         """
         try:
-            await self._client.directory.get_properties(**kwargs)
+            await self._client.directory.get_properties(
+                allow_trailing_dot=self.allow_trailing_dot,
+                file_request_intent=self.file_request_intent,
+                sharesnapshot=self.snapshot,
+                **kwargs,
+            )
             return True
         except HttpResponseError as error:
             try:
@@ -711,6 +725,8 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                 recursive=None,
                 sharesnapshot=self.snapshot,
                 cls=return_response_headers,
+                allow_trailing_dot=self.allow_trailing_dot,
+                file_request_intent=self.file_request_intent,
                 **kwargs,
             )
             return {
@@ -755,6 +771,8 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                     recursive=recursive,
                     sharesnapshot=self.snapshot,
                     cls=return_response_headers,
+                    allow_trailing_dot=self.allow_trailing_dot,
+                    file_request_intent=self.file_request_intent,
                     **kwargs,
                 )
             except HttpResponseError as error:
@@ -787,7 +805,12 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
             response = cast(
                 "DirectoryProperties",
                 await self._client.directory.get_properties(
-                    timeout=timeout, cls=deserialize_directory_properties, **kwargs
+                    timeout=timeout,
+                    cls=deserialize_directory_properties,
+                    allow_trailing_dot=self.allow_trailing_dot,
+                    file_request_intent=self.file_request_intent,
+                    sharesnapshot=self.snapshot,
+                    **kwargs,
                 ),
             )
         except HttpResponseError as error:
@@ -821,7 +844,12 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
             return cast(
                 Dict[str, Any],
                 await self._client.directory.set_metadata(
-                    timeout=timeout, cls=return_response_headers, headers=headers, **kwargs
+                    timeout=timeout,
+                    cls=return_response_headers,
+                    headers=headers,
+                    allow_trailing_dot=self.allow_trailing_dot,
+                    file_request_intent=self.file_request_intent,
+                    **kwargs,
                 ),
             )
         except HttpResponseError as error:
@@ -900,6 +928,8 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                     file_permission_key=permission_key,
                     timeout=timeout,
                     cls=return_response_headers,
+                    allow_trailing_dot=self.allow_trailing_dot,
+                    file_request_intent=self.file_request_intent,
                     **kwargs,
                 ),
             )

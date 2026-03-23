@@ -40,7 +40,6 @@ from .policies import (
     StorageHeadersPolicy,
     StorageHosts,
     StorageRequestHook,
-    StorageTrailingSlashPolicy,
 )
 from .policies_async import AsyncStorageBearerTokenCredentialPolicy, AsyncStorageResponseHook
 from .response_handlers import PartialBatchErrorException, process_storage_error
@@ -129,7 +128,6 @@ class AsyncStorageAccountHostsMixin(object):
         hosts = self._hosts
         policies = [
             QueueMessagePolicy(),
-            StorageTrailingSlashPolicy(),
             config.proxy_policy,
             config.user_agent_policy,
             StorageContentValidation(),

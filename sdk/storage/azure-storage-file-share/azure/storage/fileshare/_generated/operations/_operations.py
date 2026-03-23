@@ -1351,7 +1351,7 @@ def build_file_download_request(
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if range is not None:
-        _headers["Range"] = _SERIALIZER.header("range", range, "str")
+        _headers["x-ms-range"] = _SERIALIZER.header("range", range, "str")
     if range_get_content_md5 is not None:
         _headers["x-ms-range-get-content-md5"] = _SERIALIZER.header(
             "range_get_content_md5", range_get_content_md5, "bool"
@@ -1848,7 +1848,7 @@ def build_file_get_range_list_request(
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if range is not None:
-        _headers["Range"] = _SERIALIZER.header("range", range, "str")
+        _headers["x-ms-range"] = _SERIALIZER.header("range", range, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
     if allow_trailing_dot is not None:

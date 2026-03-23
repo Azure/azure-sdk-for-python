@@ -24,7 +24,7 @@ from ._parser import _parse_snapshot
 from ._serialize import get_access_conditions, get_api_version
 from ._share_client_helpers import _create_permission_for_share_options, _format_url, _from_share_url, _parse_url
 from ._shared.base_client import parse_connection_str, parse_query, StorageAccountHostsMixin, TransportWrapper
-from ._shared.base_client import _NoOpCredential, _patch_generated_client
+from ._client_helpers import _NoOpCredential, _strip_snapshot_from_url
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import process_storage_error, return_headers_and_deserialized, return_response_headers
 
@@ -118,16 +118,11 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         self.allow_source_trailing_dot = kwargs.pop("allow_source_trailing_dot", None)
         self.file_request_intent = token_intent
         self._client = AzureFileStorage(
-            url=self._base_url,
+            url=_strip_snapshot_from_url(self.url),
             credential=_NoOpCredential(),
             version=get_api_version(kwargs),
             pipeline=self._pipeline,
         )
-        self._client._config.allow_trailing_dot = self.allow_trailing_dot
-        self._client._config.allow_source_trailing_dot = self.allow_source_trailing_dot
-        self._client._config.file_request_intent = self.file_request_intent
-        self._client._config.sharesnapshot = self.snapshot
-        _patch_generated_client(self._client)
 
     def __enter__(self) -> Self:
         self._client.__enter__()
@@ -424,6 +419,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
                     share_provisioned_bandwidth_mibps=share_provisioned_bandwidth_mibps,
                     cls=return_response_headers,
                     headers=headers,
+                    file_request_intent=self.file_request_intent,
                     **kwargs
                 ),
             )
@@ -471,7 +467,11 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             return cast(
                 Dict[str, Any],
                 self._client.share.create_snapshot(
-                    timeout=timeout, cls=return_response_headers, headers=headers, **kwargs
+                    timeout=timeout,
+                    cls=return_response_headers,
+                    headers=headers,
+                    file_request_intent=self.file_request_intent,
+                    **kwargs
                 ),
             )
         except HttpResponseError as error:
@@ -530,6 +530,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
                 sharesnapshot=self.snapshot,
                 lease_id=access_conditions,
                 delete_snapshots=delete_include,
+                file_request_intent=self.file_request_intent,
                 **kwargs
             )
         except HttpResponseError as error:
@@ -577,6 +578,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
                     sharesnapshot=self.snapshot,
                     cls=deserialize_share_properties,
                     lease_id=access_conditions,
+                    file_request_intent=self.file_request_intent,
                     **kwargs
                 ),
             )
@@ -630,6 +632,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
                     access_tier=None,
                     lease_id=access_conditions,
                     cls=return_response_headers,
+                    file_request_intent=self.file_request_intent,
                     **kwargs
                 ),
             )
@@ -704,6 +707,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
                     share_provisioned_iops=share_provisioned_iops,
                     share_provisioned_bandwidth_mibps=share_provisioned_bandwidth_mibps,
                     cls=return_response_headers,
+                    file_request_intent=self.file_request_intent,
                     **kwargs
                 ),
             )
@@ -755,7 +759,12 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             return cast(
                 Dict[str, Any],
                 self._client.share.set_metadata(
-                    timeout=timeout, cls=return_response_headers, headers=headers, lease_id=access_conditions, **kwargs
+                    timeout=timeout,
+                    cls=return_response_headers,
+                    headers=headers,
+                    lease_id=access_conditions,
+                    file_request_intent=self.file_request_intent,
+                    **kwargs
                 ),
             )
         except HttpResponseError as error:
@@ -787,7 +796,11 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         timeout = kwargs.pop("timeout", None)
         try:
             response, identifiers = self._client.share.get_access_policy(
-                timeout=timeout, cls=return_headers_and_deserialized, lease_id=access_conditions, **kwargs
+                timeout=timeout,
+                cls=return_headers_and_deserialized,
+                lease_id=access_conditions,
+                file_request_intent=self.file_request_intent,
+                **kwargs
             )
         except HttpResponseError as error:
             process_storage_error(error)
@@ -848,6 +861,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
                     timeout=timeout,
                     cls=return_response_headers,
                     lease_id=access_conditions,
+                    file_request_intent=self.file_request_intent,
                     **kwargs
                 ),
             )
@@ -882,7 +896,10 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         timeout = kwargs.pop("timeout", None)
         try:
             stats = cast(
-                ShareStats, self._client.share.get_statistics(timeout=timeout, lease_id=access_conditions, **kwargs)
+                ShareStats,
+                self._client.share.get_statistics(
+                    timeout=timeout, lease_id=access_conditions, file_request_intent=self.file_request_intent, **kwargs
+                ),
             )
             return stats.share_usage_bytes
         except HttpResponseError as error:
@@ -972,7 +989,10 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         timeout = kwargs.pop("timeout", None)
         options = _create_permission_for_share_options(file_permission, timeout=timeout, **kwargs)
         try:
-            return cast(Optional[str], self._client.share.create_permission(**options))
+            return cast(
+                Optional[str],
+                self._client.share.create_permission(file_request_intent=self.file_request_intent, **options),
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -1001,7 +1021,11 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             return cast(
                 str,
                 self._client.share.get_permission(
-                    file_permission_key=permission_key, cls=deserialize_permission, timeout=timeout, **kwargs
+                    file_permission_key=permission_key,
+                    cls=deserialize_permission,
+                    timeout=timeout,
+                    file_request_intent=self.file_request_intent,
+                    **kwargs
                 ),
             )
         except HttpResponseError as error:
