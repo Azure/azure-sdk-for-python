@@ -89,6 +89,7 @@ from ._evaluation_processor import EvaluationProcessor
 from ._mlflow_integration import MLflowIntegration
 from ._result_processor import ResultProcessor
 from ._foundry import FoundryExecutionManager, StrategyMapper
+from ._utils._rai_service_target import AzureRAIServiceTarget
 
 
 @experimental
@@ -1727,15 +1728,29 @@ class RedTeam:
         progress_bar.set_postfix({"current": "initializing"})
 
         try:
-            # Create Foundry execution manager
-            # Use chat_target as adversarial_chat_target since PyRIT's RedTeamAgent requires one
-            # even for single-turn attacks (it's used for default scoring if not overridden)
+            # Create RAI service target for adversarial chat.
+            # This must NOT be the user's chat_target — PyRIT uses adversarial_chat
+            # as the converter_target for TenseConverter and for multi-turn attacks.
+            # Using the user's callback would cause the callback response to leak
+            # into converted prompts.
+            adversarial_template_key = self._get_adversarial_template_key(flattened_attack_strategies)
+            is_crescendo = adversarial_template_key == "orchestrators/crescendo/crescendo_variant_1.yaml"
+            adversarial_chat = AzureRAIServiceTarget(
+                client=self.generated_rai_client,
+                api_version=None,
+                model="gpt-4",
+                prompt_template_key=adversarial_template_key,
+                logger=self.logger,
+                is_one_dp_project=self._one_dp_project,
+                crescendo_format=is_crescendo,
+            )
+
             foundry_manager = FoundryExecutionManager(
                 credential=self.credential,
                 azure_ai_project=self.azure_ai_project,
                 logger=self.logger,
                 output_dir=self.scan_output_dir,
-                adversarial_chat_target=chat_target,
+                adversarial_chat_target=adversarial_chat,
             )
 
             # Build objectives by risk category from cached attack_objectives
@@ -1835,6 +1850,34 @@ class RedTeam:
 
         finally:
             progress_bar.close()
+
+    @staticmethod
+    def _get_adversarial_template_key(flattened_attack_strategies: List) -> str:
+        """Select the appropriate RAI service template key for the adversarial chat target.
+
+        Different attack strategies require different prompt templates:
+        - Crescendo: uses the crescendo conversation template
+        - MultiTurn (RedTeaming): uses the red teaming text generation template
+        - Single-turn converters (e.g., Tense): uses the tense converter template
+
+        :param flattened_attack_strategies: List of attack strategies being executed
+        :type flattened_attack_strategies: List
+        :return: The prompt template key for the AzureRAIServiceTarget
+        :rtype: str
+        """
+        for strategy in flattened_attack_strategies:
+            if isinstance(strategy, list):
+                if AttackStrategy.Crescendo in strategy:
+                    return "orchestrators/crescendo/crescendo_variant_1.yaml"
+                if AttackStrategy.MultiTurn in strategy:
+                    return "orchestrators/red_teaming/text_generation.yaml"
+            else:
+                if strategy == AttackStrategy.Crescendo:
+                    return "orchestrators/crescendo/crescendo_variant_1.yaml"
+                if strategy == AttackStrategy.MultiTurn:
+                    return "orchestrators/red_teaming/text_generation.yaml"
+
+        return "prompt_converters/tense_converter.yaml"
 
     def _build_objective_dict_from_cached(self, obj: Any, risk_value: str) -> Optional[Dict]:
         """Build objective dictionary from cached objective data.
