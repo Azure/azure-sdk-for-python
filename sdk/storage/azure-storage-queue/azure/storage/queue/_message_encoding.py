@@ -81,7 +81,10 @@ class MessageDecodePolicy(object):
                 content = decrypt_queue_message(
                     content, response, self.require_encryption, self.key_encryption_key, self.resolver
                 )
-            message.message_text = self.decode(content, response)
+            decoded = self.decode(content, response)
+            # Store decoded content on a side attribute to bypass the _RestField
+            # descriptor which would re-serialize bytes back to base64.
+            message._decoded_content = decoded
         return obj
 
     def configure(
