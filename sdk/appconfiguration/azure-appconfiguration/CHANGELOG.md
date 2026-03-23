@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Moved connection string authentication in favor of Entra ID authentication using `DefaultAzureCredential`.
+
 ## 1.8.0 (2026-01-26)
 
 ### Features Added
