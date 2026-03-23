@@ -296,6 +296,12 @@ class _VoiceLiveInstrumentorPreview:
             parsed = urlparse(mgr_self._endpoint)
             server_address = parsed.hostname
             port = parsed.port
+            if port is None:
+                scheme = (parsed.scheme or "").lower()
+                if scheme in ("https", "wss"):
+                    port = 443
+                elif scheme in ("http", "ws"):
+                    port = 80
 
             span = start_span(
                 OperationName.CONNECT,
