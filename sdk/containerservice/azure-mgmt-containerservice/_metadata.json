@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.ContainerService": "2026-01-01"
   },
-  "commit": "947878feb7a528ff4344f8fe67ab85522afcbb79",
+  "commit": "3d69f01137e1271361cc8003e399475cbfefadec",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/containerservice/resource-manager/Microsoft.ContainerService/aks",
   "emitterVersion": "0.61.0"
