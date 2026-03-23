@@ -9,6 +9,8 @@ on:
 jobs:
   chronus-verify:
     name: Verify Chronus Change Descriptions
+    if: >-
+      github.event.pull_request.user.login != 'azure-sdk'
     runs-on: ubuntu-latest
     permissions:
       contents: read
