@@ -187,9 +187,11 @@ def _default_sampler(configurations):
         configurations[SAMPLER_TYPE] = sampler
     elif sampler is not None:
         _logger.error(  # pylint: disable=C0301
-            "Invalid value '%s' for the sampler. "
-            "Supported values are %s. Defaulting to %s: %s",
-            sampler, SUPPORTED_OTEL_SAMPLERS, RATE_LIMITED_SAMPLER, "5.0 traces per second",
+            "Invalid value '%s' for the sampler. " "Supported values are %s. Defaulting to %s: %s",
+            sampler,
+            SUPPORTED_OTEL_SAMPLERS,
+            RATE_LIMITED_SAMPLER,
+            "5.0 traces per second",
         )
         configurations[SAMPLER_TYPE] = RATE_LIMITED_SAMPLER
     elif configurations.get("sampling_ratio") is not None:
@@ -200,7 +202,9 @@ def _default_sampler(configurations):
         configurations[SAMPLING_TRACES_PER_SECOND_ARG] = configurations["traces_per_second"]
     else:
         _logger.info(  # pylint: disable=C0301
-            "No sampler specified. Defaulting to %s: %s", RATE_LIMITED_SAMPLER, "5.0 traces per second",
+            "No sampler specified. Defaulting to %s: %s",
+            RATE_LIMITED_SAMPLER,
+            "5.0 traces per second",
         )
         configurations[SAMPLER_TYPE] = RATE_LIMITED_SAMPLER
 
@@ -296,7 +300,7 @@ def _get_sampler_from_name(sampler_type):
 
     if sampler_type == ALWAYS_OFF_SAMPLER:
         return ALWAYS_OFF
-    
+
     sampler_arg = environ.get(OTEL_TRACES_SAMPLER_ARG)
     sampler_value = default_value
     if sampler_arg is not None:
@@ -312,7 +316,10 @@ def _get_sampler_from_name(sampler_type):
 
     if sampler_type == TRACE_ID_RATIO_SAMPLER:
         if sampler_value < 0.0 or sampler_value > 1.0:
-            _logger.error("Invalid sampler argument for TRACE_ID_RATIO_SAMPLER. It should be a value between 0 and 1. Defaulting to %s.", default_value)
+            _logger.error(
+                "Invalid sampler argument for TRACE_ID_RATIO_SAMPLER. It should be a value between 0 and 1. Defaulting to %s.",
+                default_value,
+            )
             sampler_value = default_value
         else:
             _logger.info("Using sampling value: %s", sampler_value)
@@ -320,9 +327,12 @@ def _get_sampler_from_name(sampler_type):
 
     if sampler_type == PARENT_BASED_TRACE_ID_RATIO_SAMPLER:
         if sampler_value < 0.0 or sampler_value > 1.0:
-            _logger.error("Invalid sampler argument for PARENT_BASED_TRACE_ID_RATIO_SAMPLER. It should be a value between 0 and 1. Defaulting to %s.", default_value)
+            _logger.error(
+                "Invalid sampler argument for PARENT_BASED_TRACE_ID_RATIO_SAMPLER. It should be a value between 0 and 1. Defaulting to %s.",
+                default_value,
+            )
             sampler_value = default_value
         else:
             _logger.info("Using sampling value: %s", sampler_value)
         return ParentBased(TraceIdRatioBased(sampler_value))
-    return ParentBased(ALWAYS_ON) 
+    return ParentBased(ALWAYS_ON)

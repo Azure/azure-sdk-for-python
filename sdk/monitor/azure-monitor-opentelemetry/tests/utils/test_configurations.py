@@ -660,7 +660,6 @@ class TestConfigurations(TestCase):
         },
         clear=True,
     )
-
     @patch.dict(
         "os.environ",
         {
