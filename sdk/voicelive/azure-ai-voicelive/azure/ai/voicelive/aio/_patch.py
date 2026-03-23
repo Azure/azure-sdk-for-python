@@ -17,7 +17,14 @@ from typing import Any, Mapping, Optional, Union, AsyncIterator, cast
 
 # === Third-party ===
 from typing_extensions import TypedDict
-import aiohttp
+
+try:
+    import aiohttp
+except ImportError as exc:
+    raise ImportError(
+        "aiohttp is required for azure-ai-voicelive. "
+        "Install it with: pip install azure-ai-voicelive[aiohttp]"
+    ) from exc
 from azure.ai.voicelive.models._models import (
     ClientEventConversationItemCreate,
     ClientEventConversationItemDelete,
@@ -35,7 +42,6 @@ from azure.ai.voicelive.models._models import (
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import AzureError
-from azure.core.pipeline import policies
 
 # === Local ===
 from ..models import ClientEvent, ServerEvent, RequestSession
@@ -687,7 +693,6 @@ class _VoiceLiveConnectionManager(
         self.__extra_query = extra_query
         self.__extra_headers = extra_headers
         self.__connection_options = self._map_to_aiohttp_ws_options(connection_options or {})
-        self.__proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
 
     def _map_to_aiohttp_ws_options(self, options: WebsocketConnectionOptions) -> dict[str, Any]:
         """
@@ -769,12 +774,6 @@ class _VoiceLiveConnectionManager(
 
             self.__connection_options.setdefault("max_msg_size", 4 * 1024 * 1024)
             self.__connection_options.setdefault("heartbeat", 30)
-
-            if self.__proxy_policy:
-                self.__proxy_policy.proxies = {
-                    "http": "http://localhost:8888",
-                    "https": "http://localhost:8888",
-                }
 
             auth_headers = await self._get_auth_headers()
             headers = {**auth_headers, **dict(self.__extra_headers)}

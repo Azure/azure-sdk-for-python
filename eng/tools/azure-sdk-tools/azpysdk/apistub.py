@@ -3,7 +3,7 @@ import os
 import sys
 
 from typing import Optional, List
-from subprocess import CalledProcessError
+from subprocess import CalledProcessError, run
 
 from .Check import Check
 from ci_tools.functions import install_into_venv, find_whl
@@ -62,6 +62,13 @@ class apistub(Check):
             dest="dest_dir",
             default=None,
             help="Destination directory for generated API stub token files.",
+        )
+        p.add_argument(
+            "--md",
+            dest="generate_md",
+            default=False,
+            action="store_true",
+            help="Generate api.md from the JSON token file using Export-APIViewMarkdown.ps1. Output directory for api.md is the same as the generated token file.",
         )
         p.set_defaults(func=self.run)
 
@@ -125,7 +132,7 @@ class apistub(Check):
 
             dest_dir = getattr(args, "dest_dir", None)
             if dest_dir:
-                out_token_path = os.path.join(dest_dir, package_name)
+                out_token_path = os.path.join(os.path.abspath(dest_dir), package_name)
                 os.makedirs(out_token_path, exist_ok=True)
             else:
                 out_token_path = os.path.abspath(staging_directory)
@@ -146,8 +153,32 @@ class apistub(Check):
 
             try:
                 self.run_venv_command(executable, cmds, cwd=staging_directory, check=True, immediately_dump=True)
+                if getattr(args, "generate_md", False):
+                    token_json_path = os.path.join(out_token_path, f"{package_name}_python.json")
+                    md_script = os.path.join(REPO_ROOT, "eng", "common", "scripts", "Export-APIViewMarkdown.ps1")
+                    logger.info(f"Generating api.md for {package_name}")
+                    try:
+                        result = run(
+                            ["pwsh", md_script, "-TokenJsonPath", token_json_path, "-OutputPath", out_token_path],
+                            check=True,
+                            capture_output=True,
+                            text=True,
+                        )
+                        # pwsh script logs the api.md location
+                        if result.stdout:
+                            logger.info(result.stdout)
+                    except FileNotFoundError:
+                        logger.error("Failed to generate api.md: pwsh (PowerShell) is not installed or not on PATH.")
+                        results.append(1)
+                    except CalledProcessError as e:
+                        logger.error(f"Failed to generate api.md (exit code {e.returncode}):")
+                        if e.stderr:
+                            logger.error(e.stderr)
+                        if e.stdout:
+                            logger.error(e.stdout)
+                        results.append(1)
             except CalledProcessError as e:
-                logger.error(f"{package_name} exited with error {e.returncode}")
+                logger.error(f"{package_name} exited with error {e.returncode}: {e}")
                 results.append(e.returncode)
 
         return max(results) if results else 0
