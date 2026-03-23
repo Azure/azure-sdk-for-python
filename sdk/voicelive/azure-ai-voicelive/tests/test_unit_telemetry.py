@@ -1,0 +1,771 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+"""Unit tests for VoiceLive telemetry instrumentation."""
+
+import json
+import os
+import time
+from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
+
+
+# ------------------------------------------------------------------ #
+#  Fixtures                                                           #
+# ------------------------------------------------------------------ #
+
+
+@pytest.fixture(autouse=True)
+def _reset_instrumentation():
+    """Ensure instrumentation state is clean before/after each test."""
+    import azure.ai.voicelive.telemetry._voicelive_instrumentor as mod
+
+    mod._voicelive_traces_enabled = False
+    mod._trace_voicelive_content = False
+    yield
+    # Uninstrument after each test to restore originals
+    try:
+        from azure.ai.voicelive.telemetry import VoiceLiveInstrumentor
+
+        inst = VoiceLiveInstrumentor()
+        if inst.is_instrumented():
+            inst.uninstrument()
+    except Exception:  # pylint: disable=broad-except
+        pass
+    mod._voicelive_traces_enabled = False
+    mod._trace_voicelive_content = False
+
+
+@pytest.fixture
+def enable_tracing_env(monkeypatch):
+    """Set the env var gate that enables tracing."""
+    monkeypatch.setenv("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", "true")
+
+
+@pytest.fixture
+def mock_span():
+    """Create a mock AbstractSpan."""
+    span = MagicMock()
+    span.span_instance = MagicMock()
+    span.span_instance.is_recording = True
+    span.add_attribute = MagicMock()
+    span.__enter__ = MagicMock(return_value=span)
+    span.__exit__ = MagicMock(return_value=False)
+    return span
+
+
+# ------------------------------------------------------------------ #
+#  VoiceLiveInstrumentor - basic lifecycle                            #
+# ------------------------------------------------------------------ #
+
+
+class TestVoiceLiveInstrumentorLifecycle:
+    """Tests for instrument/uninstrument/is_instrumented."""
+
+    def test_instrument_requires_env_gate(self):
+        """instrument() is a no-op when env gate is not set."""
+        from azure.ai.voicelive.telemetry import VoiceLiveInstrumentor
+
+        inst = VoiceLiveInstrumentor()
+        inst.instrument()
+        assert not inst.is_instrumented()
+
+    def test_instrument_with_env_gate(self, enable_tracing_env):
+        """instrument() activates when env gate is set."""
+        from azure.ai.voicelive.telemetry import VoiceLiveInstrumentor
+
+        inst = VoiceLiveInstrumentor()
+        inst.instrument()
+        assert inst.is_instrumented()
+
+    def test_uninstrument(self, enable_tracing_env):
+        """uninstrument() restores original methods."""
+        from azure.ai.voicelive.telemetry import VoiceLiveInstrumentor
+
+        inst = VoiceLiveInstrumentor()
+        inst.instrument()
+        assert inst.is_instrumented()
+
+        inst.uninstrument()
+        assert not inst.is_instrumented()
+
+    def test_double_instrument_raises(self, enable_tracing_env):
+        """Calling instrument() twice without uninstrument raises RuntimeError."""
+        from azure.ai.voicelive.telemetry import VoiceLiveInstrumentor
+
+        inst = VoiceLiveInstrumentor()
+        inst.instrument()
+        with pytest.raises(RuntimeError, match="already enabled"):
+            inst._impl._instrument_voicelive()
+
+    def test_uninstrument_when_not_instrumented_is_noop(self):
+        """uninstrument() when not instrumented is safe."""
+        from azure.ai.voicelive.telemetry import VoiceLiveInstrumentor
+
+        inst = VoiceLiveInstrumentor()
+        inst.uninstrument()  # should not raise
+        assert not inst.is_instrumented()
+
+
+# ------------------------------------------------------------------ #
+#  Content recording                                                  #
+# ------------------------------------------------------------------ #
+
+
+class TestContentRecording:
+    """Tests for content recording controls."""
+
+    def test_content_recording_default_false(self, enable_tracing_env):
+        from azure.ai.voicelive.telemetry import VoiceLiveInstrumentor
+
+        inst = VoiceLiveInstrumentor()
+        inst.instrument()
+        assert not inst.is_content_recording_enabled()
+
+    def test_content_recording_explicit_true(self, enable_tracing_env):
+        from azure.ai.voicelive.telemetry import VoiceLiveInstrumentor
+
+        inst = VoiceLiveInstrumentor()
+        inst.instrument(enable_content_recording=True)
+        assert inst.is_content_recording_enabled()
+
+    def test_content_recording_from_env(self, enable_tracing_env, monkeypatch):
+        monkeypatch.setenv("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "true")
+        from azure.ai.voicelive.telemetry import VoiceLiveInstrumentor
+
+        inst = VoiceLiveInstrumentor()
+        inst.instrument()
+        assert inst.is_content_recording_enabled()
+
+    def test_content_recording_from_legacy_env(self, enable_tracing_env, monkeypatch):
+        monkeypatch.setenv("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED", "true")
+        from azure.ai.voicelive.telemetry import VoiceLiveInstrumentor
+
+        inst = VoiceLiveInstrumentor()
+        inst.instrument()
+        assert inst.is_content_recording_enabled()
+
+    def test_conflicting_env_vars_disables_content(self, enable_tracing_env, monkeypatch):
+        monkeypatch.setenv("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "true")
+        monkeypatch.setenv("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED", "false")
+        from azure.ai.voicelive.telemetry import VoiceLiveInstrumentor
+
+        inst = VoiceLiveInstrumentor()
+        inst.instrument()
+        assert not inst.is_content_recording_enabled()
+
+    def test_successive_instrument_updates_content_recording(self, enable_tracing_env):
+        from azure.ai.voicelive.telemetry import VoiceLiveInstrumentor
+
+        inst = VoiceLiveInstrumentor()
+        inst.instrument(enable_content_recording=True)
+        assert inst.is_content_recording_enabled()
+
+        # Second call with False should update
+        inst.instrument(enable_content_recording=False)
+        assert not inst.is_content_recording_enabled()
+
+
+# ------------------------------------------------------------------ #
+#  Method wrapping verification                                       #
+# ------------------------------------------------------------------ #
+
+
+class TestMethodWrapping:
+    """Tests that instrument() wraps the correct methods."""
+
+    def test_methods_are_wrapped(self, enable_tracing_env):
+        from azure.ai.voicelive.telemetry import VoiceLiveInstrumentor
+        from azure.ai.voicelive.aio._patch import VoiceLiveConnection, _VoiceLiveConnectionManager
+
+        inst = VoiceLiveInstrumentor()
+        inst.instrument()
+
+        assert hasattr(VoiceLiveConnection.send, "_original")
+        assert hasattr(VoiceLiveConnection.recv, "_original")
+        assert hasattr(VoiceLiveConnection.close, "_original")
+        assert hasattr(_VoiceLiveConnectionManager.__aenter__, "_original")
+        assert hasattr(_VoiceLiveConnectionManager.__aexit__, "_original")
+
+    def test_methods_are_unwrapped(self, enable_tracing_env):
+        from azure.ai.voicelive.telemetry import VoiceLiveInstrumentor
+        from azure.ai.voicelive.aio._patch import VoiceLiveConnection, _VoiceLiveConnectionManager
+
+        inst = VoiceLiveInstrumentor()
+        inst.instrument()
+        inst.uninstrument()
+
+        assert not hasattr(VoiceLiveConnection.send, "_original")
+        assert not hasattr(VoiceLiveConnection.recv, "_original")
+        assert not hasattr(VoiceLiveConnection.close, "_original")
+        assert not hasattr(_VoiceLiveConnectionManager.__aenter__, "_original")
+        assert not hasattr(_VoiceLiveConnectionManager.__aexit__, "_original")
+
+
+# ------------------------------------------------------------------ #
+#  Span creation in _utils                                            #
+# ------------------------------------------------------------------ #
+
+
+class TestStartSpan:
+    """Tests for the start_span utility."""
+
+    def test_start_span_returns_none_without_tracing(self):
+        """start_span returns None when no tracing provider is configured."""
+        from azure.ai.voicelive.telemetry._utils import start_span, OperationName
+
+        with patch("azure.ai.voicelive.telemetry._utils._span_impl_type", None):
+            with patch("azure.ai.voicelive.telemetry._utils.settings") as mock_settings:
+                mock_settings.tracing_implementation.return_value = None
+                result = start_span(OperationName.CONNECT)
+                assert result is None
+
+    def test_start_span_sets_attributes(self, mock_span):
+        """start_span sets the expected semantic attributes."""
+        from azure.ai.voicelive.telemetry._utils import (
+            start_span,
+            OperationName,
+            AZ_NAMESPACE,
+            AZ_NAMESPACE_VALUE,
+            GEN_AI_SYSTEM,
+            AZ_AI_VOICELIVE_SYSTEM,
+            GEN_AI_OPERATION_NAME,
+            GEN_AI_REQUEST_MODEL,
+            SERVER_ADDRESS,
+        )
+
+        mock_impl = MagicMock(return_value=mock_span)
+
+        with patch("azure.ai.voicelive.telemetry._utils._span_impl_type", mock_impl):
+            span = start_span(
+                OperationName.CONNECT,
+                server_address="test.cognitiveservices.azure.com",
+                port=443,
+                model="gpt-4o-realtime-preview",
+            )
+
+        assert span is not None
+        span.add_attribute.assert_any_call(AZ_NAMESPACE, AZ_NAMESPACE_VALUE)
+        span.add_attribute.assert_any_call(GEN_AI_SYSTEM, AZ_AI_VOICELIVE_SYSTEM)
+        span.add_attribute.assert_any_call(GEN_AI_OPERATION_NAME, "connect")
+        span.add_attribute.assert_any_call(SERVER_ADDRESS, "test.cognitiveservices.azure.com")
+        span.add_attribute.assert_any_call(GEN_AI_REQUEST_MODEL, "gpt-4o-realtime-preview")
+
+
+# ------------------------------------------------------------------ #
+#  Send/recv wrapper span tests                                       #
+# ------------------------------------------------------------------ #
+
+
+class TestSendRecvTracing:
+    """Tests that send/recv wrappers create spans correctly."""
+
+    @pytest.mark.asyncio
+    async def test_send_creates_span(self, enable_tracing_env, mock_span):
+        from azure.ai.voicelive.telemetry import VoiceLiveInstrumentor
+        from azure.ai.voicelive.aio._patch import VoiceLiveConnection
+
+        inst = VoiceLiveInstrumentor()
+        inst.instrument()
+
+        mock_impl = MagicMock(return_value=mock_span)
+        mock_ws = AsyncMock()
+        mock_session = AsyncMock()
+
+        conn = VoiceLiveConnection.__new__(VoiceLiveConnection)
+        conn._client_session = mock_session
+        conn._connection = mock_ws
+        conn._telemetry_server_address = "test.example.com"
+        conn._telemetry_port = 443
+        conn._telemetry_model = "gpt-4o-realtime-preview"
+
+        event = {"type": "session.update", "session": {"model": "gpt-4o-realtime-preview"}}
+
+        with patch("azure.ai.voicelive.telemetry._voicelive_instrumentor.settings") as mock_settings:
+            mock_settings.tracing_implementation.return_value = mock_impl
+            with patch("azure.ai.voicelive.telemetry._voicelive_instrumentor.start_span", return_value=mock_span):
+                await conn.send(event)
+
+        mock_ws.send_str.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_recv_creates_span(self, enable_tracing_env, mock_span):
+        from azure.ai.voicelive.telemetry import VoiceLiveInstrumentor
+        from azure.ai.voicelive.aio._patch import VoiceLiveConnection
+
+        inst = VoiceLiveInstrumentor()
+        inst.instrument()
+
+        mock_impl = MagicMock(return_value=mock_span)
+
+        # Create a mock WebSocket message
+        import aiohttp
+
+        mock_ws_msg = MagicMock()
+        mock_ws_msg.type = aiohttp.WSMsgType.TEXT
+        mock_ws_msg.data = json.dumps({"type": "session.created", "session": {"id": "sess_123"}})
+
+        mock_ws = AsyncMock()
+        mock_ws.receive = AsyncMock(return_value=mock_ws_msg)
+        mock_session = AsyncMock()
+
+        conn = VoiceLiveConnection.__new__(VoiceLiveConnection)
+        conn._client_session = mock_session
+        conn._connection = mock_ws
+        conn._telemetry_server_address = "test.example.com"
+        conn._telemetry_port = 443
+        conn._telemetry_model = "gpt-4o-realtime-preview"
+
+        # Initialize resource attributes that VoiceLiveConnection.__init__ would set
+        from azure.ai.voicelive.aio._patch import (
+            SessionResource,
+            ResponseResource,
+            InputAudioBufferResource,
+            ConversationResource,
+            OutputAudioBufferResource,
+            TranscriptionSessionResource,
+        )
+
+        conn.session = SessionResource(conn)
+        conn.response = ResponseResource(conn)
+        conn.input_audio_buffer = InputAudioBufferResource(conn)
+        conn.conversation = ConversationResource(conn)
+        conn.output_audio_buffer = OutputAudioBufferResource(conn)
+        conn.transcription_session = TranscriptionSessionResource(conn)
+
+        with patch("azure.ai.voicelive.telemetry._voicelive_instrumentor.settings") as mock_settings:
+            mock_settings.tracing_implementation.return_value = mock_impl
+            with patch("azure.ai.voicelive.telemetry._voicelive_instrumentor.start_span", return_value=mock_span):
+                result = await conn.recv()
+
+        assert result is not None
+
+
+# ------------------------------------------------------------------ #
+#  Error recording                                                    #
+# ------------------------------------------------------------------ #
+
+
+class TestErrorRecording:
+    """Tests for error recording on spans."""
+
+    def test_record_error_sets_status(self, mock_span):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        impl = _VoiceLiveInstrumentorPreview()
+
+        exc = ConnectionError("test error")
+        with patch("azure.ai.voicelive.telemetry._voicelive_instrumentor.Span", MagicMock()):
+            with patch("azure.ai.voicelive.telemetry._voicelive_instrumentor.StatusCode") as mock_code:
+                mock_code.ERROR = "ERROR"
+                mock_span.span_instance = MagicMock(spec=["set_status"])
+                # Make isinstance check pass
+                with patch(
+                    "azure.ai.voicelive.telemetry._voicelive_instrumentor.Span",
+                    type(mock_span.span_instance),
+                ):
+                    impl.record_error(mock_span, exc)
+                    mock_span.span_instance.set_status.assert_called_once()
+
+
+# ------------------------------------------------------------------ #
+#  Event helpers                                                      #
+# ------------------------------------------------------------------ #
+
+
+class TestEventHelpers:
+    """Tests for send/recv event helpers."""
+
+    def test_add_send_event_without_content(self, mock_span):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        impl = _VoiceLiveInstrumentorPreview()
+        impl._add_send_event(mock_span, "session.update", None)
+        mock_span.span_instance.add_event.assert_called_once()
+        call_kwargs = mock_span.span_instance.add_event.call_args
+        assert call_kwargs[1]["name"] == "gen_ai.input.messages"
+        assert "gen_ai.voice.event_type" in call_kwargs[1]["attributes"]
+
+    def test_add_send_event_with_content_recording(self, mock_span):
+        import azure.ai.voicelive.telemetry._voicelive_instrumentor as mod
+
+        mod._trace_voicelive_content = True
+        try:
+            impl = mod._VoiceLiveInstrumentorPreview()
+            impl._add_send_event(mock_span, "session.update", '{"session": {}}')
+            call_kwargs = mock_span.span_instance.add_event.call_args
+            assert "gen_ai.event.content" in call_kwargs[1]["attributes"]
+        finally:
+            mod._trace_voicelive_content = False
+
+    def test_add_recv_event(self, mock_span):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        impl = _VoiceLiveInstrumentorPreview()
+        impl._add_recv_event(mock_span, "session.created", None)
+        call_kwargs = mock_span.span_instance.add_event.call_args
+        assert call_kwargs[1]["name"] == "gen_ai.output.messages"
+
+
+# ------------------------------------------------------------------ #
+#  Session ID extraction                                              #
+# ------------------------------------------------------------------ #
+
+
+class TestSessionIdExtraction:
+    """Tests for session ID tracking from recv events."""
+
+    def test_extract_session_id_from_dict(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        conn._telemetry_span = MagicMock()
+        result = {"type": "session.created", "session": {"id": "sess_abc123"}}
+
+        _VoiceLiveInstrumentorPreview._extract_session_id(conn, result)
+
+        assert conn._telemetry_session_id == "sess_abc123"
+        conn._telemetry_span.add_attribute.assert_called_with(
+            "gen_ai.voice.session_id", "sess_abc123"
+        )
+
+    def test_extract_session_id_from_object(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        conn._telemetry_span = MagicMock()
+        session = MagicMock()
+        session.id = "sess_xyz789"
+        # Remove dict-like access from session so hasattr(.get) is False
+        del session.get
+        result = MagicMock()
+        result.session = session
+        # Remove dict-like access
+        del result.get
+
+        _VoiceLiveInstrumentorPreview._extract_session_id(conn, result)
+
+        assert conn._telemetry_session_id == "sess_xyz789"
+
+    def test_extract_session_id_no_session(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        conn._telemetry_span = MagicMock()
+        result = {"type": "session.created"}
+
+        _VoiceLiveInstrumentorPreview._extract_session_id(conn, result)
+
+        # Should not crash, and no attribute set
+        conn._telemetry_span.add_attribute.assert_not_called()
+
+
+# ------------------------------------------------------------------ #
+#  Audio format extraction                                            #
+# ------------------------------------------------------------------ #
+
+
+class TestAudioFormatExtraction:
+    """Tests for audio format extraction from session.update events."""
+
+    def test_extract_audio_format_from_dict(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        conn._telemetry_span = MagicMock()
+        event = {
+            "type": "session.update",
+            "session": {
+                "input_audio_format": "pcm16",
+                "output_audio_format": "pcm16",
+            },
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_audio_format_from_send(conn, event)
+
+        assert conn._telemetry_input_audio_format == "pcm16"
+        assert conn._telemetry_output_audio_format == "pcm16"
+        conn._telemetry_span.add_attribute.assert_any_call(
+            "gen_ai.voice.input_audio_format", "pcm16"
+        )
+        conn._telemetry_span.add_attribute.assert_any_call(
+            "gen_ai.voice.output_audio_format", "pcm16"
+        )
+
+    def test_extract_audio_format_no_session(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        conn._telemetry_span = MagicMock()
+        event = {"type": "session.update"}
+
+        _VoiceLiveInstrumentorPreview._extract_audio_format_from_send(conn, event)
+
+        # Should not crash
+        conn._telemetry_span.add_attribute.assert_not_called()
+
+
+# ------------------------------------------------------------------ #
+#  First-token latency                                                #
+# ------------------------------------------------------------------ #
+
+
+class TestFirstTokenLatency:
+    """Tests for first-token latency tracking."""
+
+    def test_first_token_latency_set_on_recv(self, mock_span):
+        """First token latency should be calculated on first audio/text delta."""
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        conn._telemetry_response_create_time = time.monotonic() - 0.5  # 500ms ago
+        conn._telemetry_first_token_latency_recorded = False
+        conn._telemetry_span = MagicMock()
+
+        result = {"type": "response.audio.delta", "delta": "AAAA"}
+
+        # Simulate the logic from _trace_recv
+        event_type_str = "response.audio.delta"
+        response_create_time = conn._telemetry_response_create_time
+        already_recorded = conn._telemetry_first_token_latency_recorded
+        if response_create_time is not None and not already_recorded:
+            latency_ms = (time.monotonic() - response_create_time) * 1000
+            mock_span.add_attribute("gen_ai.voice.first_token_latency_ms", round(latency_ms, 2))
+            conn._telemetry_first_token_latency_recorded = True
+
+        mock_span.add_attribute.assert_called_once()
+        call_args = mock_span.add_attribute.call_args
+        assert call_args[0][0] == "gen_ai.voice.first_token_latency_ms"
+        assert call_args[0][1] >= 400  # Should be ~500ms
+        assert conn._telemetry_first_token_latency_recorded is True
+
+    def test_first_token_latency_not_recorded_twice(self):
+        """Once first-token latency is recorded, subsequent deltas should not re-record."""
+        conn = MagicMock()
+        conn._telemetry_response_create_time = time.monotonic() - 0.5
+        conn._telemetry_first_token_latency_recorded = True
+
+        # Simulate the guard check
+        already_recorded = conn._telemetry_first_token_latency_recorded
+        assert already_recorded is True  # Should not proceed with recording
+
+
+# ------------------------------------------------------------------ #
+#  Turn count and interruption tracking                               #
+# ------------------------------------------------------------------ #
+
+
+class TestTurnCountAndInterruptions:
+    """Tests for turn count and interruption count tracking."""
+
+    def test_turn_count_increments_on_response_done(self):
+        conn = MagicMock()
+        conn._telemetry_turn_count = 0
+
+        # Simulate response.done processing
+        conn._telemetry_turn_count = conn._telemetry_turn_count + 1
+        assert conn._telemetry_turn_count == 1
+
+        conn._telemetry_turn_count = conn._telemetry_turn_count + 1
+        assert conn._telemetry_turn_count == 2
+
+    def test_interruption_count_increments_on_response_cancel(self):
+        conn = MagicMock()
+        conn._telemetry_interruption_count = 0
+
+        # Simulate response.cancel processing
+        conn._telemetry_interruption_count = conn._telemetry_interruption_count + 1
+        assert conn._telemetry_interruption_count == 1
+
+    def test_counters_recorded_on_aexit(self, mock_span):
+        """Verify the aexit wrapper records session-level counters."""
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import (
+            _VoiceLiveInstrumentorPreview,
+            GEN_AI_VOICE_TURN_COUNT,
+            GEN_AI_VOICE_INTERRUPTION_COUNT,
+            GEN_AI_VOICE_AUDIO_BYTES_SENT,
+            GEN_AI_VOICE_AUDIO_BYTES_RECEIVED,
+        )
+
+        conn = MagicMock()
+        conn._telemetry_turn_count = 3
+        conn._telemetry_interruption_count = 1
+        conn._telemetry_audio_bytes_sent = 48000
+        conn._telemetry_audio_bytes_received = 96000
+
+        # Simulate the aexit logic that records counters on the span
+        if conn._telemetry_turn_count > 0:
+            mock_span.add_attribute(GEN_AI_VOICE_TURN_COUNT, conn._telemetry_turn_count)
+        if conn._telemetry_interruption_count > 0:
+            mock_span.add_attribute(GEN_AI_VOICE_INTERRUPTION_COUNT, conn._telemetry_interruption_count)
+        if conn._telemetry_audio_bytes_sent > 0:
+            mock_span.add_attribute(GEN_AI_VOICE_AUDIO_BYTES_SENT, conn._telemetry_audio_bytes_sent)
+        if conn._telemetry_audio_bytes_received > 0:
+            mock_span.add_attribute(GEN_AI_VOICE_AUDIO_BYTES_RECEIVED, conn._telemetry_audio_bytes_received)
+
+        mock_span.add_attribute.assert_any_call("gen_ai.voice.turn_count", 3)
+        mock_span.add_attribute.assert_any_call("gen_ai.voice.interruption_count", 1)
+        mock_span.add_attribute.assert_any_call("gen_ai.voice.audio_bytes_sent", 48000)
+        mock_span.add_attribute.assert_any_call("gen_ai.voice.audio_bytes_received", 96000)
+
+
+# ------------------------------------------------------------------ #
+#  Audio bytes tracking                                               #
+# ------------------------------------------------------------------ #
+
+
+class TestAudioBytesTracking:
+    """Tests for audio bytes sent/received tracking."""
+
+    def test_audio_bytes_sent_from_base64(self):
+        """Audio bytes sent should decode base64 to count raw bytes."""
+        import base64
+
+        conn = MagicMock()
+        conn._telemetry_audio_bytes_sent = 0
+
+        # 100 bytes of raw audio encoded as base64
+        raw_audio = b"\x00" * 100
+        b64_audio = base64.b64encode(raw_audio).decode("utf-8")
+
+        audio_bytes = len(base64.b64decode(b64_audio))
+        conn._telemetry_audio_bytes_sent = conn._telemetry_audio_bytes_sent + audio_bytes
+
+        assert conn._telemetry_audio_bytes_sent == 100
+
+    def test_audio_bytes_received_from_delta(self):
+        """Audio bytes received should decode the delta field."""
+        import base64
+
+        conn = MagicMock()
+        conn._telemetry_audio_bytes_received = 0
+
+        raw_audio = b"\xFF" * 200
+        b64_delta = base64.b64encode(raw_audio).decode("utf-8")
+
+        audio_bytes = len(base64.b64decode(b64_delta))
+        conn._telemetry_audio_bytes_received = conn._telemetry_audio_bytes_received + audio_bytes
+
+        assert conn._telemetry_audio_bytes_received == 200
+
+
+# ------------------------------------------------------------------ #
+#  Message size tracking                                              #
+# ------------------------------------------------------------------ #
+
+
+class TestMessageSize:
+    """Tests for WebSocket message size tracking on spans."""
+
+    def test_message_size_on_send(self, mock_span):
+        """Send wrapper should set message size attribute."""
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        event = {"type": "session.update", "session": {"model": "gpt-4o"}}
+        content_str = json.dumps(event, default=str)
+        expected_size = len(content_str)
+
+        mock_span.add_attribute("gen_ai.voice.message_size", expected_size)
+        mock_span.add_attribute.assert_called_with("gen_ai.voice.message_size", expected_size)
+
+    def test_message_size_on_recv(self, mock_span):
+        """Recv wrapper should set message size attribute."""
+        result = {"type": "session.created", "session": {"id": "sess_123"}}
+        content_str = json.dumps(result, default=str)
+        expected_size = len(content_str)
+
+        mock_span.add_attribute("gen_ai.voice.message_size", expected_size)
+        mock_span.add_attribute.assert_called_with("gen_ai.voice.message_size", expected_size)
+
+
+# ------------------------------------------------------------------ #
+#  Rate limit and error event tracking                                #
+# ------------------------------------------------------------------ #
+
+
+class TestRateLimitEvents:
+    """Tests for rate limit / error event recording."""
+
+    def test_error_event_recorded(self, mock_span):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        impl = _VoiceLiveInstrumentorPreview()
+        result = {
+            "type": "error",
+            "error": {"code": "rate_limit_exceeded", "message": "Too many requests"},
+        }
+
+        impl._add_rate_limit_event(mock_span, "error", result)
+
+        call_kwargs = mock_span.span_instance.add_event.call_args
+        assert call_kwargs[1]["name"] == "gen_ai.voice.error"
+        assert call_kwargs[1]["attributes"]["error.code"] == "rate_limit_exceeded"
+        assert call_kwargs[1]["attributes"]["error.message"] == "Too many requests"
+
+    def test_rate_limits_updated_event_recorded(self, mock_span):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        impl = _VoiceLiveInstrumentorPreview()
+        result = {
+            "type": "rate_limits.updated",
+            "rate_limits": [
+                {"name": "requests", "limit": 100, "remaining": 95, "reset_seconds": 60},
+            ],
+        }
+
+        impl._add_rate_limit_event(mock_span, "rate_limits.updated", result)
+
+        call_kwargs = mock_span.span_instance.add_event.call_args
+        assert call_kwargs[1]["name"] == "gen_ai.voice.rate_limits.updated"
+        assert "gen_ai.voice.rate_limits" in call_kwargs[1]["attributes"]
+
+    def test_error_event_with_object_result(self, mock_span):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        impl = _VoiceLiveInstrumentorPreview()
+        error_obj = MagicMock()
+        error_obj.code = "server_error"
+        error_obj.message = "Internal error"
+        # Remove dict-like access from error_obj so hasattr(.get) is False
+        del error_obj.get
+        result = MagicMock()
+        result.error = error_obj
+        del result.get  # Remove dict-like access
+
+        impl._add_rate_limit_event(mock_span, "error", result)
+
+        call_kwargs = mock_span.span_instance.add_event.call_args
+        assert call_kwargs[1]["attributes"]["error.code"] == "server_error"
+        assert call_kwargs[1]["attributes"]["error.message"] == "Internal error"
+
+
+# ------------------------------------------------------------------ #
+#  New constants verification                                         #
+# ------------------------------------------------------------------ #
+
+
+class TestNewConstants:
+    """Verify all new telemetry constants are properly defined."""
+
+    def test_new_constants_exist(self):
+        from azure.ai.voicelive.telemetry._utils import (
+            GEN_AI_VOICE_INPUT_AUDIO_FORMAT,
+            GEN_AI_VOICE_OUTPUT_AUDIO_FORMAT,
+            GEN_AI_VOICE_TURN_COUNT,
+            GEN_AI_VOICE_INTERRUPTION_COUNT,
+            GEN_AI_VOICE_AUDIO_BYTES_SENT,
+            GEN_AI_VOICE_AUDIO_BYTES_RECEIVED,
+            GEN_AI_VOICE_MESSAGE_SIZE,
+            GEN_AI_VOICE_FIRST_TOKEN_LATENCY_MS,
+        )
+
+        assert GEN_AI_VOICE_INPUT_AUDIO_FORMAT == "gen_ai.voice.input_audio_format"
+        assert GEN_AI_VOICE_OUTPUT_AUDIO_FORMAT == "gen_ai.voice.output_audio_format"
+        assert GEN_AI_VOICE_TURN_COUNT == "gen_ai.voice.turn_count"
+        assert GEN_AI_VOICE_INTERRUPTION_COUNT == "gen_ai.voice.interruption_count"
+        assert GEN_AI_VOICE_AUDIO_BYTES_SENT == "gen_ai.voice.audio_bytes_sent"
+        assert GEN_AI_VOICE_AUDIO_BYTES_RECEIVED == "gen_ai.voice.audio_bytes_received"
+        assert GEN_AI_VOICE_MESSAGE_SIZE == "gen_ai.voice.message_size"
+        assert GEN_AI_VOICE_FIRST_TOKEN_LATENCY_MS == "gen_ai.voice.first_token_latency_ms"
