@@ -451,12 +451,27 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """
         try:
             _, identifiers = cast(
-                Tuple[Dict, List],
+                Tuple[Dict, SignedIdentifiers],
                 self._client.queue.get_access_policy(timeout=timeout, cls=return_headers_and_deserialized, **kwargs),
             )
         except HttpResponseError as error:
             process_storage_error(error)
-        return {s.id: s.access_policy or AccessPolicy() for s in identifiers.items_property} if identifiers else {}
+        return (
+            {
+                s.id: (
+                    AccessPolicy(
+                        permission=s.access_policy.permission,
+                        expiry=s.access_policy.expiry,
+                        start=s.access_policy.start,
+                    )
+                    if s.access_policy
+                    else AccessPolicy()
+                )
+                for s in identifiers.items_property
+            }
+            if identifiers
+            else {}
+        )
 
     @distributed_trace
     def set_queue_access_policy(

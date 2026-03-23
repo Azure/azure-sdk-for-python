@@ -391,7 +391,7 @@ class QueueMessage(DictMixin):
     def _from_generated(cls, generated: Any) -> Self:
         # Prefer _decoded_content (set by MessageDecodePolicy) over message_text
         # because the _RestField descriptor re-serializes bytes to base64 on assignment.
-        content = getattr(generated, '_decoded_content', None)
+        content = getattr(generated, "_decoded_content", None)
         if content is None:
             content = generated.message_text
         message = cls(content=content)

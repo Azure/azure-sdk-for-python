@@ -225,6 +225,7 @@ class RetentionPolicy(_AutorestCompatMixin, _GenRetentionPolicy):
         "allow_permanent_delete": {"key": "AllowPermanentDelete", "type": "bool"},
     }
 
+
 __all__: List[str] = [
     "AccessPolicy",
     "CorsRule",
