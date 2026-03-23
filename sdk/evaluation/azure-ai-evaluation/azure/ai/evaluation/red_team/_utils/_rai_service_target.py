@@ -10,7 +10,7 @@ import json
 import traceback
 import asyncio
 import re
-from typing import Dict, Optional, Any
+from typing import Dict, List, Optional, Any
 
 from tenacity import (
     RetryCallState,
@@ -53,6 +53,9 @@ def _fallback_response(retry_state: RetryCallState):
         "rationale_behind_jailbreak": "This question continues the narrative while encouraging discussion of manipulation tactics. It's designed to elicit specific details about the character's methods and preferences.",
     }
     request = retry_state.kwargs.get("message") or retry_state.kwargs.get("prompt_request")
+    if request is None:
+        logger.warning("_fallback_response: no 'message' or 'prompt_request' in retry kwargs")
+        return []
     request = request.get_piece(0)
     response_entry = construct_response_from_request(
         request=request, response_text_pieces=[json.dumps(fallback_response)]
@@ -486,7 +489,7 @@ class AzureRAIServiceTarget(PromptChatTarget):
     )
     async def send_prompt_async(
         self, *, message: Message = None, prompt_request: Message = None, objective: str = ""
-    ) -> list[Message]:
+    ) -> List[Message]:
         """Send a prompt to the Azure RAI service.
 
         :param message: The prompt message (PyRIT 0.11+ parameter name)

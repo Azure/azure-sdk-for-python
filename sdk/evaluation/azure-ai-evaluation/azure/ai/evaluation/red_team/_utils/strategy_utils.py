@@ -45,6 +45,18 @@ from azure.ai.evaluation._model_configurations import (
     OpenAIModelConfiguration,
 )
 
+# All known Azure OpenAI host suffixes (public + sovereign clouds).
+# Used to detect Azure endpoints that need /openai/v1 path normalization for PyRIT.
+_AZURE_OPENAI_HOST_SUFFIXES = (
+    ".openai.azure.com",
+    ".services.ai.azure.com",
+    ".cognitiveservices.azure.com",
+    ".openai.azure.us",
+    ".cognitiveservices.azure.us",
+    ".openai.azure.cn",
+    ".cognitiveservices.azure.cn",
+)
+
 # Azure OpenAI uses cognitive services scope for AAD authentication
 AZURE_OPENAI_SCOPE = "https://cognitiveservices.azure.com/.default"
 
@@ -224,16 +236,6 @@ def get_chat_target(
             endpoint = target["azure_endpoint"].rstrip("/")
             parsed = urlparse(endpoint)
             hostname = (parsed.hostname or "").lower()
-
-            _AZURE_OPENAI_HOST_SUFFIXES = (
-                ".openai.azure.com",
-                ".services.ai.azure.com",
-                ".cognitiveservices.azure.com",
-                ".openai.azure.us",
-                ".cognitiveservices.azure.us",
-                ".openai.azure.cn",
-                ".cognitiveservices.azure.cn",
-            )
 
             if any(hostname.endswith(sfx) for sfx in _AZURE_OPENAI_HOST_SUFFIXES):
                 if endpoint.endswith("/openai"):
