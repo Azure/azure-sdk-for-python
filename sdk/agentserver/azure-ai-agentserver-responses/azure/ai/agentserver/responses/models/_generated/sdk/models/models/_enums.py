@@ -199,6 +199,8 @@ class DetailEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HIGH."""
     AUTO = "auto"
     """AUTO."""
+    ORIGINAL = "original"
+    """ORIGINAL."""
 
 
 class FunctionAndCustomToolCallOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -214,6 +216,28 @@ class FunctionAndCustomToolCallOutputType(str, Enum, metaclass=CaseInsensitiveEn
 
 class FunctionCallItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of FunctionCallItemStatus."""
+
+    IN_PROGRESS = "in_progress"
+    """IN_PROGRESS."""
+    COMPLETED = "completed"
+    """COMPLETED."""
+    INCOMPLETE = "incomplete"
+    """INCOMPLETE."""
+
+
+class FunctionCallOutputStatusEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of FunctionCallOutputStatusEnum."""
+
+    IN_PROGRESS = "in_progress"
+    """IN_PROGRESS."""
+    COMPLETED = "completed"
+    """COMPLETED."""
+    INCOMPLETE = "incomplete"
+    """INCOMPLETE."""
+
+
+class FunctionCallStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of FunctionCallStatus."""
 
     IN_PROGRESS = "in_progress"
     """IN_PROGRESS."""
@@ -301,6 +325,8 @@ class ImageDetail(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HIGH."""
     AUTO = "auto"
     """AUTO."""
+    ORIGINAL = "original"
+    """ORIGINAL."""
 
 
 class ImageGenActionEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -371,6 +397,10 @@ class ItemFieldType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MESSAGE."""
     FUNCTION_CALL = "function_call"
     """FUNCTION_CALL."""
+    TOOL_SEARCH_CALL = "tool_search_call"
+    """TOOL_SEARCH_CALL."""
+    TOOL_SEARCH_OUTPUT = "tool_search_output"
+    """TOOL_SEARCH_OUTPUT."""
     FUNCTION_CALL_OUTPUT = "function_call_output"
     """FUNCTION_CALL_OUTPUT."""
     FILE_SEARCH_CALL = "file_search_call"
@@ -434,6 +464,10 @@ class ItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FUNCTION_CALL."""
     FUNCTION_CALL_OUTPUT = "function_call_output"
     """FUNCTION_CALL_OUTPUT."""
+    TOOL_SEARCH_CALL = "tool_search_call"
+    """TOOL_SEARCH_CALL."""
+    TOOL_SEARCH_OUTPUT = "tool_search_output"
+    """TOOL_SEARCH_OUTPUT."""
     REASONING = "reasoning"
     """REASONING."""
     COMPACTION = "compaction"
@@ -587,10 +621,7 @@ class MessagePhase(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Labels an ``assistant`` message as intermediate commentary (``commentary``) or the final answer
     (``final_answer``). For models like ``gpt-5.3-codex`` and beyond, when sending follow-up
     requests, preserve and resend phase on all assistant messages — dropping it can degrade
-    performance. Not used for user messages. Use ``commentary`` for an intermediate assistant
-    message and ``final_answer`` for the final assistant message. For follow-up requests with
-    models like ``gpt-5.3-codex`` and later, preserve and resend phase on all assistant messages.
-    Omitting it can degrade performance. Not used for user messages.
+    performance. Not used for user messages.
     """
 
     COMMENTARY = "commentary"
@@ -637,6 +668,10 @@ class ModelIdsCompaction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     `model guide </docs/models>`_ to browse and compare available models.
     """
 
+    GPT5_4 = "gpt-5.4"
+    """GPT5_4."""
+    GPT5_3_CHAT_LATEST = "gpt-5.3-chat-latest"
+    """GPT5_3_CHAT_LATEST."""
     GPT5_2 = "gpt-5.2"
     """GPT5_2."""
     GPT5_2_2025_12_11 = "gpt-5.2-2025-12-11"
@@ -853,6 +888,10 @@ class OutputItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """COMPUTER_CALL."""
     REASONING = "reasoning"
     """REASONING."""
+    TOOL_SEARCH_CALL = "tool_search_call"
+    """TOOL_SEARCH_CALL."""
+    TOOL_SEARCH_OUTPUT = "tool_search_output"
+    """TOOL_SEARCH_OUTPUT."""
     COMPACTION = "compaction"
     """COMPACTION."""
     IMAGE_GENERATION_CALL = "image_generation_call"
@@ -1125,6 +1164,15 @@ class ResponseStreamEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RESPONSE_CUSTOM_TOOL_CALL_INPUT_DONE."""
 
 
+class SearchContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of SearchContentType."""
+
+    TEXT = "text"
+    """TEXT."""
+    IMAGE = "image"
+    """IMAGE."""
+
+
 class SearchContextSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of SearchContextSize."""
 
@@ -1198,6 +1246,19 @@ class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """IMAGE_GENERATION."""
     CODE_INTERPRETER = "code_interpreter"
     """CODE_INTERPRETER."""
+    COMPUTER = "computer"
+    """COMPUTER."""
+    COMPUTER_USE = "computer_use"
+    """COMPUTER_USE."""
+
+
+class ToolSearchExecutionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ToolSearchExecutionType."""
+
+    SERVER = "server"
+    """SERVER."""
+    CLIENT = "client"
+    """CLIENT."""
 
 
 class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1207,6 +1268,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FUNCTION."""
     FILE_SEARCH = "file_search"
     """FILE_SEARCH."""
+    COMPUTER = "computer"
+    """COMPUTER."""
     COMPUTER_USE_PREVIEW = "computer_use_preview"
     """COMPUTER_USE_PREVIEW."""
     WEB_SEARCH = "web_search"
@@ -1223,6 +1286,10 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SHELL."""
     CUSTOM = "custom"
     """CUSTOM."""
+    NAMESPACE = "namespace"
+    """NAMESPACE."""
+    TOOL_SEARCH = "tool_search"
+    """TOOL_SEARCH."""
     WEB_SEARCH_PREVIEW = "web_search_preview"
     """WEB_SEARCH_PREVIEW."""
     APPLY_PATCH = "apply_patch"

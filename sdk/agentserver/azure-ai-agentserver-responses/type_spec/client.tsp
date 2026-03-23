@@ -4,7 +4,7 @@ using Azure.ClientGenerator.Core;
 using Azure.Core.Experimental;
 
 // Map all OpenAI base types into our SDK namespace
-@clientNamespace("Azure.AI.Responses.Server.Sdk.Models")
+@clientNamespace("Azure.AI.AgentServer.Responses.Sdk.Models")
 namespace OpenAI {
   // The responses view does not export ItemResourceType (only the full src does).
   // Bridge the gap with an alias so the Azure augmentations can reference it.
@@ -13,7 +13,7 @@ namespace OpenAI {
 
 // Map Azure.AI.Projects augmentation types into our SDK namespace
 #suppress "@azure-tools/typespec-azure-core/experimental-feature" ""
-@clientNamespace("Azure.AI.Responses.Server.Sdk.Models")
+@clientNamespace("Azure.AI.AgentServer.Responses.Sdk.Models")
 namespace Azure.AI.Projects {
   // Propagate "sequence_number" to base of stream events
   @@copyProperties(OpenAI.ResponseStreamEvent,
