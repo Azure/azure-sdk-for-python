@@ -12,7 +12,7 @@ import json
 import logging
 import os
 import time
-from typing import Any, Callable, Dict, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Optional, Tuple
 
 from azure.core.settings import settings
 from azure.core.tracing import AbstractSpan
@@ -21,8 +21,6 @@ from ._utils import (
     AZ_AI_VOICELIVE_SYSTEM,
     ERROR_TYPE,
     GEN_AI_EVENT_CONTENT,
-    GEN_AI_OPERATION_NAME,
-    GEN_AI_REQUEST_MODEL,
     GEN_AI_SYSTEM,
     GEN_AI_USAGE_INPUT_TOKENS,
     GEN_AI_USAGE_OUTPUT_TOKENS,
@@ -47,6 +45,10 @@ try:
 
     _tracing_library_available = True
 except ModuleNotFoundError:
+    otel_context = None  # type: ignore[assignment]
+    set_span_in_context = None  # type: ignore[assignment]
+    Span = None  # type: ignore[assignment,misc]
+    StatusCode = None  # type: ignore[assignment,misc]
     _tracing_library_available = False
 
 __all__ = ["VoiceLiveInstrumentor"]
@@ -655,7 +657,9 @@ class _VoiceLiveInstrumentorPreview:
         store it on the connection object. Also sets it on the parent connect span.
 
         :param conn_self: The ``VoiceLiveConnection`` instance.
+        :type conn_self: ~azure.ai.voicelive.aio.VoiceLiveConnection
         :param result: The received event object.
+        :type result: any
         """
         session = None
         if hasattr(result, "get"):
@@ -671,7 +675,7 @@ class _VoiceLiveInstrumentorPreview:
                 session_id = getattr(session, "id", None)
 
             if session_id:
-                conn_self._telemetry_session_id = session_id
+                conn_self._telemetry_session_id = session_id  # pylint: disable=protected-access
                 connect_span = getattr(conn_self, "_telemetry_span", None)
                 if connect_span is not None:
                     connect_span.add_attribute(GEN_AI_VOICE_SESSION_ID, session_id)
@@ -682,7 +686,9 @@ class _VoiceLiveInstrumentorPreview:
         send event and store on the connection. Also sets on the parent connect span.
 
         :param conn_self: The ``VoiceLiveConnection`` instance.
+        :type conn_self: ~azure.ai.voicelive.aio.VoiceLiveConnection
         :param event: The event being sent.
+        :type event: any
         """
         session = None
         if hasattr(event, "get"):
@@ -703,7 +709,7 @@ class _VoiceLiveInstrumentorPreview:
             input_audio_format = getattr(session, "input_audio_format", None)
         if input_audio_format:
             input_fmt_str = str(input_audio_format)
-            conn_self._telemetry_input_audio_format = input_fmt_str
+            conn_self._telemetry_input_audio_format = input_fmt_str  # pylint: disable=protected-access
             if connect_span is not None:
                 connect_span.add_attribute(GEN_AI_VOICE_INPUT_AUDIO_FORMAT, input_fmt_str)
 
@@ -715,7 +721,7 @@ class _VoiceLiveInstrumentorPreview:
             output_audio_format = getattr(session, "output_audio_format", None)
         if output_audio_format:
             output_fmt_str = str(output_audio_format)
-            conn_self._telemetry_output_audio_format = output_fmt_str
+            conn_self._telemetry_output_audio_format = output_fmt_str  # pylint: disable=protected-access
             if connect_span is not None:
                 connect_span.add_attribute(GEN_AI_VOICE_OUTPUT_AUDIO_FORMAT, output_fmt_str)
 
@@ -728,6 +734,7 @@ class _VoiceLiveInstrumentorPreview:
         :param event_type: The event type string (``"error"`` or ``"rate_limits.updated"``).
         :type event_type: str
         :param result: The received event object.
+        :type result: any
         """
         attrs: Dict[str, Any] = {GEN_AI_SYSTEM: AZ_AI_VOICELIVE_SYSTEM, "gen_ai.voice.event_type": event_type}
 
@@ -872,7 +879,7 @@ class _VoiceLiveInstrumentorPreview:
                 cls = getattr(module, class_name)
                 current = getattr(cls, method_name)
                 if hasattr(current, "_original"):
-                    setattr(cls, method_name, current._original)
+                    setattr(cls, method_name, current._original)  # pylint: disable=protected-access
             except (AttributeError, ImportError) as exc:
                 logger.warning(
                     "Could not uninstrument %s.%s.%s: %s",
@@ -896,6 +903,7 @@ class _VoiceLiveInstrumentorPreview:
     def _is_content_recording_enabled(self) -> bool:
         """Return ``True`` if content recording is currently enabled.
 
+        :return: Whether content recording is enabled.
         :rtype: bool
         """
         return _trace_voicelive_content

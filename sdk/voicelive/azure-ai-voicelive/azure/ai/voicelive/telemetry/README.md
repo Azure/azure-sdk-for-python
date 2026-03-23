@@ -1,21 +1,12 @@
-# Azure AI VoiceLive Telemetry
+Azure AI VoiceLive Telemetry client library for Python
+======================================================
 
 This module provides opt-in [OpenTelemetry](https://opentelemetry.io/)-based tracing for the Azure AI VoiceLive SDK, following [GenAI Semantic Conventions v1.34.0](https://opentelemetry.io/docs/specs/semconv/gen-ai/).
 
-## Architecture
+Getting started
+---------------
 
-![Telemetry Architecture](telemetry_architecture.png)
-
-**Key layers:**
-
-- **User Application** — sets up `TracerProvider` and exporter, calls `VoiceLiveInstrumentor().instrument()`.
-- **azure-ai-voicelive SDK** — the VoiceLive client that manages WebSocket connections and message exchange.
-- **Telemetry Layer** — `VoiceLiveInstrumentor` automatically instruments SDK operations to emit OpenTelemetry spans.
-- **OpenTelemetry Stack** — `azure-core-tracing-opentelemetry` bridges to `opentelemetry-sdk` → Exporter → backend (Azure Monitor, Jaeger, console, etc.).
-
-## Quick Start
-
-### 1. Install dependencies
+### Install dependencies
 
 ```bash
 # Console tracing
@@ -25,7 +16,7 @@ pip install azure-ai-voicelive opentelemetry-sdk azure-core-tracing-opentelemetr
 pip install azure-ai-voicelive azure-monitor-opentelemetry
 ```
 
-### 2. Configure & enable tracing
+### Configure and enable tracing
 
 ```python
 import os
@@ -52,30 +43,13 @@ from azure.ai.voicelive.telemetry import VoiceLiveInstrumentor
 VoiceLiveInstrumentor().instrument()
 ```
 
-### 3. Use the SDK as normal
-
-```python
-from azure.ai.voicelive.aio import connect
-
-async with connect(endpoint=endpoint, credential=credential, model=model) as connection:
-    await connection.session.update(session=session_config)   # → "send session.update" span
-    await connection.conversation.item.create(item=message)   # → "send conversation.item.create" span
-    await connection.response.create()                        # → "send response.create" span
-
-    async for event in connection:                            # → "recv" spans per event
-        ...
-# ← connect span ends here
-```
-
-All spans are created automatically — no code changes needed in your application logic.
-
-### 4. Disable tracing
+### Disable tracing
 
 ```python
 VoiceLiveInstrumentor().uninstrument()
 ```
 
-## Environment Variables
+### Environment variables
 
 | Variable | Required | Description |
 |---|---|---|
@@ -83,7 +57,29 @@ VoiceLiveInstrumentor().uninstrument()
 | `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` | No | Set to `"true"` to record full message payloads in span events (`gen_ai.event.content`). **May contain personal data.** Defaults to `false`. |
 | `AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED` | No | Legacy equivalent of the above. If both are set and differ, content recording is disabled. |
 
-## Span Structure
+Key concepts
+------------
+
+### Architecture
+
+![Telemetry Architecture](telemetry_architecture.png)
+
+**Key layers:**
+
+- **User Application** — sets up `TracerProvider` and exporter, calls `VoiceLiveInstrumentor().instrument()`.
+- **azure-ai-voicelive SDK** — the VoiceLive client that manages WebSocket connections and message exchange.
+- **Telemetry Layer** — `VoiceLiveInstrumentor` automatically instruments SDK operations to emit OpenTelemetry spans.
+- **OpenTelemetry Stack** — `azure-core-tracing-opentelemetry` bridges to `opentelemetry-sdk` → Exporter → backend (Azure Monitor, Jaeger, console, etc.).
+
+### How it works
+
+1. **Enable** — Call `VoiceLiveInstrumentor().instrument()` after setting the required environment variable. This hooks into SDK operations to emit spans automatically.
+2. **Connect span** — A parent span is created when the VoiceLive session starts and remains open for the entire session lifetime. Session-level metrics (turn count, interruptions, audio bytes) are recorded on this span when the session ends.
+3. **Send / Recv spans** — Each message sent or received creates a child span under the connect span, capturing the event type, message size, and (optionally) the full payload.
+4. **First-token latency** — The time between sending `response.create` and receiving the first audio or text delta is measured and recorded automatically.
+5. **Disable** — Call `uninstrument()` to stop tracing.
+
+### Span structure
 
 The instrumentor creates the following span hierarchy for a VoiceLive session:
 
@@ -101,9 +97,9 @@ connect (parent span — open for the entire session lifetime)
 └── close
 ```
 
-## Span Attributes Reference
+### Span attributes
 
-### Standard GenAI Semantic Convention Attributes
+#### Standard GenAI Semantic Convention Attributes
 
 | Attribute | Type | Description |
 |---|---|---|
@@ -117,7 +113,7 @@ connect (parent span — open for the entire session lifetime)
 | `server.port` | int | Server port |
 | `error.type` | string | Fully-qualified exception class name on error |
 
-### VoiceLive-Specific Attributes
+#### VoiceLive-Specific Attributes
 
 | Attribute | Type | Scope | Description |
 |---|---|---|---|
@@ -132,7 +128,7 @@ connect (parent span — open for the entire session lifetime)
 | `gen_ai.voice.audio_bytes_received` | int | Connect span | Total raw audio bytes received (decoded from base64) |
 | `gen_ai.voice.message_size` | int | Send/Recv spans | JSON payload byte length of each WebSocket message |
 
-### Span Events
+#### Span Events
 
 | Event Name | When | Key Attributes |
 |---|---|---|
@@ -141,64 +137,7 @@ connect (parent span — open for the entire session lifetime)
 | `gen_ai.voice.error` | On server `error` events | `error.code`, `error.message` |
 | `gen_ai.voice.rate_limits.updated` | On `rate_limits.updated` events | `gen_ai.voice.rate_limits` (JSON array) |
 
-## Content Recording
-
-By default, message payloads are **not** captured in span events to protect user privacy. To enable:
-
-```python
-# Option 1: Environment variable
-os.environ["OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"] = "true"
-VoiceLiveInstrumentor().instrument()
-
-# Option 2: Programmatic
-VoiceLiveInstrumentor().instrument(enable_content_recording=True)
-```
-
-When enabled, the full JSON payload appears as `gen_ai.event.content` in `gen_ai.input.messages` and `gen_ai.output.messages` span events.
-
-> **Warning:** Content recording may capture personal data (user speech transcripts, AI responses). Only enable in development or controlled environments.
-
-## Exporter Options
-
-### Console (development)
-
-```python
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
-
-provider.add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
-```
-
-### Azure Monitor / Application Insights (production)
-
-```python
-from azure.monitor.opentelemetry import configure_azure_monitor
-
-configure_azure_monitor(connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
-```
-
-### OTLP (Jaeger, Aspire Dashboard, etc.)
-
-```python
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
-from opentelemetry.sdk.trace.export import BatchSpanProcessor
-
-provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
-```
-
-## Samples
-
-See the [samples/telemetry/](../../../../samples/telemetry/) directory:
-
-| Sample | Description |
-|---|---|
-| `sample_voicelive_with_console_tracing.py` | Console exporter — spans print to stdout |
-| `sample_voicelive_with_azure_monitor_tracing.py` | Azure Monitor exporter |
-| `sample_voicelive_with_console_tracing_custom_attributes.py` | Custom `SpanProcessor` to inject app-specific attributes |
-| `sample_voicelive_with_content_recording.py` | Content recording enabled |
-
-## API Reference
-
-### `VoiceLiveInstrumentor`
+### VoiceLiveInstrumentor API
 
 ```python
 from azure.ai.voicelive.telemetry import VoiceLiveInstrumentor
@@ -217,20 +156,102 @@ instrumentor.uninstrument()                      # Disable tracing
 | `is_instrumented()` | Returns `True` if tracing is active. |
 | `is_content_recording_enabled()` | Returns `True` if message content recording is enabled. |
 
-## How It Works
+Examples
+--------
 
-1. **Enable** — Call `VoiceLiveInstrumentor().instrument()` after setting the required environment variable. This hooks into SDK operations to emit spans automatically.
-2. **Connect span** — A parent span is created when the VoiceLive session starts and remains open for the entire session lifetime. Session-level metrics (turn count, interruptions, audio bytes) are recorded on this span when the session ends.
-3. **Send / Recv spans** — Each message sent or received creates a child span under the connect span, capturing the event type, message size, and (optionally) the full payload.
-4. **First-token latency** — The time between sending `response.create` and receiving the first audio or text delta is measured and recorded automatically.
-5. **Disable** — Call `uninstrument()` to stop tracing.
+### Use the SDK with tracing
 
-## Troubleshooting
+```python
+from azure.ai.voicelive.aio import connect
+
+async with connect(endpoint=endpoint, credential=credential, model=model) as connection:
+    await connection.session.update(session=session_config)   # → "send session.update" span
+    await connection.conversation.item.create(item=message)   # → "send conversation.item.create" span
+    await connection.response.create()                        # → "send response.create" span
+
+    async for event in connection:                            # → "recv" spans per event
+        ...
+# ← connect span ends here
+```
+
+All spans are created automatically — no code changes needed in your application logic.
+
+### Content recording
+
+By default, message payloads are **not** captured in span events to protect user privacy. To enable:
+
+```python
+# Option 1: Environment variable
+os.environ["OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"] = "true"
+VoiceLiveInstrumentor().instrument()
+
+# Option 2: Programmatic
+VoiceLiveInstrumentor().instrument(enable_content_recording=True)
+```
+
+When enabled, the full JSON payload appears as `gen_ai.event.content` in `gen_ai.input.messages` and `gen_ai.output.messages` span events.
+
+> **Warning:** Content recording may capture personal data (user speech transcripts, AI responses). Only enable in development or controlled environments.
+
+### Exporter options
+
+#### Console (development)
+
+```python
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
+
+provider.add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
+```
+
+#### Azure Monitor / Application Insights (production)
+
+```python
+from azure.monitor.opentelemetry import configure_azure_monitor
+
+configure_azure_monitor(connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
+```
+
+#### OTLP (Jaeger, Aspire Dashboard, etc.)
+
+```python
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
+provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
+```
+
+### Samples
+
+See the `samples/telemetry/` directory:
+
+| Sample | Description |
+|---|---|
+| `sample_voicelive_with_console_tracing.py` | Console exporter — spans print to stdout |
+| `sample_voicelive_with_azure_monitor_tracing.py` | Azure Monitor exporter |
+| `sample_voicelive_with_console_tracing_custom_attributes.py` | Custom `SpanProcessor` to inject app-specific attributes |
+| `sample_voicelive_with_content_recording.py` | Content recording enabled |
+
+Troubleshooting
+---------------
 
 | Problem | Cause | Fix |
 |---|---|---|
 | `instrument()` does nothing / no spans appear | `AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING` not set | `os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"` |
 | `ModuleNotFoundError` when creating `VoiceLiveInstrumentor()` | `opentelemetry` packages not installed | `pip install opentelemetry-sdk azure-core-tracing-opentelemetry` |
-| Spans created but not exported anywhere | No `TracerProvider` / exporter configured | Set up a `TracerProvider` with an exporter (see [Quick Start](#2-configure--enable-tracing)) |
+| Spans created but not exported anywhere | No `TracerProvider` / exporter configured | Set up a `TracerProvider` with an exporter (see Getting started) |
 | `settings.tracing_implementation` not set | `azure-core` doesn't know to use OpenTelemetry | `settings.tracing_implementation = "opentelemetry"` |
 | Content not appearing in span events | Content recording is off by default | Set `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true` or pass `enable_content_recording=True` |
+
+Next steps
+----------
+
+- Explore the `samples/telemetry/` directory for complete working examples.
+- See the main `azure-ai-voicelive` package README for general SDK usage and authentication.
+- Learn more about [OpenTelemetry Python](https://opentelemetry.io/docs/languages/python/) and [GenAI Semantic Conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/).
+
+Contributing
+------------
+
+This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information, see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.

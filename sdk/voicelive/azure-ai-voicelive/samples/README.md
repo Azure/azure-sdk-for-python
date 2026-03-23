@@ -114,10 +114,10 @@ These samples are in the `telemetry/` folder and demonstrate OpenTelemetry-based
 
 | Sample | Description |
 |---|---|
-| [sample_voicelive_with_console_tracing.py](telemetry/sample_voicelive_with_console_tracing.py) | Basic tracing with console output. All connection, send, and receive operations produce OpenTelemetry spans printed to stdout. |
-| [sample_voicelive_with_azure_monitor_tracing.py](telemetry/sample_voicelive_with_azure_monitor_tracing.py) | Traces exported to Azure Monitor / Application Insights. View results in the "Tracing" tab. |
-| [sample_voicelive_with_console_tracing_custom_attributes.py](telemetry/sample_voicelive_with_console_tracing_custom_attributes.py) | Adds custom `SpanProcessor` to inject application-specific attributes (session ID, etc.) into every span. |
-| [sample_voicelive_with_content_recording.py](telemetry/sample_voicelive_with_content_recording.py) | Enables content recording to capture full message payloads in span events. Useful for debugging; may contain personal data. |
+| `sample_voicelive_with_console_tracing.py` | Basic tracing with console output. All connection, send, and receive operations produce OpenTelemetry spans printed to stdout. |
+| `sample_voicelive_with_azure_monitor_tracing.py` | Traces exported to Azure Monitor / Application Insights. View results in the "Tracing" tab. |
+| `sample_voicelive_with_console_tracing_custom_attributes.py` | Adds custom `SpanProcessor` to inject application-specific attributes (session ID, etc.) into every span. |
+| `sample_voicelive_with_content_recording.py` | Enables content recording to capture full message payloads in span events. Useful for debugging; may contain personal data. |
 
 **Prerequisites for telemetry samples:**
 

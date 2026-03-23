@@ -305,7 +305,7 @@ class TestSendRecvTracing:
 
         mock_ws_msg = MagicMock()
         mock_ws_msg.type = aiohttp.WSMsgType.TEXT
-        mock_ws_msg.data = json.dumps({"type": "session.created", "session": {"id": "sess_123"}})
+        mock_ws_msg.data = json.dumps({"type": "session.created", "session": {"id": "test-session-123"}})
 
         mock_ws = AsyncMock()
         mock_ws.receive = AsyncMock(return_value=mock_ws_msg)
@@ -424,13 +424,13 @@ class TestSessionIdExtraction:
 
         conn = MagicMock()
         conn._telemetry_span = MagicMock()
-        result = {"type": "session.created", "session": {"id": "sess_abc123"}}
+        result = {"type": "session.created", "session": {"id": "test-session-abc123"}}
 
         _VoiceLiveInstrumentorPreview._extract_session_id(conn, result)
 
-        assert conn._telemetry_session_id == "sess_abc123"
+        assert conn._telemetry_session_id == "test-session-abc123"
         conn._telemetry_span.add_attribute.assert_called_with(
-            "gen_ai.voice.session_id", "sess_abc123"
+            "gen_ai.voice.session_id", "test-session-abc123"
         )
 
     def test_extract_session_id_from_object(self):
@@ -439,12 +439,12 @@ class TestSessionIdExtraction:
 
         conn = MagicMock()
         conn._telemetry_span = MagicMock()
-        session = types.SimpleNamespace(id="sess_xyz789")
+        session = types.SimpleNamespace(id="test-session-xyz789")
         result = types.SimpleNamespace(session=session)
 
         _VoiceLiveInstrumentorPreview._extract_session_id(conn, result)
 
-        assert conn._telemetry_session_id == "sess_xyz789"
+        assert conn._telemetry_session_id == "test-session-xyz789"
 
     def test_extract_session_id_no_session(self):
         from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
@@ -669,7 +669,7 @@ class TestMessageSize:
 
     def test_message_size_on_recv(self, mock_span):
         """Recv wrapper should set message size attribute."""
-        result = {"type": "session.created", "session": {"id": "sess_123"}}
+        result = {"type": "session.created", "session": {"id": "test-session-123"}}
         content_str = json.dumps(result, default=str)
         expected_size = len(content_str)
 
