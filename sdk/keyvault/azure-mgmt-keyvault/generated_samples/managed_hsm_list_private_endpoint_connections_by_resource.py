@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-05-01/ManagedHsm_ListPrivateEndpointConnectionsByResource.json
+# x-ms-original-file: 2026-02-01/ManagedHsm_ListPrivateEndpointConnectionsByResource.json
 if __name__ == "__main__":
     main()
