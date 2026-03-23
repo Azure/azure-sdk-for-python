@@ -219,15 +219,17 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     def emit_incomplete(
         self,
         *,
-        reason: str | None = None,
+        reason: str | generated_models.ResponseIncompleteReason | None = None,
         usage: generated_models.ResponseUsage | dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """Emit a ``response.incomplete`` terminal lifecycle event.
 
         :keyword reason: Optional reason for incompleteness.
-        :keyword type reason: str | None
+        :keyword type reason: str | ~azure.ai.agentserver.responses.models._generated.ResponseIncompleteReason
+                                | None
         :keyword usage: Optional usage statistics to attach to the response.
-        :keyword type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any] | None
+        :keyword type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any]
+                                | None
         :returns: The emitted event dict with type and payload.
         :rtype: dict[str, Any]
         """
