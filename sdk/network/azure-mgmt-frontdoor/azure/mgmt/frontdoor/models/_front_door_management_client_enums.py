@@ -19,6 +19,7 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REDIRECT = "Redirect"
     ANOMALY_SCORING = "AnomalyScoring"
     JS_CHALLENGE = "JSChallenge"
+    CAPTCHA = "CAPTCHA"
 
 
 class AggregationInterval(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -235,7 +236,9 @@ class ManagedRuleExclusionMatchVariable(str, Enum, metaclass=CaseInsensitiveEnum
     REQUEST_BODY_JSON_ARG_NAMES = "RequestBodyJsonArgNames"
 
 
-class ManagedRuleExclusionSelectorMatchOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ManagedRuleExclusionSelectorMatchOperator(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Comparison operator to apply to the selector when specifying which elements in the collection
     this exclusion applies to.
     """
@@ -321,6 +324,7 @@ class Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BEGINS_WITH = "BeginsWith"
     ENDS_WITH = "EndsWith"
     REG_EX = "RegEx"
+    SERVICE_TAG_MATCH = "ServiceTagMatch"
 
 
 class PolicyEnabledState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -445,6 +449,17 @@ class ScrubbingRuleEntryState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
+
+class SensitivityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the sensitivity for the rule."""
+
+    LOW = "Low"
+    """Low Sensitivity - triggers the rule by larger spikes in traffic"""
+    MEDIUM = "Medium"
+    """Medium Sensitivity - triggers the rule by moderate spikes in traffic"""
+    HIGH = "High"
+    """High Sensitivity - triggers the rule by smaller spikes in traffic"""
 
 
 class SessionAffinityEnabledState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
