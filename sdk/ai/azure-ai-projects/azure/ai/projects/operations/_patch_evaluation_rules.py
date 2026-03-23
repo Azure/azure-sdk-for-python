@@ -98,7 +98,7 @@ class EvaluationRulesOperations(GeneratedEvaluationRulesOperations):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        if getattr(self._config, "_allow_preview", False):
+        if getattr(self._config, "allow_preview", False):
             # Import at call time to avoid circular import during module initialization.
             from ._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 

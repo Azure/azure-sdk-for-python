@@ -97,7 +97,7 @@ class EvaluationRulesOperations(GeneratedEvaluationRulesOperations):
         :rtype: ~azure.ai.projects.models.EvaluationRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if getattr(self._config, "_allow_preview", False):
+        if getattr(self._config, "allow_preview", False):
             # Import at call time to avoid circular import during module initialization.
             from ...operations import _patch as _sync_patch
 
