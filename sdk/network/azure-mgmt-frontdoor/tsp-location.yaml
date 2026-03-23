@@ -1,4 +1,0 @@
-directory: specification/frontdoor/resource-manager/Microsoft.Network/FrontDoor
-commit: 40574d16ec8eed6c53c80a27fe084ce17732e1af
-repo: Azure/azure-rest-api-specs
-additionalDirectories: 
