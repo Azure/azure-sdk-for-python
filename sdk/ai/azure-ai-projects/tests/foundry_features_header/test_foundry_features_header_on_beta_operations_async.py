@@ -42,9 +42,11 @@ from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
 from foundry_features_header_test_base import (
     EXPECTED_FOUNDRY_FEATURES,
     FAKE_ENDPOINT,
+    FOUNDRY_FEATURES_HEADER,
     AsyncFakeCredential,
     FoundryFeaturesHeaderTestBase,
     _RequestCaptured,
+    _UNSET_SENTINELS,
 )
 
 # ---------------------------------------------------------------------------
@@ -234,3 +236,113 @@ class TestFoundryFeaturesHeaderOnBetaOperationsAsync(FoundryFeaturesHeaderTestBa
         sc = getattr(async_client.beta, subclient_name)
         method = getattr(sc, method_name)
         await self._assert_header_async(label, self._make_fake_call(method), expected_header_value)
+
+
+# ---------------------------------------------------------------------------
+# Pick the first discovered beta method (reuses _ASYNC_TEST_CASES, no extra I/O)
+# ---------------------------------------------------------------------------
+
+_, _FIRST_SC_NAME, _FIRST_M_NAME, _ = _ASYNC_TEST_CASES[0].values
+
+
+# ---------------------------------------------------------------------------
+# Tests: caller-controlled header override / augmentation behaviour (async)
+# ---------------------------------------------------------------------------
+
+
+class TestFoundryFeaturesHeaderOverrideOnBetaOperationsAsync(FoundryFeaturesHeaderTestBase):
+    """Verify callers can override or augment the internally-set Foundry-Features header (async).
+
+    All three tests operate on the first public method enumerated on any .beta sub-client
+    to avoid hard-coding a specific API surface.
+    """
+
+    @staticmethod
+    async def _capture_async(call: Any) -> Any:
+        """Invoke *call* and return the captured HttpRequest (async version)."""
+        result = call()
+        if inspect.isawaitable(result):
+            try:
+                await result
+            except _RequestCaptured as exc:
+                return exc.request
+            raise AssertionError("Transport was never called (awaitable completed without raising)")
+        ai = result.__aiter__()
+        try:
+            await ai.__anext__()
+        except _RequestCaptured as exc:
+            return exc.request
+        except StopAsyncIteration:
+            raise AssertionError("Iterator exhausted without the transport being called") from None
+        raise AssertionError("Transport was never called")
+
+    @staticmethod
+    def _make_fake_call_with_headers(method: Any, headers: dict) -> Any:
+        """Like _make_fake_call but also passes *headers* as a keyword argument."""
+        sig = inspect.signature(method)
+        args: list[Any] = []
+        kwargs: dict[str, Any] = {"headers": headers}
+        for param_name, param in sig.parameters.items():
+            if param_name in ("self", "cls"):
+                continue
+            if param.kind in (param.VAR_POSITIONAL, param.VAR_KEYWORD):
+                continue
+            is_required = param.default is inspect.Parameter.empty or param.default in _UNSET_SENTINELS
+            if not is_required:
+                continue
+            fake = FoundryFeaturesHeaderTestBase._fake_for_param(param)
+            if param.kind in (inspect.Parameter.POSITIONAL_OR_KEYWORD, inspect.Parameter.POSITIONAL_ONLY):
+                args.append(fake)
+            else:
+                kwargs[param_name] = fake
+        return lambda: method(*args, **kwargs)
+
+    @pytest.mark.asyncio
+    async def test_foundry_features_header_override_on_beta_operations_async(
+        self, async_client: AsyncAIProjectClient
+    ) -> None:
+        """Caller-supplied headers={"Foundry-Features": "CustomValue"} must reach the transport
+        instead of the internally-set default value."""
+        sc = getattr(async_client.beta, _FIRST_SC_NAME)
+        method = getattr(sc, _FIRST_M_NAME)
+        custom_headers = {FOUNDRY_FEATURES_HEADER: "CustomValue"}
+        request = await self._capture_async(self._make_fake_call_with_headers(method, custom_headers))
+        assert request.headers.get(FOUNDRY_FEATURES_HEADER) == "CustomValue", (
+            f"Expected '{FOUNDRY_FEATURES_HEADER}: CustomValue' but got: {dict(request.headers)}"
+        )
+
+    @pytest.mark.asyncio
+    async def test_foundry_features_header_override_and_add_on_beta_operations_async(
+        self, async_client: AsyncAIProjectClient
+    ) -> None:
+        """Caller-supplied headers={"Foundry-Features": "CustomValue", "SomeOtherHeaderName": "SomeOtherHeaderValue"}
+        must result in both headers reaching the transport (custom Foundry-Features value and extra header)."""
+        sc = getattr(async_client.beta, _FIRST_SC_NAME)
+        method = getattr(sc, _FIRST_M_NAME)
+        custom_headers = {FOUNDRY_FEATURES_HEADER: "CustomValue", "SomeOtherHeaderName": "SomeOtherHeaderValue"}
+        request = await self._capture_async(self._make_fake_call_with_headers(method, custom_headers))
+        assert request.headers.get(FOUNDRY_FEATURES_HEADER) == "CustomValue", (
+            f"Expected '{FOUNDRY_FEATURES_HEADER}: CustomValue' but got: {dict(request.headers)}"
+        )
+        assert request.headers.get("SomeOtherHeaderName") == "SomeOtherHeaderValue", (
+            f"Expected 'SomeOtherHeaderName: SomeOtherHeaderValue' in headers but got: {dict(request.headers)}"
+        )
+
+    @pytest.mark.asyncio
+    async def test_foundry_features_header_additional_header_on_beta_operations_async(
+        self, async_client: AsyncAIProjectClient
+    ) -> None:
+        """Caller-supplied headers={"SomeOtherHeaderName": "SomeOtherHeaderValue"} (no Foundry-Features
+        override) must result in the extra header AND the internally-set Foundry-Features header both
+        reaching the transport."""
+        sc = getattr(async_client.beta, _FIRST_SC_NAME)
+        method = getattr(sc, _FIRST_M_NAME)
+        custom_headers = {"SomeOtherHeaderName": "SomeOtherHeaderValue"}
+        request = await self._capture_async(self._make_fake_call_with_headers(method, custom_headers))
+        assert request.headers.get(FOUNDRY_FEATURES_HEADER) is not None, (
+            f"Expected '{FOUNDRY_FEATURES_HEADER}' to be present but it was missing. "
+            f"Headers: {dict(request.headers)}"
+        )
+        assert request.headers.get("SomeOtherHeaderName") == "SomeOtherHeaderValue", (
+            f"Expected 'SomeOtherHeaderName: SomeOtherHeaderValue' in headers but got: {dict(request.headers)}"
+        )
