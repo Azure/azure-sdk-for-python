@@ -69,7 +69,6 @@ from azure.monitor.opentelemetry._constants import (
     PARENT_BASED_ALWAYS_ON_SAMPLER,
     PARENT_BASED_ALWAYS_OFF_SAMPLER,
     PARENT_BASED_TRACE_ID_RATIO_SAMPLER,
-    SAMPLING_ARG,
     SAMPLER_TYPE,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
@@ -187,7 +186,7 @@ def _default_sampler(configurations):
         configurations[SAMPLER_TYPE] = sampler
     elif sampler is not None:
         _logger.error(  # pylint: disable=C0301
-            "Invalid value '%s' for the sampler. " "Supported values are %s. Defaulting to %s: %s",
+            "Invalid value '%s' for the sampler. Supported values are %s. Defaulting to %s: %s",
             sampler,
             SUPPORTED_OTEL_SAMPLERS,
             RATE_LIMITED_SAMPLER,
@@ -289,50 +288,44 @@ def _default_enable_trace_based_sampling(configurations):
 
 def _get_sampler_from_name(sampler_type):
     default_value = 1.0
+    sampler = None
+
     if sampler_type == PARENT_BASED_ALWAYS_OFF_SAMPLER:
-        return ParentBased(ALWAYS_OFF)
+        sampler = ParentBased(ALWAYS_OFF)
+    elif sampler_type == PARENT_BASED_ALWAYS_ON_SAMPLER:
+        sampler = ParentBased(ALWAYS_ON)
+    elif sampler_type == ALWAYS_ON_SAMPLER:
+        sampler = ALWAYS_ON
+    elif sampler_type == ALWAYS_OFF_SAMPLER:
+        sampler = ALWAYS_OFF
+    elif sampler_type in (TRACE_ID_RATIO_SAMPLER, PARENT_BASED_TRACE_ID_RATIO_SAMPLER):
+        sampler_arg = environ.get(OTEL_TRACES_SAMPLER_ARG)
+        sampler_value = default_value
+        if sampler_arg is not None:
+            try:
+                sampler_value = float(sampler_arg)
+            except ValueError:
+                _logger.error(
+                    _INVALID_FLOAT_MESSAGE,
+                    OTEL_TRACES_SAMPLER_ARG,
+                    default_value,
+                )
+                sampler_value = default_value
 
-    if sampler_type == PARENT_BASED_ALWAYS_ON_SAMPLER:
-        return ParentBased(ALWAYS_ON)
-
-    if sampler_type == ALWAYS_ON_SAMPLER:
-        return ALWAYS_ON
-
-    if sampler_type == ALWAYS_OFF_SAMPLER:
-        return ALWAYS_OFF
-
-    sampler_arg = environ.get(OTEL_TRACES_SAMPLER_ARG)
-    sampler_value = default_value
-    if sampler_arg is not None:
-        try:
-            sampler_value = float(sampler_arg)
-        except ValueError as e:
-            _logger.error(
-                _INVALID_FLOAT_MESSAGE,
-                OTEL_TRACES_SAMPLER_ARG,
-                default_value,
-            )
-            sampler_value = default_value
-
-    if sampler_type == TRACE_ID_RATIO_SAMPLER:
         if sampler_value < 0.0 or sampler_value > 1.0:
             _logger.error(
-                "Invalid sampler argument for TRACE_ID_RATIO_SAMPLER. It should be a value between 0 and 1. Defaulting to %s.",
+                "Invalid sampler argument for %s. " \
+                "It should be a value between 0 and 1. Defaulting to %s.",
+                sampler_type,
                 default_value,
             )
             sampler_value = default_value
         else:
             _logger.info("Using sampling value: %s", sampler_value)
-        return TraceIdRatioBased(sampler_value)
 
-    if sampler_type == PARENT_BASED_TRACE_ID_RATIO_SAMPLER:
-        if sampler_value < 0.0 or sampler_value > 1.0:
-            _logger.error(
-                "Invalid sampler argument for PARENT_BASED_TRACE_ID_RATIO_SAMPLER. It should be a value between 0 and 1. Defaulting to %s.",
-                default_value,
-            )
-            sampler_value = default_value
+        if sampler_type == TRACE_ID_RATIO_SAMPLER:
+            sampler = TraceIdRatioBased(sampler_value)
         else:
-            _logger.info("Using sampling value: %s", sampler_value)
-        return ParentBased(TraceIdRatioBased(sampler_value))
-    return ParentBased(ALWAYS_ON)
+            sampler = ParentBased(TraceIdRatioBased(sampler_value))
+
+    return sampler if sampler is not None else ParentBased(ALWAYS_ON)

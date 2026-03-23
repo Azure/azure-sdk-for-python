@@ -41,11 +41,9 @@ from azure.monitor.opentelemetry._constants import (
     METRIC_READERS_ARG,
     VIEWS_ARG,
     ENABLE_TRACE_BASED_SAMPLING_ARG,
-    SAMPLING_ARG,
     SAMPLER_TYPE,
     RATE_LIMITED_SAMPLER,
     FIXED_PERCENTAGE_SAMPLER,
-    SAMPLER_TYPE,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry.exporter._quickpulse import (  # pylint: disable=import-error,no-name-in-module
@@ -170,7 +168,7 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
     resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
     enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
     sampler_type = configurations.get(SAMPLER_TYPE, RATE_LIMITED_SAMPLER)
-    if sampler_type == RATE_LIMITED_SAMPLER or sampler_type == "microsoft.fixed.percentage":
+    if sampler_type in (RATE_LIMITED_SAMPLER, 'microsoft.fixed.percentage'):
         traces_per_second = configurations.get(SAMPLING_TRACES_PER_SECOND_ARG)
         sampler = (
             RateLimitedSampler()
