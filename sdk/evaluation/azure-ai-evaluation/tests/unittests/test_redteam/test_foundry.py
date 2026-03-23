@@ -217,9 +217,7 @@ class TestDatasetConfigurationBuilder:
         assert len(seeds) >= 1
 
         # Check that attack vehicle metadata is present on some seeds
-        has_attack_vehicle = any(
-            getattr(seed, "metadata", {}).get("is_attack_vehicle") for seed in seeds
-        )
+        has_attack_vehicle = any(getattr(seed, "metadata", {}).get("is_attack_vehicle") for seed in seeds)
         # In XPIA mode with context, we should have attack vehicles
         # (This depends on implementation details)
 
@@ -465,10 +463,7 @@ class TestStrategyMapper:
 
     def test_requires_special_handling_indirect_jailbreak(self):
         """Test that IndirectJailbreak requires special handling."""
-        assert (
-            StrategyMapper.requires_special_handling(AttackStrategy.IndirectJailbreak)
-            is True
-        )
+        assert StrategyMapper.requires_special_handling(AttackStrategy.IndirectJailbreak) is True
 
     def test_requires_special_handling_base64(self):
         """Test that Base64 does not require special handling."""
@@ -576,9 +571,7 @@ class TestRAIServiceScorer:
         assert scorer.risk_category == RiskCategory.Violence
         assert scorer.scorer_type == "true_false"
 
-    def test_initialization_with_default_logger(
-        self, mock_credential, mock_azure_ai_project
-    ):
+    def test_initialization_with_default_logger(self, mock_credential, mock_azure_ai_project):
         """Test RAIServiceScorer with default logger."""
         scorer = RAIServiceScorer(
             credential=mock_credential,
@@ -588,9 +581,7 @@ class TestRAIServiceScorer:
 
         assert scorer.logger is not None
 
-    def test_validate_with_valid_piece(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_validate_with_valid_piece(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test validation with a valid message piece."""
         scorer = RAIServiceScorer(
             credential=mock_credential,
@@ -606,9 +597,7 @@ class TestRAIServiceScorer:
         # Should not raise
         scorer.validate(mock_piece, task="Test task")
 
-    def test_validate_with_none_raises(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_validate_with_none_raises(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test validation raises for None input."""
         scorer = RAIServiceScorer(
             credential=mock_credential,
@@ -620,9 +609,7 @@ class TestRAIServiceScorer:
         with pytest.raises(ValueError, match="cannot be None"):
             scorer.validate(None)
 
-    def test_validate_with_empty_value_raises(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_validate_with_empty_value_raises(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test validation raises for empty value."""
         scorer = RAIServiceScorer(
             credential=mock_credential,
@@ -653,9 +640,7 @@ class TestRAIServiceScorer:
         assert identifier["risk_category"] == "violence"
 
     @pytest.mark.asyncio
-    async def test_score_async_success(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    async def test_score_async_success(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test score_async with successful RAI evaluation."""
         scorer = RAIServiceScorer(
             credential=mock_credential,
@@ -701,9 +686,7 @@ class TestRAIServiceScorer:
             assert score.score_type == "true_false"
 
     @pytest.mark.asyncio
-    async def test_score_async_failure(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    async def test_score_async_failure(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test score_async when attack fails (below threshold)."""
         scorer = RAIServiceScorer(
             credential=mock_credential,
@@ -748,9 +731,7 @@ class TestRAIServiceScorer:
             assert score.score_value == "false"  # Attack failed
 
     @pytest.mark.asyncio
-    async def test_score_async_error_handling(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    async def test_score_async_error_handling(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test score_async re-raises errors so PyRIT treats them as UNDETERMINED."""
         scorer = RAIServiceScorer(
             credential=mock_credential,
@@ -779,9 +760,7 @@ class TestRAIServiceScorer:
             with pytest.raises(Exception, match="RAI service error"):
                 await scorer.score_async(mock_message, objective="Test attack")
 
-    def test_get_context_for_piece_from_labels(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_get_context_for_piece_from_labels(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test context retrieval from message labels."""
         scorer = RAIServiceScorer(
             credential=mock_credential,
@@ -807,9 +786,7 @@ class TestRAIServiceScorer:
         assert "Context content 1" in result
         assert "Context content 2" in result
 
-    def test_get_context_for_piece_empty(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_get_context_for_piece_empty(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test context retrieval returns empty string when no context."""
         scorer = RAIServiceScorer(
             credential=mock_credential,
@@ -1017,9 +994,7 @@ class TestScenarioOrchestrator:
         failure_result.outcome = AttackOutcome.FAILURE
 
         orchestrator._scenario_result = MagicMock()
-        orchestrator._scenario_result.attack_results = {
-            "obj1": [success_result, success_result, failure_result]
-        }
+        orchestrator._scenario_result.attack_results = {"obj1": [success_result, success_result, failure_result]}
 
         asr = orchestrator.calculate_asr()
         assert asr == pytest.approx(2 / 3)  # 2 successes out of 3
@@ -1052,9 +1027,7 @@ class TestScenarioOrchestrator:
         morse_success.attack_identifier = {"__type__": "MorseAttack"}
 
         orchestrator._scenario_result = MagicMock()
-        orchestrator._scenario_result.attack_results = {
-            "obj1": [base64_success, base64_failure, morse_success]
-        }
+        orchestrator._scenario_result.attack_results = {"obj1": [base64_success, base64_failure, morse_success]}
 
         asr_by_strategy = orchestrator.calculate_asr_by_strategy()
 
@@ -1064,9 +1037,7 @@ class TestScenarioOrchestrator:
         assert asr_by_strategy["MorseAttack"] == pytest.approx(1.0)  # 1/1
 
     @pytest.mark.asyncio
-    async def test_execute_swallows_run_async_exception_with_partial_results(
-        self, mock_logger
-    ):
+    async def test_execute_swallows_run_async_exception_with_partial_results(self, mock_logger):
         """Test that when run_async raises, execute() does not propagate the exception
         and _scenario_result captures partial results from _result if available."""
         from pyrit.scenario.foundry import FoundryStrategy
@@ -1087,9 +1058,7 @@ class TestScenarioOrchestrator:
         partial_result = MagicMock()
         mock_foundry = AsyncMock()
         mock_foundry.initialize_async = AsyncMock()
-        mock_foundry.run_async = AsyncMock(
-            side_effect=RuntimeError("mid-execution failure")
-        )
+        mock_foundry.run_async = AsyncMock(side_effect=RuntimeError("mid-execution failure"))
         mock_foundry._result = partial_result
 
         with patch(
@@ -1108,9 +1077,7 @@ class TestScenarioOrchestrator:
             mock_logger.warning.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_execute_swallows_run_async_exception_no_partial_results(
-        self, mock_logger
-    ):
+    async def test_execute_swallows_run_async_exception_no_partial_results(self, mock_logger):
         """Test that when run_async raises and _result is absent, execute() still returns
         normally with _scenario_result remaining None."""
         from pyrit.scenario.foundry import FoundryStrategy
@@ -1261,9 +1228,7 @@ class TestFoundryResultProcessor:
         assert stats["successful"] == 2
         assert stats["failed"] == 1
         assert stats["undetermined"] == 1
-        assert stats["asr"] == pytest.approx(
-            2 / 3
-        )  # 2 successes / 3 decided (undetermined excluded)
+        assert stats["asr"] == pytest.approx(2 / 3)  # 2 successes / 3 decided (undetermined excluded)
 
     def test_build_messages_from_pieces(self):
         """Test building message list from conversation pieces."""
@@ -1410,9 +1375,7 @@ class TestFoundryExecutionManager:
         assert manager._scenarios == {}
         assert manager._dataset_configs == {}
 
-    def test_initialization_with_adversarial_chat(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_initialization_with_adversarial_chat(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test FoundryExecutionManager with adversarial chat target."""
         mock_adversarial = MagicMock()
 
@@ -1426,9 +1389,7 @@ class TestFoundryExecutionManager:
 
         assert manager.adversarial_chat_target == mock_adversarial
 
-    def test_extract_objective_content_from_messages(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_extract_objective_content_from_messages(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test extracting objective content from messages format."""
         manager = FoundryExecutionManager(
             credential=mock_credential,
@@ -1442,9 +1403,7 @@ class TestFoundryExecutionManager:
 
         assert result == "Attack prompt"
 
-    def test_extract_objective_content_from_content_field(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_extract_objective_content_from_content_field(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test extracting objective content from content field."""
         manager = FoundryExecutionManager(
             credential=mock_credential,
@@ -1458,9 +1417,7 @@ class TestFoundryExecutionManager:
 
         assert result == "Attack prompt"
 
-    def test_extract_objective_content_from_objective_field(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_extract_objective_content_from_objective_field(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test extracting objective content from objective field."""
         manager = FoundryExecutionManager(
             credential=mock_credential,
@@ -1474,9 +1431,7 @@ class TestFoundryExecutionManager:
 
         assert result == "Attack prompt"
 
-    def test_extract_objective_content_returns_none(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_extract_objective_content_returns_none(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test extracting objective content returns None for invalid input."""
         manager = FoundryExecutionManager(
             credential=mock_credential,
@@ -1490,9 +1445,7 @@ class TestFoundryExecutionManager:
 
         assert result is None
 
-    def test_extract_context_items_from_message_context(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_extract_context_items_from_message_context(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test extracting context items from message context."""
         manager = FoundryExecutionManager(
             credential=mock_credential,
@@ -1516,9 +1469,7 @@ class TestFoundryExecutionManager:
         assert len(result) == 1
         assert result[0]["content"] == "Email body"
 
-    def test_extract_context_items_from_top_level(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_extract_context_items_from_top_level(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test extracting context items from top-level context."""
         manager = FoundryExecutionManager(
             credential=mock_credential,
@@ -1533,9 +1484,7 @@ class TestFoundryExecutionManager:
         assert len(result) == 1
         assert result[0]["content"] == "Top level context"
 
-    def test_build_dataset_config(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_build_dataset_config(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test building DatasetConfiguration from objectives."""
         manager = FoundryExecutionManager(
             credential=mock_credential,
@@ -1577,9 +1526,7 @@ class TestFoundryExecutionManager:
 
         assert manager.get_scenarios() == {}
 
-    def test_get_dataset_configs(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_get_dataset_configs(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test get_dataset_configs returns empty dict initially."""
         manager = FoundryExecutionManager(
             credential=mock_credential,
@@ -1590,9 +1537,7 @@ class TestFoundryExecutionManager:
 
         assert manager.get_dataset_configs() == {}
 
-    def test_group_results_by_strategy(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_group_results_by_strategy(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test grouping results by strategy uses get_strategy_name() keys."""
         manager = FoundryExecutionManager(
             credential=mock_credential,
@@ -1620,9 +1565,7 @@ class TestFoundryExecutionManager:
         assert "rot13" in results
         assert results["rot13"]["asr"] == 0.75
 
-    def test_group_results_by_strategy_with_baseline(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_group_results_by_strategy_with_baseline(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test grouping results includes baseline when requested."""
         manager = FoundryExecutionManager(
             credential=mock_credential,
@@ -1680,9 +1623,7 @@ class TestFoundryExecutionManager:
                 key in ATTACK_STRATEGY_COMPLEXITY_MAP
             ), f"Strategy key '{key}' not found in ATTACK_STRATEGY_COMPLEXITY_MAP"
 
-    def test_group_results_by_strategy_empty(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_group_results_by_strategy_empty(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test grouping results by strategy with no strategies falls back to Foundry."""
         manager = FoundryExecutionManager(
             credential=mock_credential,
@@ -1734,9 +1675,7 @@ class TestFoundryExecutionManager:
         assert "Foundry" not in results  # Should NOT fall back
 
     @pytest.mark.asyncio
-    async def test_execute_attacks_empty_objectives(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    async def test_execute_attacks_empty_objectives(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test execute_attacks with no objectives."""
         manager = FoundryExecutionManager(
             credential=mock_credential,
@@ -1774,12 +1713,8 @@ class TestFoundryExecutionManager:
 
         # Create a mock orchestrator instance that's fully configured
         mock_orchestrator_instance = MagicMock()
-        mock_orchestrator_instance.execute = AsyncMock(
-            return_value=mock_orchestrator_instance
-        )
-        mock_orchestrator_instance.calculate_asr_by_strategy.return_value = {
-            "test": 0.5
-        }
+        mock_orchestrator_instance.execute = AsyncMock(return_value=mock_orchestrator_instance)
+        mock_orchestrator_instance.calculate_asr_by_strategy.return_value = {"test": 0.5}
         mock_orchestrator_instance.get_attack_results.return_value = []
 
         # Mock result processor
@@ -1990,9 +1925,7 @@ class TestDatasetConfigurationBuilderExtended:
         assert len(seeds) >= 1  # At least the objective
 
         # Check for attack vehicle seeds
-        attack_vehicles = [
-            s for s in seeds if getattr(s, "metadata", {}).get("is_attack_vehicle")
-        ]
+        attack_vehicles = [s for s in seeds if getattr(s, "metadata", {}).get("is_attack_vehicle")]
         assert len(attack_vehicles) > 0  # Should have attack vehicles for each context
 
     def test_determine_data_type_edge_cases(self):
@@ -2007,20 +1940,12 @@ class TestDatasetConfigurationBuilderExtended:
 
         # Mixed case - all non-tool_call return binary_path
         assert builder._determine_data_type({"context_type": "HTML"}) == "binary_path"
-        assert (
-            builder._determine_data_type({"context_type": "TOOL_CALL"}) == "tool_call"
-        )
+        assert builder._determine_data_type({"context_type": "TOOL_CALL"}) == "tool_call"
 
         # Substrings - all return binary_path now
-        assert (
-            builder._determine_data_type({"context_type": "image_png"}) == "binary_path"
-        )
-        assert (
-            builder._determine_data_type({"context_type": "audio_wav"}) == "binary_path"
-        )
-        assert (
-            builder._determine_data_type({"context_type": "video_mp4"}) == "binary_path"
-        )
+        assert builder._determine_data_type({"context_type": "image_png"}) == "binary_path"
+        assert builder._determine_data_type({"context_type": "audio_wav"}) == "binary_path"
+        assert builder._determine_data_type({"context_type": "video_mp4"}) == "binary_path"
 
     def test_build_with_no_seed_groups(self):
         """Test building with no seed groups added raises error on access."""
@@ -2040,9 +1965,7 @@ class TestDatasetConfigurationBuilderExtended:
 class TestRAIServiceScorerExtended:
     """Extended tests for RAIServiceScorer edge cases."""
 
-    def test_initialization_with_dataset_config(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_initialization_with_dataset_config(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test RAIServiceScorer initialization with dataset config."""
         # Create mock dataset config
         mock_dataset = MagicMock()
@@ -2071,9 +1994,7 @@ class TestRAIServiceScorerExtended:
         # Context lookup should be built with the mock seed
         assert len(scorer._context_lookup) > 0
 
-    def test_get_context_from_prompt_metadata(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_get_context_from_prompt_metadata(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test context retrieval from prompt_metadata."""
         # Create mock dataset config with context
         mock_dataset = MagicMock()
@@ -2116,9 +2037,7 @@ class TestRAIServiceScorerExtended:
         assert isinstance(result, str)
 
     @pytest.mark.asyncio
-    async def test_score_async_with_context(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    async def test_score_async_with_context(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test score_async includes context in evaluation."""
         scorer = RAIServiceScorer(
             credential=mock_credential,
@@ -2131,9 +2050,7 @@ class TestRAIServiceScorerExtended:
         mock_piece.id = "test-id"
         mock_piece.converted_value = "Response text"
         mock_piece.original_value = "Original text"
-        mock_piece.labels = {
-            "context": json.dumps({"contexts": [{"content": "Context for eval"}]})
-        }
+        mock_piece.labels = {"context": json.dumps({"contexts": [{"content": "Context for eval"}]})}
         mock_piece.api_role = "assistant"
 
         mock_message = MagicMock()
@@ -2289,9 +2206,7 @@ class TestScenarioOrchestratorExtended:
         undetermined.outcome = AttackOutcome.UNDETERMINED
 
         orchestrator._scenario_result = MagicMock()
-        orchestrator._scenario_result.attack_results = {
-            "obj1": [success, failure, undetermined, success]
-        }
+        orchestrator._scenario_result.attack_results = {"obj1": [success, failure, undetermined, success]}
 
         asr = orchestrator.calculate_asr()
         # 2 successes out of 3 decided (undetermined excluded from denominator)
@@ -2615,9 +2530,7 @@ class TestFoundryResultProcessorExtended:
 class TestFoundryExecutionManagerExtended:
     """Extended tests for FoundryExecutionManager."""
 
-    def test_extract_context_string_format(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_extract_context_string_format(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test extracting context when it's a string instead of list."""
         manager = FoundryExecutionManager(
             credential=mock_credential,
@@ -2639,9 +2552,7 @@ class TestFoundryExecutionManagerExtended:
         # String context is not a supported format and is silently ignored
         assert len(result) == 0
 
-    def test_extract_objective_string_type(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_extract_objective_string_type(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test extracting objective when input is just a string."""
         manager = FoundryExecutionManager(
             credential=mock_credential,
@@ -2656,9 +2567,7 @@ class TestFoundryExecutionManagerExtended:
         # Should return None for non-dict input
         assert result is None
 
-    def test_build_dataset_config_with_string_objectives(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_build_dataset_config_with_string_objectives(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test building dataset config handles string objectives gracefully."""
         manager = FoundryExecutionManager(
             credential=mock_credential,
@@ -2698,9 +2607,7 @@ class TestFoundryExecutionManagerExtended:
 
         mock_target = MagicMock()
 
-        with patch.object(
-            ScenarioOrchestrator, "execute", new_callable=AsyncMock
-        ) as mock_execute:
+        with patch.object(ScenarioOrchestrator, "execute", new_callable=AsyncMock) as mock_execute:
             mock_execute.side_effect = Exception("Orchestrator failed")
 
             result = await manager.execute_attacks(
@@ -2713,9 +2620,7 @@ class TestFoundryExecutionManagerExtended:
             # Should return error status for the risk category
             # The error is caught and logged, result structure depends on implementation
 
-    def test_get_result_processors(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_get_result_processors(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test accessing result processors after execution."""
         manager = FoundryExecutionManager(
             credential=mock_credential,
@@ -2771,23 +2676,15 @@ class TestStrategyMapperExtended:
 
         for strategy in individual_strategies:
             foundry_strategy = StrategyMapper.map_strategy(strategy)
-            assert (
-                foundry_strategy is not None
-            ), f"Strategy {strategy} should map to a FoundryStrategy"
+            assert foundry_strategy is not None, f"Strategy {strategy} should map to a FoundryStrategy"
 
     def test_map_aggregate_strategies(self):
         """Test mapping aggregate difficulty strategies."""
         from pyrit.scenario.foundry import FoundryStrategy
 
         assert StrategyMapper.map_strategy(AttackStrategy.EASY) == FoundryStrategy.EASY
-        assert (
-            StrategyMapper.map_strategy(AttackStrategy.MODERATE)
-            == FoundryStrategy.MODERATE
-        )
-        assert (
-            StrategyMapper.map_strategy(AttackStrategy.DIFFICULT)
-            == FoundryStrategy.DIFFICULT
-        )
+        assert StrategyMapper.map_strategy(AttackStrategy.MODERATE) == FoundryStrategy.MODERATE
+        assert StrategyMapper.map_strategy(AttackStrategy.DIFFICULT) == FoundryStrategy.DIFFICULT
 
     def test_filter_mixed_strategies(self):
         """Test filtering a complex mix of strategies."""
@@ -2851,9 +2748,7 @@ class TestRedTeamFoundryIntegration:
         # Patch all network-related and initialization calls
         with patch("azure.ai.evaluation.red_team._red_team.CentralMemory"), patch(
             "azure.ai.evaluation.red_team._red_team.SQLiteMemory"
-        ), patch(
-            "azure.ai.evaluation.red_team._red_team.validate_azure_ai_project"
-        ), patch(
+        ), patch("azure.ai.evaluation.red_team._red_team.validate_azure_ai_project"), patch(
             "azure.ai.evaluation.red_team._red_team.is_onedp_project",
             return_value=False,
         ), patch(
@@ -2879,9 +2774,7 @@ class TestRedTeamFoundryIntegration:
     def test_build_objective_dict_from_cached_dict_with_messages(self, mock_red_team):
         """Test building objective dict when cached obj already has messages."""
         obj = {
-            "messages": [
-                {"content": "Attack prompt", "context": [{"content": "Context"}]}
-            ],
+            "messages": [{"content": "Attack prompt", "context": [{"content": "Context"}]}],
             "metadata": {"risk_subtype": "weapons"},
         }
 
@@ -2891,9 +2784,7 @@ class TestRedTeamFoundryIntegration:
         assert "messages" in result
         assert result["messages"][0]["content"] == "Attack prompt"
 
-    def test_build_objective_dict_from_cached_dict_without_messages(
-        self, mock_red_team
-    ):
+    def test_build_objective_dict_from_cached_dict_without_messages(self, mock_red_team):
         """Test building objective dict when cached obj has content but no messages."""
         obj = {
             "content": "Attack prompt",
@@ -3126,9 +3017,7 @@ class TestFoundryFlowIntegration:
             "asr": 0.5,
         }
 
-        with patch.object(
-            ScenarioOrchestrator, "__init__", return_value=None
-        ), patch.object(
+        with patch.object(ScenarioOrchestrator, "__init__", return_value=None), patch.object(
             ScenarioOrchestrator, "execute", mock_orchestrator.execute
         ), patch.object(
             ScenarioOrchestrator,
@@ -3226,9 +3115,7 @@ class TestASRScoringErrorRegression:
         undetermined.outcome = AttackOutcome.UNDETERMINED
 
         orchestrator._scenario_result = MagicMock()
-        orchestrator._scenario_result.attack_results = {
-            "obj1": [undetermined, undetermined, undetermined]
-        }
+        orchestrator._scenario_result.attack_results = {"obj1": [undetermined, undetermined, undetermined]}
 
         asr = orchestrator.calculate_asr()
         assert asr == 0.0
@@ -3259,9 +3146,7 @@ class TestASRScoringErrorRegression:
         undetermined.outcome = AttackOutcome.UNDETERMINED
 
         orchestrator._scenario_result = MagicMock()
-        orchestrator._scenario_result.attack_results = {
-            "obj1": [success, failure] + [undetermined] * 8
-        }
+        orchestrator._scenario_result.attack_results = {"obj1": [success, failure] + [undetermined] * 8}
 
         asr = orchestrator.calculate_asr()
         # Must be 0.5 (1/2), NOT 0.1 (1/10)
@@ -3287,9 +3172,7 @@ class TestASRScoringErrorRegression:
         undetermined.attack_identifier = {"__type__": "Base64Attack"}
 
         orchestrator._scenario_result = MagicMock()
-        orchestrator._scenario_result.attack_results = {
-            "obj1": [success] + [undetermined] * 4
-        }
+        orchestrator._scenario_result.attack_results = {"obj1": [success] + [undetermined] * 4}
 
         asr_by_strategy = orchestrator.calculate_asr_by_strategy()
 
@@ -3392,9 +3275,7 @@ class TestReviewFixRegressions:
         return MagicMock()
 
     @pytest.mark.asyncio
-    async def test_scorer_handles_none_eval_result(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    async def test_scorer_handles_none_eval_result(self, mock_credential, mock_azure_ai_project, mock_logger):
         """H4: RAIServiceScorer must not crash when evaluate_with_rai_service_sync returns None."""
         scorer = RAIServiceScorer(
             credential=mock_credential,
@@ -3426,9 +3307,7 @@ class TestReviewFixRegressions:
             assert scores[0].score_value == "false"
 
     @pytest.mark.asyncio
-    async def test_scorer_handles_empty_results_list(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    async def test_scorer_handles_empty_results_list(self, mock_credential, mock_azure_ai_project, mock_logger):
         """H4 variant: scorer handles eval result with empty results list."""
         scorer = RAIServiceScorer(
             credential=mock_credential,
@@ -3488,13 +3367,9 @@ class TestReviewFixRegressions:
             if call_count == 2:
                 raise Exception("Simulated failure for hate_unfairness")
 
-        with patch.object(
-            ScenarioOrchestrator, "__init__", return_value=None
-        ), patch.object(
+        with patch.object(ScenarioOrchestrator, "__init__", return_value=None), patch.object(
             ScenarioOrchestrator, "execute", side_effect=mock_execute
-        ), patch.object(
-            RAIServiceScorer, "__init__", return_value=None
-        ), patch.object(
+        ), patch.object(RAIServiceScorer, "__init__", return_value=None), patch.object(
             FoundryResultProcessor, "__init__", return_value=None
         ), patch.object(
             FoundryResultProcessor, "to_jsonl", return_value=None
@@ -3519,9 +3394,7 @@ class TestReviewFixRegressions:
         assert "hate_unfairness" in result["Foundry"]
         assert result["Foundry"]["hate_unfairness"]["status"] == "failed"
 
-    def test_empty_objective_content_filtered(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    def test_empty_objective_content_filtered(self, mock_credential, mock_azure_ai_project, mock_logger):
         """M6: _build_dataset_config skips objectives with empty content."""
         manager = FoundryExecutionManager(
             credential=mock_credential,
@@ -3954,9 +3827,7 @@ class TestExecuteAttacksEarlyAbort:
     """Tests for early-abort after consecutive configuration errors."""
 
     @pytest.mark.asyncio
-    async def test_aborts_after_consecutive_config_errors(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    async def test_aborts_after_consecutive_config_errors(self, mock_credential, mock_azure_ai_project, mock_logger):
         """After 2 consecutive config errors, remaining categories should be marked failed and loop aborts."""
         manager = FoundryExecutionManager(
             credential=mock_credential,
@@ -3978,9 +3849,7 @@ class TestExecuteAttacksEarlyAbort:
         mock_dataset = MagicMock()
         mock_dataset.get_all_seed_groups = MagicMock(return_value=[MagicMock()])
 
-        with patch.object(
-            manager, "_build_dataset_config", return_value=mock_dataset
-        ), patch(
+        with patch.object(manager, "_build_dataset_config", return_value=mock_dataset), patch(
             "azure.ai.evaluation.red_team._foundry._execution_manager.ScenarioOrchestrator",
             return_value=mock_orchestrator,
         ), patch(
@@ -4014,9 +3883,7 @@ class TestExecuteAttacksEarlyAbort:
         assert mock_orchestrator.execute.call_count == 2
 
     @pytest.mark.asyncio
-    async def test_non_config_error_resets_counter(
-        self, mock_credential, mock_azure_ai_project, mock_logger
-    ):
+    async def test_non_config_error_resets_counter(self, mock_credential, mock_azure_ai_project, mock_logger):
         """A non-config error between config errors should reset the counter."""
         manager = FoundryExecutionManager(
             credential=mock_credential,
@@ -4039,17 +3906,13 @@ class TestExecuteAttacksEarlyAbort:
         config_error_2.response = mock_resp_400
 
         mock_orchestrator = MagicMock()
-        mock_orchestrator.execute = AsyncMock(
-            side_effect=[config_error, generic_error, config_error_2]
-        )
+        mock_orchestrator.execute = AsyncMock(side_effect=[config_error, generic_error, config_error_2])
         mock_orchestrator.get_attack_results = MagicMock(return_value=[])
 
         mock_dataset = MagicMock()
         mock_dataset.get_all_seed_groups = MagicMock(return_value=[MagicMock()])
 
-        with patch.object(
-            manager, "_build_dataset_config", return_value=mock_dataset
-        ), patch(
+        with patch.object(manager, "_build_dataset_config", return_value=mock_dataset), patch(
             "azure.ai.evaluation.red_team._foundry._execution_manager.ScenarioOrchestrator",
             return_value=mock_orchestrator,
         ), patch(

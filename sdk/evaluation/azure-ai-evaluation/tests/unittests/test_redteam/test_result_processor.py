@@ -173,13 +173,7 @@ class TestCleanContentFilterResponse:
 
     def test_finish_reason_content_filter_no_details_gives_generic_message(self):
         """finish_reason: content_filter with empty cfr → generic blocked message."""
-        payload = json.dumps(
-            {
-                "choices": [
-                    {"finish_reason": "content_filter", "content_filter_results": {}}
-                ]
-            }
-        )
+        payload = json.dumps({"choices": [{"finish_reason": "content_filter", "content_filter_results": {}}]})
         result = ResultProcessor._clean_content_filter_response(payload)
         assert result == "[Response blocked by Azure OpenAI content filter]"
 
@@ -195,15 +189,7 @@ class TestExtractFilterDetailsFromParsed:
     """Unit tests for the helper that extracts categories from parsed dicts."""
 
     def test_choices_structure(self):
-        parsed = {
-            "choices": [
-                {
-                    "content_filter_results": {
-                        "violence": {"filtered": True, "severity": "high"}
-                    }
-                }
-            ]
-        }
+        parsed = {"choices": [{"content_filter_results": {"violence": {"filtered": True, "severity": "high"}}}]}
         details = ResultProcessor._extract_filter_details_from_parsed(parsed)
         assert details == ["violence (severity: high)"]
 
@@ -212,9 +198,7 @@ class TestExtractFilterDetailsFromParsed:
         assert ResultProcessor._extract_filter_details_from_parsed(None) == []
 
     def test_top_level_cfr(self):
-        parsed = {
-            "content_filter_results": {"hate": {"filtered": True, "severity": "low"}}
-        }
+        parsed = {"content_filter_results": {"hate": {"filtered": True, "severity": "low"}}}
         details = ResultProcessor._extract_filter_details_from_parsed(parsed)
         assert details == ["hate (severity: low)"]
 
@@ -227,30 +211,18 @@ class TestHasFinishReasonContentFilter:
         assert ResultProcessor._has_finish_reason_content_filter(parsed) is True
 
     def test_top_level_finish_reason(self):
-        assert (
-            ResultProcessor._has_finish_reason_content_filter(
-                {"finish_reason": "content_filter"}
-            )
-            is True
-        )
+        assert ResultProcessor._has_finish_reason_content_filter({"finish_reason": "content_filter"}) is True
 
     def test_finish_reason_stop(self):
         parsed = {"choices": [{"finish_reason": "stop"}]}
         assert ResultProcessor._has_finish_reason_content_filter(parsed) is False
 
     def test_no_finish_reason(self):
-        assert (
-            ResultProcessor._has_finish_reason_content_filter(
-                {"choices": [{"text": "hi"}]}
-            )
-            is False
-        )
+        assert ResultProcessor._has_finish_reason_content_filter({"choices": [{"text": "hi"}]}) is False
 
     def test_cfr_keys_without_finish_reason_returns_false(self):
         """content_filter_results key alone should NOT indicate blocking."""
-        parsed = {
-            "choices": [{"content_filter_results": {"hate": {"filtered": False}}}]
-        }
+        parsed = {"choices": [{"content_filter_results": {"hate": {"filtered": False}}}]}
         assert ResultProcessor._has_finish_reason_content_filter(parsed) is False
 
     def test_non_dict(self):
@@ -357,3 +329,107 @@ class TestAggregateRunErrors:
         assert result is not None
         assert result["message"] == "actual error"
         assert "should be ignored" not in result["message"]
+
+
+class TestDetermineRunStatusAndAggregateErrorsIntegration:
+    """Integration tests verifying _determine_run_status and _aggregate_run_errors
+    interact correctly in _build_results_payload."""
+
+    @staticmethod
+    def _make_processor():
+        """Create a minimal ResultProcessor for testing."""
+        import logging
+
+        return ResultProcessor(
+            logger=logging.getLogger("test"),
+            attack_success_thresholds={},
+            application_scenario="test",
+            risk_categories=[],
+        )
+
+    def test_completed_status_produces_no_error(self):
+        """When all tasks are completed, error must be None in the payload."""
+        from azure.ai.evaluation.red_team._red_team_result import RedTeamResult
+
+        processor = self._make_processor()
+        red_team_info = {
+            "Baseline": {
+                "violence": {"status": "completed", "asr": 0.5},
+                "sexual": {"status": "completed", "asr": 0.3},
+            }
+        }
+        result = RedTeamResult(scan_result={"scorecard": {}, "parameters": {}})
+        payload = processor._build_results_payload(
+            redteam_result=result,
+            output_items=[],
+            red_team_info=red_team_info,
+            run_id_override="test-run",
+            eval_id_override="test-eval",
+            created_at_override=1000000,
+        )
+        assert payload["status"] == "completed"
+        assert payload["error"] is None
+
+    def test_failed_status_produces_error(self):
+        """When a task fails, status should be 'failed' and error should be populated."""
+        from azure.ai.evaluation.red_team._red_team_result import RedTeamResult
+
+        processor = self._make_processor()
+        red_team_info = {
+            "Baseline": {
+                "violence": {
+                    "status": "failed",
+                    "error": "Model unavailable",
+                    "asr": 0.0,
+                },
+                "sexual": {"status": "completed", "asr": 0.3},
+            }
+        }
+        result = RedTeamResult(scan_result={"scorecard": {}, "parameters": {}})
+        payload = processor._build_results_payload(
+            redteam_result=result,
+            output_items=[],
+            red_team_info=red_team_info,
+            run_id_override="test-run",
+            eval_id_override="test-eval",
+            created_at_override=1000000,
+        )
+        assert payload["status"] == "failed"
+        assert payload["error"] is not None
+        assert payload["error"]["code"] == "scan_failed"
+        assert "Model unavailable" in payload["error"]["message"]
+
+    def test_partial_failure_with_completed_results_is_failed(self):
+        """Mixed completed and failed tasks should result in 'failed' status."""
+        from azure.ai.evaluation.red_team._red_team_result import RedTeamResult
+        from azure.ai.evaluation.red_team._foundry._execution_manager import (
+            _ERROR_TRACKING_KEY,
+        )
+
+        processor = self._make_processor()
+        red_team_info = {
+            "Baseline": {
+                "violence": {"status": "completed", "asr": 0.5},
+            },
+            _ERROR_TRACKING_KEY: {
+                "sexual": {
+                    "status": "failed",
+                    "error": "Auth failure",
+                    "asr": 0.0,
+                },
+            },
+        }
+        result = RedTeamResult(scan_result={"scorecard": {}, "parameters": {}})
+        payload = processor._build_results_payload(
+            redteam_result=result,
+            output_items=[],
+            red_team_info=red_team_info,
+            run_id_override="test-run",
+            eval_id_override="test-eval",
+            created_at_override=1000000,
+        )
+        assert payload["status"] == "failed"
+        assert payload["error"] is not None
+        # _ERROR_TRACKING_KEY should not appear in data_source attack_strategies
+        strategies = payload.get("data_source", {}).get("item_generation_params", {}).get("attack_strategies", [])
+        assert _ERROR_TRACKING_KEY not in strategies

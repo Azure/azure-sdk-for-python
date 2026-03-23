@@ -21,6 +21,12 @@ from ._scenario_orchestrator import ScenarioOrchestrator
 from ._strategy_mapping import StrategyMapper
 
 
+# Key used in red_team_info for error/abort tracking entries that don't
+# correspond to a real attack strategy. Must be excluded from strategy
+# listings (e.g., _build_data_source_section).
+_ERROR_TRACKING_KEY = "_error_tracking"
+
+
 class FoundryExecutionManager:
     """Manages Foundry-based red team execution.
 
@@ -85,18 +91,12 @@ class FoundryExecutionManager:
         :rtype: Dict[str, Any]
         """
         # Filter strategies for Foundry (exclude special handling strategies)
-        foundry_strategies, special_strategies = StrategyMapper.filter_for_foundry(
-            attack_strategies
-        )
+        foundry_strategies, special_strategies = StrategyMapper.filter_for_foundry(attack_strategies)
         mapped_strategies = StrategyMapper.map_strategies(foundry_strategies)
 
         # Check if Baseline was requested (it's in special_strategies)
         include_baseline = any(
-            (
-                s == AttackStrategy.Baseline
-                if not isinstance(s, list)
-                else AttackStrategy.Baseline in s
-            )
+            (s == AttackStrategy.Baseline if not isinstance(s, list) else AttackStrategy.Baseline in s)
             for s in attack_strategies
         )
 
@@ -114,9 +114,7 @@ class FoundryExecutionManager:
             )
             # Filter out multi-turn strategies
             mapped_strategies = [
-                s
-                for s in mapped_strategies
-                if s not in (FoundryStrategy.MultiTurn, FoundryStrategy.Crescendo)
+                s for s in mapped_strategies if s not in (FoundryStrategy.MultiTurn, FoundryStrategy.Crescendo)
             ]
 
         # Check if we need XPIA handling
@@ -125,6 +123,7 @@ class FoundryExecutionManager:
         red_team_info: Dict[str, Dict[str, Any]] = {}
         consecutive_config_failures = 0
         max_consecutive_config_failures = 2
+        exception_handler = ExceptionHandler(logger=self.logger)
 
         try:
             # Process each risk category
@@ -136,9 +135,7 @@ class FoundryExecutionManager:
                     self.logger.info(f"No objectives for {risk_value}, skipping")
                     continue
 
-                self.logger.info(
-                    f"Processing {len(objectives)} objectives for {risk_value}"
-                )
+                self.logger.info(f"Processing {len(objectives)} objectives for {risk_value}")
 
                 # Build dataset configuration
                 dataset_config = self._build_dataset_config(
@@ -195,9 +192,9 @@ class FoundryExecutionManager:
                         )
                         # Record partial failure in structured output so callers
                         # relying on red_team_info can observe it.
-                        if "Foundry" not in red_team_info:
-                            red_team_info["Foundry"] = {}
-                        red_team_info["Foundry"][risk_value] = {
+                        if _ERROR_TRACKING_KEY not in red_team_info:
+                            red_team_info[_ERROR_TRACKING_KEY] = {}
+                        red_team_info[_ERROR_TRACKING_KEY][risk_value] = {
                             "data_file": "",
                             "status": "partial_failure",
                             "error": str(e),
@@ -205,13 +202,11 @@ class FoundryExecutionManager:
                             "asr": 0.0,
                         }
                     else:
-                        self.logger.error(
-                            f"Error executing attacks for {risk_value}: {e}"
-                        )
+                        self.logger.error(f"Error executing attacks for {risk_value}: {e}")
                         # No results recoverable — use empty fallback
-                        if "Foundry" not in red_team_info:
-                            red_team_info["Foundry"] = {}
-                        red_team_info["Foundry"][risk_value] = {
+                        if _ERROR_TRACKING_KEY not in red_team_info:
+                            red_team_info[_ERROR_TRACKING_KEY] = {}
+                        red_team_info[_ERROR_TRACKING_KEY][risk_value] = {
                             "data_file": "",
                             "status": "failed",
                             "error": str(e),
@@ -220,25 +215,17 @@ class FoundryExecutionManager:
 
                         # Track consecutive failures to detect systemic issues
                         # (e.g., unavailable model, bad credentials)
-                        if ExceptionHandler().categorize_exception(e) in (
+                        if exception_handler.categorize_exception(e) in (
                             ErrorCategory.CONFIGURATION,
                             ErrorCategory.AUTHENTICATION,
                         ):
                             consecutive_config_failures += 1
-                            if (
-                                consecutive_config_failures
-                                >= max_consecutive_config_failures
-                            ):
+                            if consecutive_config_failures >= max_consecutive_config_failures:
                                 remaining = [
                                     rc.value
                                     for rc in risk_categories
                                     if rc.value
-                                    not in {
-                                        rv
-                                        for rd in red_team_info.values()
-                                        if isinstance(rd, dict)
-                                        for rv in rd
-                                    }
+                                    not in {rv for rd in red_team_info.values() if isinstance(rd, dict) for rv in rd}
                                 ]
                                 if remaining:
                                     abort_msg = (
@@ -248,9 +235,9 @@ class FoundryExecutionManager:
                                     )
                                     self.logger.error(abort_msg)
                                     for rv in remaining:
-                                        if "Foundry" not in red_team_info:
-                                            red_team_info["Foundry"] = {}
-                                        red_team_info["Foundry"][rv] = {
+                                        if _ERROR_TRACKING_KEY not in red_team_info:
+                                            red_team_info[_ERROR_TRACKING_KEY] = {}
+                                        red_team_info[_ERROR_TRACKING_KEY][rv] = {
                                             "data_file": "",
                                             "status": "failed",
                                             "error": str(e),
@@ -270,9 +257,7 @@ class FoundryExecutionManager:
                 self._result_processors[risk_value] = result_processor
 
                 # Generate JSONL output
-                output_path = os.path.join(
-                    self.output_dir, f"{risk_value}_results.jsonl"
-                )
+                output_path = os.path.join(self.output_dir, f"{risk_value}_results.jsonl")
                 result_processor.to_jsonl(output_path)
 
                 # Get summary stats
@@ -451,9 +436,7 @@ class FoundryExecutionManager:
         results: Dict[str, Dict[str, Any]] = {}
 
         # Get the Foundry strategies that were actually executed
-        foundry_strategies, special_strategies = StrategyMapper.filter_for_foundry(
-            attack_strategies
-        )
+        foundry_strategies, special_strategies = StrategyMapper.filter_for_foundry(attack_strategies)
 
         # Create an entry per requested Foundry strategy using get_strategy_name() as key
         # so it matches ATTACK_STRATEGY_COMPLEXITY_MAP and _red_team.py eval matching
