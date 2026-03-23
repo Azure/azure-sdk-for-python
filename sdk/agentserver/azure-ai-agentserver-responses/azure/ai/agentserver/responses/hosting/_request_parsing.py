@@ -66,10 +66,10 @@ def _apply_item_cursors(items: list[dict[str, Any]], *, after: str | None, befor
 
     :param items: Ordered list of input item dictionaries.
     :type items: list[dict[str, Any]]
-    :param after: Item ID to start after (exclusive lower bound), or ``None``.
-    :type after: str | None
-    :param before: Item ID to stop before (exclusive upper bound), or ``None``.
-    :type before: str | None
+    :keyword after: Item ID to start after (exclusive lower bound), or ``None``.
+    :keyword type after: str | None
+    :keyword before: Item ID to stop before (exclusive upper bound), or ``None``.
+    :keyword type before: str | None
     :return: The subset of items within the cursor window.
     :rtype: list[dict[str, Any]]
     """

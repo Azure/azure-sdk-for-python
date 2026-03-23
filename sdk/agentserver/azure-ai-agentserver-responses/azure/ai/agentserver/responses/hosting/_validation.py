@@ -16,7 +16,9 @@ def parse_create_response(payload: Mapping[str, Any]) -> CreateResponse:
     """Parse incoming JSON payload into the generated ``CreateResponse`` model.
 
     :param payload: Raw request payload mapping.
+    :type payload: Mapping[str, Any]
     :returns: Parsed generated create response model.
+    :rtype: CreateResponse
     :raises RequestValidationError: If payload is not an object or cannot be parsed.
     """
     if not isinstance(payload, Mapping):
@@ -65,6 +67,8 @@ def normalize_create_response(
 def validate_create_response(request: CreateResponse) -> None:
     """Validate create request semantics not enforced by generated model typing.
 
+    :param request: The parsed create response model to validate.
+    :type request: CreateResponse
     :raises RequestValidationError: If semantic preconditions are violated.
     """
     store_enabled = True if request.store is None else bool(request.store)
@@ -100,8 +104,8 @@ def parse_and_validate_create_response(
 
     :param payload: Raw request payload mapping.
     :type payload: Mapping[str, Any]
-    :param options: Server runtime options for defaults, or ``None``.
-    :type options: ResponsesServerOptions | None
+    :keyword options: Server runtime options for defaults, or ``None``.
+    :keyword type options: ResponsesServerOptions | None
     :return: A fully validated ``CreateResponse`` model.
     :rtype: CreateResponse
     :raises RequestValidationError: If parsing or validation fails.
@@ -124,14 +128,14 @@ def build_api_error_response(
 
     :param message: Human-readable error message.
     :type message: str
-    :param code: Machine-readable error code.
-    :type code: str
-    :param param: The request parameter that caused the error, or ``None``.
-    :type param: str | None
-    :param error_type: Error type category (default ``"invalid_request_error"``).
-    :type error_type: str
-    :param debug_info: Optional debug information dictionary.
-    :type debug_info: dict[str, Any] | None
+    :keyword code: Machine-readable error code.
+    :keyword type code: str
+    :keyword param: The request parameter that caused the error, or ``None``.
+    :keyword type param: str | None
+    :keyword error_type: Error type category (default ``"invalid_request_error"``).
+    :keyword type error_type: str
+    :keyword debug_info: Optional debug information dictionary.
+    :keyword type debug_info: dict[str, Any] | None
     :return: A generated ``ApiErrorResponse`` envelope.
     :rtype: ApiErrorResponse
     """
@@ -156,10 +160,10 @@ def build_not_found_error_response(
 
     :param resource_id: The ID of the resource that was not found.
     :type resource_id: str
-    :param param: The parameter name to include in the error (default ``"response_id"``).
-    :type param: str
-    :param resource_name: Display name for the resource type (default ``"response"``).
-    :type resource_name: str
+    :keyword param: The parameter name to include in the error (default ``"response_id"``).
+    :keyword type param: str
+    :keyword resource_name: Display name for the resource type (default ``"response"``).
+    :keyword type resource_name: str
     :return: A generated ``ApiErrorResponse`` envelope with not-found error.
     :rtype: ApiErrorResponse
     """
@@ -180,8 +184,8 @@ def build_invalid_mode_error_response(
 
     :param message: Human-readable error message.
     :type message: str
-    :param param: The request parameter that caused the error, or ``None``.
-    :type param: str | None
+    :keyword param: The request parameter that caused the error, or ``None``.
+    :keyword type param: str | None
     :return: A generated ``ApiErrorResponse`` envelope with invalid-mode error.
     :rtype: ApiErrorResponse
     """

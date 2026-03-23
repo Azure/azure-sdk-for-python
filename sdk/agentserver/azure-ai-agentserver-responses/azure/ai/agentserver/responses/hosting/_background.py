@@ -34,22 +34,22 @@ async def _run_background_non_stream(
     Collects handler events, builds the response payload, and transitions the
     record status to ``completed``, ``failed``, or ``cancelled``.
 
-    :param create_async: The handler's async generator callable.
-    :type create_async: Any
-    :param parsed: Parsed ``CreateResponse`` model instance.
-    :type parsed: Any
-    :param context: Runtime response context for this request.
-    :type context: RuntimeResponseContext
-    :param cancellation_signal: Event signalling that cancellation was requested.
-    :type cancellation_signal: asyncio.Event
-    :param record: The mutable execution record to update.
-    :type record: _ExecutionRecord
-    :param response_id: The response ID for this execution.
-    :type response_id: str
-    :param agent_reference: Normalized agent reference dictionary.
-    :type agent_reference: dict[str, Any]
-    :param model: Model name, or ``None``.
-    :type model: str | None
+    :keyword create_async: The handler's async generator callable.
+    :keyword type create_async: Any
+    :keyword parsed: Parsed ``CreateResponse`` model instance.
+    :keyword type parsed: Any
+    :keyword context: Runtime response context for this request.
+    :keyword type context: RuntimeResponseContext
+    :keyword cancellation_signal: Event signalling that cancellation was requested.
+    :keyword type cancellation_signal: asyncio.Event
+    :keyword record: The mutable execution record to update.
+    :keyword type record: _ExecutionRecord
+    :keyword response_id: The response ID for this execution.
+    :keyword type response_id: str
+    :keyword agent_reference: Normalized agent reference dictionary.
+    :keyword type agent_reference: dict[str, Any]
+    :keyword model: Model name, or ``None``.
+    :keyword type model: str | None
     :return: None
     :rtype: None
     """

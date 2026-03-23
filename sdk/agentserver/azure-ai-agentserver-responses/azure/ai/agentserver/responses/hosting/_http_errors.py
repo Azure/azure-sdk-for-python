@@ -42,18 +42,18 @@ def _api_error(
 ) -> JSONResponse:
     """Build a standard API error ``JSONResponse`` from individual fields.
 
-    :param message: Human-readable error message.
-    :type message: str
-    :param code: Machine-readable error code.
-    :type code: str
-    :param param: The request parameter that caused the error, or ``None``.
-    :type param: str | None
-    :param error_type: Error type category (default ``"invalid_request_error"``).
-    :type error_type: str
-    :param status_code: HTTP status code for the response.
-    :type status_code: int
-    :param headers: Response headers to include.
-    :type headers: dict[str, str]
+    :keyword message: Human-readable error message.
+    :keyword type message: str
+    :keyword code: Machine-readable error code.
+    :keyword type code: str
+    :keyword param: The request parameter that caused the error, or ``None``.
+    :keyword type param: str | None
+    :keyword error_type: Error type category (default ``"invalid_request_error"``).
+    :keyword type error_type: str
+    :keyword status_code: HTTP status code for the response.
+    :keyword type status_code: int
+    :keyword headers: Response headers to include.
+    :keyword type headers: dict[str, str]
     :return: A ``JSONResponse`` with the error envelope.
     :rtype: JSONResponse
     """
@@ -120,8 +120,8 @@ def _invalid_request(message: str, headers: dict[str, str], *, param: str | None
     :type message: str
     :param headers: Response headers to include.
     :type headers: dict[str, str]
-    :param param: The request parameter that caused the error, or ``None``.
-    :type param: str | None
+    :keyword param: The request parameter that caused the error, or ``None``.
+    :keyword type param: str | None
     :return: A 400 ``JSONResponse``.
     :rtype: JSONResponse
     """
@@ -142,8 +142,8 @@ def _invalid_mode(message: str, headers: dict[str, str], *, param: str | None = 
     :type message: str
     :param headers: Response headers to include.
     :type headers: dict[str, str]
-    :param param: The request parameter that caused the error, or ``None``.
-    :type param: str | None
+    :keyword param: The request parameter that caused the error, or ``None``.
+    :keyword type param: str | None
     :return: A 400 ``JSONResponse`` with an ``invalid_mode`` error code.
     :rtype: JSONResponse
     """

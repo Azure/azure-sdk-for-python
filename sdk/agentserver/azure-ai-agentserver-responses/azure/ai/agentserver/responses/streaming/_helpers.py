@@ -33,12 +33,12 @@ def _build_events(
 
     :param response_id: Unique identifier for the response.
     :type response_id: str
-    :param include_progress: Whether to include an ``in_progress`` event.
-    :type include_progress: bool
-    :param agent_reference: Agent reference metadata dict.
-    :type agent_reference: dict[str, Any]
-    :param model: Optional model identifier.
-    :type model: str | None
+    :keyword include_progress: Whether to include an ``in_progress`` event.
+    :keyword type include_progress: bool
+    :keyword agent_reference: Agent reference metadata dict.
+    :keyword type agent_reference: dict[str, Any]
+    :keyword model: Optional model identifier.
+    :keyword type model: str | None
     :returns: A list of event dicts containing created and completed (and optionally in_progress) events.
     :rtype: list[dict[str, Any]]
     """
@@ -108,14 +108,14 @@ def _apply_stream_event_defaults(
 
     :param event: The event dict to enrich.
     :type event: dict[str, Any]
-    :param response_id: Response ID to stamp in the payload.
-    :type response_id: str
-    :param agent_reference: Agent reference metadata dict.
-    :type agent_reference: dict[str, Any]
-    :param model: Optional model identifier.
-    :type model: str | None
-    :param sequence_number: Optional sequence number to set; removed if ``None``.
-    :type sequence_number: int | None
+    :keyword response_id: Response ID to stamp in the payload.
+    :keyword type response_id: str
+    :keyword agent_reference: Agent reference metadata dict.
+    :keyword type agent_reference: dict[str, Any]
+    :keyword model: Optional model identifier.
+    :keyword type model: str | None
+    :keyword sequence_number: Optional sequence number to set; removed if ``None``.
+    :keyword type sequence_number: int | None
     :returns: A deep copy of the event with defaults applied.
     :rtype: dict[str, Any]
     """
@@ -155,14 +155,14 @@ def _extract_response_snapshot_from_events(
 
     :param events: The event stream to search.
     :type events: list[dict[str, Any]]
-    :param response_id: Response ID for default stamping.
-    :type response_id: str
-    :param agent_reference: Agent reference metadata dict.
-    :type agent_reference: dict[str, Any]
-    :param model: Optional model identifier.
-    :type model: str | None
-    :param remove_sequence_number: Whether to strip ``sequence_number`` from the result.
-    :type remove_sequence_number: bool
+    :keyword response_id: Response ID for default stamping.
+    :keyword type response_id: str
+    :keyword agent_reference: Agent reference metadata dict.
+    :keyword type agent_reference: dict[str, Any]
+    :keyword model: Optional model identifier.
+    :keyword type model: str | None
+    :keyword remove_sequence_number: Whether to strip ``sequence_number`` from the result.
+    :keyword type remove_sequence_number: bool
     :returns: A dict representing the response snapshot payload.
     :rtype: dict[str, Any]
     """

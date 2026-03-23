@@ -13,10 +13,15 @@ def build_platform_server_header(sdk_name: str, version: str, runtime: str, extr
     """Build the platform server identity header value.
 
     :param sdk_name: SDK package name.
+    :type sdk_name: str
     :param version: SDK package version.
+    :type version: str
     :param runtime: Runtime marker, such as python/3.10.
+    :type runtime: str
     :param extra: Optional additional identity suffix.
+    :type extra: str | None
     :returns: Formatted identity header value.
+    :rtype: str
     """
     base_value = f"{sdk_name}/{version} ({runtime})"
     return f"{base_value} {extra}".strip() if extra else base_value
@@ -128,14 +133,14 @@ def build_create_span_tags(
 ) -> dict[str, Any]:
     """Build a baseline GenAI tag set for create spans.
 
-    :param response_id: The response ID, or ``None`` if not yet assigned.
-    :type response_id: str | None
-    :param model: Model name, or ``None``.
-    :type model: str | None
-    :param agent_reference: Agent reference dictionary, or ``None``.
-    :type agent_reference: dict[str, Any] | None
-    :param service_name: Logical service name for the span.
-    :type service_name: str
+    :keyword response_id: The response ID, or ``None`` if not yet assigned.
+    :keyword type response_id: str | None
+    :keyword model: Model name, or ``None``.
+    :keyword type model: str | None
+    :keyword agent_reference: Agent reference dictionary, or ``None``.
+    :keyword type agent_reference: dict[str, Any] | None
+    :keyword service_name: Logical service name for the span.
+    :keyword type service_name: str
     :return: Dictionary of OpenTelemetry-style GenAI span tags.
     :rtype: dict[str, Any]
     """

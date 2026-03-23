@@ -136,8 +136,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     def emit_created(self, *, status: str = "in_progress") -> dict[str, Any]:
         """Emit a ``response.created`` lifecycle event.
 
-        :param status: Initial status to set on the response. Defaults to ``"in_progress"``.
-        :type status: str
+        :keyword status: Initial status to set on the response. Defaults to ``"in_progress"``.
+        :keyword type status: str
         :returns: The emitted event dict with type and payload.
         :rtype: dict[str, Any]
         """
@@ -166,8 +166,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     def emit_completed(self, *, usage: generated_models.ResponseUsage | dict[str, Any] | None = None) -> dict[str, Any]:
         """Emit a ``response.completed`` terminal lifecycle event.
 
-        :param usage: Optional usage statistics to attach to the response.
-        :type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any] | None
+        :keyword usage: Optional usage statistics to attach to the response.
+        :keyword type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any] | None
         :returns: The emitted event dict with type and payload.
         :rtype: dict[str, Any]
         """
@@ -191,12 +191,12 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     ) -> dict[str, Any]:
         """Emit a ``response.failed`` terminal lifecycle event.
 
-        :param code: Error code describing the failure.
-        :type code: str | ~azure.ai.agentserver.responses.models._generated.ResponseErrorCode
-        :param message: Human-readable error message.
-        :type message: str
-        :param usage: Optional usage statistics to attach to the response.
-        :type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any] | None
+        :keyword code: Error code describing the failure.
+        :keyword type code: str | ~azure.ai.agentserver.responses.models._generated.ResponseErrorCode
+        :keyword message: Human-readable error message.
+        :keyword type message: str
+        :keyword usage: Optional usage statistics to attach to the response.
+        :keyword type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any] | None
         :returns: The emitted event dict with type and payload.
         :rtype: dict[str, Any]
         """
@@ -219,15 +219,15 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     def emit_incomplete(
         self,
         *,
-        reason: str | generated_models.ResponseIncompleteDetailsReason | None = None,
+        reason: str | None = None,
         usage: generated_models.ResponseUsage | dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """Emit a ``response.incomplete`` terminal lifecycle event.
 
-        :param reason: Optional reason for incompleteness.
-        :type reason: str | ~azure.ai.agentserver.responses.models._generated.ResponseIncompleteDetailsReason | None
-        :param usage: Optional usage statistics to attach to the response.
-        :type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any] | None
+        :keyword reason: Optional reason for incompleteness.
+        :keyword type reason: str | None
+        :keyword usage: Optional usage statistics to attach to the response.
+        :keyword type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any] | None
         :returns: The emitted event dict with type and payload.
         :rtype: dict[str, Any]
         """
@@ -547,8 +547,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     def _set_terminal_fields(self, *, usage: generated_models.ResponseUsage | dict[str, Any] | None) -> None:
         """Set terminal fields on the response envelope (completed_at, usage, output_text).
 
-        :param usage: Optional usage statistics to attach.
-        :type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any] | None
+        :keyword usage: Optional usage statistics to attach.
+        :keyword type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any] | None
         :rtype: None
         """
         self._response.completed_at = datetime.now(timezone.utc)

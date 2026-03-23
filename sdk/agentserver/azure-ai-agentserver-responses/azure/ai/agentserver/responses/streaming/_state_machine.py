@@ -115,12 +115,12 @@ def normalize_lifecycle_events(
     Applies ``id`` and ``model`` defaults to each payload, validates ordering,
     and appends a synthetic ``response.failed`` terminal event when none is present.
 
-    :param response_id: Response ID to stamp in each event payload.
-    :type response_id: str
-    :param events: The sequence of raw lifecycle event mappings.
-    :type events: Sequence[Mapping[str, Any]]
-    :param default_model: Optional default model identifier to set.
-    :type default_model: str | None
+    :keyword response_id: Response ID to stamp in each event payload.
+    :keyword type response_id: str
+    :keyword events: The sequence of raw lifecycle event mappings.
+    :keyword type events: Sequence[Mapping[str, Any]]
+    :keyword default_model: Optional default model identifier to set.
+    :keyword type default_model: str | None
     :returns: A list of normalized event dicts with guaranteed terminal event.
     :rtype: list[dict[str, Any]]
     :raises LifecycleStateMachineError: If a lifecycle event has no type or ordering is invalid.

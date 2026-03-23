@@ -93,9 +93,13 @@ def map_responses_server(
     """Register Responses API routes on a Starlette application.
 
     :param app: Starlette application instance to configure.
+    :type app: Starlette
     :param handler: User-provided response handler implementation.
-    :param prefix: Optional route prefix.
-    :param options: Optional server runtime options.
+    :type handler: ResponseHandler
+    :keyword prefix: Optional route prefix.
+    :keyword type prefix: str
+    :keyword options: Optional server runtime options.
+    :keyword type options: ResponsesServerOptions | None
     """
     if app is None:
         raise ValueError("app is required")
@@ -151,30 +155,30 @@ def map_responses_server(
         Invokes the handler's async generator and returns an SSE
         ``StreamingResponse``, optionally storing the execution record.
 
-        :param parsed: Parsed ``CreateResponse`` model instance.
-        :type parsed: Any
-        :param context: Runtime response context for this request.
-        :type context: RuntimeResponseContext
-        :param cancellation_signal: Event signalling cancellation.
-        :type cancellation_signal: asyncio.Event
-        :param response_id: The assigned response ID.
-        :type response_id: str
-        :param agent_reference: Normalized agent reference dictionary.
-        :type agent_reference: Any
-        :param model: Model name, or ``None``.
-        :type model: str | None
-        :param store: Whether to persist the execution record.
-        :type store: bool
-        :param background: Whether this is a background request.
-        :type background: bool
-        :param input_items: Extracted input items from the request.
-        :type input_items: list[Any]
-        :param previous_response_id: Previous response ID for chaining, or ``None``.
-        :type previous_response_id: str | None
-        :param span: Active observability span.
-        :type span: Any
-        :param captured_error: Pre-captured error, or ``None``.
-        :type captured_error: Exception | None
+        :keyword parsed: Parsed ``CreateResponse`` model instance.
+        :keyword type parsed: Any
+        :keyword context: Runtime response context for this request.
+        :keyword type context: RuntimeResponseContext
+        :keyword cancellation_signal: Event signalling cancellation.
+        :keyword type cancellation_signal: asyncio.Event
+        :keyword response_id: The assigned response ID.
+        :keyword type response_id: str
+        :keyword agent_reference: Normalized agent reference dictionary.
+        :keyword type agent_reference: Any
+        :keyword model: Model name, or ``None``.
+        :keyword type model: str | None
+        :keyword store: Whether to persist the execution record.
+        :keyword type store: bool
+        :keyword background: Whether this is a background request.
+        :keyword type background: bool
+        :keyword input_items: Extracted input items from the request.
+        :keyword type input_items: list[Any]
+        :keyword previous_response_id: Previous response ID for chaining, or ``None``.
+        :keyword type previous_response_id: str | None
+        :keyword span: Active observability span.
+        :keyword type span: Any
+        :keyword captured_error: Pre-captured error, or ``None``.
+        :keyword type captured_error: Exception | None
         :return: An SSE ``StreamingResponse`` or error ``JSONResponse``.
         :rtype: Response
         """
@@ -429,28 +433,28 @@ def map_responses_server(
         Collects all handler events, builds the response snapshot, and returns
         a ``JSONResponse``.
 
-        :param parsed: Parsed ``CreateResponse`` model instance.
-        :type parsed: Any
-        :param context: Runtime response context for this request.
-        :type context: RuntimeResponseContext
-        :param cancellation_signal: Event signalling cancellation.
-        :type cancellation_signal: asyncio.Event
-        :param response_id: The assigned response ID.
-        :type response_id: str
-        :param agent_reference: Normalized agent reference dictionary.
-        :type agent_reference: Any
-        :param model: Model name, or ``None``.
-        :type model: str | None
-        :param store: Whether to persist the execution record.
-        :type store: bool
-        :param input_items: Extracted input items from the request.
-        :type input_items: list[Any]
-        :param previous_response_id: Previous response ID for chaining, or ``None``.
-        :type previous_response_id: str | None
-        :param span: Active observability span.
-        :type span: Any
-        :param captured_error: Pre-captured error, or ``None``.
-        :type captured_error: Exception | None
+        :keyword parsed: Parsed ``CreateResponse`` model instance.
+        :keyword type parsed: Any
+        :keyword context: Runtime response context for this request.
+        :keyword type context: RuntimeResponseContext
+        :keyword cancellation_signal: Event signalling cancellation.
+        :keyword type cancellation_signal: asyncio.Event
+        :keyword response_id: The assigned response ID.
+        :keyword type response_id: str
+        :keyword agent_reference: Normalized agent reference dictionary.
+        :keyword type agent_reference: Any
+        :keyword model: Model name, or ``None``.
+        :keyword type model: str | None
+        :keyword store: Whether to persist the execution record.
+        :keyword type store: bool
+        :keyword input_items: Extracted input items from the request.
+        :keyword type input_items: list[Any]
+        :keyword previous_response_id: Previous response ID for chaining, or ``None``.
+        :keyword type previous_response_id: str | None
+        :keyword span: Active observability span.
+        :keyword type span: Any
+        :keyword captured_error: Pre-captured error, or ``None``.
+        :keyword type captured_error: Exception | None
         :return: A ``JSONResponse`` containing the response snapshot.
         :rtype: Response
         """
@@ -528,28 +532,28 @@ def map_responses_server(
         Creates a queued execution record with an attached background runner,
         and returns the initial snapshot immediately.
 
-        :param parsed: Parsed ``CreateResponse`` model instance.
-        :type parsed: Any
-        :param context: Runtime response context for this request.
-        :type context: RuntimeResponseContext
-        :param cancellation_signal: Event signalling cancellation.
-        :type cancellation_signal: asyncio.Event
-        :param response_id: The assigned response ID.
-        :type response_id: str
-        :param agent_reference: Normalized agent reference dictionary.
-        :type agent_reference: Any
-        :param model: Model name, or ``None``.
-        :type model: str | None
-        :param store: Whether to persist the execution record.
-        :type store: bool
-        :param input_items: Extracted input items from the request.
-        :type input_items: list[Any]
-        :param previous_response_id: Previous response ID for chaining, or ``None``.
-        :type previous_response_id: str | None
-        :param span: Active observability span.
-        :type span: Any
-        :param captured_error: Pre-captured error, or ``None``.
-        :type captured_error: Exception | None
+        :keyword parsed: Parsed ``CreateResponse`` model instance.
+        :keyword type parsed: Any
+        :keyword context: Runtime response context for this request.
+        :keyword type context: RuntimeResponseContext
+        :keyword cancellation_signal: Event signalling cancellation.
+        :keyword type cancellation_signal: asyncio.Event
+        :keyword response_id: The assigned response ID.
+        :keyword type response_id: str
+        :keyword agent_reference: Normalized agent reference dictionary.
+        :keyword type agent_reference: Any
+        :keyword model: Model name, or ``None``.
+        :keyword type model: str | None
+        :keyword store: Whether to persist the execution record.
+        :keyword type store: bool
+        :keyword input_items: Extracted input items from the request.
+        :keyword type input_items: list[Any]
+        :keyword previous_response_id: Previous response ID for chaining, or ``None``.
+        :keyword type previous_response_id: str | None
+        :keyword span: Active observability span.
+        :keyword type span: Any
+        :keyword captured_error: Pre-captured error, or ``None``.
+        :keyword type captured_error: Exception | None
         :return: A ``JSONResponse`` containing the queued response snapshot.
         :rtype: Response
         """

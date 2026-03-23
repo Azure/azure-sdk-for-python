@@ -170,12 +170,12 @@ def apply_common_defaults(
 
     :param events: The list of event dicts to mutate.
     :type events: list[dict[str, Any]]
-    :param response_id: Response ID to set as default.
-    :type response_id: str
-    :param agent_reference: Optional agent reference metadata dict.
-    :type agent_reference: dict[str, Any] | None
-    :param model: Optional model identifier.
-    :type model: str | None
+    :keyword response_id: Response ID to set as default.
+    :keyword type response_id: str
+    :keyword agent_reference: Optional agent reference metadata dict.
+    :keyword type agent_reference: dict[str, Any] | None
+    :keyword model: Optional model identifier.
+    :keyword type model: str | None
     :rtype: None
     """
     for event in events:
