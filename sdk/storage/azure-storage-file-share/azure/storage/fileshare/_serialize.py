@@ -85,7 +85,13 @@ def get_source_conditions(kwargs: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def get_access_conditions(lease: Optional[Union["ShareLeaseClient", "ShareLeaseClientAsync", str]]) -> Optional[str]:
-    """Extract lease_id from a lease client or string. Returns the lease_id string or None."""
+    """Extract lease_id from a lease client or string. Returns the lease_id string or None.
+
+    :param lease: A lease client or string lease ID.
+    :type lease: ~azure.storage.fileshare.ShareLeaseClient or str or None
+    :returns: The lease ID or None.
+    :rtype: str or None
+    """
     if lease is None:
         return None
     if hasattr(lease, "id"):
@@ -96,7 +102,13 @@ def get_access_conditions(lease: Optional[Union["ShareLeaseClient", "ShareLeaseC
 def get_source_access_conditions(
     lease: Optional[Union["ShareLeaseClient", "ShareLeaseClientAsync", str]]
 ) -> Optional[str]:
-    """Extract source_lease_id from a lease client or string. Returns the lease_id string or None."""
+    """Extract source_lease_id from a lease client or string. Returns the lease_id string or None.
+
+    :param lease: A lease client or string lease ID.
+    :type lease: ~azure.storage.fileshare.ShareLeaseClient or str or None
+    :returns: The lease ID or None.
+    :rtype: str or None
+    """
     if lease is None:
         return None
     if hasattr(lease, "id"):
@@ -107,7 +119,13 @@ def get_source_access_conditions(
 def get_dest_access_conditions(
     lease: Optional[Union["ShareLeaseClient", "ShareLeaseClientAsync", str]]
 ) -> Optional[str]:
-    """Extract destination_lease_id from a lease client or string. Returns the lease_id string or None."""
+    """Extract destination_lease_id from a lease client or string. Returns the lease_id string or None.
+
+    :param lease: A lease client or string lease ID.
+    :type lease: ~azure.storage.fileshare.ShareLeaseClient or str or None
+    :returns: The lease ID or None.
+    :rtype: str or None
+    """
     if lease is None:
         return None
     if hasattr(lease, "id"):

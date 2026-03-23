@@ -517,8 +517,8 @@ class ShareServiceClient(StorageAccountHostsMixin):
         share = self.get_share_client(deleted_share_name)
 
         try:
-            share._client.share.restore(
-                deleted_share_name=deleted_share_name,  # pylint: disable=protected-access
+            share._client.share.restore(  # pylint: disable=protected-access
+                deleted_share_name=deleted_share_name,
                 deleted_share_version=deleted_share_version,
                 timeout=kwargs.pop("timeout", None),
                 **kwargs,

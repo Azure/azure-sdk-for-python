@@ -75,7 +75,7 @@ def _upload_range_from_url_options(
     destination_range = f"bytes={offset}-{end_range}"
     source_range = f"bytes={source_offset}-{source_offset + length - 1}"
     source_authorization = kwargs.pop("source_authorization", None)
-    source_mod_conditions = get_source_conditions(kwargs)
+    _source_mod_conditions = get_source_conditions(kwargs)
     access_conditions = get_access_conditions(kwargs.pop("lease", None))
     file_last_write_mode = kwargs.pop("file_last_write_mode", None)
 

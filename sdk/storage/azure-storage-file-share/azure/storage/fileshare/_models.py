@@ -9,6 +9,9 @@
 from enum import Enum
 from typing import Any, Callable, Dict, List, Literal, Optional, Union, TYPE_CHECKING
 from urllib.parse import unquote
+
+import datetime as _datetime_module
+
 from typing_extensions import Self
 
 from azure.core import CaseInsensitiveEnumMeta
@@ -31,15 +34,19 @@ from ._generated.models import StorageServiceProperties as GeneratedStorageServi
 from ._shared.models import DictMixin, get_enum_value
 from ._shared.response_handlers import process_storage_error, return_context_and_deserialized
 
-import datetime as _datetime_module
-
 if TYPE_CHECKING:
     from datetime import datetime
     from ._generated.models import ShareRootSquash
 
 
 def _parse_datetime(value):
-    """Parse a datetime value that may already be a datetime object (new generated code) or a string (old)."""
+    """Parse a datetime value that may already be a datetime object (new generated code) or a string (old).
+
+    :param value: The value to parse.
+    :type value: str or ~datetime.datetime or None
+    :returns: A datetime object or None.
+    :rtype: ~datetime.datetime or None
+    """
     if value is None:
         return None
     if isinstance(value, _datetime_module.datetime):
@@ -135,9 +142,9 @@ class Metrics(GeneratedMetrics):
             version=generated.version,
             enabled=generated.enabled,
             include_apis=generated.include_apis,
-            retention_policy=RetentionPolicy._from_generated(
+            retention_policy=RetentionPolicy._from_generated(  # pylint: disable=protected-access
                 generated.retention_policy
-            ),  # pylint: disable=protected-access
+            ),
         )
 
 
@@ -232,7 +239,7 @@ class SmbMultichannel(GeneratedSmbMultichannel):
     enabled: bool
     """If SMB Multichannel is enabled."""
 
-    def __init__(self, *, enabled: bool, **kwargs: Any) -> None:
+    def __init__(self, *, enabled: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self._data = {}
         self.enabled = enabled
 
@@ -246,7 +253,7 @@ class SmbEncryptionInTransit(GeneratedSmbEncryptionInTransit):
     required: bool
     """If encryption in transit is enabled."""
 
-    def __init__(self, *, required: bool, **kwargs: Any) -> None:
+    def __init__(self, *, required: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self._data = {}
         self.required = required
 
@@ -263,7 +270,7 @@ class ShareSmbSettings(GeneratedShareSmbSettings):
     encryption_in_transit: Optional[SmbEncryptionInTransit]
     """Sets the encryption in transit settings."""
 
-    def __init__(
+    def __init__(  # pylint: disable=unused-argument
         self,
         *,
         multichannel: Optional[SmbMultichannel] = None,
@@ -286,7 +293,7 @@ class NfsEncryptionInTransit(GeneratedNfsEncryptionInTransit):
     required: bool
     """If encryption in transit is enabled."""
 
-    def __init__(self, *, required: bool, **kwargs: Any) -> None:
+    def __init__(self, *, required: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self._data = {}
         self.required = required
 
@@ -300,7 +307,7 @@ class ShareNfsSettings(GeneratedShareNfsSettings):
     encryption_in_transit: NfsEncryptionInTransit
     """Sets the encryption in transit settings."""
 
-    def __init__(self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any) -> None:
+    def __init__(self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self._data = {}
         self.encryption_in_transit = encryption_in_transit
 
@@ -319,7 +326,7 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings):
     nfs: Optional[ShareNfsSettings]
     """Sets the NFS settings."""
 
-    def __init__(
+    def __init__(  # pylint: disable=unused-argument
         self, *, smb: Optional[ShareSmbSettings] = None, nfs: Optional[ShareNfsSettings] = None, **kwargs: Any
     ) -> None:
         self._data = {}
@@ -764,8 +771,8 @@ class SharePropertiesPaged(PageIterator):
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.current_page = [
-            ShareProperties._from_generated(i) for i in self._response.share_items
-        ]  # pylint: disable=protected-access
+            ShareProperties._from_generated(i) for i in self._response.share_items  # pylint: disable=protected-access
+        ]
         return self._response.next_marker or None, self.current_page
 
 
@@ -881,8 +888,8 @@ class HandlesPaged(PageIterator):
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response = get_next_return
         self.current_page = [
-            Handle._from_generated(h) for h in self._response.handle_list
-        ]  # pylint: disable=protected-access
+            Handle._from_generated(h) for h in self._response.handle_list  # pylint: disable=protected-access
+        ]
         return self._response.next_marker or None, self.current_page
 
 
@@ -1135,11 +1142,12 @@ class DirectoryPropertiesPaged(PageIterator):
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.current_page = [
-            DirectoryProperties._from_generated(i) for i in self._response.segment.directory_items
-        ]  # pylint: disable = protected-access
+            DirectoryProperties._from_generated(i)  # pylint: disable=protected-access
+            for i in self._response.segment.directory_items
+        ]
         self.current_page.extend(
-            [FileProperties._from_generated(i) for i in self._response.segment.file_items]
-        )  # pylint: disable = protected-access
+            [FileProperties._from_generated(i) for i in self._response.segment.file_items]  # pylint: disable=protected-access
+        )
         return self._response.next_marker or None, self.current_page
 
 
