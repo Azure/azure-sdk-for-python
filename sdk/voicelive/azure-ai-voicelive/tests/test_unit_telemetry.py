@@ -341,6 +341,8 @@ class TestSendRecvTracing:
                 result = await conn.recv()
 
         assert result is not None
+        # Verify recv span name is updated to include event type
+        mock_span.span_instance.update_name.assert_called_once_with("recv session.created")
 
 
 # ------------------------------------------------------------------ #
@@ -433,17 +435,12 @@ class TestSessionIdExtraction:
 
     def test_extract_session_id_from_object(self):
         from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+        import types
 
         conn = MagicMock()
         conn._telemetry_span = MagicMock()
-        session = MagicMock()
-        session.id = "sess_xyz789"
-        # Remove dict-like access from session so hasattr(.get) is False
-        del session.get
-        result = MagicMock()
-        result.session = session
-        # Remove dict-like access
-        del result.get
+        session = types.SimpleNamespace(id="sess_xyz789")
+        result = types.SimpleNamespace(session=session)
 
         _VoiceLiveInstrumentorPreview._extract_session_id(conn, result)
 
@@ -723,16 +720,11 @@ class TestRateLimitEvents:
 
     def test_error_event_with_object_result(self, mock_span):
         from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+        import types
 
         impl = _VoiceLiveInstrumentorPreview()
-        error_obj = MagicMock()
-        error_obj.code = "server_error"
-        error_obj.message = "Internal error"
-        # Remove dict-like access from error_obj so hasattr(.get) is False
-        del error_obj.get
-        result = MagicMock()
-        result.error = error_obj
-        del result.get  # Remove dict-like access
+        error_obj = types.SimpleNamespace(code="server_error", message="Internal error")
+        result = types.SimpleNamespace(error=error_obj)
 
         impl._add_rate_limit_event(mock_span, "error", result)
 

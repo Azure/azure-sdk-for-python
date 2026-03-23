@@ -42,7 +42,8 @@ from ._utils import (
 logger = logging.getLogger(__name__)
 
 try:
-    from opentelemetry.trace import Span, StatusCode
+    from opentelemetry import context as otel_context
+    from opentelemetry.trace import Span, StatusCode, set_span_in_context
 
     _tracing_library_available = True
 except ModuleNotFoundError:
@@ -326,6 +327,12 @@ class _VoiceLiveInstrumentorPreview:
                 result._telemetry_audio_bytes_received = 0
                 result._telemetry_response_create_time = None
                 result._telemetry_first_token_latency_recorded = False
+                # Attach the connect span to the OTel context so that
+                # send/recv/close spans are automatically parented under it.
+                # We bypass azure-core's _SuppressionContextManager to avoid
+                # suppressing child CLIENT spans.
+                ctx = set_span_in_context(span.span_instance)
+                result._telemetry_context_token = otel_context.attach(ctx)
                 return result
             except Exception as exc:
                 instrumentor.record_error(span, exc)
@@ -347,6 +354,12 @@ class _VoiceLiveInstrumentorPreview:
             await original_aexit(mgr_self, exc_type, exc, exc_tb)
 
             if span is not None:
+                # Detach the connect span's context token so it is no longer
+                # the active span after the session closes.
+                context_token = getattr(conn, "_telemetry_context_token", None)
+                if context_token is not None:
+                    otel_context.detach(context_token)
+
                 # Record session-level counters on the connect span
                 turn_count = getattr(conn, "_telemetry_turn_count", 0)
                 interruption_count = getattr(conn, "_telemetry_interruption_count", 0)
@@ -507,6 +520,8 @@ class _VoiceLiveInstrumentorPreview:
 
                     if event_type:
                         span.add_attribute("gen_ai.voice.event_type", event_type_str)
+                        # Update span name to include event type (e.g. "recv session.created")
+                        span.span_instance.update_name(f"recv {event_type_str}")
 
                     # Compute and record message size
                     message_size = None
