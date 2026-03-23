@@ -11,4 +11,3 @@ class AnswerLengthEvaluator:
 
 def evaluate_answer_length(answer: str):
     return len(answer)
-

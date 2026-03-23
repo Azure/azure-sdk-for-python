@@ -214,7 +214,9 @@ class TestEvaluatorsUpload:
             )
 
             mock_container.upload_blob.assert_called_once()
-            blob_name = mock_container.upload_blob.call_args.kwargs.get("name") or mock_container.upload_blob.call_args[1].get("name")
+            blob_name = mock_container.upload_blob.call_args.kwargs.get("name") or mock_container.upload_blob.call_args[
+                1
+            ].get("name")
             assert blob_name == "evaluator.py"
 
     def test_upload_handles_nested_folders(self):
@@ -223,11 +225,13 @@ class TestEvaluatorsUpload:
         ops.pending_upload.return_value = self._mock_pending_upload_response()
         ops.create_version.return_value = {"name": "test", "version": "1"}
 
-        folder = self._create_temp_folder({
-            "evaluator.py": b"class Eval: pass",
-            "utils/__init__.py": b"",
-            "utils/helper.py": b"def helper(): pass",
-        })
+        folder = self._create_temp_folder(
+            {
+                "evaluator.py": b"class Eval: pass",
+                "utils/__init__.py": b"",
+                "utils/helper.py": b"def helper(): pass",
+            }
+        )
 
         with patch("azure.ai.projects.operations._patch_evaluators.ContainerClient") as MockContainerClient:
             mock_container = MagicMock()
@@ -243,8 +247,7 @@ class TestEvaluatorsUpload:
 
             assert mock_container.upload_blob.call_count == 3
             uploaded_names = sorted(
-                c.kwargs.get("name") or c[1].get("name")
-                for c in mock_container.upload_blob.call_args_list
+                c.kwargs.get("name") or c[1].get("name") for c in mock_container.upload_blob.call_args_list
             )
             assert uploaded_names == sorted(["evaluator.py", "utils/__init__.py", "utils/helper.py"])
 
@@ -254,12 +257,14 @@ class TestEvaluatorsUpload:
         ops.pending_upload.return_value = self._mock_pending_upload_response()
         ops.create_version.return_value = {"name": "test", "version": "1"}
 
-        folder = self._create_temp_folder({
-            "evaluator.py": b"class Eval: pass",
-            "__pycache__/evaluator.cpython-312.pyc": b"compiled",
-            "other.pyc": b"compiled",
-            "other.pyo": b"optimized",
-        })
+        folder = self._create_temp_folder(
+            {
+                "evaluator.py": b"class Eval: pass",
+                "__pycache__/evaluator.cpython-312.pyc": b"compiled",
+                "other.pyc": b"compiled",
+                "other.pyo": b"optimized",
+            }
+        )
 
         with patch("azure.ai.projects.operations._patch_evaluators.ContainerClient") as MockContainerClient:
             mock_container = MagicMock()
@@ -275,7 +280,9 @@ class TestEvaluatorsUpload:
 
             # Only evaluator.py should be uploaded
             assert mock_container.upload_blob.call_count == 1
-            blob_name = mock_container.upload_blob.call_args.kwargs.get("name") or mock_container.upload_blob.call_args[1].get("name")
+            blob_name = mock_container.upload_blob.call_args.kwargs.get("name") or mock_container.upload_blob.call_args[
+                1
+            ].get("name")
             assert blob_name == "evaluator.py"
 
     # ---------------------------------------------------------------
