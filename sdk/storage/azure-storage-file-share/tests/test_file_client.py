@@ -262,7 +262,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
             assert service._hosts[LocationMode.SECONDARY] == expected_secondary
 
         service = ShareFileClient.from_file_url(
-            file_url=f"{account_url}/{share_name}/{directory_path}/{file_path}",
+            file_url=f"{account_url}/{share_name}/{directory_path}/{file_path}-secondary",
             credential=storage_account_key.secret
         )
         assert service is not None

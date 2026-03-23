@@ -365,7 +365,7 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
             assert service._hosts[LocationMode.SECONDARY] == expected_secondary
 
         service = BlobClient.from_blob_url(
-            blob_url=f"{account_url}/{container_name}/{blob_name}",
+            blob_url=f"{account_url}/{container_name}/{blob_name}-secondary",
             credential=storage_account_key.secret
         )
 

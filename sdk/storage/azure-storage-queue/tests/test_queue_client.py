@@ -306,7 +306,7 @@ class TestStorageQueueClient(StorageRecordedTestCase):
             assert service._hosts[LocationMode.SECONDARY] == expected_secondary
 
         service = QueueClient.from_queue_url(
-            queue_url=f"{account_url}/{queue_name}", credential=storage_account_key.secret
+            queue_url=f"{account_url}/{queue_name}-secondary", credential=storage_account_key.secret
         )
         assert service is not None
         assert service.scheme == "https"
