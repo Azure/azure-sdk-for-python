@@ -35,7 +35,7 @@ class TestApplicationInsightsSampler(unittest.TestCase):
         sampler = ApplicationInsightsSampler({})  # type: ignore
         self.assertEqual(sampler._ratio, 1.0)
         self.assertEqual(sampler._sample_rate, 100.0)
-    
+
     def test_user_passed_value_through_distro(self):
         sampler = ApplicationInsightsSampler(sampling_ratio=0.5)
         self.assertEqual(sampler._ratio, 0.5)

@@ -31,9 +31,12 @@ from azure.monitor.opentelemetry.exporter.export.trace._utils import (
 )
 
 _INVALID_TRACES_PER_SECOND_MESSAGE = "Invalid value '%s' for traces per second. Expected a float. Defaulting to %s."
-_INVALID_TRACES_PER_SECOND_MESSAGE_NEGATIVE_VALUE = "Invalid value '%s' for traces per second. It should be a non-negative number. Defaulting to %s"
+_INVALID_TRACES_PER_SECOND_MESSAGE_NEGATIVE_VALUE = (
+    "Invalid value '%s' for traces per second. It should be a non-negative number. Defaulting to %s"
+)
 
 _logger = getLogger(__name__)
+
 
 class _State:
     def __init__(self, effective_window_count: float, effective_window_nanoseconds: float, last_nano_time: int):
@@ -97,7 +100,9 @@ class RateLimitedSampler(Sampler):
         if traces_per_second is not None:
             try:
                 if traces_per_second < 0.0:
-                    _logger.error(_INVALID_TRACES_PER_SECOND_MESSAGE_NEGATIVE_VALUE, traces_per_second, default_traces_per_second)
+                    _logger.error(
+                        _INVALID_TRACES_PER_SECOND_MESSAGE_NEGATIVE_VALUE, traces_per_second, default_traces_per_second
+                    )
                     traces_per_second = default_traces_per_second
                 else:
                     _logger.info("Using rate limited sampler: %s traces per second", traces_per_second)
@@ -109,7 +114,9 @@ class RateLimitedSampler(Sampler):
             try:
                 sampler_value = float(sampling_arg) if sampling_arg is not None else default_traces_per_second
                 if sampler_value < 0.0:
-                    _logger.error(_INVALID_TRACES_PER_SECOND_MESSAGE_NEGATIVE_VALUE, sampler_value, default_traces_per_second)
+                    _logger.error(
+                        _INVALID_TRACES_PER_SECOND_MESSAGE_NEGATIVE_VALUE, sampler_value, default_traces_per_second
+                    )
                     traces_per_second = default_traces_per_second
                 else:
                     _logger.info("Using rate limited sampler: %s traces per second", sampler_value)

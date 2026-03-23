@@ -27,6 +27,7 @@ _INVALID_FLOAT_MESSAGE = "Value of %s must be a float. Defaulting to %s."
 
 _logger = getLogger(__name__)
 
+
 # Sampler is responsible for the following:
 # Implements same trace id hashing algorithm so that traces are sampled the same across multiple nodes (via AI SDKS)
 # Adds item count to span attribute if span is sampled (needed for ingestion service)
@@ -41,17 +42,30 @@ class ApplicationInsightsSampler(Sampler):
         if sampling_ratio is not None:
             try:
                 if sampling_ratio < 0.0 or sampling_ratio > 1.0:
-                    _logger.error("Sampling ratio must be in the range [0.0, 1.0]. Defaulting to %s.", default_sampling_ratio)
+                    _logger.error(
+                        "Invalid value '%s' for sampling ratio. "
+                        "Sampling ratio must be in the range [0.0, 1.0]. "
+                        "Defaulting to %s.",
+                        sampling_ratio,
+                        default_sampling_ratio,
+                    )
                     sampling_ratio = default_sampling_ratio
             except TypeError:
-                _logger.error("Invalid value '%s' for sampling ratio. Defaulting to %s.", sampling_ratio, default_sampling_ratio)
+                _logger.error(
+                    "Invalid value '%s' for sampling ratio. Defaulting to %s.", sampling_ratio, default_sampling_ratio
+                )
                 sampling_ratio = default_sampling_ratio
         else:
             sampling_arg = os.environ.get(OTEL_TRACES_SAMPLER_ARG)
             try:
                 sampler_value = float(sampling_arg) if sampling_arg is not None else default_sampling_ratio
                 if sampler_value < 0.0 or sampler_value > 1.0:
-                    _logger.error("Invalid value '%s' for OTEL_TRACES_SAMPLER_ARG. It should be a value between 0 and 1. Defaulting to %s.", sampling_arg, default_sampling_ratio)
+                    _logger.error(
+                        "Invalid value '%s' for OTEL_TRACES_SAMPLER_ARG. "
+                        "It should be a value between 0 and 1. Defaulting to %s.",
+                        sampling_arg,
+                        default_sampling_ratio,
+                    )
                     sampling_ratio = default_sampling_ratio
                 else:
                     _logger.info("Using sampling ratio: %s", sampler_value)
