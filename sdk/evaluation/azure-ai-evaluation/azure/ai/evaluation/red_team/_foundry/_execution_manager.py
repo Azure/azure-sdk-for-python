@@ -13,6 +13,7 @@ from pyrit.scenario.foundry import FoundryStrategy
 
 from .._attack_objective_generator import RiskCategory
 from .._attack_strategy import AttackStrategy
+from .._utils.exception_utils import ErrorCategory, ExceptionHandler
 from ._dataset_builder import DatasetConfigurationBuilder
 from ._foundry_result_processor import FoundryResultProcessor
 from ._rai_scorer import RAIServiceScorer
@@ -84,12 +85,18 @@ class FoundryExecutionManager:
         :rtype: Dict[str, Any]
         """
         # Filter strategies for Foundry (exclude special handling strategies)
-        foundry_strategies, special_strategies = StrategyMapper.filter_for_foundry(attack_strategies)
+        foundry_strategies, special_strategies = StrategyMapper.filter_for_foundry(
+            attack_strategies
+        )
         mapped_strategies = StrategyMapper.map_strategies(foundry_strategies)
 
         # Check if Baseline was requested (it's in special_strategies)
         include_baseline = any(
-            (s == AttackStrategy.Baseline if not isinstance(s, list) else AttackStrategy.Baseline in s)
+            (
+                s == AttackStrategy.Baseline
+                if not isinstance(s, list)
+                else AttackStrategy.Baseline in s
+            )
             for s in attack_strategies
         )
 
@@ -107,7 +114,9 @@ class FoundryExecutionManager:
             )
             # Filter out multi-turn strategies
             mapped_strategies = [
-                s for s in mapped_strategies if s not in (FoundryStrategy.MultiTurn, FoundryStrategy.Crescendo)
+                s
+                for s in mapped_strategies
+                if s not in (FoundryStrategy.MultiTurn, FoundryStrategy.Crescendo)
             ]
 
         # Check if we need XPIA handling
@@ -115,7 +124,7 @@ class FoundryExecutionManager:
 
         red_team_info: Dict[str, Dict[str, Any]] = {}
         consecutive_config_failures = 0
-        _MAX_CONSECUTIVE_CONFIG_FAILURES = 2
+        max_consecutive_config_failures = 2
 
         try:
             # Process each risk category
@@ -127,7 +136,9 @@ class FoundryExecutionManager:
                     self.logger.info(f"No objectives for {risk_value}, skipping")
                     continue
 
-                self.logger.info(f"Processing {len(objectives)} objectives for {risk_value}")
+                self.logger.info(
+                    f"Processing {len(objectives)} objectives for {risk_value}"
+                )
 
                 # Build dataset configuration
                 dataset_config = self._build_dataset_config(
@@ -194,7 +205,9 @@ class FoundryExecutionManager:
                             "asr": 0.0,
                         }
                     else:
-                        self.logger.error(f"Error executing attacks for {risk_value}: {e}")
+                        self.logger.error(
+                            f"Error executing attacks for {risk_value}: {e}"
+                        )
                         # No results recoverable — use empty fallback
                         if "Foundry" not in red_team_info:
                             red_team_info["Foundry"] = {}
@@ -207,14 +220,25 @@ class FoundryExecutionManager:
 
                         # Track consecutive failures to detect systemic issues
                         # (e.g., unavailable model, bad credentials)
-                        if self._is_configuration_error(e):
+                        if ExceptionHandler().categorize_exception(e) in (
+                            ErrorCategory.CONFIGURATION,
+                            ErrorCategory.AUTHENTICATION,
+                        ):
                             consecutive_config_failures += 1
-                            if consecutive_config_failures >= _MAX_CONSECUTIVE_CONFIG_FAILURES:
+                            if (
+                                consecutive_config_failures
+                                >= max_consecutive_config_failures
+                            ):
                                 remaining = [
                                     rc.value
                                     for rc in risk_categories
                                     if rc.value
-                                    not in {rv for rd in red_team_info.values() if isinstance(rd, dict) for rv in rd}
+                                    not in {
+                                        rv
+                                        for rd in red_team_info.values()
+                                        if isinstance(rd, dict)
+                                        for rv in rd
+                                    }
                                 ]
                                 if remaining:
                                     abort_msg = (
@@ -246,7 +270,9 @@ class FoundryExecutionManager:
                 self._result_processors[risk_value] = result_processor
 
                 # Generate JSONL output
-                output_path = os.path.join(self.output_dir, f"{risk_value}_results.jsonl")
+                output_path = os.path.join(
+                    self.output_dir, f"{risk_value}_results.jsonl"
+                )
                 result_processor.to_jsonl(output_path)
 
                 # Get summary stats
@@ -276,31 +302,6 @@ class FoundryExecutionManager:
             self._builders.clear()
 
         return red_team_info
-
-    @staticmethod
-    def _is_configuration_error(exception: Exception) -> bool:
-        """Check if an exception indicates a systemic configuration problem.
-
-        Configuration errors (bad model name, auth failures, etc.) will
-        affect all risk categories identically, so there is no value in
-        retrying subsequent categories.
-        """
-        # HTTP 400 / 401 / 403 from OpenAI / Azure
-        if hasattr(exception, "response") and hasattr(exception.response, "status_code"):
-            return exception.response.status_code in (400, 401, 403)
-
-        # Keyword heuristics for wrapped or chained errors
-        msg = str(exception).lower()
-        config_keywords = (
-            "unavailable_model",
-            "bad request",
-            "unauthorized",
-            "forbidden",
-            "authentication",
-            "permission denied",
-            "invalid_api_key",
-        )
-        return any(kw in msg for kw in config_keywords)
 
     def _build_dataset_config(
         self,
@@ -450,7 +451,9 @@ class FoundryExecutionManager:
         results: Dict[str, Dict[str, Any]] = {}
 
         # Get the Foundry strategies that were actually executed
-        foundry_strategies, special_strategies = StrategyMapper.filter_for_foundry(attack_strategies)
+        foundry_strategies, special_strategies = StrategyMapper.filter_for_foundry(
+            attack_strategies
+        )
 
         # Create an entry per requested Foundry strategy using get_strategy_name() as key
         # so it matches ATTACK_STRATEGY_COMPLEXITY_MAP and _red_team.py eval matching

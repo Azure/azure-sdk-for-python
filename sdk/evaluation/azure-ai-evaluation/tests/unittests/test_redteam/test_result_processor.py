@@ -173,7 +173,13 @@ class TestCleanContentFilterResponse:
 
     def test_finish_reason_content_filter_no_details_gives_generic_message(self):
         """finish_reason: content_filter with empty cfr → generic blocked message."""
-        payload = json.dumps({"choices": [{"finish_reason": "content_filter", "content_filter_results": {}}]})
+        payload = json.dumps(
+            {
+                "choices": [
+                    {"finish_reason": "content_filter", "content_filter_results": {}}
+                ]
+            }
+        )
         result = ResultProcessor._clean_content_filter_response(payload)
         assert result == "[Response blocked by Azure OpenAI content filter]"
 
@@ -189,7 +195,15 @@ class TestExtractFilterDetailsFromParsed:
     """Unit tests for the helper that extracts categories from parsed dicts."""
 
     def test_choices_structure(self):
-        parsed = {"choices": [{"content_filter_results": {"violence": {"filtered": True, "severity": "high"}}}]}
+        parsed = {
+            "choices": [
+                {
+                    "content_filter_results": {
+                        "violence": {"filtered": True, "severity": "high"}
+                    }
+                }
+            ]
+        }
         details = ResultProcessor._extract_filter_details_from_parsed(parsed)
         assert details == ["violence (severity: high)"]
 
@@ -198,7 +212,9 @@ class TestExtractFilterDetailsFromParsed:
         assert ResultProcessor._extract_filter_details_from_parsed(None) == []
 
     def test_top_level_cfr(self):
-        parsed = {"content_filter_results": {"hate": {"filtered": True, "severity": "low"}}}
+        parsed = {
+            "content_filter_results": {"hate": {"filtered": True, "severity": "low"}}
+        }
         details = ResultProcessor._extract_filter_details_from_parsed(parsed)
         assert details == ["hate (severity: low)"]
 
@@ -211,19 +227,133 @@ class TestHasFinishReasonContentFilter:
         assert ResultProcessor._has_finish_reason_content_filter(parsed) is True
 
     def test_top_level_finish_reason(self):
-        assert ResultProcessor._has_finish_reason_content_filter({"finish_reason": "content_filter"}) is True
+        assert (
+            ResultProcessor._has_finish_reason_content_filter(
+                {"finish_reason": "content_filter"}
+            )
+            is True
+        )
 
     def test_finish_reason_stop(self):
         parsed = {"choices": [{"finish_reason": "stop"}]}
         assert ResultProcessor._has_finish_reason_content_filter(parsed) is False
 
     def test_no_finish_reason(self):
-        assert ResultProcessor._has_finish_reason_content_filter({"choices": [{"text": "hi"}]}) is False
+        assert (
+            ResultProcessor._has_finish_reason_content_filter(
+                {"choices": [{"text": "hi"}]}
+            )
+            is False
+        )
 
     def test_cfr_keys_without_finish_reason_returns_false(self):
         """content_filter_results key alone should NOT indicate blocking."""
-        parsed = {"choices": [{"content_filter_results": {"hate": {"filtered": False}}}]}
+        parsed = {
+            "choices": [{"content_filter_results": {"hate": {"filtered": False}}}]
+        }
         assert ResultProcessor._has_finish_reason_content_filter(parsed) is False
 
     def test_non_dict(self):
         assert ResultProcessor._has_finish_reason_content_filter([1, 2]) is False
+
+
+class TestAggregateRunErrors:
+    """Tests for ResultProcessor._aggregate_run_errors."""
+
+    def test_non_dict_returns_none(self):
+        """Non-dict red_team_info should return None."""
+        assert ResultProcessor._aggregate_run_errors(None) is None
+        assert ResultProcessor._aggregate_run_errors("not a dict") is None
+        assert ResultProcessor._aggregate_run_errors([]) is None
+
+    def test_no_failed_tasks_returns_none(self):
+        """All tasks completed → no error to report."""
+        red_team_info = {
+            "Foundry": {
+                "violence": {"status": "completed", "asr": 0.5},
+                "sexual": {"status": "completed", "asr": 0.3},
+            }
+        }
+        assert ResultProcessor._aggregate_run_errors(red_team_info) is None
+
+    def test_failed_tasks_without_error_field_returns_none(self):
+        """Failed tasks with no error messages should return None."""
+        red_team_info = {
+            "Foundry": {
+                "violence": {"status": "failed", "asr": 0.0},
+                "sexual": {"status": "failed", "asr": 0.0},
+            }
+        }
+        assert ResultProcessor._aggregate_run_errors(red_team_info) is None
+
+    def test_single_failed_task_with_error(self):
+        """Single failure produces an error dict with the error message."""
+        red_team_info = {
+            "Foundry": {
+                "violence": {
+                    "status": "failed",
+                    "error": "Model deployment unavailable",
+                    "asr": 0.0,
+                },
+                "sexual": {"status": "completed", "asr": 0.3},
+            }
+        }
+        result = ResultProcessor._aggregate_run_errors(red_team_info)
+        assert result is not None
+        assert result["code"] == "scan_failed"
+        assert result["message"] == "Model deployment unavailable"
+
+    def test_same_error_across_categories_is_deduplicated(self):
+        """Identical errors across categories should collapse into one."""
+        shared_error = "Model deployment 'gpt-4' is unavailable"
+        red_team_info = {
+            "Foundry": {
+                "violence": {"status": "failed", "error": shared_error, "asr": 0.0},
+                "sexual": {"status": "failed", "error": shared_error, "asr": 0.0},
+                "self_harm": {"status": "failed", "error": shared_error, "asr": 0.0},
+            }
+        }
+        result = ResultProcessor._aggregate_run_errors(red_team_info)
+        assert result is not None
+        assert result["code"] == "scan_failed"
+        # Single unique error → message should be just that error
+        assert result["message"] == shared_error
+
+    def test_different_errors_produce_summary(self):
+        """Different errors across categories should produce a summary."""
+        red_team_info = {
+            "Foundry": {
+                "violence": {
+                    "status": "failed",
+                    "error": "Model unavailable",
+                    "asr": 0.0,
+                },
+                "sexual": {
+                    "status": "failed",
+                    "error": "Rate limit exceeded",
+                    "asr": 0.0,
+                },
+            }
+        }
+        result = ResultProcessor._aggregate_run_errors(red_team_info)
+        assert result is not None
+        assert result["code"] == "scan_failed"
+        assert "2 distinct errors" in result["message"]
+        assert "Model unavailable" in result["message"]
+
+    def test_mixed_statuses_only_collects_from_failures(self):
+        """Only failed/incomplete/timeout/pending/running produce errors."""
+        red_team_info = {
+            "Foundry": {
+                "violence": {
+                    "status": "completed",
+                    "error": "should be ignored",
+                    "asr": 0.5,
+                },
+                "sexual": {"status": "failed", "error": "actual error", "asr": 0.0},
+            }
+        }
+        result = ResultProcessor._aggregate_run_errors(red_team_info)
+        assert result is not None
+        assert result["message"] == "actual error"
+        assert "should be ignored" not in result["message"]
