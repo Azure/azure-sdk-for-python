@@ -8,7 +8,7 @@ import sys
 from io import BytesIO, IOBase
 from typing import AsyncIterator
 
-from .streams import StructuredMessageConstants, StructuredMessageProperties
+from .streams import StructuredMessageConstants, StructuredMessageProperties, parse_message_header, parse_segment_header
 from .validation import calculate_crc64
 
 
@@ -158,22 +158,10 @@ class AsyncStructuredMessageDecoder(IOBase):  # pylint: disable=too-many-instanc
         return data
 
     async def _read_message_header(self) -> None:
-        # The first byte should always be the message version
-        self.message_version = int.from_bytes(await self._read_from_inner(1), 'little')
-
-        if self.message_version == 1:
-            message_length = int.from_bytes(await self._read_from_inner(8), 'little')
-            if message_length != self.message_length:
-                raise ValueError(f"Structured message length {message_length} "
-                                 f"did not match content length {self.message_length}")
-
-            self.flags = StructuredMessageProperties(int.from_bytes(await self._read_from_inner(2), 'little'))
-            self.num_segments = int.from_bytes(await self._read_from_inner(2), 'little')
-
-            self._message_offset += StructuredMessageConstants.V1_HEADER_LENGTH
-
-        else:
-            raise ValueError(f"The structured message version is not supported: {self.message_version}")
+        header_data = await self._read_from_inner(StructuredMessageConstants.V1_HEADER_LENGTH)
+        self.message_version, self.flags, self.num_segments = parse_message_header(
+            header_data, self.message_length)
+        self._message_offset += StructuredMessageConstants.V1_HEADER_LENGTH
 
     async def _read_message_footer(self) -> None:
         # Sanity check: There should only be self._message_footer_length (could be 0) bytes left to consume.
@@ -191,11 +179,9 @@ class AsyncStructuredMessageDecoder(IOBase):  # pylint: disable=too-many-instanc
         self._message_offset += self._message_footer_length
 
     async def _read_segment_header(self) -> None:
-        segment_number = int.from_bytes(await self._read_from_inner(2), 'little')
-        if segment_number != self._segment_number + 1:
-            raise ValueError(f"Structured message segment number invalid or out of order {segment_number}")
-        self._segment_number = segment_number
-        self._segment_content_length = int.from_bytes(await self._read_from_inner(8), 'little')
+        header_data = await self._read_from_inner(self._segment_header_length)
+        self._segment_number, self._segment_content_length = parse_segment_header(
+            header_data, self._segment_number + 1)
         self._message_offset += self._segment_header_length
 
         self._segment_content_offset = 0
