@@ -19,6 +19,10 @@ def _strip_snapshot_from_url(url):
 
     The generated client should receive a base URL without snapshot params,
     since snapshots are passed per-operation.
+
+    :param str url: The full URL possibly containing snapshot query params.
+    :return: The URL with sharesnapshot and snapshot query params removed.
+    :rtype: str
     """
     if "?" not in url:
         return url
