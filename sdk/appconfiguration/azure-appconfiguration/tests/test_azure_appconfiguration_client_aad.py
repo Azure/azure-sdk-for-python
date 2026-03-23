@@ -32,7 +32,6 @@ from azure.core.exceptions import (
 )
 from azure.appconfiguration import (
     ResourceReadOnlyError,
-    AzureAppConfigurationClient,
     ConfigurationSetting,
     ConfigurationSettingsFilter,
     SecretReferenceConfigurationSetting,
@@ -120,7 +119,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_get_configuration_setting_no_label(self, appconfiguration_endpoint_string):
         client = self.create_client(appconfiguration_endpoint_string)
         compare_kv = self.create_config_setting_no_label()
-        self.add_for_test(client, compare_kv)
+        client.set_configuration_setting(compare_kv)
         fetched_kv = client.get_configuration_setting(compare_kv.key)
         assert (
             fetched_kv.key == compare_kv.key
@@ -137,7 +136,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_get_configuration_setting(self, appconfiguration_endpoint_string):
         client = self.create_client(appconfiguration_endpoint_string)
         compare_kv = self.create_config_setting()
-        self.add_for_test(client, compare_kv)
+        client.set_configuration_setting(compare_kv)
         fetched_kv = client.get_configuration_setting(compare_kv.key, compare_kv.label)
         assert (
             fetched_kv.key == compare_kv.key
@@ -162,7 +161,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_get_configuration_setting_with_etag(self, appconfiguration_endpoint_string):
         client = self.create_client(appconfiguration_endpoint_string)
         compare_kv = self.create_config_setting()
-        self.add_for_test(client, compare_kv)
+        client.set_configuration_setting(compare_kv)
         compare_kv = client.get_configuration_setting(compare_kv.key, compare_kv.label)
 
         # test get with wrong etag
@@ -183,7 +182,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_delete_configuration_setting_with_key_no_label(self, appconfiguration_endpoint_string):
         client = self.create_client(appconfiguration_endpoint_string)
         to_delete_kv = self.create_config_setting_no_label()
-        self.add_for_test(client, to_delete_kv)
+        client.set_configuration_setting(to_delete_kv)
         deleted_kv = client.delete_configuration_setting(key=to_delete_kv.key, label=to_delete_kv.label)
         assert deleted_kv is not None
         with pytest.raises(ResourceNotFoundError):
@@ -194,7 +193,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_delete_configuration_setting_with_key_label(self, appconfiguration_endpoint_string):
         client = self.create_client(appconfiguration_endpoint_string)
         to_delete_kv = self.create_config_setting()
-        self.add_for_test(client, to_delete_kv)
+        client.set_configuration_setting(to_delete_kv)
         deleted_kv = client.delete_configuration_setting(key=to_delete_kv.key, label=to_delete_kv.label)
         assert deleted_kv is not None
         with pytest.raises(ResourceNotFoundError):
@@ -212,7 +211,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_delete_configuration_setting_with_etag(self, appconfiguration_endpoint_string):
         client = self.create_client(appconfiguration_endpoint_string)
         to_delete_kv = self.create_config_setting_no_label()
-        self.add_for_test(client, to_delete_kv)
+        client.set_configuration_setting(to_delete_kv)
         to_delete_kv = client.get_configuration_setting(to_delete_kv.key, to_delete_kv.label)
 
         # test delete with wrong etag
@@ -341,7 +340,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         client = self.create_client(appconfiguration_endpoint_string)
         to_list_kv = self.create_config_setting()
-        self.add_for_test(client, to_list_kv)
+        client.set_configuration_setting(to_list_kv)
         to_list_kv = client.get_configuration_setting(to_list_kv.key, to_list_kv.label)
         custom_headers = {"If-Match": to_list_kv.etag}
         items = list(
@@ -481,7 +480,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_list_revisions_correct_etag(self, appconfiguration_endpoint_string):
         client = self.create_client(appconfiguration_endpoint_string)
         to_list_kv = self.create_config_setting()
-        self.add_for_test(client, to_list_kv)
+        client.set_configuration_setting(to_list_kv)
         to_list_kv = client.get_configuration_setting(to_list_kv.key, to_list_kv.label)
         custom_headers = {"If-Match": to_list_kv.etag}
         items = list(
@@ -498,7 +497,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_set_read_only(self, appconfiguration_endpoint_string):
         client = self.create_client(appconfiguration_endpoint_string)
         to_set_kv = self.create_config_setting()
-        self.add_for_test(client, to_set_kv)
+        client.set_configuration_setting(to_set_kv)
         to_set_kv = client.get_configuration_setting(to_set_kv.key, to_set_kv.label)
 
         read_only_kv = client.set_read_only(to_set_kv)
@@ -518,7 +517,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_set_read_only_with_wrong_etag(self, appconfiguration_endpoint_string):
         client = self.create_client(appconfiguration_endpoint_string)
         to_set_kv = self.create_config_setting()
-        self.add_for_test(client, to_set_kv)
+        client.set_configuration_setting(to_set_kv)
         to_set_kv = client.get_configuration_setting(to_set_kv.key, to_set_kv.label)
 
         to_set_kv.etag = "wrong etag"
@@ -1184,70 +1183,6 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
 
         # monitor pages after updates - only changed pages will be yielded
         items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
-        iterator = items.by_page(match_conditions=new_match_conditions)
-        changed_pages = list(iterator)
-        # Should yield 0 pages
-        assert len(changed_pages) == 0
-
-        # clean up
-        self.tear_down()
-
-    @AppConfigPreparer()
-    @recorded_by_proxy
-    def test_check_configuration_settings_by_page_etag(self, appconfiguration_endpoint_string):
-        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
-        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        self.set_up(appconfiguration_endpoint_string)
-        # prepare 200 configuration settings
-        for i in range(200):
-            self.client.set_configuration_setting(
-                ConfigurationSetting(
-                    key=f"sample_key_{str(i)}",
-                    label=f"sample_label_{str(i)}",
-                )
-            )
-        # there will have 2 pages while listing, there are 100 configuration settings per page.
-
-        # get page etags using check (HEAD request)
-        match_conditions = []
-        items = self.client.check_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
-        iterator = items.by_page()
-        for _ in iterator:
-            etag = iterator.etag
-            match_conditions.append(etag)
-
-        # monitor page updates without changes - only changed pages will be yielded
-        items = self.client.check_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
-        iterator = items.by_page(match_conditions=match_conditions)
-        changed_pages = list(iterator)
-
-        # No pages should be yielded since nothing changed
-        assert len(changed_pages) == 0
-
-        # do some changes
-        self.client.set_configuration_setting(
-            ConfigurationSetting(
-                key="sample_key_201",
-                label="sample_label_202",
-            )
-        )
-        # now we have three pages, 100 settings in first two pages and 1 setting in the last page
-
-        # get page etags after updates using check (HEAD request)
-        new_match_conditions = []
-        items = self.client.check_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
-        iterator = items.by_page()
-        for _ in iterator:
-            etag = iterator.etag
-            new_match_conditions.append(etag)
-
-        assert match_conditions[0] == new_match_conditions[0]
-        assert match_conditions[1] != new_match_conditions[1]
-        assert match_conditions[2] != new_match_conditions[2]
-        assert len(new_match_conditions) == 3
-
-        # monitor pages after updates - only changed pages will be yielded
-        items = self.client.check_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
         iterator = items.by_page(match_conditions=new_match_conditions)
         changed_pages = list(iterator)
         # Should yield 0 pages

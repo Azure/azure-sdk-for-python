@@ -65,7 +65,7 @@ class TestAppConfigurationClientUnitTest:
         AppConfigRequestsCredentialsPolicy._signed_request = temp
 
     def test_from_connection_string(self):
-        connection_string = "Endpoint=https://fake_app_config.azconfig-test.io;" "Id=fake-id;" "Secret=fakesecret="
+        connection_string = "Endpoint=https://fake_app_config.azconfig-test.io;Id=fake-id;Secret=fakesecret="
         client = AzureAppConfigurationClient.from_connection_string(connection_string)
         assert client._impl._config.endpoint == "https://fake_app_config.azconfig-test.io"
         client.close()
@@ -81,7 +81,7 @@ class TestAppConfigurationClientUnitTest:
     def test_from_connection_string_mock_policies(self):
         from unittest.mock import patch, MagicMock
 
-        connection_string = "Endpoint=https://fake_app_config.azconfig-test.io;" "Id=fake-id;" "Secret=fakesecret="
+        connection_string = "Endpoint=https://fake_app_config.azconfig-test.io;Id=fake-id;Secret=fakesecret="
         with patch(
             "azure.appconfiguration._azure_appconfiguration_client.AppConfigRequestsCredentialsPolicy"
         ) as mock_policy_cls:
