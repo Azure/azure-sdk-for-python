@@ -112,6 +112,54 @@ This library is failing two release blocking checks - Mypy and Tests - CI. The l
 
 ---
 
+## Local SDK Generation and Package Lifecycle (TypeSpec)
+
+### AUTHORITATIVE REFERENCE
+For all TypeSpec-based SDK workflows (generation, building, validation, testing, versioning, and release), follow #file:../eng/common/instructions/azsdk-tools/local-sdk-workflow.instructions.md
+
+### DEFAULT BEHAVIORS
+- **Repository:** Use the current workspace as the local SDK repository unless the user specifies a different path.
+- **Configuration:** Identify `tsp-location.yaml` from files open in the editor. If unclear, ask the user.
+
+### PYTHON-SPECIFIC RULES
+- **Skip build step:** Python packages do not require compilation. After generation, proceed directly to validation and tests.
+
+### REQUIRED CONFIRMATIONS
+Ask the user for clarification if repository path or configuration file is ambiguous.
+
+---
+
+## MGMT SDK Code Review Rules
+
+### SCOPE
+These rules apply to management-plane SDK packages located at `sdk/*/azure-mgmt-*/`.
+
+### REVIEW EXCLUSIONS
+- **Skip** the `generated_samples/` and `generated_tests/` folders entirely — do not review generated sample or test code.
+- **Skip** source code under `azure/mgmt/**/` **except** `_client.py` — only review `_client.py` among the generated source files.
+
+### VERSION CONSISTENCY
+- The version string in `_version.py` **must** match the latest version listed in `CHANGELOG.md`.
+
+### CHANGELOG DATE
+- If the release date of the latest version in `CHANGELOG.md` is **more than 3 weeks in the future** from the current date, remind the author to verify and update the date.
+
+### PYPROJECT.TOML STABILITY FLAGS
+- **Stable version** (version string does **not** contain `b`):
+  - `is_stable` in `pyproject.toml` must be `true`
+  - `classifiers` must include `"Development Status :: 5 - Production/Stable"`
+- **Preview version** (version string contains `b`):
+  - `is_stable` in `pyproject.toml` must be `false`
+  - `classifiers` must include `"Development Status :: 4 - Beta"`
+
+### CLIENT SIGNATURE
+- The `__init__` method of the client class in `_client.py` must include the parameters `credential`, `subscription_id`, and `base_url` **in that order**. Default values are not checked.
+
+### README CODE SNIPPETS
+- Code snippets in `README.md` must follow the real client class signatures and usage patterns. Verify that sample code matches the actual client API.
+
+---
+
 ## SDK release
 
 For detailed workflow instructions, see [SDK Release](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/instructions/copilot/sdk-release.instructions.md).

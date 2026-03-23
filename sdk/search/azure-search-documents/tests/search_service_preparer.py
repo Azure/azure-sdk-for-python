@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -51,16 +52,34 @@ def _clean_up_indexes(endpoint, cred):
 
     client = SearchIndexClient(endpoint, cred, retry_backoff_factor=60)
 
+    # wipe knowledge sources first (they reference indexes)
+    try:
+        for ks in client.list_knowledge_sources():
+            client.delete_knowledge_source(ks.name)
+    except HttpResponseError:
+        pass
+
+    # wipe knowledge bases
+    try:
+        for kb in client.list_knowledge_bases():
+            client.delete_knowledge_base(kb.name)
+    except HttpResponseError:
+        pass
+
     # wipe the synonym maps which seem to survive the index
     for map in client.get_synonym_maps():
         client.delete_synonym_map(map.name)
+
     # wipe out any existing aliases
     for alias in client.list_aliases():
         client.delete_alias(alias)
 
     # wipe any existing indexes
     for index in client.list_indexes():
-        client.delete_index(index)
+        try:
+            client.delete_index(index)
+        except HttpResponseError:
+            pass
 
 
 def _clean_up_indexers(endpoint, cred):
@@ -75,10 +94,7 @@ def _clean_up_indexers(endpoint, cred):
         for skillset in client.get_skillset_names():
             client.delete_skillset(skillset)
     except HttpResponseError as ex:
-        if (
-            "skillset related operations are not enabled in this region"
-            in ex.message.lower()
-        ):
+        if "skillset related operations are not enabled in this region" in ex.message.lower():
             pass
         else:
             raise
@@ -87,7 +103,7 @@ def _clean_up_indexers(endpoint, cred):
 def _set_up_index(service_name, endpoint, cred, schema, index_batch):
     from azure.search.documents import SearchClient
     from azure.search.documents.indexes.models import SearchIndex
-    from azure.search.documents._generated.models import IndexBatch
+    from azure.search.documents import IndexDocumentsBatch
     from azure.search.documents.indexes import SearchIndexClient
 
     schema = _load_schema(schema)
@@ -95,13 +111,14 @@ def _set_up_index(service_name, endpoint, cred, schema, index_batch):
     if schema:
         index_json = json.loads(schema)
         index_name = index_json["name"]
-        index = SearchIndex.from_dict(index_json)
+        index = SearchIndex(index_json)
         index_client = SearchIndexClient(endpoint, cred, retry_backoff_factor=60)
         index_create = index_client.create_index(index)
 
     # optionally load data into the index
     if index_batch and schema:
-        batch = IndexBatch.deserialize(index_batch)
+        batch = IndexDocumentsBatch()
+        batch.add_upload_actions(index_batch.get("value", []))
         client = SearchClient(endpoint, index_name, cred)
         results = client.index_documents(batch)
         if not all(result.succeeded for result in results):
@@ -132,9 +149,8 @@ def _trim_kwargs_from_test_function(fn, kwargs):
 
 def search_decorator(*, schema, index_batch):
     def decorator(func):
-        def wrapper(*args, **kwargs):
-            # set up hotels search index
-            test = args[0]
+        def _prepare_test(test, kwargs):
+            """Common setup logic for both sync and async tests."""
             endpoint = kwargs.get("search_service_endpoint")
             service_name = kwargs.get("search_service_name")
             if test.is_live:
@@ -153,9 +169,25 @@ def search_decorator(*, schema, index_batch):
 
             trimmed_kwargs = {k: v for k, v in kwargs.items()}
             _trim_kwargs_from_test_function(func, trimmed_kwargs)
+            return trimmed_kwargs
 
-            return func(*args, **trimmed_kwargs)
+        if inspect.iscoroutinefunction(func):
 
-        return wrapper
+            @functools.wraps(func)
+            async def async_wrapper(*args, **kwargs):
+                test = args[0]
+                trimmed_kwargs = _prepare_test(test, kwargs)
+                return await func(*args, **trimmed_kwargs)
+
+            return async_wrapper
+        else:
+
+            @functools.wraps(func)
+            def wrapper(*args, **kwargs):
+                test = args[0]
+                trimmed_kwargs = _prepare_test(test, kwargs)
+                return func(*args, **trimmed_kwargs)
+
+            return wrapper
 
     return decorator

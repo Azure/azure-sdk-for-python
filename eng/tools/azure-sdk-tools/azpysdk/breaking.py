@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+import tempfile
 
 from typing import Optional, List
 from subprocess import CalledProcessError, check_call
@@ -28,16 +29,80 @@ class breaking(Check):
         p = subparsers.add_parser("breaking", parents=parents, help="Run the breaking change check")
         p.set_defaults(func=self.run)
 
+        p.add_argument(
+            "-m",
+            "--module",
+            dest="target_module",
+            help="The target module. The target module passed will be the top most module in the package.",
+            default=None,
+        )
+        p.add_argument(
+            "--in-venv",
+            dest="in_venv",
+            help="Check if we are in the newly created venv.",
+            default=False,
+        )
+        p.add_argument(
+            "-s",
+            "--stable-version",
+            "--stable_version",
+            dest="stable_version",
+            help="The stable version of the target package, if it exists on PyPi.",
+            default=None,
+        )
+        p.add_argument(
+            "-c",
+            "--changelog",
+            dest="changelog",
+            help="Output changes listed in changelog format.",
+            action="store_true",
+            default=False,
+        )
+        p.add_argument(
+            "--code-report",
+            dest="code_report",
+            help="Output a code report for a package.",
+            action="store_true",
+            default=False,
+        )
+        p.add_argument(
+            "--source-report",
+            dest="source_report",
+            help="Path to the code report for the previous package version.",
+            default=None,
+        )
+        p.add_argument(
+            "--target-report",
+            dest="target_report",
+            help="Path to the code report for the new package version.",
+            default=None,
+        )
+        p.add_argument(
+            "--latest-pypi-version",
+            dest="latest_pypi_version",
+            help="Use the latest package version on PyPi (can be preview or stable).",
+            action="store_true",
+            default=False,
+        )
+
     def run(self, args: argparse.Namespace) -> int:
         """Run the breaking change check command."""
         logger.info("Running breaking check...")
 
         set_envvar_defaults()
+
+        # Fast path: if two pre-built code reports are provided, compare them directly
+        # without needing a package directory, build, or install step.
+        if getattr(args, "source_report", None) and getattr(args, "target_report", None):
+            return self._run_from_reports(args)
+
         targeted = self.get_targeted_directories(args)
 
         results: List[int] = []
 
         for parsed in targeted:
+            if os.getcwd() != parsed.folder:
+                os.chdir(parsed.folder)
             package_dir = parsed.folder
             package_name = parsed.name
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
@@ -78,6 +143,22 @@ class breaking(Check):
                     "--target",
                     package_dir,
                 ]
+                if getattr(args, "target_module", None):
+                    cmd.extend(["--module", args.target_module])
+                if getattr(args, "in_venv", False):
+                    cmd.extend(["--in-venv", str(args.in_venv).lower()])
+                if getattr(args, "stable_version", None):
+                    cmd.extend(["--stable_version", args.stable_version])
+                if getattr(args, "changelog", False):
+                    cmd.append("--changelog")
+                if getattr(args, "code_report", False):
+                    cmd.append("--code-report")
+                if getattr(args, "source_report", None):
+                    cmd.extend(["--source-report", args.source_report])
+                if getattr(args, "target_report", None):
+                    cmd.extend(["--target-report", args.target_report])
+                if getattr(args, "latest_pypi_version", False):
+                    cmd.append("--latest-pypi-version")
                 check_call(cmd)
             except CalledProcessError as e:
                 logger.error(f"Breaking check failed for {package_name}: {e}")
@@ -85,3 +166,37 @@ class breaking(Check):
                 continue
 
         return max(results) if results else 0
+
+    def _run_from_reports(self, args: argparse.Namespace) -> int:
+        """Compare two pre-built code reports directly, skipping package build and install."""
+        source = os.path.abspath(args.source_report)
+        target = os.path.abspath(args.target_report)
+
+        # Use a temporary root directory, but create a subdirectory whose basename is derived
+        # from the source report path so detect_breaking_changes.py can infer the package name
+        # correctly from os.path.basename(pkg_dir).
+        with tempfile.TemporaryDirectory() as tmp_root:
+            # Heuristic: use the parent directory name of the source report as the package name.
+            pkg_name = os.path.basename(os.path.dirname(source))
+            tmp_pkg_dir = os.path.join(tmp_root, pkg_name)
+            os.makedirs(tmp_pkg_dir, exist_ok=True)
+
+            cmd = [
+                sys.executable,
+                os.path.join(BREAKING_CHECKER_PATH, "detect_breaking_changes.py"),
+                "--target",
+                tmp_pkg_dir,
+                "--source-report",
+                source,
+                "--target-report",
+                target,
+            ]
+            if getattr(args, "changelog", False):
+                cmd.append("--changelog")
+
+            try:
+                check_call(cmd)
+            except CalledProcessError as e:
+                logger.error(f"Breaking change report generation failed: {e}")
+                return 1
+        return 0

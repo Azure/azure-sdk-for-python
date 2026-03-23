@@ -30,7 +30,7 @@ OPTIONAL ENV VARS:
 # [START conversation_authoring_load_snapshot_async]
 import os
 import asyncio
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 

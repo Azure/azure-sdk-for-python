@@ -39,13 +39,17 @@ def main():
         body={
             "properties": {
                 "permissions": "ReadWrite",
-                "server": {"certificateObject": "<REDACTED>", "fqdn": "fullyqualified.domainname.com"},
+                "server": {
+                    "certificateObject": "<REDACTED>",
+                    "fqdn": "fullyqualified.domainname.com",
+                    "onCertificateConflictAction": "Update",
+                },
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-09-01-preview/Buckets_Update.json
+# x-ms-original-file: 2025-12-15-preview/Buckets_Update.json
 if __name__ == "__main__":
     main()

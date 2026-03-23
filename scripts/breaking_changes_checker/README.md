@@ -11,7 +11,7 @@ Add your package name to the `RUN_BREAKING_CHANGES_PACKAGES` found [here](https:
 
 **1) Install azpysdk:**
 
-`pip install -e eng/tools/azure-sdk-tools[build]`
+`pip install -e eng/tools/azure-sdk-tools`
 
 **2) Run the `breaking` check.**
 
@@ -21,18 +21,6 @@ Here we run the breaking changes tool against azure-storage-blob, for example:
 cd ./sdk/storage/azure-storage-blob
 azpysdk breaking .
 ```
-
-## Run locally with tox
-
-**1) Install tox:**
-
-`pip install tox<5`
-
-**2) Run the `breaking` environment.**
-
-Here we run the breaking changes tool against azure-storage-blob, for example:
-
-`C:\azure-sdk-for-python\sdk\storage\azure-storage-blob>tox run -c ../../../eng/tox/tox.ini --root . -e breaking`
 
 For more advanced usage scenarios see [Advanced scenarios](#advanced-scenarios).
 
@@ -102,7 +90,7 @@ By default, this tool will only compare against past stable releases on PyPi. If
 Example:
 
 ```
-C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> tox run -c ../../../eng/tox/tox.ini --root . -e breaking -- --latest-pypi-version
+C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> azpysdk breaking . --latest-pypi-version
 ```
 
 ### Changelog reporting
@@ -112,7 +100,7 @@ The breaking changes tool also supports reporting general changes between librar
 To get changelog output use the `--changelog` flag:
 
 ```
-C:\azure-sdk-for-python\sdk\storage\azure-storage-blob>tox run -c ../../../eng/tox/tox.ini --root . -e breaking -- --changelog
+C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> azpysdk breaking . --changelog
 ```
 
 Example output:
@@ -136,7 +124,7 @@ To get a code report pass the `--code-report` flag.
 Example:
 
 ```
-C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> tox run -c ../../../eng/tox/tox.ini --root . -e breaking -- --code-report
+C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> azpysdk breaking . --code-report
 ```
 
 This command will generate a `code_report.json` file in the library directory.
@@ -148,5 +136,47 @@ To use previously generated code reports for breaking changes comparison you wil
 Example:
 
 ```
-C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> tox run -c ../../../eng/tox/tox.ini --root . -e breaking -- --source-report ./source_code_report.json --target-report ./target_code_report.json
+C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> azpysdk breaking . --source-report ./source_code_report.json --target-report ./target_code_report.json
 ```
+
+### Generate changelog from two code reports
+
+When both `--source-report` and `--target-report` are provided together with the `--changelog` flag, the tool skips the package build and PyPI install steps entirely and generates the changelog by comparing the two reports directly. This is the fastest way to produce a changelog when you already have code reports for both versions.
+
+**Step 1:** Generate a code report for the stable (old) version:
+
+```
+C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> azpysdk breaking . --code-report
+```
+
+Rename the output file: `mv code_report.json stable_report.json`
+
+**Step 2:** After updating your code, generate a report for the new version:
+
+```
+C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> azpysdk breaking . --code-report
+```
+
+Rename the output file: `mv code_report.json current_report.json`
+
+**Step 3:** Generate the changelog by comparing the two reports:
+
+```
+C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> azpysdk breaking --source-report ./stable_report.json --target-report ./current_report.json --changelog
+```
+
+Example output:
+
+```
+===== changelog start =====
+### Features Added
+
+  - Client `BlobServiceClient` added method `list_blobs_flat`
+
+### Breaking Changes
+
+  - Deleted or renamed client method `BlobServiceClient.list_blobs`
+===== changelog end =====
+```
+
+> **Note:** When `--source-report` and `--target-report` are both specified, you do not need to pass a positional package directory argument, but you should still run the command from the package's root directory so that the package name is inferred correctly for opt-in and ignore-rule behavior. The `--changelog` flag is optional — omitting it will report only breaking changes and exit with code 1 if any are found.

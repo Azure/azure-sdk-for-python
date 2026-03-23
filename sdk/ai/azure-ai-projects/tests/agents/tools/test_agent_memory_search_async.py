@@ -6,6 +6,7 @@
 # cSpell:disable
 
 import asyncio
+import pytest
 from typing import Final
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -13,7 +14,7 @@ from devtools_testutils import RecordedTransport, is_live, is_live_and_not_recor
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.projects.models import (
     MemoryStoreDefaultDefinition,
-    MemorySearchTool,
+    MemorySearchPreviewTool,
     PromptAgentDefinition,
     MemoryStoreDefaultOptions,
 )
@@ -21,6 +22,9 @@ from azure.ai.projects.models import (
 
 class TestAgentMemorySearchAsync(TestBase):
 
+    @pytest.mark.skip(
+        reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+    )
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_memory_search_async(self, **kwargs):
@@ -56,7 +60,7 @@ class TestAgentMemorySearchAsync(TestBase):
             # in live mode so we don't get logs of this call in test recordings.
             if is_live_and_not_recording():
                 try:
-                    await project_client.memory_stores.delete(memory_store_name)
+                    await project_client.beta.memory_stores.delete(memory_store_name)
                     print(f"Memory store `{memory_store_name}` deleted")
                 except ResourceNotFoundError:
                     pass
@@ -68,7 +72,7 @@ class TestAgentMemorySearchAsync(TestBase):
                     embedding_model=embedding_model,
                     options=MemoryStoreDefaultOptions(user_profile_enabled=True, chat_summary_enabled=True),
                 )
-                memory_store = await project_client.memory_stores.create(
+                memory_store = await project_client.beta.memory_stores.create(
                     name=memory_store_name,
                     description="Test memory store for agent conversations",
                     definition=definition,
@@ -79,7 +83,7 @@ class TestAgentMemorySearchAsync(TestBase):
                 assert memory_store.description == "Test memory store for agent conversations"
 
                 # Create memory search tool
-                tool = MemorySearchTool(
+                tool = MemorySearchPreviewTool(
                     memory_store_name=memory_store.name,
                     scope=scope,
                     update_delay=1,  # Wait 1 second for testing; use higher value (300) in production
@@ -107,7 +111,7 @@ class TestAgentMemorySearchAsync(TestBase):
                 response = await openai_client.responses.create(
                     input="I prefer dark roast coffee",
                     conversation=conversation.id,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
                 self.validate_response(response)
 
@@ -132,7 +136,7 @@ class TestAgentMemorySearchAsync(TestBase):
                 new_response = await openai_client.responses.create(
                     input="Please order my usual coffee",
                     conversation=new_conversation.id,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
                 self.validate_response(new_response)
 
@@ -181,7 +185,7 @@ class TestAgentMemorySearchAsync(TestBase):
 
                 if memory_store:
                     try:
-                        await project_client.memory_stores.delete(memory_store.name)
+                        await project_client.beta.memory_stores.delete(memory_store.name)
                         print("Memory store deleted")
                     except Exception as e:
                         print(f"Failed to delete memory store: {e}")

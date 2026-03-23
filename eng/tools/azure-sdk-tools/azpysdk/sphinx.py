@@ -13,9 +13,7 @@ from pathlib import Path
 from .Check import Check
 from ci_tools.functions import install_into_venv, unzip_file_to_directory
 from ci_tools.scenario.generation import create_package_and_install
-from ci_tools.variables import in_ci, set_envvar_defaults
-from ci_tools.variables import discover_repo_root
-from ci_tools.variables import in_analyze_weekly
+from ci_tools.variables import in_ci, set_envvar_defaults, discover_repo_root, in_analyze_weekly
 
 from ci_tools.logging import logger
 
@@ -24,7 +22,6 @@ SPHINX_VERSION = "8.2.0"
 SPHINX_RTD_THEME_VERSION = "3.0.2"
 MYST_PARSER_VERSION = "4.0.1"
 SPHINX_CONTRIB_JQUERY_VERSION = "4.1"
-PYGITHUB_VERSION = "1.59.0"
 
 RST_EXTENSION_FOR_INDEX = """
 
@@ -217,6 +214,8 @@ class sphinx(Check):
         results: List[int] = []
 
         for parsed in targeted:
+            if os.getcwd() != parsed.folder:
+                os.chdir(parsed.folder)
             package_dir = parsed.folder
             package_name = parsed.name
 
@@ -256,7 +255,6 @@ class sphinx(Check):
                             "sphinx_rtd_theme",
                             "myst_parser",
                             "sphinxcontrib-jquery",
-                            f"PyGithub=={PYGITHUB_VERSION}",
                         ],
                         package_dir,
                     )
@@ -289,22 +287,20 @@ class sphinx(Check):
             # run apidoc
             output_dir = os.path.join(staging_directory, f"{UNZIPPPED_DIR_NAME}/{DOCGEN_DIR_NAME}")
             if is_mgmt_package(package_name):
-                results.append(self.mgmt_apidoc(output_dir, package_dir, executable))
+                apidoc_result = self.mgmt_apidoc(output_dir, package_dir, executable)
             else:
-                results.append(self.sphinx_apidoc(staging_directory, parsed.namespace, executable))
+                apidoc_result = self.sphinx_apidoc(staging_directory, parsed.namespace, executable)
+            results.append(apidoc_result)
 
             # build
             # Only data-plane libraries run strict sphinx at the moment
             fail_on_warning = not is_mgmt_package(package_name)
-            results.append(
-                # doc_folder = source
-                # site_folder  = output
-                self.sphinx_build(package_dir, doc_folder, site_folder, fail_on_warning, executable)
-            )
+            build_result = self.sphinx_build(package_dir, doc_folder, site_folder, fail_on_warning, executable)
+            results.append(build_result)
 
             if in_ci() or args.in_ci:
                 move_output_and_compress(site_folder, package_dir, package_name)
-                if in_analyze_weekly():
+                if in_analyze_weekly() and apidoc_result == 0 and build_result == 0:
                     from gh_tools.vnext_issue_creator import close_vnext_issue
 
                     close_vnext_issue(package_name, "sphinx")
@@ -340,7 +336,8 @@ class sphinx(Check):
             if in_analyze_weekly():
                 from gh_tools.vnext_issue_creator import create_vnext_issue
 
-                create_vnext_issue(package_dir, "sphinx")
+                check_version = self.get_check_version(executable, "sphinx")
+                create_vnext_issue(package_dir, "sphinx", check_version)
             return 1
         return 0
 

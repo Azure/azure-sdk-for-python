@@ -14,10 +14,8 @@
 import unittest
 from unittest.mock import Mock, call, patch
 
-from opentelemetry.sdk._logs import LoggingHandler
 from opentelemetry.sdk.resources import Resource
 
-from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 from azure.monitor.opentelemetry._configure import (
     _send_attach_warning,
     _setup_instrumentations,
@@ -33,6 +31,7 @@ from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import _DISTRO_
 TEST_RESOURCE = Resource({"foo": "bar"})
 
 
+# pylint: disable=too-many-public-methods
 class TestConfigure(unittest.TestCase):
     @patch(
         "azure.monitor.opentelemetry._configure._send_attach_warning",
@@ -68,7 +67,7 @@ class TestConfigure(unittest.TestCase):
         tracing_mock.assert_called_once()
         logging_mock.assert_called_once()
         metrics_mock.assert_called_once()
-        live_metrics_mock.assert_not_called()
+        live_metrics_mock.assert_called_once()
         instrumentation_mock.assert_called_once()
         detect_attach_mock.assert_called_once()
 
@@ -109,17 +108,24 @@ class TestConfigure(unittest.TestCase):
                 "django": {"enabled": False},
                 "requests": {"enabled": False},
             },
-            "enable_live_metrics": False,
+            "enable_live_metrics": True,
             "enable_performance_counters": True,
             "resource": TEST_RESOURCE,
         }
         config_mock.return_value = configurations
+        # Track call order using side_effect
+        call_order = []
+        metrics_mock.side_effect = lambda *args, **kwargs: call_order.append("metrics")
+        logging_mock.side_effect = lambda *args, **kwargs: call_order.append("logging")
+        tracing_mock.side_effect = lambda *args, **kwargs: call_order.append("tracing")
         configure_azure_monitor()
         tracing_mock.assert_not_called()
         logging_mock.assert_called_once_with(configurations)
         metrics_mock.assert_called_once_with(configurations)
-        live_metrics_mock.assert_not_called()
+        live_metrics_mock.assert_called_once_with(configurations)
         instrumentation_mock.assert_called_once_with(configurations)
+        # Assert setup_metrics is called before setup_logging
+        self.assertLess(call_order.index("metrics"), call_order.index("logging"))
 
     @patch(
         "azure.monitor.opentelemetry._configure._setup_instrumentations",
@@ -153,17 +159,24 @@ class TestConfigure(unittest.TestCase):
             "disable_tracing": False,
             "disable_logging": True,
             "disable_metrics": False,
-            "enable_live_metrics": False,
+            "enable_live_metrics": True,
             "enable_performance_counters": True,
             "resource": TEST_RESOURCE,
         }
         config_mock.return_value = configurations
+        # Track call order using side_effect
+        call_order = []
+        metrics_mock.side_effect = lambda *args, **kwargs: call_order.append("metrics")
+        logging_mock.side_effect = lambda *args, **kwargs: call_order.append("logging")
+        tracing_mock.side_effect = lambda *args, **kwargs: call_order.append("tracing")
         configure_azure_monitor()
         tracing_mock.assert_called_once_with(configurations)
         logging_mock.assert_not_called()
         metrics_mock.assert_called_once_with(configurations)
-        live_metrics_mock.assert_not_called()
+        live_metrics_mock.assert_called_once_with(configurations)
         instrumentation_mock.assert_called_once_with(configurations)
+        # Assert setup_metrics is called before setup_tracing
+        self.assertLess(call_order.index("metrics"), call_order.index("tracing"))
 
     @patch(
         "azure.monitor.opentelemetry._configure._setup_instrumentations",
@@ -197,7 +210,7 @@ class TestConfigure(unittest.TestCase):
             "disable_tracing": False,
             "disable_logging": False,
             "disable_metrics": True,
-            "enable_live_metrics": False,
+            "enable_live_metrics": True,
             "enable_performance_counters": True,
             "resource": TEST_RESOURCE,
         }
@@ -206,7 +219,7 @@ class TestConfigure(unittest.TestCase):
         tracing_mock.assert_called_once_with(configurations)
         logging_mock.assert_called_once_with(configurations)
         metrics_mock.assert_not_called()
-        live_metrics_mock.assert_not_called()
+        live_metrics_mock.assert_called_once_with(configurations)
         instrumentation_mock.assert_called_once_with(configurations)
 
     @patch(
@@ -246,12 +259,20 @@ class TestConfigure(unittest.TestCase):
             "resource": TEST_RESOURCE,
         }
         config_mock.return_value = configurations
+        # Track call order using side_effect
+        call_order = []
+        metrics_mock.side_effect = lambda *args, **kwargs: call_order.append("metrics")
+        logging_mock.side_effect = lambda *args, **kwargs: call_order.append("logging")
+        tracing_mock.side_effect = lambda *args, **kwargs: call_order.append("tracing")
         configure_azure_monitor()
         tracing_mock.assert_called_once_with(configurations)
         logging_mock.assert_called_once_with(configurations)
         metrics_mock.assert_called_once_with(configurations)
         live_metrics_mock.assert_called_once_with(configurations)
         instrumentation_mock.assert_called_once_with(configurations)
+        # Assert setup_metrics is called before setup_logging and setup_tracing
+        self.assertLess(call_order.index("metrics"), call_order.index("logging"))
+        self.assertLess(call_order.index("metrics"), call_order.index("tracing"))
 
     @patch(
         "azure.monitor.opentelemetry._configure._setup_instrumentations",
@@ -522,8 +543,6 @@ class TestConfigure(unittest.TestCase):
         log_exporter_mock = Mock()
         blrp_mock = Mock()
         logging_handler_mock = Mock()
-        elp_mock = Mock()
-        set_elp_mock = Mock()
 
         lp_init_mock = Mock()
         lp_mock.return_value = lp_init_mock
@@ -539,8 +558,6 @@ class TestConfigure(unittest.TestCase):
         custom_lrp = Mock()
         get_logger_mock.return_value = logger_mock
         formatter_init_mock = Mock()
-        elp_init_mock = Mock()
-        elp_mock.return_value = elp_init_mock
         pclp_init_mock = Mock()
         pclp_mock.return_value = pclp_init_mock
         configurations = {
@@ -558,13 +575,12 @@ class TestConfigure(unittest.TestCase):
             "sys.modules",
             {
                 "opentelemetry._logs": Mock(set_logger_provider=set_logger_provider_mock),
-                "opentelemetry.sdk._logs": Mock(LoggerProvider=lp_mock, LoggingHandler=logging_handler_mock),
+                "opentelemetry.sdk._logs": Mock(LoggerProvider=lp_mock),
+                "opentelemetry.instrumentation.logging.handler": Mock(LoggingHandler=logging_handler_mock),
                 "azure.monitor.opentelemetry.exporter.export.logs._processor": Mock(
                     _AzureBatchLogRecordProcessor=blrp_mock
                 ),
                 "azure.monitor.opentelemetry.exporter": Mock(AzureMonitorLogExporter=log_exporter_mock),
-                "opentelemetry._events": Mock(_set_event_logger_provider=set_elp_mock),
-                "opentelemetry.sdk._events": Mock(EventLoggerProvider=elp_mock),
             },
         ):
             _setup_logging(configurations)
@@ -584,8 +600,6 @@ class TestConfigure(unittest.TestCase):
         logging_handler_init_mock.setFormatter.assert_called_once_with(formatter_init_mock)
         get_logger_mock.assert_called_once_with("test")
         logger_mock.addHandler.assert_called_once_with(logging_handler_init_mock)
-        elp_mock.assert_called_once_with(lp_init_mock)
-        set_elp_mock.assert_called_once_with(elp_init_mock, False)
 
     @patch("azure.monitor.opentelemetry._configure._PerformanceCountersLogRecordProcessor")
     @patch("azure.monitor.opentelemetry._configure.isinstance")
@@ -596,8 +610,6 @@ class TestConfigure(unittest.TestCase):
         set_logger_provider_mock = Mock()
         log_exporter_mock = Mock()
         blrp_mock = Mock()
-        elp_mock = Mock()
-        set_elp_mock = Mock()
 
         # Create mock instances
         lp_init_mock = Mock()
@@ -617,9 +629,6 @@ class TestConfigure(unittest.TestCase):
         logger_mock.handlers = [logging_handler_init_mock]
         get_logger_mock.return_value = logger_mock
         instance_mock.return_value = True
-
-        elp_init_mock = Mock()
-        elp_mock.return_value = elp_init_mock
 
         configurations = {
             "connection_string": "test_cs",
@@ -641,8 +650,6 @@ class TestConfigure(unittest.TestCase):
                     _AzureBatchLogRecordProcessor=blrp_mock
                 ),
                 "azure.monitor.opentelemetry.exporter": Mock(AzureMonitorLogExporter=log_exporter_mock),
-                "opentelemetry._events": Mock(_set_event_logger_provider=set_elp_mock),
-                "opentelemetry.sdk._events": Mock(EventLoggerProvider=elp_mock),
             },
         ):
             _setup_logging(configurations)
@@ -657,8 +664,6 @@ class TestConfigure(unittest.TestCase):
         get_logger_mock.assert_called_once_with("test")
         # The logger already has a LoggingHandler, so addHandler should not be called
         logger_mock.addHandler.assert_not_called()
-        elp_mock.assert_called_once_with(lp_init_mock)
-        set_elp_mock.assert_called_once_with(elp_init_mock, False)
 
     @patch("azure.monitor.opentelemetry._configure._PerformanceCountersLogRecordProcessor")
     @patch("azure.monitor.opentelemetry._configure.getLogger")
@@ -668,8 +673,6 @@ class TestConfigure(unittest.TestCase):
         log_exporter_mock = Mock()
         blrp_mock = Mock()
         logging_handler_mock = Mock()
-        elp_mock = Mock()
-        set_elp_mock = Mock()
 
         lp_init_mock = Mock()
         lp_mock.return_value = lp_init_mock
@@ -684,8 +687,6 @@ class TestConfigure(unittest.TestCase):
         logger_mock.handlers = []
         get_logger_mock.return_value = logger_mock
         formatter_init_mock = Mock()
-        elp_init_mock = Mock()
-        elp_mock.return_value = elp_init_mock
         pclp_init_mock = Mock()
         pclp_mock.return_value = pclp_init_mock
         configurations = {
@@ -703,13 +704,12 @@ class TestConfigure(unittest.TestCase):
             "sys.modules",
             {
                 "opentelemetry._logs": Mock(set_logger_provider=set_logger_provider_mock),
-                "opentelemetry.sdk._logs": Mock(LoggerProvider=lp_mock, LoggingHandler=logging_handler_mock),
+                "opentelemetry.sdk._logs": Mock(LoggerProvider=lp_mock),
+                "opentelemetry.instrumentation.logging.handler": Mock(LoggingHandler=logging_handler_mock),
                 "azure.monitor.opentelemetry.exporter.export.logs._processor": Mock(
                     _AzureBatchLogRecordProcessor=blrp_mock
                 ),
                 "azure.monitor.opentelemetry.exporter": Mock(AzureMonitorLogExporter=log_exporter_mock),
-                "opentelemetry._events": Mock(_set_event_logger_provider=set_elp_mock),
-                "opentelemetry.sdk._events": Mock(EventLoggerProvider=elp_mock),
             },
         ):
             _setup_logging(configurations)
@@ -724,8 +724,6 @@ class TestConfigure(unittest.TestCase):
         logging_handler_init_mock.setFormatter.assert_called_once_with(formatter_init_mock)
         get_logger_mock.assert_called_once_with("test")
         logger_mock.addHandler.assert_called_once_with(logging_handler_init_mock)
-        elp_mock.assert_called_once_with(lp_init_mock)
-        set_elp_mock.assert_called_once_with(elp_init_mock, False)
 
     @patch(
         "azure.monitor.opentelemetry._configure.enable_performance_counters",
@@ -1010,6 +1008,7 @@ class TestConfigure(unittest.TestCase):
         instrumentor_mock.instrument.assert_called_once()
         logger_mock.debug.assert_called_once()
 
+    @patch("azure.monitor.opentelemetry._configure._logger")
     @patch("azure.monitor.opentelemetry._configure.AzureDiagnosticLogging")
     @patch("azure.monitor.opentelemetry._configure._is_on_functions")
     @patch("azure.monitor.opentelemetry._configure._is_attach_enabled")
@@ -1018,12 +1017,21 @@ class TestConfigure(unittest.TestCase):
         is_attach_enabled_mock,
         is_on_functions_mock,
         mock_diagnostics,
+        mock_logger,
     ):
         is_attach_enabled_mock.return_value = True
         is_on_functions_mock.return_value = False
         _send_attach_warning()
+        message = (
+            "Distro detected that automatic instrumentation may have occurred. Only use autoinstrumentation if you "
+            "are not using manual instrumentation of OpenTelemetry in your code, such as with "
+            "azure-monitor-opentelemetry or azure-monitor-opentelemetry-exporter. For App Service resources, disable "
+            "autoinstrumentation in the Application Insights experience on your App Service resource or by setting "
+            "the ApplicationInsightsAgent_EXTENSION_VERSION app setting to 'disabled'."
+        )
+        mock_logger.warning.assert_called_once_with(message)
         mock_diagnostics.warning.assert_called_once_with(
-            "Distro detected that automatic attach may have occurred. Check your data to ensure that telemetry is not being duplicated. This may impact your cost.",
+            message,
             _DISTRO_DETECTS_ATTACH,
         )
 

@@ -27,6 +27,16 @@ class HalfOptionalEval:
         return {"half_score": 0 if response == "default" else 1}
 
 
+class QuotationFixEval:
+    def __init__(self):
+        pass
+
+    def __call__(self, query, response, ground_truth):
+        if ground_truth == response:
+            return {"score": 1, "reason": "eq"}
+        return {"score": 2, "reason": "ne"}
+
+
 class OptionalEval:
     def __init__(self):
         pass

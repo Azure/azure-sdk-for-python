@@ -39,10 +39,7 @@ from azure.ai.language.conversations.models import (
     AnalyzeConversationOperationInput,
     PiiOperationAction,
     ConversationPiiActionContent,
-    AnalyzeConversationOperationResult,
     ConversationPiiOperationResult,
-    InputWarning,
-    ConversationError,
 )
 
 
@@ -144,12 +141,6 @@ async def sample_conversation_pii_async():
                                 print(f"  Confidence score: {entity.confidence_score}\n")
                                 entities_detected.append(entity)
 
-                        if conversation.warnings:
-                            print("Warnings:")
-                            for warning in conversation.warnings:
-                                if isinstance(warning, InputWarning):
-                                    print(f"  Code: {warning.code}")
-                                    print(f"  Message: {warning.message}")
                         print()
                 else:
                     print("  [No supported results to display for this action type]")

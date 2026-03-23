@@ -116,7 +116,7 @@ CONVERTED_CSV_DATA = b"Service;Package;Version;RepoPath;MissingDocs.App Configur
 class TestStorageQuickQuery(StorageRecordedTestCase):
     def _setUp(self, account_name, account_key):
         url = self.account_url(account_name, 'dfs')
-        self.dsc = DataLakeServiceClient(url, credential=account_key, logging_enable=True)
+        self.dsc = DataLakeServiceClient(url, credential=account_key.secret, logging_enable=True)
         self.config = self.dsc._config
         self.filesystem_name = self.get_resource_name('utqqcontainer') # cspell:disable-line
 

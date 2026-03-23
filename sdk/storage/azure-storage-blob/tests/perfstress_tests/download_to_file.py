@@ -12,15 +12,12 @@ from devtools_testutils.perfstress_tests import RandomStream
 from ._test_base import _BlobTest
 
 class DownloadToFileTest(_BlobTest):
-    _temp_file: Optional[str] = None
-
-    async def global_setup(self):
-        await super().global_setup()
-        data = RandomStream(self.args.size)
-        await self.async_blob_client.upload_blob(data)
+    _temp_file: str = ""
 
     async def setup(self):
         await super().setup()
+        data = RandomStream(self.args.size)
+        await self.async_blob_client.upload_blob(data)
         with tempfile.NamedTemporaryFile(delete=False) as tf:
             self._temp_file = tf.name
 

@@ -115,7 +115,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -146,7 +146,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -179,7 +179,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -211,7 +211,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -239,7 +239,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -278,7 +278,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -312,7 +312,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -344,7 +344,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -393,7 +393,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -440,7 +440,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -492,7 +492,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -546,7 +546,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -595,7 +595,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -646,7 +646,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -683,7 +683,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -727,7 +727,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -777,7 +777,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -830,7 +830,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -871,7 +871,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -916,7 +916,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -958,7 +958,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -1003,7 +1003,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -1046,7 +1046,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -1095,7 +1095,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
 
@@ -1128,7 +1128,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
         expression = "select * from blobstorage where id < 1;"
@@ -1155,7 +1155,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await self._setup(bsc)
         expression = "SELECT * from BlobStorage"

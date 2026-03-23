@@ -86,6 +86,16 @@ class TestNetAppManagementAccountsOperations(AzureMgmtRecordedTestCase):
                             "status": "str",
                         },
                     },
+                    "entraIdConfig": {
+                        "applicationId": "str",
+                        "domain": "str",
+                        "serverNamePrefix": "str",
+                        "entraIdAkvConfig": {
+                            "azureKeyVaultUri": "str",
+                            "certificateName": "str",
+                            "userAssignedIdentity": "str",
+                        },
+                    },
                     "ldapConfiguration": {
                         "certificateCNHost": "str",
                         "domain": "str",
@@ -157,7 +167,6 @@ class TestNetAppManagementAccountsOperations(AzureMgmtRecordedTestCase):
                             "username": "str",
                         }
                     ],
-                    "disableShowmount": bool,
                     "encryption": {
                         "identity": {"federatedClientId": "str", "principalId": "str", "userAssignedIdentity": "str"},
                         "keySource": "str",
@@ -169,6 +178,16 @@ class TestNetAppManagementAccountsOperations(AzureMgmtRecordedTestCase):
                             "status": "str",
                         },
                     },
+                    "entraIdConfig": {
+                        "applicationId": "str",
+                        "domain": "str",
+                        "entraIdAkvConfig": {
+                            "azureKeyVaultUri": "str",
+                            "certificateName": "str",
+                            "userAssignedIdentity": "str",
+                        },
+                        "serverNamePrefix": "str",
+                    },
                     "ldapConfiguration": {
                         "certificateCNHost": "str",
                         "domain": "str",
@@ -178,7 +197,6 @@ class TestNetAppManagementAccountsOperations(AzureMgmtRecordedTestCase):
                     },
                     "multiAdStatus": "str",
                     "nfsV4IDDomain": "str",
-                    "provisioningState": "str",
                 },
                 "tags": {"str": "str"},
                 "type": "str",

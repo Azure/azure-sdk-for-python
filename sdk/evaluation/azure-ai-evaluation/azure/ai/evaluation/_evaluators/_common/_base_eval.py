@@ -482,6 +482,22 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         for metric, values in evaluation_per_turn.items():
             if all(isinstance(value, (int, float)) for value in values):
                 aggregated[metric] = self._conversation_aggregation_function(cast(List[Union[int, float]], values))
+            # Also promote certain non-numeric fields to top level for the last turn
+            # This maintains backwards compatibility where base label and reason fields appear at top level
+            elif (
+                metric
+                and not metric.endswith("_total_tokens")
+                and not metric.endswith("_prompt_tokens")
+                and not metric.endswith("_completion_tokens")
+                and not metric.endswith("_finish_reason")
+                and not metric.endswith("_sample_input")
+                and not metric.endswith("_sample_output")
+                and not metric.endswith("_model")
+                and not metric.endswith("_details")
+            ):
+                # Promote the last turn's value for non-numeric fields (like labels and reasons)
+                if values:
+                    aggregated[metric] = values[-1]
         # Slap the per-turn results back in.
         aggregated["evaluation_per_turn"] = evaluation_per_turn
         return aggregated

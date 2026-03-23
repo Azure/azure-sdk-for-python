@@ -8,6 +8,7 @@ import json
 from typing import Dict, List, Union, TypeVar, Optional, cast
 from typing_extensions import override
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
 from azure.ai.evaluation._exceptions import (
     ErrorBlame,
     ErrorCategory,
@@ -75,6 +76,8 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _NO_TOOL_DEFINITIONS_MESSAGE = "Tool definitions must be provided."
     _TOOL_DEFINITIONS_MISSING_MESSAGE = "Tool definitions for all tool calls must be provided."
 
+    _validator: ValidatorInterface
+
     def __init__(
         self,
         model_config,
@@ -84,6 +87,14 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     ):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
+
+        # Initialize input validator
+        self._validator = ToolDefinitionsValidator(
+            error_target=ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR,
+            optional_tool_definitions=False,
+            check_for_unsupported_tools=True,
+        )
+
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
@@ -106,37 +117,50 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         query = kwargs.get("query")
         response = kwargs.get("response")
 
-        # Extract tool calls from response
         if not response:
             return {"error_message": "Response parameter is required to extract tool calls."}
 
+        # Try to parse tool calls from response
         tool_calls = self._parse_tools_from_response(response)
-        if not tool_calls:
-            return {"error_message": self._NO_TOOL_CALLS_MESSAGE}
 
-        if not isinstance(tool_calls, list):
+        if not tool_calls:
+            # If no tool calls found and response is string, use response string as tool calls as is
+            if isinstance(response, str):
+                tool_calls = response
+            else:
+                return {"error_message": self._NO_TOOL_CALLS_MESSAGE}
+
+        # Normalize tool_calls and tool_definitions (skip for strings)
+        if not isinstance(tool_calls, list) and not isinstance(tool_calls, str):
             tool_calls = [tool_calls]
-        if not isinstance(tool_definitions, list):
+        if not isinstance(tool_definitions, list) and not isinstance(tool_definitions, str):
             tool_definitions = [tool_definitions] if tool_definitions else []
 
-        try:
-            # Type cast to satisfy static type checker
-            tool_calls_typed = cast(List[Dict], tool_calls)
-            needed_tool_definitions = self._extract_needed_tool_definitions(
-                tool_calls_typed, tool_definitions, ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR
-            )
-        except EvaluationException as e:
-            # Check if this is because no tool definitions were provided at all
-            if len(tool_definitions) == 0:
-                return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
-            else:
-                return {"error_message": self._TOOL_DEFINITIONS_MISSING_MESSAGE}
+        # Cross-validation (skip when either is string)
+        if isinstance(tool_calls, str) or isinstance(tool_definitions, str):
+            needed_tool_definitions = tool_definitions
+        else:
+            try:
+                # Type cast to satisfy static type checker
+                tool_calls_typed = cast(List[Dict], tool_calls)
+                needed_tool_definitions = self._extract_needed_tool_definitions(
+                    tool_calls_typed, tool_definitions, ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR
+                )
+            except EvaluationException:
+                # Check if this is because no tool definitions were provided at all
+                if len(tool_definitions) == 0:
+                    return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
+                else:
+                    return {"error_message": self._TOOL_DEFINITIONS_MISSING_MESSAGE}
 
-        if len(needed_tool_definitions) == 0:
+        if not needed_tool_definitions:
             return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
 
-        # Reformat agent response with tool calls and results using reformat_agent_response
-        agent_response_with_tools = reformat_agent_response(response, include_tool_messages=True)
+        # Reformat response for LLM (skip for strings - already a string)
+        if isinstance(tool_calls, str):
+            agent_response_with_tools = tool_calls
+        else:
+            agent_response_with_tools = reformat_agent_response(response, include_tool_messages=True)
 
         return {
             "query": query,
@@ -153,6 +177,24 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: A dictionary containing the result of the evaluation.
         :rtype: Dict[str, Union[str, float]]
         """
+        # Import helper functions from base class module
+        from azure.ai.evaluation._evaluators._common._base_prompty_eval import (
+            _is_intermediate_response,
+            _preprocess_messages,
+        )
+
+        # Check for intermediate response
+        if _is_intermediate_response(eval_input.get("response")):
+            return self._not_applicable_result(
+                "Intermediate response. Please provide the agent's final response for evaluation.",
+                1,
+                has_details=True,
+            )
+
+        # Preprocess messages if they are lists
+        if isinstance(eval_input.get("response"), list):
+            eval_input["response"] = _preprocess_messages(eval_input["response"])
+
         if eval_input.get("query") is None:
             raise EvaluationException(
                 message=("Query is a required input to " "the Tool Input Accuracy evaluator."),
@@ -162,6 +204,9 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 target=ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR,
             )
 
+        if isinstance(eval_input.get("query"), list):
+            eval_input["query"] = _preprocess_messages(eval_input["query"])
+
         # Format conversation history for cleaner evaluation
         eval_input["query"] = reformat_conversation_history(
             eval_input["query"], logger, include_system_messages=True, include_tool_messages=True
@@ -169,7 +214,7 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # Call the LLM to evaluate
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-        llm_output = prompty_output_dict.get("llm_output", {})
+        llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
 
         if isinstance(llm_output, dict):
             result = llm_output.get("result", None)
@@ -208,10 +253,10 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         else:
             raise EvaluationException(
-                message="Tool input accuracy evaluator returned invalid output.",
+                message="Evaluator returned invalid output.",
                 blame=ErrorBlame.SYSTEM_ERROR,
                 category=ErrorCategory.FAILED_EXECUTION,
-                target=ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR,
+                target=ErrorTarget.EVALUATE,
             )
 
     async def _real_call(self, **kwargs):
@@ -222,12 +267,15 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result.
         :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """
+        # Validate input before processing
+        self._validator.validate_eval_input(kwargs)
+
         # Convert inputs into list of evaluable inputs.
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
         if isinstance(eval_input, dict) and eval_input.get("error_message"):
             # If there is an error message, return not applicable result
             error_message = eval_input.get("error_message", "Unknown error")
-            return self._not_applicable_result(error_message, 1)
+            return self._not_applicable_result(error_message, 1, has_details=True)
         # Do the evaluation
         result = await self._do_eval(eval_input)
         # Return the result

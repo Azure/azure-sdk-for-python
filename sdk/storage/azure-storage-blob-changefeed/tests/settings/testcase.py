@@ -13,7 +13,7 @@ except ImportError:
     import mock
 
 import logging
-from devtools_testutils import PowerShellPreparer
+from devtools_testutils import EnvironmentVariableLoader, EnvironmentVariableOptions
 from devtools_testutils.fake_credentials import STORAGE_ACCOUNT_FAKE_KEY
 
 try:
@@ -43,9 +43,10 @@ os.environ['PROTOCOL'] = PROTOCOL
 os.environ['ACCOUNT_URL_SUFFIX'] = ACCOUNT_URL_SUFFIX
 
 ChangeFeedPreparer = functools.partial(
-    PowerShellPreparer, "storage",
+    EnvironmentVariableLoader, "storage",
     storage_account_name="storagename",
     storage_account_key=STORAGE_ACCOUNT_FAKE_KEY,
+    options=EnvironmentVariableOptions(hide_secrets=["storage_account_key"]),
 )
 
 def not_for_emulator(test):

@@ -29,7 +29,7 @@ class TestFileServiceProperties(StorageRecordedTestCase):
     def _setup(self, storage_account_name, storage_account_key):
         url = self.account_url(storage_account_name, "file")
         credential = storage_account_key
-        self.fsc = ShareServiceClient(url, credential=credential)
+        self.fsc = ShareServiceClient(url, credential=credential.secret)
 
     def _teardown(self, FILE_PATH):
         if os.path.isfile(FILE_PATH):

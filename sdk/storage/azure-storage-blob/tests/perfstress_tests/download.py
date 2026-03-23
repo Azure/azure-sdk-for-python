@@ -13,8 +13,8 @@ class DownloadTest(_BlobTest):
         super().__init__(arguments)
         self.download_stream = WriteStream()
 
-    async def global_setup(self):
-        await super().global_setup()
+    async def setup(self):
+        await super().setup()
         data = RandomStream(self.args.size)
         await self.async_blob_client.upload_blob(data)
 

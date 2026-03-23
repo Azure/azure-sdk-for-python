@@ -130,3 +130,91 @@ def test_retry_delay(get_token_method):
         assert token.token == CACHED_TOKEN
         credential.acquire_token_silently.assert_called_with(SCOPE, claims=None, enable_cae=False, tenant_id=None)
         credential.request_token.assert_called_once_with(SCOPE, claims=None, enable_cae=False, tenant_id=None)
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_refresh_on_in_past(get_token_method):
+    """A credential should refresh when the token's refresh_on is in the past"""
+
+    now = int(time.time())
+    # Token is still valid but refresh_on is in the past
+    cached = AccessTokenInfo(CACHED_TOKEN, now + 3600, refresh_on=now - 1)
+    credential = MockCredential(cached_token=cached)
+    token = getattr(credential, get_token_method)(SCOPE)
+
+    credential.acquire_token_silently.assert_called_once()
+    credential.request_token.assert_called_once_with(SCOPE, claims=None, enable_cae=False, tenant_id=None)
+    assert token.token == MockCredential.NEW_TOKEN.token
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_refresh_on_in_future(get_token_method):
+    """A credential should not refresh when the token's refresh_on is in the future"""
+
+    now = int(time.time())
+    cached = AccessTokenInfo(CACHED_TOKEN, now + 3600, refresh_on=now + 600)
+    credential = MockCredential(cached_token=cached)
+    token = getattr(credential, get_token_method)(SCOPE)
+
+    credential.acquire_token_silently.assert_called_once()
+    assert credential.request_token.call_count == 0
+    assert token.token == CACHED_TOKEN
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_expired_token_ignores_retry_delay(get_token_method):
+    """An expired token should always prompt a refresh, even within the retry delay window"""
+
+    now = int(time.time())
+    expired = AccessTokenInfo(CACHED_TOKEN, now - 1)
+    credential = MockCredential(cached_token=expired)
+    # Simulate a recent request to set the retry delay
+    credential._last_request_time = now
+    token = getattr(credential, get_token_method)(SCOPE)
+
+    credential.request_token.assert_called_once_with(SCOPE, claims=None, enable_cae=False, tenant_id=None)
+    assert token.token == MockCredential.NEW_TOKEN.token
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_refresh_on_respects_retry_delay(get_token_method):
+    """A token past refresh_on should not be refreshed if a request was just made (retry delay)"""
+
+    now = int(time.time())
+    cached = AccessTokenInfo(CACHED_TOKEN, now + 3600, refresh_on=now - 1)
+    credential = MockCredential(cached_token=cached)
+    # Simulate a recent request
+    credential._last_request_time = now
+    token = getattr(credential, get_token_method)(SCOPE)
+
+    credential.acquire_token_silently.assert_called_once()
+    assert credential.request_token.call_count == 0
+    assert token.token == CACHED_TOKEN
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_expired_token_propagates_error(get_token_method):
+    """When a cached token is expired (required), request failures should propagate, not be swallowed."""
+
+    now = int(time.time())
+    expired = AccessTokenInfo(CACHED_TOKEN, now - 1)
+    credential = MockCredential(cached_token=expired)
+    credential.request_token = mock.Mock(side_effect=Exception("auth failed"))
+
+    with pytest.raises(Exception, match="auth failed"):
+        getattr(credential, get_token_method)(SCOPE)
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_recommended_refresh_swallows_error(get_token_method):
+    """When a cached token is within the refresh window (recommended), request failures should be swallowed."""
+
+    credential = MockCredential(
+        cached_token=AccessTokenInfo(CACHED_TOKEN, int(time.time() + DEFAULT_REFRESH_OFFSET - 1))
+    )
+    credential.request_token = mock.Mock(side_effect=Exception("transient error"))
+    token = getattr(credential, get_token_method)(SCOPE)
+
+    # The credential should swallow the error and return the cached token.
+    assert token.token == CACHED_TOKEN
+    credential.request_token.assert_called_once()

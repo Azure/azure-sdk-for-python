@@ -1,6 +1,7 @@
 # Devtools Testutils
 
 ## Objects in this package for use with Azure Testing
+
 * [`AzureMgmtPreparer`][azure_mgmt_preparer]: Base class for Management-plane resource preparers
 * [`is_live`][is_live]: Helper method for determining whether a test run is in live or playback mode
 * [`get_region_override`][get_region_override]: Helper method for determining resource region
@@ -28,10 +29,16 @@ This loader is meant to be paired with the PowerShell test resource management c
 resource management.
 
 The `EnvironmentVariableLoader` accepts a positional `directory` argument and arbitrary keyword-only arguments:
-- `directory` is the name of your package's service as it appears in the Python repository; i.e. `service` in `azure-sdk-for-python/sdk/service/azure-service-package`.
-  - For example, for `azure-keyvault-keys`, the value of `directory` is `keyvault`.
-- For each environment variable you want to provide to tests, pass in a keyword argument with the pattern `environment_variable_name="sanitized-value"`.
-  - For example, to fetch the value of `STORAGE_ENDPOINT` and sanitize this value in recordings as `fake-endpoint`, provide `storage_endpoint="fake-endpoint"` to the `EnvironmentVariableLoader` constructor.
+
+* `directory` is the name of your package's service as it appears in the Python repository; i.e. `service` in `azure-sdk-for-python/sdk/service/azure-service-package`.
+  * For example, for `azure-keyvault-keys`, the value of `directory` is `keyvault`.
+* For each environment variable you want to provide to tests, pass in a keyword argument with the pattern `environment_variable_name="sanitized-value"`.
+  * For example, to fetch the value of `STORAGE_ENDPOINT` and sanitize this value in recordings as `fake-endpoint`, provide `storage_endpoint="fake-endpoint"` to the `EnvironmentVariableLoader` constructor.
+
+Additionally, the loader accepts an `EnvironmentVariableOptions` object via the `options` kwarg. This should be used
+whenever fetching sensitive environment variables like connection strings or account keys. See
+[Hide secret environment variables in test logs](#hide-secret-environment-variables-in-test-logs) for details and usage
+examples.
 
 Decorated test methods will have the values of environment variables passed to them as keyword arguments, and these
 values will automatically have sanitizers registered with the test proxy. More specifically, the true values of
@@ -71,16 +78,67 @@ variables in recordings.
 > `{SERVICE}_TENANT_ID`, `{SERVICE}_CLIENT_ID`, and `{SERVICE}_CLIENT_SECRET` for a service principal when using this
 > class.
 
+### Hide secret environment variables in test logs
+
+Pytest will log local test variables, including test method parameters, whenever a test fails. This can lead to secret
+leak warnings in pipelines even if test resources are transient or mocked. To avoid leaks, you should shield sensitive
+variables with the `options` keyword argument.
+
+`options` accepts an [EnvironmentVariableOptions][options] instance, with which you can provide a case insensitive list
+of environment variables that should be hidden in tests. [For example:][options_use]
+
+```python
+DataLakePreparer = functools.partial(
+    EnvironmentVariableLoader, "storage",
+    datalake_storage_account_name="storagename",
+    datalake_storage_account_key=STORAGE_ACCOUNT_FAKE_KEY,
+    storage_data_lake_soft_delete_account_name="storagesoftdelname",
+    storage_data_lake_soft_delete_account_key=STORAGE_ACCOUNT_FAKE_KEY,
+    options=EnvironmentVariableOptions(
+        hide_secrets=["datalake_storage_account_key", "storage_data_lake_soft_delete_account_key"]
+    ),
+)
+```
+
+The loader will raise an error if a variable specified in `hide_secrets` doesn't match any of the variables requested
+for loading.
+
+Hidden variables will be passed to tests as an [EnvironmentVariable][environmentvariable] instance instead of a plain
+string; the variable's value should be fetched with the `.secret` string attribute. **It's important to avoid assigning
+the secret to a local variable.** As mentioned in the start of this section, Pytest logs the values of local variables
+upon test failure. Instead, `<variable>.secret` should be accessed only when the value is used; e.g.
+[when providing the secret to a credential constructor][environmentvariable_use].
+
+```python
+class TestDatalakeCpk(StorageRecordedTestCase):
+    def _setup(self, account_name: str, account_key: EnvironmentVariable):
+        url = self.account_url(account_name, 'dfs')
+        self.dsc = DataLakeServiceClient(url, credential=account_key.secret)
+        ...
+
+    # Note that DataLakePreparer passes account name as a plain string, but hides account key in an EnvironmentVariable
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_create_directory_cpk(
+        self, datalake_storage_account_name: str, datalake_storage_account_key: EnvironmentVariable
+    ):
+        self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        ...
+```
 
 <!-- LINKS -->
 [azure_mgmt_preparer]: https://github.com/Azure/azure-sdk-for-python/blob/4df650d2ce4c292942009ed648cae21eb9c2121d/eng/tools/azure-sdk-tools/devtools_testutils/mgmt_testcase.py#L42
 [credscan]: https://aka.ms/credscan
 [credscan_guide]: https://github.com/Azure/azure-sdk-for-python/blob/18611efee7ecf4e591d59b61ba3762d6bdd86304/doc/dev/credscan_process.md
 [env_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
+[environmentvariable]: https://github.com/Azure/azure-sdk-for-python/blob/b6b227edbe318ee79a6a987d063e9823608f3c0a/eng/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py#L209
+[environmentvariable_use]: https://github.com/Azure/azure-sdk-for-python/blob/b6b227edbe318ee79a6a987d063e9823608f3c0a/sdk/storage/azure-storage-file-datalake/tests/test_cpk.py#L27
 [fake_credentials]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/fake_credentials.py
 [fake_credentials_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/fake_credentials_async.py
 [get_region_override]: https://github.com/Azure/azure-sdk-for-python/blob/4df650d2ce4c292942009ed648cae21eb9c2121d/eng/tools/azure-sdk-tools/devtools_testutils/azure_testcase.py#L52
 [is_live]: https://github.com/Azure/azure-sdk-for-python/blob/4df650d2ce4c292942009ed648cae21eb9c2121d/eng/tools/azure-sdk-tools/devtools_testutils/azure_testcase.py#L42
+[options]: https://github.com/Azure/azure-sdk-for-python/blob/b6b227edbe318ee79a6a987d063e9823608f3c0a/eng/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py#L20
+[options_use]: https://github.com/Azure/azure-sdk-for-python/blob/b6b227edbe318ee79a6a987d063e9823608f3c0a/sdk/storage/azure-storage-file-datalake/tests/settings/testcase.py#L45
 [retry_counter]: https://github.com/Azure/azure-sdk-for-python/blob/4df650d2ce4c292942009ed648cae21eb9c2121d/eng/tools/azure-sdk-tools/devtools_testutils/helpers.py#L119
 [response_callback]: https://github.com/Azure/azure-sdk-for-python/blob/4df650d2ce4c292942009ed648cae21eb9c2121d/eng/tools/azure-sdk-tools/devtools_testutils/helpers.py#L127
 [test_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#readme

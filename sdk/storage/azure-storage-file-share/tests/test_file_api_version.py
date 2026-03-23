@@ -184,7 +184,7 @@ class TestStorageClient(StorageRecordedTestCase):
         self.setUp()
         fsc = ShareServiceClient(
             self.account_url(storage_account_name, "file"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_range_size=4 * 1024,
             api_version=self.api_version_1
         )
@@ -205,7 +205,7 @@ class TestStorageClient(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=share.share_name,
             file_path='file1copy',
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             api_version=self.api_version_1)
 
         # Act

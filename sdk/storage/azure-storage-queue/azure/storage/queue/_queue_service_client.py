@@ -116,8 +116,9 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             audience=audience,
             **kwargs,
         )
-        self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(api_version)  # type: ignore [assignment]
+        self._client = AzureQueueStorage(
+            self.url, get_api_version(api_version), base_url=self.url, pipeline=self._pipeline
+        )
         self._configure_encryption(kwargs)
 
     def __enter__(self) -> Self:
@@ -211,7 +212,13 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def get_user_delegation_key(
-        self, *, expiry: "datetime", start: Optional["datetime"] = None, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        *,
+        expiry: "datetime",
+        start: Optional["datetime"] = None,
+        delegated_user_tid: Optional[str] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any,
     ) -> "UserDelegationKey":
         """
         Obtain a user delegation key for the purpose of signing SAS tokens.
@@ -223,6 +230,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :keyword start:
             A DateTime value. Indicates when the key becomes valid.
         :paramtype start: Optional[~datetime.datetime]
+        :keyword str delegated_user_tid: The delegated user tenant id in Entra ID.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -232,7 +240,11 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :return: The user delegation key.
         :rtype: ~azure.storage.queue.UserDelegationKey
         """
-        key_info = KeyInfo(start=_to_utc_datetime(start), expiry=_to_utc_datetime(expiry))  # type: ignore
+        key_info = KeyInfo(
+            start=_to_utc_datetime(start),  # type: ignore [arg-type]
+            expiry=_to_utc_datetime(expiry),
+            delegated_user_tid=delegated_user_tid,
+        )
         try:
             user_delegation_key = self._client.service.get_user_delegation_key(
                 key_info=key_info, timeout=timeout, **kwargs

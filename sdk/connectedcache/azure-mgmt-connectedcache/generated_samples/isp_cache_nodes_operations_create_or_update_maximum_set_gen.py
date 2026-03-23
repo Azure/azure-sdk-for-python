@@ -48,7 +48,6 @@ def main():
                     "optionalProperty3": "bxkoxq",
                     "optionalProperty4": "pqlkcekupusoc",
                     "optionalProperty5": "nyvvmrjigqdufzjdvazdca",
-                    "proxyUrl": "qhux",
                     "proxyUrlConfiguration": {"proxyUrl": "hplstyg"},
                 },
                 "cacheNode": {
@@ -77,6 +76,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2023-05-01-preview/IspCacheNodesOperations_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2024-11-30-preview/IspCacheNodesOperations_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

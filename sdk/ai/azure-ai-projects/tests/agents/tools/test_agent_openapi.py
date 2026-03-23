@@ -13,12 +13,15 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    OpenApiAgentTool,
+    OpenApiTool,
     OpenApiFunctionDefinition,
     OpenApiAnonymousAuthDetails,
 )
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAgentOpenApi(TestBase):
 
     # To run this test:
@@ -30,7 +33,7 @@ class TestAgentOpenApi(TestBase):
         Test agent with OpenAPI tool capabilities.
 
         This test verifies that an agent can:
-        1. Use OpenApiAgentTool to call external APIs defined by OpenAPI specifications
+        1. Use OpenApiTool to call external APIs defined by OpenAPI specifications
         2. Load and parse OpenAPI spec from JSON file
         3. Make API calls and incorporate results into responses
 
@@ -42,7 +45,7 @@ class TestAgentOpenApi(TestBase):
         POST   /agents/{agent_name}/versions                 project_client.agents.create_version()
 
         # Test focus:
-        POST   /openai/responses                             openai_client.responses.create() (with OpenApiAgentTool)
+        POST   /openai/responses                             openai_client.responses.create() (with OpenApiTool)
 
         # Teardown:
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
@@ -66,7 +69,7 @@ class TestAgentOpenApi(TestBase):
                 openapi_weather = jsonref.loads(f.read())
 
             # Create OpenAPI tool
-            tool = OpenApiAgentTool(
+            tool = OpenApiTool(
                 openapi=OpenApiFunctionDefinition(
                     name="get_weather",
                     spec=openapi_weather,
@@ -94,7 +97,7 @@ class TestAgentOpenApi(TestBase):
 
             response = openai_client.responses.create(
                 input="Use the OpenAPI tool to print out, what is the weather in Seattle, WA today.",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
             self.validate_response(response)
 

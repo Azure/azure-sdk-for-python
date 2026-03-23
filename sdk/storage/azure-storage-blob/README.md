@@ -455,11 +455,6 @@ Several Storage Blobs Python SDK samples are available to you in the SDK's GitHu
     * Acquire a lease on a blob
     * Copy a blob from a URL
 
-* [blob_samples_directory_interface.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob/samples/blob_samples_directory_interface.py) - Examples for interfacing with Blob storage as if it were a directory on a filesystem:
-    * Copy (upload or download) a single file or directory
-    * List files or directories at a single level or recursively
-    * Delete a single file or recursively delete a directory
-
 ### Additional documentation
 For more extensive documentation on Azure Blob storage, see the [Azure Blob storage documentation](https://learn.microsoft.com/azure/storage/blobs/) on learn.microsoft.com.
 

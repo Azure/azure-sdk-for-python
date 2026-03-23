@@ -6,6 +6,7 @@
 # cSpell:disable
 
 import json
+import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, FunctionTool
@@ -82,7 +83,7 @@ class TestAgentFunctionTool(TestBase):
 
             response = openai_client.responses.create(
                 input="What's the weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             self.validate_response(response, print_message="Initial response completed")
@@ -135,7 +136,7 @@ class TestAgentFunctionTool(TestBase):
             response = openai_client.responses.create(
                 input=input_list,
                 previous_response_id=response.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             self.validate_response(response, print_message="Final response completed")
@@ -228,7 +229,7 @@ class TestAgentFunctionTool(TestBase):
             print("\n--- Turn 1: Current weather query ---")
             response_1 = openai_client.responses.create(
                 input="What's the weather in New York?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             # Handle function call
@@ -252,7 +253,7 @@ class TestAgentFunctionTool(TestBase):
             response_1 = openai_client.responses.create(
                 input=input_list,
                 previous_response_id=response_1.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_1_text = response_1.output_text
@@ -264,7 +265,7 @@ class TestAgentFunctionTool(TestBase):
             response_2 = openai_client.responses.create(
                 input="What about the forecast for the next few days?",
                 previous_response_id=response_1.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             # Handle forecast function call
@@ -299,7 +300,7 @@ class TestAgentFunctionTool(TestBase):
             response_2 = openai_client.responses.create(
                 input=input_list,
                 previous_response_id=response_2.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_2_text = response_2.output_text
@@ -311,7 +312,7 @@ class TestAgentFunctionTool(TestBase):
             response_3 = openai_client.responses.create(
                 input="How does that compare to Seattle's weather?",
                 previous_response_id=response_2.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             # Handle function calls for Seattle (agent might call both weather and forecast)
@@ -353,7 +354,7 @@ class TestAgentFunctionTool(TestBase):
             response_3 = openai_client.responses.create(
                 input=input_list,
                 previous_response_id=response_3.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_3_text = response_3.output_text
@@ -420,7 +421,7 @@ class TestAgentFunctionTool(TestBase):
             print("\n--- Turn 1: Get temperature ---")
             response_1 = openai_client.responses.create(
                 input="What's the temperature in Boston?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             # Handle function call
@@ -439,7 +440,7 @@ class TestAgentFunctionTool(TestBase):
             response_1 = openai_client.responses.create(
                 input=input_list,
                 previous_response_id=response_1.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_1_text = response_1.output_text
@@ -451,7 +452,7 @@ class TestAgentFunctionTool(TestBase):
             response_2 = openai_client.responses.create(
                 input="What is that in Celsius?",  # "that" refers to the 72°F from previous response
                 previous_response_id=response_1.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_2_text = response_2.output_text
@@ -472,7 +473,7 @@ class TestAgentFunctionTool(TestBase):
             response_3 = openai_client.responses.create(
                 input="Is that warmer or colder than 25°C?",  # "that" refers to the Celsius value just mentioned
                 previous_response_id=response_2.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_3_text = response_3.output_text

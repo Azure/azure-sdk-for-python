@@ -133,6 +133,7 @@ class ContainerOperations:
 
         _request = build_create_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             access=access,
@@ -140,7 +141,6 @@ class ContainerOperations:
             default_encryption_scope=_default_encryption_scope,
             prevent_encryption_scope_override=_prevent_encryption_scope_override,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -220,11 +220,11 @@ class ContainerOperations:
 
         _request = build_get_properties_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -332,13 +332,13 @@ class ContainerOperations:
 
         _request = build_delete_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             request_id_parameter=request_id_parameter,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -431,6 +431,7 @@ class ContainerOperations:
 
         _request = build_set_metadata_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             metadata=metadata,
@@ -438,7 +439,6 @@ class ContainerOperations:
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -519,12 +519,12 @@ class ContainerOperations:
 
         _request = build_get_access_policy_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -636,6 +636,7 @@ class ContainerOperations:
 
         _request = build_set_access_policy_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             access=access,
@@ -645,7 +646,6 @@ class ContainerOperations:
             restype=restype,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -727,13 +727,13 @@ class ContainerOperations:
 
         _request = build_restore_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             deleted_container_name=deleted_container_name,
             deleted_container_version=deleted_container_version,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -813,12 +813,12 @@ class ContainerOperations:
         _request = build_rename_request(
             url=self._config.url,
             source_container_name=source_container_name,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             source_lease_id=source_lease_id,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -901,12 +901,12 @@ class ContainerOperations:
         _request = build_submit_batch_request(
             url=self._config.url,
             content_length=content_length,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
             multipart_content_type=multipart_content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1009,6 +1009,7 @@ class ContainerOperations:
 
         _request = build_filter_blobs_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             where=where,
@@ -1017,7 +1018,6 @@ class ContainerOperations:
             include=include,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1113,6 +1113,7 @@ class ContainerOperations:
 
         _request = build_acquire_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             duration=duration,
             proposed_lease_id=proposed_lease_id,
@@ -1122,7 +1123,6 @@ class ContainerOperations:
             comp=comp,
             restype=restype,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1211,6 +1211,7 @@ class ContainerOperations:
         _request = build_release_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
@@ -1218,7 +1219,6 @@ class ContainerOperations:
             comp=comp,
             restype=restype,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1306,6 +1306,7 @@ class ContainerOperations:
         _request = build_renew_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
@@ -1313,7 +1314,6 @@ class ContainerOperations:
             comp=comp,
             restype=restype,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1407,6 +1407,7 @@ class ContainerOperations:
 
         _request = build_break_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             break_period=break_period,
             if_modified_since=_if_modified_since,
@@ -1415,7 +1416,6 @@ class ContainerOperations:
             comp=comp,
             restype=restype,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1510,6 +1510,7 @@ class ContainerOperations:
             url=self._config.url,
             lease_id=lease_id,
             proposed_lease_id=proposed_lease_id,
+            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
@@ -1517,7 +1518,6 @@ class ContainerOperations:
             comp=comp,
             restype=restype,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1620,6 +1620,7 @@ class ContainerOperations:
 
         _request = build_list_blob_flat_segment_request(
             url=self._config.url,
+            version=self._config.version,
             prefix=prefix,
             marker=marker,
             maxresults=maxresults,
@@ -1629,7 +1630,6 @@ class ContainerOperations:
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1741,6 +1741,7 @@ class ContainerOperations:
         _request = build_list_blob_hierarchy_segment_request(
             url=self._config.url,
             delimiter=delimiter,
+            version=self._config.version,
             prefix=prefix,
             marker=marker,
             maxresults=maxresults,
@@ -1750,7 +1751,6 @@ class ContainerOperations:
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1823,11 +1823,11 @@ class ContainerOperations:
 
         _request = build_get_account_info_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )

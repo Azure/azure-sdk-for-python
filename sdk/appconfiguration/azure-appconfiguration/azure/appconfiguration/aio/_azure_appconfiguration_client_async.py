@@ -19,6 +19,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from ._sync_token_async import AsyncSyncTokenPolicy
 from .._azure_appconfiguration_error import ResourceReadOnlyError
 from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
+from .._query_param_policy import QueryParamPolicy
 from .._generated.aio import AzureAppConfigurationClient as AzureAppConfigurationClientGenerated
 from .._generated.models import (
     SnapshotStatus,
@@ -31,6 +32,7 @@ from .._generated.models import (
 from .._models import (
     ConfigurationSetting,
     ConfigurationSettingPropertiesPagedAsync,
+    ConfigurationSettingPagedAsync,
     ConfigurationSettingsFilter,
     ConfigurationSnapshot,
     ConfigurationSettingLabel,
@@ -41,6 +43,7 @@ from .._utils import (
     get_label_filter,
     parse_connection_string,
 )
+from .._audience_error_handling_policy import AudienceErrorHandlingPolicy
 
 
 class AzureAppConfigurationClient:
@@ -73,8 +76,16 @@ class AzureAppConfigurationClient:
             raise ValueError("Missing credential")
 
         self._sync_token_policy = AsyncSyncTokenPolicy()
+        self._query_param_policy = QueryParamPolicy()
 
-        audience = kwargs.pop("audience", get_audience(base_url))
+        audience = kwargs.pop("audience", None)
+
+        audience_policy = AudienceErrorHandlingPolicy(bool(audience))
+        per_call_policies = [self._query_param_policy, self._sync_token_policy, audience_policy]
+
+        if audience is None:
+            audience = get_audience(base_url)
+
         # Ensure all scopes end with /.default and strip any trailing slashes before adding suffix
         kwargs["credential_scopes"] = [audience + DEFAULT_SCOPE_SUFFIX]
 
@@ -99,7 +110,7 @@ class AzureAppConfigurationClient:
             )
         # mypy doesn't compare the credential type hint with the API surface in patch.py
         self._impl = AzureAppConfigurationClientGenerated(
-            base_url, credential, per_call_policies=self._sync_token_policy, **kwargs  # type: ignore[arg-type]
+            base_url, credential, per_call_policies=per_call_policies, **kwargs  # type: ignore[arg-type]
         )
 
     @classmethod
@@ -243,7 +254,7 @@ class AzureAppConfigurationClient:
         key_filter, kwargs = get_key_filter(*args, **kwargs)
         label_filter, kwargs = get_label_filter(*args, **kwargs)
         command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]
-        return AsyncItemPaged(
+        return ConfigurationSettingPagedAsync(
             command,
             key=key_filter,
             label=label_filter,

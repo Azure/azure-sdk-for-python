@@ -100,7 +100,7 @@ class PhraseListProperties(_Model):
 
     :ivar phrases: List of phrases for recognition.
     :vartype phrases: list[str]
-    :ivar biasing_weight: Biasing weight for phrase list (1.0 to 20.0).
+    :ivar biasing_weight: Biasing weight for phrase list (0.0-2.0).
     :vartype biasing_weight: float
     """
 
@@ -109,7 +109,7 @@ class PhraseListProperties(_Model):
     biasing_weight: Optional[float] = rest_field(
         name="biasingWeight", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Biasing weight for phrase list (1.0 to 20.0)."""
+    """Biasing weight for phrase list (0.0-2.0)."""
 
     @overload
     def __init__(

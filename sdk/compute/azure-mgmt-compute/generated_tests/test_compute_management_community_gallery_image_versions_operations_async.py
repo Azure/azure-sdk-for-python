@@ -26,7 +26,7 @@ class TestComputeManagementCommunityGalleryImageVersionsOperationsAsync(AzureMgm
             location="str",
             public_gallery_name="str",
             gallery_image_name="str",
-            api_version="2024-03-03",
+            api_version="2025-03-03",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestComputeManagementCommunityGalleryImageVersionsOperationsAsync(AzureMgm
             public_gallery_name="str",
             gallery_image_name="str",
             gallery_image_version_name="str",
-            api_version="2024-03-03",
+            api_version="2025-03-03",
         )
 
         # please add some check logic here by yourself
