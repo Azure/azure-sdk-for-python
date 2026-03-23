@@ -344,7 +344,7 @@ class _VoiceLiveInstrumentorPreview:
                 return result
             except Exception as exc:
                 instrumentor.record_error(span, exc)
-                span.__exit__(type(exc), exc, exc.__traceback__)
+                span.__exit__(type(exc), exc, exc.__traceback__)  # pyright: ignore[reportArgumentType]
                 raise
 
         wrapper._original = original_aenter  # type: ignore[attr-defined]  # pylint: disable=protected-access
