@@ -235,9 +235,8 @@ def track_completed_output_item(
     if not isinstance(output_index, int) or output_index < 0 or not isinstance(item, dict):
         return
 
-    output_items = response.output
-    if not isinstance(output_items, list):
-        output_items = []
+    output_items: list[Any] = response.output if isinstance(response.output, list) else []
+    if not isinstance(response.output, list):
         response.output = output_items
 
     try:

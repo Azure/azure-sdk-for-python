@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import base64
 import secrets
-from typing import Sequence
+from typing import Callable, Sequence
 
 from .models import _generated as generated_models
 
@@ -352,7 +352,7 @@ class IdGenerator:  # pylint: disable=too-many-public-methods
         :returns: A new unique ID string, or None if the item type is a reference or unrecognized.
         :rtype: str | None
         """
-        dispatch_map: tuple[tuple[type[object], callable], ...] = (
+        dispatch_map: tuple[tuple[type[object], Callable[..., str]], ...] = (
             (generated_models.ItemMessage, IdGenerator.new_message_item_id),
             (generated_models.ItemOutputMessage, IdGenerator.new_output_message_item_id),
             (generated_models.ItemFunctionToolCall, IdGenerator.new_function_call_item_id),

@@ -97,13 +97,13 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
                     self._response.model = request_model
                 request_agent_reference = request_mapping.get("agent_reference")
                 if isinstance(request_agent_reference, dict):
-                    self._response.agent_reference = deepcopy(request_agent_reference)
+                    self._response.agent_reference = deepcopy(request_agent_reference)  # type: ignore[assignment]
 
         if model is not None:
             self._response.model = model
 
         if agent_reference is not None:
-            self._response.agent_reference = deepcopy(agent_reference)
+            self._response.agent_reference = deepcopy(agent_reference)  # type: ignore[assignment]
 
         self._agent_reference = _internals.extract_agent_reference(self._response)
         self._model = _internals.extract_model(self._response)
@@ -141,7 +141,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :returns: The emitted event dict with type and payload.
         :rtype: dict[str, Any]
         """
-        self._response.status = status
+        self._response.status = status  # type: ignore[assignment]
         return self.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_CREATED.value,
@@ -172,8 +172,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :rtype: dict[str, Any]
         """
         self._response.status = "completed"
-        self._response.error = None
-        self._response.incomplete_details = None
+        self._response.error = None  # type: ignore[assignment]
+        self._response.incomplete_details = None  # type: ignore[assignment]
         self._set_terminal_fields(usage=usage)
         return self.emit_event(
             {
@@ -201,7 +201,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :rtype: dict[str, Any]
         """
         self._response.status = "failed"
-        self._response.incomplete_details = None
+        self._response.incomplete_details = None  # type: ignore[assignment]
         self._response.error = generated_models.ResponseError(
             {
                 "code": _internals.enum_value(code),
@@ -219,7 +219,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     def emit_incomplete(
         self,
         *,
-        reason: str | generated_models.ResponseIncompleteReason | None = None,
+        reason: str | None = None,
         usage: generated_models.ResponseUsage | dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """Emit a ``response.incomplete`` terminal lifecycle event.
@@ -234,9 +234,9 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :rtype: dict[str, Any]
         """
         self._response.status = "incomplete"
-        self._response.error = None
+        self._response.error = None  # type: ignore[assignment]
         if reason is None:
-            self._response.incomplete_details = None
+            self._response.incomplete_details = None  # type: ignore[assignment]
         else:
             self._response.incomplete_details = generated_models.ResponseIncompleteDetails(
                 {
