@@ -189,19 +189,19 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disable
         "env_value, instrument_kwarg, expected_propagated, baggage_env_value, baggage_kwarg, expected_baggage",
         [
             # --- trace context propagation (baggage defaults off) ---
-            (None, None, True, None, None, False),        # default: traceparent on, baggage off
-            ("true", None, True, None, None, False),      # explicit true
-            ("True", None, True, None, None, False),      # case-insensitive
-            ("TRUE", None, True, None, None, False),      # case-insensitive
-            ("false", None, False, None, None, False),    # propagation off → no headers at all
-            ("False", None, False, None, None, False),    # case-insensitive
-            (None, True, True, None, None, False),        # parameter override: True
-            (None, False, False, None, None, False),      # parameter override: False
+            (None, None, True, None, None, False),  # default: traceparent on, baggage off
+            ("true", None, True, None, None, False),  # explicit true
+            ("True", None, True, None, None, False),  # case-insensitive
+            ("TRUE", None, True, None, None, False),  # case-insensitive
+            ("false", None, False, None, None, False),  # propagation off → no headers at all
+            ("False", None, False, None, None, False),  # case-insensitive
+            (None, True, True, None, None, False),  # parameter override: True
+            (None, False, False, None, None, False),  # parameter override: False
             # --- baggage propagation (trace context on via default) ---
-            (None, None, True, "true", None, True),       # baggage env=true → baggage header present
-            (None, None, True, "false", None, False),     # baggage env=false → baggage header absent
-            (None, None, True, None, True, True),         # baggage kwarg=True → baggage header present
-            (None, None, True, None, False, False),       # baggage kwarg=False → baggage header absent
+            (None, None, True, "true", None, True),  # baggage env=true → baggage header present
+            (None, None, True, "false", None, False),  # baggage env=false → baggage header absent
+            (None, None, True, None, True, True),  # baggage kwarg=True → baggage header present
+            (None, None, True, None, False, False),  # baggage kwarg=False → baggage header absent
             # baggage enabled but trace propagation disabled → hook not installed, baggage still absent
             (None, False, False, None, True, False),
         ],
@@ -279,7 +279,9 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disable
             import azure.ai.projects.telemetry._ai_project_instrumentor as _instrumentor_mod
 
             # Verify the module-level global for trace context propagation reflects the correct state.
-            assert _instrumentor_mod._trace_context_propagation_enabled == expected_propagated, (  # pylint: disable=protected-access
+            assert (
+                _instrumentor_mod._trace_context_propagation_enabled == expected_propagated
+            ), (  # pylint: disable=protected-access
                 f"Expected _trace_context_propagation_enabled={expected_propagated} "
                 f"for env={env_value!r} / kwarg={instrument_kwarg!r}"
             )
@@ -315,6 +317,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disable
             # on top of the current global context, so baggage set only in that context arg
             # would be silently dropped.
             from opentelemetry import context as otel_context
+
             tracer = trace.get_tracer(__name__)
             ctx_with_baggage = otel_baggage.set_baggage("test-key", "test-value")
             token = otel_context.attach(ctx_with_baggage)
@@ -328,22 +331,22 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disable
             header_names = [h.lower() for h in transport.last_request.headers.keys()]
 
             if expected_propagated:
-                assert "traceparent" in header_names, (
-                    f"Expected traceparent header to be present (env={env_value!r}, kwarg={instrument_kwarg!r})"
-                )
+                assert (
+                    "traceparent" in header_names
+                ), f"Expected traceparent header to be present (env={env_value!r}, kwarg={instrument_kwarg!r})"
             else:
-                assert "traceparent" not in header_names, (
-                    f"Expected traceparent header to be absent (env={env_value!r}, kwarg={instrument_kwarg!r})"
-                )
+                assert (
+                    "traceparent" not in header_names
+                ), f"Expected traceparent header to be absent (env={env_value!r}, kwarg={instrument_kwarg!r})"
 
             if expected_baggage:
-                assert "baggage" in header_names, (
-                    f"Expected baggage header to be present (baggage_env={baggage_env_value!r}, baggage_kwarg={baggage_kwarg!r})"
-                )
+                assert (
+                    "baggage" in header_names
+                ), f"Expected baggage header to be present (baggage_env={baggage_env_value!r}, baggage_kwarg={baggage_kwarg!r})"
             else:
-                assert "baggage" not in header_names, (
-                    f"Expected baggage header to be absent (baggage_env={baggage_env_value!r}, baggage_kwarg={baggage_kwarg!r})"
-                )
+                assert (
+                    "baggage" not in header_names
+                ), f"Expected baggage header to be absent (baggage_env={baggage_env_value!r}, baggage_kwarg={baggage_kwarg!r})"
 
         finally:
             exporter.shutdown()

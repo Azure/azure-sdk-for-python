@@ -17,6 +17,7 @@ test_required_header_async.py (async):
 
 import inspect
 import pytest
+import tempfile
 from typing import Any, ClassVar, List, Tuple, Union, get_origin
 
 from azure.core.credentials import AccessToken
@@ -127,11 +128,14 @@ class FoundryFeaturesHeaderTestBase:
         Resolution order:
           - Union types (e.g. Union[Model, JSON, IO[bytes]])  -> {} (JSON body)
           - list / List[...]                                  -> []
-          - str                                               -> "fake-value"
+          - str                                               -> "fake-value" (special case: for "folder" param we return the OS temp dir, since we need the folder to exist.)
           - int                                               -> 0
           - bool                                              -> False
           - anything else (model classes, etc.)               -> {}
         """
+        if param.name == "folder" and param.annotation is str:
+            return tempfile.gettempdir()
+
         ann = param.annotation
         if ann is inspect.Parameter.empty:
             return "fake-value"
