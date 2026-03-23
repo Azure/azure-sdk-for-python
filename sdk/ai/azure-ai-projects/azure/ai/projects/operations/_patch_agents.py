@@ -10,6 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from typing import Union, Optional, Any, IO, overload, Final
 from azure.core.exceptions import HttpResponseError
+from azure.core.tracing.decorator import distributed_trace
 from ._operations import AgentsOperations as GeneratedAgentsOperations, JSON, _Unset
 from .. import models as _models
 from ..models._enums import _AgentDefinitionOptInKeys, _FoundryFeaturesOptInKeys
@@ -143,6 +144,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         """
         ...
 
+    @distributed_trace
     def create_version(
         self,
         agent_name: str,

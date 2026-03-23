@@ -10,6 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from typing import Union, Any, IO, overload
 from azure.core.exceptions import HttpResponseError
+from azure.core.tracing.decorator import distributed_trace
 from ._operations import EvaluationRulesOperations as GeneratedEvaluationRulesOperations, JSON
 from ._patch_agents import _PREVIEW_FEATURE_REQUIRED_CODE, _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE
 from .. import models as _models
@@ -83,6 +84,7 @@ class EvaluationRulesOperations(GeneratedEvaluationRulesOperations):
         """
         ...
 
+    @distributed_trace
     def create_or_update(
         self, id: str, evaluation_rule: Union[_models.EvaluationRule, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationRule:

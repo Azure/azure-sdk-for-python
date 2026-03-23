@@ -10,6 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from typing import Union, Optional, Any, IO, overload
 from azure.core.exceptions import HttpResponseError
+from azure.core.tracing.decorator_async import distributed_trace_async
 from ._operations import AgentsOperations as GeneratedAgentsOperations, JSON, _Unset
 from ... import models as _models
 from ...operations._patch_agents import (
@@ -118,6 +119,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         """
         ...
 
+    @distributed_trace_async
     async def create_version(
         self,
         agent_name: str,
