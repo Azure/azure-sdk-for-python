@@ -11,6 +11,7 @@ Foundry-Features header and verify both modes:
   - allow_preview unset -> header is absent
 """
 
+import inspect
 from typing import Any, ClassVar, Iterator, List, Tuple
 
 import pytest
@@ -19,10 +20,12 @@ from azure.ai.projects import AIProjectClient
 
 from foundry_features_header_test_base import (
     FAKE_ENDPOINT,
+    FOUNDRY_FEATURES_HEADER,
     FakeCredential,
     FoundryFeaturesHeaderTestBase,
     _NON_BETA_OPTIONAL_TEST_CASES,
     _RequestCaptured,
+    _UNSET_SENTINELS,
 )
 
 
@@ -147,3 +150,147 @@ class TestFoundryFeaturesHeaderOnGaOperations(FoundryFeaturesHeaderTestBase):
         sc = getattr(client_preview_disabled, subclient_name)
         method = getattr(sc, method_attr)
         self._assert_header_absent(method_name, self._make_fake_call(method))
+
+
+# ---------------------------------------------------------------------------
+# Tests: caller-controlled header override / augmentation on GA operations
+# (only applies when allow_preview=True, since that is when the header is sent)
+# ---------------------------------------------------------------------------
+
+
+class TestFoundryFeaturesHeaderOverrideOnGaOperations(FoundryFeaturesHeaderTestBase):
+    """Verify caller-supplied headers are correctly handled on GA (non-beta) operations.
+
+    All tests are parametrized over _NON_BETA_OPTIONAL_TEST_CASES.
+
+    Tests with allow_preview=True (header is injected internally):
+      - override: caller supplies Foundry-Features → custom value wins.
+      - override-and-add: caller supplies Foundry-Features + extra header → both reach transport.
+      - additional-header: caller supplies only an extra header → extra header AND the
+        internally-set Foundry-Features header both reach the transport.
+
+    Tests without allow_preview (header is NOT injected internally):
+      - additional-header-no-preview: caller supplies only an extra header → that header
+        reaches the transport (Foundry-Features is absent, as expected).
+    """
+
+    @staticmethod
+    def _capture(call: Any) -> Any:
+        """Invoke *call* and return the captured HttpRequest (sync version)."""
+        try:
+            result = call()
+        except _RequestCaptured as exc:
+            return exc.request
+        try:
+            next(iter(result))
+        except _RequestCaptured as exc:
+            return exc.request
+        except StopIteration:
+            raise AssertionError("Iterator exhausted without the transport being called") from None
+        raise AssertionError("Transport was never called")
+
+    @staticmethod
+    def _make_fake_call_with_headers(method: Any, headers: dict) -> Any:
+        """Like _make_fake_call but also passes *headers* as a keyword argument."""
+        sig = inspect.signature(method)
+        args: list[Any] = []
+        kwargs: dict[str, Any] = {"headers": headers}
+        for param_name, param in sig.parameters.items():
+            if param_name in ("self", "cls"):
+                continue
+            if param.kind in (param.VAR_POSITIONAL, param.VAR_KEYWORD):
+                continue
+            is_required = param.default is inspect.Parameter.empty or param.default in _UNSET_SENTINELS
+            if not is_required:
+                continue
+            fake = FoundryFeaturesHeaderTestBase._fake_for_param(param)
+            if param.kind in (inspect.Parameter.POSITIONAL_OR_KEYWORD, inspect.Parameter.POSITIONAL_ONLY):
+                args.append(fake)
+            else:
+                kwargs[param_name] = fake
+        return lambda: method(*args, **kwargs)
+
+    @pytest.mark.parametrize("method_name,_expected_header_value", _NON_BETA_OPTIONAL_TEST_CASES)
+    def test_foundry_features_header_override_on_ga_operations(
+        self,
+        client_preview_enabled: AIProjectClient,
+        method_name: str,
+        _expected_header_value: str,
+    ) -> None:
+        """Caller-supplied headers={"Foundry-Features": "CustomValue"} must reach the transport
+        instead of the internally-set default value (allow_preview=True)."""
+        subclient_name, method_attr = method_name.split(".")
+        sc = getattr(client_preview_enabled, subclient_name)
+        method = getattr(sc, method_attr)
+        custom_headers = {FOUNDRY_FEATURES_HEADER: "CustomValue"}
+        request = self._capture(self._make_fake_call_with_headers(method, custom_headers))
+        assert request.headers.get(FOUNDRY_FEATURES_HEADER) == "CustomValue", (
+            f"{method_name}: Expected '{FOUNDRY_FEATURES_HEADER}: CustomValue' but got: {dict(request.headers)}"
+        )
+
+    @pytest.mark.parametrize("method_name,_expected_header_value", _NON_BETA_OPTIONAL_TEST_CASES)
+    def test_foundry_features_header_override_and_add_on_ga_operations(
+        self,
+        client_preview_enabled: AIProjectClient,
+        method_name: str,
+        _expected_header_value: str,
+    ) -> None:
+        """Caller-supplied headers={"Foundry-Features": "CustomValue", "SomeOtherHeaderName": "SomeOtherHeaderValue"}
+        must result in both headers reaching the transport (allow_preview=True)."""
+        subclient_name, method_attr = method_name.split(".")
+        sc = getattr(client_preview_enabled, subclient_name)
+        method = getattr(sc, method_attr)
+        custom_headers = {FOUNDRY_FEATURES_HEADER: "CustomValue", "SomeOtherHeaderName": "SomeOtherHeaderValue"}
+        request = self._capture(self._make_fake_call_with_headers(method, custom_headers))
+        assert request.headers.get(FOUNDRY_FEATURES_HEADER) == "CustomValue", (
+            f"{method_name}: Expected '{FOUNDRY_FEATURES_HEADER}: CustomValue' but got: {dict(request.headers)}"
+        )
+        assert request.headers.get("SomeOtherHeaderName") == "SomeOtherHeaderValue", (
+            f"{method_name}: Expected 'SomeOtherHeaderName: SomeOtherHeaderValue' in headers but got: {dict(request.headers)}"
+        )
+
+    @pytest.mark.parametrize("method_name,_expected_header_value", _NON_BETA_OPTIONAL_TEST_CASES)
+    def test_foundry_features_header_additional_header_on_ga_operations(
+        self,
+        client_preview_enabled: AIProjectClient,
+        method_name: str,
+        _expected_header_value: str,
+    ) -> None:
+        """Caller-supplied headers={"SomeOtherHeaderName": "SomeOtherHeaderValue"} (no Foundry-Features
+        override) must result in the extra header AND the internally-set Foundry-Features header both
+        reaching the transport (allow_preview=True)."""
+        subclient_name, method_attr = method_name.split(".")
+        sc = getattr(client_preview_enabled, subclient_name)
+        method = getattr(sc, method_attr)
+        custom_headers = {"SomeOtherHeaderName": "SomeOtherHeaderValue"}
+        request = self._capture(self._make_fake_call_with_headers(method, custom_headers))
+        assert request.headers.get(FOUNDRY_FEATURES_HEADER) is not None, (
+            f"{method_name}: Expected '{FOUNDRY_FEATURES_HEADER}' to be present but it was missing. "
+            f"Headers: {dict(request.headers)}"
+        )
+        assert request.headers.get("SomeOtherHeaderName") == "SomeOtherHeaderValue", (
+            f"{method_name}: Expected 'SomeOtherHeaderName: SomeOtherHeaderValue' in headers but got: {dict(request.headers)}"
+        )
+
+    @pytest.mark.parametrize("method_name,_expected_header_value", _NON_BETA_OPTIONAL_TEST_CASES)
+    def test_foundry_features_header_additional_header_on_ga_operations_no_preview(
+        self,
+        client_preview_disabled: AIProjectClient,
+        method_name: str,
+        _expected_header_value: str,
+    ) -> None:
+        """When allow_preview is NOT set, a caller-supplied extra header
+        (e.g. headers={"SomeOtherHeaderName": "SomeOtherHeaderValue"}) must still reach
+        the transport. Foundry-Features is expected to be absent in this mode."""
+        subclient_name, method_attr = method_name.split(".")
+        sc = getattr(client_preview_disabled, subclient_name)
+        method = getattr(sc, method_attr)
+        custom_headers = {"SomeOtherHeaderName": "SomeOtherHeaderValue"}
+        request = self._capture(self._make_fake_call_with_headers(method, custom_headers))
+        assert request.headers.get("SomeOtherHeaderName") == "SomeOtherHeaderValue", (
+            f"{method_name}: Expected 'SomeOtherHeaderName: SomeOtherHeaderValue' in headers but got: {dict(request.headers)}"
+        )
+        assert request.headers.get(FOUNDRY_FEATURES_HEADER) is None, (
+            f"{method_name}: Expected '{FOUNDRY_FEATURES_HEADER}' to be absent when allow_preview is not set, "
+            f"but found: {request.headers.get(FOUNDRY_FEATURES_HEADER)}"
+        )
