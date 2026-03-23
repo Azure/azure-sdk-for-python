@@ -46,3 +46,5 @@ extends:
       safeName: azureaiagentserveragentframework
     - name: azure-ai-agentserver-langgraph
       safeName: azureaiagentserverlanggraph
+    - name: azure-ai-agentserver-responses
+      safeName: azureaiagentserverresponses
