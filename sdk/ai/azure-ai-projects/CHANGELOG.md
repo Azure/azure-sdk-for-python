@@ -8,7 +8,7 @@
 
 ### Breaking Changes
 
-* Placeholder
+* Tracing: trace context propagation is enabled by default when tracing is enabled.
 
 ### Bugs Fixed
 
@@ -25,6 +25,7 @@
 * Added CSV evaluation sample (`sample_evaluations_builtin_with_csv.py`) demonstrating evaluation with an uploaded CSV dataset.
 * Added synthetic data evaluation samples (`sample_synthetic_data_agent_evaluation.py`) and (`sample_synthetic_data_model_evaluation.py`).
 * Added Chat Completions basic samples (`sample_chat_completions_basic.py`, `sample_chat_completions_basic_async.py`) demonstrating chat completions calls using `AIProjectClient` + the OpenAI-compatible client.
+* Added Toolsets CRUD samples (`sample_toolsets_crud.py`, `sample_toolsets_crud_async.py`) demonstrating `project_client.beta.toolsets` create/get/update/list/delete.
 
 ### Other Changes
 

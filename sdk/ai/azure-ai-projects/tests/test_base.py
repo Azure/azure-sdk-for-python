@@ -69,7 +69,7 @@ servicePreparer = functools.partial(
     fabric_user_input="List all customers!",
     a2a_user_input="What can the secondary agent do?",
     bing_custom_user_input="Tell me more about foundry agent service",
-    memory_store_chat_model_deployment_name="sanitized-gpt-memory",
+    memory_store_chat_model_deployment_name="sanitized-model-deployment-name",
     memory_store_embedding_model_deployment_name="text-embedding-ada-002",
 )
 
