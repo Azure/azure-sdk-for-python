@@ -15,7 +15,7 @@ from azure.mgmt.frontdoor import FrontDoorManagementClient
     pip install azure-identity
     pip install azure-mgmt-frontdoor
 # USAGE
-    python frontdoor_purge_content.py
+    python network_experiment_list_by_resource_group_profiles.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.endpoints.begin_purge_content(
-        resource_group_name="rg1",
-        front_door_name="frontDoor1",
-        content_file_paths={"contentPaths": ["/pictures.aspx", "/pictures/*"]},
-    ).result()
+    response = client.network_experiment_profiles.list_by_resource_group(
+        resource_group_name="MyResourceGroup",
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2025-10-01/FrontdoorPurgeContent.json
+# x-ms-original-file: 2025-10-01/NetworkExperimentListByResourceGroupProfiles.json
 if __name__ == "__main__":
     main()
