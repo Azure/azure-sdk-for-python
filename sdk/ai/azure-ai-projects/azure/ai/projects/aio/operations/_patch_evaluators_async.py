@@ -17,11 +17,14 @@ from azure.storage.blob.aio import ContainerClient
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from ._operations import BetaEvaluatorsOperations as EvaluatorsOperationsGenerated, JSON
+from ...models._enums import _FoundryFeaturesOptInKeys
 from ...models._models import (
     EvaluatorVersion,
 )
 
 logger = logging.getLogger(__name__)
+
+_EVALUATORS_FOUNDRY_FEATURES_VALUE = _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value
 
 
 class EvaluatorsOperations(EvaluatorsOperationsGenerated):
@@ -42,6 +45,9 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
     ) -> Tuple[ContainerClient, str, str]:
         """Call startPendingUpload to get a SAS URI and return a ContainerClient and blob URI."""
 
+        # Import at call time to avoid circular import during module initialization.
+        from ...operations._patch import _FOUNDRY_FEATURES_HEADER_NAME
+
         request_body: dict = {}
         if connection_name:
             request_body["connectionName"] = connection_name
@@ -50,6 +56,7 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
             name=name,
             version=version,
             pending_upload_request=request_body,
+            headers={_FOUNDRY_FEATURES_HEADER_NAME: _EVALUATORS_FOUNDRY_FEATURES_VALUE},
         )
 
         # The service returns blobReferenceForConsumption
@@ -77,9 +84,12 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
 
     async def _get_next_version(self, name: str) -> str:
         """Get the next version number for an evaluator by fetching existing versions."""
+        # Import at call time to avoid circular import during module initialization.
+        from ...operations._patch import _FOUNDRY_FEATURES_HEADER_NAME
+
         try:
             versions = []
-            async for v in self.list_versions(name=name):
+            async for v in self.list_versions(name=name, headers={_FOUNDRY_FEATURES_HEADER_NAME: _EVALUATORS_FOUNDRY_FEATURES_VALUE}):
                 versions.append(v)
             if versions:
                 numeric_versions = []
@@ -196,9 +206,13 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
                 if hasattr(evaluator_version, "definition") and evaluator_version.definition:
                     evaluator_version.definition.blob_uri = blob_uri
 
+            # Import at call time to avoid circular import during module initialization.
+            from ...operations._patch import _FOUNDRY_FEATURES_HEADER_NAME
+
             result = await self.create_version(
                 name=name,
                 evaluator_version=evaluator_version,
+                headers={_FOUNDRY_FEATURES_HEADER_NAME: _EVALUATORS_FOUNDRY_FEATURES_VALUE},
             )
 
         return result
