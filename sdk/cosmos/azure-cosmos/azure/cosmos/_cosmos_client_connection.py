@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) 2014 Microsoft Corporation
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -248,6 +248,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         ]
         # after passing in the user_agent into the user agent policy the user_agent is no longer needed
         kwargs.pop("user_agent", None)
+        kwargs.pop("user_agent_overwrite", None)
 
         transport = kwargs.pop("transport", None)
         self.pipeline_client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient(
@@ -3347,6 +3348,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 EPK_sub_range = routing_range.Range(range_min=max(single_range.min, feed_range_epk.min),
                                                     range_max=min(single_range.max, feed_range_epk.max),
                                                     isMinInclusive=True, isMaxInclusive=False)
+
+                # set the session token for this specific partition to avoid sending compound token for all partitions
+                base.set_session_token_header(self, req_headers, path, request_params, options,
+                                              over_lapping_range["id"])
                 if single_range.min == EPK_sub_range.min and EPK_sub_range.max == single_range.max:
                     # The Epk Sub Range spans exactly one physical partition
                     # In this case we can route to the physical pk range id
