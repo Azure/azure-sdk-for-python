@@ -309,7 +309,7 @@ class TestStorageClient(StorageRecordedTestCase):
             ),
             (
                 "https://myaccount-secondary.blob.core.windows.net/",
-                "myaccount.blob.core.windows.net",
+                "myaccount-secondary.blob.core.windows.net",
                 "myaccount-secondary.blob.core.windows.net",
             ),
             (
@@ -324,12 +324,12 @@ class TestStorageClient(StorageRecordedTestCase):
             ),
             (
                 "https://myaccount-secondary-dualstack.blob.core.windows.net/",
-                "myaccount-dualstack.blob.core.windows.net",
+                "myaccount-secondary-dualstack.blob.core.windows.net",
                 "myaccount-secondary-dualstack.blob.core.windows.net",
             ),
             (
                 "https://myaccount-secondary-ipv6.blob.core.windows.net/",
-                "myaccount-ipv6.blob.core.windows.net",
+                "myaccount-secondary-ipv6.blob.core.windows.net",
                 "myaccount-secondary-ipv6.blob.core.windows.net",
             ),
         ]

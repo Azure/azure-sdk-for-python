@@ -84,9 +84,7 @@ def _construct_endpoints(netloc: str, account_part: str) -> Tuple[str, str, str]
 
     if idx >= 0:
         base_name = account_part[:idx]
-        feature_suffix = account_part[idx + len(_SECONDARY_SUFFIX):]
-        primary_hostname = f"{base_name}{feature_suffix}{domain_suffix}"
-        secondary_hostname = f"{base_name}{_SECONDARY_SUFFIX}{feature_suffix}{domain_suffix}"
+        primary_hostname = secondary_hostname = f"{account_part}{domain_suffix}"
     else:
         feature_suffix = ""
         base_name = account_part

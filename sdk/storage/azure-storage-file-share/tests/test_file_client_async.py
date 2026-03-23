@@ -185,7 +185,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
             ),
             (
                 "https://myaccount-secondary.file.core.windows.net/",
-                "myaccount.file.core.windows.net",
+                "myaccount-secondary.file.core.windows.net",
                 "myaccount-secondary.file.core.windows.net",
             ),
             (
@@ -200,12 +200,12 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
             ),
             (
                 "https://myaccount-secondary-dualstack.file.core.windows.net/",
-                "myaccount-dualstack.file.core.windows.net",
+                "myaccount-secondary-dualstack.file.core.windows.net",
                 "myaccount-secondary-dualstack.file.core.windows.net",
             ),
             (
                 "https://myaccount-secondary-ipv6.file.core.windows.net/",
-                "myaccount-ipv6.file.core.windows.net",
+                "myaccount-secondary-ipv6.file.core.windows.net",
                 "myaccount-secondary-ipv6.file.core.windows.net",
             ),
         ]

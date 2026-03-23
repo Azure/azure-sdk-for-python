@@ -246,7 +246,7 @@ class TestStorageQueueClient(StorageRecordedTestCase):
             ),
             (
                 "https://myaccount-secondary.queue.core.windows.net/",
-                "myaccount.queue.core.windows.net",
+                "myaccount-secondary.queue.core.windows.net",
                 "myaccount-secondary.queue.core.windows.net",
             ),
             (
@@ -261,12 +261,12 @@ class TestStorageQueueClient(StorageRecordedTestCase):
             ),
             (
                 "https://myaccount-secondary-dualstack.queue.core.windows.net/",
-                "myaccount-dualstack.queue.core.windows.net",
+                "myaccount-secondary-dualstack.queue.core.windows.net",
                 "myaccount-secondary-dualstack.queue.core.windows.net",
             ),
             (
                 "https://myaccount-secondary-ipv6.queue.core.windows.net/",
-                "myaccount-ipv6.queue.core.windows.net",
+                "myaccount-secondary-ipv6.queue.core.windows.net",
                 "myaccount-secondary-ipv6.queue.core.windows.net",
             ),
         ],
