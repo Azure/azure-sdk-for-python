@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,protected-access,too-many-statements
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -295,7 +295,7 @@ class _VoiceLiveInstrumentorPreview:
         instrumentor = self
 
         @functools.wraps(original_aenter)
-        async def wrapper(mgr_self, *args, **kwargs):  # pylint: disable=protected-access
+        async def wrapper(mgr_self, *args, **kwargs):
             span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
             if span_impl_type is None:
                 return await original_aenter(mgr_self, *args, **kwargs)
@@ -347,7 +347,7 @@ class _VoiceLiveInstrumentorPreview:
                 span.__exit__(type(exc), exc, exc.__traceback__)  # pyright: ignore[reportArgumentType]
                 raise
 
-        wrapper._original = original_aenter  # type: ignore[attr-defined]  # pylint: disable=protected-access
+        wrapper._original = original_aenter  # type: ignore[attr-defined]
         return wrapper
 
     def _trace_aexit(self, original_aexit: Callable) -> Callable:
@@ -395,7 +395,7 @@ class _VoiceLiveInstrumentorPreview:
                 except Exception:  # pylint: disable=broad-except
                     pass
 
-        wrapper._original = original_aexit  # type: ignore[attr-defined]  # pylint: disable=protected-access
+        wrapper._original = original_aexit  # type: ignore[attr-defined]
         return wrapper
 
     # ------------------------------------------------------------------ #
@@ -413,7 +413,7 @@ class _VoiceLiveInstrumentorPreview:
         instrumentor = self
 
         @functools.wraps(original_send)
-        async def wrapper(conn_self, event, *args, **kwargs):  # pylint: disable=too-many-branches,too-many-statements,protected-access
+        async def wrapper(conn_self, event, *args, **kwargs):  # pylint: disable=too-many-branches,too-many-locals
             span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
             if span_impl_type is None:
                 return await original_send(conn_self, event, *args, **kwargs)
@@ -502,7 +502,7 @@ class _VoiceLiveInstrumentorPreview:
                 instrumentor.record_error(span, exc)
                 raise
 
-        wrapper._original = original_send  # type: ignore[attr-defined]  # pylint: disable=protected-access
+        wrapper._original = original_send  # type: ignore[attr-defined]
         return wrapper
 
     def _trace_recv(self, original_recv: Callable) -> Callable:
@@ -516,7 +516,7 @@ class _VoiceLiveInstrumentorPreview:
         instrumentor = self
 
         @functools.wraps(original_recv)
-        async def wrapper(conn_self, *args, **kwargs):  # pylint: disable=too-many-branches,too-many-statements,protected-access
+        async def wrapper(conn_self, *args, **kwargs):  # pylint: disable=too-many-branches,too-many-locals
             span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
             if span_impl_type is None:
                 return await original_recv(conn_self, *args, **kwargs)
@@ -639,7 +639,7 @@ class _VoiceLiveInstrumentorPreview:
                 instrumentor.record_error(span, exc)
                 raise
 
-        wrapper._original = original_recv  # type: ignore[attr-defined]  # pylint: disable=protected-access
+        wrapper._original = original_recv  # type: ignore[attr-defined]
         return wrapper
 
     def _trace_close(self, original_close: Callable) -> Callable:
@@ -674,7 +674,7 @@ class _VoiceLiveInstrumentorPreview:
                 instrumentor.record_error(span, exc)
                 raise
 
-        wrapper._original = original_close  # type: ignore[attr-defined]  # pylint: disable=protected-access
+        wrapper._original = original_close  # type: ignore[attr-defined]
         return wrapper
 
     # ------------------------------------------------------------------ #

@@ -12,8 +12,6 @@ from azure.core.tracing import AbstractSpan, SpanKind
 from azure.core.settings import settings
 
 try:
-    from opentelemetry.trace import StatusCode, Span  # noqa: F401  # pylint: disable=unused-import
-
     _span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
 except ModuleNotFoundError:
     _span_impl_type = None
@@ -78,8 +76,9 @@ class OperationName(Enum):
     INPUT_AUDIO_BUFFER_CLEAR = "input_audio_buffer_clear"
 
 
-def start_span(
+def start_span(  # pylint: disable=R0913,R0917
     operation_name: OperationName,
+    *,
     server_address: Optional[str] = None,
     port: Optional[int] = None,
     span_name: Optional[str] = None,
