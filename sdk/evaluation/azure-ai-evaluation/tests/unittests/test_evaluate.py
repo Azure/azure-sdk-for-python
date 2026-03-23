@@ -758,7 +758,25 @@ class TestEvaluate:
         assert defect_rates["evaluator.protected_material_details.detail1_defect_rate"] == 0.5
         assert defect_rates["evaluator.protected_material_details.detail2_defect_rate"] == 0.5
 
-    def test_quotation_fix_test_data(self, quotation_fix_test_data):
+    def test_aggregate_label_defect_metrics_xpia_uses_xpia_prefix(self):
+        """Test that xpia_label columns (IndirectAttackEvaluator output) are properly aggregated."""
+        import pandas as pd
+
+        data = {
+            # IndirectAttackEvaluator outputs xpia_label (not indirect_attack_label)
+            "indirect_attack.xpia_label": [True, False, True, False],
+        }
+        df = pd.DataFrame(data)
+
+        label_cols, defect_rates = _aggregate_label_defect_metrics(df)
+
+        # The label column should be recognized
+        assert "indirect_attack.xpia_label" in label_cols
+        # The defect rate should use xpia prefix
+        assert "indirect_attack.xpia_defect_rate" in defect_rates
+        assert defect_rates["indirect_attack.xpia_defect_rate"] == 0.5
+
+
         from test_evaluators.test_inputs_evaluators import QuotationFixEval
 
         result = evaluate(

@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import math
 from typing import Any, Dict, List, TypeVar, Union, Optional
 
 from typing_extensions import override
@@ -225,6 +226,10 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                 )
             input_data["context"] = context
 
+        # For XPIA, pass "xpia" as the metric display name to ensure output keys
+        # use the "xpia" prefix (e.g. "xpia_label") for backward compatibility.
+        metric_display_name = "xpia" if self._eval_metric == EvaluationMetrics.XPIA else None
+
         eval_result = await evaluate_with_rai_service_sync(  # type: ignore
             metric_name=self._eval_metric,
             data=input_data,
@@ -233,6 +238,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             annotation_task=self._get_task(),
             evaluator_name=self.__class__.__name__,
             use_legacy_endpoint=self._use_legacy_endpoint,
+            metric_display_name=metric_display_name,
         )
 
         # Legacy endpoint returns a pre-parsed dict from parse_response(); return directly
@@ -297,10 +303,36 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                         # Convert string to boolean
                         label = label_str.lower() == "true" if isinstance(label_str, str) else bool(label_str)
 
+                        # Use "xpia" as the output key prefix for XPIA to maintain backward
+                        # compatibility with column naming expected by AI Foundry and downstream logic.
+                        output_prefix = (
+                            "xpia" if self._eval_metric == EvaluationMetrics.XPIA else self._eval_metric.value
+                        )
+
                         parsed_result = {
-                            f"{self._eval_metric.value}_label": label,
-                            f"{self._eval_metric.value}_reason": reason,
+                            f"{output_prefix}_label": label,
+                            f"{output_prefix}_reason": reason,
                         }
+
+                        # For XPIA, extract sub-metrics as flat keys (manipulated_content, intrusion,
+                        # information_gathering) so they appear as individual columns in the results.
+                        if self._eval_metric == EvaluationMetrics.XPIA:
+                            for sub_metric in ["manipulated_content", "intrusion", "information_gathering"]:
+                                # Service may return snake_case or camelCase keys; try both
+                                camel_map = {
+                                    "manipulated_content": "manipulatedContent",
+                                    "information_gathering": "informationGathering",
+                                }
+                                sub_value = score_properties.get(
+                                    sub_metric, score_properties.get(camel_map.get(sub_metric, sub_metric), math.nan)
+                                )
+                                if isinstance(sub_value, str):
+                                    sub_value = (
+                                        sub_value.lower() == "true"
+                                        if sub_value.lower() in ["true", "false"]
+                                        else math.nan
+                                    )
+                                parsed_result[f"{output_prefix}_{sub_metric}"] = sub_value
 
                         # For protected_material, also extract breakdown if available
                         if self._eval_metric == EvaluationMetrics.PROTECTED_MATERIAL:
@@ -321,7 +353,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
 
                         # Extract details from scoreProperties
                         if score_properties:
-                            parsed_result[f"{self._eval_metric. value}_details"] = _prepare_details(score_properties)
+                            parsed_result[f"{output_prefix}_details"] = _prepare_details(score_properties)
 
                         # Extract token counts from metrics
                         metrics = properties.get("metrics", {})
@@ -339,15 +371,15 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                             total_tokens = ""
 
                         # Add token metadata (matching old format)
-                        parsed_result[f"{self._eval_metric. value}_total_tokens"] = total_tokens
-                        parsed_result[f"{self._eval_metric.value}_prompt_tokens"] = prompt_tokens
-                        parsed_result[f"{self._eval_metric.value}_completion_tokens"] = completion_tokens
+                        parsed_result[f"{output_prefix}_total_tokens"] = total_tokens
+                        parsed_result[f"{output_prefix}_prompt_tokens"] = prompt_tokens
+                        parsed_result[f"{output_prefix}_completion_tokens"] = completion_tokens
 
                         # Add empty placeholders for fields that sync_evals doesn't provide
-                        parsed_result[f"{self._eval_metric.value}_finish_reason"] = ""
-                        parsed_result[f"{self._eval_metric.value}_sample_input"] = ""
-                        parsed_result[f"{self._eval_metric.value}_sample_output"] = ""
-                        parsed_result[f"{self._eval_metric.value}_model"] = ""
+                        parsed_result[f"{output_prefix}_finish_reason"] = ""
+                        parsed_result[f"{output_prefix}_sample_input"] = ""
+                        parsed_result[f"{output_prefix}_sample_output"] = ""
+                        parsed_result[f"{output_prefix}_model"] = ""
 
                         return parsed_result
 
@@ -392,21 +424,29 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         # check if it's already in the correct format (might be legacy response)
         if isinstance(eval_result, dict):
             # Check if it already has the expected keys
-            expected_key = (
-                f"{self._eval_metric.value}_label"
-                if self._eval_metric
-                in [
-                    EvaluationMetrics.CODE_VULNERABILITY,
-                    EvaluationMetrics.PROTECTED_MATERIAL,
-                    EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
-                    EvaluationMetrics.XPIA,
-                    _InternalEvaluationMetrics.ECI,
-                ]
-                else self._eval_metric.value
-            )
-
-            if expected_key in eval_result:
-                return eval_result
+            # For XPIA, use "xpia" prefix for backward compatibility
+            if self._eval_metric == EvaluationMetrics.XPIA:
+                if "xpia_label" in eval_result:
+                    return eval_result
+                # Handle legacy responses that use "indirect_attack_" prefix instead of "xpia_"
+                if "indirect_attack_label" in eval_result:
+                    return {
+                        key.replace("indirect_attack_", "xpia_"): value
+                        for key, value in eval_result.items()
+                    }
+            elif self._eval_metric in [
+                EvaluationMetrics.CODE_VULNERABILITY,
+                EvaluationMetrics.PROTECTED_MATERIAL,
+                EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
+                _InternalEvaluationMetrics.ECI,
+            ]:
+                expected_key = f"{self._eval_metric.value}_label"
+                if expected_key in eval_result:
+                    return eval_result
+            else:
+                expected_key = self._eval_metric.value
+                if expected_key in eval_result:
+                    return eval_result
 
         # Return empty dict if we can't parse
         return {}
