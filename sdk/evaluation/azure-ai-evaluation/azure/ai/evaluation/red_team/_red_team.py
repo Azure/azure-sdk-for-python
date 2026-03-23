@@ -760,7 +760,7 @@ class RedTeam:
                 xpia_prompts = await get_xpia_prompts_with_retry()
             except Exception as agent_error:
                 if target_type_str == "agent":
-                    self.logger.debug(
+                    self.logger.warning(
                         f"Agent-type XPIA prompt fetch failed ({agent_error}), falling back to model-type"
                     )
                 else:

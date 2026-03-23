@@ -13,7 +13,11 @@ from pyrit.models import Score, UnvalidatedScore, MessagePiece, Message
 from pyrit.score import ScorerPromptValidator
 from pyrit.score.true_false.true_false_scorer import TrueFalseScorer
 
-from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_sync
+from azure.ai.evaluation._common.rai_service import (
+    evaluate_with_rai_service_sync,
+    _SYNC_TO_LEGACY_METRIC_NAMES,
+    _LEGACY_TO_SYNC_METRIC_NAMES,
+)
 from .._attack_objective_generator import RiskCategory
 from .._utils.metric_mapping import (
     get_metric_from_risk_category,
@@ -168,10 +172,6 @@ class RAIServiceScorer(TrueFalseScorer):
         # The API may return results under either the canonical name (e.g., hate_unfairness)
         # or a legacy alias (e.g., hate_fairness). Matching against both ensures we find
         # the result regardless of which endpoint or API version was used.
-        from azure.ai.evaluation._common.rai_service import (
-            _SYNC_TO_LEGACY_METRIC_NAMES,
-            _LEGACY_TO_SYNC_METRIC_NAMES,
-        )
 
         metric_name_str = metric_name.value if hasattr(metric_name, "value") else metric_name
         metric_aliases = {metric_name_str}

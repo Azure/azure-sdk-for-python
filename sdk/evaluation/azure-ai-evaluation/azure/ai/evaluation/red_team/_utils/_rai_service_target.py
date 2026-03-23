@@ -54,8 +54,7 @@ def _fallback_response(retry_state: RetryCallState):
     }
     request = retry_state.kwargs.get("message") or retry_state.kwargs.get("prompt_request")
     if request is None:
-        logger.warning("_fallback_response: no 'message' or 'prompt_request' in retry kwargs")
-        return []
+        raise RuntimeError("_fallback_response: no 'message' or 'prompt_request' in retry kwargs")
     request = request.get_piece(0)
     response_entry = construct_response_from_request(
         request=request, response_text_pieces=[json.dumps(fallback_response)]
