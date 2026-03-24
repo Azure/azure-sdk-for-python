@@ -11,6 +11,11 @@ from typing import Any
 
 from .._handlers import RuntimeResponseContext
 from ..models import _generated as generated_models
+from ..streaming._helpers import (
+    EVENT_TYPE,
+    _RESPONSE_SNAPSHOT_EVENT_TYPES,
+    _extract_response_snapshot_from_events,
+)
 
 
 @dataclass(slots=True)
@@ -32,6 +37,50 @@ class _ExecutionRecord:  # pylint: disable=too-many-instance-attributes
     input_items: list[dict[str, Any]] = field(default_factory=list)
     previous_response_id: str | None = None
     response_context: RuntimeResponseContext | None = None
+
+    def apply_event(self, normalized: dict[str, Any], all_events: list[dict[str, Any]]) -> None:
+        """Apply a normalised stream event to this record's state.
+
+        Updates ``events``, ``response_payload``, and ``status`` according to the
+        event type.  Does nothing if the record is already ``"cancelled"``.
+
+        :param normalized: The normalised event dictionary (``{"type": ..., "payload": {...}}``).
+        :type normalized: dict[str, Any]
+        :param all_events: The full ordered list of handler events seen so far
+            (used to extract the latest response snapshot).
+        :type all_events: list[dict[str, Any]]
+        """
+        if self.status == "cancelled":
+            return
+        self.events.append(deepcopy(normalized))
+        event_type = normalized.get("type")
+        payload = normalized.get("payload", {})
+        if event_type in _RESPONSE_SNAPSHOT_EVENT_TYPES:
+            self.response_payload = _extract_response_snapshot_from_events(
+                all_events,
+                response_id=self.response_id,
+                agent_reference=self.agent_reference,
+                model=self.model,
+            )
+            resolved = self.response_payload.get("status")
+            if isinstance(resolved, str):
+                self.status = resolved
+        elif event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value:
+            item = payload.get("item")
+            if isinstance(item, dict) and isinstance(self.response_payload, dict):
+                output = self.response_payload.setdefault("output", [])
+                output.append(deepcopy(item))
+        elif event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value:
+            item = payload.get("item")
+            output_index = payload.get("output_index")
+            if (
+                isinstance(item, dict)
+                and isinstance(output_index, int)
+                and isinstance(self.response_payload, dict)
+            ):
+                output = self.response_payload.get("output", [])
+                if 0 <= output_index < len(output):
+                    output[output_index] = deepcopy(item)
 
     def to_snapshot(self) -> dict[str, Any]:
         """Build a normalized response snapshot dictionary from this record.

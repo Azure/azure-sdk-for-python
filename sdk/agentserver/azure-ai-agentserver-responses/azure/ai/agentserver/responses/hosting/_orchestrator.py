@@ -17,7 +17,6 @@ from typing import Any, AsyncIterator
 from ..streaming._sse import encode_keep_alive_comment, encode_sse_payload, new_stream_counter
 from ..streaming._helpers import (
     EVENT_TYPE,
-    _RESPONSE_SNAPSHOT_EVENT_TYPES,
     _apply_stream_event_defaults,
     _build_events,
     _coerce_handler_event,
@@ -102,39 +101,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             sequence_number=len(ctx.handler_events),
         )
         ctx.handler_events.append(normalized)
-        if ctx.bg_record is not None and ctx.bg_record.status != "cancelled":
-            ctx.bg_record.events.append(deepcopy(normalized))
-            event_type = normalized.get("type")
-            payload = normalized.get("payload", {})
-            if event_type in _RESPONSE_SNAPSHOT_EVENT_TYPES:
-                # response.* lifecycle event: replace the entire snapshot (S-013)
-                ctx.bg_record.response_payload = _extract_response_snapshot_from_events(
-                    ctx.handler_events,
-                    response_id=ctx.response_id,
-                    agent_reference=ctx.agent_reference,
-                    model=ctx.model,
-                )
-                resolved = ctx.bg_record.response_payload.get("status")
-                if isinstance(resolved, str):
-                    ctx.bg_record.status = resolved
-            elif event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value:
-                # Accumulate output items between response.* events (S-014)
-                item = payload.get("item")
-                if isinstance(item, dict) and isinstance(ctx.bg_record.response_payload, dict):
-                    output = ctx.bg_record.response_payload.setdefault("output", [])
-                    output.append(deepcopy(item))
-            elif event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value:
-                # Update tracked output item at its index
-                item = payload.get("item")
-                output_index = payload.get("output_index")
-                if (
-                    isinstance(item, dict)
-                    and isinstance(output_index, int)
-                    and isinstance(ctx.bg_record.response_payload, dict)
-                ):
-                    output = ctx.bg_record.response_payload.get("output", [])
-                    if 0 <= output_index < len(output):
-                        output[output_index] = deepcopy(item)
+        if ctx.bg_record is not None:
+            ctx.bg_record.apply_event(normalized, ctx.handler_events)
         return normalized
 
     @staticmethod
@@ -173,8 +141,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             sequence_number=len(ctx.handler_events),
         )
         ctx.handler_events.append(normalized)
-        if ctx.bg_record is not None and ctx.bg_record.status != "cancelled":
-            ctx.bg_record.events.append(deepcopy(normalized))
+        if ctx.bg_record is not None:
+            ctx.bg_record.apply_event(normalized, ctx.handler_events)
         return encode_sse_payload(normalized["type"], normalized["payload"])
 
     async def _finalize_stream(self, ctx: _ExecutionContext) -> None:
