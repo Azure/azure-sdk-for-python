@@ -119,6 +119,20 @@ async def main() -> None:
             f"Content range analysis returned pages"
             f" {range_doc_content.start_page_number} - {range_doc_content.end_page_number}"
         )
+
+        # Combine multiple page ranges: pages 1-3, page 5, and pages 9 onward.
+        print("\nAnalyzing combined pages (1-3, 5, 9-) with content range '1-3,5,9-'...")
+        combine_range_poller = await client.begin_analyze(
+            analyzer_id="prebuilt-documentSearch",
+            inputs=[AnalysisInput(url=document_url, content_range="1-3,5,9-")],
+        )
+        combine_range_result: AnalysisResult = await combine_range_poller.result()
+
+        combine_doc_content = cast(DocumentContent, combine_range_result.contents[0])
+        print(
+            f"Combined content range analysis returned pages"
+            f" {combine_doc_content.start_page_number} - {combine_doc_content.end_page_number}"
+        )
         # [END analyze_document_url_with_content_range]
 
         # [START analyze_video_from_url]
