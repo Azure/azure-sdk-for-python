@@ -8,32 +8,25 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import asyncio
-import inspect
 from typing import Any
 
-# Import the extract_parameter_groups function from the sync operations patch
 from ...operations._patch import extract_parameter_groups, _CONTAINER_STRIP_KWARGS
 
-
-# Import the generated operation classes
-from ._operations import ServiceOperations as ServiceOperationsGenerated
-from ._operations import ContainerOperations as ContainerOperationsGenerated
-from ._operations import BlobOperations as BlobOperationsGenerated
-from ._operations import PageBlobOperations as PageBlobOperationsGenerated
-from ._operations import AppendBlobOperations as AppendBlobOperationsGenerated
-from ._operations import BlockBlobOperations as BlockBlobOperationsGenerated
+from ._operations import ServiceOperations as _ServiceOpsGen
+from ._operations import ContainerOperations as _ContainerOpsGen
+from ._operations import BlobOperations as _BlobOpsGen
+from ._operations import PageBlobOperations as _PageBlobOpsGen
+from ._operations import AppendBlobOperations as _AppendBlobOpsGen
+from ._operations import BlockBlobOperations as _BlockBlobOpsGen
 
 
 class _ParameterGroupExtractionMixin:
-    """Mixin that intercepts method calls to extract parameter groups from kwargs."""
+    """Intercepts public method calls to extract parameter groups from kwargs."""
 
-    # Subclasses can override this to list kwargs that should be stripped
-    # after parameter group extraction.
     _strip_after_extraction: tuple[str, ...] = ()
 
     def __getattribute__(self, name: str) -> Any:
         attr = super().__getattribute__(name)
-        # Only wrap public methods (not private/magic and must be callable)
         if not name.startswith("_") and callable(attr):
             strip_keys = object.__getattribute__(self, "_strip_after_extraction")
             if asyncio.iscoroutinefunction(attr):
@@ -57,39 +50,27 @@ class _ParameterGroupExtractionMixin:
         return attr
 
 
-class ServiceOperations(_ParameterGroupExtractionMixin, ServiceOperationsGenerated):
-    """Wrapper for ServiceOperations with parameter group support."""
-
+class ServiceOperations(_ParameterGroupExtractionMixin, _ServiceOpsGen):
     _strip_after_extraction = _CONTAINER_STRIP_KWARGS
 
 
-class ContainerOperations(_ParameterGroupExtractionMixin, ContainerOperationsGenerated):
-    """Wrapper for ContainerOperations with parameter group support."""
-
+class ContainerOperations(_ParameterGroupExtractionMixin, _ContainerOpsGen):
     _strip_after_extraction = _CONTAINER_STRIP_KWARGS
 
 
-class BlobOperations(_ParameterGroupExtractionMixin, BlobOperationsGenerated):
-    """Wrapper for BlobOperations with parameter group support."""
-
+class BlobOperations(_ParameterGroupExtractionMixin, _BlobOpsGen):
     pass
 
 
-class PageBlobOperations(_ParameterGroupExtractionMixin, PageBlobOperationsGenerated):
-    """Wrapper for PageBlobOperations with parameter group support."""
-
+class PageBlobOperations(_ParameterGroupExtractionMixin, _PageBlobOpsGen):
     pass
 
 
-class AppendBlobOperations(_ParameterGroupExtractionMixin, AppendBlobOperationsGenerated):
-    """Wrapper for AppendBlobOperations with parameter group support."""
-
+class AppendBlobOperations(_ParameterGroupExtractionMixin, _AppendBlobOpsGen):
     pass
 
 
-class BlockBlobOperations(_ParameterGroupExtractionMixin, BlockBlobOperationsGenerated):
-    """Wrapper for BlockBlobOperations with parameter group support."""
-
+class BlockBlobOperations(_ParameterGroupExtractionMixin, _BlockBlobOpsGen):
     pass
 
 
