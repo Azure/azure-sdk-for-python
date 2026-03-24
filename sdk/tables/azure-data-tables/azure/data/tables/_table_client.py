@@ -242,25 +242,11 @@ class TableClient(TablesBaseClient):
                 payload = None
             identifiers.append(SignedIdentifier(id=key, access_policy=payload))
         try:
-            if identifiers:
-                self._client.table.set_access_policy(
-                    table=self.table_name,
-                    table_acl=_SignedIdentifiers(identifiers=identifiers),
-                    **kwargs,
-                )
-            else:
-                from ._generated.operations._operations import build_table_set_access_policy_request
-
-                _request = build_table_set_access_policy_request(
-                    table=self.table_name,
-                    content_type="application/xml",
-                    api_version=self._client._config.api_version,  # pylint: disable=protected-access
-                )
-                _request.url = self._client._config.url + _request.url  # pylint: disable=protected-access
-                pipeline_response = self._client.table._client.send_request(  # pylint: disable=protected-access
-                    _request, stream=False, **kwargs
-                )
-                pipeline_response.raise_for_status()
+            self._client.table.set_access_policy(
+                table=self.table_name,
+                table_acl=_SignedIdentifiers(identifiers=identifiers),
+                **kwargs,
+            )
         except HttpResponseError as error:
             try:
                 _process_table_error(error, table_name=self.table_name)
