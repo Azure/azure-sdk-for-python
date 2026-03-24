@@ -913,6 +913,7 @@ class TestScenarioOrchestrator:
 
             mock_config.assert_called_once_with(
                 objective_scorer=mock_scorer,
+                refusal_scorer=mock_scorer,
                 use_score_as_feedback=True,
             )
 

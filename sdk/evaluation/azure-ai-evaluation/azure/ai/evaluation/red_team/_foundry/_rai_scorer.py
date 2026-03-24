@@ -13,7 +13,11 @@ from pyrit.models import Score, UnvalidatedScore, MessagePiece, Message
 from pyrit.score import ScorerPromptValidator
 from pyrit.score.true_false.true_false_scorer import TrueFalseScorer
 
-from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_sync
+from azure.ai.evaluation._common.rai_service import (
+    evaluate_with_rai_service_sync,
+    _SYNC_TO_LEGACY_METRIC_NAMES,
+    _LEGACY_TO_SYNC_METRIC_NAMES,
+)
 from .._attack_objective_generator import RiskCategory
 from .._utils.metric_mapping import (
     get_metric_from_risk_category,
@@ -164,8 +168,17 @@ class RAIServiceScorer(TrueFalseScorer):
         metric_name = get_metric_from_risk_category(self.risk_category)
         annotation_task = get_annotation_task_from_risk_category(self.risk_category)
 
-        # Metric name normalization (hate_fairness ↔ hate_unfairness) is handled by
-        # evaluate_with_rai_service_sync based on the use_legacy_endpoint flag.
+        # Build set of acceptable metric names for result matching.
+        # The API may return results under either the canonical name (e.g., hate_unfairness)
+        # or a legacy alias (e.g., hate_fairness). Matching against both ensures we find
+        # the result regardless of which endpoint or API version was used.
+
+        metric_name_str = metric_name.value if hasattr(metric_name, "value") else metric_name
+        metric_aliases = {metric_name_str}
+        if metric_name_str in _SYNC_TO_LEGACY_METRIC_NAMES:
+            metric_aliases.add(_SYNC_TO_LEGACY_METRIC_NAMES[metric_name_str])
+        if metric_name_str in _LEGACY_TO_SYNC_METRIC_NAMES:
+            metric_aliases.add(_LEGACY_TO_SYNC_METRIC_NAMES[metric_name_str])
 
         try:
             eval_result = await evaluate_with_rai_service_sync(
@@ -194,7 +207,7 @@ class RAIServiceScorer(TrueFalseScorer):
 
                 for result_item in results:
                     result_dict = result_item if isinstance(result_item, dict) else result_item.__dict__
-                    if result_dict.get("name") == metric_name or result_dict.get("metric") == metric_name:
+                    if result_dict.get("name") in metric_aliases or result_dict.get("metric") in metric_aliases:
                         raw_score = result_dict.get("score")
                         if raw_score is None:
                             raw_score = 0
