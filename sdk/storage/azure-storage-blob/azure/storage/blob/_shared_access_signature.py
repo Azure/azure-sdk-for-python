@@ -170,7 +170,9 @@ class BlobSharedAccessSignature(SharedAccessSignature):
 
         resource = 'bs' if snapshot else 'b'
         resource = 'bv' if version_id else resource
-        resource = 'd' if kwargs.pop("is_directory", None) else resource
+        if is_directory:
+            resource = 'd'
+            sas.add_directory_depth(blob_name)
         sas.add_resource(resource)
 
         sas.add_timestamp(snapshot or version_id)
@@ -314,6 +316,12 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
 
     def add_timestamp(self, timestamp):
         self._add_query(BlobQueryStringConstants.SIGNED_TIMESTAMP, timestamp)
+
+    def add_directory_depth(self, blob_name):
+        if blob_name == "" or blob_name == "/":
+            self._add_query(QueryStringConstants.SIGNED_DIRECTORY_DEPTH, 0)
+        else:
+            self._add_query(QueryStringConstants.SIGNED_DIRECTORY_DEPTH, len(blob_name.strip("/").split("/")))
 
     def add_info_for_hns_account(self, **kwargs):
         self._add_query(QueryStringConstants.SIGNED_DIRECTORY_DEPTH, kwargs.pop('sdd', None))
@@ -792,6 +800,7 @@ def generate_blob_sas(
         user_delegation_oid=user_delegation_oid,
         request_headers=request_headers,
         request_query_params=request_query_params,
+        is_directory=is_directory,
         sts_hook=sts_hook,
         **kwargs
     )
