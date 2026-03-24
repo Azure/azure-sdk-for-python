@@ -1,5 +1,28 @@
 # Release History
 
+## 4.0.0b3 (2026-03-24)
+
+### Features Added
+
+  - Model `UpdateGroup` added property `max_concurrency`
+  - Model `UpdateGroupStatus` added property `max_concurrency`
+  - Model `UpdateStage` added property `max_concurrency`
+  - Model `UpdateStageStatus` added property `max_concurrency`
+  - Model `AutoUpgradeProfilesOperations` added parameter `top` in method `list_by_fleet`
+  - Model `AutoUpgradeProfilesOperations` added parameter `skip_token` in method `list_by_fleet`
+  - Model `FleetMembersOperations` added parameter `top` in method `list_by_fleet`
+  - Model `FleetMembersOperations` added parameter `skip_token` in method `list_by_fleet`
+  - Model `FleetMembersOperations` added parameter `filter` in method `list_by_fleet`
+  - Model `FleetUpdateStrategiesOperations` added parameter `top` in method `list_by_fleet`
+  - Model `FleetUpdateStrategiesOperations` added parameter `skip_token` in method `list_by_fleet`
+  - Model `FleetsOperations` added parameter `top` in method `list_by_subscription`
+  - Model `FleetsOperations` added parameter `skip_token` in method `list_by_subscription`
+  - Model `GatesOperations` added parameter `filter` in method `list_by_fleet`
+  - Model `GatesOperations` added parameter `top` in method `list_by_fleet`
+  - Model `GatesOperations` added parameter `skip_token` in method `list_by_fleet`
+  - Model `UpdateRunsOperations` added parameter `top` in method `list_by_fleet`
+  - Model `UpdateRunsOperations` added parameter `skip_token` in method `list_by_fleet`
+
 ## 4.0.0b2 (2025-12-03)
 
 ### Features Added

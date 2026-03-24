@@ -15,7 +15,7 @@ from azure.mgmt.containerservicefleet import ContainerServiceFleetMgmtClient
     pip install azure-identity
     pip install azure-mgmt-containerservicefleet
 # USAGE
-    python fleet_members_list_by_fleet_maximum_set_gen.py
+    python auto_upgrade_profile_operations_generate_update_run.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.fleet_members.list_by_fleet(
+    response = client.auto_upgrade_profile_operations.begin_generate_update_run(
         resource_group_name="rgfleets",
         fleet_name="fleet1",
-    )
-    for item in response:
-        print(item)
+        auto_upgrade_profile_name="aup1",
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: 2025-08-01-preview/FleetMembers_ListByFleet_MaximumSet_Gen.json
+# x-ms-original-file: 2026-02-01-preview/AutoUpgradeProfileOperations_GenerateUpdateRun.json
 if __name__ == "__main__":
     main()
