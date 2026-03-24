@@ -569,7 +569,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
 
         # Act
         with pytest.raises(ResourceNotFoundError):
-            await fake_file_system_client.delete_file_system()
+            await fake_file_system_client.delete_file_system(match_condition=MatchConditions.IfMissing)
 
     @DataLakePreparer()
     @recorded_by_proxy_async

@@ -421,6 +421,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         lease = kwargs.pop('lease', None)
         access_conditions = get_access_conditions(lease)
         timeout = kwargs.pop('timeout', None)
+        # These are not accepted by the generated delete operation
+        kwargs.pop('match_condition', None)
+        kwargs.pop('etag', None)
         try:
             self._client.container.delete(
                 timeout=timeout,

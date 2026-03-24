@@ -608,7 +608,7 @@ class TestFileSystem(StorageRecordedTestCase):
 
         # Act
         with pytest.raises(ResourceNotFoundError):
-            fake_file_system_client.delete_file_system()
+            fake_file_system_client.delete_file_system(match_condition=MatchConditions.IfMissing)
 
     @DataLakePreparer()
     @recorded_by_proxy

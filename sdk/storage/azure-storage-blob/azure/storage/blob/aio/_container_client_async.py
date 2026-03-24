@@ -418,6 +418,9 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         lease = kwargs.pop('lease', None)
         access_conditions = get_access_conditions(lease)
         timeout = kwargs.pop('timeout', None)
+        # These are not accepted by the generated delete operation
+        kwargs.pop('match_condition', None)
+        kwargs.pop('etag', None)
         try:
             await self._client.container.delete(
                 timeout=timeout,
