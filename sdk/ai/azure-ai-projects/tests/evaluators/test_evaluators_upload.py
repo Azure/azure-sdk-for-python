@@ -14,6 +14,7 @@ from azure.ai.projects.models._patch import _FOUNDRY_FEATURES_HEADER_NAME
 
 _EVALUATORS_HEADERS = {_FOUNDRY_FEATURES_HEADER_NAME: _EVALUATORS_FOUNDRY_FEATURES_VALUE}
 
+
 class TestEvaluatorsUpload:
     """Unit tests for BetaEvaluatorsOperations.upload() method."""
 
