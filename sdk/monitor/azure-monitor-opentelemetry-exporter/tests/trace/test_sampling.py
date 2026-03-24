@@ -11,16 +11,19 @@ from azure.monitor.opentelemetry.exporter.export.trace._sampling import (
 
 # pylint: disable=protected-access
 class TestApplicationInsightsSampler(unittest.TestCase):
+    @mock.patch.dict("os.environ", {}, clear=True)
     def test_constructor(self):
         sampler = ApplicationInsightsSampler()
         self.assertEqual(sampler._ratio, 1.0)
         self.assertEqual(sampler._sample_rate, 100)
 
+    @mock.patch.dict("os.environ", {}, clear=True)
     def test_constructor_ratio(self):
         sampler = ApplicationInsightsSampler(0.75)
         self.assertEqual(sampler._ratio, 0.75)
         self.assertEqual(sampler._sample_rate, 75)
 
+    @mock.patch.dict("os.environ", {}, clear=True)
     def test_invalid_ratio(self):
         # Invalid explicit ratio logs an error and defaults to 1.0 instead of raising
         sampler = ApplicationInsightsSampler(1.01)
@@ -30,12 +33,14 @@ class TestApplicationInsightsSampler(unittest.TestCase):
         self.assertEqual(sampler._ratio, 1.0)
         self.assertEqual(sampler._sample_rate, 100.0)
 
+    @mock.patch.dict("os.environ", {}, clear=True)
     def test_invalid_type_ratio_defaults(self):
         # Non-numeric explicit ratio logs an error and defaults to 1.0
         sampler = ApplicationInsightsSampler({})  # type: ignore
         self.assertEqual(sampler._ratio, 1.0)
         self.assertEqual(sampler._sample_rate, 100.0)
 
+    @mock.patch.dict("os.environ", {}, clear=True)
     def test_user_passed_value_through_distro(self):
         sampler = ApplicationInsightsSampler(sampling_ratio=0.5)
         self.assertEqual(sampler._ratio, 0.5)
@@ -84,14 +89,17 @@ class TestApplicationInsightsSampler(unittest.TestCase):
         self.assertEqual(result.attributes["_MS.sampleRate"], 50)
         self.assertFalse(result.decision.is_sampled())
 
+    @mock.patch.dict("os.environ", {}, clear=True)
     def test_sampler_factory(self):
         sampler = azure_monitor_opentelemetry_sampler_factory("1.0")
         self.assertEqual(sampler._ratio, 1.0)
 
+    @mock.patch.dict("os.environ", {}, clear=True)
     def test_sampler_factory_none(self):
         sampler = azure_monitor_opentelemetry_sampler_factory(None)
         self.assertEqual(sampler._ratio, 1.0)
 
+    @mock.patch.dict("os.environ", {}, clear=True)
     def test_sampler_factory_empty(self):
         sampler = azure_monitor_opentelemetry_sampler_factory("")
         self.assertEqual(sampler._ratio, 1.0)

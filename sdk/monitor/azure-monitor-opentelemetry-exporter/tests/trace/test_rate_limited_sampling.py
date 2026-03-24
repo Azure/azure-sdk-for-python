@@ -174,7 +174,7 @@ class TestRateLimitedSampler(unittest.TestCase):
             self.assertEqual(sampler.get_description(), f"RateLimitedSampler{{{target_rate}}}")
 
     # Test that negative explicit traces per second logs error and defaults to 5.0
-    def test_negative_rate_raises_error(self):
+    def test_negative_rate_defaults_to_5(self):
         sampler = RateLimitedSampler(-1.0)
         self.assertEqual(sampler.get_description(), "RateLimitedSampler{5.0}")
 
