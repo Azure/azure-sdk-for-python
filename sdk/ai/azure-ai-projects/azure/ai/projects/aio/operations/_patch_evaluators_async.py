@@ -91,7 +91,13 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
         evaluator_version: Union[EvaluatorVersion, JSON, IO[bytes]],
         blob_uri: str,
     ) -> None:
-        """Set ``blob_uri`` on the evaluator version's definition."""
+        """Set ``blob_uri`` on the evaluator version's definition.
+
+        :param evaluator_version: The evaluator version object to update.
+        :type evaluator_version: Union[~azure.ai.projects.models.EvaluatorVersion, JSON, IO[bytes]]
+        :param blob_uri: The blob URI to set on the definition.
+        :type blob_uri: str
+        """
         if isinstance(evaluator_version, dict):
             definition = evaluator_version.get("definition", {})
             if isinstance(definition, dict):
@@ -109,7 +115,17 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
         version: str,
         connection_name: Optional[str] = None,
     ) -> Tuple[ContainerClient, str, str]:
-        """Call startPendingUpload to get a SAS URI and return a ContainerClient and blob URI."""
+        """Call startPendingUpload to get a SAS URI and return a ContainerClient and blob URI.
+
+        :param name: The evaluator name.
+        :type name: str
+        :param version: The evaluator version.
+        :type version: str
+        :param connection_name: Optional storage account connection name.
+        :type connection_name: Optional[str]
+        :return: A tuple of (ContainerClient, version, blob_uri).
+        :rtype: Tuple[ContainerClient, str, str]
+        """
 
         request_body: dict = {}
         if connection_name:
@@ -145,7 +161,13 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
         )
 
     async def _get_next_version(self, name: str) -> str:
-        """Get the next version number for an evaluator by fetching existing versions."""
+        """Get the next version number for an evaluator by fetching existing versions.
+
+        :param name: The evaluator name.
+        :type name: str
+        :return: The next version number as a string.
+        :rtype: str
+        """
         try:
             versions = []
             async for v in self.list_versions(name=name):
