@@ -235,7 +235,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_documents_crud_async.py
+            .. literalinclude:: ../samples/sample_documents_crud_async.py
                 :start-after: [START get_document_async]
                 :end-before: [END get_document_async]
                 :language: python
@@ -263,7 +263,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_documents_crud_async.py
+            .. literalinclude:: ../samples/sample_documents_crud_async.py
                 :start-after: [START delete_document_async]
                 :end-before: [END delete_document_async]
                 :language: python
@@ -291,7 +291,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_documents_crud_async.py
+            .. literalinclude:: ../samples/sample_documents_crud_async.py
                 :start-after: [START merge_document_async]
                 :end-before: [END merge_document_async]
                 :language: python
@@ -318,7 +318,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_documents_crud_async.py
+            .. literalinclude:: ../samples/sample_documents_crud_async.py
                 :start-after: [START merge_or_upload_document_async]
                 :end-before: [END merge_or_upload_document_async]
                 :language: python
@@ -519,7 +519,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_query_simple_async.py
+            .. literalinclude:: ../samples/sample_query_simple_async.py
                 :start-after: [START simple_query_async]
                 :end-before: [END simple_query_async]
                 :language: python
@@ -528,7 +528,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_query_filter_async.py
+            .. literalinclude:: ../samples/sample_query_filter_async.py
                 :start-after: [START filter_query_async]
                 :end-before: [END filter_query_async]
                 :language: python
@@ -537,7 +537,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_query_facets_async.py
+            .. literalinclude:: ../samples/sample_query_facets_async.py
                 :start-after: [START facet_query_async]
                 :end-before: [END facet_query_async]
                 :language: python
@@ -646,7 +646,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_query_suggestions_async.py
+            .. literalinclude:: ../samples/sample_query_suggestions_async.py
                 :start-after: [START suggest_query_async]
                 :end-before: [END suggest_query_async]
                 :language: python
@@ -725,7 +725,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_query_autocomplete_async.py
+            .. literalinclude:: ../samples/sample_query_autocomplete_async.py
                 :start-after: [START autocomplete_query_async]
                 :end-before: [END autocomplete_query_async]
                 :language: python

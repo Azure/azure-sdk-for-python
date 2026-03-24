@@ -8,13 +8,12 @@ from azure.ai.evaluation._constants import EvaluationMetrics, _InternalEvaluatio
 from azure.ai.evaluation._common.constants import Tasks, _InternalAnnotationTasks
 
 # Mapping of risk categories to their corresponding evaluation metrics.
-# Note: HateUnfairness maps to HATE_FAIRNESS because that is the metric name the legacy
-# annotation endpoint recognizes. The bidirectional mapping between hate_fairness and
-# hate_unfairness is handled at the routing layer in evaluate_with_rai_service_sync(),
-# which normalizes the metric name based on the endpoint being used (legacy vs sync).
+# Uses the canonical sync endpoint metric names (e.g., hate_unfairness, not hate_fairness).
+# The routing layer in evaluate_with_rai_service_sync() normalizes these to legacy names
+# (e.g., hate_fairness) when use_legacy_endpoint=True via _SYNC_TO_LEGACY_METRIC_NAMES.
 RISK_CATEGORY_METRIC_MAP = {
     RiskCategory.Violence: EvaluationMetrics.VIOLENCE,
-    RiskCategory.HateUnfairness: EvaluationMetrics.HATE_FAIRNESS,
+    RiskCategory.HateUnfairness: EvaluationMetrics.HATE_UNFAIRNESS,
     RiskCategory.Sexual: EvaluationMetrics.SEXUAL,
     RiskCategory.SelfHarm: EvaluationMetrics.SELF_HARM,
     RiskCategory.ProtectedMaterial: EvaluationMetrics.PROTECTED_MATERIAL,
@@ -49,7 +48,7 @@ def get_metric_from_risk_category(risk_category: Union[RiskCategory]) -> str:
     :return: The corresponding evaluation metric
     :rtype: str
     """
-    return RISK_CATEGORY_METRIC_MAP.get(risk_category, EvaluationMetrics.HATE_FAIRNESS)
+    return RISK_CATEGORY_METRIC_MAP.get(risk_category, EvaluationMetrics.HATE_UNFAIRNESS)
 
 
 def get_annotation_task_from_risk_category(risk_category: Union[RiskCategory]) -> str:

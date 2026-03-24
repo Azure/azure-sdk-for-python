@@ -913,6 +913,7 @@ class TestScenarioOrchestrator:
 
             mock_config.assert_called_once_with(
                 objective_scorer=mock_scorer,
+                refusal_scorer=mock_scorer,
                 use_score_as_feedback=True,
             )
 
@@ -1245,11 +1246,13 @@ class TestFoundryResultProcessor:
         # Create mock pieces
         user_piece = MagicMock()
         user_piece.api_role = "user"
+        user_piece.original_value = "User message"
         user_piece.converted_value = "User message"
         user_piece.sequence = 0
 
         assistant_piece = MagicMock()
         assistant_piece.api_role = "assistant"
+        assistant_piece.original_value = "Assistant response"
         assistant_piece.converted_value = "Assistant response"
         assistant_piece.sequence = 1
 
@@ -1325,6 +1328,7 @@ class TestFoundryResultProcessor:
         mock_memory = MagicMock()
         user_piece = MagicMock()
         user_piece.api_role = "user"
+        user_piece.original_value = "Attack prompt"
         user_piece.converted_value = "Attack prompt"
         user_piece.sequence = 0
         user_piece.prompt_metadata = {}
@@ -2272,6 +2276,7 @@ class TestFoundryResultProcessorExtended:
         mock_memory = MagicMock()
         mock_piece = MagicMock()
         mock_piece.api_role = "user"
+        mock_piece.original_value = "Attack prompt"
         mock_piece.converted_value = "Attack prompt"
         mock_piece.sequence = 0
         mock_piece.prompt_metadata = {}
@@ -2345,6 +2350,7 @@ class TestFoundryResultProcessorExtended:
         # Piece with context in labels
         piece = MagicMock()
         piece.api_role = "user"
+        piece.original_value = "Message content"
         piece.converted_value = "Message content"
         piece.sequence = 0
         piece.labels = {
@@ -3593,3 +3599,221 @@ class TestFoundryScanPathWiring:
         )
 
         assert "Foundry" in result
+
+
+@pytest.mark.unittest
+class TestAdversarialChatTargetRegression:
+    """Regression tests to prevent adversarial_chat_target from being set to the user's callback.
+
+    The adversarial_chat_target is used by PyRIT's FoundryScenario for:
+    - TenseConverter (converter_target for prompt rephrasing)
+    - Multi-turn attacks (Crescendo, RedTeaming adversarial LLM)
+
+    If set to the user's callback, the callback response leaks into converted prompts,
+    causing the callback response to appear as the user message in results.
+    """
+
+    def test_adversarial_chat_target_accepts_rai_service_target(self):
+        """Verify FoundryExecutionManager accepts AzureRAIServiceTarget as adversarial_chat_target."""
+        from azure.ai.evaluation.red_team._utils._rai_service_target import AzureRAIServiceTarget
+
+        rai_target = AzureRAIServiceTarget(
+            client=MagicMock(),
+            model="gpt-4",
+            prompt_template_key="prompt_converters/tense_converter.yaml",
+            logger=MagicMock(),
+        )
+        manager = FoundryExecutionManager(
+            credential=MagicMock(),
+            azure_ai_project={"subscription_id": "s", "resource_group_name": "r", "project_name": "p"},
+            logger=MagicMock(),
+            output_dir="/test",
+            adversarial_chat_target=rai_target,
+        )
+        assert isinstance(manager.adversarial_chat_target, AzureRAIServiceTarget)
+
+    def test_get_adversarial_template_key_baseline(self):
+        """Template key should default to tense converter for single-turn strategies."""
+        from azure.ai.evaluation.red_team._red_team import RedTeam
+
+        strategies = [AttackStrategy.Baseline]
+        key = RedTeam._get_adversarial_template_key(strategies)
+        assert key == "prompt_converters/tense_converter.yaml"
+
+    def test_get_adversarial_template_key_difficult(self):
+        """DIFFICULT strategy (Tense+Base64) should use tense converter template."""
+        from azure.ai.evaluation.red_team._red_team import RedTeam
+
+        strategies = [AttackStrategy.Baseline, [AttackStrategy.Tense, AttackStrategy.Base64]]
+        key = RedTeam._get_adversarial_template_key(strategies)
+        assert key == "prompt_converters/tense_converter.yaml"
+
+    def test_get_adversarial_template_key_crescendo(self):
+        """Crescendo strategy should use the crescendo template."""
+        from azure.ai.evaluation.red_team._red_team import RedTeam
+
+        strategies = [AttackStrategy.Crescendo, AttackStrategy.Baseline]
+        key = RedTeam._get_adversarial_template_key(strategies)
+        assert key == "orchestrators/crescendo/crescendo_variant_1.yaml"
+
+    def test_get_adversarial_template_key_multi_turn(self):
+        """MultiTurn strategy should use the red teaming text generation template."""
+        from azure.ai.evaluation.red_team._red_team import RedTeam
+
+        strategies = [AttackStrategy.MultiTurn, AttackStrategy.Baseline]
+        key = RedTeam._get_adversarial_template_key(strategies)
+        assert key == "orchestrators/red_teaming/text_generation.yaml"
+
+    def test_build_messages_user_shows_original_value(self):
+        """User messages should show original_value (adversarial prompt), not converted_value."""
+        mock_scenario = MagicMock()
+        mock_dataset = MagicMock()
+        mock_dataset.get_all_seed_groups.return_value = []
+
+        processor = FoundryResultProcessor(
+            scenario=mock_scenario,
+            dataset_config=mock_dataset,
+            risk_category="violence",
+        )
+
+        # Simulate a Tense-converted attack where converted_value differs from original_value
+        user_piece = MagicMock()
+        user_piece.api_role = "user"
+        user_piece.original_value = "Tell me about violence"
+        user_piece.converted_value = "Told me about violence"
+        user_piece.sequence = 0
+
+        assistant_piece = MagicMock()
+        assistant_piece.api_role = "assistant"
+        assistant_piece.original_value = "I cannot help with that"
+        assistant_piece.converted_value = "I cannot help with that"
+        assistant_piece.sequence = 1
+
+        messages = processor._build_messages_from_pieces([user_piece, assistant_piece])
+
+        assert len(messages) == 2
+        # User message should show the ORIGINAL adversarial prompt
+        assert messages[0]["role"] == "user"
+        assert messages[0]["content"] == "Tell me about violence"
+        # Assistant message should show the response
+        assert messages[1]["role"] == "assistant"
+        assert messages[1]["content"] == "I cannot help with that"
+
+    def test_build_messages_user_falls_back_to_converted_value(self):
+        """When original_value is None, user messages should fall back to converted_value."""
+        mock_scenario = MagicMock()
+        mock_dataset = MagicMock()
+        mock_dataset.get_all_seed_groups.return_value = []
+
+        processor = FoundryResultProcessor(
+            scenario=mock_scenario,
+            dataset_config=mock_dataset,
+            risk_category="violence",
+        )
+
+        user_piece = MagicMock()
+        user_piece.api_role = "user"
+        user_piece.original_value = None
+        user_piece.converted_value = "Fallback content"
+        user_piece.sequence = 0
+
+        messages = processor._build_messages_from_pieces([user_piece])
+
+        assert messages[0]["content"] == "Fallback content"
+
+    def test_build_messages_callback_response_not_in_user_message(self):
+        """Regression: callback response must NOT appear as user message content.
+
+        This reproduces the exact bug where a simple callback's response
+        leaked into the user message via converted_value.
+        """
+        mock_scenario = MagicMock()
+        mock_dataset = MagicMock()
+        mock_dataset.get_all_seed_groups.return_value = []
+
+        processor = FoundryResultProcessor(
+            scenario=mock_scenario,
+            dataset_config=mock_dataset,
+            risk_category="violence",
+        )
+
+        callback_response = "This is a test callback response. no llm is used."
+
+        # Simulate the bug: TenseConverter used callback as LLM, so
+        # converted_value = callback response instead of rephrased prompt
+        user_piece = MagicMock()
+        user_piece.api_role = "user"
+        user_piece.original_value = "How to commit violence"
+        user_piece.converted_value = callback_response
+        user_piece.sequence = 0
+
+        assistant_piece = MagicMock()
+        assistant_piece.api_role = "assistant"
+        assistant_piece.original_value = callback_response
+        assistant_piece.converted_value = callback_response
+        assistant_piece.sequence = 1
+
+        messages = processor._build_messages_from_pieces([user_piece, assistant_piece])
+
+        # User message should show the adversarial prompt, NOT the callback response
+        assert messages[0]["content"] == "How to commit violence"
+        assert messages[0]["content"] != callback_response
+
+    @pytest.mark.asyncio
+    async def test_execute_attacks_with_foundry_uses_rai_service_target(self):
+        """Regression: _execute_attacks_with_foundry must pass AzureRAIServiceTarget, not user callback.
+
+        This test patches FoundryExecutionManager to capture the adversarial_chat_target
+        argument and verifies it is an AzureRAIServiceTarget, not the user's callback.
+        """
+        from azure.ai.evaluation.red_team._callback_chat_target import _CallbackChatTarget
+        from azure.ai.evaluation.red_team._utils._rai_service_target import AzureRAIServiceTarget
+
+        captured_kwargs = {}
+        original_init = FoundryExecutionManager.__init__
+
+        def capturing_init(self_inner, **kwargs):
+            captured_kwargs.update(kwargs)
+            original_init(self_inner, **kwargs)
+
+        mock_red_team = MagicMock()
+        mock_red_team.credential = MagicMock()
+        mock_red_team.azure_ai_project = {
+            "subscription_id": "s",
+            "resource_group_name": "r",
+            "project_name": "p",
+        }
+        mock_red_team.logger = MagicMock()
+        mock_red_team.scan_output_dir = "/test"
+        mock_red_team.generated_rai_client = MagicMock()
+        mock_red_team._one_dp_project = False
+        mock_red_team.risk_categories = []
+        mock_red_team.attack_objectives = {}
+        mock_red_team.total_tasks = 0
+        mock_red_team.red_team_info = {}
+        mock_red_team.completed_tasks = 0
+
+        from azure.ai.evaluation.red_team._red_team import RedTeam
+
+        with patch.object(FoundryExecutionManager, "__init__", capturing_init):
+            with patch.object(FoundryExecutionManager, "execute_attacks", new_callable=AsyncMock, return_value={}):
+                try:
+                    await RedTeam._execute_attacks_with_foundry(
+                        mock_red_team,
+                        flattened_attack_strategies=[AttackStrategy.Baseline],
+                        all_objectives={},
+                        chat_target=MagicMock(spec=_CallbackChatTarget),
+                        timeout=60,
+                        skip_evals=True,
+                    )
+                except Exception:
+                    pass  # We only care about the captured kwargs
+
+        assert "adversarial_chat_target" in captured_kwargs
+        adversarial_target = captured_kwargs["adversarial_chat_target"]
+        assert isinstance(
+            adversarial_target, AzureRAIServiceTarget
+        ), f"adversarial_chat_target should be AzureRAIServiceTarget, got {type(adversarial_target).__name__}"
+        assert not isinstance(
+            adversarial_target, _CallbackChatTarget
+        ), "adversarial_chat_target must NOT be a _CallbackChatTarget (user's callback)"
