@@ -33,6 +33,7 @@ from azure.ai.evaluation.red_team._foundry._foundry_result_processor import (
 )
 from azure.ai.evaluation.red_team._foundry._execution_manager import (
     FoundryExecutionManager,
+    _ERROR_TRACKING_KEY,
 )
 
 
@@ -3389,10 +3390,13 @@ class TestReviewFixRegressions:
                 objectives_by_risk=objectives_by_risk,
             )
 
-        # hate_unfairness should have a failed entry
+        # Violence should succeed under strategy key
         assert "Foundry" in result
-        assert "hate_unfairness" in result["Foundry"]
-        assert result["Foundry"]["hate_unfairness"]["status"] == "failed"
+        assert "violence" in result["Foundry"]
+        # hate_unfairness should have a failed entry under error tracking
+        assert _ERROR_TRACKING_KEY in result
+        assert "hate_unfairness" in result[_ERROR_TRACKING_KEY]
+        assert result[_ERROR_TRACKING_KEY]["hate_unfairness"]["status"] == "failed"
 
     def test_empty_objective_content_filtered(self, mock_credential, mock_azure_ai_project, mock_logger):
         """M6: _build_dataset_config skips objectives with empty content."""
@@ -3581,28 +3585,44 @@ class TestFoundryScanPathWiring:
             output_dir="/test",
         )
 
-        # Mock out internal methods that would call external services
-        manager._get_rai_client = MagicMock(return_value=MagicMock())
-        manager._process_category = AsyncMock(
-            return_value={
-                "status": "completed",
-                "results": [],
-                "asr": 0.0,
-            }
-        )
+        mock_orchestrator = MagicMock()
+        mock_orchestrator.execute = AsyncMock(return_value=None)
+        mock_orchestrator.get_attack_results = MagicMock(return_value=[])
+
+        mock_dataset = MagicMock()
+        mock_dataset.get_all_seed_groups = MagicMock(return_value=[MagicMock()])
 
         objectives_by_risk = {
-            RiskCategory.Violence: [{"messages": [{"content": "test objective"}]}],
+            "violence": [{"messages": [{"content": "test objective"}]}],
         }
 
-        result = await manager.execute_attacks(
-            objective_target=MagicMock(),
-            risk_categories=[RiskCategory.Violence],
-            attack_strategies=[AttackStrategy.Baseline],
-            objectives_by_risk=objectives_by_risk,
-        )
+        with patch.object(manager, "_build_dataset_config", return_value=mock_dataset), patch(
+            "azure.ai.evaluation.red_team._foundry._execution_manager.ScenarioOrchestrator",
+            return_value=mock_orchestrator,
+        ), patch(
+            "azure.ai.evaluation.red_team._foundry._execution_manager.RAIServiceScorer",
+        ), patch.object(
+            FoundryResultProcessor, "__init__", return_value=None
+        ), patch.object(
+            FoundryResultProcessor, "to_jsonl", return_value=None
+        ), patch.object(
+            FoundryResultProcessor,
+            "get_summary_stats",
+            return_value={"total": 1, "asr": 0.0},
+        ), patch.object(
+            manager,
+            "_group_results_by_strategy",
+            return_value={"Foundry": {"data_file": "", "asr": 0.0}},
+        ):
+            result = await manager.execute_attacks(
+                objective_target=MagicMock(),
+                risk_categories=[RiskCategory.Violence],
+                attack_strategies=[AttackStrategy.Baseline],
+                objectives_by_risk=objectives_by_risk,
+            )
 
         assert "Foundry" in result
+        assert "violence" in result["Foundry"]
 
 
 @pytest.mark.unittest
@@ -3872,11 +3892,11 @@ class TestExecuteAttacksEarlyAbort:
                 },
             )
 
-        # All three categories should be marked failed
-        foundry_info = result.get("Foundry", {})
+        # All three categories should be marked failed under error tracking
+        error_info = result.get(_ERROR_TRACKING_KEY, {})
         for category in ["violence", "sexual", "self_harm"]:
-            assert category in foundry_info, f"{category} not found in result"
-            assert foundry_info[category]["status"] == "failed"
+            assert category in error_info, f"{category} not found in result['{_ERROR_TRACKING_KEY}']"
+            assert error_info[category]["status"] == "failed"
 
         # Orchestrator should have been called only twice (abort after 2nd config error),
         # not three times
