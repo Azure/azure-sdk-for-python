@@ -19,7 +19,6 @@ from logging import Formatter
 
 from opentelemetry.sdk.environment_variables import (
     OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
-    OTEL_TRACES_SAMPLER_ARG,
     OTEL_TRACES_SAMPLER,
 )
 from opentelemetry.instrumentation.environment_variables import (
@@ -48,6 +47,7 @@ from azure.monitor.opentelemetry._constants import (
     PARENT_BASED_ALWAYS_ON_SAMPLER,
     PARENT_BASED_TRACE_ID_RATIO_SAMPLER,
     METRIC_READERS_ARG,
+    SAMPLER_TYPE,
 )
 
 from azure.monitor.opentelemetry._version import VERSION
@@ -98,6 +98,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["resource"].attributes, TEST_MERGED_RESOURCE.attributes)
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "azure_app_service,azure_vm")
         resource_create_mock.assert_called_once_with(TEST_CUSTOM_RESOURCE.attributes)
+        self.assertEqual(configurations["sampler_type"], "microsoft.fixed_percentage")
         self.assertEqual(configurations["sampling_ratio"], 0.5)
         self.assertEqual(configurations["credential"], "test_credential")
         self.assertEqual(
@@ -150,7 +151,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "azure_app_service,azure_vm")
         resource_create_mock.assert_called_once_with()
-        self.assertEqual(configurations["traces_per_second"], 5.0)
+        self.assertEqual(configurations["sampler_type"], "microsoft.rate_limited")
         self.assertTrue("credential" not in configurations)
         self.assertTrue("storage_directory" not in configurations)
         self.assertEqual(configurations["enable_live_metrics"], True)
@@ -166,7 +167,6 @@ class TestConfigurations(TestCase):
         "os.environ",
         {
             OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask,requests,fastapi,azure_sdk",
-            OTEL_TRACES_SAMPLER_ARG: "0.5",
             OTEL_TRACES_EXPORTER: "None",
             OTEL_LOGS_EXPORTER: "none",
             OTEL_METRICS_EXPORTER: "NONE",
@@ -198,13 +198,12 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
         resource_create_mock.assert_called_once_with()
-        self.assertEqual(configurations["traces_per_second"], 5.0)
+        self.assertEqual(configurations["sampler_type"], "microsoft.rate_limited")
 
     @patch.dict(
         "os.environ",
         {
             OTEL_TRACES_SAMPLER: FIXED_PERCENTAGE_SAMPLER,
-            OTEL_TRACES_SAMPLER_ARG: "Half",
             OTEL_TRACES_EXPORTER: "False",
             OTEL_LOGS_EXPORTER: "no",
             OTEL_METRICS_EXPORTER: "True",
@@ -218,13 +217,12 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["disable_logging"], False)
         self.assertEqual(configurations["disable_metrics"], False)
         self.assertEqual(configurations["disable_tracing"], False)
-        self.assertEqual(configurations["sampling_ratio"], 1.0)
+        self.assertEqual(configurations["sampler_type"], "microsoft.fixed_percentage")
 
     @patch.dict(
         "os.environ",
         {
             OTEL_TRACES_SAMPLER: "microsoft.fixed.percentage",
-            OTEL_TRACES_SAMPLER_ARG: "10.45",
             OTEL_TRACES_EXPORTER: "False",
             OTEL_LOGS_EXPORTER: "no",
             OTEL_METRICS_EXPORTER: "True",
@@ -238,7 +236,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["disable_logging"], False)
         self.assertEqual(configurations["disable_metrics"], False)
         self.assertEqual(configurations["disable_tracing"], False)
-        self.assertEqual(configurations["sampling_ratio"], 1.0)
+        self.assertEqual(configurations[SAMPLER_TYPE], "microsoft.fixed.percentage")
 
     @patch.dict(
         "os.environ",
@@ -427,8 +425,7 @@ class TestConfigurations(TestCase):
         "os.environ",
         {
             OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask,requests,fastapi,azure_sdk",
-            OTEL_TRACES_SAMPLER: RATE_LIMITED_SAMPLER,
-            OTEL_TRACES_SAMPLER_ARG: "0.5",
+            OTEL_TRACES_SAMPLER: "always_offk",  # cSpell: ignore offk
             OTEL_TRACES_EXPORTER: "None",
             OTEL_LOGS_EXPORTER: "none",
             OTEL_METRICS_EXPORTER: "NONE",
@@ -437,7 +434,7 @@ class TestConfigurations(TestCase):
         clear=True,
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_rate_limited(self, resource_create_mock):
+    def test_get_configurations_env_vars_always_off_incorrect_val(self, resource_create_mock):
         configurations = _get_configurations()
 
         self.assertTrue("connection_string" not in configurations)
@@ -460,40 +457,12 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
         resource_create_mock.assert_called_once_with()
-        self.assertEqual(configurations["traces_per_second"], 0.5)
-
-    @patch.dict("os.environ", {}, clear=True)
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_rate_limited_sampler_param(self, resource_create_mock):
-        configurations = _get_configurations(traces_per_second=2.5)
-
-        self.assertTrue("connection_string" not in configurations)
-        self.assertEqual(configurations["disable_logging"], False)
-        self.assertEqual(configurations["disable_metrics"], False)
-        self.assertEqual(configurations["disable_tracing"], False)
-        self.assertEqual(
-            configurations["instrumentation_options"],
-            {
-                "azure_sdk": {"enabled": True},
-                "django": {"enabled": True},
-                "fastapi": {"enabled": True},
-                "flask": {"enabled": True},
-                "psycopg2": {"enabled": True},
-                "requests": {"enabled": True},
-                "urllib": {"enabled": True},
-                "urllib3": {"enabled": True},
-            },
-        )
-        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "azure_app_service,azure_vm")
-        resource_create_mock.assert_called_once_with()
-        self.assertEqual(configurations["traces_per_second"], 2.5)
+        self.assertEqual(configurations["sampler_type"], "microsoft.rate_limited")
 
     @patch.dict(
         "os.environ",
         {
             OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask,requests,fastapi,azure_sdk",
-            OTEL_TRACES_SAMPLER_ARG: "34",
             OTEL_TRACES_EXPORTER: "None",
             OTEL_LOGS_EXPORTER: "none",
             OTEL_METRICS_EXPORTER: "NONE",
@@ -525,52 +494,13 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
         resource_create_mock.assert_called_once_with()
-        self.assertEqual(configurations["traces_per_second"], 5.0)
-
-    @patch.dict(
-        "os.environ",
-        {
-            OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask,requests,fastapi,azure_sdk",
-            OTEL_TRACES_SAMPLER_ARG: "2 traces per second",
-            OTEL_TRACES_EXPORTER: "None",
-            OTEL_LOGS_EXPORTER: "none",
-            OTEL_METRICS_EXPORTER: "NONE",
-            OTEL_EXPERIMENTAL_RESOURCE_DETECTORS: "custom_resource_detector",
-        },
-        clear=True,
-    )
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_check_default(self, resource_create_mock):
-        configurations = _get_configurations()
-
-        self.assertTrue("connection_string" not in configurations)
-        self.assertEqual(configurations["disable_logging"], True)
-        self.assertEqual(configurations["disable_metrics"], True)
-        self.assertEqual(configurations["disable_tracing"], True)
-        self.assertEqual(
-            configurations["instrumentation_options"],
-            {
-                "azure_sdk": {"enabled": False},
-                "django": {"enabled": True},
-                "fastapi": {"enabled": False},
-                "flask": {"enabled": False},
-                "psycopg2": {"enabled": True},
-                "requests": {"enabled": False},
-                "urllib": {"enabled": True},
-                "urllib3": {"enabled": True},
-            },
-        )
-        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
-        resource_create_mock.assert_called_once_with()
-        self.assertEqual(configurations["traces_per_second"], 5.0)
+        self.assertEqual(configurations["sampler_type"], "microsoft.rate_limited")
 
     @patch.dict(
         "os.environ",
         {
             OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask,requests,fastapi,azure_sdk",
             OTEL_TRACES_SAMPLER: FIXED_PERCENTAGE_SAMPLER,
-            OTEL_TRACES_SAMPLER_ARG: "0.9",
             OTEL_TRACES_EXPORTER: "None",
             OTEL_LOGS_EXPORTER: "none",
             OTEL_METRICS_EXPORTER: "NONE",
@@ -602,7 +532,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
         resource_create_mock.assert_called_once_with()
-        self.assertEqual(configurations["sampling_ratio"], 0.9)
+        self.assertEqual(configurations["sampler_type"], "microsoft.fixed_percentage")
 
     @patch.dict(
         "os.environ",
@@ -640,7 +570,6 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
         resource_create_mock.assert_called_once_with()
-        self.assertEqual(configurations["sampling_arg"], 1.0)
         self.assertEqual(configurations["sampler_type"], "always_on")
 
     @patch.dict(
@@ -657,7 +586,6 @@ class TestConfigurations(TestCase):
 
         self.assertTrue("connection_string" not in configurations)
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(configurations["sampling_arg"], 0.0)
         self.assertEqual(configurations["sampler_type"], "always_off")
 
     @patch.dict(
@@ -665,25 +593,6 @@ class TestConfigurations(TestCase):
         {
             OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask,requests,fastapi,azure_sdk",
             OTEL_TRACES_SAMPLER: TRACE_ID_RATIO_SAMPLER,
-            OTEL_TRACES_SAMPLER_ARG: "3.5",
-        },
-        clear=True,
-    )
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_trace_id_ratio_incorrect_value(self, resource_create_mock):
-        configurations = _get_configurations()
-
-        self.assertTrue("connection_string" not in configurations)
-        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(configurations["sampling_arg"], 1.0)
-        self.assertEqual(configurations["sampler_type"], "trace_id_ratio")
-
-    @patch.dict(
-        "os.environ",
-        {
-            OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask,requests,fastapi,azure_sdk",
-            OTEL_TRACES_SAMPLER: TRACE_ID_RATIO_SAMPLER,
-            OTEL_TRACES_SAMPLER_ARG: ".75",
         },
         clear=True,
     )
@@ -693,25 +602,6 @@ class TestConfigurations(TestCase):
 
         self.assertTrue("connection_string" not in configurations)
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(configurations["sampling_arg"], 0.75)
-        self.assertEqual(configurations["sampler_type"], "trace_id_ratio")
-
-    @patch.dict(
-        "os.environ",
-        {
-            OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask,requests,fastapi,azure_sdk",
-            OTEL_TRACES_SAMPLER: TRACE_ID_RATIO_SAMPLER,
-            OTEL_TRACES_SAMPLER_ARG: "sampler",
-        },
-        clear=True,
-    )
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_trace_id_ratio_non_numeric_value(self, resource_create_mock):
-        configurations = _get_configurations()
-
-        self.assertTrue("connection_string" not in configurations)
-        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(configurations["sampling_arg"], 1.0)
         self.assertEqual(configurations["sampler_type"], "trace_id_ratio")
 
     @patch.dict(
@@ -728,7 +618,6 @@ class TestConfigurations(TestCase):
 
         self.assertTrue("connection_string" not in configurations)
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(configurations["sampling_arg"], 1.0)
         self.assertEqual(configurations["sampler_type"], "parentbased_always_on")
 
     @patch.dict(
@@ -745,7 +634,6 @@ class TestConfigurations(TestCase):
 
         self.assertTrue("connection_string" not in configurations)
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(configurations["sampling_arg"], 0.0)
         self.assertEqual(configurations["sampler_type"], "parentbased_always_off")
 
     @patch.dict(
@@ -753,7 +641,6 @@ class TestConfigurations(TestCase):
         {
             OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask,requests,fastapi,azure_sdk",
             OTEL_TRACES_SAMPLER: PARENT_BASED_TRACE_ID_RATIO_SAMPLER,
-            OTEL_TRACES_SAMPLER_ARG: "0.89",
         },
         clear=True,
     )
@@ -763,45 +650,6 @@ class TestConfigurations(TestCase):
 
         self.assertTrue("connection_string" not in configurations)
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(configurations["sampling_arg"], 0.89)
-        self.assertEqual(configurations["sampler_type"], "parentbased_trace_id_ratio")
-
-    @patch.dict(
-        "os.environ",
-        {
-            OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask,requests,fastapi,azure_sdk",
-            OTEL_TRACES_SAMPLER: PARENT_BASED_TRACE_ID_RATIO_SAMPLER,
-            OTEL_TRACES_SAMPLER_ARG: "9.45",
-        },
-        clear=True,
-    )
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_parentbased_trace_id_ratio_with_out_of_bounds_value(
-        self, resource_create_mock
-    ):
-        configurations = _get_configurations()
-
-        self.assertTrue("connection_string" not in configurations)
-        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(configurations["sampling_arg"], 1.0)
-        self.assertEqual(configurations["sampler_type"], "parentbased_trace_id_ratio")
-
-    @patch.dict(
-        "os.environ",
-        {
-            OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask,requests,fastapi,azure_sdk",
-            OTEL_TRACES_SAMPLER: PARENT_BASED_TRACE_ID_RATIO_SAMPLER,
-            OTEL_TRACES_SAMPLER_ARG: "non-numeric-value",
-        },
-        clear=True,
-    )
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_parentbased_trace_id_ratio_non_numeric_value(self, resource_create_mock):
-        configurations = _get_configurations()
-
-        self.assertTrue("connection_string" not in configurations)
-        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(configurations["sampling_arg"], 1.0)
         self.assertEqual(configurations["sampler_type"], "parentbased_trace_id_ratio")
 
     @patch.dict(
@@ -812,15 +660,6 @@ class TestConfigurations(TestCase):
         },
         clear=True,
     )
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_parentbased_trace_id_ratio_no_sampler_argument(self, resource_create_mock):
-        configurations = _get_configurations()
-
-        self.assertTrue("connection_string" not in configurations)
-        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(configurations["sampling_arg"], 1.0)
-        self.assertEqual(configurations["sampler_type"], "parentbased_trace_id_ratio")
-
     @patch.dict(
         "os.environ",
         {
@@ -834,26 +673,24 @@ class TestConfigurations(TestCase):
 
         self.assertTrue("connection_string" not in configurations)
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(configurations["traces_per_second"], 5.0)
+        self.assertEqual(configurations["sampler_type"], "microsoft.rate_limited")
 
     # Tests for the _get_sampler_from_name function
     def test_get_sampler_from_name_always_on_off(self):
-        self.assertIs(_get_sampler_from_name(ALWAYS_ON_SAMPLER, None), ALWAYS_ON)
-        self.assertIs(_get_sampler_from_name(ALWAYS_OFF_SAMPLER, None), ALWAYS_OFF)
+        self.assertIs(_get_sampler_from_name(ALWAYS_ON_SAMPLER), ALWAYS_ON)
+        self.assertIs(_get_sampler_from_name(ALWAYS_OFF_SAMPLER), ALWAYS_OFF)
 
     def test_get_sampler_from_name_trace_id_ratio(self):
-        sampler = _get_sampler_from_name(TRACE_ID_RATIO_SAMPLER, "0.3")
+        sampler = _get_sampler_from_name(TRACE_ID_RATIO_SAMPLER)
         self.assertIsInstance(sampler, TraceIdRatioBased)
-        self.assertEqual(sampler._rate, 0.3)
 
     def test_get_sampler_from_name_trace_id_ratio_defaults_to_one(self):
-        sampler = _get_sampler_from_name(TRACE_ID_RATIO_SAMPLER, None)
+        sampler = _get_sampler_from_name(TRACE_ID_RATIO_SAMPLER)
         self.assertIsInstance(sampler, TraceIdRatioBased)
-        self.assertEqual(sampler._rate, 1.0)
 
     def test_get_sampler_from_name_parent_based_fixed(self):
-        sampler_on = _get_sampler_from_name(PARENT_BASED_ALWAYS_ON_SAMPLER, None)
-        sampler_off = _get_sampler_from_name(PARENT_BASED_ALWAYS_OFF_SAMPLER, None)
+        sampler_on = _get_sampler_from_name(PARENT_BASED_ALWAYS_ON_SAMPLER)
+        sampler_off = _get_sampler_from_name(PARENT_BASED_ALWAYS_OFF_SAMPLER)
 
         self.assertIsInstance(sampler_on, ParentBased)
         self.assertIs(sampler_on._root, ALWAYS_ON)
@@ -862,17 +699,15 @@ class TestConfigurations(TestCase):
         self.assertIs(sampler_off._root, ALWAYS_OFF)
 
     def test_get_sampler_from_name_parent_based_trace_id_ratio(self):
-        sampler = _get_sampler_from_name(PARENT_BASED_TRACE_ID_RATIO_SAMPLER, "0.25")
+        sampler = _get_sampler_from_name(PARENT_BASED_TRACE_ID_RATIO_SAMPLER)
         self.assertIsInstance(sampler, ParentBased)
         self.assertIsInstance(sampler._root, TraceIdRatioBased)
-        self.assertEqual(sampler._root._rate, 0.25)
 
     def test_get_sampler_from_name_parent_based_trace_id_ratio_defaults(self):
-        sampler = _get_sampler_from_name(PARENT_BASED_TRACE_ID_RATIO_SAMPLER, None)
+        sampler = _get_sampler_from_name(PARENT_BASED_TRACE_ID_RATIO_SAMPLER)
         self.assertIsInstance(sampler._root, TraceIdRatioBased)
-        self.assertEqual(sampler._root._rate, 1.0)
 
     def test_get_sampler_from_name_invalid_type_defaults_parentbased_always_on(self):
-        sampler = _get_sampler_from_name("not-a-sampler", None)
+        sampler = _get_sampler_from_name("not-a-sampler")
         self.assertIsInstance(sampler, ParentBased)
         self.assertIs(sampler._root, ALWAYS_ON)
