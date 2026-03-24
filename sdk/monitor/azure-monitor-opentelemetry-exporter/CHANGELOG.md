@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Kubernetes pod name take precedence when populating `cloud_RoleInstance`.
 
 ### Other Changes
 
