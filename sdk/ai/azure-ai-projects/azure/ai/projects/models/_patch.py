@@ -36,7 +36,15 @@ _BETA_OPERATION_FEATURE_HEADERS: dict = {
 
 
 def _has_header_case_insensitive(headers: Any, header_name: str) -> bool:
-    """Return True if headers already contains the provided header name."""
+    """Return True if headers already contains the provided header name.
+
+    :param headers: The headers mapping to search.
+    :type headers: Any
+    :param header_name: The header name to look for (case-insensitive).
+    :type header_name: str
+    :return: True if the header is present, False otherwise.
+    :rtype: bool
+    """
     try:
         header_name_lower = header_name.lower()
         return any(str(key).lower() == header_name_lower for key in headers)
