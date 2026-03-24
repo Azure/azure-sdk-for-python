@@ -6,21 +6,40 @@ from __future__ import annotations
 
 import itertools
 import json
+from contextvars import ContextVar
 from typing import Any, Mapping
 
 from ..models._generated import ResponseStreamEvent
 
 
-_sequence_counter = itertools.count()
+_stream_counter_var: ContextVar[itertools.count] = ContextVar("_stream_counter_var")
+
+
+def new_stream_counter() -> None:
+    """Initialize a fresh per-stream SSE sequence number counter for the current context.
+
+    Call this once at the start of each streaming response so that concurrent
+    streams are numbered independently, each starting from 0.
+
+    :rtype: None
+    """
+    _stream_counter_var.set(itertools.count())
 
 
 def _next_sequence_number() -> int:
-    """Return the next global SSE sequence number.
+    """Return the next SSE sequence number for the current stream context.
 
-    :returns: A monotonically increasing integer.
+    Initializes a new per-stream counter if none has been set for the current
+    context (e.g. direct calls from tests or outside a streaming request).
+
+    :returns: A monotonically increasing integer, starting from 0 for each stream.
     :rtype: int
     """
-    return next(_sequence_counter)
+    counter = _stream_counter_var.get(None)
+    if counter is None:
+        counter = itertools.count()
+        _stream_counter_var.set(counter)
+    return next(counter)
 
 
 def _coerce_payload(event: Any) -> tuple[str, dict[str, Any]]:

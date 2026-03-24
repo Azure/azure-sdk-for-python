@@ -440,57 +440,6 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             name=name,
         )
 
-    def build(self) -> list[dict[str, Any]]:
-        """Build the finalized event list with lifecycle normalization and sequence numbers.
-
-        Applies common defaults, assigns sequence numbers, and validates event ordering.
-
-        :returns: A list of deep-copied, fully normalized event dicts.
-        :rtype: list[dict[str, Any]]
-        """
-        events = [deepcopy(event) for event in self._events]
-
-        if not events:
-            events = normalize_lifecycle_events(
-                response_id=self._response_id, events=[], default_model=self._model
-            )
-            _internals.apply_common_defaults(
-                events,
-                response_id=self._response_id,
-                agent_reference=self._agent_reference,
-                model=self._model
-            )
-            _internals.assign_sequence_numbers(events)
-            validate_response_event_stream(events)
-            return events
-
-        lifecycle_events = [
-            event for event in events if event["type"].startswith("response.") and "output_item" not in event["type"]
-        ]
-        if lifecycle_events:
-            normalized_lifecycle = normalize_lifecycle_events(
-                response_id=self._response_id,
-                events=lifecycle_events,
-                default_model=self._model,
-            )
-            lifecycle_iter = iter(normalized_lifecycle)
-            stitched_events: list[dict[str, Any]] = []
-            for event in events:
-                if event["type"].startswith("response.") and "output_item" not in event["type"]:
-                    stitched_events.append(next(lifecycle_iter))
-                else:
-                    stitched_events.append(event)
-            remaining_lifecycle = list(lifecycle_iter)
-            stitched_events.extend(remaining_lifecycle)
-            events = stitched_events
-
-        _internals.apply_common_defaults(
-            events, response_id=self._response_id, agent_reference=self._agent_reference, model=self._model
-        )
-        _internals.assign_sequence_numbers(events)
-        validate_response_event_stream(events)
-        return events
-
     def events(self) -> list[dict[str, Any]]:
         """Return a deep copy of all events emitted so far (before finalization).
 

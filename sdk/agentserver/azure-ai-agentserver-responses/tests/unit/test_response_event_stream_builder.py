@@ -80,13 +80,6 @@ def test_event_stream_builder__output_item_added_returns_event_immediately() -> 
     assert emitted["payload"]["sequence_number"] == 2
 
 
-def test_event_stream_builder__auto_appends_failed_terminal_when_missing() -> None:
-    stream = ResponseEventStream(response_id="resp_builder_failed_12345")
-    stream.emit_created(status="queued")
-    events = stream.build()
-    assert events[-1]["type"] == "response.failed"
-
-
 def test_event_stream_builder__rejects_illegal_output_item_sequence() -> None:
     stream = ResponseEventStream(response_id="resp_builder_bad_12345")
     stream.emit_created(status="queued")

@@ -40,7 +40,8 @@ def test_sse_writer__keep_alive_comment_frame_format() -> None:
 
 def test_sse_writer__injects_monotonic_sequence_numbers() -> None:
     import json as _json
-    import re
+
+    _sse.new_stream_counter()
 
     first_event = _FakeEvent(type="response.created", sequence_number=-1, text="a")
     second_event = _FakeEvent(type="response.in_progress", sequence_number=-1, text="b")
@@ -56,8 +57,5 @@ def test_sse_writer__injects_monotonic_sequence_numbers() -> None:
     seq_first = _extract_sequence_number(encoded_first)
     seq_second = _extract_sequence_number(encoded_second)
 
-    assert seq_first >= 0, f"sequence_number must be non-negative, got {seq_first}"
-    assert seq_second == seq_first + 1, (
-        f"sequence_numbers must be consecutive monotonic integers; "
-        f"got {seq_first} then {seq_second}"
-    )
+    assert seq_first == 0, f"first sequence_number must be 0 for a new stream, got {seq_first}"
+    assert seq_second == 1, f"second sequence_number must be 1 for a new stream, got {seq_second}"
