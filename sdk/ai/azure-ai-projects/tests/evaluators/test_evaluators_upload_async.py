@@ -8,11 +8,15 @@ import tempfile
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.ai.projects.aio.operations._patch_evaluators_async import BetaEvaluatorsOperations, _EVALUATORS_FOUNDRY_FEATURES_VALUE
+from azure.ai.projects.aio.operations._patch_evaluators_async import (
+    BetaEvaluatorsOperations,
+    _EVALUATORS_FOUNDRY_FEATURES_VALUE,
+)
 from azure.ai.projects.models import EvaluatorVersion
 from azure.ai.projects.models._patch import _FOUNDRY_FEATURES_HEADER_NAME
 
 _EVALUATORS_HEADERS = {_FOUNDRY_FEATURES_HEADER_NAME: _EVALUATORS_FOUNDRY_FEATURES_VALUE}
+
 
 class TestEvaluatorsUploadAsync:
     """Unit tests for async BetaEvaluatorsOperations.upload() method."""

@@ -10,8 +10,6 @@ REM
 
 REM Revert this, as we want to keep some edits to these file.
 git restore pyproject.toml
-REM Looks like this is no longer needed:
-REM git restore azure\ai\projects\_version.py
 
 REM Rename `"items_property": items`, to `"items": items` in search_memories and begin_update_memories methods. "items" is specified in TypeSpec, but Python emitter does not allow it.
 powershell -Command "(Get-Content azure\ai\projects\aio\operations\_operations.py) -replace '\"items_property\": items', '\"items\": items' | Set-Content azure\ai\projects\aio\operations\_operations.py"
