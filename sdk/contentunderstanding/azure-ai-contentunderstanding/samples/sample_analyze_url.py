@@ -70,7 +70,7 @@ def main() -> None:
     print("DOCUMENT ANALYSIS FROM URL")
     print("=" * 60)
     # You can replace this URL with your own publicly accessible document URL.
-    document_url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/document/mixed_financial_invoices.pdf"
+    document_url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/document/mixed_financial_docs.pdf"
 
     print(f"Analyzing document from URL with prebuilt-documentSearch...")
     print(f"  URL: {document_url}")
@@ -104,11 +104,14 @@ def main() -> None:
 
     # [START analyze_document_url_with_content_range]
     # Restrict to specific pages with a content range string.
+    # Use a multi-page document to demonstrate content range filtering.
+    multi_page_document_url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/document/mixed_financial_invoices.pdf"
+
     # Extract only page 1 of the document.
     print("\nAnalyzing page 1 only with content range '1'...")
     range_poller = client.begin_analyze(
         analyzer_id="prebuilt-documentSearch",
-        inputs=[AnalysisInput(url=document_url, content_range="1")],
+        inputs=[AnalysisInput(url=multi_page_document_url, content_range="1")],
     )
     range_result: AnalysisResult = range_poller.result()
 
@@ -122,7 +125,7 @@ def main() -> None:
     print("\nAnalyzing combined pages (1-3, 5, 9-) with content range '1-3,5,9-'...")
     combine_range_poller = client.begin_analyze(
         analyzer_id="prebuilt-documentSearch",
-        inputs=[AnalysisInput(url=document_url, content_range="1-3,5,9-")],
+        inputs=[AnalysisInput(url=multi_page_document_url, content_range="1-3,5,9-")],
     )
     combine_range_result: AnalysisResult = combine_range_poller.result()
 

@@ -473,7 +473,7 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
         full_result = await full_poller.result()
         full_doc = cast(DocumentContent, full_result.contents[0])
         full_page_count = len(full_doc.pages) if full_doc.pages else 0
-        assert full_page_count == 4, f"Full document should return all 4 pages, got {full_page_count}"
+        assert full_page_count == 10, f"Full document should return all 10 pages, got {full_page_count}"
         print(f"[PASS] Full document: {full_page_count} pages, {len(full_doc.markdown or '')} chars")
 
         # "1" — single page
@@ -499,7 +499,7 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
         print(f"[PASS] '1': {range_page_count} page, {len(range_doc.markdown or '')} chars")
 
         # "1-3,5,9-" — combined disjoint page ranges
-        # Document has 4 pages, so only pages 1-3 match (no page 5 or 9+)
+        # Document has 10 pages, so pages 1-3, 5, 9-10 match (6 pages total)
         print("\nAnalyzing combined pages (1-3, 5, 9-) with content range '1-3,5,9-'...")
         combine_poller = await client.begin_analyze(
             analyzer_id="prebuilt-documentSearch",
@@ -508,16 +508,16 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
         combine_result = await combine_poller.result()
         combine_doc = cast(DocumentContent, combine_result.contents[0])
         combine_page_count = len(combine_doc.pages) if combine_doc.pages else 0
-        assert combine_page_count == 3, f"'1-3,5,9-' should return 3 pages (1-3), got {combine_page_count}"
+        assert combine_page_count == 6, f"'1-3,5,9-' should return 6 pages (1-3, 5, 9-10), got {combine_page_count}"
         assert combine_doc.start_page_number == 1, (
             f"'1-3,5,9-' should start at page 1, got {combine_doc.start_page_number}"
         )
-        assert combine_doc.end_page_number == 3, (
-            f"'1-3,5,9-' should end at page 3, got {combine_doc.end_page_number}"
+        assert combine_doc.end_page_number == 10, (
+            f"'1-3,5,9-' should end at page 10, got {combine_doc.end_page_number}"
         )
         actual_combine_pages = sorted([p.page_number for p in combine_doc.pages])
-        assert actual_combine_pages == [1, 2, 3], (
-            f"'1-3,5,9-' page numbers should be [1, 2, 3], got {actual_combine_pages}"
+        assert actual_combine_pages == [1, 2, 3, 5, 9, 10], (
+            f"'1-3,5,9-' page numbers should be [1, 2, 3, 5, 9, 10], got {actual_combine_pages}"
         )
         print(f"[PASS] '1-3,5,9-': {combine_page_count} pages, page numbers: {actual_combine_pages}")
 
