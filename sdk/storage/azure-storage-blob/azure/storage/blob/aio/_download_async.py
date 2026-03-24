@@ -24,6 +24,7 @@ from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteRead
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import parse_length_from_content_range, process_storage_error
 from .._shared.constants import DEFAULT_MAX_CONCURRENCY
+from .._shared.validation import is_md5_validation
 from .._deserialize import deserialize_blob_properties, get_page_ranges_result
 from .._download import process_range_and_offset, _ChunkDownloader
 from .._encryption import (
@@ -124,7 +125,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
             range_header, range_validation = validate_and_format_range_headers(
                 download_range[0],
                 download_range[1],
-                check_content_md5=self.validate_content
+                check_content_md5=is_md5_validation(self.validate_content)
             )
 
             retry_active = True
@@ -267,6 +268,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._file_size = 0
         self._non_empty_ranges = None
         self._encryption_data: Optional["_EncryptionData"] = None
+        self._is_structured_message = False
 
         # The content download offset, after any processing (decryption), in bytes
         self._download_offset = 0
@@ -318,10 +320,10 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             await self._get_encryption_data_request()
 
         # The service only provides transactional MD5s for chunks under 4MB.
-        # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first
+        # If validate_content is using MD5, get only self.MAX_CHUNK_GET_SIZE for the first
         # chunk so a transactional MD5 can be retrieved.
         first_get_size = (
-            self._config.max_single_get_size if not self._validate_content else self._config.max_chunk_get_size
+            self._config.max_single_get_size if not is_md5_validation(self._validate_content) else self._config.max_chunk_get_size
         )
         initial_request_start = self._start_range if self._start_range is not None else 0
         if self._end_range is not None and self._end_range - initial_request_start < first_get_size:
@@ -356,7 +358,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
     @property
     def _download_complete(self):
-        if is_encryption_v2(self._encryption_data):
+        if is_encryption_v2(self._encryption_data) or self._is_structured_message:
             return self._download_offset >= self.size
         return self._raw_download_offset >= self.size
 
@@ -366,7 +368,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             self._initial_range[1],
             start_range_required=False,
             end_range_required=False,
-            check_content_md5=self._validate_content
+            check_content_md5=is_md5_validation(self._validate_content)
         )
 
         retry_active = True
@@ -449,6 +451,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             except HttpResponseError:
                 pass
 
+        self._is_structured_message = response.response.headers.get("x-ms-structured-body") is not None
         if not self._download_complete and self._request_options.get("modified_access_conditions"):
             self._request_options["modified_access_conditions"].if_match = response.properties.etag
 

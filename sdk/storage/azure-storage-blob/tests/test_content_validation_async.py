@@ -24,7 +24,9 @@ from settings.testcase import BlobPreparer
 from test_content_validation import (
     assert_content_crc64,
     assert_content_md5,
+    assert_content_md5_get,
     assert_structured_message,
+    assert_structured_message_get,
     TestIter
 )
 
@@ -339,4 +341,151 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         content = await blob.download_blob(offset=0, length=len(data1) + len(data2_encoded))
         assert await content.read() == data1 + data2_encoded
+        await self._teardown()
+
+    @BlobPreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy_async
+    async def test_download_blob(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        await self._setup(storage_account_name)
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        data = b'abc' * 512
+        await blob.upload_blob(data, overwrite=True)
+        assert_method = assert_structured_message_get if a == 'crc64' else assert_content_md5_get
+
+        # Act
+        downloader = await blob.download_blob(validate_content=a, raw_response_hook=assert_method)
+        content = await downloader.read()
+
+        stream = BytesIO()
+        downloader = await blob.download_blob(validate_content=a, raw_response_hook=assert_method)
+        await downloader.readinto(stream)
+        stream.seek(0)
+
+        # Assert
+        assert content == data
+        assert stream.read() == data
+        await self._teardown()
+
+    @BlobPreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy_async
+    async def test_download_blob_chunks(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        await self._setup(storage_account_name)
+        self.container._config.max_single_get_size = 512
+        self.container._config.max_chunk_get_size = 512
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        data = b'abc' * 512 + b'abcde'
+        await blob.upload_blob(data, overwrite=True)
+        assert_method = assert_structured_message_get if a == 'crc64' else assert_content_md5_get
+
+        # Act
+        downloader = await blob.download_blob(validate_content=a, raw_response_hook=assert_method)
+        content = await downloader.read()
+
+        stream = BytesIO()
+        downloader = await blob.download_blob(validate_content=a, raw_response_hook=assert_method)
+        await downloader.readinto(stream)
+        stream.seek(0)
+
+        read_content = b''
+        downloader = await blob.download_blob(validate_content=a, raw_response_hook=assert_method)
+        for _ in range(len(data) // 100 + 1):
+            read_content += await downloader.read(100)
+
+        # Assert
+        assert content == data
+        assert stream.read() == data
+        assert read_content == data
+        await self._teardown()
+
+    @BlobPreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy_async
+    async def test_download_blob_chunks_partial(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        await self._setup(storage_account_name)
+        self.container._config.max_single_get_size = 512
+        self.container._config.max_chunk_get_size = 512
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        data = b'abc' * 512 + b'abcde'
+        await blob.upload_blob(data, overwrite=True)
+        assert_method = assert_structured_message_get if a == 'crc64' else assert_content_md5_get
+
+        # Act
+        downloader = await blob.download_blob(offset=10, length=1000, validate_content=a, raw_response_hook=assert_method)
+        content = await downloader.read()
+
+        stream = BytesIO()
+        downloader = await blob.download_blob(offset=10, length=1000, validate_content=a, raw_response_hook=assert_method)
+        await downloader.readinto(stream)
+        stream.seek(0)
+
+        # Assert
+        assert content == data[10:1010]
+        assert stream.read() == data[10:1010]
+        await self._teardown()
+
+    @BlobPreparer()
+    @pytest.mark.live_test_only
+    async def test_download_blob_large_chunks(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        await self._setup(storage_account_name)
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        # The service will use 4 MiB for structured message chunk size, so make chunk size larger
+        self.container._config.max_chunk_get_size = 10 * 1024 * 1024
+        data = b'abcde' * 30 * 1024 * 1024 + b'abcde'  # 150 MiB + 5
+        await blob.upload_blob(data, overwrite=True, max_concurrency=5)
+
+        # Act
+        downloader = await blob.download_blob(validate_content='crc64', max_concurrency=3)
+        content = await downloader.read()
+
+        downloader = await blob.download_blob(offset=5 * 1024 * 1024, length=25 * 1024 * 1024)
+        partial = await downloader.read()
+
+        # Assert
+        assert content == data
+        assert partial == data[5 * 1024 * 1024: 30 * 1024 * 1024]
+        await self._teardown()
+
+    @BlobPreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy_async
+    async def test_download_blob_chars(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        await self._setup(storage_account_name)
+        self.container._config.max_single_get_size = 512
+        self.container._config.max_chunk_get_size = 512
+
+        data = '你好世界' * 256  # 3 KiB
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        await blob.upload_blob(data, encoding='utf-8', overwrite=True)
+
+        stream = await blob.download_blob(encoding='utf-8', validate_content=a)
+        assert await stream.read() == data
+
+        stream = await blob.download_blob(encoding='utf-8', validate_content=a)
+        assert await stream.read(chars=100000) == data
+
+        result = ''
+        stream = await blob.download_blob(encoding='utf-8', validate_content=a)
+        for _ in range(4):
+            chunk = await stream.read(chars=100)
+            result += chunk
+            assert len(chunk) == 100
+
+        result += await stream.readall()
+        assert result == data
         await self._teardown()
