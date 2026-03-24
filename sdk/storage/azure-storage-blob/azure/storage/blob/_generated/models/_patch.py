@@ -88,18 +88,18 @@ def _patched_model_new(cls, *args, **kwargs):
                     attr_to_rest_field[k] = v
                     attr_to_defining_class[k] = mro_class
 
-        annotations = {
-            k: v
-            for mro_class in mros
-            if hasattr(mro_class, "__annotations__")
-            for k, v in mro_class.__annotations__.items()
-        }
         for attr, rf in attr_to_rest_field.items():
             # Use the defining class's module for forward-ref resolution
             defining_cls = attr_to_defining_class[attr]
             rf._module = defining_cls.__module__
             if not rf._type:
-                rf._type = rf._get_deserialize_callable_from_annotation(annotations.get(attr, None))
+                # Use the annotation from the class that *defined* the rest_field,
+                # NOT the merged annotations from all subclasses.  A subclass
+                # (e.g. azure-storage-file-datalake RetentionPolicy) may override
+                # the annotation with a type whose __init__ can't accept XML
+                # elements, which would break model_base XML deserialization.
+                defining_annotations = getattr(defining_cls, "__annotations__", {})
+                rf._type = rf._get_deserialize_callable_from_annotation(defining_annotations.get(attr, None))
             if not rf._rest_name_input:
                 rf._rest_name_input = attr
         cls._attr_to_rest_field = dict(attr_to_rest_field.items())
@@ -258,7 +258,6 @@ class StaticWebsite(_AutorestCompatMixin, _GenStaticWebsite):
         "error_document404_path": {"key": "ErrorDocument404Path", "type": "str"},
         "default_index_document_path": {"key": "DefaultIndexDocumentPath", "type": "str"},
     }
-
 
 # ---------------------------------------------------------------------------
 # Parameter group models
