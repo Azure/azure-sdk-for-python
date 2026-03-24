@@ -4550,7 +4550,9 @@ class BetaInsightsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get(self, insight_id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any) -> _models.Insight:
+    async def get(
+        self, insight_id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any
+    ) -> _models.Insight:
         """Get a specific insight by Id.
 
         :param insight_id: The unique identifier for the insights report. Required.
