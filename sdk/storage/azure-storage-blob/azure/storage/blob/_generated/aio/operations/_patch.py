@@ -12,7 +12,7 @@ import inspect
 from typing import Any
 
 # Import the extract_parameter_groups function from the sync operations patch
-from ...operations._patch import extract_parameter_groups
+from ...operations._patch import extract_parameter_groups, _CONTAINER_STRIP_KWARGS
 
 
 # Import the generated operation classes
@@ -27,14 +27,21 @@ from ._operations import BlockBlobOperations as BlockBlobOperationsGenerated
 class _ParameterGroupExtractionMixin:
     """Mixin that intercepts method calls to extract parameter groups from kwargs."""
 
+    # Subclasses can override this to list kwargs that should be stripped
+    # after parameter group extraction.
+    _strip_after_extraction: tuple[str, ...] = ()
+
     def __getattribute__(self, name: str) -> Any:
         attr = super().__getattribute__(name)
         # Only wrap public methods (not private/magic and must be callable)
         if not name.startswith("_") and callable(attr):
+            strip_keys = object.__getattribute__(self, "_strip_after_extraction")
             if asyncio.iscoroutinefunction(attr):
 
                 async def async_wrapper(*args, **kwargs):
                     extract_parameter_groups(kwargs)
+                    for k in strip_keys:
+                        kwargs.pop(k, None)
                     return await attr(*args, **kwargs)
 
                 return async_wrapper
@@ -42,6 +49,8 @@ class _ParameterGroupExtractionMixin:
 
                 def wrapper(*args, **kwargs):
                     extract_parameter_groups(kwargs)
+                    for k in strip_keys:
+                        kwargs.pop(k, None)
                     return attr(*args, **kwargs)
 
                 return wrapper
@@ -51,13 +60,13 @@ class _ParameterGroupExtractionMixin:
 class ServiceOperations(_ParameterGroupExtractionMixin, ServiceOperationsGenerated):
     """Wrapper for ServiceOperations with parameter group support."""
 
-    pass
+    _strip_after_extraction = _CONTAINER_STRIP_KWARGS
 
 
 class ContainerOperations(_ParameterGroupExtractionMixin, ContainerOperationsGenerated):
     """Wrapper for ContainerOperations with parameter group support."""
 
-    pass
+    _strip_after_extraction = _CONTAINER_STRIP_KWARGS
 
 
 class BlobOperations(_ParameterGroupExtractionMixin, BlobOperationsGenerated):

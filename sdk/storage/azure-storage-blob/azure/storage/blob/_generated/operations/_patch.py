@@ -313,29 +313,44 @@ from ._operations import BlockBlobOperations as BlockBlobOperationsGenerated
 class _ParameterGroupExtractionMixin:
     """Mixin that intercepts method calls to extract parameter groups from kwargs."""
 
+    # Subclasses can override this to list kwargs that should be stripped
+    # after parameter group extraction (e.g. container/service ops that don't
+    # accept etag/match_condition/if_tags).
+    _strip_after_extraction: tuple[str, ...] = ()
+
     def __getattribute__(self, name: str) -> Any:
         attr = super().__getattribute__(name)
         # Only wrap public methods (not private/magic and must be callable)
         if not name.startswith("_") and callable(attr):
+            strip_keys = object.__getattribute__(self, "_strip_after_extraction")
 
             def wrapper(*args, **kwargs):
                 extract_parameter_groups(kwargs)
+                for k in strip_keys:
+                    kwargs.pop(k, None)
                 return attr(*args, **kwargs)
 
             return wrapper
         return attr
 
 
+# Container and Service generated operations do not accept etag, match_condition,
+# or if_tags as explicit parameters.
+# These can be re-injected by _extract_modified_access_conditions after
+# parameter group extraction, so we strip them afterwards.
+_CONTAINER_STRIP_KWARGS = ("match_condition", "etag", "if_tags")
+
+
 class ServiceOperations(_ParameterGroupExtractionMixin, ServiceOperationsGenerated):
     """Wrapper for ServiceOperations with parameter group support."""
 
-    pass
+    _strip_after_extraction = _CONTAINER_STRIP_KWARGS
 
 
 class ContainerOperations(_ParameterGroupExtractionMixin, ContainerOperationsGenerated):
     """Wrapper for ContainerOperations with parameter group support."""
 
-    pass
+    _strip_after_extraction = _CONTAINER_STRIP_KWARGS
 
 
 class BlobOperations(_ParameterGroupExtractionMixin, BlobOperationsGenerated):
