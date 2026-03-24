@@ -94,18 +94,18 @@ def start_span(  # pylint: disable=R0913,R0917
 
     :param operation_name: The logical operation being performed.
     :type operation_name: ~azure.ai.voicelive.telemetry._utils.OperationName
-    :param server_address: The server hostname (``server.address`` attribute).
-    :type server_address: str or None
-    :param port: The server port (``server.port`` attribute).
-    :type port: int or None
-    :param span_name: Custom span name. Defaults to ``operation_name.value``.
-    :type span_name: str or None
-    :param model: The model identifier (``gen_ai.request.model`` attribute).
-    :type model: str or None
-    :param session_id: The voice session identifier (``gen_ai.voice.session_id`` attribute).
-    :type session_id: str or None
-    :param kind: The span kind. Defaults to ``SpanKind.CLIENT``.
-    :type kind: ~azure.core.tracing.SpanKind
+    :keyword server_address: The server hostname (``server.address`` attribute).
+    :paramtype server_address: str or None
+    :keyword port: The server port (``server.port`` attribute).
+    :paramtype port: int or None
+    :keyword span_name: Custom span name. Defaults to ``operation_name.value``.
+    :paramtype span_name: str or None
+    :keyword model: The model identifier (``gen_ai.request.model`` attribute).
+    :paramtype model: str or None
+    :keyword session_id: The voice session identifier (``gen_ai.voice.session_id`` attribute).
+    :paramtype session_id: str or None
+    :keyword kind: The span kind. Defaults to ``SpanKind.CLIENT``.
+    :paramtype kind: ~azure.core.tracing.SpanKind
     :return: The created span, or ``None`` if no tracing implementation is configured.
     :rtype: ~azure.core.tracing.AbstractSpan or None
     """

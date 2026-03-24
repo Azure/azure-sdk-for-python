@@ -185,6 +185,7 @@ class _VoiceLiveInstrumentorPreview:
     def is_instrumented(self) -> bool:
         """Return ``True`` if VoiceLive tracing is currently active.
 
+        :return: ``True`` if instrumentation is active.
         :rtype: bool
         """
         return _voicelive_traces_enabled
@@ -192,6 +193,7 @@ class _VoiceLiveInstrumentorPreview:
     def is_content_recording_enabled(self) -> bool:
         """Return ``True`` if message content recording is enabled.
 
+        :return: ``True`` if content recording is enabled.
         :rtype: bool
         """
         return _trace_voicelive_content
