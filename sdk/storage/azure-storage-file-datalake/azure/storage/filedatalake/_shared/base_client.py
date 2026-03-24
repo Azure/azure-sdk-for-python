@@ -145,7 +145,7 @@ class StorageAccountHostsMixin(object):
         :return: The full endpoint URL to this entity, including SAS token if used.
         :rtype: str
         """
-        return self._format_url(self._hosts[self._location_mode])   # type: ignore
+        return self._format_url(self._hosts[self._location_mode])  # type: ignore
 
     @property
     def primary_endpoint(self) -> str:
@@ -178,7 +178,7 @@ class StorageAccountHostsMixin(object):
         """
         if not self._hosts[LocationMode.SECONDARY]:
             raise ValueError("No secondary host configured.")
-        return self._format_url(self._hosts[LocationMode.SECONDARY])    # type: ignore
+        return self._format_url(self._hosts[LocationMode.SECONDARY])  # type: ignore
 
     @property
     def secondary_hostname(self) -> Optional[str]:
@@ -416,7 +416,7 @@ def parse_connection_str(
     if any(len(tup) != 2 for tup in conn_settings_list):
         raise ValueError("Connection string is either blank or malformed.")
     conn_settings = dict((key.upper(), val) for key, val in conn_settings_list)
-    if conn_settings.get('USEDEVELOPMENTSTORAGE') == 'true':
+    if conn_settings.get("USEDEVELOPMENTSTORAGE") == "true":
         return _get_development_storage_endpoint(service), None, DEVSTORE_ACCOUNT_KEY
     endpoints = _SERVICE_PARAMS[service]
     primary = None

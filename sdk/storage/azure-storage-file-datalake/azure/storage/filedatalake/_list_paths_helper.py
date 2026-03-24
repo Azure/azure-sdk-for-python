@@ -4,10 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import (
-    Any, Callable, cast, Dict,
-    List, Optional, Tuple, Union
-)
+from typing import Any, Callable, cast, Dict, List, Optional, Tuple, Union
 
 from azure.core.paging import PageIterator
 from azure.core.exceptions import HttpResponseError
@@ -15,13 +12,9 @@ from azure.core.exceptions import HttpResponseError
 from ._deserialize import (
     get_deleted_path_properties_from_generated_code,
     process_storage_error,
-    return_headers_and_deserialized_path_list
+    return_headers_and_deserialized_path_list,
 )
-from ._generated.models import (
-    BlobItemInternal,
-    BlobPrefix as GenBlobPrefix,
-    Path
-)
+from ._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix, Path
 from ._models import DeletedPathProperties, PathProperties
 from ._shared.models import DictMixin
 from ._shared.response_handlers import return_context_and_deserialized
@@ -43,11 +36,11 @@ class DirectoryPrefix(DictMixin):
         options include "primary" and "secondary"."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.name = kwargs.get('prefix')  # type: ignore [assignment]
-        self.results_per_page = kwargs.get('results_per_page')  # type: ignore [assignment]
-        self.file_system = kwargs.get('container')  # type: ignore [assignment]
-        self.delimiter = kwargs.get('delimiter')  # type: ignore [assignment]
-        self.location_mode = kwargs.get('location_mode')  # type: ignore [assignment]
+        self.name = kwargs.get("prefix")  # type: ignore [assignment]
+        self.results_per_page = kwargs.get("results_per_page")  # type: ignore [assignment]
+        self.file_system = kwargs.get("container")  # type: ignore [assignment]
+        self.delimiter = kwargs.get("delimiter")  # type: ignore [assignment]
+        self.location_mode = kwargs.get("location_mode")  # type: ignore [assignment]
 
 
 class DeletedPathPropertiesPaged(PageIterator):
@@ -74,18 +67,17 @@ class DeletedPathPropertiesPaged(PageIterator):
         options include "primary" and "secondary"."""
 
     def __init__(
-        self, command: Callable,
+        self,
+        command: Callable,
         container: Optional[str] = None,
         prefix: Optional[str] = None,
         results_per_page: Optional[int] = None,
         continuation_token: Optional[str] = None,
         delimiter: Optional[str] = None,
-        location_mode: Optional[str] = None
+        location_mode: Optional[str] = None,
     ) -> None:
         super(DeletedPathPropertiesPaged, self).__init__(
-            get_next=self._get_next_cb,
-            extract_data=self._extract_data_cb,
-            continuation_token=continuation_token or ""
+            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
         )
         self._command = command
         self.service_endpoint = None
@@ -104,7 +96,7 @@ class DeletedPathPropertiesPaged(PageIterator):
                 marker=continuation_token or None,
                 max_results=self.results_per_page,
                 cls=return_context_and_deserialized,
-                use_location=self.location_mode
+                use_location=self.location_mode,
             )
         except HttpResponseError as error:
             process_storage_error(error)
@@ -134,7 +126,7 @@ class DeletedPathPropertiesPaged(PageIterator):
                 container=self.container,
                 prefix=item.name,
                 results_per_page=self.results_per_page,
-                location_mode=self.location_mode
+                location_mode=self.location_mode,
             )
         return item
 
@@ -157,17 +149,16 @@ class PathPropertiesPaged(PageIterator):
     """The path list to build the items for the current page."""
 
     def __init__(
-        self, command: Callable,
+        self,
+        command: Callable,
         recursive: bool,
         path: Optional[str] = None,
         max_results: Optional[int] = None,
         continuation_token: Optional[str] = None,
-        upn: Optional[str] = None
+        upn: Optional[str] = None,
     ) -> None:
         super(PathPropertiesPaged, self).__init__(
-            get_next=self._get_next_cb,
-            extract_data=self._extract_data_cb,
-            continuation_token=continuation_token or ""
+            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
         )
         self._command = command
         self.recursive = recursive
@@ -185,7 +176,7 @@ class PathPropertiesPaged(PageIterator):
                 path=self.path,
                 max_results=self.results_per_page,
                 upn=self.upn,
-                cls=return_headers_and_deserialized_path_list
+                cls=return_headers_and_deserialized_path_list,
             )
         except HttpResponseError as error:
             process_storage_error(error)
@@ -194,7 +185,7 @@ class PathPropertiesPaged(PageIterator):
         self.path_list, self._response = cast(Tuple[List[Path], Dict[str, Any]], get_next_return)
         self.current_page = [self._build_item(item) for item in self.path_list]
 
-        return self._response['continuation'] or None, self.current_page
+        return self._response["continuation"] or None, self.current_page
 
     @staticmethod
     def _build_item(item: Union[Path, PathProperties]) -> PathProperties:

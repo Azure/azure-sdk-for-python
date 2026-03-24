@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -176,8 +177,11 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
         error_message += f"\n{name}:{info}"
 
     if additional_data.get("headername") == "x-ms-version" and error_code == StorageErrorCode.INVALID_HEADER_VALUE:
-        error_message = ("The provided service version is not enabled on this storage account." +
-                         f"Please see {SV_DOCS_URL} for additional information.\n" + error_message)
+        error_message = (
+            "The provided service version is not enabled on this storage account."
+            + f"Please see {SV_DOCS_URL} for additional information.\n"
+            + error_message
+        )
 
     # No need to create an instance if it has already been serialized by the generated layer
     if serialized:

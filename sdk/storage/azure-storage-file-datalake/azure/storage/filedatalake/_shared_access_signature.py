@@ -5,10 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
-from typing import (
-    Any, Callable, cast, Dict, Optional, Union,
-    TYPE_CHECKING
-)
+from typing import Any, Callable, cast, Dict, Optional, Union, TYPE_CHECKING
 from urllib.parse import parse_qs
 
 from azure.storage.blob import generate_account_sas as generate_blob_account_sas
@@ -27,7 +24,7 @@ if TYPE_CHECKING:
         FileSasPermissions,
         FileSystemSasPermissions,
         ResourceTypes,
-        UserDelegationKey
+        UserDelegationKey,
     )
 
 
@@ -481,7 +478,7 @@ def generate_file_sas(
     :rtype: str
     """
     if directory_name:
-        path = directory_name.rstrip('/') + "/" + file_name
+        path = directory_name.rstrip("/") + "/" + file_name
     else:
         path = file_name
     return generate_blob_sas(
@@ -498,6 +495,7 @@ def generate_file_sas(
         sts_hook=sts_hook,
         **kwargs
     )
+
 
 def _is_credential_sastoken(credential: Any) -> bool:
     if not credential or not isinstance(credential, str):
