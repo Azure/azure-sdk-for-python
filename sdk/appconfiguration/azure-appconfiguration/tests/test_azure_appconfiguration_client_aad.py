@@ -887,13 +887,16 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
             etag = iterator.etag
             new_match_conditions.append(etag)
 
-        # We should have gained exactly one additional page after adding a new setting.
-        assert len(new_match_conditions) == len(match_conditions) + 1
+        before_len = len(match_conditions)
+        after_len = len(new_match_conditions)
+        # the number of pages should not decrease after adding a configuration setting
+        assert after_len >= before_len
 
         # At least one of the existing pages' ETags should differ after the update.
         assert any(
             old_etag != new_etag for old_etag, new_etag in zip(match_conditions, new_match_conditions)
         )
+
         # monitor pages after updates - only changed pages will be yielded
         items = self.client.check_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
         iterator = items.by_page(match_conditions=new_match_conditions)

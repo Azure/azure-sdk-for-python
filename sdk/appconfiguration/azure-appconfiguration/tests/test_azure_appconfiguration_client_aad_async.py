@@ -921,11 +921,11 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):  # pylint: dis
         after_len = len(new_match_conditions)
         # the number of pages should not decrease after adding a configuration setting
         assert after_len >= before_len
-        # at least one page's etag should change or a new page should be added
-        etag_changed = any(
+
+        # At least one of the existing pages' ETags should differ after the update.
+        assert any(
             old != new for old, new in zip(match_conditions, new_match_conditions)
         )
-        assert etag_changed or after_len > before_len
 
         # monitor pages after updates - only changed pages will be yielded
         items = self.client.check_configuration_settings(
