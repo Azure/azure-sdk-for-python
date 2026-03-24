@@ -9,7 +9,7 @@ import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.ai.projects.aio.operations._patch_evaluators_async import EvaluatorsOperations
-from azure.ai.projects.models import EvaluatorVersion
+from azure.ai.projects.models import CodeBasedEvaluatorDefinition, EvaluatorVersion
 
 
 class TestEvaluatorsUploadAsync:
@@ -356,7 +356,7 @@ class TestEvaluatorsUploadAsync:
         folder = self._create_temp_folder()
 
         ev = MagicMock(spec=EvaluatorVersion)
-        ev.definition = MagicMock()
+        ev.definition = MagicMock(spec=CodeBasedEvaluatorDefinition)
         ev.definition.blob_uri = None
 
         with patch("azure.ai.projects.aio.operations._patch_evaluators_async.ContainerClient") as MockContainerClient:
