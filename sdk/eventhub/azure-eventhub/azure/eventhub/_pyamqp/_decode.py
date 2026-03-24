@@ -282,7 +282,7 @@ def _decode_array_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
 
         if subconstructor == 0:
             composite_type = buffer[9]
-            buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[9:])
+            buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[10:])
             subconstructor = buffer[0]
             buffer = buffer[1:]
             for i in range(count):
@@ -453,11 +453,11 @@ _DESCR_BY_CONSTRUCTOR = {
     130: described.DescribedFloat,
     131: described.DescribedInt,
     160: described.DescribedBytes,
-    161: described.DescribedStr,
-    163: described.DescribedStr,
+    161: described.DescribedBytes,
+    163: described.DescribedBytes,
     176: described.DescribedBytes,
-    177: described.DescribedStr,
-    179: described.DescribedStr,
+    177: described.DescribedBytes,
+    179: described.DescribedBytes,
     192: described.DescribedList,
     193: described.DescribedDict,
     208: described.DescribedList,

@@ -16,10 +16,6 @@ class DescribedInt(Described, int):
 
 
 class DescribedFloat(Described, float):
-        pass
-
-
-class DescribedStr(Described, str):
     pass
 
 
