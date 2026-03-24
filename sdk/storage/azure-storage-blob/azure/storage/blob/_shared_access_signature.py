@@ -319,12 +319,15 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
 
     def add_directory_depth(self, blob_name):
         if blob_name == "" or blob_name == "/":
-            self._add_query(QueryStringConstants.SIGNED_DIRECTORY_DEPTH, 0)
+            depth = 0
         else:
-            self._add_query(QueryStringConstants.SIGNED_DIRECTORY_DEPTH, len(blob_name.strip("/").split("/")))
+            depth = len(blob_name.strip("/").split("/"))
+        self._add_query(QueryStringConstants.SIGNED_DIRECTORY_DEPTH, str(depth))
 
     def add_info_for_hns_account(self, **kwargs):
-        self._add_query(QueryStringConstants.SIGNED_DIRECTORY_DEPTH, kwargs.pop('sdd', None))
+        sdd = kwargs.pop('sdd', None)
+        if sdd is not None:
+            self._add_query(QueryStringConstants.SIGNED_DIRECTORY_DEPTH, str(sdd))
         self._add_query(QueryStringConstants.SIGNED_AUTHORIZED_OID, kwargs.pop('preauthorized_agent_object_id', None))
         self._add_query(QueryStringConstants.SIGNED_UNAUTHORIZED_OID, kwargs.pop('agent_object_id', None))
         self._add_query(QueryStringConstants.SIGNED_CORRELATION_ID, kwargs.pop('correlation_id', None))

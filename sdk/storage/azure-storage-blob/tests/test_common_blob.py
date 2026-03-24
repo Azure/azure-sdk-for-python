@@ -3831,3 +3831,132 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert props.archive_status == "rehydrate-pending-to-smart"
 
     # ------------------------------------------------------------------------------
+    # Directory SAS tests (sr=d / sdd)
+    # ------------------------------------------------------------------------------
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_directory_sas_all_permissions(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        self._setup(storage_account_name, storage_account_key)
+
+        expiry = datetime.utcnow() + timedelta(hours=1)
+
+        for blob_name in ["foo", "foo/bar", "foo/bar/hello"]:
+            token = self.generate_sas(
+                generate_blob_sas,
+                account_name=storage_account_name,
+                container_name=self.container_name,
+                blob_name=blob_name,
+                account_key=storage_account_key.secret,
+                permission=BlobSasPermissions(read=True, write=True, delete=True, list=True, add=True, create=True),
+                expiry=expiry,
+                is_directory=True,
+            )
+
+            # Blob whose name exactly matches the SAS directory name should succeed
+            exact_blob = self.bsc.get_blob_client(self.container_name, blob_name)
+            BlobClient.from_blob_url(exact_blob.url, credential=token).upload_blob(b"data", overwrite=True)
+
+            # Blob whose name has the SAS directory name as a prefix should also succeed
+            child_blob = self.bsc.get_blob_client(self.container_name, blob_name + "/test")
+            BlobClient.from_blob_url(child_blob.url, credential=token).upload_blob(b"data", overwrite=True)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_directory_sas_all_permissions_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        self._setup(storage_account_name, storage_account_key)
+
+        expiry = datetime.utcnow() + timedelta(hours=1)
+        # SAS is scoped to foo/bar/hello (depth 3)
+        token = self.generate_sas(
+            generate_blob_sas,
+            account_name=storage_account_name,
+            container_name=self.container_name,
+            blob_name="foo/bar/hello",
+            account_key=storage_account_key.secret,
+            permission=BlobSasPermissions(read=True, write=True, delete=True, list=True, add=True, create=True),
+            expiry=expiry,
+            is_directory=True,
+        )
+
+        # foo/bar does NOT have foo/bar/hello as a prefix — must fail
+        non_prefix_blob = self.bsc.get_blob_client(self.container_name, "foo/bar")
+        non_prefix_blob_with_sas = BlobClient.from_blob_url(non_prefix_blob.url, credential=token)
+        from azure.core.exceptions import HttpResponseError
+        with pytest.raises(HttpResponseError):
+            non_prefix_blob_with_sas.upload_blob(b"data", overwrite=True)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_directory_identity_sas_all_permissions(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        token_credential = self.get_credential(BlobServiceClient)
+        service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
+        container_name = self.get_resource_name("directorysascontainer")
+        container = service.create_container(container_name)
+
+        expiry = datetime.utcnow() + timedelta(hours=1)
+        user_delegation_key = service.get_user_delegation_key(datetime.utcnow(), expiry)
+
+        for blob_name in ["foo", "foo/bar", "foo/bar/hello"]:
+            token = self.generate_sas(
+                generate_blob_sas,
+                account_name=storage_account_name,
+                container_name=container_name,
+                blob_name=blob_name,
+                user_delegation_key=user_delegation_key,
+                permission=BlobSasPermissions(read=True, write=True, delete=True, list=True, add=True, create=True),
+                expiry=expiry,
+                is_directory=True,
+            )
+
+            # Blob whose name exactly matches the SAS directory name should succeed
+            exact_blob = service.get_blob_client(container_name, blob_name)
+            BlobClient.from_blob_url(exact_blob.url, credential=token).upload_blob(b"data", overwrite=True)
+
+            # Blob whose name has the SAS directory name as a prefix should also succeed
+            child_blob = service.get_blob_client(container_name, blob_name + "/test")
+            BlobClient.from_blob_url(child_blob.url, credential=token).upload_blob(b"data", overwrite=True)
+
+        container.delete_container()
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_directory_identity_sas_all_permissions_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        token_credential = self.get_credential(BlobServiceClient)
+        service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
+        container_name = self.get_resource_name("directorysascontainer")
+        service.create_container(container_name)
+
+        expiry = datetime.utcnow() + timedelta(hours=1)
+        user_delegation_key = service.get_user_delegation_key(datetime.utcnow(), expiry)
+
+        # SAS is scoped to foo/bar/hello (depth 3)
+        token = self.generate_sas(
+            generate_blob_sas,
+            account_name=storage_account_name,
+            container_name=container_name,
+            blob_name="foo/bar/hello",
+            user_delegation_key=user_delegation_key,
+            permission=BlobSasPermissions(read=True, write=True, delete=True, list=True, add=True, create=True),
+            expiry=expiry,
+            is_directory=True,
+        )
+
+        # foo/bar does NOT have foo/bar/hello as a prefix — must fail
+        non_prefix_blob = service.get_blob_client(container_name, "foo/bar")
+        non_prefix_blob_with_sas = BlobClient.from_blob_url(non_prefix_blob.url, credential=token)
+        from azure.core.exceptions import HttpResponseError
+        with pytest.raises(HttpResponseError):
+            non_prefix_blob_with_sas.upload_blob(b"data", overwrite=True)
+
+        service.delete_container(container_name)
+
+    # ------------------------------------------------------------------------------
