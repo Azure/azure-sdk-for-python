@@ -47,6 +47,29 @@ def generate_segment_header(number: int, size: int) -> bytes:
             size.to_bytes(8, 'little'))
 
 
+def parse_message_header(
+    data: bytes, expected_message_length: int
+) -> tuple[int, StructuredMessageProperties, int]:
+    version = data[0]
+    if version != 1:
+        raise ValueError(f"The structured message version is not supported: {version}")
+    message_length = int.from_bytes(data[1:9], 'little')
+    if message_length != expected_message_length:
+        raise ValueError(f"Structured message length {message_length} "
+                         f"did not match content length {expected_message_length}")
+    flags = StructuredMessageProperties(int.from_bytes(data[9:11], 'little'))
+    num_segments = int.from_bytes(data[11:13], 'little')
+    return version, flags, num_segments
+
+
+def parse_segment_header(data: bytes, expected_segment_number: int) -> tuple[int, int]:
+    segment_number = int.from_bytes(data[0:2], 'little')
+    if segment_number != expected_segment_number:
+        raise ValueError(f"Structured message segment number invalid or out of order {segment_number}")
+    segment_content_length = int.from_bytes(data[2:10], 'little')
+    return segment_number, segment_content_length
+
+
 class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instance-attributes
     message_version: int
     content_length: int
@@ -527,22 +550,10 @@ class StructuredMessageDecoder(IOBase):  # pylint: disable=too-many-instance-att
         return data
 
     def _read_message_header(self) -> None:
-        # The first byte should always be the message version
-        self.message_version = int.from_bytes(self._read_from_inner(1), 'little')
-
-        if self.message_version == 1:
-            message_length = int.from_bytes(self._read_from_inner(8), 'little')
-            if message_length != self.message_length:
-                raise ValueError(f"Structured message length {message_length} "
-                                 f"did not match content length {self.message_length}")
-
-            self.flags = StructuredMessageProperties(int.from_bytes(self._read_from_inner(2), 'little'))
-            self.num_segments = int.from_bytes(self._read_from_inner(2), 'little')
-
-            self._message_offset += StructuredMessageConstants.V1_HEADER_LENGTH
-
-        else:
-            raise ValueError(f"The structured message version is not supported: {self.message_version}")
+        header_data = self._read_from_inner(StructuredMessageConstants.V1_HEADER_LENGTH)
+        self.message_version, self.flags, self.num_segments = parse_message_header(
+            header_data, self.message_length)
+        self._message_offset += StructuredMessageConstants.V1_HEADER_LENGTH
 
     def _read_message_footer(self) -> None:
         # Sanity check: There should only be self._message_footer_length (could be 0) bytes left to consume.
@@ -560,11 +571,9 @@ class StructuredMessageDecoder(IOBase):  # pylint: disable=too-many-instance-att
         self._message_offset += self._message_footer_length
 
     def _read_segment_header(self) -> None:
-        segment_number = int.from_bytes(self._read_from_inner(2), 'little')
-        if segment_number != self._segment_number + 1:
-            raise ValueError(f"Structured message segment number invalid or out of order {segment_number}")
-        self._segment_number = segment_number
-        self._segment_content_length = int.from_bytes(self._read_from_inner(8), 'little')
+        header_data = self._read_from_inner(self._segment_header_length)
+        self._segment_number, self._segment_content_length = parse_segment_header(
+            header_data, self._segment_number + 1)
         self._message_offset += self._segment_header_length
 
         self._segment_content_offset = 0
