@@ -13,7 +13,7 @@ from ci_tools.logging import logger
 from ci_tools.parsing import ParsedSetup
 
 REPO_ROOT = discover_repo_root()
-PYTHON_VERSION_LIMIT = (3, 12)  # apistub errors on Python 3.12+
+PYTHON_VERSION_LIMIT = (3, 11)  # apistub doesn't support Python 3.11+
 
 
 def get_package_wheel_path(pkg_root: str) -> str:
