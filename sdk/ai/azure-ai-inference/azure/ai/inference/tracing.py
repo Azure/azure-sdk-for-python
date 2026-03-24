@@ -280,10 +280,14 @@ class _AIInferenceInstrumentorPreview:
 
     def _get_finish_reason_for_choice(self, choice):
         finish_reason = getattr(choice, "finish_reason", None)
-        if finish_reason is not None:
+        if finish_reason is None:
+            return "none"
+        elif hasattr(finish_reason, "value"):
             return finish_reason.value
-
-        return "none"
+        elif isinstance(finish_reason, str):
+            return finish_reason
+        else:
+            return "none"
 
     def _add_response_chat_message_events(
         self, span: "AbstractSpan", result: _models.ChatCompletions, last_event_timestamp_ns: int
