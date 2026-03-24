@@ -136,7 +136,7 @@ with (
 
         while clusterInsight.state not in [OperationState.SUCCEEDED, OperationState.FAILED]:
             print("Waiting for insight to be generated...")
-            clusterInsight = project_client.beta.insights.get(insight_id=clusterInsight.insight_id)
+            clusterInsight = project_client.beta.insights.get(id=clusterInsight.insight_id)
             print(f"Insight status: {clusterInsight.state}")
             time.sleep(5)
 

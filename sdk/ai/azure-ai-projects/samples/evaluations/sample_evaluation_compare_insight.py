@@ -145,7 +145,7 @@ with (
         print(f"Started insight generation (id: {compareInsight.insight_id})")
 
         while compareInsight.state not in [OperationState.SUCCEEDED, OperationState.FAILED]:
-            compareInsight = project_client.beta.insights.get(insight_id=compareInsight.insight_id)
+            compareInsight = project_client.beta.insights.get(id=compareInsight.insight_id)
             print(f"Waiting for insight to be generated...current status: {compareInsight.state}")
             time.sleep(5)
 
