@@ -56,6 +56,12 @@ AVAILABLE_TEST_PROXY_BINARIES = {
             "file_name": "test-proxy-standalone-win-x64.zip",
             "executable": "Azure.Sdk.Tools.TestProxy.exe",
         },
+        "ARM64": {
+            "system": "Windows",
+            "machine": "ARM64",
+            "file_name": "test-proxy-standalone-win-x64.zip",
+            "executable": "Azure.Sdk.Tools.TestProxy.exe",
+        },
     },
     "Linux": {
         "X86_64": {

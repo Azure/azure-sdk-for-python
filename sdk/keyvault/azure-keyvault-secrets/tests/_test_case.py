@@ -24,9 +24,15 @@ class SecretsClientPreparer(AzureRecordedTestCase):
 
         self.is_logging_enabled = kwargs.pop("logging_enable", True)
         if is_live():
-            os.environ["AZURE_TENANT_ID"] = os.getenv("KEYVAULT_TENANT_ID", "")  # empty in pipelines
-            os.environ["AZURE_CLIENT_ID"] = os.getenv("KEYVAULT_CLIENT_ID", "")  # empty in pipelines
-            os.environ["AZURE_CLIENT_SECRET"] = os.getenv("KEYVAULT_CLIENT_SECRET", "")  # empty for user-based auth
+            # Only set if a non-empty value is provided; empty values cause EnvironmentCredential to fail
+            for dest, src in [
+                ("AZURE_TENANT_ID", "KEYVAULT_TENANT_ID"),
+                ("AZURE_CLIENT_ID", "KEYVAULT_CLIENT_ID"),
+                ("AZURE_CLIENT_SECRET", "KEYVAULT_CLIENT_SECRET"),
+            ]:
+                value = os.getenv(src, "")
+                if value:
+                    os.environ[dest] = value
 
     def __call__(self, fn):
         def _preparer(test_class, api_version, **kwargs):
@@ -42,7 +48,13 @@ class SecretsClientPreparer(AzureRecordedTestCase):
     def create_client(self, vault_uri, **kwargs):
         from azure.keyvault.secrets import SecretClient
 
-        credential = self.get_credential(SecretClient)
+        # For user-based auth (no service principal), configure the credential to allow
+        # multi-tenant authentication so the Key Vault challenge flow works correctly.
+        credential = self.get_credential(
+            SecretClient,
+            additionally_allowed_tenants=["*"],
+            broker_tenant_id=os.environ.get("AZURE_TENANT_ID"),
+        )
         return self.create_client_from_credential(SecretClient, credential=credential, vault_url=vault_uri, **kwargs)
 
     def _skip_if_not_configured(self, api_version, **kwargs):
