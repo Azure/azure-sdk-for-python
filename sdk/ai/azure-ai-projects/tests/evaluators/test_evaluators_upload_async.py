@@ -8,16 +8,16 @@ import tempfile
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.ai.projects.aio.operations._patch_evaluators_async import EvaluatorsOperations
+from azure.ai.projects.aio.operations._patch_evaluators_async import BetaEvaluatorsOperations
 from azure.ai.projects.models import EvaluatorVersion
 
 
 class TestEvaluatorsUploadAsync:
-    """Unit tests for async EvaluatorsOperations.upload() method."""
+    """Unit tests for async BetaEvaluatorsOperations.upload() method."""
 
     def _create_operations(self):
-        """Create a mock async EvaluatorsOperations instance with mocked service calls."""
-        ops = object.__new__(EvaluatorsOperations)
+        """Create a mock async BetaEvaluatorsOperations instance with mocked service calls."""
+        ops = object.__new__(BetaEvaluatorsOperations)
         ops.pending_upload = AsyncMock()
         ops.list_versions = MagicMock()
         ops.create_version = AsyncMock()
