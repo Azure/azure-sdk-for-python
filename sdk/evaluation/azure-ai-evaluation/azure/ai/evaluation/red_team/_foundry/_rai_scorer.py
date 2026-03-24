@@ -398,10 +398,20 @@ class RAIServiceScorer(TrueFalseScorer):
                 results = eval_result.get("results")
 
             if results:
+                # Build a set of metric aliases to match against, to support
+                # both canonical and legacy metric names.
+                metric_aliases = {metric_name}
+                legacy_name = _SYNC_TO_LEGACY_METRIC_NAMES.get(metric_name)
+                if legacy_name:
+                    metric_aliases.add(legacy_name)
+                sync_name = _LEGACY_TO_SYNC_METRIC_NAMES.get(metric_name)
+                if sync_name:
+                    metric_aliases.add(sync_name)
+
                 for result_item in results or []:
                     result_dict = result_item if isinstance(result_item, dict) else getattr(result_item, "__dict__", {})
                     result_name = result_dict.get("name") or result_dict.get("metric")
-                    if result_name == metric_name:
+                    if result_name in metric_aliases:
                         props = result_dict.get("properties", {})
                         if isinstance(props, dict):
                             metrics = props.get("metrics", {})
