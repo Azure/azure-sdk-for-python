@@ -1193,7 +1193,7 @@ def build_beta_insights_get_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/insights/{insight_id}"
+    _url = "/insights/{id}"
     path_format_arguments = {
         "id": _SERIALIZER.url("insight_id", insight_id, "str"),
     }
