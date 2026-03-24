@@ -21,13 +21,13 @@ class TestAutomationObjectDataTypesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_fields_by_module_and_type(self, resource_group):
+    async def test_object_data_types_list_fields_by_module_and_type(self, resource_group):
         response = self.client.object_data_types.list_fields_by_module_and_type(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             module_name="str",
             type_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -35,12 +35,12 @@ class TestAutomationObjectDataTypesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_fields_by_type(self, resource_group):
+    async def test_object_data_types_list_fields_by_type(self, resource_group):
         response = self.client.object_data_types.list_fields_by_type(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             type_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

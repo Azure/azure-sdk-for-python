@@ -21,13 +21,13 @@ class TestAutomationSourceControlSyncJobStreamsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_sync_job(self, resource_group):
+    async def test_source_control_sync_job_streams_list_by_sync_job(self, resource_group):
         response = self.client.source_control_sync_job_streams.list_by_sync_job(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             source_control_name="str",
             source_control_sync_job_id="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -35,14 +35,14 @@ class TestAutomationSourceControlSyncJobStreamsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_source_control_sync_job_streams_get(self, resource_group):
         response = await self.client.source_control_sync_job_streams.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             source_control_name="str",
             source_control_sync_job_id="str",
             stream_id="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself

@@ -20,12 +20,12 @@ class TestAutomationCertificateOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_certificate_delete(self, resource_group):
         response = self.client.certificate.delete(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             certificate_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestAutomationCertificateOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_certificate_get(self, resource_group):
         response = self.client.certificate.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             certificate_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestAutomationCertificateOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_certificate_create_or_update(self, resource_group):
         response = self.client.certificate.create_or_update(
             resource_group_name=resource_group.name,
             automation_account_name="str",
@@ -58,7 +58,7 @@ class TestAutomationCertificateOperations(AzureMgmtRecordedTestCase):
                 "isExportable": bool,
                 "thumbprint": "str",
             },
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -66,13 +66,13 @@ class TestAutomationCertificateOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_certificate_update(self, resource_group):
         response = self.client.certificate.update(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             certificate_name="str",
             parameters={"description": "str", "name": "str"},
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -80,11 +80,11 @@ class TestAutomationCertificateOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_automation_account(self, resource_group):
+    def test_certificate_list_by_automation_account(self, resource_group):
         response = self.client.certificate.list_by_automation_account(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

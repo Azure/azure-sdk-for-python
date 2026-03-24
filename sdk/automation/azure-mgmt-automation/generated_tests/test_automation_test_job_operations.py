@@ -20,13 +20,13 @@ class TestAutomationTestJobOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create(self, resource_group):
+    def test_test_job_create(self, resource_group):
         response = self.client.test_job.create(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             runbook_name="str",
-            parameters={"parameters": {"str": "str"}, "runOn": "str"},
-            api_version="2022-08-08",
+            parameters={"parameters": {"str": "str"}, "runOn": "str", "runtimeEnvironment": "str"},
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -34,12 +34,12 @@ class TestAutomationTestJobOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_test_job_get(self, resource_group):
         response = self.client.test_job.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             runbook_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -47,12 +47,12 @@ class TestAutomationTestJobOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_resume(self, resource_group):
+    def test_test_job_resume(self, resource_group):
         response = self.client.test_job.resume(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             runbook_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -60,12 +60,12 @@ class TestAutomationTestJobOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_stop(self, resource_group):
+    def test_test_job_stop(self, resource_group):
         response = self.client.test_job.stop(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             runbook_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -73,12 +73,12 @@ class TestAutomationTestJobOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_suspend(self, resource_group):
+    def test_test_job_suspend(self, resource_group):
         response = self.client.test_job.suspend(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             runbook_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself

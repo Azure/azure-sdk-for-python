@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -34,6 +35,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2022-01-31/examples/getDeletedAutomationAccount.json
+# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2024-10-23/examples/getDeletedAutomationAccount.json
 if __name__ == "__main__":
     main()

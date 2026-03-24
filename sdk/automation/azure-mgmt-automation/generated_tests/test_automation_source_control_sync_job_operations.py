@@ -20,14 +20,14 @@ class TestAutomationSourceControlSyncJobOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create(self, resource_group):
+    def test_source_control_sync_job_create(self, resource_group):
         response = self.client.source_control_sync_job.create(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             source_control_name="str",
             source_control_sync_job_id="str",
             parameters={"commitId": "str"},
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -35,13 +35,13 @@ class TestAutomationSourceControlSyncJobOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_source_control_sync_job_get(self, resource_group):
         response = self.client.source_control_sync_job.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             source_control_name="str",
             source_control_sync_job_id="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -49,12 +49,12 @@ class TestAutomationSourceControlSyncJobOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_automation_account(self, resource_group):
+    def test_source_control_sync_job_list_by_automation_account(self, resource_group):
         response = self.client.source_control_sync_job.list_by_automation_account(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             source_control_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

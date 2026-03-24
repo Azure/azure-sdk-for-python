@@ -7,29 +7,28 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
 from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.settings import settings
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 
 from .. import models as _models
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import AutomationClientConfiguration
 from .operations import (
     ActivityOperations,
     AgentRegistrationInformationOperations,
     AutomationAccountOperations,
-    AutomationClientOperationsMixin,
     CertificateOperations,
     ConnectionOperations,
     ConnectionTypeOperations,
     CredentialOperations,
     DeletedAutomationAccountsOperations,
-    DscCompilationJobOperations,
-    DscCompilationJobStreamOperations,
     DscConfigurationOperations,
     DscNodeConfigurationOperations,
     DscNodeOperations,
@@ -46,12 +45,14 @@ from .operations import (
     NodeReportsOperations,
     ObjectDataTypesOperations,
     Operations,
+    PackageOperations,
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
     Python2PackageOperations,
     Python3PackageOperations,
     RunbookDraftOperations,
     RunbookOperations,
+    RuntimeEnvironmentsOperations,
     ScheduleOperations,
     SoftwareUpdateConfigurationMachineRunsOperations,
     SoftwareUpdateConfigurationRunsOperations,
@@ -66,21 +67,26 @@ from .operations import (
     VariableOperations,
     WatcherOperations,
     WebhookOperations,
+    _AutomationClientOperationsMixin,
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AutomationClient(
-    AutomationClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class AutomationClient(_AutomationClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
     """Automation Client.
 
-    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
-    :vartype private_endpoint_connections:
-     azure.mgmt.automation.aio.operations.PrivateEndpointConnectionsOperations
+    :ivar node_count_information: NodeCountInformationOperations operations
+    :vartype node_count_information:
+     azure.mgmt.automation.aio.operations.NodeCountInformationOperations
+    :ivar software_update_configurations: SoftwareUpdateConfigurationsOperations operations
+    :vartype software_update_configurations:
+     azure.mgmt.automation.aio.operations.SoftwareUpdateConfigurationsOperations
+    :ivar deleted_automation_accounts: DeletedAutomationAccountsOperations operations
+    :vartype deleted_automation_accounts:
+     azure.mgmt.automation.aio.operations.DeletedAutomationAccountsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
      azure.mgmt.automation.aio.operations.PrivateLinkResourcesOperations
@@ -91,24 +97,6 @@ class AutomationClient(
     :vartype dsc_node: azure.mgmt.automation.aio.operations.DscNodeOperations
     :ivar node_reports: NodeReportsOperations operations
     :vartype node_reports: azure.mgmt.automation.aio.operations.NodeReportsOperations
-    :ivar dsc_compilation_job: DscCompilationJobOperations operations
-    :vartype dsc_compilation_job: azure.mgmt.automation.aio.operations.DscCompilationJobOperations
-    :ivar dsc_compilation_job_stream: DscCompilationJobStreamOperations operations
-    :vartype dsc_compilation_job_stream:
-     azure.mgmt.automation.aio.operations.DscCompilationJobStreamOperations
-    :ivar node_count_information: NodeCountInformationOperations operations
-    :vartype node_count_information:
-     azure.mgmt.automation.aio.operations.NodeCountInformationOperations
-    :ivar watcher: WatcherOperations operations
-    :vartype watcher: azure.mgmt.automation.aio.operations.WatcherOperations
-    :ivar software_update_configurations: SoftwareUpdateConfigurationsOperations operations
-    :vartype software_update_configurations:
-     azure.mgmt.automation.aio.operations.SoftwareUpdateConfigurationsOperations
-    :ivar webhook: WebhookOperations operations
-    :vartype webhook: azure.mgmt.automation.aio.operations.WebhookOperations
-    :ivar deleted_automation_accounts: DeletedAutomationAccountsOperations operations
-    :vartype deleted_automation_accounts:
-     azure.mgmt.automation.aio.operations.DeletedAutomationAccountsOperations
     :ivar automation_account: AutomationAccountOperations operations
     :vartype automation_account: azure.mgmt.automation.aio.operations.AutomationAccountOperations
     :ivar statistics: StatisticsOperations operations
@@ -154,6 +142,11 @@ class AutomationClient(
     :vartype fields: azure.mgmt.automation.aio.operations.FieldsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.automation.aio.operations.Operations
+    :ivar package: PackageOperations operations
+    :vartype package: azure.mgmt.automation.aio.operations.PackageOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
+    :vartype private_endpoint_connections:
+     azure.mgmt.automation.aio.operations.PrivateEndpointConnectionsOperations
     :ivar python2_package: Python2PackageOperations operations
     :vartype python2_package: azure.mgmt.automation.aio.operations.Python2PackageOperations
     :ivar python3_package: Python3PackageOperations operations
@@ -166,6 +159,9 @@ class AutomationClient(
     :vartype test_job_streams: azure.mgmt.automation.aio.operations.TestJobStreamsOperations
     :ivar test_job: TestJobOperations operations
     :vartype test_job: azure.mgmt.automation.aio.operations.TestJobOperations
+    :ivar runtime_environments: RuntimeEnvironmentsOperations operations
+    :vartype runtime_environments:
+     azure.mgmt.automation.aio.operations.RuntimeEnvironmentsOperations
     :ivar schedule: ScheduleOperations operations
     :vartype schedule: azure.mgmt.automation.aio.operations.ScheduleOperations
     :ivar software_update_configuration_machine_runs:
@@ -185,13 +181,23 @@ class AutomationClient(
      azure.mgmt.automation.aio.operations.SourceControlSyncJobStreamsOperations
     :ivar variable: VariableOperations operations
     :vartype variable: azure.mgmt.automation.aio.operations.VariableOperations
+    :ivar watcher: WatcherOperations operations
+    :vartype watcher: azure.mgmt.automation.aio.operations.WatcherOperations
+    :ivar webhook: WebhookOperations operations
+    :vartype webhook: azure.mgmt.automation.aio.operations.WebhookOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Gets subscription credentials which uniquely identify Microsoft Azure
      subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is None.
     :type base_url: str
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: Api Version. Default value is "2024-10-23". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -200,10 +206,24 @@ class AutomationClient(
         self,
         credential: "AsyncTokenCredential",
         subscription_id: str,
-        base_url: str = "https://management.azure.com",
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
-        self._config = AutomationClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
+        _endpoints = get_arm_endpoints(_cloud)
+        if not base_url:
+            base_url = _endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
+        self._config = AutomationClientConfiguration(
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
+        )
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -222,13 +242,21 @@ class AutomationClient(
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(
+            base_url=cast(str, base_url), policies=_policies, **kwargs
+        )
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+        self.node_count_information = NodeCountInformationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.software_update_configurations = SoftwareUpdateConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.deleted_automation_accounts = DeletedAutomationAccountsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.private_link_resources = PrivateLinkResourcesOperations(
@@ -239,23 +267,6 @@ class AutomationClient(
         )
         self.dsc_node = DscNodeOperations(self._client, self._config, self._serialize, self._deserialize)
         self.node_reports = NodeReportsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.dsc_compilation_job = DscCompilationJobOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.dsc_compilation_job_stream = DscCompilationJobStreamOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.node_count_information = NodeCountInformationOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.watcher = WatcherOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.software_update_configurations = SoftwareUpdateConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.webhook = WebhookOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.deleted_automation_accounts = DeletedAutomationAccountsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.automation_account = AutomationAccountOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -291,12 +302,19 @@ class AutomationClient(
         )
         self.fields = FieldsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.package = PackageOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.python2_package = Python2PackageOperations(self._client, self._config, self._serialize, self._deserialize)
         self.python3_package = Python3PackageOperations(self._client, self._config, self._serialize, self._deserialize)
         self.runbook_draft = RunbookDraftOperations(self._client, self._config, self._serialize, self._deserialize)
         self.runbook = RunbookOperations(self._client, self._config, self._serialize, self._deserialize)
         self.test_job_streams = TestJobStreamsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.test_job = TestJobOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.runtime_environments = RuntimeEnvironmentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.schedule = ScheduleOperations(self._client, self._config, self._serialize, self._deserialize)
         self.software_update_configuration_machine_runs = SoftwareUpdateConfigurationMachineRunsOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -312,6 +330,8 @@ class AutomationClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.variable = VariableOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.watcher = WatcherOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.webhook = WebhookOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

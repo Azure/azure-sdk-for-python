@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -52,6 +53,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/preview/2020-01-13-preview/examples/createOrUpdateWatcher.json
+# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2024-10-23/examples/createOrUpdateWatcher.json
 if __name__ == "__main__":
     main()

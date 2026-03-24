@@ -29,7 +29,7 @@ class TestAutomationAsync(AzureMgmtRecordedTestCase):
                 "graphRunbookJson": "str",
                 "rawContent": {"runbookDefinition": "str", "runbookType": "str", "schemaVersion": "str"},
             },
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself

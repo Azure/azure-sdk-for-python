@@ -21,7 +21,7 @@ class TestAutomationSourceControlOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_source_control_create_or_update(self, resource_group):
         response = await self.client.source_control.create_or_update(
             resource_group_name=resource_group.name,
             automation_account_name="str",
@@ -36,7 +36,7 @@ class TestAutomationSourceControlOperationsAsync(AzureMgmtRecordedTestCase):
                 "securityToken": {"accessToken": "str", "refreshToken": "str", "tokenType": "str"},
                 "sourceType": "str",
             },
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -44,7 +44,7 @@ class TestAutomationSourceControlOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_source_control_update(self, resource_group):
         response = await self.client.source_control.update(
             resource_group_name=resource_group.name,
             automation_account_name="str",
@@ -57,7 +57,7 @@ class TestAutomationSourceControlOperationsAsync(AzureMgmtRecordedTestCase):
                 "publishRunbook": bool,
                 "securityToken": {"accessToken": "str", "refreshToken": "str", "tokenType": "str"},
             },
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -65,12 +65,12 @@ class TestAutomationSourceControlOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_source_control_delete(self, resource_group):
         response = await self.client.source_control.delete(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             source_control_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -78,12 +78,12 @@ class TestAutomationSourceControlOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_source_control_get(self, resource_group):
         response = await self.client.source_control.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             source_control_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -91,11 +91,11 @@ class TestAutomationSourceControlOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_automation_account(self, resource_group):
+    async def test_source_control_list_by_automation_account(self, resource_group):
         response = self.client.source_control.list_by_automation_account(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

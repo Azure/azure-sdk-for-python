@@ -21,11 +21,11 @@ class TestAutomationStatisticsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_automation_account(self, resource_group):
+    async def test_statistics_list_by_automation_account(self, resource_group):
         response = self.client.statistics.list_by_automation_account(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

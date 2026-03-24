@@ -20,12 +20,12 @@ class TestAutomationNodeReportsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_node(self, resource_group):
+    def test_node_reports_list_by_node(self, resource_group):
         response = self.client.node_reports.list_by_node(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             node_id="str",
-            api_version="2020-01-13-preview",
+            api_version="2024-10-23",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,13 +33,13 @@ class TestAutomationNodeReportsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_node_reports_get(self, resource_group):
         response = self.client.node_reports.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             node_id="str",
             report_id="str",
-            api_version="2020-01-13-preview",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -47,13 +47,13 @@ class TestAutomationNodeReportsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_content(self, resource_group):
+    def test_node_reports_get_content(self, resource_group):
         response = self.client.node_reports.get_content(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             node_id="str",
             report_id="str",
-            api_version="2020-01-13-preview",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself

@@ -20,11 +20,11 @@ class TestAutomationAgentRegistrationInformationOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_agent_registration_information_get(self, resource_group):
         response = self.client.agent_registration_information.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2020-01-13-preview",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestAutomationAgentRegistrationInformationOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_regenerate_key(self, resource_group):
+    def test_agent_registration_information_regenerate_key(self, resource_group):
         response = self.client.agent_registration_information.regenerate_key(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             parameters={"keyName": "str"},
-            api_version="2020-01-13-preview",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself

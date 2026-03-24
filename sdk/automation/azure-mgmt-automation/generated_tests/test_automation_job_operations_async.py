@@ -21,12 +21,12 @@ class TestAutomationJobOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_output(self, resource_group):
+    async def test_job_get_output(self, resource_group):
         response = await self.client.job.get_output(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             job_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -34,12 +34,12 @@ class TestAutomationJobOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_runbook_content(self, resource_group):
+    async def test_job_get_runbook_content(self, resource_group):
         response = await self.client.job.get_runbook_content(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             job_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -47,12 +47,12 @@ class TestAutomationJobOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_suspend(self, resource_group):
+    async def test_job_suspend(self, resource_group):
         response = await self.client.job.suspend(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             job_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -60,12 +60,12 @@ class TestAutomationJobOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_stop(self, resource_group):
+    async def test_job_stop(self, resource_group):
         response = await self.client.job.stop(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             job_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -73,12 +73,12 @@ class TestAutomationJobOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_job_get(self, resource_group):
         response = await self.client.job.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             job_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -86,13 +86,13 @@ class TestAutomationJobOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create(self, resource_group):
+    async def test_job_create(self, resource_group):
         response = await self.client.job.create(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             job_name="str",
             parameters={"parameters": {"str": "str"}, "runOn": "str", "runbook": {"name": "str"}},
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -100,11 +100,11 @@ class TestAutomationJobOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_automation_account(self, resource_group):
+    async def test_job_list_by_automation_account(self, resource_group):
         response = self.client.job.list_by_automation_account(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -112,12 +112,12 @@ class TestAutomationJobOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_resume(self, resource_group):
+    async def test_job_resume(self, resource_group):
         response = await self.client.job.resume(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             job_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself

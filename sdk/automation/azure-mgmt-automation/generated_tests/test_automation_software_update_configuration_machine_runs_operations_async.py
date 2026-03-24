@@ -21,12 +21,12 @@ class TestAutomationSoftwareUpdateConfigurationMachineRunsOperationsAsync(AzureM
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_by_id(self, resource_group):
+    async def test_software_update_configuration_machine_runs_get_by_id(self, resource_group):
         response = await self.client.software_update_configuration_machine_runs.get_by_id(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             software_update_configuration_machine_run_id="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -34,11 +34,11 @@ class TestAutomationSoftwareUpdateConfigurationMachineRunsOperationsAsync(AzureM
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_software_update_configuration_machine_runs_list(self, resource_group):
         response = await self.client.software_update_configuration_machine_runs.list(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself

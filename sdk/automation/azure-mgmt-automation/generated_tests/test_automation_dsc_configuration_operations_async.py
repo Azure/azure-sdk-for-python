@@ -21,12 +21,12 @@ class TestAutomationDscConfigurationOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_dsc_configuration_delete(self, resource_group):
         response = await self.client.dsc_configuration.delete(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             configuration_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -34,12 +34,12 @@ class TestAutomationDscConfigurationOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_dsc_configuration_get(self, resource_group):
         response = await self.client.dsc_configuration.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             configuration_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestAutomationDscConfigurationOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_dsc_configuration_create_or_update(self, resource_group):
         response = await self.client.dsc_configuration.create_or_update(
             resource_group_name=resource_group.name,
             automation_account_name="str",
@@ -67,7 +67,7 @@ class TestAutomationDscConfigurationOperationsAsync(AzureMgmtRecordedTestCase):
                 "parameters": {"str": {"defaultValue": "str", "isMandatory": bool, "position": 0, "type": "str"}},
                 "tags": {"str": "str"},
             },
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -75,12 +75,12 @@ class TestAutomationDscConfigurationOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_dsc_configuration_update(self, resource_group):
         response = await self.client.dsc_configuration.update(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             configuration_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -88,12 +88,12 @@ class TestAutomationDscConfigurationOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_content(self, resource_group):
+    async def test_dsc_configuration_get_content(self, resource_group):
         response = await self.client.dsc_configuration.get_content(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             configuration_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -101,11 +101,11 @@ class TestAutomationDscConfigurationOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_automation_account(self, resource_group):
+    async def test_dsc_configuration_list_by_automation_account(self, resource_group):
         response = self.client.dsc_configuration.list_by_automation_account(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

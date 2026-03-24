@@ -20,11 +20,11 @@ class TestAutomationPrivateEndpointConnectionsOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_automation_account(self, resource_group):
+    def test_private_endpoint_connections_list_by_automation_account(self, resource_group):
         response = self.client.private_endpoint_connections.list_by_automation_account(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2020-01-13-preview",
+            api_version="2024-10-23",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestAutomationPrivateEndpointConnectionsOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_private_endpoint_connections_get(self, resource_group):
         response = self.client.private_endpoint_connections.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             private_endpoint_connection_name="str",
-            api_version="2020-01-13-preview",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestAutomationPrivateEndpointConnectionsOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_private_endpoint_connections_begin_create_or_update(self, resource_group):
         response = self.client.private_endpoint_connections.begin_create_or_update(
             resource_group_name=resource_group.name,
             automation_account_name="str",
@@ -56,9 +56,17 @@ class TestAutomationPrivateEndpointConnectionsOperations(AzureMgmtRecordedTestCa
                 "name": "str",
                 "privateEndpoint": {"id": "str"},
                 "privateLinkServiceConnectionState": {"actionsRequired": "str", "description": "str", "status": "str"},
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "type": "str",
             },
-            api_version="2020-01-13-preview",
+            api_version="2024-10-23",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -66,12 +74,12 @@ class TestAutomationPrivateEndpointConnectionsOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_private_endpoint_connections_begin_delete(self, resource_group):
         response = self.client.private_endpoint_connections.begin_delete(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             private_endpoint_connection_name="str",
-            api_version="2020-01-13-preview",
+            api_version="2024-10-23",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

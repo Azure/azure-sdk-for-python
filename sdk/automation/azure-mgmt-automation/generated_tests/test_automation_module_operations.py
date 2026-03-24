@@ -20,12 +20,12 @@ class TestAutomationModuleOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_module_delete(self, resource_group):
         response = self.client.module.delete(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             module_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestAutomationModuleOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_module_get(self, resource_group):
         response = self.client.module.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             module_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestAutomationModuleOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_module_create_or_update(self, resource_group):
         response = self.client.module.create_or_update(
             resource_group_name=resource_group.name,
             automation_account_name="str",
@@ -57,7 +57,7 @@ class TestAutomationModuleOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "tags": {"str": "str"},
             },
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -65,7 +65,7 @@ class TestAutomationModuleOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_module_update(self, resource_group):
         response = self.client.module.update(
             resource_group_name=resource_group.name,
             automation_account_name="str",
@@ -76,7 +76,7 @@ class TestAutomationModuleOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "tags": {"str": "str"},
             },
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -84,11 +84,11 @@ class TestAutomationModuleOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_automation_account(self, resource_group):
+    def test_module_list_by_automation_account(self, resource_group):
         response = self.client.module.list_by_automation_account(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

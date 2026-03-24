@@ -21,13 +21,13 @@ class TestAutomationRunbookOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_publish(self, resource_group):
+    async def test_runbook_begin_publish(self, resource_group):
         response = await (
             await self.client.runbook.begin_publish(
                 resource_group_name=resource_group.name,
                 automation_account_name="str",
                 runbook_name="str",
-                api_version="2022-08-08",
+                api_version="2024-10-23",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -36,12 +36,12 @@ class TestAutomationRunbookOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_content(self, resource_group):
+    async def test_runbook_get_content(self, resource_group):
         response = await self.client.runbook.get_content(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             runbook_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -49,12 +49,12 @@ class TestAutomationRunbookOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_runbook_get(self, resource_group):
         response = await self.client.runbook.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             runbook_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -62,7 +62,7 @@ class TestAutomationRunbookOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_runbook_create_or_update(self, resource_group):
         response = await self.client.runbook.create_or_update(
             resource_group_name=resource_group.name,
             automation_account_name="str",
@@ -92,9 +92,10 @@ class TestAutomationRunbookOperationsAsync(AzureMgmtRecordedTestCase):
                     "uri": "str",
                     "version": "str",
                 },
+                "runtimeEnvironment": "str",
                 "tags": {"str": "str"},
             },
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -102,7 +103,7 @@ class TestAutomationRunbookOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_runbook_update(self, resource_group):
         response = await self.client.runbook.update(
             resource_group_name=resource_group.name,
             automation_account_name="str",
@@ -116,7 +117,7 @@ class TestAutomationRunbookOperationsAsync(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "tags": {"str": "str"},
             },
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -124,12 +125,12 @@ class TestAutomationRunbookOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_runbook_delete(self, resource_group):
         response = await self.client.runbook.delete(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             runbook_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -137,11 +138,11 @@ class TestAutomationRunbookOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_automation_account(self, resource_group):
+    async def test_runbook_list_by_automation_account(self, resource_group):
         response = self.client.runbook.list_by_automation_account(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

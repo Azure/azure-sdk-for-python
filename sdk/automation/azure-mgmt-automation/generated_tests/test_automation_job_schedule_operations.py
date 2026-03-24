@@ -20,12 +20,12 @@ class TestAutomationJobScheduleOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_job_schedule_delete(self, resource_group):
         response = self.client.job_schedule.delete(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             job_schedule_id="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestAutomationJobScheduleOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_job_schedule_get(self, resource_group):
         response = self.client.job_schedule.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             job_schedule_id="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestAutomationJobScheduleOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create(self, resource_group):
+    def test_job_schedule_create(self, resource_group):
         response = self.client.job_schedule.create(
             resource_group_name=resource_group.name,
             automation_account_name="str",
@@ -57,7 +57,7 @@ class TestAutomationJobScheduleOperations(AzureMgmtRecordedTestCase):
                 "parameters": {"str": "str"},
                 "runOn": "str",
             },
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -65,11 +65,11 @@ class TestAutomationJobScheduleOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_automation_account(self, resource_group):
+    def test_job_schedule_list_by_automation_account(self, resource_group):
         response = self.client.job_schedule.list_by_automation_account(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

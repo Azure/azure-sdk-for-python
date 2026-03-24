@@ -20,12 +20,12 @@ class TestAutomationConnectionTypeOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_connection_type_delete(self, resource_group):
         response = self.client.connection_type.delete(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             connection_type_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestAutomationConnectionTypeOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_connection_type_get(self, resource_group):
         response = self.client.connection_type.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             connection_type_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestAutomationConnectionTypeOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_connection_type_create_or_update(self, resource_group):
         response = self.client.connection_type.create_or_update(
             resource_group_name=resource_group.name,
             automation_account_name="str",
@@ -56,7 +56,7 @@ class TestAutomationConnectionTypeOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "isGlobal": bool,
             },
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -64,11 +64,11 @@ class TestAutomationConnectionTypeOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_automation_account(self, resource_group):
+    def test_connection_type_list_by_automation_account(self, resource_group):
         response = self.client.connection_type.list_by_automation_account(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

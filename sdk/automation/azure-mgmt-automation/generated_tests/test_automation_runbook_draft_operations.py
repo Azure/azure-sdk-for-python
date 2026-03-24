@@ -20,12 +20,12 @@ class TestAutomationRunbookDraftOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_content(self, resource_group):
+    def test_runbook_draft_get_content(self, resource_group):
         response = self.client.runbook_draft.get_content(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             runbook_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -33,13 +33,13 @@ class TestAutomationRunbookDraftOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_replace_content(self, resource_group):
+    def test_runbook_draft_begin_replace_content(self, resource_group):
         response = self.client.runbook_draft.begin_replace_content(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             runbook_name="str",
             runbook_content=b"bytes",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -47,12 +47,12 @@ class TestAutomationRunbookDraftOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_runbook_draft_get(self, resource_group):
         response = self.client.runbook_draft.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             runbook_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -60,12 +60,12 @@ class TestAutomationRunbookDraftOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_undo_edit(self, resource_group):
+    def test_runbook_draft_undo_edit(self, resource_group):
         response = self.client.runbook_draft.undo_edit(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             runbook_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself

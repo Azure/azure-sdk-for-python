@@ -20,9 +20,9 @@ class TestAutomationDeletedAutomationAccountsOperations(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_subscription(self, resource_group):
+    def test_deleted_automation_accounts_list_by_subscription(self, resource_group):
         response = self.client.deleted_automation_accounts.list_by_subscription(
-            api_version="2022-01-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself

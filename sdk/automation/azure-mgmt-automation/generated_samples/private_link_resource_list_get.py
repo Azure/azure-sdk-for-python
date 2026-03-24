@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -27,17 +28,17 @@ from azure.mgmt.automation import AutomationClient
 def main():
     client = AutomationClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-1111-2222-3333-444444444444",
+        subscription_id="subid",
     )
 
     response = client.private_link_resources.automation(
         resource_group_name="rg1",
-        automation_account_name="ddb1",
+        automation_account_name="testaccount",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/preview/2020-01-13-preview/examples/PrivateLinkResourceListGet.json
+# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2024-10-23/examples/PrivateLinkResourceListGet.json
 if __name__ == "__main__":
     main()

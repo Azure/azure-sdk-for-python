@@ -20,7 +20,7 @@ class TestAutomationScheduleOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_schedule_create_or_update(self, resource_group):
         response = self.client.schedule.create_or_update(
             resource_group_name=resource_group.name,
             automation_account_name="str",
@@ -39,7 +39,7 @@ class TestAutomationScheduleOperations(AzureMgmtRecordedTestCase):
                 "interval": {},
                 "timeZone": "str",
             },
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -47,13 +47,13 @@ class TestAutomationScheduleOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_schedule_update(self, resource_group):
         response = self.client.schedule.update(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             schedule_name="str",
             parameters={"description": "str", "isEnabled": bool, "name": "str"},
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -61,12 +61,12 @@ class TestAutomationScheduleOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_schedule_get(self, resource_group):
         response = self.client.schedule.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             schedule_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -74,12 +74,12 @@ class TestAutomationScheduleOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_schedule_delete(self, resource_group):
         response = self.client.schedule.delete(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             schedule_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -87,11 +87,11 @@ class TestAutomationScheduleOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_automation_account(self, resource_group):
+    def test_schedule_list_by_automation_account(self, resource_group):
         response = self.client.schedule.list_by_automation_account(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

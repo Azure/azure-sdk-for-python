@@ -21,7 +21,7 @@ class TestAutomationSoftwareUpdateConfigurationsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create(self, resource_group):
+    async def test_software_update_configurations_create(self, resource_group):
         response = await self.client.software_update_configurations.create(
             resource_group_name=resource_group.name,
             automation_account_name="str",
@@ -89,7 +89,7 @@ class TestAutomationSoftwareUpdateConfigurationsOperationsAsync(AzureMgmtRecorde
                 },
                 "type": "str",
             },
-            api_version="2019-06-01",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -97,12 +97,12 @@ class TestAutomationSoftwareUpdateConfigurationsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_by_name(self, resource_group):
+    async def test_software_update_configurations_get_by_name(self, resource_group):
         response = await self.client.software_update_configurations.get_by_name(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             software_update_configuration_name="str",
-            api_version="2019-06-01",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -110,12 +110,12 @@ class TestAutomationSoftwareUpdateConfigurationsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_software_update_configurations_delete(self, resource_group):
         response = await self.client.software_update_configurations.delete(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             software_update_configuration_name="str",
-            api_version="2019-06-01",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -123,11 +123,11 @@ class TestAutomationSoftwareUpdateConfigurationsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_software_update_configurations_list(self, resource_group):
         response = await self.client.software_update_configurations.list(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2019-06-01",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
