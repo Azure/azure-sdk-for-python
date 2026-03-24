@@ -9,6 +9,8 @@ from typing import Any, Iterable, Protocol, runtime_checkable
 from ..models._generated import Response
 
 
+
+
 @runtime_checkable
 class ResponseProviderProtocol(Protocol):
     """Protocol aligned with the .NET ``IResponsesProvider`` contract.
@@ -112,3 +114,41 @@ class ResponseProviderProtocol(Protocol):
         """
 
 
+@runtime_checkable
+class ResponseStreamProviderProtocol(Protocol):
+    """Protocol for providers that can persist and replay SSE stream events.
+
+    Implement this protocol alongside :class:`ResponseProviderProtocol` to enable
+    SSE replay for responses that are no longer resident in the in-process runtime
+    state (for example, after a process restart).
+    """
+
+    async def save_stream_events_async(
+        self,
+        response_id: str,
+        events: list[dict[str, Any]],
+    ) -> None:
+        """Persist the complete ordered list of SSE events for a response.
+
+        Called once when the background+stream response reaches terminal state.
+        The *events* list uses the same normalised format that the SSE encoding
+        layer expects: ``[{"type": str, "payload": dict}, ...]``.
+
+        :param response_id: The unique identifier of the response.
+        :type response_id: str
+        :param events: Ordered list of normalised SSE event dicts to persist.
+        :type events: list[dict[str, Any]]
+        :rtype: None
+        """
+
+    async def get_stream_events_async(
+        self,
+        response_id: str,
+    ) -> list[dict[str, Any]] | None:
+        """Retrieve the persisted SSE events for a response.
+
+        :param response_id: The unique identifier of the response whose events to retrieve.
+        :type response_id: str
+        :returns: The ordered list of normalised SSE event dicts, or ``None`` if not found.
+        :rtype: list[dict[str, Any]] | None
+        """

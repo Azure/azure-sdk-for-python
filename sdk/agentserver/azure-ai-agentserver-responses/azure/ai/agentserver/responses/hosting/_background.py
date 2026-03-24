@@ -9,6 +9,7 @@ from copy import deepcopy
 from typing import Any
 
 from .._handlers import RuntimeResponseContext
+from ..models import _generated as generated_models
 from ..streaming._helpers import (
     _build_events,
     _coerce_handler_event,
@@ -28,6 +29,8 @@ async def _run_background_non_stream(
     response_id: str,
     agent_reference: dict[str, Any],
     model: str | None,
+    provider: Any = None,
+    store: bool = True,
 ) -> None:
     """Execute a non-stream handler in the background and update the execution record.
 
@@ -50,6 +53,11 @@ async def _run_background_non_stream(
     :keyword type agent_reference: dict[str, Any]
     :keyword model: Model name, or ``None``.
     :keyword type model: str | None
+    :keyword provider: Optional persistence provider; when set and ``store`` is ``True``,
+        ``update_response_async`` is called after terminal state is reached.
+    :keyword type provider: Any
+    :keyword store: Whether the response should be persisted via the provider.
+    :keyword type store: bool
     :return: None
     :rtype: None
     """
@@ -57,58 +65,72 @@ async def _run_background_non_stream(
     handler_events: list[dict[str, Any]] = []
 
     try:
-        async for handler_event in create_async(parsed, context, cancellation_signal):
-            if cancellation_signal.is_set():
-                record.status = "cancelled"
-                return
+        try:
+            async for handler_event in create_async(parsed, context, cancellation_signal):
+                if cancellation_signal.is_set():
+                    record.status = "cancelled"
+                    return
 
-            coerced = _coerce_handler_event(handler_event)
-            normalized = _apply_stream_event_defaults(
-                coerced,
-                response_id=response_id,
-                agent_reference=agent_reference,
-                model=model,
-                sequence_number=None,
-            )
-            handler_events.append(normalized)
-    except Exception:  # pylint: disable=broad-exception-caught
+                coerced = _coerce_handler_event(handler_event)
+                normalized = _apply_stream_event_defaults(
+                    coerced,
+                    response_id=response_id,
+                    agent_reference=agent_reference,
+                    model=model,
+                    sequence_number=None,
+                )
+                handler_events.append(normalized)
+        except Exception:  # pylint: disable=broad-exception-caught
+            if record.status != "cancelled":
+                record.status = "failed"
+                record.response_payload = {
+                    "id": response_id,
+                    "response_id": response_id,
+                    "agent_reference": deepcopy(agent_reference),
+                    "object": "response",
+                    "status": "failed",
+                    "model": model,
+                    "output": [],
+                    "created_at": context.created_at,
+                    "error": {"code": "server_error", "message": "An internal server error occurred."},
+                }
+            return
+
+        if cancellation_signal.is_set():
+            record.status = "cancelled"
+            return
+
+        events = handler_events if handler_events else _build_events(
+            response_id,
+            include_progress=True,
+            agent_reference=agent_reference,
+            model=model,
+        )
+        response_payload = _extract_response_snapshot_from_events(
+            events,
+            response_id=response_id,
+            agent_reference=agent_reference,
+            model=model,
+            remove_sequence_number=True,
+        )
+
+        resolved_status = response_payload.get("status")
+        record.response_payload = response_payload
         if record.status != "cancelled":
-            record.status = "failed"
-            record.response_payload = {
-                "id": response_id,
-                "response_id": response_id,
-                "agent_reference": deepcopy(agent_reference),
-                "object": "response",
-                "status": "failed",
-                "model": model,
-                "output": [],
-                "created_at": context.created_at,
-                "error": {"code": "server_error", "message": "An internal server error occurred."},
-            }
-        return
-
-    if cancellation_signal.is_set():
-        record.status = "cancelled"
-        return
-
-    events = handler_events if handler_events else _build_events(
-        response_id,
-        include_progress=True,
-        agent_reference=agent_reference,
-        model=model,
-    )
-    response_payload = _extract_response_snapshot_from_events(
-        events,
-        response_id=response_id,
-        agent_reference=agent_reference,
-        model=model,
-        remove_sequence_number=True,
-    )
-
-    resolved_status = response_payload.get("status")
-    record.response_payload = response_payload
-    if record.status != "cancelled":
-        record.status = resolved_status if isinstance(resolved_status, str) else "completed"
+            record.status = resolved_status if isinstance(resolved_status, str) else "completed"
+    finally:
+        # Persist terminal state update via provider (bg non-stream: update after runner completes)
+        if (
+            store
+            and provider is not None
+            and record.status not in {"cancelled"}
+            and isinstance(record.response_payload, dict)
+        ):
+            try:
+                _response_obj = generated_models.Response(record.response_payload)
+                await provider.update_response_async(_response_obj)
+            except Exception:  # pylint: disable=broad-exception-caught
+                pass  # best effort
 
 
 async def _try_execute_background_runner(record: _ExecutionRecord) -> None:

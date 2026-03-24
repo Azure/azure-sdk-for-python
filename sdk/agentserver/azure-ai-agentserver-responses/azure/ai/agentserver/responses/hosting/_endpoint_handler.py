@@ -21,6 +21,7 @@ from .._handlers import RuntimeResponseContext
 from .._options import ResponsesServerOptions
 from ..models import ResponseModeFlags
 from ..streaming._helpers import _encode_sse
+from ..streaming._sse import encode_sse_payload
 from ..streaming._state_machine import LifecycleStateMachineError, normalize_lifecycle_events
 from ._background import _refresh_background_status, _try_execute_background_runner
 from ._execution_context import _ExecutionContext
@@ -44,6 +45,7 @@ from ._request_parsing import (
 )
 from ._runtime_state import _RuntimeState
 from ._validation import parse_and_validate_create_response
+from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ..streaming._helpers import EVENT_TYPE
 
 
@@ -67,6 +69,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         response_headers: dict[str, str],
         sse_headers: dict[str, str],
         sdk_name: str,
+        provider: ResponseProviderProtocol,
+        stream_provider: ResponseStreamProviderProtocol | None = None,
     ) -> None:
         """Initialise the endpoint handler.
 
@@ -82,6 +86,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :type sse_headers: dict[str, str]
         :param sdk_name: SDK package name string for observability tags.
         :type sdk_name: str
+        :param provider: Persistence provider for response envelopes and input items.
+        :type provider: ResponseProviderProtocol
+        :param stream_provider: Optional provider for SSE stream event persistence and replay.
+        :type stream_provider: ResponseStreamProviderProtocol | None
         """
         self._orchestrator = orchestrator
         self._runtime_state = runtime_state
@@ -89,6 +97,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         self._response_headers = response_headers
         self._sse_headers = sse_headers
         self._sdk_name = sdk_name
+        self._provider = provider
+        self._stream_provider = stream_provider
         self._shutdown_requested: asyncio.Event = asyncio.Event()
         self._is_draining: bool = False
 
@@ -227,6 +237,46 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if record is None:
             if await self._runtime_state.is_deleted(response_id):
                 return _deleted_response(response_id, self._response_headers)
+
+            stream_replay = request.query_params.get("stream", "false").lower() == "true"
+            if not stream_replay:
+                # Provider fallback: serve completed responses that are no longer in runtime state
+                # (e.g., after a process restart).
+                try:
+                    response_obj = await self._provider.get_response_async(response_id)
+                    snapshot = response_obj.as_dict()
+                    return JSONResponse(snapshot, status_code=200, headers=self._response_headers)
+                except Exception:  # pylint: disable=broad-exception-caught
+                    pass
+            else:
+                # Stream provider fallback: replay persisted SSE events when runtime state is gone.
+                if self._stream_provider is not None:
+                    try:
+                        replay_events = await self._stream_provider.get_stream_events_async(response_id)
+                        if replay_events is not None:
+                            cursor_raw = request.query_params.get("starting_after")
+                            starting_after = -1
+                            if cursor_raw is not None:
+                                try:
+                                    starting_after = int(cursor_raw)
+                                except ValueError:
+                                    return _invalid_request(
+                                        "starting_after must be an integer",
+                                        self._response_headers,
+                                        param="starting_after",
+                                    )
+                            filtered = [
+                                e for e in replay_events
+                                if e["payload"]["sequence_number"] > starting_after
+                            ]
+                            return StreamingResponse(
+                                _encode_sse(filtered),
+                                media_type="text/event-stream",
+                                headers=self._sse_headers,
+                            )
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        pass
+
             return _not_found(response_id, self._response_headers)
 
         await _try_execute_background_runner(record)
@@ -254,12 +304,19 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         param="starting_after",
                     )
 
-            replay_events = [
-                event for event in record.events
-                if event["payload"]["sequence_number"] > starting_after
-            ]
+            # Live subscription: delivers buffered history + ongoing live events,
+            # then exits when the stream completes. Matches .NET SseReplayResult /
+            # IResponsesStreamProvider.SubscribeToEventsAsync() behaviour.
+            # record.subject is always set for bg+stream records (created in _live_stream
+            # before the record is registered in _runtime_state).
+            _cursor = starting_after
+
+            async def _stream_from_subject():
+                async for event in record.subject.subscribe(cursor=_cursor):  # type: ignore[union-attr]
+                    yield encode_sse_payload(event["type"], event["payload"])
+
             return StreamingResponse(
-                _encode_sse(replay_events), media_type="text/event-stream", headers=self._sse_headers
+                _stream_from_subject(), media_type="text/event-stream", headers=self._sse_headers
             )
 
         if not record.visible_via_get:
@@ -292,6 +349,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         deleted = await self._runtime_state.delete(response_id)
         if not deleted:
             return _not_found(response_id, self._response_headers)
+
+        if record.store:
+            try:
+                await self._provider.delete_response_async(response_id)
+            except Exception:  # pylint: disable=broad-exception-caught
+                pass  # best effort: provider may not have the record if response was not persisted
 
         return JSONResponse(
             {"id": response_id, "object": "response.deleted", "deleted": True},
@@ -404,11 +467,19 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         before = request.query_params.get("before")
 
         try:
-            items = await self._runtime_state.get_input_items(response_id)
+            items = await self._provider.get_input_items_async(
+                response_id, limit=100, ascending=True
+            )
         except ValueError:
             return _deleted_response(response_id, self._response_headers)
         except KeyError:
-            return _not_found(response_id, self._response_headers)
+            # Fall back to runtime_state for in-flight responses not yet persisted to provider
+            try:
+                items = await self._runtime_state.get_input_items(response_id)
+            except ValueError:
+                return _deleted_response(response_id, self._response_headers)
+            except KeyError:
+                return _not_found(response_id, self._response_headers)
 
         ordered_items = items if order == "asc" else list(reversed(items))
         scoped_items = _apply_item_cursors(ordered_items, after=after, before=before)

@@ -14,6 +14,7 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
 from typing import Any, AsyncIterator
 
+from ..models import _generated as generated_models
 from ..streaming._sse import encode_keep_alive_comment, encode_sse_payload, new_stream_counter
 from ..streaming._helpers import (
     EVENT_TYPE,
@@ -23,7 +24,9 @@ from ..streaming._helpers import (
     _extract_response_snapshot_from_events,
 )
 from .._options import ResponsesServerOptions
+from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ._background import _run_background_non_stream
+from ._event_subject import _ResponseEventSubject
 from ._execution_context import _ExecutionContext
 from ._runtime_state import _ExecutionRecord, _RuntimeState
 
@@ -62,6 +65,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         create_async: Any,
         runtime_state: _RuntimeState,
         runtime_options: ResponsesServerOptions,
+        provider: ResponseProviderProtocol,
+        stream_provider: ResponseStreamProviderProtocol | None = None,
     ) -> None:
         """Initialise the orchestrator.
 
@@ -71,19 +76,25 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         :type runtime_state: _RuntimeState
         :param runtime_options: Server runtime options (keep-alive, etc.).
         :type runtime_options: ResponsesServerOptions
+        :param provider: Persistence provider for response envelopes and input items.
+        :type provider: ResponseProviderProtocol
+        :param stream_provider: Optional provider for SSE stream event persistence and replay.
+        :type stream_provider: ResponseStreamProviderProtocol | None
         """
         self._create_async = create_async
         self._runtime_state = runtime_state
         self._runtime_options = runtime_options
+        self._provider = provider
+        self._stream_provider = stream_provider
 
     # ------------------------------------------------------------------
     # Internal helpers (stream path)
     # ------------------------------------------------------------------
 
-    def _normalize_and_append(self, ctx: _ExecutionContext, handler_event: Any) -> dict[str, Any]:
+    async def _normalize_and_append(self, ctx: _ExecutionContext, handler_event: Any) -> dict[str, Any]:
         """Coerce, normalise, and append a handler event to the context.
 
-        Also propagates the event into the background record when one is active.
+        Also propagates the event into the background record and its subject when active.
 
         :param ctx: Current execution context.
         :type ctx: _ExecutionContext
@@ -103,6 +114,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         ctx.handler_events.append(normalized)
         if ctx.bg_record is not None:
             ctx.bg_record.apply_event(normalized, ctx.handler_events)
+            if ctx.bg_record.subject is not None:
+                await ctx.bg_record.subject.publish(normalized)
         return normalized
 
     @staticmethod
@@ -116,7 +129,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         """
         return any(e["type"] in _ResponseOrchestrator._TERMINAL_SSE_TYPES for e in handler_events)
 
-    def _cancel_terminal_sse(self, ctx: _ExecutionContext) -> str:
+    async def _cancel_terminal_sse(self, ctx: _ExecutionContext) -> str:
         """Build and record a ``response.failed`` cancel-terminal SSE string.
 
         :param ctx: Current execution context.
@@ -143,6 +156,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         ctx.handler_events.append(normalized)
         if ctx.bg_record is not None:
             ctx.bg_record.apply_event(normalized, ctx.handler_events)
+            if ctx.bg_record.subject is not None:
+                await ctx.bg_record.subject.publish(normalized)
         return encode_sse_payload(normalized["type"], normalized["payload"])
 
     async def _finalize_stream(self, ctx: _ExecutionContext) -> None:
@@ -187,8 +202,29 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     status = resolved_status if isinstance(resolved_status, str) else "in_progress"
                     ctx.bg_record.response_payload = response_payload
                     ctx.bg_record.status = status
-                ctx.bg_record.events = deepcopy(ctx.handler_events) if ctx.handler_events else []
+            # Persist terminal state update via provider (bg+stream: initial create already done)
+            if ctx.bg_record.store and ctx.bg_record.status != "cancelled" and ctx.bg_record.response_payload:
+                try:
+                    _final_response_obj = generated_models.Response(ctx.bg_record.response_payload)
+                    await self._provider.update_response_async(_final_response_obj)
+                except Exception:  # pylint: disable=broad-exception-caught
+                    pass  # best effort
+                # Persist SSE events for replay after process restart
+                if self._stream_provider is not None and ctx.handler_events:
+                    try:
+                        await self._stream_provider.save_stream_events_async(
+                            ctx.response_id, ctx.handler_events
+                        )
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        pass  # best effort
             ctx.span.end(ctx.captured_error)
+            # Complete the subject — signals all live SSE replay subscribers that the
+            # stream has ended, matching .NET's publisher.OnCompletedAsync() call.
+            if ctx.bg_record.subject is not None:
+                try:
+                    await ctx.bg_record.subject.complete()
+                except Exception:  # pylint: disable=broad-exception-caught
+                    pass  # best effort
             return
 
         events = ctx.handler_events if ctx.handler_events else _build_events(
@@ -210,6 +246,12 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             else ("in_progress" if ctx.background else "completed")
         )
         if ctx.store:
+            # Pre-fill a completed subject so GET ?stream=true replay always has
+            # a subject to subscribe to (non-bg: stream already finished here).
+            replay_subject = _ResponseEventSubject()
+            for _evt in events:
+                await replay_subject.publish(_evt)
+            await replay_subject.complete()
             stream_record = _ExecutionRecord(
                 response_id=ctx.response_id,
                 agent_reference=deepcopy(ctx.agent_reference),
@@ -221,11 +263,22 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 status=status,
                 model=ctx.model,
                 response_payload=response_payload,
-                events=deepcopy(events) if ctx.background else [],
+                subject=replay_subject,
                 input_items=deepcopy(ctx.input_items),
                 previous_response_id=ctx.previous_response_id,
             )
             await self._runtime_state.add(stream_record)
+            # Persist via provider (non-bg stream: single create at terminal state)
+            try:
+                _response_obj = generated_models.Response(response_payload)
+                _history_ids = (
+                    await self._provider.get_history_item_ids_async(ctx.previous_response_id, None, 10000)
+                    if ctx.previous_response_id
+                    else None
+                )
+                await self._provider.create_response_async(_response_obj, ctx.input_items or None, _history_ids)
+            except Exception:  # pylint: disable=broad-exception-caught
+                pass  # best effort
         ctx.span.end(ctx.captured_error)
 
     # ------------------------------------------------------------------
@@ -318,22 +371,36 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 status=initial_status,
                 model=ctx.model,
                 response_payload=initial_payload,
-                events=[deepcopy(first_normalized)],
                 input_items=deepcopy(ctx.input_items),
                 previous_response_id=ctx.previous_response_id,
                 cancel_signal=ctx.cancellation_signal,
             )
+            # Create the broadcast subject and seed it with the first event so that
+            # any subscriber joining mid-stream receives full history (like .NET's
+            # SeekableReplaySubject / ConcurrentReplayAsyncSubject).
+            ctx.bg_record.subject = _ResponseEventSubject()
+            await ctx.bg_record.subject.publish(first_normalized)
             await self._runtime_state.add(ctx.bg_record)
+            if ctx.store:
+                _initial_response_obj = generated_models.Response(initial_payload)
+                _history_ids = (
+                    await self._provider.get_history_item_ids_async(ctx.previous_response_id, None, 10000)
+                    if ctx.previous_response_id
+                    else None
+                )
+                await self._provider.create_response_async(
+                    _initial_response_obj, ctx.input_items or None, _history_ids
+                )
 
         # --- Fast path: no keep-alive ---
         if not self._runtime_options.sse_keep_alive_enabled:
             try:
                 yield encode_sse_payload(first_normalized["type"], first_normalized["payload"])
                 async for handler_event in handler_iterator:
-                    normalized = self._normalize_and_append(ctx, handler_event)
+                    normalized = await self._normalize_and_append(ctx, handler_event)
                     yield encode_sse_payload(normalized["type"], normalized["payload"])
                 if ctx.cancellation_signal.is_set() and not self._has_terminal_event(ctx.handler_events):
-                    yield self._cancel_terminal_sse(ctx)
+                    yield await self._cancel_terminal_sse(ctx)
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 ctx.captured_error = exc
                 # B-13: emit response.failed when handler raises after response.created
@@ -348,7 +415,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                             "error": {"code": "server_error", "message": "An internal server error occurred."},
                         },
                     }
-                    normalized_failed = self._normalize_and_append(ctx, failed_event)
+                    normalized_failed = await self._normalize_and_append(ctx, failed_event)
                     yield encode_sse_payload(normalized_failed["type"], normalized_failed["payload"])
                 return
             finally:
@@ -364,7 +431,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         async def _handler_producer() -> None:
             try:
                 async for handler_event in handler_iterator:
-                    normalized = self._normalize_and_append(ctx, handler_event)
+                    normalized = await self._normalize_and_append(ctx, handler_event)
                     await merge_queue.put(encode_sse_payload(normalized["type"], normalized["payload"]))
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 handler_error.append(exc)
@@ -405,10 +472,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                             "error": {"code": "server_error", "message": "An internal server error occurred."},
                         },
                     }
-                    normalized_failed = self._normalize_and_append(ctx, failed_event)
+                    normalized_failed = await self._normalize_and_append(ctx, failed_event)
                     yield encode_sse_payload(normalized_failed["type"], normalized_failed["payload"])
             elif ctx.cancellation_signal.is_set() and not self._has_terminal_event(ctx.handler_events):
-                yield self._cancel_terminal_sse(ctx)
+                yield await self._cancel_terminal_sse(ctx)
         except Exception as exc:  # pylint: disable=broad-exception-caught
             ctx.captured_error = exc
         finally:
@@ -492,6 +559,17 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
         if ctx.store:
             await self._runtime_state.add(record)
+            # Persist via provider (non-bg sync: single create at terminal state)
+            try:
+                _response_obj = generated_models.Response(response_payload)
+                _history_ids = (
+                    await self._provider.get_history_item_ids_async(ctx.previous_response_id, None, 10000)
+                    if ctx.previous_response_id
+                    else None
+                )
+                await self._provider.create_response_async(_response_obj, ctx.input_items or None, _history_ids)
+            except Exception:  # pylint: disable=broad-exception-caught
+                pass  # best effort
 
         ctx.span.end(ctx.captured_error)
         return record.to_snapshot()
@@ -522,6 +600,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             response_context=ctx.context,
         )
 
+        _captured_provider = self._provider
+
         async def _background_runner() -> None:
             await _run_background_non_stream(
                 create_async=self._create_async,
@@ -532,12 +612,26 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 response_id=ctx.response_id,
                 agent_reference=ctx.agent_reference,
                 model=ctx.model,
+                provider=_captured_provider,
+                store=ctx.store,
             )
 
         record.background_runner = _background_runner
 
         if ctx.store:
             await self._runtime_state.add(record)
+            # Persist initial queued state via provider (bg non-stream: create at queued time)
+            try:
+                _initial_snapshot = record.to_snapshot()
+                _response_obj = generated_models.Response(_initial_snapshot)
+                _history_ids = (
+                    await self._provider.get_history_item_ids_async(ctx.previous_response_id, None, 10000)
+                    if ctx.previous_response_id
+                    else None
+                )
+                await self._provider.create_response_async(_response_obj, ctx.input_items or None, _history_ids)
+            except Exception:  # pylint: disable=broad-exception-caught
+                pass  # best effort
 
         ctx.span.end(ctx.captured_error)
         return record.to_snapshot()

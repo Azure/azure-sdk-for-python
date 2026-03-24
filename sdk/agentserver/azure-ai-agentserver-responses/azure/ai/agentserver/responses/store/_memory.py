@@ -12,7 +12,7 @@ from typing import Any, Dict, Iterable
 
 from ..models._generated import Response
 from ..models.runtime import ResponseExecution, ResponseModeFlags, ResponseStatus, StreamEventRecord, StreamReplayState
-from ._base import ResponseProviderProtocol
+from ._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 
 
 @dataclass(slots=True)
@@ -28,8 +28,8 @@ class _StoreEntry:
     deleted: bool = False
 
 
-class InMemoryResponseProvider(ResponseProviderProtocol):
-    """In-memory provider aligned to ``ResponseProviderProtocol``."""
+class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderProtocol):
+    """In-memory provider implementing both ``ResponseProviderProtocol`` and ``ResponseStreamProviderProtocol``."""
 
     def __init__(self) -> None:
         """Initialize in-memory state and an async mutation lock."""
@@ -37,6 +37,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         self._lock = asyncio.Lock()
         self._item_store: Dict[str, Any] = {}
         self._conversation_responses: Dict[str, list[str]] = {}
+        self._stream_events: Dict[str, list[dict[str, Any]]] = {}
 
     async def create_response_async(
         self,
@@ -243,7 +244,10 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
             if previous_response_id is not None:
                 entry = self._entries.get(previous_response_id)
                 if entry is not None and not entry.deleted:
+                    # Mirror .NET IResponsesProvider.GetHistoryItemIdsAsync:
+                    # return historyItemIds + inputItemIds of the previous response
                     resolved.extend(entry.history_item_ids or [])
+                    resolved.extend(entry.input_item_ids or [])
 
             if conversation_id is not None:
                 for response_id in self._conversation_responses.get(conversation_id, []):
@@ -454,7 +458,41 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         """
         async with self._lock:
             self._purge_expired_unlocked()
+            self._stream_events.pop(response_id, None)
             return self._entries.pop(response_id, None) is not None
+
+    async def save_stream_events_async(
+        self,
+        response_id: str,
+        events: list[dict[str, Any]],
+    ) -> None:
+        """Persist the complete ordered list of SSE events for ``response_id``.
+
+        :param response_id: The unique identifier of the response.
+        :type response_id: str
+        :param events: Ordered list of normalised SSE event dicts.
+        :type events: list[dict[str, Any]]
+        :rtype: None
+        """
+        async with self._lock:
+            self._stream_events[response_id] = deepcopy(events)
+
+    async def get_stream_events_async(
+        self,
+        response_id: str,
+    ) -> list[dict[str, Any]] | None:
+        """Retrieve the persisted SSE events for ``response_id``.
+
+        :param response_id: The unique identifier of the response whose events to retrieve.
+        :type response_id: str
+        :returns: A deep-copied list of normalised SSE event dicts, or ``None`` if not found.
+        :rtype: list[dict[str, Any]] | None
+        """
+        async with self._lock:
+            events = self._stream_events.get(response_id)
+            if events is None:
+                return None
+            return deepcopy(events)
 
     async def purge_expired(self, *, now: datetime | None = None) -> int:
         """Remove expired entries and return count.

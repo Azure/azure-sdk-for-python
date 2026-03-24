@@ -12,6 +12,8 @@ from ._observability import build_platform_server_header
 from .._options import ResponsesServerOptions
 from ._orchestrator import _ResponseOrchestrator
 from ._runtime_state import _RuntimeState
+from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
+from ..store._memory import InMemoryResponseProvider
 from .._version import VERSION
 
 if TYPE_CHECKING:
@@ -43,6 +45,7 @@ def map_responses_server(
     *,
     prefix: str = "",
     options: ResponsesServerOptions | None = None,
+    provider: ResponseProviderProtocol | None = None,
 ) -> None:
     if app is None:
         raise ValueError("app is required")
@@ -68,11 +71,15 @@ def map_responses_server(
         "x-accel-buffering": "no",
     }
 
+    resolved_provider: ResponseProviderProtocol = provider if provider is not None else InMemoryResponseProvider()
+    stream_provider = resolved_provider if isinstance(resolved_provider, ResponseStreamProviderProtocol) else None
     runtime_state = _RuntimeState()
     orchestrator = _ResponseOrchestrator(
         create_async=create_async,
         runtime_state=runtime_state,
         runtime_options=runtime_options,
+        provider=resolved_provider,
+        stream_provider=stream_provider,
     )
     endpoint = _ResponseEndpointHandler(
         orchestrator=orchestrator,
@@ -81,6 +88,8 @@ def map_responses_server(
         response_headers=response_headers,
         sse_headers=sse_headers,
         sdk_name=_SDK_NAME,
+        provider=resolved_provider,
+        stream_provider=stream_provider,
     )
 
     app.add_route(f"{normalized_prefix}/responses", endpoint.handle_create, methods=["POST"])

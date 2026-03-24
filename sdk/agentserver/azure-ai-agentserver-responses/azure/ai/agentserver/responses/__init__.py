@@ -22,7 +22,7 @@ from .streaming._builders import (
 from .streaming._event_stream import ResponseEventStream
 from ._handlers import ResponseContext, ResponseHandler, RuntimeResponseContext
 from ._options import ResponsesServerOptions
-from .store._base import ResponseProviderProtocol
+from .store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from .store._memory import InMemoryResponseProvider
 
 __all__ = [
@@ -31,6 +31,7 @@ __all__ = [
     "RuntimeResponseContext",
     "ResponsesServerOptions",
     "ResponseProviderProtocol",
+    "ResponseStreamProviderProtocol",
     "InMemoryResponseProvider",
     "TextContentBuilder",
     "OutputItemMessageBuilder",

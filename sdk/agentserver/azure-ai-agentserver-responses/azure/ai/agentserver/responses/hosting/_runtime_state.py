@@ -16,6 +16,7 @@ from ..streaming._helpers import (
     _RESPONSE_SNAPSHOT_EVENT_TYPES,
     _extract_response_snapshot_from_events,
 )
+from ._event_subject import _ResponseEventSubject
 
 
 @dataclass(slots=True)
@@ -30,7 +31,7 @@ class _ExecutionRecord:  # pylint: disable=too-many-instance-attributes
     status: str
     model: str | None
     response_payload: dict[str, Any] | None = None
-    events: list[dict[str, Any]] = field(default_factory=list)
+    subject: _ResponseEventSubject | None = None
     cancel_signal: asyncio.Event = field(default_factory=asyncio.Event)
     background_runner: Any | None = None
     background_execution_started: bool = False
@@ -41,8 +42,8 @@ class _ExecutionRecord:  # pylint: disable=too-many-instance-attributes
     def apply_event(self, normalized: dict[str, Any], all_events: list[dict[str, Any]]) -> None:
         """Apply a normalised stream event to this record's state.
 
-        Updates ``events``, ``response_payload``, and ``status`` according to the
-        event type.  Does nothing if the record is already ``"cancelled"``.
+        Updates ``response_payload`` and ``status`` according to the event type.
+        Does nothing if the record is already ``"cancelled"``.
 
         :param normalized: The normalised event dictionary (``{"type": ..., "payload": {...}}``).
         :type normalized: dict[str, Any]
@@ -52,7 +53,6 @@ class _ExecutionRecord:  # pylint: disable=too-many-instance-attributes
         """
         if self.status == "cancelled":
             return
-        self.events.append(deepcopy(normalized))
         event_type = normalized.get("type")
         payload = normalized.get("payload", {})
         if event_type in _RESPONSE_SNAPSHOT_EVENT_TYPES:
