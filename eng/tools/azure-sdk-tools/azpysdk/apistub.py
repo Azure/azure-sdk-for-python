@@ -78,7 +78,7 @@ class apistub(Check):
 
         if sys.version_info >= PYTHON_VERSION_LIMIT:
             logger.error(
-                f"Python version {sys.version_info.major}.{sys.version_info.minor} is not supported. Maximum supported version is {PYTHON_VERSION_LIMIT[0]}.{PYTHON_VERSION_LIMIT[1]}."
+                f"Python version {sys.version_info.major}.{sys.version_info.minor} is not supported. Version must be less than {PYTHON_VERSION_LIMIT[0]}.{PYTHON_VERSION_LIMIT[1]}."
             )
             return 1
 
