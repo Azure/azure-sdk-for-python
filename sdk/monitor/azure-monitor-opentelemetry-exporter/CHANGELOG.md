@@ -9,6 +9,8 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Move sampler argument extraction logic from distro to respective samplers
+  ([#45849](https://github.com/Azure/azure-sdk-for-python/pull/45849))
 
 ## 1.0.0b49 (2026-03-19)
 
