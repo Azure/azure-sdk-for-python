@@ -25,13 +25,6 @@ from azure.monitor.opentelemetry._configure import (
     _setup_tracing,
     configure_azure_monitor,
 )
-
-from azure.monitor.opentelemetry._constants import (
-    SAMPLER_TYPE,
-    FIXED_PERCENTAGE_SAMPLER,
-    RATE_LIMITED_SAMPLER,
-)
-
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import _DISTRO_DETECTS_ATTACH
 
 
@@ -385,7 +378,6 @@ class TestConfigure(unittest.TestCase):
                     "azure.core.tracing.ext.opentelemetry_span": Mock(OpenTelemetrySpan=opentelemetry_span_mock),
                 },
             ):
-                configurations[SAMPLER_TYPE] = FIXED_PERCENTAGE_SAMPLER
                 _setup_tracing(configurations)
                 sampler_mock.assert_called_once_with(sampling_ratio=0.5)
                 tp_mock.assert_called_once_with(sampler=sampler_init_mock, resource=TEST_RESOURCE)
@@ -459,9 +451,8 @@ class TestConfigure(unittest.TestCase):
                     "azure.core.tracing.ext.opentelemetry_span": Mock(OpenTelemetrySpan=opentelemetry_span_mock),
                 },
             ):
-                configurations[SAMPLER_TYPE] = RATE_LIMITED_SAMPLER
                 _setup_tracing(configurations)
-                sampler_mock.assert_called_once_with(traces_per_second=2.0)
+                sampler_mock.assert_called_once_with(target_spans_per_second_limit=2.0)
                 tp_mock.assert_called_once_with(sampler=sampler_init_mock, resource=TEST_RESOURCE)
                 set_tracer_provider_mock.assert_called_once_with(tp_init_mock)
                 trace_exporter_mock.assert_called_once_with(**configurations)
@@ -533,7 +524,6 @@ class TestConfigure(unittest.TestCase):
                     "azure.core.tracing.ext.opentelemetry_span": Mock(OpenTelemetrySpan=opentelemetry_span_mock),
                 },
             ):
-                configurations[SAMPLER_TYPE] = FIXED_PERCENTAGE_SAMPLER
                 _setup_tracing(configurations)
                 sampler_mock.assert_called_once_with(sampling_ratio=0.5)
                 tp_mock.assert_called_once_with(sampler=sampler_init_mock, resource=TEST_RESOURCE)

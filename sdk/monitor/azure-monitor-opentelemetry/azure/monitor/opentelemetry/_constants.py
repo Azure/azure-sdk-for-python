@@ -41,7 +41,6 @@ PARENT_BASED_ALWAYS_ON_SAMPLER = "parentbased_always_on"
 PARENT_BASED_ALWAYS_OFF_SAMPLER = "parentbased_always_off"
 PARENT_BASED_TRACE_ID_RATIO_SAMPLER = "parentbased_trace_id_ratio"
 SUPPORTED_OTEL_SAMPLERS = (
-    "microsoft.fixed.percentage",  # Ensures backward compatibility with old value
     RATE_LIMITED_SAMPLER,
     FIXED_PERCENTAGE_SAMPLER,
     ALWAYS_ON_SAMPLER,

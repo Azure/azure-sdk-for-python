@@ -41,9 +41,8 @@ from azure.monitor.opentelemetry._constants import (
     METRIC_READERS_ARG,
     VIEWS_ARG,
     ENABLE_TRACE_BASED_SAMPLING_ARG,
+    SAMPLING_ARG,
     SAMPLER_TYPE,
-    RATE_LIMITED_SAMPLER,
-    FIXED_PERCENTAGE_SAMPLER,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry.exporter._quickpulse import (  # pylint: disable=import-error,no-name-in-module
@@ -167,24 +166,21 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
     resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
     enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
-    sampler_type = configurations.get(SAMPLER_TYPE, RATE_LIMITED_SAMPLER)
-    if sampler_type in (RATE_LIMITED_SAMPLER, "microsoft.fixed.percentage"):
-        traces_per_second = configurations.get(SAMPLING_TRACES_PER_SECOND_ARG)
-        sampler = (
-            RateLimitedSampler()
-            if traces_per_second is None
-            else RateLimitedSampler(traces_per_second=traces_per_second)
-        )
-    elif sampler_type == FIXED_PERCENTAGE_SAMPLER:
-        sampling_ratio = configurations.get(SAMPLING_RATIO_ARG)
-        sampler = (
-            ApplicationInsightsSampler()
-            if sampling_ratio is None
-            else ApplicationInsightsSampler(sampling_ratio=sampling_ratio)
+    if SAMPLING_ARG in configurations:
+        sampler_arg = configurations[SAMPLING_ARG]
+        sampler_type = configurations[SAMPLER_TYPE]
+        sampler = _get_sampler_from_name(sampler_type, sampler_arg)
+        tracer_provider = TracerProvider(sampler=sampler, resource=resource)
+    elif SAMPLING_RATIO_ARG in configurations:
+        sampling_ratio = configurations[SAMPLING_RATIO_ARG]
+        tracer_provider = TracerProvider(
+            sampler=ApplicationInsightsSampler(sampling_ratio=cast(float, sampling_ratio)), resource=resource
         )
     else:
-        sampler = _get_sampler_from_name(sampler_type)
-    tracer_provider = TracerProvider(sampler=sampler, resource=resource)
+        traces_per_second = configurations[SAMPLING_TRACES_PER_SECOND_ARG]
+        tracer_provider = TracerProvider(
+            sampler=RateLimitedSampler(target_spans_per_second_limit=cast(float, traces_per_second)), resource=resource
+        )
 
     for span_processor in configurations[SPAN_PROCESSORS_ARG]:  # type: ignore
         tracer_provider.add_span_processor(span_processor)  # type: ignore
