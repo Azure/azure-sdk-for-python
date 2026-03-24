@@ -534,8 +534,8 @@ class TestC4BgStreamStoredAsync:
                 f"Expected response.failed for cancel per B26, got: {terminal['type']}"
             )
             # B11: status inside is "cancelled"
-            assert terminal["data"].get("status") == "cancelled"
+            assert terminal["data"]["response"].get("status") == "cancelled"
             # B11: output cleared
-            assert terminal["data"].get("output") == []
+            assert terminal["data"]["response"].get("output") == []
         finally:
             await _ensure_task_done(post_task, handler)

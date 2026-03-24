@@ -10,6 +10,7 @@ from contextvars import ContextVar
 from typing import Any, Mapping
 
 from ..models._generated import ResponseStreamEvent
+from ._internals import _RESPONSE_SNAPSHOT_EVENT_TYPES
 
 
 _stream_counter_var: ContextVar[itertools.count] = ContextVar("_stream_counter_var")
@@ -126,7 +127,7 @@ def encode_sse_event(event: ResponseStreamEvent) -> str:
     """
     event_type, payload = _coerce_payload(event)
     _ensure_sequence_number(event, payload)
-    return _build_sse_frame(event_type, payload)
+    return _build_sse_frame(event_type, {"type": event_type, **payload})
 
 
 def encode_sse_payload(event_type: str, payload: Mapping[str, Any]) -> str:
@@ -142,7 +143,14 @@ def encode_sse_payload(event_type: str, payload: Mapping[str, Any]) -> str:
     event = {"type": event_type, **dict(payload)}
     normalized_type, normalized_payload = _coerce_payload(event)
     _ensure_sequence_number(event, normalized_payload)
-    return _build_sse_frame(normalized_type, normalized_payload)
+    if normalized_type in _RESPONSE_SNAPSHOT_EVENT_TYPES:
+        seq = normalized_payload.pop("sequence_number", None)
+        data: dict[str, Any] = {"type": normalized_type, "response": normalized_payload}
+        if seq is not None:
+            data["sequence_number"] = seq
+    else:
+        data = {"type": normalized_type, **normalized_payload}
+    return _build_sse_frame(normalized_type, data)
 
 
 def encode_keep_alive_comment(comment: str = "keep-alive") -> str:

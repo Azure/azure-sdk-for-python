@@ -108,7 +108,9 @@ def _background_stream_mode() -> None:
                     except json.JSONDecodeError:
                         continue
 
-                    candidate = data_payload.get("id")
+                    # Response ID is nested under data_payload["response"]["id"]
+                    # (e.g. response.created event), not at the top level.
+                    candidate = data_payload.get("response", {}).get("id")
                     if isinstance(candidate, str) and candidate:
                         response_id = candidate
 
@@ -141,7 +143,7 @@ def _get_replay_mode() -> None:
                 except json.JSONDecodeError:
                     continue
 
-                candidate = data_payload.get("id")
+                candidate = data_payload.get("response", {}).get("id")
                 if isinstance(candidate, str) and candidate:
                     response_id = candidate
                     break

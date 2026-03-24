@@ -74,9 +74,9 @@ def test_event_stream_builder__output_item_added_returns_event_immediately() -> 
     assert emitted["payload"]["output_index"] == 0
     assert emitted["payload"]["item"]["id"] == message.item_id
     assert emitted["payload"]["item"]["type"] == "output_message"
-    assert emitted["payload"]["response_id"] == "resp_builder_incremental_12345"
-    assert emitted["payload"]["agent_reference"]["name"] == "unit-agent"
-    assert emitted["payload"]["model"] == "gpt-4o-mini"
+    # response_id and agent_reference belong on the Response, not on the item
+    assert "response_id" not in emitted["payload"]["item"]
+    assert "agent_reference" not in emitted["payload"]["item"]
     assert emitted["payload"]["sequence_number"] == 2
 
 

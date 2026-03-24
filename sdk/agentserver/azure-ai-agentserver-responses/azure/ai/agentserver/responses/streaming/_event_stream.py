@@ -490,11 +490,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :returns: A deep copy of the item with ``response_id`` and ``agent_reference`` defaults applied.
         :rtype: dict[str, Any]
         """
-        stamped_item = deepcopy(item)
-        stamped_item.setdefault("response_id", self._response_id)
-        if self._agent_reference is not None:
-            stamped_item.setdefault("agent_reference", deepcopy(self._agent_reference))
-        return stamped_item
+        return deepcopy(item)
 
     def _set_terminal_fields(self, *, usage: generated_models.ResponseUsage | dict[str, Any] | None) -> None:
         """Set terminal fields on the response envelope (completed_at, usage, output_text).

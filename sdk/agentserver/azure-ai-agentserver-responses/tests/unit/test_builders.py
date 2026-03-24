@@ -107,7 +107,7 @@ def test_output_item_function_call_output_builder__emits_added_and_done_events()
     assert done["payload"]["item"]["output"] == "result"
 
 
-def test_output_item_events__auto_stamp_response_id_and_agent_reference_on_item() -> None:
+def test_output_item_events__item_has_no_response_id_or_agent_reference() -> None:
     stream = ResponseEventStream(
         response_id="resp_builder_3c",
         agent_reference={"type": "agent_reference", "name": "agent-a"},
@@ -118,10 +118,10 @@ def test_output_item_events__auto_stamp_response_id_and_agent_reference_on_item(
     added = function_call.emit_added()
     done = function_call.emit_done()
 
-    assert added["payload"]["item"]["response_id"] == "resp_builder_3c"
-    assert added["payload"]["item"]["agent_reference"]["name"] == "agent-a"
-    assert done["payload"]["item"]["response_id"] == "resp_builder_3c"
-    assert done["payload"]["item"]["agent_reference"]["name"] == "agent-a"
+    assert "response_id" not in added["payload"]["item"]
+    assert "agent_reference" not in added["payload"]["item"]
+    assert "response_id" not in done["payload"]["item"]
+    assert "agent_reference" not in done["payload"]["item"]
 
 
 def test_stream_builders__share_global_sequence_number() -> None:

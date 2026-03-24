@@ -17,6 +17,17 @@ from ..models import _generated as generated_models
 EVENT_TYPE = generated_models.ResponseStreamEventType
 
 
+# Event types whose payload is a full Response snapshot.
+# Only these events should carry id/response_id/object/agent_reference/model.
+_RESPONSE_SNAPSHOT_EVENT_TYPES: frozenset[str] = frozenset({
+    EVENT_TYPE.RESPONSE_QUEUED.value,
+    EVENT_TYPE.RESPONSE_CREATED.value,
+    EVENT_TYPE.RESPONSE_IN_PROGRESS.value,
+    EVENT_TYPE.RESPONSE_COMPLETED.value,
+    EVENT_TYPE.RESPONSE_FAILED.value,
+    EVENT_TYPE.RESPONSE_INCOMPLETE.value,
+})
+
 _EVENT_MODEL_CLASS_NAMES: dict[str, str] = {
     EVENT_TYPE.RESPONSE_QUEUED.value: "ResponseQueuedEvent",
     EVENT_TYPE.RESPONSE_CREATED.value: "ResponseCreatedEvent",
@@ -163,10 +174,14 @@ def apply_common_defaults(
     agent_reference: dict[str, Any] | None,
     model: str | None,
 ) -> None:
-    """Stamp every event payload with response-level defaults.
+    """Stamp lifecycle event payloads with response-level defaults.
 
-    Mutates each event's payload in-place with ``id``, ``response_id``,
-    ``object``, ``agent_reference``, and ``model`` defaults.
+    Only events whose payload is a ``Response`` snapshot
+    (``response.queued``, ``response.created``, ``response.in_progress``,
+    ``response.completed``, ``response.failed``, ``response.incomplete``)
+    receive ``id``, ``response_id``, ``object``, ``agent_reference``, and
+    ``model`` defaults.  Other event types carry different schemas per the
+    contract and are left untouched.
 
     :param events: The list of event dicts to mutate.
     :type events: list[dict[str, Any]]
@@ -179,6 +194,9 @@ def apply_common_defaults(
     :rtype: None
     """
     for event in events:
+        event_type = event.get("type")
+        if event_type not in _RESPONSE_SNAPSHOT_EVENT_TYPES:
+            continue
         payload = event.get("payload")
         if not isinstance(payload, dict):
             payload = {}

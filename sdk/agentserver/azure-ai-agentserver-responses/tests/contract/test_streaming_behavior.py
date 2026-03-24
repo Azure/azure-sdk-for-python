@@ -113,8 +113,8 @@ def test_streaming__first_event_is_response_created() -> None:
     assert events, "Expected at least one SSE event"
     assert events[0]["type"] == "response.created"
     # Contract (B8): response.created event status must be queued or in_progress
-    assert events[0]["data"].get("status") in {"queued", "in_progress"}, (
-        f"response.created status must be queued or in_progress per B8, got: {events[0]['data'].get('status')}"
+    assert events[0]["data"]["response"].get("status") in {"queued", "in_progress"}, (
+        f"response.created status must be queued or in_progress per B8, got: {events[0]['data']['response'].get('status')}"
     )
 
 
@@ -183,16 +183,23 @@ def test_streaming__identity_fields_are_consistent_across_events() -> None:
         events = _collect_stream_events(response)
 
     assert events, "Expected at least one SSE event"
-    first_payload = events[0]["data"]
-    response_id = first_payload.get("response_id")
-    assert response_id == first_payload.get("id")
-    assert isinstance(first_payload.get("agent_reference"), dict)
+    # The first event is response.created — a lifecycle event whose data wraps the
+    # Response snapshot under the "response" key per the ResponseCreatedEvent contract.
+    first_response = events[0]["data"]["response"]
+    response_id = first_response.get("response_id")
+    assert response_id == first_response.get("id")
+    assert isinstance(first_response.get("agent_reference"), dict)
 
-    for event in events:
-        payload = event["data"]
-        assert payload.get("response_id") == response_id
-        assert payload.get("id") == response_id
-        assert payload.get("agent_reference") == first_payload.get("agent_reference")
+    _LIFECYCLE_TYPES = {
+        "response.queued", "response.created", "response.in_progress",
+        "response.completed", "response.failed", "response.incomplete",
+    }
+    lifecycle_events = [e for e in events if e["type"] in _LIFECYCLE_TYPES]
+    for event in lifecycle_events:
+        response_payload = event["data"]["response"]
+        assert response_payload.get("response_id") == response_id
+        assert response_payload.get("id") == response_id
+        assert response_payload.get("agent_reference") == first_response.get("agent_reference")
 
 
 def test_streaming__forwards_emitted_event_before_late_handler_failure() -> None:

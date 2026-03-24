@@ -80,7 +80,7 @@ def _extract_response_id_from_sse_text(raw_text: str) -> str | None:
         if not line:
             if current_type is not None and current_data:
                 payload = json.loads(current_data)
-                candidate = payload.get("id")
+                candidate = payload.get("response", {}).get("id")
                 if isinstance(candidate, str) and candidate:
                     return candidate
             current_type = None
@@ -94,7 +94,7 @@ def _extract_response_id_from_sse_text(raw_text: str) -> str | None:
 
     if current_type is not None and current_data:
         payload = json.loads(current_data)
-        candidate = payload.get("id")
+        candidate = payload.get("response", {}).get("id")
         if isinstance(candidate, str) and candidate:
             return candidate
 

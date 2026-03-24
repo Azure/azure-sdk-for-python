@@ -73,7 +73,7 @@ def _create_streaming_and_get_response_id(client: TestClient) -> str:
         events = _collect_replay_events(create_response)
 
     assert events, "Expected streaming create to emit at least one event"
-    response_id = events[0]["data"].get("id")
+    response_id = events[0]["data"]["response"].get("id")
     assert isinstance(response_id, str)
     return response_id
 
@@ -95,7 +95,7 @@ def _create_background_streaming_and_get_response_id(client: TestClient) -> str:
         events = _collect_replay_events(create_response)
 
     assert events, "Expected background streaming create to emit at least one event"
-    response_id = events[0]["data"].get("id")
+    response_id = events[0]["data"]["response"].get("id")
     assert isinstance(response_id, str)
     return response_id
 

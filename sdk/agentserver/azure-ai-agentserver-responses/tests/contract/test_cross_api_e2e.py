@@ -276,7 +276,7 @@ def _create_streaming_response(client: TestClient, **extra: Any) -> str:
         assert resp.status_code == 200
         events = _collect_sse_events(resp)
     assert events, "Expected at least one SSE event"
-    return events[0]["data"]["id"]
+    return events[0]["data"]["response"]["id"]
 
 
 def _create_bg_response(client: TestClient, **extra: Any) -> str:
@@ -296,7 +296,7 @@ def _create_bg_streaming_response(client: TestClient, **extra: Any) -> str:
         assert resp.status_code == 200
         events = _collect_sse_events(resp)
     assert events, "Expected at least one SSE event"
-    return events[0]["data"]["id"]
+    return events[0]["data"]["response"]["id"]
 
 
 # ════════════════════════════════════════════════════════════
@@ -334,7 +334,7 @@ class TestEphemeralStoreFalse:
             with client.stream("POST", "/responses", json=create_payload) as resp:
                 assert resp.status_code == 200
                 events = _collect_sse_events(resp)
-            response_id = events[0]["data"]["id"]
+            response_id = events[0]["data"]["response"]["id"]
         else:
             r = client.post("/responses", json=create_payload)
             assert r.status_code == 200
@@ -373,7 +373,7 @@ class TestEphemeralStoreFalse:
             with client.stream("POST", "/responses", json=create_payload) as resp:
                 assert resp.status_code == 200
                 events = _collect_sse_events(resp)
-            response_id = events[0]["data"]["id"]
+            response_id = events[0]["data"]["response"]["id"]
         else:
             r = client.post("/responses", json=create_payload)
             assert r.status_code == 200

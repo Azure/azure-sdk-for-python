@@ -7,19 +7,13 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Any, AsyncIterator
 
+from . import _internals
 from ._event_stream import ResponseEventStream
+from ._internals import _RESPONSE_SNAPSHOT_EVENT_TYPES
 from ._sse import encode_sse_payload
 from ..models import _generated as generated_models
 
 EVENT_TYPE = generated_models.ResponseStreamEventType
-_RESPONSE_SNAPSHOT_EVENT_TYPES = {
-    EVENT_TYPE.RESPONSE_CREATED.value,
-    EVENT_TYPE.RESPONSE_QUEUED.value,
-    EVENT_TYPE.RESPONSE_IN_PROGRESS.value,
-    EVENT_TYPE.RESPONSE_COMPLETED.value,
-    EVENT_TYPE.RESPONSE_FAILED.value,
-    EVENT_TYPE.RESPONSE_INCOMPLETE.value,
-}
 
 
 def _build_events(
@@ -96,34 +90,6 @@ def _coerce_handler_event(handler_event: Any) -> dict[str, Any]:
     return {"type": event_type, "payload": normalized_payload}
 
 
-def _stamp_output_items(
-    response_payload: dict[str, Any],
-    *,
-    response_id: str,
-    agent_reference: dict[str, Any],
-) -> None:
-    """Stamp B20/B21 fields on each item in the ``output`` array of a response snapshot.
-
-    For every item in ``output[]``, sets ``response_id`` (B20) and
-    ``agent_reference`` (B21) using ``setdefault`` so handler-supplied
-    values are not overwritten.
-
-    :param response_payload: The mutable response snapshot dict (modified in-place).
-    :type response_payload: dict[str, Any]
-    :keyword response_id: The response ID to stamp on each output item.
-    :keyword type response_id: str
-    :keyword agent_reference: The agent reference dict to stamp on each output item.
-    :keyword type agent_reference: dict[str, Any]
-    """
-    output = response_payload.get("output")
-    if not isinstance(output, list):
-        return
-    for item in output:
-        if isinstance(item, dict):
-            item.setdefault("response_id", response_id)
-            item.setdefault("agent_reference", deepcopy(agent_reference))
-
-
 def _apply_stream_event_defaults(
     event: dict[str, Any],
     *,
@@ -134,9 +100,20 @@ def _apply_stream_event_defaults(
 ) -> dict[str, Any]:
     """Apply response-level defaults to an event payload.
 
+    For lifecycle events whose payload is a ``Response`` snapshot
+    (``response.created``, ``response.queued``, ``response.in_progress``,
+    ``response.completed``, ``response.failed``, ``response.incomplete``),
+    stamps ``id``, ``response_id``, ``object``, ``agent_reference``, and
+    ``model`` using ``setdefault`` so handler-supplied values are not overwritten.
+    For all other event types the payload is left untouched — those events have
+    different schemas per the contract and do not carry these fields.
+
+    ``sequence_number`` is always applied (or removed) regardless of event type,
+    because it lives on the ``ResponseStreamEvent`` base class.
+
     :param event: The event dict to enrich.
     :type event: dict[str, Any]
-    :keyword response_id: Response ID to stamp in the payload.
+    :keyword response_id: Response ID to stamp in lifecycle-event payloads.
     :keyword type response_id: str
     :keyword agent_reference: Agent reference metadata dict.
     :keyword type agent_reference: dict[str, Any]
@@ -148,19 +125,17 @@ def _apply_stream_event_defaults(
     :rtype: dict[str, Any]
     """
     normalized = deepcopy(event)
+    # Delegate lifecycle-event stamping to the canonical implementation in _internals.
+    _internals.apply_common_defaults(
+        [normalized],
+        response_id=response_id,
+        agent_reference=agent_reference if agent_reference else {},
+        model=model,
+    )
     payload = normalized.get("payload")
     if not isinstance(payload, dict):
         payload = {}
         normalized["payload"] = payload
-
-    payload.setdefault("id", response_id)
-    payload.setdefault("response_id", response_id)
-    payload.setdefault("object", "response")
-    payload.setdefault("agent_reference", deepcopy(agent_reference))
-    if model is not None:
-        payload.setdefault("model", model)
-    _stamp_output_items(payload, response_id=response_id, agent_reference=agent_reference)
-
     if sequence_number is not None:
         payload["sequence_number"] = sequence_number
     else:
@@ -207,7 +182,6 @@ def _extract_response_snapshot_from_events(
             snapshot.setdefault("output", [])
             if model is not None:
                 snapshot.setdefault("model", model)
-            _stamp_output_items(snapshot, response_id=response_id, agent_reference=agent_reference)
             if remove_sequence_number:
                 snapshot.pop("sequence_number", None)
             return snapshot

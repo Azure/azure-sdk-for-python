@@ -530,8 +530,8 @@ class _OutputItemHandler:
         return _events()
 
 
-def test_output_item__response_id_matches_response_id() -> None:
-    """B20 — Output items include response_id field matching the current response ID."""
+def test_output_item__no_response_id_on_item() -> None:
+    """Output items do not carry response_id — that field belongs on the Response only."""
     client = _build_client(_OutputItemHandler())
 
     response = client.post(
@@ -549,14 +549,13 @@ def test_output_item__response_id_matches_response_id() -> None:
     assert payload["status"] == "completed"
     assert len(payload.get("output", [])) == 1
     item = payload["output"][0]
-    assert item.get("response_id") == payload["id"], (
-        f"B20: output item response_id must match response id. "
-        f"item.response_id={item.get('response_id')!r}, response.id={payload['id']!r}"
+    assert "response_id" not in item, (
+        f"response_id must not appear on output items (belongs on Response only), got: {item!r}"
     )
 
 
-def test_output_item__agent_reference_matches_request_agent_reference() -> None:
-    """B21 — agent_reference from the request is present on the response and all output items."""
+def test_output_item__agent_reference_on_response_not_item() -> None:
+    """agent_reference from the request is present on the Response but not on individual output items."""
     app = Starlette()
     map_responses_server(app, _OutputItemHandler())
     client = TestClient(app)
@@ -577,16 +576,14 @@ def test_output_item__agent_reference_matches_request_agent_reference() -> None:
     assert response.status_code == 200
     payload = response.json()
     assert payload["status"] == "completed"
-    # B21: agent_reference is propagated to the response
+    # agent_reference is propagated to the Response
     assert payload.get("agent_reference", {}).get("name") == "my-agent"
     assert payload.get("agent_reference", {}).get("version") == "v2"
-    # B21: agent_reference is propagated to all output items
+    # agent_reference does NOT appear on individual output items
     assert len(payload.get("output", [])) == 1
     item = payload["output"][0]
-    item_agent_ref = item.get("agent_reference")
-    assert item_agent_ref is not None, "B21: output item must have agent_reference"
-    assert item_agent_ref.get("name") == "my-agent", (
-        f"B21: output item agent_reference.name must match request, got: {item_agent_ref!r}"
+    assert "agent_reference" not in item, (
+        f"agent_reference must not appear on output items (belongs on Response only), got: {item!r}"
     )
 
 
@@ -642,7 +639,7 @@ def test_x_platform_server_header__present_on_sse_replay_get_response() -> None:
                 first_data = line.split(":", 1)[1].strip()
                 break
     assert first_data is not None
-    response_id = _json.loads(first_data)["id"]
+    response_id = _json.loads(first_data)["response"]["id"]
 
     with client.stream("GET", f"/responses/{response_id}?stream=true") as replay_response:
         assert replay_response.status_code == 200
