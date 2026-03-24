@@ -264,11 +264,10 @@ class TestSampleAnalyzeBinary(ContentUnderstandingClientTestBase):
         # Read the sample file (use multi-page document for content range testing)
         tests_dir = os.path.dirname(os.path.dirname(__file__))
         file_path = os.path.join(tests_dir, "test_data", "mixed_financial_invoices.pdf")
-        if not os.path.exists(file_path):
-            pytest.skip(
-                f"Required multi-page test file not found: {file_path}. "
-                "This test requires 'mixed_financial_docs.pdf' to validate content range scenarios."
-            )
+        assert os.path.exists(file_path), (
+            f"Required multi-page test file not found: {file_path}. "
+            "This test requires 'mixed_financial_invoices.pdf' to validate content range scenarios."
+        )
 
         with open(file_path, "rb") as f:
             file_bytes = f.read()
