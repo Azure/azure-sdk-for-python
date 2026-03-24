@@ -16,7 +16,9 @@ from urllib.parse import urlsplit
 from azure.storage.blob.aio import ContainerClient
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from ._operations import BetaEvaluatorsOperations as EvaluatorsOperationsGenerated, JSON
+from ._operations import BetaEvaluatorsOperations as BetaEvaluatorsOperationsGenerated, JSON
+from ...models._enums import _FoundryFeaturesOptInKeys
+from ...models._patch import _FOUNDRY_FEATURES_HEADER_NAME
 from ...models._models import (
     CodeBasedEvaluatorDefinition,
     EvaluatorVersion,
@@ -24,8 +26,10 @@ from ...models._models import (
 
 logger = logging.getLogger(__name__)
 
+_EVALUATORS_FOUNDRY_FEATURES_VALUE = _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value
 
-class EvaluatorsOperations(EvaluatorsOperationsGenerated):
+
+class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -139,6 +143,7 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
             name=name,
             version=version,
             pending_upload_request=request_body,
+            headers={_FOUNDRY_FEATURES_HEADER_NAME: _EVALUATORS_FOUNDRY_FEATURES_VALUE},
         )
 
         # The service returns blobReferenceForConsumption
@@ -174,7 +179,9 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
         """
         try:
             versions = []
-            async for v in self.list_versions(name=name):
+            async for v in self.list_versions(
+                name=name, headers={_FOUNDRY_FEATURES_HEADER_NAME: _EVALUATORS_FOUNDRY_FEATURES_VALUE}
+            ):
                 versions.append(v)
             if versions:
                 numeric_versions = []
@@ -245,6 +252,7 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
             result = await self.create_version(
                 name=name,
                 evaluator_version=evaluator_version,
+                headers={_FOUNDRY_FEATURES_HEADER_NAME: _EVALUATORS_FOUNDRY_FEATURES_VALUE},
             )
 
         return result

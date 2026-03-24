@@ -10,9 +10,15 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from typing import Union, Optional, Any, IO, overload
 from azure.core.exceptions import HttpResponseError
+from azure.core.tracing.decorator_async import distributed_trace_async
 from ._operations import AgentsOperations as GeneratedAgentsOperations, JSON, _Unset
 from ... import models as _models
-from ...operations._patch_agents import _PREVIEW_FEATURE_REQUIRED_CODE, _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE
+from ...models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
+from ...operations._patch_agents import (
+    _AGENT_OPERATION_FEATURE_HEADERS,
+    _PREVIEW_FEATURE_REQUIRED_CODE,
+    _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE,
+)
 
 
 class AgentsOperations(GeneratedAgentsOperations):
@@ -114,6 +120,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         """
         ...
 
+    @distributed_trace_async
     async def create_version(
         self,
         agent_name: str,
@@ -151,6 +158,15 @@ class AgentsOperations(GeneratedAgentsOperations):
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        if getattr(self._config, "allow_preview", False):
+            # Add Foundry-Features header if not already present
+            headers = kwargs.get("headers")
+            if headers is None:
+                kwargs["headers"] = {_FOUNDRY_FEATURES_HEADER_NAME: _AGENT_OPERATION_FEATURE_HEADERS}
+            elif not _has_header_case_insensitive(headers, _FOUNDRY_FEATURES_HEADER_NAME):
+                headers[_FOUNDRY_FEATURES_HEADER_NAME] = _AGENT_OPERATION_FEATURE_HEADERS
+                kwargs["headers"] = headers
+
         try:
             return await super().create_version(
                 agent_name,

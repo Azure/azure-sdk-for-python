@@ -8,16 +8,19 @@ import tempfile
 import pytest
 from unittest.mock import MagicMock, patch, call
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.ai.projects.operations._patch_evaluators import EvaluatorsOperations
+from azure.ai.projects.operations._patch_evaluators import BetaEvaluatorsOperations, _EVALUATORS_FOUNDRY_FEATURES_VALUE
 from azure.ai.projects.models import CodeBasedEvaluatorDefinition, EvaluatorVersion
+from azure.ai.projects.models._patch import _FOUNDRY_FEATURES_HEADER_NAME
+
+_EVALUATORS_HEADERS = {_FOUNDRY_FEATURES_HEADER_NAME: _EVALUATORS_FOUNDRY_FEATURES_VALUE}
 
 
 class TestEvaluatorsUpload:
-    """Unit tests for EvaluatorsOperations.upload() method."""
+    """Unit tests for BetaEvaluatorsOperations.upload() method."""
 
     def _create_operations(self):
-        """Create a mock EvaluatorsOperations instance with mocked service calls."""
-        ops = object.__new__(EvaluatorsOperations)
+        """Create a mock BetaEvaluatorsOperations instance with mocked service calls."""
+        ops = object.__new__(BetaEvaluatorsOperations)
         ops.pending_upload = MagicMock()
         ops.list_versions = MagicMock()
         ops.create_version = MagicMock()
@@ -187,6 +190,7 @@ class TestEvaluatorsUpload:
             name="test",
             version="1",
             pending_upload_request={"connectionName": "my-connection"},
+            headers=_EVALUATORS_HEADERS,
         )
 
     # ---------------------------------------------------------------
@@ -372,6 +376,7 @@ class TestEvaluatorsUpload:
             ops.create_version.assert_called_once_with(
                 name="my_eval",
                 evaluator_version=evaluator_version,
+                headers=_EVALUATORS_HEADERS,
             )
             assert result == {"name": "my_eval", "version": "1"}
 
@@ -400,6 +405,7 @@ class TestEvaluatorsUpload:
                 name="my_eval",
                 version="3",
                 pending_upload_request={},
+                headers=_EVALUATORS_HEADERS,
             )
 
     # ---------------------------------------------------------------

@@ -10,8 +10,11 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from typing import Union, Optional, Any, IO, overload, Final
 from azure.core.exceptions import HttpResponseError
+from azure.core.tracing.decorator import distributed_trace
 from ._operations import AgentsOperations as GeneratedAgentsOperations, JSON, _Unset
 from .. import models as _models
+from ..models._enums import _AgentDefinitionOptInKeys, _FoundryFeaturesOptInKeys
+from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 
 """
 Example service response payload when the caller is trying to use a feature preview without opt-in flag (service error 403 (Forbidden)): 
@@ -33,6 +36,13 @@ _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE: Final = (
     '\n**Python SDK users**: This operation requires you to set "allow_preview=True" '
     "when calling the AIProjectClient constructor. "
     "\nNote that preview features are under development and subject to change."
+)
+_AGENT_OPERATION_FEATURE_HEADERS: str = ",".join(
+    [
+        _AgentDefinitionOptInKeys.HOSTED_AGENTS_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW.value,
+        _FoundryFeaturesOptInKeys.AGENT_ENDPOINT_V1_PREVIEW.value,
+    ]
 )
 
 
@@ -135,6 +145,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         """
         ...
 
+    @distributed_trace
     def create_version(
         self,
         agent_name: str,
@@ -172,6 +183,16 @@ class AgentsOperations(GeneratedAgentsOperations):
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
+        if getattr(self._config, "allow_preview", False):
+            # Add Foundry-Features header if not already present
+            headers = kwargs.get("headers")
+            if headers is None:
+                kwargs["headers"] = {_FOUNDRY_FEATURES_HEADER_NAME: _AGENT_OPERATION_FEATURE_HEADERS}
+            elif not _has_header_case_insensitive(headers, _FOUNDRY_FEATURES_HEADER_NAME):
+                headers[_FOUNDRY_FEATURES_HEADER_NAME] = _AGENT_OPERATION_FEATURE_HEADERS
+                kwargs["headers"] = headers
+
         try:
             return super().create_version(
                 agent_name,
