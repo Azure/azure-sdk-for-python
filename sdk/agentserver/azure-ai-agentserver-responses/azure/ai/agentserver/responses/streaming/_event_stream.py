@@ -24,7 +24,7 @@ from ._builders import (
     OutputItemWebSearchCallBuilder,
 )
 from .._id_generator import IdGenerator
-from ._state_machine import normalize_lifecycle_events, validate_response_event_stream
+from ._state_machine import validate_response_event_stream
 from ..models import _generated as generated_models
 
 EVENT_TYPE = generated_models.ResponseStreamEventType

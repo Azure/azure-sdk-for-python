@@ -236,7 +236,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if stream_replay:
             if not record.replay_enabled:
                 return _invalid_mode(
-                    "stream replay is not available for this response; to enable SSE replay, create the response with background=true",
+                    "stream replay is not available for this response; to enable SSE replay, " \
+                    + "create the response with background=true",
                     self._response_headers,
                     param="stream",
                 )

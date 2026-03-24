@@ -282,7 +282,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         """
         return self._live_stream(ctx)
 
-    async def _live_stream(self, ctx: _ExecutionContext) -> AsyncIterator[str]:  # pylint: disable=too-many-statements
+    async def _live_stream(self, ctx: _ExecutionContext) -> AsyncIterator[str]:  # pylint: disable=too-many-statements,too-many-branches
         new_stream_counter()
         handler_iterator = self._create_async(ctx.parsed, ctx.context, ctx.cancellation_signal)
 
