@@ -21,7 +21,7 @@ from ._generated.models import (
 )
 from ._error import _process_table_error
 from ._decoder import TableEntityDecoder
-from ._constants import NEXT_PARTITION_KEY, NEXT_ROW_KEY, NEXT_TABLE_NAME
+from ._constants import NEXT_PARTITION_KEY, NEXT_ROW_KEY
 
 
 def _return_context_and_deserialized(response, deserialized, response_headers):
@@ -289,35 +289,29 @@ class TablePropertiesPaged(PageIterator):
     continuation_token: Optional[str]
     """The continuation token needed by get_next()."""
 
-    def __init__(self, command: Callable, **kwargs: Any) -> None:
-        super(TablePropertiesPaged, self).__init__(
-            self._get_next_cb,
+    def __init__(self, get_next, extract_data, *, continuation_token=None, **kwargs):
+        self._original_extract_data = extract_data
+        super().__init__(
+            get_next,
             self._extract_data_cb,
-            continuation_token=kwargs.get("continuation_token"),
+            continuation_token=continuation_token,
         )
-        self._command = command
         self._headers = None
         self._response = None
         self.results_per_page = kwargs.get("results_per_page")
         self.filter = kwargs.get("filter")
         self._location_mode = None
 
-    def _get_next_cb(self, continuation_token, **kwargs):  # pylint: disable=inconsistent-return-statements
+    def _extract_data_cb(self, pipeline_response):
+        self._location_mode = pipeline_response.context.get("location_mode")
+        return self._original_extract_data(pipeline_response)
+
+    def __next__(self):
         try:
-            return self._command(
-                top=self.results_per_page,
-                filter=self.filter,
-                next_table_name=continuation_token or None,
-                cls=kwargs.pop("cls", None) or _return_context_and_deserialized,
-                use_location=self._location_mode,
-            )
+            return super().__next__()
         except HttpResponseError as error:
             _process_table_error(error)
-
-    def _extract_data_cb(self, get_next_return):
-        self._location_mode, self._response, self._headers = get_next_return
-        props_list = [TableItem(t.get("TableName", "")) for t in self._response.get("value", [])]
-        return self._headers.get(NEXT_TABLE_NAME) or None, props_list
+            raise
 
 
 def _extract_continuation_token(continuation_token):
