@@ -15,7 +15,7 @@ from azure.mgmt.frontdoor import FrontDoorManagementClient
     pip install azure-identity
     pip install azure-mgmt-frontdoor
 # USAGE
-    python network_experiment_get_profile.py
+    python network_experiment_list_by_resource_group_profiles.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.network_experiment_profiles.get(
+    response = client.network_experiment_profiles.list_by_resource_group(
         resource_group_name="MyResourceGroup",
-        profile_name="MyProfile",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2025-11-01/NetworkExperimentGetProfile.json
+# x-ms-original-file: 2025-11-01/NetworkExperimentListByResourceGroupProfiles.json
 if __name__ == "__main__":
     main()

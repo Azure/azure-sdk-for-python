@@ -1,11 +1,10 @@
 {
-  "commit": "03253947022beee13bf4782c4ebef93a0afa237b",
+  "apiVersion": "2025-11-01",
+  "apiVersions": {
+    "Microsoft.Network": "2025-11-01"
+  },
+  "commit": "3a617d58ce1d84caade01a3a682ec5c06a9088d9",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.10.2",
-  "use": [
-    "@autorest/python@6.50.0",
-    "@autorest/modelerfour@4.27.0"
-  ],
-  "autorest_command": "autorest specification/frontdoor/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=C:\\dev\\worktrees\\sdk-azure-mgmt-frontdoor\\sdk --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/frontdoor/resource-manager/readme.md"
+  "typespec_src": "specification/frontdoor/resource-manager/Microsoft.Network/FrontDoor",
+  "emitterVersion": "0.61.0"
 }
