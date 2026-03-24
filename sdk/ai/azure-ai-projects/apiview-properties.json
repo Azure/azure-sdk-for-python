@@ -268,6 +268,8 @@
         "azure.ai.projects.models.DeploymentType": "Azure.AI.Projects.DeploymentType",
         "azure.ai.projects.models.IndexType": "Azure.AI.Projects.IndexType",
         "azure.ai.projects.models.MemoryStoreUpdateStatus": "Azure.AI.Projects.MemoryStoreUpdateStatus",
+        "azure.ai.projects.models.AgentDefinitionOptInKeys": "Azure.AI.Projects.AgentDefinitionOptInKeys",
+        "azure.ai.projects.models.FoundryFeaturesOptInKeys": "Azure.AI.Projects.FoundryFeaturesOptInKeys",
         "azure.ai.projects.operations.AgentsOperations.get": "Azure.AI.Projects.Agents.getAgent",
         "azure.ai.projects.aio.operations.AgentsOperations.get": "Azure.AI.Projects.Agents.getAgent",
         "azure.ai.projects.operations.AgentsOperations.delete": "Azure.AI.Projects.Agents.deleteAgent",
