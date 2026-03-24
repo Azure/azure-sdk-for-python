@@ -15,8 +15,18 @@ from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, Async
 
 from .authentication import AzureSigningError, StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE
-from .policies import encode_base64, is_retry, StorageContentValidation, StorageRetryPolicy
-from .validation import ChecksumAlgorithm
+from .policies import (
+    _prepare_content_validation,
+    _validate_content_response,
+    encode_base64,
+    is_retry,
+    StorageRetryPolicy,
+)
+from .streams_async import AsyncStructuredMessageDecoder
+from .validation import (
+    calculate_content_md5,
+    is_md5_validation,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -50,11 +60,37 @@ async def is_checksum_retry(response):
             except (StreamClosedError, StreamConsumedError):
                 pass
         computed_md5 = response.http_request.headers.get("content-md5", None) or encode_base64(
-            StorageContentValidation.get_content_md5(response.http_response.body())
+            calculate_content_md5(response.http_response.body())
         )
         if response.http_response.headers["content-md5"] != computed_md5:
             return True
     return False
+
+
+class AsyncContentValidationPolicy(AsyncHTTPPolicy):
+    """A pipeline policy that performs content validation on uploads and downloads when enabled by the user.
+    This is enabled by setting the "validate_content" key in the request context. When enabled, this policy will
+    calculate and verify content checksums for uploads and downloads, and raise an exception if a mismatch is detected.
+    """
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
+        super().__init__()
+
+    async def send(self, request: "PipelineRequest") -> "PipelineResponse":
+        _prepare_content_validation(request)
+
+        response = await self.next.send(request)
+
+        validate_content = response.context.get("validate_content", False)
+        if validate_content and is_md5_validation(validate_content):
+            if hasattr(response.http_response, "load_body"):
+                try:
+                    await response.http_response.load_body()
+                except (StreamClosedError, StreamConsumedError):
+                    pass
+
+        _validate_content_response(request, response, AsyncStructuredMessageDecoder)
+
+        return response
 
 
 class AsyncStorageResponseHook(AsyncHTTPPolicy):

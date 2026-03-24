@@ -5,12 +5,15 @@
 # --------------------------------------------------------------------------
 # pylint: disable=c-extension-no-member
 
+import hashlib
 from enum import Enum
-from typing import cast, Literal, Union
+from io import SEEK_SET
+from typing import IO, cast, Literal, Union
 
 from azure.core import CaseInsensitiveEnumMeta
 
 CRC64_LENGTH = 8
+CV_TYPE_ERROR_MSG = "Data should be bytes or seekable IO[bytes] for content validation."
 
 
 class ChecksumAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -23,6 +26,28 @@ def is_md5_validation(validate_content: Union[bool, Literal["md5", "crc64"]]) ->
     if isinstance(validate_content, bool):
         return validate_content
     return validate_content == ChecksumAlgorithm.MD5
+
+
+def calculate_content_md5(data: Union[bytes, IO[bytes]]) -> bytes:
+    md5 = hashlib.md5()  # nosec
+    if isinstance(data, bytes):
+        md5.update(data)
+    elif hasattr(data, "read"):
+        pos = 0
+        try:
+            pos = data.tell()
+        except:  # pylint: disable=bare-except
+            pass
+        for chunk in iter(lambda: data.read(4096), b""):
+            md5.update(chunk)
+        try:
+            data.seek(pos, SEEK_SET)
+        except (AttributeError, IOError) as exc:
+            raise ValueError(CV_TYPE_ERROR_MSG) from exc
+    else:
+        raise ValueError(CV_TYPE_ERROR_MSG)
+
+    return md5.digest()
 
 
 def calculate_crc64(data: bytes, initial_crc: int) -> int:
