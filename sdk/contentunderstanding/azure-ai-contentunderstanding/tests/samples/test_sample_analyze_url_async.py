@@ -464,7 +464,7 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
 
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
-        url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/document/mixed_financial_docs.pdf"
+        url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/document/mixed_financial_invoices.pdf"
 
         # Full analysis for comparison
         full_poller = await client.begin_analyze(

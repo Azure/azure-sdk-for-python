@@ -70,7 +70,7 @@ def main() -> None:
     print("DOCUMENT ANALYSIS FROM URL")
     print("=" * 60)
     # You can replace this URL with your own publicly accessible document URL.
-    document_url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/document/mixed_financial_docs.pdf"
+    document_url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/document/mixed_financial_invoices.pdf"
 
     print(f"Analyzing document from URL with prebuilt-documentSearch...")
     print(f"  URL: {document_url}")
