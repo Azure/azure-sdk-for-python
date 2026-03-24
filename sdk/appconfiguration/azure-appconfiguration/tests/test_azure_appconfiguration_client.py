@@ -1227,6 +1227,7 @@ class TestAppConfigurationClientAADUnitTest:
         with pytest.raises(TypeError):
             _ = SecretReferenceConfigurationSetting("blah", value="blah")  # pylint: disable=no-value-for-parameter
 
+
 class TestAppConfigurationClientUnitTest:
     def test_type_error(self):
         with pytest.raises(TypeError):
