@@ -295,7 +295,7 @@ class _VoiceLiveInstrumentorPreview:
         instrumentor = self
 
         @functools.wraps(original_aenter)
-        async def wrapper(mgr_self, *args, **kwargs):
+        async def wrapper(mgr_self, *args, **kwargs):  # pylint: disable=protected-access
             span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
             if span_impl_type is None:
                 return await original_aenter(mgr_self, *args, **kwargs)
@@ -402,7 +402,7 @@ class _VoiceLiveInstrumentorPreview:
     #  Tracing wrappers for send / recv                                   #
     # ------------------------------------------------------------------ #
 
-    def _trace_send(self, original_send: Callable) -> Callable:
+    def _trace_send(self, original_send: Callable) -> Callable:  # pylint: disable=too-many-statements
         """Wrap ``VoiceLiveConnection.send``.
 
         :param original_send: The original ``send`` method to wrap.
@@ -413,7 +413,7 @@ class _VoiceLiveInstrumentorPreview:
         instrumentor = self
 
         @functools.wraps(original_send)
-        async def wrapper(conn_self, event, *args, **kwargs):  # pylint: disable=too-many-branches,too-many-locals
+        async def wrapper(conn_self, event, *args, **kwargs):  # pylint: disable=too-many-branches,too-many-locals,too-many-statements,protected-access
             span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
             if span_impl_type is None:
                 return await original_send(conn_self, event, *args, **kwargs)
@@ -505,7 +505,7 @@ class _VoiceLiveInstrumentorPreview:
         wrapper._original = original_send  # type: ignore[attr-defined]
         return wrapper
 
-    def _trace_recv(self, original_recv: Callable) -> Callable:
+    def _trace_recv(self, original_recv: Callable) -> Callable:  # pylint: disable=too-many-statements
         """Wrap ``VoiceLiveConnection.recv``.
 
         :param original_recv: The original ``recv`` method to wrap.
@@ -516,7 +516,7 @@ class _VoiceLiveInstrumentorPreview:
         instrumentor = self
 
         @functools.wraps(original_recv)
-        async def wrapper(conn_self, *args, **kwargs):  # pylint: disable=too-many-branches,too-many-locals
+        async def wrapper(conn_self, *args, **kwargs):  # pylint: disable=too-many-branches,too-many-locals,too-many-statements,protected-access
             span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
             if span_impl_type is None:
                 return await original_recv(conn_self, *args, **kwargs)
