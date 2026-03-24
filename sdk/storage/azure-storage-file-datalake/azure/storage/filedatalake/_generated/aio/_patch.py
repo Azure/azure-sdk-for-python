@@ -7,9 +7,13 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+from ._client import DataLakeClient
+
+# Alias the old name so existing SDK code continues to work.
+AzureDataLakeStorageRESTAPI = DataLakeClient
 
 
-__all__: list[str] = []  # Add all objects you want publicly available to users at this package level
+__all__: list[str] = ["AzureDataLakeStorageRESTAPI"]
 
 
 def patch_sdk():

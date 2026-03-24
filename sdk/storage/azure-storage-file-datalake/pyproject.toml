@@ -32,7 +32,7 @@ keywords = ["azure", "azure sdk"]
 
 dependencies = [
     "isodate>=0.6.1",
-    "azure-core>=1.37.0",
+    "azure-core>=1.38.3",
     "typing-extensions>=4.6.0",
 ]
 dynamic = [
@@ -43,7 +43,7 @@ dynamic = [
 repository = "https://github.com/Azure/azure-sdk-for-python"
 
 [tool.setuptools.dynamic]
-version = {attr = "azure.storage.filedatalake._generated._version.VERSION"}
+version = {attr = "azure.storage.filedatalake._version.VERSION"}
 readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
