@@ -129,7 +129,6 @@ class TableBatchOperations(object):
             table=self.table_name,
             json=entity_json,
             api_version=self._config.api_version,
-            content_type="application/json;odata=nometadata",
             **kwargs,
         )
         request.url = self._base_url + request.url
