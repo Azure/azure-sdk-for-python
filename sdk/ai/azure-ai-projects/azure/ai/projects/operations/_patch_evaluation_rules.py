@@ -15,6 +15,7 @@ from ._operations import EvaluationRulesOperations as GeneratedEvaluationRulesOp
 from ._patch_agents import _PREVIEW_FEATURE_REQUIRED_CODE, _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE
 from .. import models as _models
 from ..models._enums import _FoundryFeaturesOptInKeys
+from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 
 
 class EvaluationRulesOperations(GeneratedEvaluationRulesOperations):
@@ -101,9 +102,6 @@ class EvaluationRulesOperations(GeneratedEvaluationRulesOperations):
         """
 
         if getattr(self._config, "allow_preview", False):
-            # Import at call time to avoid circular import during module initialization.
-            from ._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
-
             # Add Foundry-Features header if not already present
             headers = kwargs.get("headers")
             if headers is None:

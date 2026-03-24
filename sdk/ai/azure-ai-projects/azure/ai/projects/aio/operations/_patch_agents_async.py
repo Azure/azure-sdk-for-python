@@ -13,6 +13,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._operations import AgentsOperations as GeneratedAgentsOperations, JSON, _Unset
 from ... import models as _models
+from ...models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 from ...operations._patch_agents import (
     _AGENT_OPERATION_FEATURE_HEADERS,
     _PREVIEW_FEATURE_REQUIRED_CODE,
@@ -158,9 +159,6 @@ class AgentsOperations(GeneratedAgentsOperations):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         if getattr(self._config, "allow_preview", False):
-            # Import at call time to avoid circular import during module initialization.
-            from ...operations._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
-
             # Add Foundry-Features header if not already present
             headers = kwargs.get("headers")
             if headers is None:

@@ -21,7 +21,11 @@ from ..models import (
     MemoryStoreUpdateCompletedResult,
     UpdateMemoriesLROPoller,
 )
-from ..models._patch import _UpdateMemoriesLROPollingMethod
+from ..models._patch import (
+    _UpdateMemoriesLROPollingMethod,
+    _FOUNDRY_FEATURES_HEADER_NAME,
+    _BETA_OPERATION_FEATURE_HEADERS,
+)
 from ._operations import JSON, _Unset, ClsType, BetaMemoryStoresOperations as GenerateBetaMemoryStoresOperations
 from .._validation import api_version_validation
 from .._utils.model_base import _deserialize, _serialize
@@ -383,9 +387,6 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-
-        # Import here to avoid circular import at module load time.
-        from ._patch import _BETA_OPERATION_FEATURE_HEADERS, _FOUNDRY_FEATURES_HEADER_NAME
 
         if polling:
             polling_method: _UpdateMemoriesLROPollingMethod = _UpdateMemoriesLROPollingMethod(

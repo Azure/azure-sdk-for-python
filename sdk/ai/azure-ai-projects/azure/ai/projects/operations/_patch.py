@@ -10,8 +10,8 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from functools import wraps
 import inspect
-from typing import Any, Callable, Dict, Final, List
-from ..models._enums import _FoundryFeaturesOptInKeys
+from typing import Any, Callable, List
+from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _BETA_OPERATION_FEATURE_HEADERS, _has_header_case_insensitive
 from ._patch_agents import AgentsOperations
 from ._patch_datasets import DatasetsOperations
 from ._patch_evaluation_rules import EvaluationRulesOperations
@@ -27,26 +27,6 @@ from ._operations import (
     BetaSchedulesOperations,
     BetaToolsetsOperations,
 )
-
-_FOUNDRY_FEATURES_HEADER_NAME: Final[str] = "Foundry-Features"
-_BETA_OPERATION_FEATURE_HEADERS: Final[Dict[str, str]] = {
-    "evaluation_taxonomies": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
-    "evaluators": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
-    "insights": _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW.value,
-    "memory_stores": _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value,
-    "red_teams": _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW.value,
-    "schedules": _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW.value,
-    "toolsets": _FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW.value,
-}
-
-
-def _has_header_case_insensitive(headers: Any, header_name: str) -> bool:
-    """Return True if headers already contains the provided header name."""
-    try:
-        header_name_lower = header_name.lower()
-        return any(str(key).lower() == header_name_lower for key in headers)
-    except Exception:  # pylint: disable=broad-except
-        return False
 
 
 def _method_accepts_keyword_headers(method: Callable[..., Any]) -> bool:
