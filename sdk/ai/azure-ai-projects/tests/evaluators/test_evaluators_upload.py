@@ -9,11 +9,10 @@ import pytest
 from unittest.mock import MagicMock, patch, call
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.ai.projects.operations._patch_evaluators import BetaEvaluatorsOperations, _EVALUATORS_FOUNDRY_FEATURES_VALUE
-from azure.ai.projects.models import EvaluatorVersion
+from azure.ai.projects.models import CodeBasedEvaluatorDefinition, EvaluatorVersion
 from azure.ai.projects.models._patch import _FOUNDRY_FEATURES_HEADER_NAME
 
 _EVALUATORS_HEADERS = {_FOUNDRY_FEATURES_HEADER_NAME: _EVALUATORS_FOUNDRY_FEATURES_VALUE}
-
 
 class TestEvaluatorsUpload:
     """Unit tests for BetaEvaluatorsOperations.upload() method."""
@@ -330,7 +329,7 @@ class TestEvaluatorsUpload:
 
         # Create a mock EvaluatorVersion object
         ev = MagicMock(spec=EvaluatorVersion)
-        ev.definition = MagicMock()
+        ev.definition = MagicMock(spec=CodeBasedEvaluatorDefinition)
         ev.definition.blob_uri = None
 
         with patch("azure.ai.projects.operations._patch_evaluators.ContainerClient") as MockContainerClient:

@@ -12,7 +12,7 @@ from azure.ai.projects.aio.operations._patch_evaluators_async import (
     BetaEvaluatorsOperations,
     _EVALUATORS_FOUNDRY_FEATURES_VALUE,
 )
-from azure.ai.projects.models import EvaluatorVersion
+from azure.ai.projects.models import CodeBasedEvaluatorDefinition, EvaluatorVersion
 from azure.ai.projects.models._patch import _FOUNDRY_FEATURES_HEADER_NAME
 
 _EVALUATORS_HEADERS = {_FOUNDRY_FEATURES_HEADER_NAME: _EVALUATORS_FOUNDRY_FEATURES_VALUE}
@@ -363,7 +363,7 @@ class TestEvaluatorsUploadAsync:
         folder = self._create_temp_folder()
 
         ev = MagicMock(spec=EvaluatorVersion)
-        ev.definition = MagicMock()
+        ev.definition = MagicMock(spec=CodeBasedEvaluatorDefinition)
         ev.definition.blob_uri = None
 
         with patch("azure.ai.projects.aio.operations._patch_evaluators_async.ContainerClient") as MockContainerClient:

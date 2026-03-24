@@ -20,6 +20,7 @@ from ._operations import BetaEvaluatorsOperations as BetaEvaluatorsOperationsGen
 from ...models._enums import _FoundryFeaturesOptInKeys
 from ...models._patch import _FOUNDRY_FEATURES_HEADER_NAME
 from ...models._models import (
+    CodeBasedEvaluatorDefinition,
     EvaluatorVersion,
 )
 
@@ -38,13 +39,101 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         :attr:`beta.evaluators` attribute.
     """
 
+    @staticmethod
+    async def _upload_folder_to_blob(
+        container_client: ContainerClient,
+        folder: str,
+        **kwargs: Any,
+    ) -> None:
+        """Walk *folder* and upload every eligible file to the blob container.
+
+        Skips ``__pycache__``, ``.git``, ``.venv``, ``venv``, ``node_modules``
+        directories and ``.pyc`` / ``.pyo`` files.
+
+        :param container_client: The blob container client to upload files to.
+        :type container_client: ~azure.storage.blob.ContainerClient
+        :param folder: Path to the local folder containing files to upload.
+        :type folder: str
+        :raises ValueError: If the folder contains no uploadable files.
+        :raises HttpResponseError: Re-raised with a friendlier message on
+            ``AuthorizationPermissionMismatch``.
+        """
+        skip_dirs = {"__pycache__", ".git", ".venv", "venv", "node_modules"}
+        skip_extensions = {".pyc", ".pyo"}
+        files_uploaded = False
+
+        for root, dirs, files in os.walk(folder):
+            dirs[:] = [d for d in dirs if d not in skip_dirs]
+            for file_name in files:
+                if any(file_name.endswith(ext) for ext in skip_extensions):
+                    continue
+                file_path = os.path.join(root, file_name)
+                blob_name = os.path.relpath(file_path, folder).replace("\\", "/")
+                logger.debug("[upload] Start uploading file `%s` as blob `%s`.", file_path, blob_name)
+                with open(file=file_path, mode="rb") as data:
+                    try:
+                        await container_client.upload_blob(name=str(blob_name), data=data, **kwargs)
+                    except HttpResponseError as e:
+                        if getattr(e, "error_code", None) == "AuthorizationPermissionMismatch":
+                            storage_account = urlsplit(container_client.url).hostname
+                            raise HttpResponseError(
+                                message=(
+                                    f"Failed to upload file '{blob_name}' to blob storage: "
+                                    f"permission denied. Ensure the identity that signed the SAS token "
+                                    f"has the 'Storage Blob Data Contributor' role on the storage account "
+                                    f"'{storage_account}'. "
+                                    f"Original error: {e.message}"
+                                ),
+                                response=e.response,
+                            ) from e
+                        raise
+                logger.debug("[upload] Done uploading file")
+                files_uploaded = True
+
+        logger.debug("[upload] Done uploading all files.")
+        if not files_uploaded:
+            raise ValueError("The provided folder is empty.")
+
+    @staticmethod
+    def _set_blob_uri(
+        evaluator_version: Union[EvaluatorVersion, JSON, IO[bytes]],
+        blob_uri: str,
+    ) -> None:
+        """Set ``blob_uri`` on the evaluator version's definition.
+
+        :param evaluator_version: The evaluator version object to update.
+        :type evaluator_version: Union[~azure.ai.projects.models.EvaluatorVersion, JSON, IO[bytes]]
+        :param blob_uri: The blob URI to set on the definition.
+        :type blob_uri: str
+        """
+        if isinstance(evaluator_version, dict):
+            definition = evaluator_version.get("definition", {})
+            if isinstance(definition, dict):
+                definition["blob_uri"] = blob_uri
+            elif isinstance(definition, CodeBasedEvaluatorDefinition):
+                definition.blob_uri = blob_uri
+        elif isinstance(evaluator_version, EvaluatorVersion):
+            definition = evaluator_version.definition
+            if isinstance(definition, CodeBasedEvaluatorDefinition):
+                definition.blob_uri = blob_uri
+
     async def _start_pending_upload_and_get_container_client(
         self,
         name: str,
         version: str,
         connection_name: Optional[str] = None,
     ) -> Tuple[ContainerClient, str, str]:
-        """Call startPendingUpload to get a SAS URI and return a ContainerClient and blob URI."""
+        """Call startPendingUpload to get a SAS URI and return a ContainerClient and blob URI.
+
+        :param name: The evaluator name.
+        :type name: str
+        :param version: The evaluator version.
+        :type version: str
+        :param connection_name: Optional storage account connection name.
+        :type connection_name: Optional[str]
+        :return: A tuple of (ContainerClient, version, blob_uri).
+        :rtype: Tuple[ContainerClient, str, str]
+        """
 
         request_body: dict = {}
         if connection_name:
@@ -81,7 +170,13 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         )
 
     async def _get_next_version(self, name: str) -> str:
-        """Get the next version number for an evaluator by fetching existing versions."""
+        """Get the next version number for an evaluator by fetching existing versions.
+
+        :param name: The evaluator name.
+        :type name: str
+        :return: The next version number as a string.
+        :rtype: str
+        """
         try:
             versions = []
             async for v in self.list_versions(
@@ -151,57 +246,8 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         )
 
         async with container_client:
-            # Upload all files from the folder (including nested subdirectories)
-            skip_dirs = {"__pycache__", ".git", ".venv", "venv", "node_modules"}
-            skip_extensions = {".pyc", ".pyo"}
-            files_uploaded: bool = False
-            for root, dirs, files in os.walk(folder):
-                # Prune directories we don't want to traverse
-                dirs[:] = [d for d in dirs if d not in skip_dirs]
-                for file in files:
-                    if any(file.endswith(ext) for ext in skip_extensions):
-                        continue
-                    file_path = os.path.join(root, file)
-                    blob_name = os.path.relpath(file_path, folder).replace("\\", "/")
-                    logger.debug(
-                        "[upload] Start uploading file `%s` as blob `%s`.",
-                        file_path,
-                        blob_name,
-                    )
-                    with open(file=file_path, mode="rb") as data:
-                        try:
-                            await container_client.upload_blob(name=str(blob_name), data=data, **kwargs)
-                        except HttpResponseError as e:
-                            if hasattr(e, "error_code") and e.error_code == "AuthorizationPermissionMismatch":
-                                storage_account = urlsplit(container_client.url).hostname
-                                raise HttpResponseError(
-                                    message=(
-                                        f"Failed to upload file '{blob_name}' to blob storage: "
-                                        f"permission denied. Ensure the identity that signed the SAS token "
-                                        f"has the 'Storage Blob Data Contributor' role on the storage account "
-                                        f"'{storage_account}'. "
-                                        f"Original error: {e.message}"
-                                    ),
-                                    response=e.response,
-                                ) from e
-                            raise
-                    logger.debug("[upload] Done uploading file")
-                    files_uploaded = True
-            logger.debug("[upload] Done uploading all files.")
-
-            if not files_uploaded:
-                raise ValueError("The provided folder is empty.")
-
-            # Set the blob_uri in the evaluator version definition
-            if isinstance(evaluator_version, dict):
-                definition = evaluator_version.get("definition", {})
-                if isinstance(definition, dict):
-                    definition["blob_uri"] = blob_uri
-                else:
-                    definition.blob_uri = blob_uri
-            else:
-                if hasattr(evaluator_version, "definition") and evaluator_version.definition:
-                    evaluator_version.definition.blob_uri = blob_uri
+            await self._upload_folder_to_blob(container_client, folder, **kwargs)
+            self._set_blob_uri(evaluator_version, blob_uri)
 
             result = await self.create_version(
                 name=name,
