@@ -46,6 +46,10 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
         Skips ``__pycache__``, ``.git``, ``.venv``, ``venv``, ``node_modules``
         directories and ``.pyc`` / ``.pyo`` files.
 
+        :param container_client: The blob container client to upload files to.
+        :type container_client: ~azure.storage.blob.ContainerClient
+        :param folder: Path to the local folder containing files to upload.
+        :type folder: str
         :raises ValueError: If the folder contains no uploadable files.
         :raises HttpResponseError: Re-raised with a friendlier message on
             ``AuthorizationPermissionMismatch``.
