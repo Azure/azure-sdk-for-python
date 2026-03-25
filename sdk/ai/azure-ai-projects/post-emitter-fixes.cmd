@@ -25,6 +25,10 @@ powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 
 REM Rename DEFAULT2024_11_15 to DEFAULT_2024_11_15
 powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'DEFAULT2024_11_15', 'DEFAULT_2024_11_15' | Set-Content azure\ai\projects\models\_enums.py"
 
+REM Make the classes AgentDefinitionOptInKeys and FoundryFeaturesOptInKeys internal
+powershell -Command "(Get-Content azure\ai\projects\models\__init__.py) | Where-Object { $_ -notmatch 'AgentDefinitionOptInKeys|FoundryFeaturesOptInKeys' } | Set-Content azure\ai\projects\models\__init__.py"
+powershell -Command "(Get-Content apiview-properties.json) | Where-Object { $_ -notmatch 'AgentDefinitionOptInKeys|FoundryFeaturesOptInKeys' } | Set-Content apiview-properties.json"
+
 REM Edit both _operations.py files to fix missing Foundry-Features HTTP request header in continued list paging calls. Add:
 REM   headers=_headers
 REM to the end of each of these lines in the BetaXxxOperations classes (do not do this in GA operations classes!)
@@ -33,19 +37,20 @@ REM In emitted code, these first 7 of those lines are associated with GA operati
 REM from the 8th occurrence onward.
 powershell -Command "$gaCount=7; $old=[char]34+'GET'+[char]34+', urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params'; $new=$old+', headers=_headers'; foreach ($f in 'azure\ai\projects\aio\operations\_operations.py','azure\ai\projects\operations\_operations.py') { $c=Get-Content $f -Raw; $parts=$c -split [regex]::Escape($old); $r=$parts[0]; for ($i=1; $i -lt $parts.Length; $i++) { if ($i -le $gaCount) { $r+=$old+$parts[$i] } else { $r+=$new+$parts[$i] } }; Set-Content $f $r -NoNewline }"
 
+REM Fix Sphinx issue in class ToolChoiceAllowed, in "tools" property doc string. The "Required" cannot come at the end of the code-block.
+REM move it to the end of the text before the code block, and make sure there are no periods after "]".
+REM     .. code-block:: json
+REM
+REM        [
+REM          { "type": "function", "name": "get_weather" },
+REM          { "type": "mcp", "server_label": "deepwiki" },
+REM          { "type": "image_generation" }
+REM        ]. Required.
+powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 'Responses API, the list of tool definitions might look like:', 'Responses API, the list of tool definitions might look like the following. Required.' | Set-Content azure\ai\projects\models\_models.py"
+powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 'list of tool definitions might look like:', 'list of tool definitions might look like the following. Required.' | Set-Content azure\ai\projects\models\_models.py"
+powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace '        \]\. Required\.', '        ]' | Set-Content azure\ai\projects\models\_models.py"
+
 REM Finishing by running 'black' tool to format code. 
 black --config ../../../eng/black-pyproject.toml .
-
-REM No you have some more manual things to do..
-
-REM Fix Sphinx issue in class ToolChoiceAllowed, in "tools" property doc string. Everything should be aligned including JSON example, like this:
-REM """A list of tool definitions that the model should be allowed to call. For the Responses API, the
-REM  list of tool definitions might look like:
-REM  .. code-block:: json
-REM  [
-REM  { \"type\": \"function\", \"name\": \"get_weather\" },
-REM  { \"type\": \"mcp\", \"server_label\": \"deepwiki\" },
-REM  { \"type\": \"image_generation\" }
-REM  ]. Required."""
 
 
