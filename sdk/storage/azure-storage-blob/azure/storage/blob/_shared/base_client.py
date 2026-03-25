@@ -161,8 +161,6 @@ class StorageAccountHostsMixin(object):
         if not self._hosts:
             if kwargs.get("secondary_hostname"):
                 secondary_hostname = kwargs["secondary_hostname"]
-            if not primary_hostname:
-                primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip("/")
             self._hosts = {LocationMode.PRIMARY: primary_hostname, LocationMode.SECONDARY: secondary_hostname}
 
         self._sdk_moniker = f"storage-{service}/{VERSION}"
