@@ -26,7 +26,9 @@ from tenacity import retry
 # Azure AI Evaluation imports
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_sync
-from azure.ai.evaluation._common.utils import get_default_threshold_for_evaluator, is_onedp_project
+from azure.ai.evaluation._common.utils import (
+    get_default_threshold_for_evaluator,
+)
 from azure.ai.evaluation._evaluate._utils import _write_output
 
 # Local imports
@@ -112,7 +114,7 @@ class EvaluationProcessor:
         # Extract all assistant messages for evaluation
         assistant_messages = [msg["content"] for msg in messages if msg.get("role") == "assistant"]
 
-        context = [msg["context"] for msg in messages if msg.get("role") == "user"]
+        context = [msg["context"] for msg in messages if msg.get("role") == "user" and "context" in msg]
         tool_calls = [
             msg.get("tool_calls", []) for msg in messages if msg.get("role") == "assistant" and msg.get("tool_calls")
         ]
@@ -151,15 +153,9 @@ class EvaluationProcessor:
             try:
                 self.logger.debug(f"Evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}")
 
-                use_sync_endpoint = is_onedp_project(self.azure_ai_project)
-                effective_metric_name = (
-                    "hate_unfairness" if use_sync_endpoint and metric_name == "hate_fairness" else metric_name
-                )
-
                 @retry(**self.retry_config["network_retry"])
                 async def evaluate_with_rai_service_with_retry():
                     try:
-                        # Always use sync_evals endpoint for all projects
                         return await evaluate_with_rai_service_sync(
                             data=query_response,
                             metric_name=metric_name,
@@ -168,6 +164,7 @@ class EvaluationProcessor:
                             annotation_task=annotation_task,
                             scan_session_id=self.scan_session_id,
                             use_legacy_endpoint=self._use_legacy_endpoint,
+                            evaluator_name=f"RedTeam.{risk_category.value}",
                         )
                     except (
                         httpx.ConnectTimeout,
@@ -210,7 +207,7 @@ class EvaluationProcessor:
 
                     # Find the result matching our metric/risk category
                     eval_result = None
-                    lookup_names = {metric_name, risk_cat_value, effective_metric_name}
+                    lookup_names = {metric_name, risk_cat_value}
                     for result_item in results:
                         result_dict = result_item if isinstance(result_item, dict) else result_item.__dict__
                         result_name = str(result_dict.get("name") or "")
@@ -228,7 +225,9 @@ class EvaluationProcessor:
                         severity_label = eval_result.get("label")
                         if severity_label is None:
                             # Calculate severity from score
-                            from azure.ai.evaluation._common.utils import get_harm_severity_level
+                            from azure.ai.evaluation._common.utils import (
+                                get_harm_severity_level,
+                            )
 
                             severity_label = get_harm_severity_level(score)
 
@@ -288,7 +287,8 @@ class EvaluationProcessor:
                         score = evaluate_output.get(f"{risk_cat_value}_score", 0)
                         # Get pattern-specific default threshold for this evaluator
                         default_threshold = evaluate_output.get(
-                            f"{risk_cat_value}_threshold", get_default_threshold_for_evaluator(risk_cat_value)
+                            f"{risk_cat_value}_threshold",
+                            get_default_threshold_for_evaluator(risk_cat_value),
                         )
 
                         # Content safety evaluators use "lower is better" scoring by default

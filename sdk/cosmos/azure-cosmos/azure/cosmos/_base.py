@@ -75,7 +75,7 @@ _COMMON_OPTIONS = {
     'max_item_count': 'maxItemCount',
     'throughput_bucket': 'throughputBucket',
     'excluded_locations': Constants.Kwargs.EXCLUDED_LOCATIONS,
-    "availability_strategy_config": Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG
+    "availability_strategy": Constants.Kwargs.AVAILABILITY_STRATEGY
 }
 
 # Cosmos resource ID validation regex breakdown:
@@ -115,10 +115,10 @@ def build_options(kwargs: dict[str, Any]) -> dict[str, Any]:
     for key, value in _COMMON_OPTIONS.items():
         if key in kwargs:
             options[value] = kwargs.pop(key)
-    if 'read_timeout' in kwargs:
-        options['read_timeout'] = kwargs['read_timeout']
-    if 'timeout' in kwargs:
-        options['timeout'] = kwargs['timeout']
+    if Constants.Kwargs.READ_TIMEOUT in kwargs:
+        options[Constants.Kwargs.READ_TIMEOUT] = kwargs[Constants.Kwargs.READ_TIMEOUT]
+    if Constants.Kwargs.TIMEOUT in kwargs:
+        options[Constants.Kwargs.TIMEOUT] = kwargs[Constants.Kwargs.TIMEOUT]
 
 
     options[Constants.OperationStartTime] = time.time()
@@ -358,6 +358,9 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     if options.get("populateIndexMetrics"):
         headers[http_constants.HttpHeaders.PopulateIndexMetrics] = options["populateIndexMetrics"]
+
+    if options.get("populateQueryAdvice"):
+        headers[http_constants.HttpHeaders.PopulateQueryAdvice] = options["populateQueryAdvice"]
 
     if options.get("responseContinuationTokenLimitInKb"):
         headers[http_constants.HttpHeaders.ResponseContinuationTokenLimitInKb] = options[

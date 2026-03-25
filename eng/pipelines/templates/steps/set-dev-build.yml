@@ -9,7 +9,7 @@ steps:
   - template: /eng/common/pipelines/templates/steps/daily-dev-build-variable.yml
 
   - pwsh: |
-      $(PIP_EXE) install "eng/tools/azure-sdk-tools[build]"
+      $(PIP_EXE) install "eng/tools/azure-sdk-tools"
       sdk_set_dev_version "*" --build-id="$(Build.BuildNumber)"
     displayName: "Update package versions for dev build"
     condition: and(succeededOrFailed(), eq(variables['SetDevVersion'],'true'), ${{ parameters.Condition }})

@@ -71,7 +71,8 @@ class CodegenTestPR:
 
     def __init__(self):
         self.issue_link = os.getenv("ISSUE_LINK", "")
-        self.pipeline_link = os.getenv("PIPELINE_LINK", "")
+        self.release_pipeline_link = os.getenv("PIPELINE_LINK", "")
+        self.triggered_pipeline_link = os.getenv("TRIGGERED_PIPELINE_LINK", "")
         self.bot_token = os.getenv("BOT_TOKEN")
         self.spec_readme = os.getenv("SPEC_README", "")
         self.spec_repo = os.getenv("SPEC_REPO", "")
@@ -328,9 +329,16 @@ class CodegenTestPR:
         pr_title = "[AutoRelease] {}(can only be merged by SDK owner)".format(self.new_branch)
         pr_head = "{}:{}".format(os.getenv("USR_NAME"), self.new_branch)
         pr_base = "main"
-        pr_body = "{} \n{} \n{}".format(self.issue_link, self.test_result, self.pipeline_link)
+        pr_body = "PR for release issue {}".format(self.issue_link)
+        if self.release_pipeline_link:
+            pr_body += " \n After PR merged, trigger [release pipeline]({}) to release".format(
+                self.release_pipeline_link
+            )
         if self.has_multi_packages:
             pr_body += f"\nBuildTargetingString\n  {self.whole_package_name}\nSkip.CreateApiReview"
+        pr_body += "\n\n (Just to record: this PR was created by this [pipeline]({}))".format(
+            self.triggered_pipeline_link
+        )
         res_create = api.pulls.create(pr_title, pr_head, pr_base, pr_body)
 
         # Add issue link on PR

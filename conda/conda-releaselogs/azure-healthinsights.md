@@ -1,5 +1,11 @@
 # Azure Cognitive Services Health Insights client library for Python (conda)
 
+## 2026.03.01
+
+### Packages included
+
+- azure-healthinsights-radiologyinsights-1.1.0
+
 ## 2025.12.01
 
 ### Packages included

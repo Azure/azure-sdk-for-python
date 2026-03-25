@@ -20,16 +20,11 @@ from azure.core.pipeline.policies import (
     RequestIdPolicy,
 )
 from azure.identity import ManagedIdentityCredential
-from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
-from azure.monitor.opentelemetry.exporter._generated._configuration import AzureMonitorClientConfiguration
-from azure.monitor.opentelemetry.exporter._generated.models import (
-    MessageData,
-    MetricsData,
-    MonitorDomain,
-    RemoteDependencyData,
-    RequestData,
-    TelemetryEventData,
-    TelemetryExceptionData,
+from azure.monitor.opentelemetry.exporter._generated.exporter import AzureMonitorClient
+from azure.monitor.opentelemetry.exporter._generated.exporter._configuration import (
+    AzureMonitorClientConfiguration,
+)
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     TelemetryItem,
 )
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -200,7 +195,9 @@ class BaseExporter:
 
                 collect_statsbeat_metrics(self)
             except Exception as e:  # pylint: disable=broad-except
-                logger.warning("Failed to initialize statsbeat metrics: %s", e)
+                logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                    "Failed to initialize statsbeat metrics: %s", e
+                )
 
         # customer sdkstats initialization
         if self._should_collect_customer_sdkstats():
@@ -218,7 +215,7 @@ class BaseExporter:
             if blob.lease(self._timeout + 5):
                 blob_data = blob.get()
                 if blob_data is not None:
-                    envelopes = [_format_storage_telemetry_item(TelemetryItem.from_dict(x)) for x in blob_data]
+                    envelopes = [TelemetryItem(x) for x in blob_data]
                     result = self._transmit(envelopes)
                     if result == ExportResult.FAILED_RETRYABLE:
                         blob.lease(1)
@@ -254,7 +251,7 @@ class BaseExporter:
         Returns an ExportResult, this function should never
         throw an exception.
         :param envelopes: The list of telemetry items to transmit.
-        :type envelopes: list of ~azure.monitor.opentelemetry.exporter._generated.models.TelemetryItem
+        :type envelopes: list of ~azure.monitor.opentelemetry.exporter._generated.exporter.models.TelemetryItem
         :return: The result of the export.
         :rtype: ~azure.monitor.opentelemetry.exporter.export._base._ExportResult
         """
@@ -448,14 +445,14 @@ class BaseExporter:
 
                 if self._should_collect_stats():
                     exc_type = request_error.exc_type
-                    if exc_type is None or exc_type is type(None):
+                    if exc_type is None or exc_type is type(None):  # pylint: disable=unidiomatic-typecheck
                         exc_type = request_error.__class__.__name__  # type: ignore
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=exc_type)
                 result = ExportResult.FAILED_RETRYABLE
             except Exception as ex:
-                logger.exception(
+                logger.exception(  # pylint: disable=do-not-log-exceptions-if-not-debug, do-not-use-logging-exception
                     "Envelopes could not be exported and are not retryable: %s.", ex
-                )  # pylint: disable=C4769
+                )
 
                 # Track dropped items in customer sdkstats for general exceptions
                 if self._should_collect_customer_sdkstats():
@@ -593,33 +590,6 @@ def _is_sampling_rejection(message: Optional[str]) -> bool:
     return message.lower() == "telemetry sampled out."
 
 
-_MONITOR_DOMAIN_MAPPING = {
-    "EventData": TelemetryEventData,
-    "ExceptionData": TelemetryExceptionData,
-    "MessageData": MessageData,
-    "MetricData": MetricsData,
-    "RemoteDependencyData": RemoteDependencyData,
-    "RequestData": RequestData,
-}
-
-
-# from_dict() deserializes incorrectly, format TelemetryItem correctly after it
-# is called
-def _format_storage_telemetry_item(item: TelemetryItem) -> TelemetryItem:
-    # After TelemetryItem.from_dict, all base_data fields are stored in
-    # additional_properties as a dict instead of in item.data.base_data itself
-    # item.data.base_data is also of type MonitorDomain instead of a child class
-    if hasattr(item, "data") and item.data is not None:
-        if hasattr(item.data, "base_data") and isinstance(item.data.base_data, MonitorDomain):
-            if hasattr(item.data, "base_type") and isinstance(item.data.base_type, str):
-                base_type = _MONITOR_DOMAIN_MAPPING.get(item.data.base_type)
-                # Apply deserialization of additional_properties and store that as base_data
-                if base_type:
-                    item.data.base_data = base_type.from_dict(item.data.base_data.additional_properties)  # type: ignore
-                    item.data.base_data.additional_properties = None  # type: ignore
-    return item
-
-
 # mypy: disable-error-code="union-attr"
 def _get_authentication_credential(**kwargs: Any) -> Optional[ManagedIdentityCredential]:
     if "credential" in kwargs:
@@ -637,13 +607,13 @@ def _get_authentication_credential(**kwargs: Any) -> Optional[ManagedIdentityCre
                 credential = ManagedIdentityCredential()
                 return credential
     except ValueError as exc:
-        logger.error(
+        logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug
             "APPLICATIONINSIGHTS_AUTHENTICATION_STRING, %s, has invalid format: %s", auth_string, exc
-        )  # pylint: disable=do-not-log-exceptions-if-not-debug
+        )
     except Exception as e:
-        logger.error(
+        logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug
             "Failed to get authentication credential and enable AAD: %s", e
-        )  # pylint: disable=do-not-log-exceptions-if-not-debug
+        )
     return None
 
 

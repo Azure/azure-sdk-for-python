@@ -18,24 +18,21 @@ class TestTranscriptionFileAsync(TranscriptionClientTestBase):
     async def test_transcribe_wav_file_async(self, transcription_endpoint):
         """Test async transcription with a local WAV audio file."""
         client = self.create_async_client(endpoint=transcription_endpoint)
-        
+
         async with client:
             # Path to test audio file
             test_audio_path = os.path.join(os.path.dirname(__file__), "assets", "audio.wav")
-            
+
             # Skip test if audio file doesn't exist (for initial setup)
             if not os.path.exists(test_audio_path):
                 pytest.skip(f"Test audio file not found: {test_audio_path}")
-            
+
             with open(test_audio_path, "rb") as audio_file:
                 # Create transcription content with audio file and options
-                content = TranscriptionContent(
-                    definition=TranscriptionOptions(locales=["en-US"]),
-                    audio=audio_file
-                )
-                
+                content = TranscriptionContent(definition=TranscriptionOptions(locales=["en-US"]), audio=audio_file)
+
                 result = await client.transcribe(body=content)
-            
+
             assert result is not None
             assert result.combined_phrases is not None
             assert len(result.combined_phrases) > 0

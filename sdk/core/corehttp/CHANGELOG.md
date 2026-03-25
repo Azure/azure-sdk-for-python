@@ -1,6 +1,18 @@
 # Release History
 
-## 1.0.0b7 (Unreleased)
+## 1.0.0b8 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed `PipelineClient.format_url` to avoid adding trailing slashes when the URL template contains only query parameters. #45113
+
+### Other Changes
+
+## 1.0.0b7 (2026-02-05)
 
 ### Features Added
 
@@ -15,8 +27,6 @@
 - Added `start_time` and `context` keyword arguments to `OpenTelemetryTracer.start_span` and `start_as_current_span` methods.
 - Added `set_span_error_status` static method to `OpenTelemetryTracer` for setting a span's status to ERROR.
 - Added `is_generated_model`, `attribute_list`, and `TypeHandlerRegistry` to `corehttp.serialization` module for SDK model handling.
-
-### Breaking Changes
 
 ### Bugs Fixed
 

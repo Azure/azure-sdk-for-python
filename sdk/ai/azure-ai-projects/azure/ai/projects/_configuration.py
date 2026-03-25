@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core.pipeline import policies
 
@@ -23,21 +23,26 @@ class AIProjectClientConfiguration:  # pylint: disable=too-many-instance-attribu
     attributes.
 
     :param endpoint: Foundry Project endpoint in the form
-     "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}".
-     If you only have one Project in your Foundry Hub, or to target the default Project
-     in your Hub, use the form
-     "https://{ai-services-account-name}.services.ai.azure.com/api/projects/_project". Required.
+     "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}". If you
+     only have one Project in your Foundry Hub, or to target the default Project in your Hub, use
+     the form "https://{ai-services-account-name}.services.ai.azure.com/api/projects/_project".
+     Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2025-11-15-preview". Note that overriding this default value may result in unsupported
+    :param allow_preview: Whether to enable preview features. Must be specified and set to True to
+     enable preview features. Default value is None.
+    :type allow_preview: bool
+    :keyword api_version: The API version to use for this operation. Known values are "v1" and
+     None. Default value is "v1". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-11-15-preview")
+    def __init__(
+        self, endpoint: str, credential: "TokenCredential", allow_preview: Optional[bool] = None, **kwargs: Any
+    ) -> None:
+        api_version: str = kwargs.pop("api_version", "v1")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -46,6 +51,7 @@ class AIProjectClientConfiguration:  # pylint: disable=too-many-instance-attribu
 
         self.endpoint = endpoint
         self.credential = credential
+        self.allow_preview = allow_preview
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://ai.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "ai-projects/{}".format(VERSION))

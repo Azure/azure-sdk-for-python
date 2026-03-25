@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 from typing_extensions import Self
 
 from azure.core import PipelineClient
@@ -18,17 +18,12 @@ from ._configuration import AIProjectClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     AgentsOperations,
+    BetaOperations,
     ConnectionsOperations,
     DatasetsOperations,
     DeploymentsOperations,
     EvaluationRulesOperations,
-    EvaluationTaxonomiesOperations,
-    EvaluatorsOperations,
     IndexesOperations,
-    InsightsOperations,
-    MemoryStoresOperations,
-    RedTeamsOperations,
-    SchedulesOperations,
 )
 
 if TYPE_CHECKING:
@@ -38,47 +33,44 @@ if TYPE_CHECKING:
 class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
+    :ivar beta: BetaOperations operations
+    :vartype beta: azure.ai.projects.operations.BetaOperations
     :ivar agents: AgentsOperations operations
     :vartype agents: azure.ai.projects.operations.AgentsOperations
-    :ivar memory_stores: MemoryStoresOperations operations
-    :vartype memory_stores: azure.ai.projects.operations.MemoryStoresOperations
+    :ivar evaluation_rules: EvaluationRulesOperations operations
+    :vartype evaluation_rules: azure.ai.projects.operations.EvaluationRulesOperations
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.operations.ConnectionsOperations
     :ivar datasets: DatasetsOperations operations
     :vartype datasets: azure.ai.projects.operations.DatasetsOperations
-    :ivar indexes: IndexesOperations operations
-    :vartype indexes: azure.ai.projects.operations.IndexesOperations
     :ivar deployments: DeploymentsOperations operations
     :vartype deployments: azure.ai.projects.operations.DeploymentsOperations
-    :ivar red_teams: RedTeamsOperations operations
-    :vartype red_teams: azure.ai.projects.operations.RedTeamsOperations
-    :ivar evaluation_rules: EvaluationRulesOperations operations
-    :vartype evaluation_rules: azure.ai.projects.operations.EvaluationRulesOperations
-    :ivar evaluation_taxonomies: EvaluationTaxonomiesOperations operations
-    :vartype evaluation_taxonomies: azure.ai.projects.operations.EvaluationTaxonomiesOperations
-    :ivar evaluators: EvaluatorsOperations operations
-    :vartype evaluators: azure.ai.projects.operations.EvaluatorsOperations
-    :ivar insights: InsightsOperations operations
-    :vartype insights: azure.ai.projects.operations.InsightsOperations
-    :ivar schedules: SchedulesOperations operations
-    :vartype schedules: azure.ai.projects.operations.SchedulesOperations
+    :ivar indexes: IndexesOperations operations
+    :vartype indexes: azure.ai.projects.operations.IndexesOperations
     :param endpoint: Foundry Project endpoint in the form
-     "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}".
-     If you only have one Project in your Foundry Hub, or to target the default Project
-     in your Hub, use the form
-     "https://{ai-services-account-name}.services.ai.azure.com/api/projects/_project". Required.
+     "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}". If you
+     only have one Project in your Foundry Hub, or to target the default Project in your Hub, use
+     the form "https://{ai-services-account-name}.services.ai.azure.com/api/projects/_project".
+     Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2025-11-15-preview". Note that overriding this default value may result in unsupported
+    :param allow_preview: Whether to enable preview features. Must be specified and set to True to
+     enable preview features. Default value is None.
+    :type allow_preview: bool
+    :keyword api_version: The API version to use for this operation. Known values are "v1" and
+     None. Default value is "v1". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: "TokenCredential", allow_preview: Optional[bool] = None, **kwargs: Any
+    ) -> None:
         _endpoint = "{endpoint}"
-        self._config = AIProjectClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = AIProjectClientConfiguration(
+            endpoint=endpoint, credential=credential, allow_preview=allow_preview, **kwargs
+        )
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -102,22 +94,15 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
+        self.beta = BetaOperations(self._client, self._config, self._serialize, self._deserialize)
         self.agents = AgentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.memory_stores = MemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.red_teams = RedTeamsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.evaluation_rules = EvaluationRulesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.evaluation_taxonomies = EvaluationTaxonomiesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.evaluators = EvaluatorsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.insights = InsightsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.schedules = SchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

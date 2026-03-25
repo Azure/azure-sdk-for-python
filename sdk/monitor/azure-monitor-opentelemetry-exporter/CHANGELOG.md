@@ -1,12 +1,51 @@
 # Release History
 
-## 1.0.0b48 (Unreleased)
+## 1.0.0b50 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b49 (2026-03-19)
+
+### Features Added
+- Added a 256kb custom properties truncation limit on specific GenAI attributes
+  ([#45749](https://github.com/Azure/azure-sdk-for-python/pull/45749))
+- Add Browser SDK loader SDK Stats feature bit
+  ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/42904))
+
+### Bugs Fixed
+- Exempt specific GenAI attributes values from custom properties truncation
+  ([#45596](https://github.com/Azure/azure-sdk-for-python/pull/45596))
+- Fix attributes override in Rate Limited Sampler
+  ([#45592](https://github.com/Azure/azure-sdk-for-python/pull/45592))
+- Add environment variable to disable/enable custom properties truncation
+  ([#45479](https://github.com/Azure/azure-sdk-for-python/pull/45479))
+- Fix io counters import issue in performance counters
+  ([#45286](https://github.com/Azure/azure-sdk-for-python/pull/45286))
+- Remove custom properties truncation
+  ([#45118](https://github.com/Azure/azure-sdk-for-python/pull/45118))
+- Fix fallback logic when connection string is provided only via environment variable
+  ([#45252](https://github.com/Azure/azure-sdk-for-python/pull/45252))
+
+### Other Changes
+- Change import path for `LoggingHandler` to accommodate upstream breaking changes -
+[core](https://github.com/open-telemetry/opentelemetry-python/pull/4919) and [contrib](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4210)
+  ([#45516](https://github.com/Azure/azure-sdk-for-python/pull/45516))
+- Generate exporter with TypeSpec
+  ([#44442](https://github.com/Azure/azure-sdk-for-python/pull/44442))
+- Generate LiveMetrics from TypeSpec
+  ([#44696](https://github.com/Azure/azure-sdk-for-python/pull/44696))
+
+## 1.0.0b48 (2026-02-05)
+
+### Bugs Fixed
+- Fix CPU usage calculation logic for live metrics
+  ([#45005](https://github.com/Azure/azure-sdk-for-python/pull/45005))
 
 ### Other Changes
 - Fix Ingestion-Side Sampling Disk Persist Behavior

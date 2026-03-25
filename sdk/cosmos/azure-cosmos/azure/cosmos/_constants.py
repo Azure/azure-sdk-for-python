@@ -109,8 +109,12 @@ class _Constants:
         RETRY_WRITE: Literal["retry_write"] = "retry_write"
         """Whether to retry write operations if they fail. Used either at client level or request level."""
         EXCLUDED_LOCATIONS: Literal["excludedLocations"] = "excludedLocations"
-        AVAILABILITY_STRATEGY_CONFIG: Literal["availabilityStrategyConfig"] = "availabilityStrategyConfig"
+        AVAILABILITY_STRATEGY: Literal["availabilityStrategy"] = "availabilityStrategy"
         """Availability strategy config. Used either at client level or request level"""
+        READ_TIMEOUT: Literal["read_timeout"] = "read_timeout"
+        """Socket read timeout in seconds. Used either at client level or request level."""
+        TIMEOUT: Literal["timeout"] = "timeout"
+        """Absolute timeout in seconds for the combined HTTP request and response processing."""
 
     class UserAgentFeatureFlags(IntEnum):
         """

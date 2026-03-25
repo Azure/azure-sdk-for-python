@@ -1,6 +1,6 @@
 # Release History
 
-## 2.3.2 (Unreleased)
+## 2.4.1 (Unreleased)
 
 ### Features Added
 
@@ -8,10 +8,20 @@
 
 ### Bugs Fixed
 
+### Other Changes
+
+## 2.4.0 (2026-02-17)
+
+### Features Added
+
+- Added startup retry, if the initial load fails, the provider will retry until the startup timeout is reached. By default the retry period is 100s, and can be configured via the `startup_timeout` kwarg on the `load` method.
+- Adds support for adding `audience` to the kwargs for `load` allowing it to specify the audience for the request.
+- Added support for snapshot references. Configuration settings that reference a snapshot are automatically resolved and expanded during `load`.
+
+### Bugs Fixed
+
 - Fixes a bug where `feature_flag_selects` could be passed in as `None` which resulted in an exception on load, doing this now results in loading the default feature flags.
 - Fixes a bug where `feature_flag_selects` couldn't load snapshots.
-
-### Other Changes
 
 ## 2.3.1 (2025-11-13)
 

@@ -17,7 +17,7 @@ from azure.identity.aio._credentials.imds import ImdsCredential, AsyncImdsRetryP
 from azure.identity._credentials.imds import PIPELINE_SETTINGS
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.policies import AsyncRetryPolicy
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.rest import HttpRequest, HttpResponse
 import pytest
 
 from helpers import mock_response, Request, GET_TOKEN_METHODS
