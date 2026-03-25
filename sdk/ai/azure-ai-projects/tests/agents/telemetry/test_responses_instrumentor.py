@@ -4693,6 +4693,10 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
+    @pytest.mark.skip(
+        reason="Fails with pydantic>=2.13.0b2 / pydantic-core>=2.42.0: MockValSer is not accepted as SchemaSerializer, "
+        "causing TypeError when iterating responses.stream() that includes function tools (not related to instrumentation)"
+    )
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.HTTPX)
@@ -4800,6 +4804,10 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         # Validate second span (tool output + final response)
         _span2 = spans[1]  # pylint: disable=unused-variable
 
+    @pytest.mark.skip(
+        reason="Fails with pydantic>=2.13.0b2 / pydantic-core>=2.42.0: MockValSer is not accepted as SchemaSerializer, "
+        "causing TypeError when iterating responses.stream() that includes function tools (not related to instrumentation)"
+    )
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.HTTPX)
