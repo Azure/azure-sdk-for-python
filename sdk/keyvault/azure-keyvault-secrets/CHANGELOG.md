@@ -2,7 +2,15 @@
 
 ## 4.11.0 (2026-03-25)
 
-skip changelog generation for data-plane package and please add changelog manually.
+### Features Added
+
+- Added support for service API version `2025-07-01`
+- Added support for retrieving secrets with `out_content_type`
+- Added the `previous_version` property to `SecretProperties`
+
+### Other Changes
+
+- Key Vault API version `2025-07-01` is now the default
 
 ## 4.10.1 (Unreleased)
 

@@ -6,12 +6,13 @@ import asyncio
 import functools
 import json
 import logging
-from unittest.mock import Mock, patch
+from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.secrets.aio import SecretClient
+from azure.keyvault.secrets._generated import models as _generated_models
 from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
 from dateutil import parser as date_parse
 from devtools_testutils import AzureRecordedTestCase, set_custom_default_matcher
@@ -48,6 +49,7 @@ class TestKeyVaultSecret(KeyVaultTestCase):
         assert s1.updated_on == s2.updated_on
         assert s1.recovery_level == s2.recovery_level
         assert s1.key_id == s2.key_id
+        assert s1.previous_version == s2.previous_version
 
     def _validate_secret_bundle(self, secret_attributes, vault, secret_name, secret_value):
         prefix = "/".join(s.strip("/") for s in [vault, "secrets", secret_name])
@@ -141,7 +143,7 @@ class TestKeyVaultSecret(KeyVaultTestCase):
     @AsyncSecretsClientPreparer()
     @recorded_by_proxy_async
     async def test_secret_list(self, client, **kwargs):
-        set_custom_default_matcher(ignore_query_ordering=True)
+        set_custom_default_matcher(ignore_query_ordering=True, ignored_headers="Accept")
         max_secrets = list_test_size
         expected = {}
 
@@ -190,7 +192,7 @@ class TestKeyVaultSecret(KeyVaultTestCase):
     @AsyncSecretsClientPreparer()
     @recorded_by_proxy_async
     async def test_list_versions(self, client, **kwargs):
-        set_custom_default_matcher(ignore_query_ordering=True)
+        set_custom_default_matcher(ignore_query_ordering=True, ignored_headers="Accept")
         secret_name = self.get_resource_name("sec")
         secret_value = "secVal"
 
@@ -396,6 +398,33 @@ class TestKeyVaultSecret(KeyVaultTestCase):
                 await client.set_secret("...", "...")
         await client.close()
 
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("api_version", only_latest)
+    @AsyncSecretsClientPreparer()
+    @recorded_by_proxy_async
+    async def test_get_secret_accepts_out_content_type(self, client, **kwargs):
+        secret_name = self.get_resource_name("content-type")
+
+        async with client:
+            created = await client.set_secret(secret_name, "secret-value")
+            try:
+                result = await client.get_secret(created.name, out_content_type="application/x-pem-file")
+                assert result.name == created.name
+            except HttpResponseError as error:
+                assert error.status_code in (400, 404)
+
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("api_version", only_latest)
+    @AsyncSecretsClientPreparer()
+    @recorded_by_proxy_async
+    async def test_previous_version_property_is_accessible(self, client, **kwargs):
+        secret_name = self.get_resource_name("previous-version")
+
+        async with client:
+            created = await client.set_secret(secret_name, "secret-value")
+            result = await client.get_secret(created.name)
+            assert result.properties.previous_version is None
+
 
 def test_service_headers_allowed_in_logs():
     service_headers = {"x-ms-keyvault-network-info", "x-ms-keyvault-region", "x-ms-keyvault-service-version"}
@@ -409,3 +438,30 @@ def test_custom_hook_policy():
 
     client = SecretClient("...", object(), custom_hook_policy=CustomHookPolicy())
     assert isinstance(client._client._config.custom_hook_policy, CustomHookPolicy)
+
+
+@pytest.mark.asyncio
+async def test_get_secret_forwards_out_content_type_to_generated_client():
+    generated_client = Mock()
+    generated_client.get_secret = AsyncMock(
+        return_value=_generated_models.SecretBundle(
+            id="https://vault.vault.azure.net/secrets/name/version",
+            value="secret-value",
+            attributes=_generated_models.SecretAttributes(),
+        )
+    )
+
+    client = SecretClient(
+        "https://vault.vault.azure.net",
+        object(),
+        generated_client=generated_client,
+        generated_models=_generated_models,
+    )
+
+    await client.get_secret("name", out_content_type="application/x-pem-file")
+
+    generated_client.get_secret.assert_awaited_once_with(
+        "name",
+        "",
+        out_content_type="application/x-pem-file",
+    )
