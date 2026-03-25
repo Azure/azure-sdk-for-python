@@ -70,6 +70,22 @@ def _should_refresh_token(token: Optional[Union["AccessToken", "AccessTokenInfo"
     return time_until_expiry < (DEFAULT_REFRESH_WINDOW_SECONDS - refresh_jitter)
 
 
+def _enforce_https(request: PipelineRequest[HTTPRequestType]) -> None:
+    # move 'enforce_https' from options to context so it persists
+    # across retries but isn't passed to a transport implementation
+    option = request.context.options.pop("enforce_https", None)
+
+    # True is the default setting; we needn't preserve an explicit opt in to the default behavior
+    if option is False:
+        request.context["enforce_https"] = option
+
+    enforce_https = request.context.get("enforce_https", True)
+    if enforce_https and not request.http_request.url.lower().startswith("https"):
+        raise ServiceRequestError(
+            "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
+        )
+
+
 # pylint:disable=too-few-public-methods
 class _BearerTokenCredentialPolicyBase:
     """Base class for a Bearer Token Credential Policy.
@@ -88,22 +104,6 @@ class _BearerTokenCredentialPolicyBase:
         self._token: Optional[Union["AccessToken", "AccessTokenInfo"]] = None
         self._enable_cae: bool = kwargs.get("enable_cae", False)
         self._refresh_jitter = 0
-
-    @staticmethod
-    def _enforce_https(request: PipelineRequest[HTTPRequestType]) -> None:
-        # move 'enforce_https' from options to context so it persists
-        # across retries but isn't passed to a transport implementation
-        option = request.context.options.pop("enforce_https", None)
-
-        # True is the default setting; we needn't preserve an explicit opt in to the default behavior
-        if option is False:
-            request.context["enforce_https"] = option
-
-        enforce_https = request.context.get("enforce_https", True)
-        if enforce_https and not request.http_request.url.lower().startswith("https"):
-            raise ServiceRequestError(
-                "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
-            )
 
     @staticmethod
     def _update_headers(headers: MutableMapping[str, str], token: str) -> None:
@@ -161,7 +161,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
 
         :param ~azure.core.pipeline.PipelineRequest request: the request
         """
-        self._enforce_https(request)
+        _enforce_https(request)
 
         if self._token is None or self._need_new_token:
             self._request_token(*self._scopes)
