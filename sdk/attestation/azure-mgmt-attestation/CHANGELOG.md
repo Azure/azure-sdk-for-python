@@ -2,7 +2,32 @@
 
 ## 2.0.0b2 (2026-03-25)
 
-skip changelog generation
+### Features Added
+
+  - Client `AttestationManagementClient` added method `send_request`
+  - Model `AttestationProvider` added property `properties`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `PrivateLinkResource` added property `system_data`
+  - Model `PrivateLinkResourceListResult` added property `next_link`
+  - Model `Resource` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Added model `CloudError`
+  - Added model `JsonWebKey`
+  - Added model `JsonWebKeySet`
+  - Added model `StatusResult`
+
+### Breaking Changes
+
+  - Method `Operations.list` changed from `asynchronous` to `synchronous`
+  - Model `AttestationProvider` deleted or renamed its instance variable `trust_model`
+  - Model `AttestationProvider` deleted or renamed its instance variable `status`
+  - Model `AttestationProvider` deleted or renamed its instance variable `attest_uri`
+  - Model `AttestationProvider` deleted or renamed its instance variable `public_network_access`
+  - Model `AttestationProvider` deleted or renamed its instance variable `private_endpoint_connections`
+  - Model `AttestationProvider` deleted or renamed its instance variable `tpm_attestation_authentication`
+  - Deleted or renamed model `JSONWebKey`
+  - Deleted or renamed model `JSONWebKeySet`
+  - Deleted or renamed model `OperationList`
 
 ## 1.1.0 (2026-03-25)
 
