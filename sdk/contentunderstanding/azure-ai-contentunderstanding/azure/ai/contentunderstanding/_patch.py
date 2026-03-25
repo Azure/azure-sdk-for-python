@@ -247,9 +247,8 @@ class ContentUnderstandingClient(GeneratedClient):
         :type analyzer_id: str
         :param binary_input: The binary content of the document to analyze. Required.
         :type binary_input: bytes
-        :keyword content_range: Range of the input to analyze. Accepts a raw string
-         (ex. ``"1-3,5,9-"``). Document content uses 1-based page numbers,
-         while audio visual content uses integer milliseconds. Default value is None.
+        :keyword content_range: Range of the input to analyze (ex. ``1-3,5,9-``). Document content uses
+         1-based page numbers, while audio visual content uses integer milliseconds. Default value is None.
         :paramtype content_range: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/octet-stream".
