@@ -1,0 +1,6 @@
+-e ../../../eng/tools/azure-sdk-tools
+pytest
+httpx
+pytest-asyncio
+opentelemetry-api>=1.20.0
+opentelemetry-sdk>=1.20.0
