@@ -1,53 +1,64 @@
 # Common Issues and FAQ for Python SDK
 
-This document clarifies some common misunderstandings about the Python SDK.
+This document clarifies common misunderstandings about the Python SDK.
 
 ## Table of Contents
 
+### API Usage Patterns
+
 - [How to update an existing resource with create\_or\_update/begin\_create\_or\_update](#how-to-update-an-existing-resource-with-create_or_updatebegin_create_or_update)
 - [Different ways to set body parameter of an operation](#different-ways-to-set-body-parameter-of-an-operation)
-- [Debug guide](#debug-guide)
-- [Build private package with PR](#build-private-package-with-pr)
+
+### Code Generation
+
 - [Duplicated models](#duplicated-models)
 
-## How to update an existing resource with `create_or_update/begin_create_or_update`
+### Development Workflow
+
+- [Build private package with PR](#build-private-package-with-pr)
+- [Debugging](#debugging)
+
+---
+
+## API Usage Patterns
+
+### How to update an existing resource with `create_or_update/begin_create_or_update`
 
 An operation named `create_or_update`/`begin_create_or_update` in the Python SDK usually corresponds to an HTTP `PUT` request. To update a field of an existing resource, you must do the following:
 
 ```python
-    ...
-    # Get all fields of the existing resource
-    agent_pool = client.agent_pools.get(
-        resource_group_name="rg1",
-        resource_name="clustername1",
-        agent_pool_name="agentpool1",
-    )
+# Get all fields of the existing resource
+agent_pool = client.agent_pools.get(
+    resource_group_name="rg1",
+    resource_name="clustername1",
+    agent_pool_name="agentpool1",
+)
 
-    agent_pool.max_count = 10
-    agent_pool.min_count = 1
-    # Change any field that you want
-    #...
+agent_pool.max_count = 10
+agent_pool.min_count = 1
+# Change any field that you want
+# ...
 
-    response = client.agent_pools.begin_create_or_update(
-        resource_group_name="rg1",
-        resource_name="clustername1",
-        agent_pool_name="agentpool1",
-        parameters=agent_pool,
-    ).result()
+response = client.agent_pools.begin_create_or_update(
+    resource_group_name="rg1",
+    resource_name="clustername1",
+    agent_pool_name="agentpool1",
+    parameters=agent_pool,
+).result()
 ```
 
-Users may have a question: **Why can't I just set the field directly instead of first retrieving the existing resource?** Here is the [guideline about PUT](https://www.geeksforgeeks.org/difference-between-put-and-patch-request/):
+**Why can't I just set the field directly instead of first retrieving the existing resource?**
 
-![image](https://github.com/Azure/azure-sdk-for-python/assets/70930885/a19c6ce3-53bf-472c-a255-cb5e17c00e67)
+`PUT` replaces the entire resource — any field you omit is treated as if you want it deleted (set to its default or removed). This is by design in the [HTTP specification (RFC 9110 § 9.3.4)](https://datatracker.ietf.org/doc/html/rfc9110#section-9.3.4). In contrast, `PATCH` applies a partial update, only changing the fields you specify.
 
-So the question becomes: **Why does `PUT` have such strange limitations when updating an existing resource?** To explain, let us consider these scenarios:
+The ambiguity stems from the meaning of `None` (or `null`/`undefined` in other languages):
 
-- User A wants to delete a field X, so A sets the field X to `None` and thinks: **Now that I set X to `None`, the service should delete X.**
-- User B wants to update a field Y, so B only sets the field Y and thinks: **Now that I didn't set X and it will be `None`, the service should keep X the same as before.**
+- **User A** wants to delete field X, so they set X to `None` — expecting the service to remove it.
+- **User B** wants to update field Y only, so they leave X unset (`None`) — expecting the service to keep it unchanged.
 
-Why is there such ambiguity? **It is caused by the meaning of `None`** (in other languages, it may be named `null`/`undefined`/etc.). `None` has two different meanings in nature: **"delete it"** or **"keep it the same as before"**. To eliminate this ambiguity, `PUT` adopts the meaning of "delete it", so if users want to update an existing resource, they have to first get all the fields of the resource and then update the specific field.
+`PUT` resolves this by always treating `None`/missing fields as "delete it." Therefore, to safely update a resource, first retrieve the full object with `get()`, modify the desired fields, and pass the complete object back to `create_or_update`.
 
-## Different ways to set body parameter of an operation
+### Different ways to set body parameter of an operation
 
 Usually, an operation has a body parameter corresponding to the HTTP request body. For Python SDK users, there are two ways to set the body parameter:
 
@@ -78,64 +89,11 @@ print(response.as_dict())
 
 In a model, the signature name is snake_case like `domain_name_label`; in a JSON-like object, the name is camelCase like `domainNameLabel`.
 
-## Debug guide
+---
 
-This guide helps Python SDK users understand how the SDK calls the REST API.
+## Code Generation
 
-1. Copy the following code into your `.py` file:
-
-    ```python
-    import sys
-    import logging
-
-    logging.basicConfig(level=logging.DEBUG,
-                        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                        stream=sys.stdout)
-    ```
-
-2. Set `logging_enable=True` when calling an operation:
-
-    ```python
-    client.operation_group.operation(..., logging_enable=True)
-    ```
-
-3. Run your `.py` file and you will find the log output on screen. This makes it easy to see the details of how the SDK calls the REST API:
-
-    ![image](https://github.com/Azure/azure-sdk-for-python/assets/70930885/d88fd936-e46f-45a2-a180-1eed4712c41a)
-
-## Build private package with PR
-
-This section shows how to build a private package (e.g., `azure-mgmt-devcenter`) locally from a [PR](https://github.com/Azure/azure-sdk-for-python/pull/35049):
-
-1. Install dependencies:
-
-    ```
-    PS D:\dev\azure-sdk-for-python> pip install wheel setuptools build
-    ```
-
-2. Pull the target branch:
-
-    ![image](https://github.com/Azure/azure-sdk-for-python/assets/70930885/a0762b7e-1b80-4a1c-958a-44c53b610928)
-
-    GitHub shows the branch as `azure-sdk:t2-devcenter-2024-04-03-14415`, which contains the remote repo name `azure-sdk` and the branch name `t2-devcenter-2024-04-03-14415`:
-
-    ```
-    PS D:\dev\azure-sdk-for-python> git remote add azure-sdk https://github.com/azure-sdk/azure-sdk-for-python.git
-    PS D:\dev\azure-sdk-for-python> git fetch azure-sdk t2-devcenter-2024-04-03-14415
-    PS D:\dev\azure-sdk-for-python> git checkout t2-devcenter-2024-04-03-14415
-    ```
-
-3. Step into the target package folder where `setup.py` or `pyproject.toml` is located, then run:
-
-    ```
-    PS D:\dev\azure-sdk-for-python\sdk\devcenter\azure-mgmt-devcenter> python -m build
-    ```
-
-    You will find the built package in the `dist` folder:
-
-    <img width="566" height="202" alt="image" src="https://github.com/user-attachments/assets/66dd017c-38a6-4c30-9019-54c159034376" />
-
-## Duplicated models
+### Duplicated models
 
 TypeSpec permits defining models with the same name in different namespaces:
 
@@ -157,10 +115,14 @@ During Python SDK generation, all models surface in a single Python package name
 
 To resolve this, apply the `@clientName` decorator in `client.tsp` to give a distinct Python name:
 
-```python
-# In client.tsp add:
-# @@clientName(Service.SubService.Foo, "SubFoo", "python");
+```typespec
+// In client.tsp:
+@@clientName(Service.SubService.Foo, "SubFoo", "python");
+```
 
+The generated Python code will then have distinct class names:
+
+```python
 # Generated Python code (models/_models.py):
 class Foo:
     ...  # from Service.Foo
@@ -174,3 +136,63 @@ from service.models import Foo, SubFoo
 foo = Foo(prop="hello")
 subfoo = SubFoo(name="world")
 ```
+
+For more on code generation, see the [Dataplane SDK Generation](dataplane_generation.md) guide.
+
+---
+
+## Development Workflow
+
+### Build private package with PR
+
+This section shows how to build a private package (e.g., `azure-mgmt-devcenter`) locally from a [PR](https://github.com/Azure/azure-sdk-for-python/pull/35049).
+
+1. Install dependencies:
+
+    ```bash
+    pip install wheel setuptools build
+    ```
+
+2. Pull the target branch. On the PR page, GitHub shows the source branch in the format `<remote>:<branch>` (e.g., `azure-sdk:t2-devcenter-2024-04-03-14415`). Use the remote name and branch name to fetch and check out:
+
+    ```bash
+    git remote add azure-sdk https://github.com/azure-sdk/azure-sdk-for-python.git
+    git fetch azure-sdk t2-devcenter-2024-04-03-14415
+    git checkout t2-devcenter-2024-04-03-14415
+    ```
+
+3. Navigate to the target package folder (where `setup.py` or `pyproject.toml` is located) and build:
+
+    ```bash
+    cd sdk/devcenter/azure-mgmt-devcenter
+    python -m build
+    ```
+
+    The built `.whl` and `.tar.gz` files will appear in the `dist/` folder.
+
+### Debugging
+
+For a detailed guide on enabling debug logging to trace how the SDK calls the REST API, see the [Debug Guide](debug_guide.md).
+
+In short, add the following to your script and pass `logging_enable=True` to any SDK operation:
+
+```python
+import sys
+import logging
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    stream=sys.stdout)
+
+# Then call any operation with logging_enable=True:
+# client.operation_group.operation(..., logging_enable=True)
+```
+
+---
+
+## See Also
+
+- [Developer Set-Up](dev_setup.md) — Setting up a development environment
+- [Debug Guide](debug_guide.md) — Detailed logging and debugging instructions
+- [Testing](tests.md) — Writing unit and functional tests
+- [Dataplane SDK Generation](dataplane_generation.md) — Generating SDKs from TypeSpec

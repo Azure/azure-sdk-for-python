@@ -7,8 +7,5 @@ In order of workflow:
 - [tests.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/tests.md) : How to test management SDK (recordings, etc.)
 - [mgmt_release.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/mgmt_release.md) : How to finish preparing the package, changelog, version, etc.
 
-Legacy documents:
-- [swagger_conf.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/swagger_conf.md) : (Legacy) Describe how to configure Swagger Readmes on https://github.com/Azure/azure-rest-api-specs for Python
-
 More implementations / advanced documents:
 - [changelog_impl.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/changelog_impl.md) : Technical details about the change log tool implementation
