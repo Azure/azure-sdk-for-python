@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/RedisEnterprise/stable/2025-07-01/examples/RedisEnterpriseListByResourceGroup.json
+# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/RedisEnterprise/preview/2025-08-01-preview/examples/RedisEnterpriseListByResourceGroup.json
 if __name__ == "__main__":
     main()

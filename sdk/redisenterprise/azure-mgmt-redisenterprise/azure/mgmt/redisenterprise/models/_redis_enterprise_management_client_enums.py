@@ -124,6 +124,24 @@ class LinkState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNLINK_FAILED = "UnlinkFailed"
 
 
+class MaintenanceDayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Day of week. Required when the maintenance window type is 'Weekly'."""
+
+    SUNDAY = "Sunday"
+    MONDAY = "Monday"
+    TUESDAY = "Tuesday"
+    WEDNESDAY = "Wednesday"
+    THURSDAY = "Thursday"
+    FRIDAY = "Friday"
+    SATURDAY = "Saturday"
+
+
+class MaintenanceWindowType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Maintenance window type."""
+
+    WEEKLY = "Weekly"
+
+
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of managed service identity (where both SystemAssigned and UserAssigned types are
     allowed).
@@ -133,6 +151,25 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
+
+
+class MigrationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current provisioning status."""
+
+    ACCEPTED = "Accepted"
+    """The request has been accepted and the migration operation is being initialized."""
+    IN_PROGRESS = "InProgress"
+    """The migration operation is in progress."""
+    READY_FOR_DNS_SWITCH = "ReadyForDnsSwitch"
+    """The migration operation has completed transferring data and is ready for DNS switch."""
+    SUCCEEDED = "Succeeded"
+    """The migration operation has completed successfully."""
+    FAILED = "Failed"
+    """The migration operation has failed."""
+    CANCELLING = "Cancelling"
+    """The migration operation is being cancelled."""
+    CANCELLED = "Cancelled"
+    """The migration operation has been cancelled."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -145,7 +182,9 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER_SYSTEM = "user,system"
 
 
-class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PrivateEndpointConnectionProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
@@ -292,6 +331,13 @@ class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FLASH_OPTIMIZED_A1500 = "FlashOptimized_A1500"
     FLASH_OPTIMIZED_A2000 = "FlashOptimized_A2000"
     FLASH_OPTIMIZED_A4500 = "FlashOptimized_A4500"
+
+
+class SourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes the source of the migration operation."""
+
+    AZURE_CACHE_FOR_REDIS = "AzureCacheForRedis"
+    """Migration from Azure Cache for Redis to Redis Enterprise."""
 
 
 class TlsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):

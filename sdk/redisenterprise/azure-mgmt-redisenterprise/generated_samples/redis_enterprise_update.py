@@ -35,7 +35,22 @@ def main():
         resource_group_name="rg1",
         cluster_name="cache1",
         parameters={
-            "properties": {"minimumTlsVersion": "1.2", "publicNetworkAccess": "Enabled"},
+            "properties": {
+                "maintenanceConfiguration": {
+                    "maintenanceWindows": [
+                        {"duration": "PT6H", "schedule": {"dayOfWeek": "Monday"}, "startHourUtc": 3, "type": "Weekly"},
+                        {"duration": "PT6H", "schedule": {"dayOfWeek": "Tuesday"}, "startHourUtc": 3, "type": "Weekly"},
+                        {
+                            "duration": "PT6H",
+                            "schedule": {"dayOfWeek": "Wednesday"},
+                            "startHourUtc": 3,
+                            "type": "Weekly",
+                        },
+                    ]
+                },
+                "minimumTlsVersion": "1.2",
+                "publicNetworkAccess": "Enabled",
+            },
             "sku": {"capacity": 9, "name": "EnterpriseFlash_F300"},
             "tags": {"tag1": "value1"},
         },
@@ -43,6 +58,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/RedisEnterprise/stable/2025-07-01/examples/RedisEnterpriseUpdate.json
+# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/RedisEnterprise/preview/2025-08-01-preview/examples/RedisEnterpriseUpdate.json
 if __name__ == "__main__":
     main()

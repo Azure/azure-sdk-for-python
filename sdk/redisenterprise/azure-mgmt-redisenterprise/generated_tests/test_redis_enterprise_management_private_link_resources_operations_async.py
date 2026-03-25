@@ -25,7 +25,7 @@ class TestRedisEnterpriseManagementPrivateLinkResourcesOperationsAsync(AzureMgmt
         response = self.client.private_link_resources.list_by_cluster(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2025-07-01",
+            api_version="2025-08-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

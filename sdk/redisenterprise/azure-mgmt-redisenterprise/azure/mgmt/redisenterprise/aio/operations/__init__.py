@@ -19,6 +19,7 @@ from ._databases_operations import DatabasesOperations  # type: ignore
 from ._access_policy_assignment_operations import AccessPolicyAssignmentOperations  # type: ignore
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations  # type: ignore
 from ._private_link_resources_operations import PrivateLinkResourcesOperations  # type: ignore
+from ._migration_operations import MigrationOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -32,6 +33,7 @@ __all__ = [
     "AccessPolicyAssignmentOperations",
     "PrivateEndpointConnectionsOperations",
     "PrivateLinkResourcesOperations",
+    "MigrationOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

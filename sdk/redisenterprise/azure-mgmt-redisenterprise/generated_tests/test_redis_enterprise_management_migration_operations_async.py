@@ -15,14 +15,14 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestRedisEnterpriseManagementPrivateEndpointConnectionsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestRedisEnterpriseManagementMigrationOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(RedisEnterpriseManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_private_endpoint_connections_list(self, resource_group):
-        response = self.client.private_endpoint_connections.list(
+    async def test_migration_list(self, resource_group):
+        response = self.client.migration.list(
             resource_group_name=resource_group.name,
             cluster_name="str",
             api_version="2025-08-01-preview",
@@ -33,35 +33,27 @@ class TestRedisEnterpriseManagementPrivateEndpointConnectionsOperationsAsync(Azu
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_private_endpoint_connections_get(self, resource_group):
-        response = await self.client.private_endpoint_connections.get(
-            resource_group_name=resource_group.name,
-            cluster_name="str",
-            private_endpoint_connection_name="str",
-            api_version="2025-08-01-preview",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_endpoint_connections_begin_put(self, resource_group):
+    async def test_migration_begin_start(self, resource_group):
         response = await (
-            await self.client.private_endpoint_connections.begin_put(
+            await self.client.migration.begin_start(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
-                private_endpoint_connection_name="str",
-                properties={
+                parameters={
+                    "creationTime": "2020-02-20 00:00:00",
                     "id": "str",
+                    "lastModifiedTime": "2020-02-20 00:00:00",
                     "name": "str",
-                    "privateEndpoint": {"id": "str"},
-                    "privateLinkServiceConnectionState": {
-                        "actionsRequired": "str",
-                        "description": "str",
-                        "status": "str",
-                    },
                     "provisioningState": "str",
+                    "statusDetails": "str",
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
+                    "targetResourceId": "str",
                     "type": "str",
                 },
                 api_version="2025-08-01-preview",
@@ -73,12 +65,23 @@ class TestRedisEnterpriseManagementPrivateEndpointConnectionsOperationsAsync(Azu
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_private_endpoint_connections_begin_delete(self, resource_group):
+    async def test_migration_get(self, resource_group):
+        response = await self.client.migration.get(
+            resource_group_name=resource_group.name,
+            cluster_name="str",
+            api_version="2025-08-01-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_migration_begin_cancel(self, resource_group):
         response = await (
-            await self.client.private_endpoint_connections.begin_delete(
+            await self.client.migration.begin_cancel(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
-                private_endpoint_connection_name="str",
                 api_version="2025-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result

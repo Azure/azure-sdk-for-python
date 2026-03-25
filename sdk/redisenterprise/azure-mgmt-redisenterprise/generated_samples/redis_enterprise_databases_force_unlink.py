@@ -43,6 +43,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/RedisEnterprise/stable/2025-07-01/examples/RedisEnterpriseDatabasesForceUnlink.json
+# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/RedisEnterprise/preview/2025-08-01-preview/examples/RedisEnterpriseDatabasesForceUnlink.json
 if __name__ == "__main__":
     main()

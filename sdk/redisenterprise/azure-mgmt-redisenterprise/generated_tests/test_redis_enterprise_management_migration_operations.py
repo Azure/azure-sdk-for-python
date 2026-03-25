@@ -14,25 +14,45 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestRedisEnterpriseManagementAccessPolicyAssignmentOperations(AzureMgmtRecordedTestCase):
+class TestRedisEnterpriseManagementMigrationOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(RedisEnterpriseManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_access_policy_assignment_begin_create_update(self, resource_group):
-        response = self.client.access_policy_assignment.begin_create_update(
+    def test_migration_list(self, resource_group):
+        response = self.client.migration.list(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            database_name="str",
-            access_policy_assignment_name="str",
+            api_version="2025-08-01-preview",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_migration_begin_start(self, resource_group):
+        response = self.client.migration.begin_start(
+            resource_group_name=resource_group.name,
+            cluster_name="str",
             parameters={
-                "accessPolicyName": "str",
+                "creationTime": "2020-02-20 00:00:00",
                 "id": "str",
+                "lastModifiedTime": "2020-02-20 00:00:00",
                 "name": "str",
                 "provisioningState": "str",
+                "statusDetails": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "targetResourceId": "str",
                 "type": "str",
-                "user": {"objectId": "str"},
             },
             api_version="2025-08-01-preview",
         ).result()  # call '.result()' to poll until service return final result
@@ -42,12 +62,10 @@ class TestRedisEnterpriseManagementAccessPolicyAssignmentOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_access_policy_assignment_get(self, resource_group):
-        response = self.client.access_policy_assignment.get(
+    def test_migration_get(self, resource_group):
+        response = self.client.migration.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            database_name="str",
-            access_policy_assignment_name="str",
             api_version="2025-08-01-preview",
         )
 
@@ -56,27 +74,12 @@ class TestRedisEnterpriseManagementAccessPolicyAssignmentOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_access_policy_assignment_begin_delete(self, resource_group):
-        response = self.client.access_policy_assignment.begin_delete(
+    def test_migration_begin_cancel(self, resource_group):
+        response = self.client.migration.begin_cancel(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            database_name="str",
-            access_policy_assignment_name="str",
             api_version="2025-08-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_access_policy_assignment_list(self, resource_group):
-        response = self.client.access_policy_assignment.list(
-            resource_group_name=resource_group.name,
-            cluster_name="str",
-            database_name="str",
-            api_version="2025-08-01-preview",
-        )
-        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

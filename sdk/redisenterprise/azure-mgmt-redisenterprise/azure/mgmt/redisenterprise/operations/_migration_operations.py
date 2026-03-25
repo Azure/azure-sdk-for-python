@@ -43,13 +43,41 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_create_update_request(
-    resource_group_name: str,
-    cluster_name: str,
-    database_name: str,
-    access_policy_assignment_name: str,
-    subscription_id: str,
-    **kwargs: Any
+def build_list_request(resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/migrations",
+    )
+    path_format_arguments = {
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "clusterName": _SERIALIZER.url(
+            "cluster_name", cluster_name, "str", pattern=r"^(?=.{1,60}$)[A-Za-z0-9]+(-[A-Za-z0-9]+)*$"
+        ),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_start_request(
+    resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -61,22 +89,16 @@ def build_create_update_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/databases/{databaseName}/accessPolicyAssignments/{accessPolicyAssignmentName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/migrations/default",
     )
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "clusterName": _SERIALIZER.url(
             "cluster_name", cluster_name, "str", pattern=r"^(?=.{1,60}$)[A-Za-z0-9]+(-[A-Za-z0-9]+)*$"
         ),
-        "databaseName": _SERIALIZER.url(
-            "database_name", database_name, "str", pattern=r"^(?=.{1,60}$)[A-Za-z0-9]+(-[A-Za-z0-9]+)*$"
-        ),
-        "accessPolicyAssignmentName": _SERIALIZER.url(
-            "access_policy_assignment_name", access_policy_assignment_name, "str", pattern=r"^[A-Za-z0-9]{1,60}$"
-        ),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -92,14 +114,7 @@ def build_create_update_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_request(
-    resource_group_name: str,
-    cluster_name: str,
-    database_name: str,
-    access_policy_assignment_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_request(resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -109,22 +124,16 @@ def build_get_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/databases/{databaseName}/accessPolicyAssignments/{accessPolicyAssignmentName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/migrations/default",
     )
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "clusterName": _SERIALIZER.url(
             "cluster_name", cluster_name, "str", pattern=r"^(?=.{1,60}$)[A-Za-z0-9]+(-[A-Za-z0-9]+)*$"
         ),
-        "databaseName": _SERIALIZER.url(
-            "database_name", database_name, "str", pattern=r"^(?=.{1,60}$)[A-Za-z0-9]+(-[A-Za-z0-9]+)*$"
-        ),
-        "accessPolicyAssignmentName": _SERIALIZER.url(
-            "access_policy_assignment_name", access_policy_assignment_name, "str", pattern=r"^[A-Za-z0-9]{1,60}$"
-        ),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -138,13 +147,8 @@ def build_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_request(
-    resource_group_name: str,
-    cluster_name: str,
-    database_name: str,
-    access_policy_assignment_name: str,
-    subscription_id: str,
-    **kwargs: Any
+def build_cancel_request(
+    resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -155,22 +159,16 @@ def build_delete_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/databases/{databaseName}/accessPolicyAssignments/{accessPolicyAssignmentName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/migrations/default/cancel",
     )
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "clusterName": _SERIALIZER.url(
             "cluster_name", cluster_name, "str", pattern=r"^(?=.{1,60}$)[A-Za-z0-9]+(-[A-Za-z0-9]+)*$"
         ),
-        "databaseName": _SERIALIZER.url(
-            "database_name", database_name, "str", pattern=r"^(?=.{1,60}$)[A-Za-z0-9]+(-[A-Za-z0-9]+)*$"
-        ),
-        "accessPolicyAssignmentName": _SERIALIZER.url(
-            "access_policy_assignment_name", access_policy_assignment_name, "str", pattern=r"^[A-Za-z0-9]{1,60}$"
-        ),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -181,55 +179,17 @@ def build_delete_request(
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_request(
-    resource_group_name: str, cluster_name: str, database_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/databases/{databaseName}/accessPolicyAssignments",
-    )
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "clusterName": _SERIALIZER.url(
-            "cluster_name", cluster_name, "str", pattern=r"^(?=.{1,60}$)[A-Za-z0-9]+(-[A-Za-z0-9]+)*$"
-        ),
-        "databaseName": _SERIALIZER.url(
-            "database_name", database_name, "str", pattern=r"^(?=.{1,60}$)[A-Za-z0-9]+(-[A-Za-z0-9]+)*$"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-class AccessPolicyAssignmentOperations:
+class MigrationOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.redisenterprise.RedisEnterpriseManagementClient`'s
-        :attr:`access_policy_assignment` attribute.
+        :attr:`migration` attribute.
     """
 
     models = _models
@@ -243,13 +203,98 @@ class AccessPolicyAssignmentOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    def _create_update_initial(
+    @distributed_trace
+    def list(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> ItemPaged["_models.Migration"]:
+        """Gets information about all migrations attempts in a Redis Enterprise cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
+         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
+         consecutive hyphens. Required.
+        :type cluster_name: str
+        :return: An iterator like instance of either Migration or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.redisenterprise.models.Migration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.MigrationList] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_list_request(
+                    resource_group_name=resource_group_name,
+                    cluster_name=cluster_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize("MigrationList", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    def _start_initial(
         self,
         resource_group_name: str,
         cluster_name: str,
-        database_name: str,
-        access_policy_assignment_name: str,
-        parameters: Union[_models.AccessPolicyAssignment, IO[bytes]],
+        parameters: Union[_models.Migration, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -273,13 +318,11 @@ class AccessPolicyAssignmentOperations:
         if isinstance(parameters, (IOBase, bytes)):
             _content = parameters
         else:
-            _json = self._serialize.body(parameters, "AccessPolicyAssignment")
+            _json = self._serialize.body(parameters, "Migration")
 
-        _request = build_create_update_request(
+        _request = build_start_request(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
-            database_name=database_name,
-            access_policy_assignment_name=access_policy_assignment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -310,26 +353,30 @@ class AccessPolicyAssignmentOperations:
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
-    def begin_create_update(
+    def begin_start(
         self,
         resource_group_name: str,
         cluster_name: str,
-        database_name: str,
-        access_policy_assignment_name: str,
-        parameters: _models.AccessPolicyAssignment,
+        parameters: _models.Migration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.AccessPolicyAssignment]:
-        """Creates/Updates a particular access policy assignment for a database.
+    ) -> LROPoller[_models.Migration]:
+        """Starts a new migration.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -338,37 +385,27 @@ class AccessPolicyAssignmentOperations:
          long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
          consecutive hyphens. Required.
         :type cluster_name: str
-        :param database_name: The name of the Redis Enterprise database. Required.
-        :type database_name: str
-        :param access_policy_assignment_name: The name of the Redis Enterprise database access policy
-         assignment. Required.
-        :type access_policy_assignment_name: str
-        :param parameters: Parameters supplied to the create access policy assignment for database.
-         Required.
-        :type parameters: ~azure.mgmt.redisenterprise.models.AccessPolicyAssignment
+        :param parameters: Parameters supplied to start a migration operation. Required.
+        :type parameters: ~azure.mgmt.redisenterprise.models.Migration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns either AccessPolicyAssignment or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.redisenterprise.models.AccessPolicyAssignment]
+        :return: An instance of LROPoller that returns either Migration or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.redisenterprise.models.Migration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def begin_create_update(
+    def begin_start(
         self,
         resource_group_name: str,
         cluster_name: str,
-        database_name: str,
-        access_policy_assignment_name: str,
         parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.AccessPolicyAssignment]:
-        """Creates/Updates a particular access policy assignment for a database.
+    ) -> LROPoller[_models.Migration]:
+        """Starts a new migration.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -377,35 +414,25 @@ class AccessPolicyAssignmentOperations:
          long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
          consecutive hyphens. Required.
         :type cluster_name: str
-        :param database_name: The name of the Redis Enterprise database. Required.
-        :type database_name: str
-        :param access_policy_assignment_name: The name of the Redis Enterprise database access policy
-         assignment. Required.
-        :type access_policy_assignment_name: str
-        :param parameters: Parameters supplied to the create access policy assignment for database.
-         Required.
+        :param parameters: Parameters supplied to start a migration operation. Required.
         :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns either AccessPolicyAssignment or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.redisenterprise.models.AccessPolicyAssignment]
+        :return: An instance of LROPoller that returns either Migration or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.redisenterprise.models.Migration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def begin_create_update(
+    def begin_start(
         self,
         resource_group_name: str,
         cluster_name: str,
-        database_name: str,
-        access_policy_assignment_name: str,
-        parameters: Union[_models.AccessPolicyAssignment, IO[bytes]],
+        parameters: Union[_models.Migration, IO[bytes]],
         **kwargs: Any
-    ) -> LROPoller[_models.AccessPolicyAssignment]:
-        """Creates/Updates a particular access policy assignment for a database.
+    ) -> LROPoller[_models.Migration]:
+        """Starts a new migration.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -414,18 +441,11 @@ class AccessPolicyAssignmentOperations:
          long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
          consecutive hyphens. Required.
         :type cluster_name: str
-        :param database_name: The name of the Redis Enterprise database. Required.
-        :type database_name: str
-        :param access_policy_assignment_name: The name of the Redis Enterprise database access policy
-         assignment. Required.
-        :type access_policy_assignment_name: str
-        :param parameters: Parameters supplied to the create access policy assignment for database. Is
-         either a AccessPolicyAssignment type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.redisenterprise.models.AccessPolicyAssignment or IO[bytes]
-        :return: An instance of LROPoller that returns either AccessPolicyAssignment or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.redisenterprise.models.AccessPolicyAssignment]
+        :param parameters: Parameters supplied to start a migration operation. Is either a Migration
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.redisenterprise.models.Migration or IO[bytes]
+        :return: An instance of LROPoller that returns either Migration or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.redisenterprise.models.Migration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -433,16 +453,14 @@ class AccessPolicyAssignmentOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AccessPolicyAssignment] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Migration] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._create_update_initial(
+            raw_result = self._start_initial(
                 resource_group_name=resource_group_name,
                 cluster_name=cluster_name,
-                database_name=database_name,
-                access_policy_assignment_name=access_policy_assignment_name,
                 parameters=parameters,
                 api_version=api_version,
                 content_type=content_type,
@@ -455,9 +473,16 @@ class AccessPolicyAssignmentOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("AccessPolicyAssignment", pipeline_response.http_response)
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+
+            deserialized = self._deserialize("Migration", pipeline_response.http_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
 
         if polling is True:
@@ -469,26 +494,19 @@ class AccessPolicyAssignmentOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.AccessPolicyAssignment].from_continuation_token(
+            return LROPoller[_models.Migration].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.AccessPolicyAssignment](
+        return LROPoller[_models.Migration](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
     @distributed_trace
-    def get(
-        self,
-        resource_group_name: str,
-        cluster_name: str,
-        database_name: str,
-        access_policy_assignment_name: str,
-        **kwargs: Any
-    ) -> _models.AccessPolicyAssignment:
-        """Gets information about access policy assignment for database.
+    def get(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> _models.Migration:
+        """Gets information about a migration in a Redis Enterprise cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -497,13 +515,8 @@ class AccessPolicyAssignmentOperations:
          long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
          consecutive hyphens. Required.
         :type cluster_name: str
-        :param database_name: The name of the Redis Enterprise database. Required.
-        :type database_name: str
-        :param access_policy_assignment_name: The name of the Redis Enterprise database access policy
-         assignment. Required.
-        :type access_policy_assignment_name: str
-        :return: AccessPolicyAssignment or the result of cls(response)
-        :rtype: ~azure.mgmt.redisenterprise.models.AccessPolicyAssignment
+        :return: Migration or the result of cls(response)
+        :rtype: ~azure.mgmt.redisenterprise.models.Migration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -518,13 +531,11 @@ class AccessPolicyAssignmentOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.AccessPolicyAssignment] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Migration] = kwargs.pop("cls", None)
 
         _request = build_get_request(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
-            database_name=database_name,
-            access_policy_assignment_name=access_policy_assignment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -547,21 +558,14 @@ class AccessPolicyAssignmentOperations:
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("AccessPolicyAssignment", pipeline_response.http_response)
+        deserialized = self._deserialize("Migration", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    def _delete_initial(
-        self,
-        resource_group_name: str,
-        cluster_name: str,
-        database_name: str,
-        access_policy_assignment_name: str,
-        **kwargs: Any
-    ) -> Iterator[bytes]:
+    def _cancel_initial(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -576,11 +580,9 @@ class AccessPolicyAssignmentOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_delete_request(
+        _request = build_cancel_request(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
-            database_name=database_name,
-            access_policy_assignment_name=access_policy_assignment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -596,7 +598,7 @@ class AccessPolicyAssignmentOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [202]:
             try:
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
@@ -609,11 +611,10 @@ class AccessPolicyAssignmentOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -623,15 +624,8 @@ class AccessPolicyAssignmentOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def begin_delete(
-        self,
-        resource_group_name: str,
-        cluster_name: str,
-        database_name: str,
-        access_policy_assignment_name: str,
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Deletes a single access policy assignment.
+    def begin_cancel(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> LROPoller[None]:
+        """Cancel or rollback the migration operation in a Redis Enterprise cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -640,11 +634,6 @@ class AccessPolicyAssignmentOperations:
          long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
          consecutive hyphens. Required.
         :type cluster_name: str
-        :param database_name: The name of the Redis Enterprise database. Required.
-        :type database_name: str
-        :param access_policy_assignment_name: The name of the Redis Enterprise database access policy
-         assignment. Required.
-        :type access_policy_assignment_name: str
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -658,11 +647,9 @@ class AccessPolicyAssignmentOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._delete_initial(
+            raw_result = self._cancel_initial(
                 resource_group_name=resource_group_name,
                 cluster_name=cluster_name,
-                database_name=database_name,
-                access_policy_assignment_name=access_policy_assignment_name,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -677,9 +664,7 @@ class AccessPolicyAssignmentOperations:
                 return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs)
-            )
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -692,96 +677,3 @@ class AccessPolicyAssignmentOperations:
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    @distributed_trace
-    def list(
-        self, resource_group_name: str, cluster_name: str, database_name: str, **kwargs: Any
-    ) -> ItemPaged["_models.AccessPolicyAssignment"]:
-        """Gets all access policy assignments..
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
-         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
-         consecutive hyphens. Required.
-        :type cluster_name: str
-        :param database_name: The name of the Redis Enterprise database. Required.
-        :type database_name: str
-        :return: An iterator like instance of either AccessPolicyAssignment or the result of
-         cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.redisenterprise.models.AccessPolicyAssignment]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.AccessPolicyAssignmentList] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_list_request(
-                    resource_group_name=resource_group_name,
-                    cluster_name=cluster_name,
-                    database_name=database_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize("AccessPolicyAssignmentList", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(
-                    _models.ErrorResponse,
-                    pipeline_response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)

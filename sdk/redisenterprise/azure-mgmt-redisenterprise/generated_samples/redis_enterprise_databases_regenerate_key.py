@@ -40,6 +40,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/RedisEnterprise/stable/2025-07-01/examples/RedisEnterpriseDatabasesRegenerateKey.json
+# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/RedisEnterprise/preview/2025-08-01-preview/examples/RedisEnterpriseDatabasesRegenerateKey.json
 if __name__ == "__main__":
     main()

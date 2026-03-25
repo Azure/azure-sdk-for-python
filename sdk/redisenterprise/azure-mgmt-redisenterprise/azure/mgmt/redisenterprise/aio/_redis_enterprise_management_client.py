@@ -23,6 +23,7 @@ from ._configuration import RedisEnterpriseManagementClientConfiguration
 from .operations import (
     AccessPolicyAssignmentOperations,
     DatabasesOperations,
+    MigrationOperations,
     Operations,
     OperationsStatusOperations,
     PrivateEndpointConnectionsOperations,
@@ -56,6 +57,8 @@ class RedisEnterpriseManagementClient:  # pylint: disable=too-many-instance-attr
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
      azure.mgmt.redisenterprise.aio.operations.PrivateLinkResourcesOperations
+    :ivar migration: MigrationOperations operations
+    :vartype migration: azure.mgmt.redisenterprise.aio.operations.MigrationOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.
@@ -65,8 +68,8 @@ class RedisEnterpriseManagementClient:  # pylint: disable=too-many-instance-attr
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: Api Version. Default value is "2025-07-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2025-08-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -137,6 +140,7 @@ class RedisEnterpriseManagementClient:  # pylint: disable=too-many-instance-attr
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.migration = MigrationOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

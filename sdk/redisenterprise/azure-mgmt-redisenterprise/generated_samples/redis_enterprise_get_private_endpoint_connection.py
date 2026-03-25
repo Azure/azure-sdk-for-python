@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/RedisEnterprise/stable/2025-07-01/examples/RedisEnterpriseGetPrivateEndpointConnection.json
+# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/RedisEnterprise/preview/2025-08-01-preview/examples/RedisEnterpriseGetPrivateEndpointConnection.json
 if __name__ == "__main__":
     main()

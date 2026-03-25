@@ -1,11 +1,11 @@
 {
-  "commit": "7f025604791df2ace50fc3a65dc6f2ac13ad7e56",
+  "commit": "8a34a1be47eeb4ccc185d5961bb4b53a27ebb98c",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.41.3",
+    "@autorest/python@6.50.0",
     "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/redisenterprise/resource-manager/Microsoft.Cache/RedisEnterprise/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.41.3 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "autorest_command": "autorest specification/redisenterprise/resource-manager/Microsoft.Cache/RedisEnterprise/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=C:\\dev\\worktrees\\sdk-azure-mgmt-redisenterprise\\sdk --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
   "readme": "specification/redisenterprise/resource-manager/Microsoft.Cache/RedisEnterprise/readme.md"
 }

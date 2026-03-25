@@ -208,6 +208,148 @@ class AccessPolicyAssignmentPropertiesUser(_serialization.Model):
         self.object_id = object_id
 
 
+class MigrationProperties(_serialization.Model):
+    """Properties for Redis Enterprise migration operation.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureCacheForRedisMigrationProperties
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar source_type: Describes the source of the migration operation. Required.
+     "AzureCacheForRedis"
+    :vartype source_type: str or ~azure.mgmt.redisenterprise.models.SourceType
+    :ivar target_resource_id: The Azure resource ID of the Azure Managed Redis destination cache to
+     migrate.
+    :vartype target_resource_id: str
+    :ivar provisioning_state: Current provisioning status of the migration. Known values are:
+     "Accepted", "InProgress", "ReadyForDnsSwitch", "Succeeded", "Failed", "Cancelling", and
+     "Cancelled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.redisenterprise.models.MigrationProvisioningState
+    :ivar status_details: Additional details about the migration operation's status in free text
+     format.
+    :vartype status_details: str
+    :ivar creation_time: The timestamp when the migration operation was created.
+    :vartype creation_time: ~datetime.datetime
+    :ivar last_modified_time: The timestamp when the migration operation was last updated.
+    :vartype last_modified_time: ~datetime.datetime
+    """
+
+    _validation = {
+        "source_type": {"required": True},
+        "target_resource_id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "status_details": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "last_modified_time": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "source_type": {"key": "sourceType", "type": "str"},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "status_details": {"key": "statusDetails", "type": "str"},
+        "creation_time": {"key": "creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "lastModifiedTime", "type": "iso-8601"},
+    }
+
+    _subtype_map = {"source_type": {"AzureCacheForRedis": "AzureCacheForRedisMigrationProperties"}}
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.source_type: Optional[str] = None
+        self.target_resource_id: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.MigrationProvisioningState"]] = None
+        self.status_details: Optional[str] = None
+        self.creation_time: Optional[datetime.datetime] = None
+        self.last_modified_time: Optional[datetime.datetime] = None
+
+
+class AzureCacheForRedisMigrationProperties(MigrationProperties):
+    """Properties for Redis Enterprise migration operation for Azure Cache for Redis.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar source_type: Describes the source of the migration operation. Required.
+     "AzureCacheForRedis"
+    :vartype source_type: str or ~azure.mgmt.redisenterprise.models.SourceType
+    :ivar target_resource_id: The Azure resource ID of the Azure Managed Redis destination cache to
+     migrate.
+    :vartype target_resource_id: str
+    :ivar provisioning_state: Current provisioning status of the migration. Known values are:
+     "Accepted", "InProgress", "ReadyForDnsSwitch", "Succeeded", "Failed", "Cancelling", and
+     "Cancelled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.redisenterprise.models.MigrationProvisioningState
+    :ivar status_details: Additional details about the migration operation's status in free text
+     format.
+    :vartype status_details: str
+    :ivar creation_time: The timestamp when the migration operation was created.
+    :vartype creation_time: ~datetime.datetime
+    :ivar last_modified_time: The timestamp when the migration operation was last updated.
+    :vartype last_modified_time: ~datetime.datetime
+    :ivar source_resource_id: The source resource ID to migrate from. This is the resource ID of
+     the Azure Cache for Redis. Required.
+    :vartype source_resource_id: str
+    :ivar switch_dns: Sets whether the DNS is switched automatically after the data is transferred
+     from the source cache to the target cache. This property must be true during the preview.
+     Required.
+    :vartype switch_dns: bool
+    :ivar skip_data_migration: Sets whether the data is migrated from source to target or not. This
+     property must be true during the preview. Required.
+    :vartype skip_data_migration: bool
+    """
+
+    _validation = {
+        "source_type": {"required": True},
+        "target_resource_id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "status_details": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "last_modified_time": {"readonly": True},
+        "source_resource_id": {"required": True},
+        "switch_dns": {"required": True},
+        "skip_data_migration": {"required": True},
+    }
+
+    _attribute_map = {
+        "source_type": {"key": "sourceType", "type": "str"},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "status_details": {"key": "statusDetails", "type": "str"},
+        "creation_time": {"key": "creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "lastModifiedTime", "type": "iso-8601"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "switch_dns": {"key": "switchDns", "type": "bool"},
+        "skip_data_migration": {"key": "skipDataMigration", "type": "bool"},
+    }
+
+    def __init__(self, *, source_resource_id: str, switch_dns: bool, skip_data_migration: bool, **kwargs: Any) -> None:
+        """
+        :keyword source_resource_id: The source resource ID to migrate from. This is the resource ID of
+         the Azure Cache for Redis. Required.
+        :paramtype source_resource_id: str
+        :keyword switch_dns: Sets whether the DNS is switched automatically after the data is
+         transferred from the source cache to the target cache. This property must be true during the
+         preview. Required.
+        :paramtype switch_dns: bool
+        :keyword skip_data_migration: Sets whether the data is migrated from source to target or not.
+         This property must be true during the preview. Required.
+        :paramtype skip_data_migration: bool
+        """
+        super().__init__(**kwargs)
+        self.source_type: str = "AzureCacheForRedis"
+        self.source_resource_id = source_resource_id
+        self.switch_dns = switch_dns
+        self.skip_data_migration = skip_data_migration
+
+
 class TrackedResource(Resource):
     """The resource model definition for an Azure Resource Manager tracked top level resource which
     has 'tags' and a 'location'.
@@ -295,6 +437,8 @@ class Cluster(TrackedResource):
     :vartype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
     :ivar encryption: Encryption-at-rest configuration for the cluster.
     :vartype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
+    :ivar maintenance_configuration: Cluster-level maintenance configuration.
+    :vartype maintenance_configuration: ~azure.mgmt.redisenterprise.models.MaintenanceConfiguration
     :ivar host_name: DNS name of the cluster endpoint.
     :vartype host_name: str
     :ivar provisioning_state: Current provisioning status of the cluster. Known values are:
@@ -349,6 +493,7 @@ class Cluster(TrackedResource):
         "high_availability": {"key": "properties.highAvailability", "type": "str"},
         "minimum_tls_version": {"key": "properties.minimumTlsVersion", "type": "str"},
         "encryption": {"key": "properties.encryption", "type": "ClusterPropertiesEncryption"},
+        "maintenance_configuration": {"key": "properties.maintenanceConfiguration", "type": "MaintenanceConfiguration"},
         "host_name": {"key": "properties.hostName", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "redundancy_mode": {"key": "properties.redundancyMode", "type": "str"},
@@ -372,6 +517,7 @@ class Cluster(TrackedResource):
         high_availability: Optional[Union[str, "_models.HighAvailability"]] = None,
         minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
         encryption: Optional["_models.ClusterPropertiesEncryption"] = None,
+        maintenance_configuration: Optional["_models.MaintenanceConfiguration"] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         **kwargs: Any
     ) -> None:
@@ -397,6 +543,9 @@ class Cluster(TrackedResource):
         :paramtype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
         :keyword encryption: Encryption-at-rest configuration for the cluster.
         :paramtype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
+        :keyword maintenance_configuration: Cluster-level maintenance configuration.
+        :paramtype maintenance_configuration:
+         ~azure.mgmt.redisenterprise.models.MaintenanceConfiguration
         :keyword public_network_access: Whether or not public network traffic can access the Redis
          cluster. Only 'Enabled' or 'Disabled' can be set. null is returned only for clusters created
          using an old API version which do not have this property and cannot be set. Known values are:
@@ -411,6 +560,7 @@ class Cluster(TrackedResource):
         self.high_availability = high_availability
         self.minimum_tls_version = minimum_tls_version
         self.encryption = encryption
+        self.maintenance_configuration = maintenance_configuration
         self.host_name: Optional[str] = None
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.redundancy_mode: Optional[Union[str, "_models.RedundancyMode"]] = None
@@ -437,6 +587,8 @@ class ClusterProperties(_serialization.Model):
     :vartype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
     :ivar encryption: Encryption-at-rest configuration for the cluster.
     :vartype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
+    :ivar maintenance_configuration: Cluster-level maintenance configuration.
+    :vartype maintenance_configuration: ~azure.mgmt.redisenterprise.models.MaintenanceConfiguration
     :ivar host_name: DNS name of the cluster endpoint.
     :vartype host_name: str
     :ivar provisioning_state: Current provisioning status of the cluster. Known values are:
@@ -471,6 +623,7 @@ class ClusterProperties(_serialization.Model):
         "high_availability": {"key": "highAvailability", "type": "str"},
         "minimum_tls_version": {"key": "minimumTlsVersion", "type": "str"},
         "encryption": {"key": "encryption", "type": "ClusterPropertiesEncryption"},
+        "maintenance_configuration": {"key": "maintenanceConfiguration", "type": "MaintenanceConfiguration"},
         "host_name": {"key": "hostName", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "redundancy_mode": {"key": "redundancyMode", "type": "str"},
@@ -485,6 +638,7 @@ class ClusterProperties(_serialization.Model):
         high_availability: Optional[Union[str, "_models.HighAvailability"]] = None,
         minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
         encryption: Optional["_models.ClusterPropertiesEncryption"] = None,
+        maintenance_configuration: Optional["_models.MaintenanceConfiguration"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -499,11 +653,15 @@ class ClusterProperties(_serialization.Model):
         :paramtype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
         :keyword encryption: Encryption-at-rest configuration for the cluster.
         :paramtype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
+        :keyword maintenance_configuration: Cluster-level maintenance configuration.
+        :paramtype maintenance_configuration:
+         ~azure.mgmt.redisenterprise.models.MaintenanceConfiguration
         """
         super().__init__(**kwargs)
         self.high_availability = high_availability
         self.minimum_tls_version = minimum_tls_version
         self.encryption = encryption
+        self.maintenance_configuration = maintenance_configuration
         self.host_name: Optional[str] = None
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.redundancy_mode: Optional[Union[str, "_models.RedundancyMode"]] = None
@@ -530,6 +688,8 @@ class ClusterCreateProperties(ClusterProperties):
     :vartype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
     :ivar encryption: Encryption-at-rest configuration for the cluster.
     :vartype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
+    :ivar maintenance_configuration: Cluster-level maintenance configuration.
+    :vartype maintenance_configuration: ~azure.mgmt.redisenterprise.models.MaintenanceConfiguration
     :ivar host_name: DNS name of the cluster endpoint.
     :vartype host_name: str
     :ivar provisioning_state: Current provisioning status of the cluster. Known values are:
@@ -570,6 +730,7 @@ class ClusterCreateProperties(ClusterProperties):
         "high_availability": {"key": "highAvailability", "type": "str"},
         "minimum_tls_version": {"key": "minimumTlsVersion", "type": "str"},
         "encryption": {"key": "encryption", "type": "ClusterPropertiesEncryption"},
+        "maintenance_configuration": {"key": "maintenanceConfiguration", "type": "MaintenanceConfiguration"},
         "host_name": {"key": "hostName", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "redundancy_mode": {"key": "redundancyMode", "type": "str"},
@@ -586,6 +747,7 @@ class ClusterCreateProperties(ClusterProperties):
         high_availability: Optional[Union[str, "_models.HighAvailability"]] = None,
         minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
         encryption: Optional["_models.ClusterPropertiesEncryption"] = None,
+        maintenance_configuration: Optional["_models.MaintenanceConfiguration"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -600,6 +762,9 @@ class ClusterCreateProperties(ClusterProperties):
         :paramtype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
         :keyword encryption: Encryption-at-rest configuration for the cluster.
         :paramtype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
+        :keyword maintenance_configuration: Cluster-level maintenance configuration.
+        :paramtype maintenance_configuration:
+         ~azure.mgmt.redisenterprise.models.MaintenanceConfiguration
         :keyword public_network_access: Whether or not public network traffic can access the Redis
          cluster. Only 'Enabled' or 'Disabled' can be set. null is returned only for clusters created
          using an old API version which do not have this property and cannot be set. Required. Known
@@ -610,6 +775,7 @@ class ClusterCreateProperties(ClusterProperties):
             high_availability=high_availability,
             minimum_tls_version=minimum_tls_version,
             encryption=encryption,
+            maintenance_configuration=maintenance_configuration,
             **kwargs
         )
         self.public_network_access = public_network_access
@@ -788,6 +954,8 @@ class ClusterUpdate(_serialization.Model):
     :vartype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
     :ivar encryption: Encryption-at-rest configuration for the cluster.
     :vartype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
+    :ivar maintenance_configuration: Cluster-level maintenance configuration.
+    :vartype maintenance_configuration: ~azure.mgmt.redisenterprise.models.MaintenanceConfiguration
     :ivar host_name: DNS name of the cluster endpoint.
     :vartype host_name: str
     :ivar provisioning_state: Current provisioning status of the cluster. Known values are:
@@ -830,6 +998,7 @@ class ClusterUpdate(_serialization.Model):
         "high_availability": {"key": "properties.highAvailability", "type": "str"},
         "minimum_tls_version": {"key": "properties.minimumTlsVersion", "type": "str"},
         "encryption": {"key": "properties.encryption", "type": "ClusterPropertiesEncryption"},
+        "maintenance_configuration": {"key": "properties.maintenanceConfiguration", "type": "MaintenanceConfiguration"},
         "host_name": {"key": "properties.hostName", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "redundancy_mode": {"key": "properties.redundancyMode", "type": "str"},
@@ -851,6 +1020,7 @@ class ClusterUpdate(_serialization.Model):
         high_availability: Optional[Union[str, "_models.HighAvailability"]] = None,
         minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
         encryption: Optional["_models.ClusterPropertiesEncryption"] = None,
+        maintenance_configuration: Optional["_models.MaintenanceConfiguration"] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         **kwargs: Any
     ) -> None:
@@ -872,6 +1042,9 @@ class ClusterUpdate(_serialization.Model):
         :paramtype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
         :keyword encryption: Encryption-at-rest configuration for the cluster.
         :paramtype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
+        :keyword maintenance_configuration: Cluster-level maintenance configuration.
+        :paramtype maintenance_configuration:
+         ~azure.mgmt.redisenterprise.models.MaintenanceConfiguration
         :keyword public_network_access: Whether or not public network traffic can access the Redis
          cluster. Only 'Enabled' or 'Disabled' can be set. null is returned only for clusters created
          using an old API version which do not have this property and cannot be set. Known values are:
@@ -885,6 +1058,7 @@ class ClusterUpdate(_serialization.Model):
         self.high_availability = high_availability
         self.minimum_tls_version = minimum_tls_version
         self.encryption = encryption
+        self.maintenance_configuration = maintenance_configuration
         self.host_name: Optional[str] = None
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.redundancy_mode: Optional[Union[str, "_models.RedundancyMode"]] = None
@@ -910,6 +1084,8 @@ class ClusterUpdateProperties(ClusterProperties):
     :vartype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
     :ivar encryption: Encryption-at-rest configuration for the cluster.
     :vartype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
+    :ivar maintenance_configuration: Cluster-level maintenance configuration.
+    :vartype maintenance_configuration: ~azure.mgmt.redisenterprise.models.MaintenanceConfiguration
     :ivar host_name: DNS name of the cluster endpoint.
     :vartype host_name: str
     :ivar provisioning_state: Current provisioning status of the cluster. Known values are:
@@ -949,6 +1125,7 @@ class ClusterUpdateProperties(ClusterProperties):
         "high_availability": {"key": "highAvailability", "type": "str"},
         "minimum_tls_version": {"key": "minimumTlsVersion", "type": "str"},
         "encryption": {"key": "encryption", "type": "ClusterPropertiesEncryption"},
+        "maintenance_configuration": {"key": "maintenanceConfiguration", "type": "MaintenanceConfiguration"},
         "host_name": {"key": "hostName", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "redundancy_mode": {"key": "redundancyMode", "type": "str"},
@@ -964,6 +1141,7 @@ class ClusterUpdateProperties(ClusterProperties):
         high_availability: Optional[Union[str, "_models.HighAvailability"]] = None,
         minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
         encryption: Optional["_models.ClusterPropertiesEncryption"] = None,
+        maintenance_configuration: Optional["_models.MaintenanceConfiguration"] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         **kwargs: Any
     ) -> None:
@@ -979,6 +1157,9 @@ class ClusterUpdateProperties(ClusterProperties):
         :paramtype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
         :keyword encryption: Encryption-at-rest configuration for the cluster.
         :paramtype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
+        :keyword maintenance_configuration: Cluster-level maintenance configuration.
+        :paramtype maintenance_configuration:
+         ~azure.mgmt.redisenterprise.models.MaintenanceConfiguration
         :keyword public_network_access: Whether or not public network traffic can access the Redis
          cluster. Only 'Enabled' or 'Disabled' can be set. null is returned only for clusters created
          using an old API version which do not have this property and cannot be set. Known values are:
@@ -989,6 +1170,7 @@ class ClusterUpdateProperties(ClusterProperties):
             high_availability=high_availability,
             minimum_tls_version=minimum_tls_version,
             encryption=encryption,
+            maintenance_configuration=maintenance_configuration,
             **kwargs
         )
         self.public_network_access = public_network_access
@@ -1997,6 +2179,107 @@ class LinkedDatabase(_serialization.Model):
         self.state: Optional[Union[str, "_models.LinkState"]] = None
 
 
+class MaintenanceConfiguration(_serialization.Model):
+    """Cluster-level maintenance configuration.
+
+    :ivar maintenance_windows: Custom maintenance windows that apply to the cluster.
+    :vartype maintenance_windows: list[~azure.mgmt.redisenterprise.models.MaintenanceWindow]
+    """
+
+    _attribute_map = {
+        "maintenance_windows": {"key": "maintenanceWindows", "type": "[MaintenanceWindow]"},
+    }
+
+    def __init__(
+        self, *, maintenance_windows: Optional[list["_models.MaintenanceWindow"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword maintenance_windows: Custom maintenance windows that apply to the cluster.
+        :paramtype maintenance_windows: list[~azure.mgmt.redisenterprise.models.MaintenanceWindow]
+        """
+        super().__init__(**kwargs)
+        self.maintenance_windows = maintenance_windows
+
+
+class MaintenanceWindow(_serialization.Model):
+    """A single custom maintenance window.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: Maintenance window type. Required. "Weekly"
+    :vartype type: str or ~azure.mgmt.redisenterprise.models.MaintenanceWindowType
+    :ivar duration: Duration in ISO-8601 format, for example 'PT5H'. Required.
+    :vartype duration: str
+    :ivar start_hour_utc: Start hour (0-23) in UTC when the maintenance window begins. Required.
+    :vartype start_hour_utc: int
+    :ivar schedule: Recurring schedule for the maintenance window. Required.
+    :vartype schedule: ~azure.mgmt.redisenterprise.models.MaintenanceWindowSchedule
+    """
+
+    _validation = {
+        "type": {"required": True},
+        "duration": {"required": True},
+        "start_hour_utc": {"required": True, "maximum": 23, "minimum": 0},
+        "schedule": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "duration": {"key": "duration", "type": "str"},
+        "start_hour_utc": {"key": "startHourUtc", "type": "int"},
+        "schedule": {"key": "schedule", "type": "MaintenanceWindowSchedule"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.MaintenanceWindowType"],
+        duration: str,
+        start_hour_utc: int,
+        schedule: "_models.MaintenanceWindowSchedule",
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: Maintenance window type. Required. "Weekly"
+        :paramtype type: str or ~azure.mgmt.redisenterprise.models.MaintenanceWindowType
+        :keyword duration: Duration in ISO-8601 format, for example 'PT5H'. Required.
+        :paramtype duration: str
+        :keyword start_hour_utc: Start hour (0-23) in UTC when the maintenance window begins. Required.
+        :paramtype start_hour_utc: int
+        :keyword schedule: Recurring schedule for the maintenance window. Required.
+        :paramtype schedule: ~azure.mgmt.redisenterprise.models.MaintenanceWindowSchedule
+        """
+        super().__init__(**kwargs)
+        self.type = type
+        self.duration = duration
+        self.start_hour_utc = start_hour_utc
+        self.schedule = schedule
+
+
+class MaintenanceWindowSchedule(_serialization.Model):
+    """Schedule details for a maintenance window.
+
+    :ivar day_of_week: Day of week. Required when the maintenance window type is 'Weekly'. Known
+     values are: "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", and "Saturday".
+    :vartype day_of_week: str or ~azure.mgmt.redisenterprise.models.MaintenanceDayOfWeek
+    """
+
+    _attribute_map = {
+        "day_of_week": {"key": "dayOfWeek", "type": "str"},
+    }
+
+    def __init__(
+        self, *, day_of_week: Optional[Union[str, "_models.MaintenanceDayOfWeek"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword day_of_week: Day of week. Required when the maintenance window type is 'Weekly'. Known
+         values are: "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", and "Saturday".
+        :paramtype day_of_week: str or ~azure.mgmt.redisenterprise.models.MaintenanceDayOfWeek
+        """
+        super().__init__(**kwargs)
+        self.day_of_week = day_of_week
+
+
 class ManagedServiceIdentity(_serialization.Model):
     """Managed service identity (system assigned and/or user assigned identities).
 
@@ -2059,6 +2342,107 @@ class ManagedServiceIdentity(_serialization.Model):
         self.tenant_id: Optional[str] = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
+
+
+class Migration(ProxyResource):
+    """Describes the current migration operation on a Redis Enterprise cluster.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.redisenterprise.models.SystemData
+    :ivar source_type: Describes the source of the migration operation. "AzureCacheForRedis"
+    :vartype source_type: str or ~azure.mgmt.redisenterprise.models.SourceType
+    :ivar target_resource_id: The Azure resource ID of the Azure Managed Redis destination cache to
+     migrate.
+    :vartype target_resource_id: str
+    :ivar provisioning_state: Current provisioning status of the migration. Known values are:
+     "Accepted", "InProgress", "ReadyForDnsSwitch", "Succeeded", "Failed", "Cancelling", and
+     "Cancelled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.redisenterprise.models.MigrationProvisioningState
+    :ivar status_details: Additional details about the migration operation's status in free text
+     format.
+    :vartype status_details: str
+    :ivar creation_time: The timestamp when the migration operation was created.
+    :vartype creation_time: ~datetime.datetime
+    :ivar last_modified_time: The timestamp when the migration operation was last updated.
+    :vartype last_modified_time: ~datetime.datetime
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "target_resource_id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "status_details": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "last_modified_time": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "source_type": {"key": "properties.sourceType", "type": "str"},
+        "target_resource_id": {"key": "properties.targetResourceId", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "status_details": {"key": "properties.statusDetails", "type": "str"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.source_type: Optional[str] = None
+        self.target_resource_id: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.MigrationProvisioningState"]] = None
+        self.status_details: Optional[str] = None
+        self.creation_time: Optional[datetime.datetime] = None
+        self.last_modified_time: Optional[datetime.datetime] = None
+
+
+class MigrationList(_serialization.Model):
+    """The response of a list-all migrations.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of migration operations.
+    :vartype value: list[~azure.mgmt.redisenterprise.models.Migration]
+    :ivar next_link: The URI to fetch the next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Migration]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[list["_models.Migration"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: List of migration operations.
+        :paramtype value: list[~azure.mgmt.redisenterprise.models.Migration]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link: Optional[str] = None
 
 
 class Module(_serialization.Model):

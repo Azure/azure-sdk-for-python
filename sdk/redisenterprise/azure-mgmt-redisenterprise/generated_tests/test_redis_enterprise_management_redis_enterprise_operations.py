@@ -43,6 +43,11 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperations(AzureMgmtRecordedTe
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
                 "kind": "str",
+                "maintenanceConfiguration": {
+                    "maintenanceWindows": [
+                        {"duration": "str", "schedule": {"dayOfWeek": "str"}, "startHourUtc": 0, "type": "str"}
+                    ]
+                },
                 "minimumTlsVersion": "str",
                 "name": "str",
                 "privateEndpointConnections": [
@@ -68,7 +73,7 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperations(AzureMgmtRecordedTe
                 "type": "str",
                 "zones": ["str"],
             },
-            api_version="2025-07-01",
+            api_version="2025-08-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -95,6 +100,11 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperations(AzureMgmtRecordedTe
                     "tenantId": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
+                "maintenanceConfiguration": {
+                    "maintenanceWindows": [
+                        {"duration": "str", "schedule": {"dayOfWeek": "str"}, "startHourUtc": 0, "type": "str"}
+                    ]
+                },
                 "minimumTlsVersion": "str",
                 "privateEndpointConnections": [
                     {
@@ -118,7 +128,7 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperations(AzureMgmtRecordedTe
                 "sku": {"name": "str", "capacity": 0},
                 "tags": {"str": "str"},
             },
-            api_version="2025-07-01",
+            api_version="2025-08-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -130,7 +140,7 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperations(AzureMgmtRecordedTe
         response = self.client.redis_enterprise.begin_delete(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2025-07-01",
+            api_version="2025-08-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -142,7 +152,7 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperations(AzureMgmtRecordedTe
         response = self.client.redis_enterprise.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2025-07-01",
+            api_version="2025-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -153,7 +163,7 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperations(AzureMgmtRecordedTe
     def test_redis_enterprise_list_by_resource_group(self, resource_group):
         response = self.client.redis_enterprise.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-07-01",
+            api_version="2025-08-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -163,7 +173,7 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperations(AzureMgmtRecordedTe
     @recorded_by_proxy
     def test_redis_enterprise_list(self, resource_group):
         response = self.client.redis_enterprise.list(
-            api_version="2025-07-01",
+            api_version="2025-08-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -175,7 +185,7 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperations(AzureMgmtRecordedTe
         response = self.client.redis_enterprise.list_skus_for_scaling(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2025-07-01",
+            api_version="2025-08-01-preview",
         )
 
         # please add some check logic here by yourself

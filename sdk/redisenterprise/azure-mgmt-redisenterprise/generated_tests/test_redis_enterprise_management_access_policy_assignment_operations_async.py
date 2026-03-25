@@ -36,7 +36,7 @@ class TestRedisEnterpriseManagementAccessPolicyAssignmentOperationsAsync(AzureMg
                     "type": "str",
                     "user": {"objectId": "str"},
                 },
-                api_version="2025-07-01",
+                api_version="2025-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -51,7 +51,7 @@ class TestRedisEnterpriseManagementAccessPolicyAssignmentOperationsAsync(AzureMg
             cluster_name="str",
             database_name="str",
             access_policy_assignment_name="str",
-            api_version="2025-07-01",
+            api_version="2025-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -66,7 +66,7 @@ class TestRedisEnterpriseManagementAccessPolicyAssignmentOperationsAsync(AzureMg
                 cluster_name="str",
                 database_name="str",
                 access_policy_assignment_name="str",
-                api_version="2025-07-01",
+                api_version="2025-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -80,7 +80,7 @@ class TestRedisEnterpriseManagementAccessPolicyAssignmentOperationsAsync(AzureMg
             resource_group_name=resource_group.name,
             cluster_name="str",
             database_name="str",
-            api_version="2025-07-01",
+            api_version="2025-08-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

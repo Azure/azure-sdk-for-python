@@ -52,6 +52,18 @@ def main():
                         "keyEncryptionKeyUrl": "https://your-kv.vault.azure.net/keys/your-key/your-key-version",
                     }
                 },
+                "maintenanceConfiguration": {
+                    "maintenanceWindows": [
+                        {"duration": "PT6H", "schedule": {"dayOfWeek": "Monday"}, "startHourUtc": 3, "type": "Weekly"},
+                        {"duration": "PT6H", "schedule": {"dayOfWeek": "Tuesday"}, "startHourUtc": 3, "type": "Weekly"},
+                        {
+                            "duration": "PT6H",
+                            "schedule": {"dayOfWeek": "Wednesday"},
+                            "startHourUtc": 3,
+                            "type": "Weekly",
+                        },
+                    ]
+                },
                 "minimumTlsVersion": "1.2",
                 "publicNetworkAccess": "Disabled",
             },
@@ -63,6 +75,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/RedisEnterprise/stable/2025-07-01/examples/RedisEnterpriseCreate.json
+# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/RedisEnterprise/preview/2025-08-01-preview/examples/RedisEnterpriseCreate.json
 if __name__ == "__main__":
     main()

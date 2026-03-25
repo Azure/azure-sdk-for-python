@@ -25,7 +25,7 @@ class TestRedisEnterpriseManagementOperationsStatusOperationsAsync(AzureMgmtReco
         response = await self.client.operations_status.get(
             location="str",
             operation_id="str",
-            api_version="2025-07-01",
+            api_version="2025-08-01-preview",
         )
 
         # please add some check logic here by yourself
