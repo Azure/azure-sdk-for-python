@@ -25,7 +25,7 @@ from ._models import (
 )
 
 
-def __getattr__(self, name):
+def _patched_getattr(self, name):
     """Lazily initialize _data for subclasses that skip super().__init__()."""
     if name == "_data":
         object.__setattr__(self, "_data", {})
@@ -33,7 +33,7 @@ def __getattr__(self, name):
     raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
 
-def __setattr__(self, name, value):
+def _patched_setattr(self, name, value):
     """Route attribute writes through _RestField descriptors even when shadowed."""
     if not name.startswith("_"):
         for cls in type(self).__mro__:
@@ -44,7 +44,7 @@ def __setattr__(self, name, value):
     object.__setattr__(self, name, value)
 
 
-def __getattribute__(self, name):
+def _patched_getattribute(self, name):
     """Route attribute reads through _RestField descriptors even when shadowed."""
     if not name.startswith("_"):
         try:
@@ -65,7 +65,7 @@ def __getattribute__(self, name):
 # annotations (not merged subclass annotations) to avoid resolving to a type
 # whose ``__init__`` can't handle XML elements.
 
-def __new__(cls, *args, **kwargs):
+def _patched_new(cls, *args, **kwargs):
     if f"{cls.__module__}.{cls.__qualname__}" not in cls._calculated:
         mros = cls.__mro__[:-9][::-1]
         attr_to_rest_field = {}
@@ -93,10 +93,10 @@ def __new__(cls, *args, **kwargs):
 
     return object.__new__(cls)
 
-_MyMutableMapping.__getattr__ = __getattr__
-_MyMutableMapping.__setattr__ = __setattr__
-_MyMutableMapping.__getattribute__ = __getattribute__
-_Model.__new__ = __new__
+_MyMutableMapping.__getattr__ = _patched_getattr
+_MyMutableMapping.__setattr__ = _patched_setattr
+_MyMutableMapping.__getattribute__ = _patched_getattribute
+_Model.__new__ = _patched_new
 
 
 
