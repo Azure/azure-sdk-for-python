@@ -11,7 +11,7 @@ from unittest.mock import Mock, patch
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from devtools_testutils import set_bodiless_matcher
+from devtools_testutils import set_custom_default_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.keyvault.certificates import (
     AdministratorContact,
@@ -342,7 +342,7 @@ class TestCertificateClient(KeyVaultTestCase):
     @AsyncCertificatesClientPreparer()
     @recorded_by_proxy_async
     async def test_recover_and_purge(self, client, **kwargs):
-        set_bodiless_matcher()
+        set_custom_default_matcher(ignored_headers="Accept", compare_bodies=False)
         certs = {}
         # create certificates to recover
         for i in range(LIST_TEST_SIZE):
