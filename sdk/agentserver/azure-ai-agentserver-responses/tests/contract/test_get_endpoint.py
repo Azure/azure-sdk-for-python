@@ -7,10 +7,10 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from starlette.applications import Starlette
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.responses.hosting import map_responses_server
+from azure.ai.agentserver.hosting import AgentServer
+from azure.ai.agentserver.responses.hosting import ResponseHandler
 from azure.ai.agentserver.responses import response_handler
 
 
@@ -25,9 +25,10 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
 
 
 def _build_client() -> TestClient:
-    app = Starlette()
-    map_responses_server(app, _noop_response_handler)
-    return TestClient(app)
+    server = AgentServer()
+    responses = ResponseHandler(server)
+    responses.create_handler(_noop_response_handler)
+    return TestClient(server.app)
 
 
 def _collect_replay_events(response: Any) -> list[dict[str, Any]]:

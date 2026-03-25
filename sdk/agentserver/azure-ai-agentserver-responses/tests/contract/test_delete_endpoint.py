@@ -8,10 +8,10 @@ import asyncio
 import threading
 from typing import Any
 
-from starlette.applications import Starlette
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.responses.hosting import map_responses_server
+from azure.ai.agentserver.hosting import AgentServer
+from azure.ai.agentserver.responses.hosting import ResponseHandler
 from azure.ai.agentserver.responses import response_handler
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from tests._helpers import EventGate, poll_until
@@ -43,9 +43,10 @@ def _delayed_response_handler(request: Any, context: Any, cancellation_signal: A
 
 
 def _build_client(handler: Any | None = None) -> TestClient:
-    app = Starlette()
-    map_responses_server(app, handler or _noop_response_handler)
-    return TestClient(app)
+    server = AgentServer()
+    responses = ResponseHandler(server)
+    responses.create_handler(handler or _noop_response_handler)
+    return TestClient(server.app)
 
 
 @response_handler
@@ -222,9 +223,10 @@ def test_delete__returns_404_for_non_bg_in_flight_response() -> None:
     started_gate = EventGate()
     release_gate = threading.Event()
     handler = _make_blocking_sync_response_handler(started_gate, release_gate)
-    app = Starlette()
-    map_responses_server(app, handler)
-    client = TestClient(app)
+    server = AgentServer()
+    responses = ResponseHandler(server)
+    responses.create_handler(handler)
+    client = TestClient(server.app)
     response_id = IdGenerator.new_response_id()
 
     create_result: dict[str, Any] = {}

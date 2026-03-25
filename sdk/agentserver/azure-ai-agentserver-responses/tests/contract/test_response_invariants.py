@@ -7,10 +7,10 @@ from __future__ import annotations
 import asyncio
 from typing import Any
 
-from starlette.applications import Starlette
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.responses.hosting import map_responses_server
+from azure.ai.agentserver.hosting import AgentServer
+from azure.ai.agentserver.responses.hosting import ResponseHandler
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 from azure.ai.agentserver.responses import response_handler
 from tests._helpers import poll_until
@@ -64,9 +64,10 @@ def _delayed_handler(request: Any, context: Any, cancellation_signal: Any):
 
 
 def _build_client(handler: Any | None = None) -> TestClient:
-    app = Starlette()
-    map_responses_server(app, handler or _noop_handler)
-    return TestClient(app)
+    server = AgentServer()
+    responses = ResponseHandler(server)
+    responses.create_handler(handler or _noop_handler)
+    return TestClient(server.app)
 
 
 def _wait_for_status(
@@ -552,9 +553,10 @@ def test_output_item__no_response_id_on_item() -> None:
 
 def test_output_item__agent_reference_on_response_not_item() -> None:
     """agent_reference from the request is present on the Response but not on individual output items."""
-    app = Starlette()
-    map_responses_server(app, _output_item_handler)
-    client = TestClient(app)
+    server = AgentServer()
+    responses = ResponseHandler(server)
+    responses.create_handler(_output_item_handler)
+    client = TestClient(server.app)
 
     agent_ref = {"type": "agent_reference", "name": "my-agent", "version": "v2"}
 

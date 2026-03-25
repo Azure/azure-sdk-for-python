@@ -25,10 +25,9 @@ from dataclasses import dataclass
 from typing import Any
 
 import pytest
-from starlette.applications import Starlette
-
+from azure.ai.agentserver.hosting import AgentServer
 from azure.ai.agentserver.responses._id_generator import IdGenerator
-from azure.ai.agentserver.responses.hosting import map_responses_server
+from azure.ai.agentserver.responses.hosting import ResponseHandler
 from azure.ai.agentserver.responses import response_handler
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
@@ -161,9 +160,10 @@ class _AsyncAsgiClient:
 
 def _build_client(handler: Any) -> _AsyncAsgiClient:
     """Create a fully isolated async ASGI client."""
-    app = Starlette()
-    map_responses_server(app, handler)
-    return _AsyncAsgiClient(app)
+    server = AgentServer()
+    responses = ResponseHandler(server)
+    responses.create_handler(handler)
+    return _AsyncAsgiClient(server.app)
 
 
 async def _ensure_task_done(

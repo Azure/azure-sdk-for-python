@@ -6,12 +6,12 @@ from __future__ import annotations
 
 from typing import Any
 
-from starlette.applications import Starlette
 from starlette.testclient import TestClient
 
 from tests._helpers import poll_until
 
-from azure.ai.agentserver.responses.hosting import map_responses_server
+from azure.ai.agentserver.hosting import AgentServer
+from azure.ai.agentserver.responses.hosting import ResponseHandler
 from azure.ai.agentserver.responses import response_handler
 
 
@@ -26,9 +26,10 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
 
 
 def _build_client() -> TestClient:
-    app = Starlette()
-    map_responses_server(app, _noop_response_handler)
-    return TestClient(app)
+    server = AgentServer()
+    responses = ResponseHandler(server)
+    responses.create_handler(_noop_response_handler)
+    return TestClient(server.app)
 
 
 def test_create__returns_json_response_for_non_streaming_success() -> None:
@@ -233,9 +234,10 @@ def test_create__non_stream_returns_completed_response_with_output_items() -> No
 
         return _events()
 
-    app = Starlette()
-    map_responses_server(app, _output_producing_handler)
-    client = TestClient(app)
+    server = AgentServer()
+    responses = ResponseHandler(server)
+    responses.create_handler(_output_producing_handler)
+    client = TestClient(server.app)
 
     response = client.post(
         "/responses",
@@ -283,9 +285,10 @@ def test_create__background_non_stream_get_eventually_returns_output_items() -> 
 
         return _events()
 
-    app = Starlette()
-    map_responses_server(app, _output_producing_handler)
-    client = TestClient(app)
+    server = AgentServer()
+    responses = ResponseHandler(server)
+    responses.create_handler(_output_producing_handler)
+    client = TestClient(server.app)
 
     create_response = client.post(
         "/responses",

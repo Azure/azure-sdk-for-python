@@ -8,6 +8,8 @@ from collections.abc import AsyncGenerator, Awaitable, Callable  # pylint: disab
 from typing import Any, Optional
 
 from starlette.applications import Starlette
+from starlette.middleware import Middleware
+from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
 from starlette.routing import Route
@@ -27,6 +29,15 @@ _PLATFORM_SERVER_VALUE = "azure-ai-agentserver-hosting"
 # Sentinel attribute name set on the console handler to prevent adding duplicates
 # across multiple AgentServer instantiations.
 _CONSOLE_HANDLER_ATTR = "_agentserver_console"
+
+
+class _PlatformHeaderMiddleware(BaseHTTPMiddleware):
+    """Middleware that adds x-platform-server identity header to all responses."""
+
+    async def dispatch(self, request: Request, call_next):  # type: ignore[no-untyped-def, override]
+        response = await call_next(request)
+        response.headers["x-platform-server"] = _PLATFORM_SERVER_VALUE
+        return response
 
 
 class AgentServer:
@@ -284,14 +295,11 @@ class AgentServer:
             Route("/healthy", self._healthy_endpoint, methods=["GET"], name="healthy"),
         )
 
-        self._app = Starlette(routes=routes, lifespan=_lifespan)
-
-        # Add x-platform-server identity header to all responses.
-        @self._app.middleware("http")
-        async def _add_platform_header(request: Request, call_next):  # type: ignore[no-untyped-def]
-            response = await call_next(request)
-            response.headers["x-platform-server"] = _PLATFORM_SERVER_VALUE
-            return response
+        self._app = Starlette(
+            routes=routes,
+            lifespan=_lifespan,
+            middleware=[Middleware(_PlatformHeaderMiddleware)],
+        )
 
     # ------------------------------------------------------------------
     # Health endpoint
