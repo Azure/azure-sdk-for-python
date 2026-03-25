@@ -6,7 +6,6 @@ from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import inspect
-from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Awaitable, Callable, Mapping, Protocol, Sequence, runtime_checkable
 
@@ -75,19 +74,26 @@ class ResponseContext(Protocol):
         """
 
 
-@dataclass(slots=True)
 class RuntimeResponseContext:
     """Default runtime context implementation used by hosting orchestration."""
 
-    response_id: str
-    mode_flags: ResponseModeFlags
-    raw_body: RawBodyType = None
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    _is_shutdown_requested: bool = False
-    _input_items_loader: OutputItemsLoader | None = None
-    _history_loader: OutputItemsLoader | None = None
-    _input_items_cache: Sequence[OutputItem] | None = None
-    _history_cache: Sequence[OutputItem] | None = None
+    def __init__(
+        self,
+        *,
+        response_id: str,
+        mode_flags: ResponseModeFlags,
+        raw_body: RawBodyType = None,
+        created_at: datetime | None = None,
+    ) -> None:
+        self.response_id = response_id
+        self.mode_flags = mode_flags
+        self.raw_body = raw_body
+        self.created_at = created_at if created_at is not None else datetime.now(timezone.utc)
+        self._is_shutdown_requested: bool = False
+        self._input_items_loader: OutputItemsLoader | None = None
+        self._history_loader: OutputItemsLoader | None = None
+        self._input_items_cache: Sequence[OutputItem] | None = None
+        self._history_cache: Sequence[OutputItem] | None = None
 
     @property
     def is_shutdown_requested(self) -> bool:

@@ -6,7 +6,6 @@ from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
-from dataclasses import dataclass, field
 from typing import Any
 
 from .._handlers import RuntimeResponseContext
@@ -19,25 +18,45 @@ from ..streaming._helpers import (
 from ._event_subject import _ResponseEventSubject
 
 
-@dataclass(slots=True)
 class _ExecutionRecord:  # pylint: disable=too-many-instance-attributes
-    response_id: str
-    agent_reference: dict[str, Any]
-    stream: bool
-    store: bool
-    background: bool
-    replay_enabled: bool
-    visible_via_get: bool
-    status: str
-    model: str | None
-    response_payload: dict[str, Any] | None = None
-    subject: _ResponseEventSubject | None = None
-    cancel_signal: asyncio.Event = field(default_factory=asyncio.Event)
-    background_runner: Any | None = None
-    background_execution_started: bool = False
-    input_items: list[dict[str, Any]] = field(default_factory=list)
-    previous_response_id: str | None = None
-    response_context: RuntimeResponseContext | None = None
+    def __init__(
+        self,
+        *,
+        response_id: str,
+        agent_reference: dict[str, Any],
+        stream: bool,
+        store: bool,
+        background: bool,
+        replay_enabled: bool,
+        visible_via_get: bool,
+        status: str,
+        model: str | None,
+        response_payload: dict[str, Any] | None = None,
+        subject: _ResponseEventSubject | None = None,
+        cancel_signal: asyncio.Event | None = None,
+        background_runner: Any | None = None,
+        background_execution_started: bool = False,
+        input_items: list[dict[str, Any]] | None = None,
+        previous_response_id: str | None = None,
+        response_context: RuntimeResponseContext | None = None,
+    ) -> None:
+        self.response_id = response_id
+        self.agent_reference = agent_reference
+        self.stream = stream
+        self.store = store
+        self.background = background
+        self.replay_enabled = replay_enabled
+        self.visible_via_get = visible_via_get
+        self.status = status
+        self.model = model
+        self.response_payload = response_payload
+        self.subject = subject
+        self.cancel_signal = cancel_signal if cancel_signal is not None else asyncio.Event()
+        self.background_runner = background_runner
+        self.background_execution_started = background_execution_started
+        self.input_items = input_items if input_items is not None else []
+        self.previous_response_id = previous_response_id
+        self.response_context = response_context
 
     def apply_event(self, normalized: dict[str, Any], all_events: list[dict[str, Any]]) -> None:
         """Apply a normalised stream event to this record's state.

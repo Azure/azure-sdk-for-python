@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Protocol, runtime_checkable
 
@@ -56,14 +55,21 @@ class CreateSpanHook(Protocol):
         """
 
 
-@dataclass(slots=True)
 class CreateSpan:
     """Mutable create-span helper used by hosting orchestration."""
 
-    name: str
-    tags: dict[str, Any]
-    _hook: CreateSpanHook | None = None
-    _ended: bool = False
+    def __init__(
+        self,
+        *,
+        name: str,
+        tags: dict[str, Any],
+        _hook: CreateSpanHook | None = None,
+        _ended: bool = False,
+    ) -> None:
+        self.name = name
+        self.tags = tags
+        self._hook = _hook
+        self._ended = _ended
 
     def set_tag(self, key: str, value: Any) -> None:
         """Set or overwrite one span tag.
@@ -163,22 +169,30 @@ def build_create_span_tags(
     }
 
 
-@dataclass(slots=True)
 class RecordedSpan:
     """Recorded span event for tests and diagnostics."""
 
-    name: str
-    tags: dict[str, Any]
-    started_at: datetime
-    ended_at: datetime | None = None
-    error: Exception | None = None
+    def __init__(
+        self,
+        *,
+        name: str,
+        tags: dict[str, Any],
+        started_at: datetime,
+        ended_at: datetime | None = None,
+        error: Exception | None = None,
+    ) -> None:
+        self.name = name
+        self.tags = tags
+        self.started_at = started_at
+        self.ended_at = ended_at
+        self.error = error
 
 
-@dataclass(slots=True)
 class InMemoryCreateSpanHook:
     """Simple in-memory hook for asserting span lifecycle in tests."""
 
-    spans: list[RecordedSpan] = field(default_factory=list)
+    def __init__(self, spans: list[RecordedSpan] | None = None) -> None:
+        self.spans: list[RecordedSpan] = spans if spans is not None else []
 
     def on_span_start(self, name: str, tags: dict[str, Any]) -> None:
         """Record a span start event.

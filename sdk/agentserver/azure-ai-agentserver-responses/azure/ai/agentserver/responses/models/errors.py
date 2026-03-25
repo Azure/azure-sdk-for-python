@@ -4,30 +4,31 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from typing import Any
 
 from azure.ai.agentserver.responses.models._generated import ApiErrorResponse, Error
 
 
-@dataclass(slots=True)
 class RequestValidationError(ValueError):
     """Represents a client-visible request validation failure."""
 
-    message: str
-    code: str = "invalid_request"
-    param: str | None = None
-    error_type: str = "invalid_request_error"
-    debug_info: dict[str, Any] | None = None
-    details: list[dict[str, str]] | None = None
-
-    def __post_init__(self) -> None:
-        """Initialize the parent :class:`ValueError` message.
-
-        Calls :meth:`ValueError.__init__` with the stored *message* so that
-        ``str(err)`` returns the validation message.
-        """
-        ValueError.__init__(self, self.message)
+    def __init__(
+        self,
+        message: str,
+        *,
+        code: str = "invalid_request",
+        param: str | None = None,
+        error_type: str = "invalid_request_error",
+        debug_info: dict[str, Any] | None = None,
+        details: list[dict[str, str]] | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.message = message
+        self.code = code
+        self.param = param
+        self.error_type = error_type
+        self.debug_info = debug_info
+        self.details = details
 
     def to_error(self) -> Error:
         """Convert this validation error to the generated ``Error`` model.

@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
-from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Literal, Mapping
 
@@ -17,23 +16,30 @@ ResponseStatus = Literal["queued", "in_progress", "completed", "failed", "cancel
 TerminalResponseStatus = Literal["completed", "failed", "cancelled", "incomplete"]
 
 
-@dataclass(slots=True)
 class ResponseModeFlags:
     """Execution mode flags captured from the create request."""
 
-    stream: bool
-    store: bool
-    background: bool
+    def __init__(self, *, stream: bool, store: bool, background: bool) -> None:
+        self.stream = stream
+        self.store = store
+        self.background = background
 
 
-@dataclass(slots=True)
 class StreamEventRecord:
     """A persisted record for one emitted stream event."""
 
-    sequence_number: int
-    event_type: str
-    payload: Mapping[str, Any]
-    emitted_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    def __init__(
+        self,
+        *,
+        sequence_number: int,
+        event_type: str,
+        payload: Mapping[str, Any],
+        emitted_at: datetime | None = None,
+    ) -> None:
+        self.sequence_number = sequence_number
+        self.event_type = event_type
+        self.payload = payload
+        self.emitted_at = emitted_at if emitted_at is not None else datetime.now(timezone.utc)
 
     @property
     def terminal(self) -> bool:
@@ -65,7 +71,6 @@ class StreamEventRecord:
         return cls(sequence_number=event.sequence_number, event_type=event.type, payload=payload)
 
 
-@dataclass(slots=True)
 class ResponseExecution:  # pylint: disable=too-many-instance-attributes
     """Lightweight pipeline state for one response execution.
 
@@ -73,17 +78,32 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
     concerns are modeled separately in :class:`StreamReplayState`.
     """
 
-    response_id: str
-    mode_flags: ResponseModeFlags
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    updated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    completed_at: datetime | None = None
-    status: ResponseStatus = "queued"
-    response: Response | None = None
-    execution_task: asyncio.Task[Any] | None = None
-    cancel_requested: bool = False
-    client_disconnected: bool = False
-    response_created_seen: bool = False
+    def __init__(
+        self,
+        *,
+        response_id: str,
+        mode_flags: ResponseModeFlags,
+        created_at: datetime | None = None,
+        updated_at: datetime | None = None,
+        completed_at: datetime | None = None,
+        status: ResponseStatus = "queued",
+        response: Response | None = None,
+        execution_task: asyncio.Task[Any] | None = None,
+        cancel_requested: bool = False,
+        client_disconnected: bool = False,
+        response_created_seen: bool = False,
+    ) -> None:
+        self.response_id = response_id
+        self.mode_flags = mode_flags
+        self.created_at = created_at if created_at is not None else datetime.now(timezone.utc)
+        self.updated_at = updated_at if updated_at is not None else datetime.now(timezone.utc)
+        self.completed_at = completed_at
+        self.status = status
+        self.response = response
+        self.execution_task = execution_task
+        self.cancel_requested = cancel_requested
+        self.client_disconnected = client_disconnected
+        self.response_created_seen = response_created_seen
 
     def transition_to(self, next_status: ResponseStatus) -> None:
         """Transition this execution to a valid lifecycle status.
@@ -136,12 +156,17 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         self.updated_at = datetime.now(timezone.utc)
 
 
-@dataclass(slots=True)
 class StreamReplayState:
     """Persisted stream replay state for one response identifier."""
 
-    response_id: str
-    events: list[StreamEventRecord] = field(default_factory=list)
+    def __init__(
+        self,
+        *,
+        response_id: str,
+        events: list[StreamEventRecord] | None = None,
+    ) -> None:
+        self.response_id = response_id
+        self.events = events if events is not None else []
 
     def append(self, event: StreamEventRecord) -> None:
         """Append a stream event and enforce replay sequence integrity.

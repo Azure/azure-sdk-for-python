@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
 from urllib.parse import quote as _url_quote
 
 _PROJECT_ENDPOINT_ENV_VAR = "FOUNDRY_PROJECT_ENDPOINT"
@@ -16,7 +15,6 @@ def _encode(value: str) -> str:
     return _url_quote(value, safe="")
 
 
-@dataclass(frozen=True)
 class FoundryStorageSettings:
     """Immutable runtime configuration for :class:`FoundryStorageProvider`.
 
@@ -24,7 +22,8 @@ class FoundryStorageSettings:
     supplying *storage_base_url* for local testing.
     """
 
-    storage_base_url: str
+    def __init__(self, *, storage_base_url: str) -> None:
+        self.storage_base_url = storage_base_url
 
     @classmethod
     def from_env(cls) -> "FoundryStorageSettings":

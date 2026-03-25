@@ -6,7 +6,6 @@ from __future__ import annotations
 
 import asyncio
 from copy import deepcopy
-from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Iterable
 
@@ -15,17 +14,27 @@ from ..models.runtime import ResponseExecution, ResponseModeFlags, ResponseStatu
 from ._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 
 
-@dataclass(slots=True)
 class _StoreEntry:
     """Container for one response execution and its replay state."""
 
-    execution: ResponseExecution
-    replay: StreamReplayState
-    expires_at: datetime | None = None
-    response: Response | None = None
-    input_item_ids: list[str] | None = None
-    history_item_ids: list[str] | None = None
-    deleted: bool = False
+    def __init__(
+        self,
+        *,
+        execution: ResponseExecution,
+        replay: StreamReplayState,
+        expires_at: datetime | None = None,
+        response: Response | None = None,
+        input_item_ids: list[str] | None = None,
+        history_item_ids: list[str] | None = None,
+        deleted: bool = False,
+    ) -> None:
+        self.execution = execution
+        self.replay = replay
+        self.expires_at = expires_at
+        self.response = response
+        self.input_item_ids = input_item_ids
+        self.history_item_ids = history_item_ids
+        self.deleted = deleted
 
 
 class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderProtocol):

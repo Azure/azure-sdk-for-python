@@ -5,11 +5,9 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
 from typing import Any, Mapping
 
 
-@dataclass(slots=True)
 class ResponsesServerOptions:
     """Configuration values for hosting and runtime behavior.
 
@@ -20,13 +18,25 @@ class ResponsesServerOptions:
     - `additional_server_identity` is optional.
     """
 
-    default_fetch_history_count_value: int = 100
-    additional_server_identity: str | None = None
-    default_model: str | None = None
-    default_fetch_history_count: int = default_fetch_history_count_value
-    sse_keep_alive_interval_seconds: int | None = None
-    shutdown_grace_period_seconds: int = 10
-    create_span_hook: Any | None = None
+    def __init__(
+        self,
+        *,
+        default_fetch_history_count_value: int = 100,
+        additional_server_identity: str | None = None,
+        default_model: str | None = None,
+        default_fetch_history_count: int = 100,
+        sse_keep_alive_interval_seconds: int | None = None,
+        shutdown_grace_period_seconds: int = 10,
+        create_span_hook: Any | None = None,
+    ) -> None:
+        self.default_fetch_history_count_value = default_fetch_history_count_value
+        self.additional_server_identity = additional_server_identity
+        self.default_model = default_model
+        self.default_fetch_history_count = default_fetch_history_count
+        self.sse_keep_alive_interval_seconds = sse_keep_alive_interval_seconds
+        self.shutdown_grace_period_seconds = shutdown_grace_period_seconds
+        self.create_span_hook = create_span_hook
+        self._validate()
 
     @classmethod
     def from_env(cls, environ: Mapping[str, str] | None = None) -> "ResponsesServerOptions":
@@ -83,7 +93,7 @@ class ResponsesServerOptions:
 
         return cls(**kwargs)
 
-    def __post_init__(self) -> None:
+    def _validate(self) -> None:
         """Validate and normalize option values.
 
         Strips whitespace from string fields and enforces positive-integer
