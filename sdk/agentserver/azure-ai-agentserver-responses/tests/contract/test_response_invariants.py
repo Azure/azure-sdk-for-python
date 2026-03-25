@@ -63,6 +63,17 @@ def _delayed_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
+@response_handler
+def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any):
+    """Handler that emits response.created then blocks until cancelled (Phase 3)."""
+    async def _events():
+        yield {"type": "response.created", "payload": {"status": "in_progress", "output": []}}
+        while not cancellation_signal.is_set():
+            await asyncio.sleep(0.01)
+
+    return _events()
+
+
 def _build_client(handler: Any | None = None) -> TestClient:
     app = Starlette()
     map_responses_server(app, handler or _noop_handler)
@@ -149,7 +160,7 @@ def test_completed_at__null_for_failed_status() -> None:
 
 def test_completed_at__null_for_cancelled_status() -> None:
     """B6 — completed_at is null when status is cancelled."""
-    client = _build_client(_delayed_handler)
+    client = _build_client(_cancellable_bg_handler)
 
     create_response = client.post(
         "/responses",
@@ -421,7 +432,7 @@ def test_get__returns_200_for_incomplete_response() -> None:
 
 def test_get__returns_200_for_cancelled_response() -> None:
     """B-12 — GET returns HTTP 200 for a response in cancelled status."""
-    client = _build_client(_delayed_handler)
+    client = _build_client(_cancellable_bg_handler)
 
     create_response = client.post(
         "/responses",
@@ -472,7 +483,7 @@ def test_error_field__null_for_completed_status() -> None:
 
 def test_error_field__null_for_cancelled_status() -> None:
     """B6 — error must be null for status=cancelled."""
-    client = _build_client(_delayed_handler)
+    client = _build_client(_cancellable_bg_handler)
 
     create_response = client.post(
         "/responses",
@@ -696,7 +707,7 @@ def test_output__preserved_for_completed_response() -> None:
 
 def test_output__cleared_for_cancelled_response() -> None:
     """B-15 — output[] is cleared (empty list) when a response is cancelled."""
-    client = _build_client(_delayed_handler)
+    client = _build_client(_cancellable_bg_handler)
 
     create_response = client.post(
         "/responses",

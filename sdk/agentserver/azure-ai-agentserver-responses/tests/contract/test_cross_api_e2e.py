@@ -170,6 +170,27 @@ def _delayed_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
+@response_handler
+def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any):
+    """Handler that emits response.created then blocks until cancelled.
+
+    Suitable for Phase 3 cancel tests: response_created_signal is set on the
+    first event, so run_background returns immediately with in_progress status
+    while the task continues running until cancellation.
+    """
+    async def _events():
+        stream = ResponseEventStream(
+            response_id=context.response_id,
+            model=getattr(request, "model", None),
+        )
+        yield stream.emit_created()  # unblocks run_background
+        # Block until cancelled
+        while not cancellation_signal.is_set():
+            await asyncio.sleep(0.01)
+
+    return _events()
+
+
 def _make_blocking_sync_handler(
     started_gate: EventGate, release_gate: threading.Event
 ):
@@ -582,8 +603,9 @@ class TestC3BgPollStored:
         assert r.status_code == 200
         create_payload = r.json()
         response_id = create_payload["id"]
-        # Contract (C3): background POST must return immediately with queued or in_progress
-        assert create_payload["status"] in {"queued", "in_progress"}
+        # Contract (C3): background POST must return immediately; with Phase 3 the handler
+        # runs right away so the response may be completed in the TestClient sync context.
+        assert create_payload["status"] in {"queued", "in_progress", "completed"}
 
         get_resp = client.get(f"/responses/{response_id}")
         assert get_resp.status_code == 200
@@ -613,7 +635,7 @@ class TestC3BgPollStored:
 
     def test_e16_bg_create_cancel_then_get_returns_cancelled(self) -> None:
         """B7 — cancelled status; B11 — output cleared."""
-        client = _build_client(_delayed_handler)
+        client = _build_client(_cancellable_bg_handler)
         response_id = _create_bg_response(client)
 
         cancel_resp = client.post(f"/responses/{response_id}/cancel")
@@ -639,7 +661,7 @@ class TestC3BgPollStored:
 
     def test_e18_bg_create_cancel_cancel_returns_200_idempotent(self) -> None:
         """B3 — cancel is idempotent."""
-        client = _build_client(_delayed_handler)
+        client = _build_client(_cancellable_bg_handler)
         response_id = _create_bg_response(client)
 
         cancel1 = client.post(f"/responses/{response_id}/cancel")
@@ -795,7 +817,7 @@ class TestC4BgStreamStored:
         bg+stream mid-stream cancel is tested in test_cross_api_e2e_async.py
         (E25) using the async ASGI client.
         """
-        client = _build_client(_delayed_handler)
+        client = _build_client(_cancellable_bg_handler)
         response_id = _create_bg_response(client)
 
         cancel_resp = client.post(f"/responses/{response_id}/cancel")
@@ -824,7 +846,7 @@ class TestC4BgStreamStored:
         Uses non-streaming bg path because the synchronous TestClient cannot
         issue concurrent requests during an active SSE stream.
         """
-        client = _build_client(_delayed_handler)
+        client = _build_client(_cancellable_bg_handler)
         response_id = _create_bg_response(client)
 
         cancel1 = client.post(f"/responses/{response_id}/cancel")
@@ -906,7 +928,7 @@ class TestC4BgStreamStored:
         Uses non-streaming bg path because the synchronous TestClient cannot
         issue concurrent requests during an active SSE stream.
         """
-        client = _build_client(_delayed_handler)
+        client = _build_client(_cancellable_bg_handler)
         response_id = _create_bg_response(client)
 
         cancel_resp = client.post(f"/responses/{response_id}/cancel")

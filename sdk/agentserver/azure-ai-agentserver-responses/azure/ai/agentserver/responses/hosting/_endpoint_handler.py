@@ -23,8 +23,9 @@ from ..models import ResponseModeFlags
 from ..streaming._helpers import _encode_sse
 from ..streaming._sse import encode_sse_payload
 from ..streaming._state_machine import LifecycleStateMachineError, normalize_lifecycle_events
-from ._background import _refresh_background_status, _try_execute_background_runner
+from ._background import _refresh_background_status
 from ._execution_context import _ExecutionContext
+from ..models.runtime import build_cancelled_response
 from ._http_errors import (
     _deleted_response,
     _error_response,
@@ -43,7 +44,7 @@ from ._request_parsing import (
     _prevalidate_identity_payload,
     _resolve_identity_fields,
 )
-from ._runtime_state import _RuntimeState
+from ._runtime_state import _RuntimeState, _ExecutionRecord
 from ._validation import parse_and_validate_create_response
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ..streaming._helpers import EVENT_TYPE
@@ -218,8 +219,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             except _HandlerError as exc:
                 return _error_response(exc.original, self._response_headers)
 
-        snapshot = await self._orchestrator.run_background(ctx)
-        return JSONResponse(snapshot, status_code=200, headers=self._response_headers)
+        try:
+            snapshot = await self._orchestrator.run_background(ctx)
+            return JSONResponse(snapshot, status_code=200, headers=self._response_headers)
+        except _HandlerError as exc:
+            return _error_response(exc.original, self._response_headers)
 
     async def handle_get(self, request: Request) -> Response:  # pylint: disable=too-many-return-statements
         """Route handler for ``GET /responses/{response_id}``.
@@ -279,7 +283,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
             return _not_found(response_id, self._response_headers)
 
-        await _try_execute_background_runner(record)
         _refresh_background_status(record)
 
         stream_replay = request.query_params.get("stream", "false").lower() == "true"
@@ -385,20 +388,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             )
 
         if record.status == "cancelled":
-            if not isinstance(record.response_payload, dict):
-                record.response_payload = {
-                    "id": record.response_id,
-                    "response_id": record.response_id,
-                    "agent_reference": deepcopy(record.agent_reference),
-                    "object": "response",
-                    "status": "cancelled",
-                    "model": record.model,
-                    "output": [],
-                }
-            else:
-                record.response_payload["status"] = "cancelled"
-                record.response_payload["output"] = []
-            return JSONResponse(record.to_snapshot(), status_code=200, headers=self._response_headers)
+            # Idempotent: ensure the response snapshot reflects cancelled state
+            record.set_response_snapshot(
+                build_cancelled_response(record.response_id, record.agent_reference, record.model)
+            )
+            return JSONResponse(_RuntimeState.to_snapshot(record), status_code=200, headers=self._response_headers)
 
         if record.status == "completed":
             return _invalid_request(
@@ -421,18 +415,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 param="response_id",
             )
 
-        record.status = "cancelled"
+        record.set_response_snapshot(
+            build_cancelled_response(record.response_id, record.agent_reference, record.model)
+        )
         record.cancel_signal.set()
-        record.response_payload = {
-            "id": record.response_id,
-            "response_id": record.response_id,
-            "agent_reference": deepcopy(record.agent_reference),
-            "object": "response",
-            "status": "cancelled",
-            "model": record.model,
-            "output": [],
-        }
-        return JSONResponse(record.to_snapshot(), status_code=200, headers=self._response_headers)
+        record.transition_to("cancelled")
+        return JSONResponse(_RuntimeState.to_snapshot(record), status_code=200, headers=self._response_headers)
 
     async def handle_input_items(self, request: Request) -> Response:
         """Route handler for ``GET /responses/{response_id}/input_items``.
@@ -522,16 +510,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             record.cancel_signal.set()
 
             if record.background and record.status in {"queued", "in_progress"}:
-                record.status = "cancelled"
-                record.response_payload = {
-                    "id": record.response_id,
-                    "response_id": record.response_id,
-                    "agent_reference": deepcopy(record.agent_reference),
-                    "object": "response",
-                    "status": "cancelled",
-                    "model": record.model,
-                    "output": [],
-                }
+                record.set_response_snapshot(
+                    build_cancelled_response(record.response_id, record.agent_reference, record.model)
+                )
+                record.transition_to("cancelled")
 
         deadline = asyncio.get_running_loop().time() + float(
             self._runtime_options.shutdown_grace_period_seconds

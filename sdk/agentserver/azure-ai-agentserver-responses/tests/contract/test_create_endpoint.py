@@ -186,7 +186,9 @@ def test_create__background_mode_returns_immediate_then_reaches_terminal_state()
 
     assert create_response.status_code == 200
     created_payload = create_response.json()
-    assert created_payload.get("status") in {"queued", "in_progress"}
+    # Phase 3: handler runs immediately, so POST may return completed when the
+    # noop handler finishes quickly in the TestClient synchronous context.
+    assert created_payload.get("status") in {"queued", "in_progress", "completed"}
     response_id = created_payload["id"]
 
     latest_snapshot: dict[str, Any] = {}

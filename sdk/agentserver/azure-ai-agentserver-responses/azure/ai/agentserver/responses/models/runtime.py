@@ -115,6 +115,8 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         self.input_items: list[dict[str, Any]] = input_items if input_items is not None else []
         self.previous_response_id = previous_response_id
         self.response_context = response_context
+        self.response_created_signal: asyncio.Event = asyncio.Event()
+        self.response_failed_before_events: bool = False
 
     def transition_to(self, next_status: ResponseStatus) -> None:
         """Transition this execution to a valid lifecycle status.
@@ -236,11 +238,6 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
     # Compat shims — bridge to _ExecutionRecord attribute names during the
     # Phase 2 → Phase 7 transition.  Remove after Task 7.2.
     # ------------------------------------------------------------------
-
-    # Non-stream background records store their runner in background_runner;
-    # ResponseExecution records are always inline-or-task-based.
-    background_runner: Any = None
-    background_execution_started: bool = False
 
     @property
     def background(self) -> bool:
@@ -366,6 +363,43 @@ def build_cancelled_response(
         "status": "cancelled",
         "model": model,
         "output": [],
+    }
+    if created_at is not None:
+        payload["created_at"] = created_at.isoformat()
+    return Response(payload)
+
+
+def build_failed_response(
+    response_id: str,
+    agent_reference: dict[str, Any],
+    model: str | None,
+    created_at: datetime | None = None,
+    error_message: str = "An internal server error occurred.",
+) -> Response:
+    """Build a Response object representing a failed terminal state.
+
+    :param response_id: The response identifier.
+    :type response_id: str
+    :param agent_reference: The agent reference metadata dict.
+    :type agent_reference: dict[str, Any]
+    :param model: Optional model identifier.
+    :type model: str | None
+    :param created_at: Optional creation timestamp; defaults to now if omitted.
+    :type created_at: datetime | None
+    :param error_message: Human-readable error message.
+    :type error_message: str
+    :returns: A Response object with status ``"failed"`` and empty output.
+    :rtype: Response
+    """
+    payload: dict[str, Any] = {
+        "id": response_id,
+        "response_id": response_id,
+        "agent_reference": deepcopy(agent_reference),
+        "object": "response",
+        "status": "failed",
+        "model": model,
+        "output": [],
+        "error": {"code": "server_error", "message": error_message},
     }
     if created_at is not None:
         payload["created_at"] = created_at.isoformat()

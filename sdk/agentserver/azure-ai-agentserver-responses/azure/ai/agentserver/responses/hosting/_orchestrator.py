@@ -14,8 +14,10 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
 from typing import Any, AsyncIterator
 
+import anyio
+
 from ..models import _generated as generated_models
-from ..models.runtime import ResponseExecution, ResponseModeFlags
+from ..models.runtime import ResponseExecution, ResponseModeFlags, build_cancelled_response as _build_cancelled_response
 from ..streaming._sse import encode_keep_alive_comment, encode_sse_payload, new_stream_counter
 from ..streaming._helpers import (
     EVENT_TYPE,
@@ -140,12 +142,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         """
         cancel_event: dict[str, Any] = {
             "type": EVENT_TYPE.RESPONSE_FAILED.value,
-            "payload": {
-                "id": ctx.response_id,
-                "object": "response",
-                "status": "cancelled",
-                "output": [],
-            },
+            "payload": _build_cancelled_response(ctx.response_id, ctx.agent_reference, ctx.model).as_dict(),
         }
         normalized = _apply_stream_event_defaults(
             cancel_event,
@@ -560,52 +557,34 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
     async def run_background(self, ctx: _ExecutionContext) -> dict[str, Any]:
         """Handle a background (non-stream) create-response request.
 
-        Creates a queued execution record with an attached background runner,
-        stores it, and returns the initial snapshot dict immediately.
+        Immediately launches the handler as an asyncio task, waits up to 10 s
+        for the first ``response.created`` event, then returns the current
+        snapshot.  This ensures that the POST response body reflects the
+        handler's real ``response.created`` payload (S-003).
 
         :param ctx: Current execution context.
         :type ctx: _ExecutionContext
-        :return: Initial queued response snapshot dictionary.
+        :return: Response snapshot dictionary (status: in_progress or queued on timeout).
         :rtype: dict[str, Any]
+        :raises _HandlerError: If the handler fails before emitting any event.
         """
-        record = _ExecutionRecord(
+        record = ResponseExecution(
             response_id=ctx.response_id,
-            agent_reference=deepcopy(ctx.agent_reference),
-            stream=False,
-            store=ctx.store,
-            background=True,
-            replay_enabled=False,
-            visible_via_get=ctx.store,
+            mode_flags=ResponseModeFlags(stream=False, store=ctx.store, background=True),
             status="queued",
-            model=ctx.model,
             input_items=deepcopy(ctx.input_items),
             previous_response_id=ctx.previous_response_id,
             response_context=ctx.context,
+            cancel_signal=ctx.cancellation_signal,
         )
 
-        _captured_provider = self._provider
+        # Always register so GET can observe in-flight state
+        await self._runtime_state.add(record)
 
-        async def _background_runner() -> None:
-            await _run_background_non_stream(
-                create_async=self._create_async,
-                parsed=ctx.parsed,
-                context=ctx.context,
-                cancellation_signal=ctx.cancellation_signal,
-                record=record,
-                response_id=ctx.response_id,
-                agent_reference=ctx.agent_reference,
-                model=ctx.model,
-                provider=_captured_provider,
-                store=ctx.store,
-            )
-
-        record.background_runner = _background_runner
-
+        # Best-effort persist initial queued state via provider
         if ctx.store:
-            await self._runtime_state.add(record)
-            # Persist initial queued state via provider (bg non-stream: create at queued time)
             try:
-                _initial_snapshot = record.to_snapshot()
+                _initial_snapshot = _RuntimeState.to_snapshot(record)
                 _response_obj = generated_models.Response(_initial_snapshot)
                 _history_ids = (
                     await self._provider.get_history_item_ids_async(ctx.previous_response_id, None, 10000)
@@ -616,5 +595,40 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             except Exception:  # pylint: disable=broad-exception-caught
                 pass  # best effort
 
+        # Launch handler immediately (S-003: handler runs asynchronously)
+        # Use anyio.CancelScope(shield=True) + suppress CancelledError so the
+        # background task is NOT cancelled when the HTTP request scope exits
+        # (anyio structured concurrency).  The shielded scope ensures the handler
+        # runs to completion; catching CancelledError prevents the Task from being
+        # marked as cancelled, so _refresh_background_status reads the real status.
+        async def _shielded_runner() -> None:
+            try:
+                with anyio.CancelScope(shield=True):
+                    await _run_background_non_stream(
+                        create_async=self._create_async,
+                        parsed=ctx.parsed,
+                        context=ctx.context,
+                        cancellation_signal=ctx.cancellation_signal,
+                        record=record,
+                        response_id=ctx.response_id,
+                        agent_reference=ctx.agent_reference,
+                        model=ctx.model,
+                        provider=self._provider,
+                        store=ctx.store,
+                    )
+            except asyncio.CancelledError:
+                pass  # event-loop teardown in TestClient; background work already done
+
+        record.execution_task = asyncio.create_task(_shielded_runner())
+
+        # Wait for first event signal (or 10 s timeout) before returning POST response
+        try:
+            await asyncio.wait_for(record.response_created_signal.wait(), timeout=10.0)
+        except asyncio.TimeoutError:
+            pass  # Return current snapshot anyway; handler is still running
+
+        if record.response_failed_before_events:
+            raise _HandlerError(RuntimeError("Handler failed before emitting response.created"))
+
         ctx.span.end(ctx.captured_error)
-        return record.to_snapshot()
+        return _RuntimeState.to_snapshot(record)

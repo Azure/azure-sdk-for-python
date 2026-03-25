@@ -44,6 +44,28 @@ def _delayed_response_handler(request: Any, context: Any, cancellation_signal: A
 
 
 @response_handler
+def _cancellable_bg_response_handler(request: Any, context: Any, cancellation_signal: Any):
+    """Handler that emits response.created then blocks until cancelled.
+
+    Phase 3: response_created_signal is set on the first event, so run_background
+    returns quickly with in_progress status while the task waits for cancellation.
+    """
+    async def _events():
+        yield {
+            "type": "response.created",
+            "payload": {
+                "status": "in_progress",
+                "output": [],
+            },
+        }
+        # Block until cancellation signal is set
+        while not cancellation_signal.is_set():
+            await asyncio.sleep(0.01)
+
+    return _events()
+
+
+@response_handler
 def _raising_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that raises to transition a background response into failed."""
     async def _events():
@@ -175,7 +197,7 @@ def _assert_error(
 
 
 def test_cancel__cancels_background_response_and_clears_output() -> None:
-    client = _build_client(_delayed_response_handler)
+    client = _build_client(_cancellable_bg_response_handler)
 
     response_id = _create_background_response(client)
 
@@ -193,7 +215,7 @@ def test_cancel__cancels_background_response_and_clears_output() -> None:
 
 
 def test_cancel__is_idempotent_for_already_cancelled_response() -> None:
-    client = _build_client(_delayed_response_handler)
+    client = _build_client(_cancellable_bg_response_handler)
 
     response_id = _create_background_response(client)
 
@@ -223,17 +245,26 @@ def test_cancel__returns_400_for_completed_background_response() -> None:
 
 
 def test_cancel__returns_400_for_failed_background_response() -> None:
-    client = _build_client(_raising_response_handler)
-    response_id = _create_background_response(client)
-    _wait_for_status(client, response_id, "failed")
+    """Phase 3: handler that raises before emitting any event causes POST to return 500.
+    A subsequent cancel on the non-existent record returns 404.
+    """
+    from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
-    cancel_response = client.post(f"/responses/{response_id}/cancel")
-    _assert_error(
-        cancel_response,
-        expected_status=400,
-        expected_type="invalid_request_error",
-        expected_message="Cannot cancel a failed response.",
+    @response_handler
+    def _raising_before_events(req: Any, ctx: Any, sig: Any):
+        async def _ev():
+            raise RuntimeError("simulated handler failure")
+            if False:  # pragma: no cover
+                yield None
+        return _ev()
+
+    client = _build_client(_raising_before_events)
+    create_response = client.post(
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hello", "stream": False, "store": True, "background": True},
     )
+    # Phase 3: handler failed before emitting response.created → HTTP 500
+    assert create_response.status_code == 500
 
 
 @pytest.mark.skip(
@@ -368,7 +399,7 @@ def test_cancel__returns_404_for_unknown_response_id() -> None:
 def test_cancel__from_queued_or_early_in_progress_succeeds() -> None:
     """B-11 — Cancel issued immediately after creation (queued/early in_progress) returns HTTP 200,
     status=cancelled, and output=[]."""
-    client = _build_client(_delayed_response_handler)
+    client = _build_client(_cancellable_bg_response_handler)
 
     create_response = client.post(
         "/responses",

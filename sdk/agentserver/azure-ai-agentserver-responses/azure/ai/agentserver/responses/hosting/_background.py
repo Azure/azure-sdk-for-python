@@ -10,13 +10,13 @@ from typing import Any
 
 from .._handlers import ResponseContext
 from ..models import _generated as generated_models
+from ..models.runtime import ResponseExecution, build_failed_response
 from ..streaming._helpers import (
     _build_events,
     _coerce_handler_event,
     _apply_stream_event_defaults,
     _extract_response_snapshot_from_events,
 )
-from ._runtime_state import _ExecutionRecord
 
 
 async def _run_background_non_stream(
@@ -25,7 +25,7 @@ async def _run_background_non_stream(
     parsed: Any,
     context: ResponseContext,
     cancellation_signal: asyncio.Event,
-    record: _ExecutionRecord,
+    record: ResponseExecution,
     response_id: str,
     agent_reference: dict[str, Any],
     model: str | None,
@@ -61,14 +61,15 @@ async def _run_background_non_stream(
     :return: None
     :rtype: None
     """
-    record.status = "in_progress"
+    record.transition_to("in_progress")
     handler_events: list[dict[str, Any]] = []
 
     try:
         try:
+            first_event_processed = False
             async for handler_event in create_async(parsed, context, cancellation_signal):
                 if cancellation_signal.is_set():
-                    record.status = "cancelled"
+                    record.transition_to("cancelled")
                     return
 
                 coerced = _coerce_handler_event(handler_event)
@@ -80,24 +81,38 @@ async def _run_background_non_stream(
                     sequence_number=None,
                 )
                 handler_events.append(normalized)
+                if not first_event_processed:
+                    first_event_processed = True
+                    # Set initial response snapshot for POST response body without
+                    # changing record.status (transition_to manages status lifecycle)
+                    _initial_snapshot = _extract_response_snapshot_from_events(
+                        handler_events,
+                        response_id=response_id,
+                        agent_reference=agent_reference,
+                        model=model,
+                    )
+                    record.set_response_snapshot(generated_models.Response(_initial_snapshot))
+                    record.response_created_signal.set()
         except Exception:  # pylint: disable=broad-exception-caught
             if record.status != "cancelled":
-                record.status = "failed"
-                record.response_payload = {
-                    "id": response_id,
-                    "response_id": response_id,
-                    "agent_reference": deepcopy(agent_reference),
-                    "object": "response",
-                    "status": "failed",
-                    "model": model,
-                    "output": [],
-                    "created_at": context.created_at,
-                    "error": {"code": "server_error", "message": "An internal server error occurred."},
-                }
+                record.set_response_snapshot(
+                    build_failed_response(
+                        response_id,
+                        agent_reference,
+                        model,
+                        created_at=context.created_at,
+                    )
+                )
+                record.transition_to("failed")
+            if not first_event_processed:
+                # Mark failure before any events so run_background can return HTTP 500
+                record.response_failed_before_events = True
+            record.response_created_signal.set()  # unblock run_background on failure
             return
 
         if cancellation_signal.is_set():
-            record.status = "cancelled"
+            record.transition_to("cancelled")
+            record.response_created_signal.set()  # unblock run_background on cancellation
             return
 
         events = handler_events if handler_events else _build_events(
@@ -115,79 +130,50 @@ async def _run_background_non_stream(
         )
 
         resolved_status = response_payload.get("status")
-        record.response_payload = response_payload
         if record.status != "cancelled":
-            record.status = resolved_status if isinstance(resolved_status, str) else "completed"
+            record.set_response_snapshot(generated_models.Response(response_payload))
+            record.transition_to(resolved_status if isinstance(resolved_status, str) else "completed")
     finally:
+        # Always unblock run_background (idempotent if already set)
+        record.response_created_signal.set()
         # Persist terminal state update via provider (bg non-stream: update after runner completes)
         if (
             store
             and provider is not None
             and record.status not in {"cancelled"}
-            and isinstance(record.response_payload, dict)
+            and record.response is not None
         ):
             try:
-                _response_obj = generated_models.Response(record.response_payload)
-                await provider.update_response_async(_response_obj)
+                await provider.update_response_async(record.response)
             except Exception:  # pylint: disable=broad-exception-caught
                 pass  # best effort
 
 
-async def _try_execute_background_runner(record: _ExecutionRecord) -> None:
-    """Attempt to execute the background runner attached to an execution record.
-
-    This is a one-shot operation: once the runner has been started, subsequent
-    calls are no-ops.
-
-    :param record: The execution record whose background runner may be invoked.
-    :type record: _ExecutionRecord
-    :return: None
-    :rtype: None
-    """
-    if not record.background or record.status in {"completed", "failed", "incomplete", "cancelled"}:
-        return
-
-    if record.background_runner is None or record.background_execution_started:
-        return
-
-    if record.cancel_signal.is_set():
-        record.status = "cancelled"
-        return
-
-    runner = record.background_runner
-    record.background_execution_started = True
-    try:
-        await runner()
-    finally:
-        record.background_runner = None
-
-
-def _refresh_background_status(record: _ExecutionRecord) -> None:
+def _refresh_background_status(record: ResponseExecution) -> None:
     """Refresh the status of a background execution record.
 
-    Transitions the record from ``queued`` to ``in_progress`` or ``cancelled``
-    based on the current cancellation signal and runner state.
+    Checks the execution task state and cancellation signal to update the
+    record status. Called by GET/DELETE/cancel endpoints to reflect the
+    current runner state without triggering execution.
 
     :param record: The execution record to refresh.
     :type record: _ExecutionRecord
     :return: None
     :rtype: None
     """
-    if not record.background or record.status in {"completed", "failed", "incomplete", "cancelled"}:
+    if not record.mode_flags.background or record.is_terminal:
         return
 
-    if record.background_runner is not None or record.background_execution_started:
-        if record.cancel_signal.is_set():
-            record.status = "cancelled"
-            return
-
-        if record.status == "queued":
-            record.status = "in_progress"
-        return
-
-    if record.cancel_signal.is_set():
+    if record.cancel_signal.is_set() and not record.is_terminal:
         record.status = "cancelled"
         return
 
-    if record.status == "queued":
-        record.status = "in_progress"
+    # execution_task is started immediately in run_background (Task 3.1)
+    if record.execution_task is not None and record.execution_task.done():
+        if not record.is_terminal:
+            if record.execution_task.cancelled():
+                record.status = "cancelled"
+            else:
+                exc = record.execution_task.exception()
+                if exc is not None:
+                    record.status = "failed"

@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 
 from starlette.applications import Starlette
@@ -21,6 +22,17 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
     async def _events():
         if False:  # pragma: no cover - keep async generator shape.
             yield None
+
+    return _events()
+
+
+@response_handler
+def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any):
+    """Handler that emits response.created then blocks until cancelled (Phase 3)."""
+    async def _events():
+        yield {"type": "response.created", "payload": {"status": "in_progress", "output": []}}
+        while not cancellation_signal.is_set():
+            await asyncio.sleep(0.01)
 
     return _events()
 
@@ -93,7 +105,9 @@ def test_store_lifecycle__background_completion_is_observed_deterministically() 
 
 
 def test_store_lifecycle__background_cancel_transition_is_deterministic() -> None:
-    client = _build_client()
+    app = Starlette()
+    map_responses_server(app, _cancellable_bg_handler)
+    client = TestClient(app)
 
     create_response = client.post(
         "/responses",
