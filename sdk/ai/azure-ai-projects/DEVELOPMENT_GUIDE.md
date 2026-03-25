@@ -21,6 +21,13 @@ The work around is the following:
 1. Run `npm install --legacy-peer-deps`. Then run `npm list` to make sure correct versions were installed.
 1. Cd back up to folder `src\azure-sdk-for-python`, and run `tsp-client generate --save-inputs --skip-install`. This will emit code using already installed packages and the local TypeSpec files.
 
+## Running post-processing
+
+After emitting code from TypeSpec, you must run the script `post-emitter-fixes.cmd`
+
+## Troubleshooting
+
+Set this environment variable to get console logs of all network calls (AIProjectClient and OpenAI clients): `set AZURE_AI_PROJECTS_CONSOLE_LOGGING=true`
 
 
 
