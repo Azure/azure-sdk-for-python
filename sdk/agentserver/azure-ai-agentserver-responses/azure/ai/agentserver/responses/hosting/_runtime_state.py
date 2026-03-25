@@ -8,8 +8,9 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
 from typing import Any
 
-from .._handlers import RuntimeResponseContext
+from .._handlers import ResponseContext
 from ..models import _generated as generated_models
+from ..models.runtime import ResponseExecution
 from ..streaming._helpers import (
     EVENT_TYPE,
     _RESPONSE_SNAPSHOT_EVENT_TYPES,
@@ -38,7 +39,7 @@ class _ExecutionRecord:  # pylint: disable=too-many-instance-attributes
         background_execution_started: bool = False,
         input_items: list[dict[str, Any]] | None = None,
         previous_response_id: str | None = None,
-        response_context: RuntimeResponseContext | None = None,
+        response_context: ResponseContext | None = None,
     ) -> None:
         self.response_id = response_id
         self.agent_reference = agent_reference
@@ -140,15 +141,15 @@ class _RuntimeState:
 
     def __init__(self) -> None:
         """Initialize the runtime state with empty record and deletion sets."""
-        self._records: dict[str, _ExecutionRecord] = {}
+        self._records: dict[str, ResponseExecution] = {}
         self._deleted_response_ids: set[str] = set()
         self._lock = asyncio.Lock()
 
-    async def add(self, record: _ExecutionRecord) -> None:
+    async def add(self, record: ResponseExecution) -> None:
         """Add or replace an execution record in the store.
 
         :param record: The execution record to store.
-        :type record: _ExecutionRecord
+        :type record: ResponseExecution
         :return: None
         :rtype: None
         """
@@ -156,13 +157,13 @@ class _RuntimeState:
             self._records[record.response_id] = record
             self._deleted_response_ids.discard(record.response_id)
 
-    async def get(self, response_id: str) -> _ExecutionRecord | None:
+    async def get(self, response_id: str) -> ResponseExecution | None:
         """Look up an execution record by response ID.
 
         :param response_id: The response ID to look up.
         :type response_id: str
         :return: The matching execution record, or ``None`` if not found.
-        :rtype: _ExecutionRecord | None
+        :rtype: ResponseExecution | None
         """
         async with self._lock:
             return self._records.get(response_id)
@@ -230,11 +231,38 @@ class _RuntimeState:
 
             return [*history, *deepcopy(record.input_items)]
 
-    async def list_records(self) -> list[_ExecutionRecord]:
+    async def list_records(self) -> list[ResponseExecution]:
         """Return a snapshot list of all execution records in the store.
 
         :return: List of all current execution records.
-        :rtype: list[_ExecutionRecord]
+        :rtype: list[ResponseExecution]
         """
         async with self._lock:
             return list(self._records.values())
+
+    @staticmethod
+    def to_snapshot(execution: ResponseExecution) -> dict[str, Any]:
+        """Build a normalized response snapshot dictionary from an execution.
+
+        Uses ``execution.response.as_dict()`` directly when a response snapshot is
+        available, avoiding an unnecessary ``Response(dict).as_dict()`` round-trip.
+        Falls back to a minimal status-only dict when no response has been set yet.
+
+        :param execution: The execution whose response snapshot to build.
+        :type execution: ResponseExecution
+        :return: A normalized response payload dictionary.
+        :rtype: dict[str, Any]
+        """
+        if execution.response is not None:
+            result: dict[str, Any] = execution.response.as_dict()
+            result.setdefault("id", execution.response_id)
+            result.setdefault("response_id", execution.response_id)
+            result.setdefault("object", "response")
+            result["status"] = execution.status
+            return result
+        return {
+            "id": execution.response_id,
+            "response_id": execution.response_id,
+            "object": "response",
+            "status": execution.status,
+        }

@@ -15,6 +15,7 @@ from copy import deepcopy
 from typing import Any, AsyncIterator
 
 from ..models import _generated as generated_models
+from ..models.runtime import ResponseExecution, ResponseModeFlags
 from ..streaming._sse import encode_keep_alive_comment, encode_sse_payload, new_stream_counter
 from ..streaming._helpers import (
     EVENT_TYPE,
@@ -180,7 +181,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 )
                 if ctx.captured_error is not None:
                     ctx.bg_record.status = "failed"
-                    ctx.bg_record.response_payload = {
+                    ctx.bg_record.set_response_snapshot(generated_models.Response({
                         "id": ctx.response_id,
                         "response_id": ctx.response_id,
                         "agent_reference": deepcopy(ctx.agent_reference),
@@ -190,7 +191,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                         "output": [],
                         "created_at": ctx.context.created_at,
                         "error": {"code": "server_error", "message": "An internal server error occurred."},
-                    }
+                    }))
                 else:
                     response_payload = _extract_response_snapshot_from_events(
                         events,
@@ -200,13 +201,12 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     )
                     resolved_status = response_payload.get("status")
                     status = resolved_status if isinstance(resolved_status, str) else "in_progress"
-                    ctx.bg_record.response_payload = response_payload
+                    ctx.bg_record.set_response_snapshot(generated_models.Response(response_payload))
                     ctx.bg_record.status = status
             # Persist terminal state update via provider (bg+stream: initial create already done)
-            if ctx.bg_record.store and ctx.bg_record.status != "cancelled" and ctx.bg_record.response_payload:
+            if ctx.bg_record.mode_flags.store and ctx.bg_record.status != "cancelled" and ctx.bg_record.response is not None:
                 try:
-                    _final_response_obj = generated_models.Response(ctx.bg_record.response_payload)
-                    await self._provider.update_response_async(_final_response_obj)
+                    await self._provider.update_response_async(ctx.bg_record.response)
                 except Exception:  # pylint: disable=broad-exception-caught
                     pass  # best effort
                 # Persist SSE events for replay after process restart
@@ -252,21 +252,15 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             for _evt in events:
                 await replay_subject.publish(_evt)
             await replay_subject.complete()
-            stream_record = _ExecutionRecord(
+            stream_record = ResponseExecution(
                 response_id=ctx.response_id,
-                agent_reference=deepcopy(ctx.agent_reference),
-                stream=True,
-                store=True,
-                background=ctx.background,
-                replay_enabled=ctx.background,
-                visible_via_get=True,
+                mode_flags=ResponseModeFlags(stream=True, store=True, background=ctx.background),
                 status=status,
-                model=ctx.model,
-                response_payload=response_payload,
                 subject=replay_subject,
                 input_items=deepcopy(ctx.input_items),
                 previous_response_id=ctx.previous_response_id,
             )
+            stream_record.set_response_snapshot(generated_models.Response(response_payload))
             await self._runtime_state.add(stream_record)
             # Persist via provider (non-bg stream: single create at terminal state)
             try:
@@ -360,27 +354,22 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             initial_status = initial_payload.get("status")
             if not isinstance(initial_status, str):
                 initial_status = "in_progress"
-            ctx.bg_record = _ExecutionRecord(
+            execution = ResponseExecution(
                 response_id=ctx.response_id,
-                agent_reference=deepcopy(ctx.agent_reference),
-                stream=True,
-                store=True,
-                background=True,
-                replay_enabled=True,
-                visible_via_get=True,
+                mode_flags=ResponseModeFlags(stream=True, store=True, background=True),
                 status=initial_status,
-                model=ctx.model,
-                response_payload=initial_payload,
                 input_items=deepcopy(ctx.input_items),
                 previous_response_id=ctx.previous_response_id,
                 cancel_signal=ctx.cancellation_signal,
             )
+            execution.set_response_snapshot(generated_models.Response(initial_payload))
             # Create the broadcast subject and seed it with the first event so that
             # any subscriber joining mid-stream receives full history (like .NET's
             # SeekableReplaySubject / ConcurrentReplayAsyncSubject).
-            ctx.bg_record.subject = _ResponseEventSubject()
+            execution.subject = _ResponseEventSubject()
+            ctx.bg_record = execution
             await ctx.bg_record.subject.publish(first_normalized)
-            await self._runtime_state.add(ctx.bg_record)
+            await self._runtime_state.add(execution)
             if ctx.store:
                 _initial_response_obj = generated_models.Response(initial_payload)
                 _history_ids = (
@@ -541,21 +530,15 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         resolved_status = response_payload.get("status")
         status = resolved_status if isinstance(resolved_status, str) else "completed"
 
-        record = _ExecutionRecord(
+        record = ResponseExecution(
             response_id=ctx.response_id,
-            agent_reference=deepcopy(ctx.agent_reference),
-            stream=False,
-            store=ctx.store,
-            background=False,
-            replay_enabled=False,
-            visible_via_get=ctx.store,
+            mode_flags=ResponseModeFlags(stream=False, store=ctx.store, background=False),
             status=status,
-            model=ctx.model,
-            response_payload=response_payload,
             input_items=deepcopy(ctx.input_items),
             previous_response_id=ctx.previous_response_id,
             response_context=ctx.context,
         )
+        record.set_response_snapshot(generated_models.Response(response_payload))
 
         if ctx.store:
             await self._runtime_state.add(record)
@@ -572,7 +555,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 pass  # best effort
 
         ctx.span.end(ctx.captured_error)
-        return record.to_snapshot()
+        return _RuntimeState.to_snapshot(record)
 
     async def run_background(self, ctx: _ExecutionContext) -> dict[str, Any]:
         """Handle a background (non-stream) create-response request.

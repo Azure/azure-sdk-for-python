@@ -8,6 +8,7 @@ Run:
 
 from __future__ import annotations
 
+import asyncio
 import json
 from collections.abc import AsyncIterable
 from typing import Any
@@ -17,6 +18,8 @@ from starlette.applications import Starlette
 from starlette.responses import JSONResponse
 
 from azure.ai.agentserver.responses import response_handler
+from azure.ai.agentserver.responses._handlers import ResponseContext
+from azure.ai.agentserver.responses.models._generated.sdk.models.models._models import CreateResponse
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 from azure.ai.agentserver.responses.hosting import map_responses_server
 
@@ -55,7 +58,7 @@ def _extract_function_call_output(request_payload: dict[str, Any]) -> str | None
 
 
 @response_handler
-def weather_handler(request: Any, context: Any, cancellation_signal: Any) -> AsyncIterable[dict[str, Any]]:
+def weather_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event) -> AsyncIterable[dict[str, Any]]:
     """Two-turn function-calling sample handler."""
     async def _events() -> AsyncIterable[dict[str, Any]]:
         payload = _request_mapping(request)

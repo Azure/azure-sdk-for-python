@@ -20,7 +20,7 @@ from .streaming._builders import (
     TextContentBuilder,
 )
 from .streaming._event_stream import ResponseEventStream
-from ._handlers import ResponseContext, RuntimeResponseContext, response_handler
+from ._handlers import ResponseContext, response_handler
 from ._options import ResponsesServerOptions
 from .store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from .store._foundry_errors import FoundryApiError, FoundryBadRequestError, FoundryResourceNotFoundError, FoundryStorageError
@@ -31,7 +31,6 @@ from .store._memory import InMemoryResponseProvider
 __all__ = [
     "response_handler",
     "ResponseContext",
-    "RuntimeResponseContext",
     "ResponsesServerOptions",
     "ResponseProviderProtocol",
     "ResponseStreamProviderProtocol",

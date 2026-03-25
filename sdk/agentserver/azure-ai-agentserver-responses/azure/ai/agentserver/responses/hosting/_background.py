@@ -8,7 +8,7 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
 from typing import Any
 
-from .._handlers import RuntimeResponseContext
+from .._handlers import ResponseContext
 from ..models import _generated as generated_models
 from ..streaming._helpers import (
     _build_events,
@@ -23,7 +23,7 @@ async def _run_background_non_stream(
     *,
     create_async: Any,
     parsed: Any,
-    context: RuntimeResponseContext,
+    context: ResponseContext,
     cancellation_signal: asyncio.Event,
     record: _ExecutionRecord,
     response_id: str,
@@ -42,7 +42,7 @@ async def _run_background_non_stream(
     :keyword parsed: Parsed ``CreateResponse`` model instance.
     :keyword type parsed: Any
     :keyword context: Runtime response context for this request.
-    :keyword type context: RuntimeResponseContext
+    :keyword type context: ResponseContext
     :keyword cancellation_signal: Event signalling that cancellation was requested.
     :keyword type cancellation_signal: asyncio.Event
     :keyword record: The mutable execution record to update.

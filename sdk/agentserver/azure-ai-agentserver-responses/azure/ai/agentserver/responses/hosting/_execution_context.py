@@ -7,8 +7,8 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 from typing import Any
 
-from .._handlers import RuntimeResponseContext
-from ._runtime_state import _ExecutionRecord
+from .._handlers import ResponseContext
+from ..models.runtime import ResponseExecution
 
 
 class _ExecutionContext:  # pylint: disable=too-many-instance-attributes
@@ -30,11 +30,11 @@ class _ExecutionContext:  # pylint: disable=too-many-instance-attributes
         input_items: list[Any],
         previous_response_id: str | None,
         cancellation_signal: asyncio.Event,
-        context: RuntimeResponseContext,
+        context: ResponseContext,
         span: Any,
         parsed: Any,
         captured_error: Exception | None = None,
-        bg_record: _ExecutionRecord | None = None,
+        bg_record: ResponseExecution | None = None,
         handler_events: list[dict[str, Any]] | None = None,
     ) -> None:
         self.response_id = response_id
@@ -63,7 +63,7 @@ class _ExecutionContext:  # pylint: disable=too-many-instance-attributes
         """Parsed ``CreateResponse`` model instance from the request body."""
         self.captured_error = captured_error
         """Exception captured during handler execution, set after the fact; ``None`` on success."""
-        self.bg_record = bg_record
+        self.bg_record: ResponseExecution | None = bg_record
         """Background execution record created after the first handler event (background+stream only)."""
         self.handler_events: list[dict[str, Any]] = handler_events if handler_events is not None else []
         """Accumulated, normalized handler events emitted so far."""

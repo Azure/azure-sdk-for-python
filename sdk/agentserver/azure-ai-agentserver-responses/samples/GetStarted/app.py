@@ -8,6 +8,7 @@ Run:
 
 from __future__ import annotations
 
+import asyncio
 from collections.abc import AsyncIterable
 from typing import Any
 
@@ -15,13 +16,14 @@ import uvicorn
 from starlette.applications import Starlette
 from starlette.responses import JSONResponse
 
-from azure.ai.agentserver.responses import response_handler
+from azure.ai.agentserver.responses import response_handler, ResponseContext
+from azure.ai.agentserver.responses.models._generated import CreateResponse
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 from azure.ai.agentserver.responses.hosting import map_responses_server
 
 
 @response_handler
-def my_handler(request: Any, context: Any, cancellation_signal: Any) -> AsyncIterable[dict[str, Any]]:
+def my_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event) -> AsyncIterable[dict[str, Any]]:
     async def _events() -> AsyncIterable[dict[str, Any]]:
         stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
 

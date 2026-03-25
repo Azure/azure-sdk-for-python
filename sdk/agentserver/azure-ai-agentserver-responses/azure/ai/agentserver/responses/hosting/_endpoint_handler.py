@@ -17,7 +17,7 @@ from typing import Any, AsyncIterator
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
-from .._handlers import RuntimeResponseContext
+from .._handlers import ResponseContext
 from .._options import ResponsesServerOptions
 from ..models import ResponseModeFlags
 from ..streaming._helpers import _encode_sse
@@ -169,7 +169,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         input_items = _extract_input_items(payload)
         previous_response_id = _extract_previous_response_id(payload)
         mode_flags = ResponseModeFlags(stream=stream, store=store, background=background)
-        context = RuntimeResponseContext(
+        context = ResponseContext(
             response_id=response_id,
             mode_flags=mode_flags,
             raw_body=payload,

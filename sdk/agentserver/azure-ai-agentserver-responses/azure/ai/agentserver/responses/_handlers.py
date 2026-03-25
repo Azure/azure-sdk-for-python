@@ -7,7 +7,7 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 import inspect
 from datetime import datetime, timezone
-from typing import Any, Awaitable, Callable, Mapping, Protocol, Sequence, runtime_checkable
+from typing import Any, Awaitable, Callable, Mapping, Sequence
 
 from .models._generated import OutputItem
 from .models import ResponseModeFlags
@@ -16,9 +16,8 @@ OutputItemsLoader = Callable[[], Awaitable[Sequence[OutputItem]]]
 RawBodyType = Mapping[str, Any] | Sequence[Any] | str | int | float | bool | None
 
 
-@runtime_checkable
-class ResponseContext(Protocol):
-    """Runtime context exposed to response handlers.
+class ResponseContext:
+    """Runtime context exposed to response handlers and used by hosting orchestration.
 
     This mirrors the referenced .NET ``IResponseContext`` shape:
     - response identifier
@@ -26,56 +25,6 @@ class ResponseContext(Protocol):
     - raw body access
     - async input/history resolution
     """
-
-    @property
-    def response_id(self) -> str:
-        """Get the unique response identifier.
-
-        :returns: The unique response identifier string.
-        :rtype: str
-        """
-
-    @property
-    def is_shutdown_requested(self) -> bool:
-        """Get whether shutdown has been requested by the host.
-
-        :returns: True if shutdown has been requested, False otherwise.
-        :rtype: bool
-        """
-
-    @is_shutdown_requested.setter
-    def is_shutdown_requested(self, value: bool) -> None:
-        """Set whether shutdown has been requested by the host.
-
-        :param value: Whether shutdown has been requested.
-        :type value: bool
-        """
-
-    @property
-    def raw_body(self) -> RawBodyType:
-        """Get the raw request body payload for extension field access.
-
-        :returns: The raw request body, which may be a mapping, sequence, scalar, or None.
-        :rtype: RawBodyType
-        """
-
-    async def get_input_items_async(self) -> Sequence[OutputItem]:
-        """Resolve and return request input items.
-
-        :returns: A sequence of input items from the request.
-        :rtype: Sequence[OutputItem]
-        """
-
-    async def get_history_async(self) -> Sequence[OutputItem]:
-        """Resolve and return conversation history items.
-
-        :returns: A sequence of conversation history items.
-        :rtype: Sequence[OutputItem]
-        """
-
-
-class RuntimeResponseContext:
-    """Default runtime context implementation used by hosting orchestration."""
 
     def __init__(
         self,
@@ -169,7 +118,7 @@ def response_handler(func: Callable) -> Callable:
     :returns: The same function, marked as a response handler.
     :rtype: Callable
     :raises TypeError: If ``func`` is not callable or does not accept exactly
-        three parameters.
+                        three parameters.
     """
     if not callable(func):
         raise TypeError("@response_handler must be applied to a callable")
