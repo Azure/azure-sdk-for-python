@@ -2,6 +2,12 @@
 
 ## 1.0.0b1 (2026-03-25)
 
-### Other Changes
+### Features Added
 
-  - Initial version
+  - Model `ServiceGroupsOperations` added method `begin_create_or_update_service_group`
+  - Model `ServiceGroupsOperations` added method `begin_delete_service_group`
+  - Model `ServiceGroupsOperations` added method `begin_update_service_group`
+
+### Breaking Changes
+
+  - Deleted or renamed model `GroupsRPAPIs`
