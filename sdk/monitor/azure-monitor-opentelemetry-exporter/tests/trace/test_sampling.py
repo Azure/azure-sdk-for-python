@@ -82,6 +82,13 @@ class TestApplicationInsightsSampler(unittest.TestCase):
         sampler = ApplicationInsightsSampler(float('-inf'))
         self.assertEqual(sampler._ratio, 1.0)
         self.assertEqual(sampler._sample_rate, 100.0)
+    
+    @mock.patch.dict("os.environ", {}, clear=True)
+    def test_invalid_type_ratio_explicit(self):
+        # Non-numeric explicit ratio logs an error and defaults to 1.0
+        sampler = ApplicationInsightsSampler("abc") # type: ignore
+        self.assertEqual(sampler._ratio, 1.0)
+        self.assertEqual(sampler._sample_rate, 100.0)
 
     def test_infinite_ratio_env_var(self):
         # Infinite value from env var falls back to 1.0

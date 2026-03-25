@@ -236,6 +236,12 @@ class TestRateLimitedSampler(unittest.TestCase):
         with patch.dict("os.environ", {}, clear=True):
             sampler = RateLimitedSampler(float('nan'))
             self.assertEqual(sampler.get_description(), "RateLimitedSampler{5.0}")
+    
+    # Test that non-numeric explicit traces per second logs error and defaults to 5.0
+    def test_non_numeric_traces_per_second_explicit(self):
+        with patch.dict("os.environ", {}, clear=True):
+            sampler = RateLimitedSampler("def") # type: ignore
+            self.assertEqual(sampler.get_description(), "RateLimitedSampler{5.0}")
 
     # Test NaN value from env var falls back to 5.0
     def test_nan_traces_per_second_env_var(self):

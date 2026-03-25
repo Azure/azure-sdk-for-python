@@ -52,7 +52,7 @@ class ApplicationInsightsSampler(Sampler):
                         default_sampling_ratio,
                     )
                     sampling_ratio = default_sampling_ratio
-            except TypeError:
+            except (ValueError, TypeError):
                 _logger.error(
                     "Invalid value '%s' for sampling ratio. Defaulting to %s.", sampling_ratio, default_sampling_ratio
                 )
@@ -73,7 +73,7 @@ class ApplicationInsightsSampler(Sampler):
                     _logger.info("Using sampling ratio: %s", sampler_value)
                     sampling_ratio = sampler_value
             except ValueError:
-                _logger.error(  # pylint: disable=C
+                _logger.error(  # pylint: disable=C0301
                     _INVALID_FLOAT_MESSAGE,
                     OTEL_TRACES_SAMPLER_ARG,
                     default_sampling_ratio,

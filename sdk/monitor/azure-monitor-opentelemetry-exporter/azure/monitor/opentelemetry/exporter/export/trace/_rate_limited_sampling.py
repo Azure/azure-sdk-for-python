@@ -107,7 +107,7 @@ class RateLimitedSampler(Sampler):
                     traces_per_second = default_traces_per_second
                 else:
                     _logger.info("Using rate limited sampler: %s traces per second", traces_per_second)
-            except TypeError:
+            except (ValueError, TypeError):
                 _logger.error(_INVALID_TRACES_PER_SECOND_MESSAGE, traces_per_second, default_traces_per_second)
                 traces_per_second = default_traces_per_second
         else:
