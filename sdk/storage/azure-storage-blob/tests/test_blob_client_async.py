@@ -48,6 +48,15 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
         assert '{}.{}.core.windows.net'.format(account_name, url_type) in service.url
         assert '{}-secondary.{}.core.windows.net'.format(account_name, url_type) in service.secondary_endpoint
 
+    def validate_ipv6_account_endpoints(self, service, account_name, account_key, primary_endpoint, secondary_endpoint):
+        assert service is not None
+        assert service.scheme == "https"
+        assert service.account_name == account_name
+        assert service.credential.account_name == account_name
+        assert service.credential.account_key == account_key
+        assert service._hosts[LocationMode.PRIMARY] == primary_endpoint
+        assert service._hosts[LocationMode.SECONDARY] == secondary_endpoint
+
     def generate_fake_sas_token(self):
         fake_key = "a" * 30 + "b" * 30
 
@@ -336,13 +345,9 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
                 container_name=container_name,
                 blob_name=blob_name
             )
-
-            assert service is not None
-            assert service.scheme == "https"
-            assert service.account_name == storage_account_name
-            assert service.credential.account_key == storage_account_key.secret
-            assert service._hosts[LocationMode.PRIMARY] == expected_primary
-            assert service._hosts[LocationMode.SECONDARY] == expected_secondary
+            self.validate_ipv6_account_endpoints(
+                service, storage_account_name, storage_account_key.secret, expected_primary, expected_secondary
+            )
 
             conn_str = (
                 "DefaultEndpointsProtocol=https;"
@@ -356,25 +361,37 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
                 container_name=container_name,
                 blob_name=blob_name
             )
-
-            assert service is not None
-            assert service.scheme == "https"
-            assert service.account_name == storage_account_name
-            assert service.credential.account_key == storage_account_key.secret
-            assert service._hosts[LocationMode.PRIMARY] == expected_primary
-            assert service._hosts[LocationMode.SECONDARY] == expected_secondary
+            self.validate_ipv6_account_endpoints(
+                service, storage_account_name, storage_account_key.secret, expected_primary, expected_secondary
+            )
 
         service = BlobClient.from_blob_url(
             blob_url=f"{account_url}/{container_name}/{blob_name}-secondary",
             credential=storage_account_key.secret
         )
+        self.validate_ipv6_account_endpoints(
+            service, storage_account_name, storage_account_key.secret, expected_primary, expected_secondary
+        )
 
-        assert service is not None
-        assert service.scheme == "https"
-        assert service.account_name == storage_account_name
-        assert service.credential.account_key == storage_account_key.secret
-        assert service._hosts[LocationMode.PRIMARY] == expected_primary
-        assert service._hosts[LocationMode.SECONDARY] == expected_secondary
+    @BlobPreparer()
+    def test_create_service_ipv6_custom_domain(self):
+        token_credential = self.get_credential(BlobServiceClient)
+
+        hostname = "github.com"
+        account_url = f"https://{hostname}"
+        for service_type in SERVICES.keys():
+            service = service_type(
+                account_url,
+                credential=token_credential,
+                container_name="foo",
+                blob_name="bar"
+            )
+            assert service is not None
+            assert service.scheme == "https"
+            assert service.account_name is None
+            assert service.credential is not None
+            assert service._hosts[LocationMode.PRIMARY] == hostname
+            assert service._hosts[LocationMode.SECONDARY] == ""
 
     # --Connection String Test Cases --------------------------------------------
     @BlobPreparer()
