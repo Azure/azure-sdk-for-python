@@ -27,11 +27,7 @@ powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace '
 
 REM Make the classes AgentDefinitionOptInKeys and FoundryFeaturesOptInKeys internal
 powershell -Command "(Get-Content azure\ai\projects\models\__init__.py) | Where-Object { $_ -notmatch 'AgentDefinitionOptInKeys|FoundryFeaturesOptInKeys' } | Set-Content azure\ai\projects\models\__init__.py"
-
-exit /b 0
-
-
-
+powershell -Command "(Get-Content apiview-properties.json) | Where-Object { $_ -notmatch 'AgentDefinitionOptInKeys|FoundryFeaturesOptInKeys' } | Set-Content apiview-properties.json"
 
 REM Edit both _operations.py files to fix missing Foundry-Features HTTP request header in continued list paging calls. Add:
 REM   headers=_headers
@@ -43,8 +39,6 @@ powershell -Command "$gaCount=7; $old=[char]34+'GET'+[char]34+', urllib.parse.ur
 
 REM Finishing by running 'black' tool to format code. 
 black --config ../../../eng/black-pyproject.toml .
-
-REM No you have some more manual things to do..
 
 REM Fix Sphinx issue in class ToolChoiceAllowed, in "tools" property doc string. Everything should be aligned including JSON example, like this:
 REM """A list of tool definitions that the model should be allowed to call. For the Responses API, the
