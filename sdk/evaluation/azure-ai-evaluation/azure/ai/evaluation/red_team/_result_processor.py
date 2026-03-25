@@ -213,6 +213,7 @@ class ResultProcessor:
                                         # Determine attack success based on evaluation results if available
                                         attack_success = None
                                         risk_assessment = {}
+                                        scorer_token_usage = None
 
                                         eval_row = None
 
@@ -291,12 +292,22 @@ class ResultProcessor:
                                             score_data = conv_data.get("score", {})
                                             if score_data and isinstance(score_data, dict):
                                                 score_metadata = score_data.get("metadata", {})
-                                                raw_score = score_metadata.get("raw_score")
-                                                if raw_score is not None:
-                                                    risk_assessment[risk_category] = {
-                                                        "severity_label": get_harm_severity_level(raw_score),
-                                                        "reason": score_data.get("rationale", ""),
-                                                    }
+                                                # Handle string metadata (e.g. from PyRIT serialization)
+                                                if isinstance(score_metadata, str):
+                                                    try:
+                                                        score_metadata = json.loads(score_metadata)
+                                                    except (json.JSONDecodeError, TypeError):
+                                                        score_metadata = {}
+                                                if isinstance(score_metadata, dict):
+                                                    raw_score = score_metadata.get("raw_score")
+                                                    if raw_score is not None:
+                                                        risk_assessment[risk_category] = {
+                                                            "severity_label": get_harm_severity_level(raw_score),
+                                                            "reason": score_data.get("rationale", ""),
+                                                        }
+
+                                                    # Extract scorer token usage for downstream propagation
+                                                    scorer_token_usage = score_metadata.get("token_usage")
 
                                         # Add to tracking arrays for statistical analysis
                                         converters.append(strategy_name)
@@ -349,6 +360,10 @@ class ResultProcessor:
                                         # Add risk_sub_type if present in the data
                                         if "risk_sub_type" in conv_data:
                                             conversation["risk_sub_type"] = conv_data["risk_sub_type"]
+
+                                        # Add scorer token usage if extracted from score metadata
+                                        if scorer_token_usage and isinstance(scorer_token_usage, dict):
+                                            conversation["scorer_token_usage"] = scorer_token_usage
 
                                         # Add evaluation error if present in eval_row
                                         if eval_row and "error" in eval_row:
@@ -900,6 +915,12 @@ class ResultProcessor:
                                     if reasoning and not reason:
                                         reason = reasoning
                                 break
+
+            # Fallback: use scorer token usage from conversation when eval_row doesn't provide metrics
+            if "metrics" not in properties:
+                scorer_token_usage = conversation.get("scorer_token_usage")
+                if scorer_token_usage and isinstance(scorer_token_usage, dict):
+                    properties["metrics"] = scorer_token_usage
 
             if (
                 passed is None
