@@ -142,24 +142,28 @@ class StorageAccountHostsMixin(object):
             self.account_name = parsed_url.path.strip("/")
 
         secondary_hostname = ""
+        if len(account) > 1:
+            self.account_name, primary_hostname, secondary_hostname = _construct_endpoints(
+                parsed_url.netloc, account[0]
+            )
+        else:
+            primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip("/")
+
+        self.credential = _format_shared_key_credential(self.account_name, credential)
+        if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
+            raise ValueError("Token credential is only supported with HTTPS.")
+
+        if hasattr(self.credential, "account_name"):
+            if not self.account_name:
+                secondary_hostname = f"{self.credential.account_name}-secondary.{service_name}.{SERVICE_HOST_BASE}"
+            self.account_name = self.credential.account_name
+
         if not self._hosts:
-            if len(account) > 1:
-                self.account_name, primary_hostname, secondary_hostname = _construct_endpoints(
-                    parsed_url.netloc, account[0]
-                )
-            else:
-                primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip("/")
             if kwargs.get("secondary_hostname"):
                 secondary_hostname = kwargs["secondary_hostname"]
             if not primary_hostname:
                 primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip("/")
             self._hosts = {LocationMode.PRIMARY: primary_hostname, LocationMode.SECONDARY: secondary_hostname}
-
-        self.credential = _format_shared_key_credential(self.account_name, credential)
-        if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
-            raise ValueError("Token credential is only supported with HTTPS.")
-        if hasattr(self.credential, "account_name"):
-            self.account_name = self.credential.account_name
 
         self._sdk_moniker = f"storage-{service}/{VERSION}"
         self._config, self._pipeline = self._create_pipeline(self.credential, sdk_moniker=self._sdk_moniker, **kwargs)
