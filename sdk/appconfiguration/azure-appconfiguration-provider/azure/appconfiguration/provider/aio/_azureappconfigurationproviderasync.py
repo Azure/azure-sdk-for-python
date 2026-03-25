@@ -63,7 +63,7 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
     refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
-    refresh_enabled: bool = False,
+    refresh_enabled: Optional[bool] = None,
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], Awaitable[None]]] = None,
     feature_flag_enabled: bool = False,
@@ -91,8 +91,9 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     not supported).
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
-    :keyword refresh_enabled: Optional flag to enable or disable refreshing of configuration settings. Default is True.
-    :paramtype refresh_enabled: bool
+    :keyword refresh_enabled: Optional flag to enable or disable refreshing of configuration settings. Defaults to
+    True if ``refresh_on`` is set, otherwise False.
+    :paramtype refresh_enabled: Optional[bool]
     :keyword on_refresh_success: Optional callback to be invoked when a change is found and a successful refresh has
     happened.
     :paramtype on_refresh_success: Optional[Callable]
@@ -134,7 +135,7 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
     refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
-    refresh_enabled: bool = False,
+    refresh_enabled: Optional[bool] = None,
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], Awaitable[None]]] = None,
     feature_flag_enabled: bool = False,
@@ -164,8 +165,9 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :paramtype refresh_on: List[Tuple[str, str]]
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
-    :keyword refresh_enabled: Optional flag to enable or disable refreshing of configuration settings. Default is True.
-    :paramtype refresh_enabled: bool
+    :keyword refresh_enabled: Optional flag to enable or disable refreshing of configuration settings. Defaults to
+    True if ``refresh_on`` is set, otherwise False.
+    :paramtype refresh_enabled: Optional[bool]
     :keyword on_refresh_success: Optional callback to be invoked when a change is found and a successful refresh has
      happened.
     :paramtype on_refresh_success: Optional[Callable]
