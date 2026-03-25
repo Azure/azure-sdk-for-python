@@ -923,9 +923,7 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):  # pylint: dis
         assert after_len >= before_len
 
         # At least one of the existing pages' ETags should differ after the update.
-        assert any(
-            old != new for old, new in zip(match_conditions, new_match_conditions)
-        )
+        assert any(old != new for old, new in zip(match_conditions, new_match_conditions))
 
         # monitor pages after updates - only changed pages will be yielded
         items = self.client.check_configuration_settings(

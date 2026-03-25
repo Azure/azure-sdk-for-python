@@ -893,9 +893,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
         assert after_len >= before_len
 
         # At least one of the existing pages' ETags should differ after the update.
-        assert any(
-            old_etag != new_etag for old_etag, new_etag in zip(match_conditions, new_match_conditions)
-        )
+        assert any(old_etag != new_etag for old_etag, new_etag in zip(match_conditions, new_match_conditions))
 
         # monitor pages after updates - only changed pages will be yielded
         items = self.client.check_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
