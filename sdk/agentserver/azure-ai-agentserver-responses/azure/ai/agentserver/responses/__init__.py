@@ -23,6 +23,9 @@ from .streaming._event_stream import ResponseEventStream
 from ._handlers import ResponseContext, ResponseHandler, RuntimeResponseContext
 from ._options import ResponsesServerOptions
 from .store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
+from .store._foundry_errors import FoundryApiError, FoundryBadRequestError, FoundryResourceNotFoundError, FoundryStorageError
+from .store._foundry_provider import FoundryStorageProvider
+from .store._foundry_settings import FoundryStorageSettings
 from .store._memory import InMemoryResponseProvider
 
 __all__ = [
@@ -33,6 +36,12 @@ __all__ = [
     "ResponseProviderProtocol",
     "ResponseStreamProviderProtocol",
     "InMemoryResponseProvider",
+    "FoundryStorageProvider",
+    "FoundryStorageSettings",
+    "FoundryStorageError",
+    "FoundryResourceNotFoundError",
+    "FoundryBadRequestError",
+    "FoundryApiError",
     "TextContentBuilder",
     "OutputItemMessageBuilder",
     "OutputItemBuilder",
