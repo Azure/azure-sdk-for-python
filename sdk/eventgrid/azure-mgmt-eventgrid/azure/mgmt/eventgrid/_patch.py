@@ -1,6 +1,7 @@
 # coding=utf-8
 # --------------------------------------------------------------------------
-# CI test: verifying chronus-verify workflow triggers for mgmt packages
+#
+# Copyright (c) Microsoft Corporation. All rights reserved.
 #
 # The MIT License (MIT)
 #
