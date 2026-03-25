@@ -76,17 +76,17 @@ class TestApplicationInsightsSampler(unittest.TestCase):
     @mock.patch.dict("os.environ", {}, clear=True)
     def test_infinite_ratio_explicit(self):
         # Infinite explicit ratio logs an error and defaults to 1.0
-        sampler = ApplicationInsightsSampler(float('inf'))
+        sampler = ApplicationInsightsSampler(float("inf"))
         self.assertEqual(sampler._ratio, 1.0)
         self.assertEqual(sampler._sample_rate, 100.0)
-        sampler = ApplicationInsightsSampler(float('-inf'))
+        sampler = ApplicationInsightsSampler(float("-inf"))
         self.assertEqual(sampler._ratio, 1.0)
         self.assertEqual(sampler._sample_rate, 100.0)
-    
+
     @mock.patch.dict("os.environ", {}, clear=True)
     def test_invalid_type_ratio_explicit(self):
         # Non-numeric explicit ratio logs an error and defaults to 1.0
-        sampler = ApplicationInsightsSampler("abc") # type: ignore
+        sampler = ApplicationInsightsSampler("abc")  # type: ignore
         self.assertEqual(sampler._ratio, 1.0)
         self.assertEqual(sampler._sample_rate, 100.0)
 
@@ -104,7 +104,7 @@ class TestApplicationInsightsSampler(unittest.TestCase):
     @mock.patch.dict("os.environ", {}, clear=True)
     def test_nan_ratio_explicit(self):
         # NaN explicit ratio logs an error and defaults to 1.0
-        sampler = ApplicationInsightsSampler(float('nan'))
+        sampler = ApplicationInsightsSampler(float("nan"))
         self.assertEqual(sampler._ratio, 1.0)
         self.assertEqual(sampler._sample_rate, 100.0)
 
