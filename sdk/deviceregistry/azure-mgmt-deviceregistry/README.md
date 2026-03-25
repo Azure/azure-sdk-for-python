@@ -24,7 +24,7 @@ pip install azure-identity
 
 ### Authentication
 
-By default, [Microsoft Entra ID](https://aka.ms/awps/aad) token authentication depends on correct configure of following environment variables.
+By default, [Microsoft Entra ID](https://aka.ms/awps/aad) token authentication depends on the following environment variables being correctly configured.
 
 - `AZURE_CLIENT_ID` for Azure client ID.
 - `AZURE_TENANT_ID` for Azure tenant ID.
