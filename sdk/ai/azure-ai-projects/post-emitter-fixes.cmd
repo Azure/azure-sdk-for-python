@@ -25,10 +25,6 @@ powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 
 REM Rename DEFAULT2024_11_15 to DEFAULT_2024_11_15
 powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'DEFAULT2024_11_15', 'DEFAULT_2024_11_15' | Set-Content azure\ai\projects\models\_enums.py"
 
-REM Make the classes AgentDefinitionOptInKeys and FoundryFeaturesOptInKeys internal
-powershell -Command "(Get-Content azure\ai\projects\models\__init__.py) | Where-Object { $_ -notmatch 'AgentDefinitionOptInKeys|FoundryFeaturesOptInKeys' } | Set-Content azure\ai\projects\models\__init__.py"
-powershell -Command "(Get-Content apiview-properties.json) | Where-Object { $_ -notmatch 'AgentDefinitionOptInKeys|FoundryFeaturesOptInKeys' } | Set-Content apiview-properties.json"
-
 REM Edit both _operations.py files to fix missing Foundry-Features HTTP request header in continued list paging calls. Add:
 REM   headers=_headers
 REM to the end of each of these lines in the BetaXxxOperations classes (do not do this in GA operations classes!)

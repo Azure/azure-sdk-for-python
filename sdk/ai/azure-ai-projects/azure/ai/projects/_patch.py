@@ -60,9 +60,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
      When preview features are enabled, the client libraries sends the HTTP request header `Foundry-Features`
      with the appropriate value in all relevant calls to the service.
     :type allow_preview: bool
-    :keyword api_version: The API version to use for this operation. Known values are "v1" and
-     None. Default value is "v1". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "v1". Default
+     value is "v1". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
