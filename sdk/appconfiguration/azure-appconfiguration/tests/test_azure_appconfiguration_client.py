@@ -1221,14 +1221,6 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
         assert len(list(rep)) == 0
 
 
-class TestAppConfigurationClientAADUnitTest:
-    def test_type_error(self):
-        with pytest.raises(TypeError):
-            _ = FeatureFlagConfigurationSetting("blah", value="blah")
-        with pytest.raises(TypeError):
-            _ = SecretReferenceConfigurationSetting("blah", value="blah")  # pylint: disable=no-value-for-parameter
-
-
 class TestAppConfigurationClientUnitTest:
     def test_type_error(self):
         with pytest.raises(TypeError):
