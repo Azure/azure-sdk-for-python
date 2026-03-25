@@ -4015,4 +4015,49 @@ class TestStorageFile(StorageRecordedTestCase):
         result = file_client.download_file(decompress=False).readall()
         assert result == compressed_data
 
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_upload_file_with_none_max_concurrency(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key.secret,
+            max_range_size=4 * 1024)
+
+        data = b"hello world"
+
+        # max_concurrency=None should not raise TypeError
+        file_client.upload_file(data, max_concurrency=None)
+
+        self.assertFileEqual(file_client, data)
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_download_file_with_none_max_concurrency(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key.secret,
+            max_range_size=4 * 1024)
+
+        data = b"hello world"
+        file_client.upload_file(data)
+
+        # max_concurrency=None should not raise TypeError
+        content = file_client.download_file(max_concurrency=None).readall()
+
+        assert content == data
+
 # ------------------------------------------------------------------------------

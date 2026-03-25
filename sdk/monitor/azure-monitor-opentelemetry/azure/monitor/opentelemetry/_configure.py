@@ -223,7 +223,8 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     # Use try catch while signal is experimental
     try:
         from opentelemetry._logs import set_logger_provider
-        from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+        from opentelemetry.sdk._logs import LoggerProvider
+        from opentelemetry.instrumentation.logging.handler import LoggingHandler
         from azure.monitor.opentelemetry.exporter.export.logs._processor import _AzureBatchLogRecordProcessor
 
         from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
@@ -266,21 +267,6 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
                     )
             logger.addHandler(handler)
 
-        # Setup Events
-        try:
-            from opentelemetry._events import _set_event_logger_provider
-            from opentelemetry.sdk._events import EventLoggerProvider
-
-            event_provider = EventLoggerProvider(logger_provider)
-            _set_event_logger_provider(event_provider, False)
-        except ImportError as ex:
-            # If the events is not available, we will not set it up.
-            # This could possibly be due to breaking change in upstream OpenTelemetry
-            # Advise user to upgrade to latest OpenTelemetry version
-            _logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
-                "Exception occurred when setting up Events. Please upgrade to the latest OpenTelemetry version: %s.",
-                ex,
-            )
     except ImportError as ex:
         # If the events is not available, we will not set it up.
         # This could possibly be due to breaking change in upstream OpenTelemetry

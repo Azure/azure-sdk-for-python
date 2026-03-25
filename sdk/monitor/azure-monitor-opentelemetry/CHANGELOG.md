@@ -1,15 +1,26 @@
 # Release History
 
-## 1.8.7 (Unreleased)
+## 1.8.8 (Unreleased)
 
 ### Features Added
-- Add Browser SDK loader feature ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/44162))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+- Remove deprecated events packages.
+  ([#45684](https://github.com/Azure/azure-sdk-for-python/pull/45684))
+
+## 1.8.7 (2026-03-20)
+
+### Features Added
+- Add Browser SDK loader feature
+  ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/42904))
+
+### Other Changes
+- Change import path for `LoggingHandler` to accommodate upstream breaking changes
+  ([#45539](https://github.com/Azure/azure-sdk-for-python/pull/45539))
 - Remove internal import from sample file
   ([#45619](https://github.com/Azure/azure-sdk-for-python/pull/45619))
 
@@ -27,6 +38,7 @@
 
 ### Other Changes
 - Add missing copyright headers and ensure consistent formatting across files.
+  ([#44908](https://github.com/Azure/azure-sdk-for-python/pull/44908))
 
 ## 1.8.5 (2026-01-28)
 
