@@ -87,37 +87,6 @@ def main():
                 "displayName": "AssetDisplayName",
                 "documentationUri": "https://www.example.com/manual",
                 "enabled": True,
-                "eventGroups": [
-                    {
-                        "events": [
-                            {
-                                "dataSource": "nsu=http://microsoft.com/Opc/OpcPlc/;s=FastUInt5",
-                                "destinations": [
-                                    {
-                                        "configuration": {
-                                            "qos": "Qos0",
-                                            "retain": "Keep",
-                                            "topic": "/contoso/testEvent1",
-                                            "ttl": 7200,
-                                        },
-                                        "target": "Mqtt",
-                                    }
-                                ],
-                                "eventConfiguration": '{"publishingInterval":7,"samplingInterval":1,"queueSize":8}',
-                                "name": "event1",
-                                "typeRef": "event1Ref",
-                            },
-                            {
-                                "dataSource": "nsu=http://microsoft.com/Opc/OpcPlc/;s=FastUInt8",
-                                "destinations": [{"configuration": {"path": "/tmp/event2"}, "target": "Storage"}],
-                                "eventConfiguration": '{"publishingInterval":7,"samplingInterval":1,"queueSize":8}',
-                                "name": "event2",
-                                "typeRef": "event2Ref",
-                            },
-                        ],
-                        "name": "default",
-                    }
-                ],
                 "externalAssetId": "8ZBA6LRHU0A458969",
                 "hardwareRevision": "1.0",
                 "managementGroups": [
@@ -186,6 +155,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-10-01/CreateOrReplace_NamespaceAsset.json
+# x-ms-original-file: 2026-03-01-preview/CreateOrReplace_NamespaceAsset.json
 if __name__ == "__main__":
     main()

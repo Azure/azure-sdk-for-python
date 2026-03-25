@@ -1,4 +1,4 @@
 directory: specification/deviceregistry/DeviceRegistry.Management
-commit: b562b95b6429f78f6c8629d5751bfeef1be7cacd
+commit: 6f8788a943c0b1e7f76906cdf10113e6d04b14de
 repo: Azure/azure-rest-api-specs
-additionalDirectories: 
+additionalDirectories:

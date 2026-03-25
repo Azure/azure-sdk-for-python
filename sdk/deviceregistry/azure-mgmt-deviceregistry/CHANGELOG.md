@@ -1,5 +1,31 @@
 # Release History
 
+## 1.2.0b1 (2026-03-25)
+
+### Features Added
+
+  - Based on API version `2026-03-01-preview`
+  - Client `DeviceRegistryMgmtClient` added operation group `credentials`
+  - Client `DeviceRegistryMgmtClient` added operation group `policies`
+  - Added model `ActivateBringYourOwnRootRequest`
+  - Added model `BringYourOwnRoot`
+  - Added model `CertificateAuthorityConfiguration`
+  - Added model `CertificateConfiguration`
+  - Added model `Credential`
+  - Added model `CredentialProperties`
+  - Added model `CredentialUpdate`
+  - Added model `DeviceCredentialPolicy`
+  - Added model `DeviceCredentialsRevokeRequest`
+  - Added model `LeafCertificateConfiguration`
+  - Added model `Policy`
+  - Added model `PolicyProperties`
+  - Added model `PolicyUpdate`
+  - Added model `PolicyUpdateProperties`
+  - Added enum `BringYourOwnRootStatus`
+  - Added enum `SupportedKeyType`
+  - Added operation group `CredentialsOperations`
+  - Added operation group `PoliciesOperations`
+
 ## 1.1.0 (2025-10-23)
 
 ### Features Added
