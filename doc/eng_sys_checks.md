@@ -117,7 +117,7 @@ This is the most useful skip, but the following skip variables are also supporte
   - Omit checking that a package's keywords are correctly formulated before releasing.
 - `Skip.Black`
   - Omit checking `black` in the `analyze` job.
-- `Skip.CSpell`
+- `Skip.SpellCheck`
   - Omit spell checking in the `analyze` job.
 
 ## The pyproject.toml

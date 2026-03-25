@@ -66,19 +66,19 @@ Usually, an operation has a body parameter corresponding to the HTTP request bod
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.network import NetworkManagementClient
 
-client = NetworkManagementClient(credential=DefaultAzureCredential(), subscription_id="subid")
+client = NetworkManagementClient(credential=DefaultAzureCredential(), subscription_id="subscription-id")
 
 # 1: With a JSON-like object
 response = client.public_ip_addresses.begin_create_or_update(
     resource_group_name="rg1",
     public_ip_address_name="test-ip",
-    parameters={"location": "eastus", "properties": {"dnsSettings": {"domainNameLabel": "dnslbl"}}},
+    parameters={"location": "eastus", "properties": {"dnsSettings": {"domainNameLabel": "dnslabel"}}},
 ).result()
 print(response.as_dict())
 
 # 2: With a native model
 from azure.mgmt.network.models import PublicIPAddress, PublicIPAddressDnsSettings
-parameters = PublicIPAddress(location="eastus", dns_settings=PublicIPAddressDnsSettings(domain_name_label="dnslbl"))
+parameters = PublicIPAddress(location="eastus", dns_settings=PublicIPAddressDnsSettings(domain_name_label="dnslabel"))
 response = client.public_ip_addresses.begin_create_or_update(
     resource_group_name="rg1",
     public_ip_address_name="test-ip",
@@ -137,7 +137,7 @@ foo = Foo(prop="hello")
 subfoo = SubFoo(name="world")
 ```
 
-For more on code generation, see the [Dataplane SDK Generation](dataplane_generation.md) guide.
+For more on code generation, see the [Dataplane SDK Generation](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/dataplane_generation.md) guide.
 
 ---
 
@@ -172,7 +172,7 @@ This section shows how to build a private package (e.g., `azure-mgmt-devcenter`)
 
 ### Debugging
 
-For a detailed guide on enabling debug logging to trace how the SDK calls the REST API, see the [Debug Guide](debug_guide.md).
+For a detailed guide on enabling debug logging to trace how the SDK calls the REST API, see the [Debug Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/debug_guide.md).
 
 In short, add the following to your script and pass `logging_enable=True` to any SDK operation:
 
@@ -192,7 +192,7 @@ logging.basicConfig(level=logging.DEBUG,
 
 ## See Also
 
-- [Developer Set-Up](dev_setup.md) — Setting up a development environment
-- [Debug Guide](debug_guide.md) — Detailed logging and debugging instructions
-- [Testing](tests.md) — Writing unit and functional tests
-- [Dataplane SDK Generation](dataplane_generation.md) — Generating SDKs from TypeSpec
+- [Developer Set-Up](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/dev_setup.md) — Setting up a development environment
+- [Debug Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/debug_guide.md) — Detailed logging and debugging instructions
+- [Testing](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md) — Writing unit and functional tests
+- [Dataplane SDK Generation](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/dataplane_generation.md) — Generating SDKs from TypeSpec

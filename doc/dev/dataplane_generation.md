@@ -177,4 +177,4 @@ See the [Release Checklist](https://dev.azure.com/azure-sdk/internal/_wiki/wikis
 
 - **Update CHANGELOG.md** with the changes for the new version and an approximate release date (e.g., `1.0.0b1 (2022-02-02)`).
 - **Update the version number** according to the [package version rule](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/package_version/package_version_rule.md).
-- **Fix CI failures** — see [CI Troubleshooting](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/ci_troubleshooting.md).
+- **Fix CI failures** — see [CI Troubleshooting](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md).
