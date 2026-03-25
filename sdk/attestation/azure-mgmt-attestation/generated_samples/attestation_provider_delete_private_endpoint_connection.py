@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.attestation import AttestationManagementClient
 
 """
@@ -29,14 +31,13 @@ def main():
         subscription_id="{subscription-id}",
     )
 
-    response = client.private_endpoint_connections.delete(
+    client.private_endpoint_connections.delete(
         resource_group_name="res6977",
         provider_name="sto2527",
         private_endpoint_connection_name="{privateEndpointConnectionName}",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/attestation/resource-manager/Microsoft.Attestation/stable/2020-10-01/examples/AttestationProviderDeletePrivateEndpointConnection.json
+# x-ms-original-file: specification/attestation/resource-manager/Microsoft.Attestation/Attestation/stable/2021-06-01/examples/AttestationProviderDeletePrivateEndpointConnection.json
 if __name__ == "__main__":
     main()
