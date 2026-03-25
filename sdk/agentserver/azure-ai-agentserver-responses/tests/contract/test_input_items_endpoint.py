@@ -262,9 +262,7 @@ def test_input_items_returns_history_plus_current_input_in_desc_order() -> None:
 
 def test_input_items_string_input_treated_as_empty() -> None:
     """T1: string input (not a list) should produce an empty input_items list."""
-    app = Starlette()
-    map_responses_server(app, _noop_response_handler)
-    client = TestClient(app)
+    client = _build_client()
 
     # Send a create request where 'input' is a plain string, not a list.
     create_response = client.post(
@@ -323,9 +321,7 @@ def test_previous_response_id_propagated() -> None:
 
 def test_empty_previous_response_id_handled() -> None:
     """T4: an empty string for previous_response_id should not raise; treated as absent."""
-    app = Starlette()
-    map_responses_server(app, _noop_response_handler)
-    client = TestClient(app)
+    client = _build_client()
 
     create_response = client.post(
         "/responses",
@@ -365,9 +361,10 @@ def test_input_items_in_flight_fallback_to_runtime() -> None:
 
         return _events()
 
-    app = Starlette()
-    map_responses_server(app, _slow_handler)
-    client = TestClient(app, raise_server_exceptions=False)
+    _server = AgentServer()
+    _rhandler = ResponseHandler(_server)
+    _rhandler.create_handler(_slow_handler)
+    client = TestClient(_server.app, raise_server_exceptions=False)
 
     item = _message_input("inflight_msg_001", "in-flight-content")
     payload: Any = {

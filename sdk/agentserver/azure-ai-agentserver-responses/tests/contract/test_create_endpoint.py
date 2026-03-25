@@ -535,9 +535,10 @@ def test_sync_handler_exception_returns_500() -> None:
 
         return _events()
 
-    app = Starlette()
-    map_responses_server(app, _raising_handler)
-    client = TestClient(app, raise_server_exceptions=False)
+    _server = AgentServer()
+    _rh = ResponseHandler(_server)
+    _rh.create_handler(_raising_handler)
+    client = TestClient(_server.app, raise_server_exceptions=False)
 
     response = client.post(
         "/responses",
@@ -569,9 +570,10 @@ def test_sync_no_terminal_event_still_completes() -> None:
 
         return _events()
 
-    app = Starlette()
-    map_responses_server(app, _no_terminal_handler)
-    client = TestClient(app)
+    _server = AgentServer()
+    _rh = ResponseHandler(_server)
+    _rh.create_handler(_no_terminal_handler)
+    client = TestClient(_server.app)
 
     response = client.post(
         "/responses",
@@ -614,9 +616,10 @@ def test_s007_wrong_first_event_sync() -> None:
 
         return _events()
 
-    app = Starlette()
-    map_responses_server(app, _wrong_first_event_handler)
-    client = TestClient(app, raise_server_exceptions=False)
+    _server = AgentServer()
+    _rh = ResponseHandler(_server)
+    _rh.create_handler(_wrong_first_event_handler)
+    client = TestClient(_server.app, raise_server_exceptions=False)
 
     response = client.post(
         "/responses",
@@ -647,9 +650,10 @@ def test_s007_wrong_first_event_stream() -> None:
 
         return _events()
 
-    app = Starlette()
-    map_responses_server(app, _wrong_first_event_handler)
-    client = TestClient(app, raise_server_exceptions=False)
+    _server = AgentServer()
+    _rh = ResponseHandler(_server)
+    _rh.create_handler(_wrong_first_event_handler)
+    client = TestClient(_server.app, raise_server_exceptions=False)
 
     import json as _json
 
@@ -704,9 +708,10 @@ def test_s008_mismatched_id_stream() -> None:
 
         return _events()
 
-    app = Starlette()
-    map_responses_server(app, _mismatched_id_handler)
-    client = TestClient(app, raise_server_exceptions=False)
+    _server = AgentServer()
+    _rh = ResponseHandler(_server)
+    _rh.create_handler(_mismatched_id_handler)
+    client = TestClient(_server.app, raise_server_exceptions=False)
 
     import json as _json
 
@@ -757,9 +762,10 @@ def test_s009_terminal_status_on_created_stream() -> None:
 
         return _events()
 
-    app = Starlette()
-    map_responses_server(app, _terminal_on_created_handler)
-    client = TestClient(app, raise_server_exceptions=False)
+    _server = AgentServer()
+    _rh = ResponseHandler(_server)
+    _rh.create_handler(_terminal_on_created_handler)
+    client = TestClient(_server.app, raise_server_exceptions=False)
 
     import json as _json
 
@@ -810,9 +816,10 @@ def test_s007_valid_handler_not_affected() -> None:
 
         return _events()
 
-    app = Starlette()
-    map_responses_server(app, _compliant_handler)
-    client = TestClient(app)
+    _server = AgentServer()
+    _rh = ResponseHandler(_server)
+    _rh.create_handler(_compliant_handler)
+    client = TestClient(_server.app)
 
     import json as _json
 

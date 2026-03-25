@@ -90,7 +90,6 @@ class ResponseHandler:
 
         # Build internal components
         runtime_options = options or ResponsesServerOptions()
-
         # SSE-specific headers (x-platform-server is handled by hosting middleware)
         sse_headers: dict[str, str] = {
             "connection": "keep-alive",
@@ -112,6 +111,7 @@ class ResponseHandler:
             orchestrator=orchestrator,
             runtime_state=runtime_state,
             runtime_options=runtime_options,
+            response_headers={},
             sse_headers=sse_headers,
             tracing=self._tracing,
             provider=resolved_provider,

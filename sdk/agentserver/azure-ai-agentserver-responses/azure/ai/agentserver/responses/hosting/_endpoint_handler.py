@@ -71,6 +71,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         orchestrator: _ResponseOrchestrator,
         runtime_state: _RuntimeState,
         runtime_options: ResponsesServerOptions,
+        response_headers: dict[str, str],
         sse_headers: dict[str, str],
         tracing: "TracingHelper | None" = None,
         provider: ResponseProviderProtocol,
@@ -84,6 +85,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :type runtime_state: _RuntimeState
         :param runtime_options: Server runtime options.
         :type runtime_options: ResponsesServerOptions
+        :param response_headers: Headers to include on all responses.
+        :type response_headers: dict[str, str]
         :param sse_headers: SSE-specific headers (e.g. connection, cache-control).
         :type sse_headers: dict[str, str]
         :param tracing: Optional tracing helper from hosting's AgentServer.
@@ -96,6 +99,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         self._orchestrator = orchestrator
         self._runtime_state = runtime_state
         self._runtime_options = runtime_options
+        self._response_headers = response_headers
         self._sse_headers = sse_headers
         self._tracing = tracing
         self._provider = provider
@@ -324,7 +328,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         self._tracing.end_span(otel_span, exc=exc.original)
                     return _error_response(exc.original, {})
 
-        try:
             snapshot = await self._orchestrator.run_background(ctx)
             if self._tracing is not None:
                 self._tracing.end_span(otel_span)

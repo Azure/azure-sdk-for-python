@@ -12,18 +12,18 @@ import asyncio
 from collections.abc import AsyncIterable
 from typing import Any
 
-import uvicorn
-from starlette.applications import Starlette
-from starlette.responses import JSONResponse
-
-from azure.ai.agentserver.responses import response_handler
+from azure.ai.agentserver.hosting import AgentServer
 from azure.ai.agentserver.responses._handlers import ResponseContext
 from azure.ai.agentserver.responses.models._generated.sdk.models.models._models import CreateResponse
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
-from azure.ai.agentserver.responses.hosting import map_responses_server
+from azure.ai.agentserver.responses.hosting import ResponseHandler
 
 
-@response_handler
+server = AgentServer()
+responses = ResponseHandler(server)
+
+
+@responses.create_handler
 def multi_output_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event) -> AsyncIterable[dict[str, Any]]:
     """Produces reasoning plus final message output in one response."""
     async def _events() -> AsyncIterable[dict[str, Any]]:
@@ -58,16 +58,8 @@ def multi_output_handler(request: CreateResponse, context: ResponseContext, canc
     return _events()
 
 
-def create_app() -> Starlette:
-    app = Starlette()
-    app.add_route("/ready", lambda request: JSONResponse({"status": "ready"}), methods=["GET"])
-    map_responses_server(app, multi_output_handler)
-    return app
-
-
 def main() -> None:
-    app = create_app()
-    uvicorn.run(app, host="127.0.0.1", port=5102)
+    server.run(host="127.0.0.1", port=5102)
 
 
 if __name__ == "__main__":

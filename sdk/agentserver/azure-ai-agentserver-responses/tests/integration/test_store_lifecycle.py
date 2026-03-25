@@ -106,9 +106,10 @@ def test_store_lifecycle__background_completion_is_observed_deterministically() 
 
 
 def test_store_lifecycle__background_cancel_transition_is_deterministic() -> None:
-    app = Starlette()
-    map_responses_server(app, _cancellable_bg_handler)
-    client = TestClient(app)
+    server = AgentServer()
+    _responses = ResponseHandler(server)
+    _responses.create_handler(_cancellable_bg_handler)
+    client = TestClient(server.app)
 
     create_response = client.post(
         "/responses",

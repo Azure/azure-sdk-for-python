@@ -409,11 +409,11 @@ def test_bg_stream_cancelled_subject_completed() -> None:
 
     import asyncio
     import threading
-    from starlette.applications import Starlette as _Starlette
-    from azure.ai.agentserver.responses.hosting import map_responses_server as _map
 
-    app = _Starlette()
-    _map(app, _blocking_bg_stream_handler)
+    _server = AgentServer()
+    _rh = ResponseHandler(_server)
+    _rh.create_handler(_blocking_bg_stream_handler)
+    app = _server.app
 
     response_id = IdGenerator.new_response_id()
     stream_events_received: list[str] = []

@@ -435,9 +435,10 @@ def test_stream_pre_creation_error_emits_error_event() -> None:
 
     B8: The standalone ``error`` event must be the only event; ``response.created`` must NOT appear.
     """
-    app = Starlette()
-    map_responses_server(app, _throwing_before_yield_handler)
-    client = TestClient(app, raise_server_exceptions=False)
+    _server = AgentServer()
+    _rh = ResponseHandler(_server)
+    _rh.create_handler(_throwing_before_yield_handler)
+    client = TestClient(_server.app, raise_server_exceptions=False)
 
     with client.stream(
         "POST",
@@ -459,9 +460,10 @@ def test_stream_post_creation_error_emits_response_failed() -> None:
 
     B-13: After response.created, handler failures surface as ``response.failed``, not raw ``error``.
     """
-    app = Starlette()
-    map_responses_server(app, _throwing_after_created_handler)
-    client = TestClient(app, raise_server_exceptions=False)
+    _server = AgentServer()
+    _rh = ResponseHandler(_server)
+    _rh.create_handler(_throwing_after_created_handler)
+    client = TestClient(_server.app, raise_server_exceptions=False)
 
     with client.stream(
         "POST",
@@ -488,9 +490,7 @@ def test_stream_empty_handler_emits_full_lifecycle() -> None:
 
     The SSE stream must contain response.created → response.in_progress → response.completed.
     """
-    app = Starlette()
-    map_responses_server(app, _noop_response_handler)
-    client = TestClient(app)
+    client = _build_client()
 
     with client.stream(
         "POST",
@@ -518,9 +518,7 @@ def test_stream_empty_handler_emits_full_lifecycle() -> None:
 
 def test_stream_sequence_numbers_monotonic() -> None:
     """T4 — SSE events from a streaming response have strictly monotonically increasing sequence numbers starting at 0."""
-    app = Starlette()
-    map_responses_server(app, _noop_response_handler)
-    client = TestClient(app)
+    client = _build_client()
 
     with client.stream(
         "POST",
