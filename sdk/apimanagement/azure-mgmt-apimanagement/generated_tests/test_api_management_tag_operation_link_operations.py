@@ -25,7 +25,7 @@ class TestApiManagementTagOperationLinkOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             tag_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestApiManagementTagOperationLinkOperations(AzureMgmtRecordedTestCase):
             service_name="str",
             tag_id="str",
             operation_link_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestApiManagementTagOperationLinkOperations(AzureMgmtRecordedTestCase):
             tag_id="str",
             operation_link_id="str",
             parameters={"id": "str", "name": "str", "operationId": "str", "type": "str"},
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -68,7 +68,7 @@ class TestApiManagementTagOperationLinkOperations(AzureMgmtRecordedTestCase):
             service_name="str",
             tag_id="str",
             operation_link_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

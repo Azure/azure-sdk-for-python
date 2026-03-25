@@ -24,7 +24,7 @@ class TestApiManagementPrivateEndpointConnectionOperations(AzureMgmtRecordedTest
         response = self.client.private_endpoint_connection.list_by_service(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestApiManagementPrivateEndpointConnectionOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             service_name="str",
             private_endpoint_connection_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -60,7 +60,7 @@ class TestApiManagementPrivateEndpointConnectionOperations(AzureMgmtRecordedTest
                     }
                 },
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -73,7 +73,7 @@ class TestApiManagementPrivateEndpointConnectionOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             service_name="str",
             private_endpoint_connection_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -85,7 +85,7 @@ class TestApiManagementPrivateEndpointConnectionOperations(AzureMgmtRecordedTest
         response = self.client.private_endpoint_connection.list_private_link_resources(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -98,7 +98,7 @@ class TestApiManagementPrivateEndpointConnectionOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             service_name="str",
             private_link_sub_resource_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

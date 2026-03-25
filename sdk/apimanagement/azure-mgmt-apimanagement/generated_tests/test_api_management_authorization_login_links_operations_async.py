@@ -28,7 +28,7 @@ class TestApiManagementAuthorizationLoginLinksOperationsAsync(AzureMgmtRecordedT
             authorization_provider_id="str",
             authorization_id="str",
             parameters={"postLoginRedirectUrl": "str"},
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

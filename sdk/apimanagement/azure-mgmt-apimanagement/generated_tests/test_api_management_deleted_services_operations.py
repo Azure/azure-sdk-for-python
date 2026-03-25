@@ -22,7 +22,7 @@ class TestApiManagementDeletedServicesOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_deleted_services_list_by_subscription(self, resource_group):
         response = self.client.deleted_services.list_by_subscription(
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestApiManagementDeletedServicesOperations(AzureMgmtRecordedTestCase):
         response = self.client.deleted_services.get_by_name(
             service_name="str",
             location="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestApiManagementDeletedServicesOperations(AzureMgmtRecordedTestCase):
         response = self.client.deleted_services.begin_purge(
             service_name="str",
             location="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

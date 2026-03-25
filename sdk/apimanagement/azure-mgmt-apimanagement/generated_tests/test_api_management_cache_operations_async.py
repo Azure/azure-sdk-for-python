@@ -25,7 +25,7 @@ class TestApiManagementCacheOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.cache.list_by_service(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestApiManagementCacheOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             cache_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestApiManagementCacheOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             cache_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -73,7 +73,7 @@ class TestApiManagementCacheOperationsAsync(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "useFromLocation": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -88,7 +88,7 @@ class TestApiManagementCacheOperationsAsync(AzureMgmtRecordedTestCase):
             cache_id="str",
             if_match="str",
             parameters={"connectionString": "str", "description": "str", "resourceId": "str", "useFromLocation": "str"},
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -102,7 +102,7 @@ class TestApiManagementCacheOperationsAsync(AzureMgmtRecordedTestCase):
             service_name="str",
             cache_id="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

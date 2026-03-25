@@ -26,7 +26,7 @@ class TestApiManagementApiIssueAttachmentOperations(AzureMgmtRecordedTestCase):
             service_name="str",
             api_id="str",
             issue_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -41,7 +41,7 @@ class TestApiManagementApiIssueAttachmentOperations(AzureMgmtRecordedTestCase):
             api_id="str",
             issue_id="str",
             attachment_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -56,7 +56,7 @@ class TestApiManagementApiIssueAttachmentOperations(AzureMgmtRecordedTestCase):
             api_id="str",
             issue_id="str",
             attachment_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -79,7 +79,7 @@ class TestApiManagementApiIssueAttachmentOperations(AzureMgmtRecordedTestCase):
                 "title": "str",
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -95,7 +95,7 @@ class TestApiManagementApiIssueAttachmentOperations(AzureMgmtRecordedTestCase):
             issue_id="str",
             attachment_id="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

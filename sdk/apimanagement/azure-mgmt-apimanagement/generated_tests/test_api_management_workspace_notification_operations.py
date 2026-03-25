@@ -25,7 +25,7 @@ class TestApiManagementWorkspaceNotificationOperations(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             service_name="str",
             workspace_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestApiManagementWorkspaceNotificationOperations(AzureMgmtRecordedTestCase
             service_name="str",
             workspace_id="str",
             notification_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestApiManagementWorkspaceNotificationOperations(AzureMgmtRecordedTestCase
             service_name="str",
             workspace_id="str",
             notification_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

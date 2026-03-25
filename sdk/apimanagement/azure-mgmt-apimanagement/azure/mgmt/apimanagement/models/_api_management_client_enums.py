@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -139,12 +140,20 @@ class AuthorizationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class BackendProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Backend communication protocol."""
+    """Backend communication protocol. Required when backend type is 'Single'."""
 
     HTTP = "http"
     """The Backend is a RESTful service."""
     SOAP = "soap"
     """The Backend is a SOAP service."""
+
+
+class BackendSessionIdSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Source from where the session id is extracted."""
+
+    COOKIE = "cookie"
+    """The session id is set by APIM gateway in a cookie and is extracted from the cookies in client
+    requests."""
 
 
 class BackendType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -172,6 +181,26 @@ class BearerTokenSendingMethods(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Access token will be transmitted as query parameters."""
 
 
+class CarbonEmissionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Scope 2 carbon emission preference for the backend. When specified, the load balancer will
+    optimize traffic flow by routing to regions that have carbon emission less than or equal to the
+    specified category. However, when all other backends are not available it will route traffic to
+    these regions anyway. This requires the backend to be attributed with 'azureRegion'
+    information.
+    """
+
+    VERY_LOW = "VeryLow"
+    """Carbon intensity of less than or equal to 150 grams CO₂e per KWh"""
+    LOW = "Low"
+    """Carbon intensity between 151 & 300 (incl) grams CO₂e per KWh"""
+    MEDIUM = "Medium"
+    """Carbon intensity between 301 & 500 (incl) grams CO₂e per KWh"""
+    HIGH = "High"
+    """Carbon intensity between 501 & 700 (incl) grams CO₂e per KWh"""
+    VERY_HIGH = "VeryHigh"
+    """Carbon intensity of more than 700 grams CO₂e per KWh"""
+
+
 class CertificateConfigurationStoreName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The System.Security.Cryptography.x509certificates.StoreName certificate store location. Only
     Root and CertificateAuthority are valid locations.
@@ -196,6 +225,24 @@ class CertificateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COMPLETED = "Completed"
     FAILED = "Failed"
     IN_PROGRESS = "InProgress"
+
+
+class ClientApplicationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Client application state. The value derives the state of an application based on the statuses
+    of its associated ClientApplicationProductLinks.
+    """
+
+    PENDING = "pending"
+    """If there are no associated ClientApplicationLinks or all ClientApplicationLinks are in a state
+    that doesn't meet the criteria for the states: active, rejected, approved (e.g., a mix of
+    active and rejected without any approved)."""
+    ACTIVE = "active"
+    """If there are no approved ClientApplicationLink, but at least one ClientApplicationLink is
+    active, the Application is considered active"""
+    REJECTED = "rejected"
+    """If all ClientApplicationLinks are rejected, the Application is considered rejected"""
+    APPROVED = "approved"
+    """If at least one ClientApplicationLink is approved, the Application is considered approved"""
 
 
 class ClientAuthenticationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -351,7 +398,9 @@ class ExportResultFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Export the API Definition in OpenAPI Specification 3.0 to Storage Blob."""
 
 
-class GatewayListDebugCredentialsContractPurpose(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class GatewayListDebugCredentialsContractPurpose(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Purpose of debug credential."""
 
     TRACING = "tracing"
@@ -452,6 +501,13 @@ class KeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SECONDARY = "secondary"
 
 
+class KeyVaultFetchCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The last status of the Key Vault certificate fetch process."""
+
+    SUCCESS = "Success"
+    FAILED = "Failed"
+
+
 class KeyVaultRefreshState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """KeyVaultRefreshState."""
 
@@ -485,6 +541,22 @@ class LegacyPortalStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Legacy Portal is disabled for the service."""
 
 
+class LlmDiagnosticSettings(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """LlmDiagnosticSettings."""
+
+    ENABLED = "enabled"
+    """Default LLM logs are enabled."""
+    DISABLED = "disabled"
+    """Default LLM logs are disabled."""
+
+
+class LlmMessageLogTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """LlmMessageLogTypes."""
+
+    ALL = "all"
+    """Log all messages."""
+
+
 class LoggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Logger type."""
 
@@ -494,6 +566,17 @@ class LoggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Azure Application Insights as log destination."""
     AZURE_MONITOR = "azureMonitor"
     """Azure Monitor"""
+
+
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
+    allowed).
+    """
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
 
 class Method(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -700,7 +783,9 @@ class PreferredIPVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     I_PV4 = "IPv4"
 
 
-class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PrivateEndpointConnectionProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
@@ -715,6 +800,13 @@ class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiv
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
+
+
+class ProductAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ProductAuthType."""
+
+    SUBSCRIPTION_KEY = "subscription-key"
+    APPLICATION_TOKEN = "application-token"
 
 
 class ProductState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -744,6 +836,17 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
+
+class ReleaseChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Release Channel of this API Management service."""
+
+    PREVIEW = "Preview"
+    """Preview Channel of the service."""
+    DEFAULT = "Default"
+    """Default Channel of the service."""
+    STABLE = "Stable"
+    """Stable Channel of the service."""
 
 
 class ResourceSkuCapacityScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -805,6 +908,8 @@ class SkuType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BasicV2 SKU of Api Management."""
     STANDARD_V2 = "StandardV2"
     """StandardV2 SKU of Api Management."""
+    PREMIUM_V2 = "PremiumV2"
+    """PremiumV2 SKU of Api Management."""
 
 
 class SoapApiType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

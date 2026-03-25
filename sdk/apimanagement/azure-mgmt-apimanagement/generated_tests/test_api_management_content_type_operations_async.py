@@ -25,7 +25,7 @@ class TestApiManagementContentTypeOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.content_type.list_by_service(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestApiManagementContentTypeOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             content_type_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -59,7 +59,7 @@ class TestApiManagementContentTypeOperationsAsync(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "version": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -73,7 +73,7 @@ class TestApiManagementContentTypeOperationsAsync(AzureMgmtRecordedTestCase):
             service_name="str",
             content_type_id="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

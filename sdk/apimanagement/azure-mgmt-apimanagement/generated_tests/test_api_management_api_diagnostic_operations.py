@@ -25,7 +25,7 @@ class TestApiManagementApiDiagnosticOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             api_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestApiManagementApiDiagnosticOperations(AzureMgmtRecordedTestCase):
             service_name="str",
             api_id="str",
             diagnostic_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestApiManagementApiDiagnosticOperations(AzureMgmtRecordedTestCase):
             service_name="str",
             api_id="str",
             diagnostic_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -107,6 +107,11 @@ class TestApiManagementApiDiagnosticOperations(AzureMgmtRecordedTestCase):
                 },
                 "httpCorrelationProtocol": "str",
                 "id": "str",
+                "largeLanguageModel": {
+                    "logs": "str",
+                    "requests": {"maxSizeInBytes": 0, "messages": "str"},
+                    "responses": {"maxSizeInBytes": 0, "messages": "str"},
+                },
                 "logClientIp": bool,
                 "loggerId": "str",
                 "metrics": bool,
@@ -116,7 +121,7 @@ class TestApiManagementApiDiagnosticOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "verbosity": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -171,6 +176,11 @@ class TestApiManagementApiDiagnosticOperations(AzureMgmtRecordedTestCase):
                 },
                 "httpCorrelationProtocol": "str",
                 "id": "str",
+                "largeLanguageModel": {
+                    "logs": "str",
+                    "requests": {"maxSizeInBytes": 0, "messages": "str"},
+                    "responses": {"maxSizeInBytes": 0, "messages": "str"},
+                },
                 "logClientIp": bool,
                 "loggerId": "str",
                 "metrics": bool,
@@ -180,7 +190,7 @@ class TestApiManagementApiDiagnosticOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "verbosity": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -195,7 +205,7 @@ class TestApiManagementApiDiagnosticOperations(AzureMgmtRecordedTestCase):
             api_id="str",
             diagnostic_id="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

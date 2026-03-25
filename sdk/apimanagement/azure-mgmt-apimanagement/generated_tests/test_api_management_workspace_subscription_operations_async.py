@@ -26,7 +26,7 @@ class TestApiManagementWorkspaceSubscriptionOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             service_name="str",
             workspace_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestApiManagementWorkspaceSubscriptionOperationsAsync(AzureMgmtRecordedTes
             service_name="str",
             workspace_id="str",
             sid="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestApiManagementWorkspaceSubscriptionOperationsAsync(AzureMgmtRecordedTes
             service_name="str",
             workspace_id="str",
             sid="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -77,7 +77,7 @@ class TestApiManagementWorkspaceSubscriptionOperationsAsync(AzureMgmtRecordedTes
                 "secondaryKey": "str",
                 "state": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -103,7 +103,7 @@ class TestApiManagementWorkspaceSubscriptionOperationsAsync(AzureMgmtRecordedTes
                 "state": "str",
                 "stateComment": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -118,7 +118,7 @@ class TestApiManagementWorkspaceSubscriptionOperationsAsync(AzureMgmtRecordedTes
             workspace_id="str",
             sid="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -132,7 +132,7 @@ class TestApiManagementWorkspaceSubscriptionOperationsAsync(AzureMgmtRecordedTes
             service_name="str",
             workspace_id="str",
             sid="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -146,7 +146,7 @@ class TestApiManagementWorkspaceSubscriptionOperationsAsync(AzureMgmtRecordedTes
             service_name="str",
             workspace_id="str",
             sid="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -160,7 +160,7 @@ class TestApiManagementWorkspaceSubscriptionOperationsAsync(AzureMgmtRecordedTes
             service_name="str",
             workspace_id="str",
             sid="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

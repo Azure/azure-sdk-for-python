@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -34,6 +35,7 @@ from ._api_tag_description_operations import ApiTagDescriptionOperations  # type
 from ._operation_operations import OperationOperations  # type: ignore
 from ._api_wiki_operations import ApiWikiOperations  # type: ignore
 from ._api_wikis_operations import ApiWikisOperations  # type: ignore
+from ._api_tool_operations import ApiToolOperations  # type: ignore
 from ._api_export_operations import ApiExportOperations  # type: ignore
 from ._api_version_set_operations import ApiVersionSetOperations  # type: ignore
 from ._authorization_provider_operations import AuthorizationProviderOperations  # type: ignore
@@ -44,7 +46,9 @@ from ._authorization_server_operations import AuthorizationServerOperations  # t
 from ._backend_operations import BackendOperations  # type: ignore
 from ._cache_operations import CacheOperations  # type: ignore
 from ._certificate_operations import CertificateOperations  # type: ignore
-from ._api_management_client_operations import ApiManagementClientOperationsMixin  # type: ignore
+from ._client_application_operations import ClientApplicationOperations  # type: ignore
+from ._client_application_product_link_operations import ClientApplicationProductLinkOperations  # type: ignore
+from ._api_management_client_operations import _ApiManagementClientOperationsMixin  # type: ignore # pylint: disable=unused-import
 from ._content_type_operations import ContentTypeOperations  # type: ignore
 from ._content_item_operations import ContentItemOperations  # type: ignore
 from ._deleted_services_operations import DeletedServicesOperations  # type: ignore
@@ -55,6 +59,7 @@ from ._diagnostic_operations import DiagnosticOperations  # type: ignore
 from ._documentation_operations import DocumentationOperations  # type: ignore
 from ._email_template_operations import EmailTemplateOperations  # type: ignore
 from ._api_gateway_config_connection_operations import ApiGatewayConfigConnectionOperations  # type: ignore
+from ._api_gateway_hostname_binding_operations import ApiGatewayHostnameBindingOperations  # type: ignore
 from ._gateway_operations import GatewayOperations  # type: ignore
 from ._gateway_hostname_configuration_operations import GatewayHostnameConfigurationOperations  # type: ignore
 from ._gateway_api_operations import GatewayApiOperations  # type: ignore
@@ -177,6 +182,7 @@ __all__ = [
     "OperationOperations",
     "ApiWikiOperations",
     "ApiWikisOperations",
+    "ApiToolOperations",
     "ApiExportOperations",
     "ApiVersionSetOperations",
     "AuthorizationProviderOperations",
@@ -187,7 +193,8 @@ __all__ = [
     "BackendOperations",
     "CacheOperations",
     "CertificateOperations",
-    "ApiManagementClientOperationsMixin",
+    "ClientApplicationOperations",
+    "ClientApplicationProductLinkOperations",
     "ContentTypeOperations",
     "ContentItemOperations",
     "DeletedServicesOperations",
@@ -198,6 +205,7 @@ __all__ = [
     "DocumentationOperations",
     "EmailTemplateOperations",
     "ApiGatewayConfigConnectionOperations",
+    "ApiGatewayHostnameBindingOperations",
     "GatewayOperations",
     "GatewayHostnameConfigurationOperations",
     "GatewayApiOperations",

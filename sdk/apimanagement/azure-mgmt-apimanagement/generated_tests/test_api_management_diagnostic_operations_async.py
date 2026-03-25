@@ -25,7 +25,7 @@ class TestApiManagementDiagnosticOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.diagnostic.list_by_service(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestApiManagementDiagnosticOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             diagnostic_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestApiManagementDiagnosticOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             diagnostic_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -104,6 +104,11 @@ class TestApiManagementDiagnosticOperationsAsync(AzureMgmtRecordedTestCase):
                 },
                 "httpCorrelationProtocol": "str",
                 "id": "str",
+                "largeLanguageModel": {
+                    "logs": "str",
+                    "requests": {"maxSizeInBytes": 0, "messages": "str"},
+                    "responses": {"maxSizeInBytes": 0, "messages": "str"},
+                },
                 "logClientIp": bool,
                 "loggerId": "str",
                 "metrics": bool,
@@ -113,7 +118,7 @@ class TestApiManagementDiagnosticOperationsAsync(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "verbosity": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -167,6 +172,11 @@ class TestApiManagementDiagnosticOperationsAsync(AzureMgmtRecordedTestCase):
                 },
                 "httpCorrelationProtocol": "str",
                 "id": "str",
+                "largeLanguageModel": {
+                    "logs": "str",
+                    "requests": {"maxSizeInBytes": 0, "messages": "str"},
+                    "responses": {"maxSizeInBytes": 0, "messages": "str"},
+                },
                 "logClientIp": bool,
                 "loggerId": "str",
                 "metrics": bool,
@@ -176,7 +186,7 @@ class TestApiManagementDiagnosticOperationsAsync(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "verbosity": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -190,7 +200,7 @@ class TestApiManagementDiagnosticOperationsAsync(AzureMgmtRecordedTestCase):
             service_name="str",
             diagnostic_id="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

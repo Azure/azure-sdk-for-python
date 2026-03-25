@@ -28,7 +28,7 @@ class TestApiManagementTenantConfigurationOperationsAsync(AzureMgmtRecordedTestC
                 service_name="str",
                 configuration_name="str",
                 parameters={"branch": "str", "force": bool},
-                api_version="2024-05-01",
+                api_version="2025-03-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -44,7 +44,7 @@ class TestApiManagementTenantConfigurationOperationsAsync(AzureMgmtRecordedTestC
                 service_name="str",
                 configuration_name="str",
                 parameters={"branch": "str", "force": bool},
-                api_version="2024-05-01",
+                api_version="2025-03-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -60,7 +60,7 @@ class TestApiManagementTenantConfigurationOperationsAsync(AzureMgmtRecordedTestC
                 service_name="str",
                 configuration_name="str",
                 parameters={"branch": "str", "force": bool},
-                api_version="2024-05-01",
+                api_version="2025-03-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -74,7 +74,7 @@ class TestApiManagementTenantConfigurationOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             service_name="str",
             configuration_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

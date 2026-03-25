@@ -27,7 +27,7 @@ class TestApiManagementWorkspaceApiReleaseOperationsAsync(AzureMgmtRecordedTestC
             service_name="str",
             workspace_id="str",
             api_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,7 +42,7 @@ class TestApiManagementWorkspaceApiReleaseOperationsAsync(AzureMgmtRecordedTestC
             workspace_id="str",
             api_id="str",
             release_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -57,7 +57,7 @@ class TestApiManagementWorkspaceApiReleaseOperationsAsync(AzureMgmtRecordedTestC
             workspace_id="str",
             api_id="str",
             release_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -81,7 +81,7 @@ class TestApiManagementWorkspaceApiReleaseOperationsAsync(AzureMgmtRecordedTestC
                 "type": "str",
                 "updatedDateTime": "2020-02-20 00:00:00",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -106,7 +106,7 @@ class TestApiManagementWorkspaceApiReleaseOperationsAsync(AzureMgmtRecordedTestC
                 "type": "str",
                 "updatedDateTime": "2020-02-20 00:00:00",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -122,7 +122,7 @@ class TestApiManagementWorkspaceApiReleaseOperationsAsync(AzureMgmtRecordedTestC
             api_id="str",
             release_id="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

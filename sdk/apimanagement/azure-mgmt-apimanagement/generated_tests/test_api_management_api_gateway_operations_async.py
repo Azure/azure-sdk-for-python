@@ -50,7 +50,7 @@ class TestApiManagementApiGatewayOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "virtualNetworkType": "str",
                 },
-                api_version="2024-05-01",
+                api_version="2025-03-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -79,7 +79,7 @@ class TestApiManagementApiGatewayOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "virtualNetworkType": "str",
                 },
-                api_version="2024-05-01",
+                api_version="2025-03-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -92,7 +92,7 @@ class TestApiManagementApiGatewayOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.api_gateway.get(
             resource_group_name=resource_group.name,
             gateway_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -105,7 +105,7 @@ class TestApiManagementApiGatewayOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.api_gateway.begin_delete(
                 resource_group_name=resource_group.name,
                 gateway_name="str",
-                api_version="2024-05-01",
+                api_version="2025-03-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -117,7 +117,7 @@ class TestApiManagementApiGatewayOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_api_gateway_list_by_resource_group(self, resource_group):
         response = self.client.api_gateway.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -127,7 +127,7 @@ class TestApiManagementApiGatewayOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_api_gateway_list(self, resource_group):
         response = self.client.api_gateway.list(
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

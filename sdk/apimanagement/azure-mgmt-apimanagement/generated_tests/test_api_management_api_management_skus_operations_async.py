@@ -23,7 +23,7 @@ class TestApiManagementApiManagementSkusOperationsAsync(AzureMgmtRecordedTestCas
     @recorded_by_proxy_async
     async def test_api_management_skus_list(self, resource_group):
         response = self.client.api_management_skus.list(
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

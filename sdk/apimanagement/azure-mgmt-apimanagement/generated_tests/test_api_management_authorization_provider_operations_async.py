@@ -25,7 +25,7 @@ class TestApiManagementAuthorizationProviderOperationsAsync(AzureMgmtRecordedTes
         response = self.client.authorization_provider.list_by_service(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestApiManagementAuthorizationProviderOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             service_name="str",
             authorization_provider_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -58,11 +58,16 @@ class TestApiManagementAuthorizationProviderOperationsAsync(AzureMgmtRecordedTes
                 "name": "str",
                 "oauth2": {
                     "grantTypes": {"authorizationCode": {"str": "str"}, "clientCredentials": {"str": "str"}},
+                    "keyVault": {
+                        "lastStatus": {"code": "str", "message": "str", "timeStampUtc": "2020-02-20 00:00:00"},
+                        "secretIdentifier": "str",
+                        "updated": "2020-02-20 00:00:00",
+                    },
                     "redirectUrl": "str",
                 },
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -76,7 +81,20 @@ class TestApiManagementAuthorizationProviderOperationsAsync(AzureMgmtRecordedTes
             service_name="str",
             authorization_provider_id="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_authorization_provider_refresh_secret(self, resource_group):
+        response = await self.client.authorization_provider.refresh_secret(
+            resource_group_name=resource_group.name,
+            service_name="str",
+            authorization_provider_id="str",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

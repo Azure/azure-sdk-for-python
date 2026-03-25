@@ -26,7 +26,7 @@ class TestApiManagementNotificationRecipientUserOperationsAsync(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             service_name="str",
             notification_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestApiManagementNotificationRecipientUserOperationsAsync(AzureMgmtRecorde
             service_name="str",
             notification_name="str",
             user_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestApiManagementNotificationRecipientUserOperationsAsync(AzureMgmtRecorde
             service_name="str",
             notification_name="str",
             user_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -68,7 +68,7 @@ class TestApiManagementNotificationRecipientUserOperationsAsync(AzureMgmtRecorde
             service_name="str",
             notification_name="str",
             user_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

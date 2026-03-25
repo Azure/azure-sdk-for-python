@@ -26,7 +26,7 @@ class TestApiManagementQuotaByCounterKeysOperationsAsync(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             service_name="str",
             quota_counter_key="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestApiManagementQuotaByCounterKeysOperationsAsync(AzureMgmtRecordedTestCa
             service_name="str",
             quota_counter_key="str",
             parameters={"callsCount": 0, "kbTransferred": 0.0},
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

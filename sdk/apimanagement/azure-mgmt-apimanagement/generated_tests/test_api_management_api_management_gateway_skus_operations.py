@@ -24,7 +24,7 @@ class TestApiManagementApiManagementGatewaySkusOperations(AzureMgmtRecordedTestC
         response = self.client.api_management_gateway_skus.list_available_skus(
             resource_group_name=resource_group.name,
             gateway_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

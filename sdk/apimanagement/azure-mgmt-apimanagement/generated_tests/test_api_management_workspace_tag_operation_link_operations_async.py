@@ -27,7 +27,7 @@ class TestApiManagementWorkspaceTagOperationLinkOperationsAsync(AzureMgmtRecorde
             service_name="str",
             workspace_id="str",
             tag_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,7 +42,7 @@ class TestApiManagementWorkspaceTagOperationLinkOperationsAsync(AzureMgmtRecorde
             workspace_id="str",
             tag_id="str",
             operation_link_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -58,7 +58,7 @@ class TestApiManagementWorkspaceTagOperationLinkOperationsAsync(AzureMgmtRecorde
             tag_id="str",
             operation_link_id="str",
             parameters={"id": "str", "name": "str", "operationId": "str", "type": "str"},
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -73,7 +73,7 @@ class TestApiManagementWorkspaceTagOperationLinkOperationsAsync(AzureMgmtRecorde
             workspace_id="str",
             tag_id="str",
             operation_link_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

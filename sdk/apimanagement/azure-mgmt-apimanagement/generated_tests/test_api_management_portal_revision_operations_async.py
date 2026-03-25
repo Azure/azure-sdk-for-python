@@ -25,7 +25,7 @@ class TestApiManagementPortalRevisionOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.portal_revision.list_by_service(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestApiManagementPortalRevisionOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             portal_revision_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestApiManagementPortalRevisionOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             portal_revision_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -77,7 +77,7 @@ class TestApiManagementPortalRevisionOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "updatedDateTime": "2020-02-20 00:00:00",
                 },
-                api_version="2024-05-01",
+                api_version="2025-03-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -105,7 +105,7 @@ class TestApiManagementPortalRevisionOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "updatedDateTime": "2020-02-20 00:00:00",
                 },
-                api_version="2024-05-01",
+                api_version="2025-03-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

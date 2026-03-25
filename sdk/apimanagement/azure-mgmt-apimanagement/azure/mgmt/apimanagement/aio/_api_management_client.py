@@ -7,27 +7,29 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
 from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.settings import settings
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 
 from .. import models as _models
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ApiManagementClientConfiguration
 from .operations import (
     AllPoliciesOperations,
     ApiDiagnosticOperations,
     ApiExportOperations,
     ApiGatewayConfigConnectionOperations,
+    ApiGatewayHostnameBindingOperations,
     ApiGatewayOperations,
     ApiIssueAttachmentOperations,
     ApiIssueCommentOperations,
     ApiIssueOperations,
-    ApiManagementClientOperationsMixin,
     ApiManagementGatewaySkusOperations,
     ApiManagementOperationsOperations,
     ApiManagementServiceOperations,
@@ -44,6 +46,7 @@ from .operations import (
     ApiRevisionOperations,
     ApiSchemaOperations,
     ApiTagDescriptionOperations,
+    ApiToolOperations,
     ApiVersionSetOperations,
     ApiWikiOperations,
     ApiWikisOperations,
@@ -55,6 +58,8 @@ from .operations import (
     BackendOperations,
     CacheOperations,
     CertificateOperations,
+    ClientApplicationOperations,
+    ClientApplicationProductLinkOperations,
     ContentItemOperations,
     ContentTypeOperations,
     DelegationSettingsOperations,
@@ -156,13 +161,15 @@ from .operations import (
     WorkspaceTagOperationLinkOperations,
     WorkspaceTagOperations,
     WorkspaceTagProductLinkOperations,
+    _ApiManagementClientOperationsMixin,
 )
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ApiManagementClient(ApiManagementClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
+class ApiManagementClient(_ApiManagementClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
     """ApiManagement Client.
 
     :ivar api_gateway: ApiGatewayOperations operations
@@ -215,6 +222,8 @@ class ApiManagementClient(ApiManagementClientOperationsMixin):  # pylint: disabl
     :vartype api_wiki: azure.mgmt.apimanagement.aio.operations.ApiWikiOperations
     :ivar api_wikis: ApiWikisOperations operations
     :vartype api_wikis: azure.mgmt.apimanagement.aio.operations.ApiWikisOperations
+    :ivar api_tool: ApiToolOperations operations
+    :vartype api_tool: azure.mgmt.apimanagement.aio.operations.ApiToolOperations
     :ivar api_export: ApiExportOperations operations
     :vartype api_export: azure.mgmt.apimanagement.aio.operations.ApiExportOperations
     :ivar api_version_set: ApiVersionSetOperations operations
@@ -239,6 +248,12 @@ class ApiManagementClient(ApiManagementClientOperationsMixin):  # pylint: disabl
     :vartype cache: azure.mgmt.apimanagement.aio.operations.CacheOperations
     :ivar certificate: CertificateOperations operations
     :vartype certificate: azure.mgmt.apimanagement.aio.operations.CertificateOperations
+    :ivar client_application: ClientApplicationOperations operations
+    :vartype client_application:
+     azure.mgmt.apimanagement.aio.operations.ClientApplicationOperations
+    :ivar client_application_product_link: ClientApplicationProductLinkOperations operations
+    :vartype client_application_product_link:
+     azure.mgmt.apimanagement.aio.operations.ClientApplicationProductLinkOperations
     :ivar content_type: ContentTypeOperations operations
     :vartype content_type: azure.mgmt.apimanagement.aio.operations.ContentTypeOperations
     :ivar content_item: ContentItemOperations operations
@@ -263,6 +278,9 @@ class ApiManagementClient(ApiManagementClientOperationsMixin):  # pylint: disabl
     :ivar api_gateway_config_connection: ApiGatewayConfigConnectionOperations operations
     :vartype api_gateway_config_connection:
      azure.mgmt.apimanagement.aio.operations.ApiGatewayConfigConnectionOperations
+    :ivar api_gateway_hostname_binding: ApiGatewayHostnameBindingOperations operations
+    :vartype api_gateway_hostname_binding:
+     azure.mgmt.apimanagement.aio.operations.ApiGatewayHostnameBindingOperations
     :ivar gateway: GatewayOperations operations
     :vartype gateway: azure.mgmt.apimanagement.aio.operations.GatewayOperations
     :ivar gateway_hostname_configuration: GatewayHostnameConfigurationOperations operations
@@ -503,10 +521,13 @@ class ApiManagementClient(ApiManagementClientOperationsMixin):  # pylint: disabl
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is None.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2024-05-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: Api Version. Default value is "2025-03-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -516,12 +537,24 @@ class ApiManagementClient(ApiManagementClientOperationsMixin):  # pylint: disabl
         self,
         credential: "AsyncTokenCredential",
         subscription_id: str,
-        base_url: str = "https://management.azure.com",
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
+        _endpoints = get_arm_endpoints(_cloud)
+        if not base_url:
+            base_url = _endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = ApiManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
         )
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -540,7 +573,9 @@ class ApiManagementClient(ApiManagementClientOperationsMixin):  # pylint: disabl
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(
+            base_url=cast(str, base_url), policies=_policies, **kwargs
+        )
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -582,6 +617,7 @@ class ApiManagementClient(ApiManagementClientOperationsMixin):  # pylint: disabl
         self.operation = OperationOperations(self._client, self._config, self._serialize, self._deserialize)
         self.api_wiki = ApiWikiOperations(self._client, self._config, self._serialize, self._deserialize)
         self.api_wikis = ApiWikisOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.api_tool = ApiToolOperations(self._client, self._config, self._serialize, self._deserialize)
         self.api_export = ApiExportOperations(self._client, self._config, self._serialize, self._deserialize)
         self.api_version_set = ApiVersionSetOperations(self._client, self._config, self._serialize, self._deserialize)
         self.authorization_provider = AuthorizationProviderOperations(
@@ -600,6 +636,12 @@ class ApiManagementClient(ApiManagementClientOperationsMixin):  # pylint: disabl
         self.backend = BackendOperations(self._client, self._config, self._serialize, self._deserialize)
         self.cache = CacheOperations(self._client, self._config, self._serialize, self._deserialize)
         self.certificate = CertificateOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.client_application = ClientApplicationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.client_application_product_link = ClientApplicationProductLinkOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.content_type = ContentTypeOperations(self._client, self._config, self._serialize, self._deserialize)
         self.content_item = ContentItemOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deleted_services = DeletedServicesOperations(
@@ -618,6 +660,9 @@ class ApiManagementClient(ApiManagementClientOperationsMixin):  # pylint: disabl
         self.documentation = DocumentationOperations(self._client, self._config, self._serialize, self._deserialize)
         self.email_template = EmailTemplateOperations(self._client, self._config, self._serialize, self._deserialize)
         self.api_gateway_config_connection = ApiGatewayConfigConnectionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.api_gateway_hostname_binding = ApiGatewayHostnameBindingOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.gateway = GatewayOperations(self._client, self._config, self._serialize, self._deserialize)

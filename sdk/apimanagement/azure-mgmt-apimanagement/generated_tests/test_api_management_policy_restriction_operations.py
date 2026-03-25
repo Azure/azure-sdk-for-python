@@ -24,7 +24,7 @@ class TestApiManagementPolicyRestrictionOperations(AzureMgmtRecordedTestCase):
         response = self.client.policy_restriction.list_by_service(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestApiManagementPolicyRestrictionOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             policy_restriction_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestApiManagementPolicyRestrictionOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             policy_restriction_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -64,7 +64,7 @@ class TestApiManagementPolicyRestrictionOperations(AzureMgmtRecordedTestCase):
             service_name="str",
             policy_restriction_id="str",
             parameters={"id": "str", "name": "str", "requireBase": "false", "scope": "str", "type": "str"},
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -79,7 +79,7 @@ class TestApiManagementPolicyRestrictionOperations(AzureMgmtRecordedTestCase):
             policy_restriction_id="str",
             if_match="str",
             parameters={"requireBase": "false", "scope": "str"},
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -92,7 +92,7 @@ class TestApiManagementPolicyRestrictionOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             policy_restriction_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

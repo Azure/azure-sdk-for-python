@@ -24,7 +24,7 @@ class TestApiManagementBackendOperations(AzureMgmtRecordedTestCase):
         response = self.client.backend.list_by_service(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestApiManagementBackendOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             backend_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestApiManagementBackendOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             backend_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -64,6 +64,7 @@ class TestApiManagementBackendOperations(AzureMgmtRecordedTestCase):
             service_name="str",
             backend_id="str",
             parameters={
+                "azureRegion": "str",
                 "circuitBreaker": {
                     "rules": [
                         {
@@ -75,6 +76,7 @@ class TestApiManagementBackendOperations(AzureMgmtRecordedTestCase):
                                 "percentage": 0,
                                 "statusCodeRanges": [{"max": 0, "min": 0}],
                             },
+                            "failureResponse": {"statusCode": 0},
                             "name": "str",
                             "tripDuration": "1 day, 0:00:00",
                         }
@@ -90,7 +92,11 @@ class TestApiManagementBackendOperations(AzureMgmtRecordedTestCase):
                 "description": "str",
                 "id": "str",
                 "name": "str",
-                "pool": {"services": [{"id": "str", "priority": 0, "weight": 0}]},
+                "pool": {
+                    "failureResponse": {"statusCode": 0},
+                    "services": [{"id": "str", "preferredCarbonEmission": "str", "priority": 0, "weight": 0}],
+                    "sessionAffinity": {"sessionId": {"name": "str", "source": "str"}},
+                },
                 "properties": {
                     "serviceFabricCluster": {
                         "managementEndpoints": ["str"],
@@ -105,11 +111,16 @@ class TestApiManagementBackendOperations(AzureMgmtRecordedTestCase):
                 "proxy": {"url": "str", "password": "str", "username": "str"},
                 "resourceId": "str",
                 "title": "str",
-                "tls": {"validateCertificateChain": True, "validateCertificateName": True},
+                "tls": {
+                    "serverCertificateThumbprints": ["str"],
+                    "serverX509Names": [{"issuerCertificateThumbprint": "str", "name": "str"}],
+                    "validateCertificateChain": True,
+                    "validateCertificateName": True,
+                },
                 "type": "str",
                 "url": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -124,6 +135,7 @@ class TestApiManagementBackendOperations(AzureMgmtRecordedTestCase):
             backend_id="str",
             if_match="str",
             parameters={
+                "azureRegion": "str",
                 "circuitBreaker": {
                     "rules": [
                         {
@@ -135,6 +147,7 @@ class TestApiManagementBackendOperations(AzureMgmtRecordedTestCase):
                                 "percentage": 0,
                                 "statusCodeRanges": [{"max": 0, "min": 0}],
                             },
+                            "failureResponse": {"statusCode": 0},
                             "name": "str",
                             "tripDuration": "1 day, 0:00:00",
                         }
@@ -148,7 +161,11 @@ class TestApiManagementBackendOperations(AzureMgmtRecordedTestCase):
                     "query": {"str": ["str"]},
                 },
                 "description": "str",
-                "pool": {"services": [{"id": "str", "priority": 0, "weight": 0}]},
+                "pool": {
+                    "failureResponse": {"statusCode": 0},
+                    "services": [{"id": "str", "preferredCarbonEmission": "str", "priority": 0, "weight": 0}],
+                    "sessionAffinity": {"sessionId": {"name": "str", "source": "str"}},
+                },
                 "properties": {
                     "serviceFabricCluster": {
                         "managementEndpoints": ["str"],
@@ -163,11 +180,16 @@ class TestApiManagementBackendOperations(AzureMgmtRecordedTestCase):
                 "proxy": {"url": "str", "password": "str", "username": "str"},
                 "resourceId": "str",
                 "title": "str",
-                "tls": {"validateCertificateChain": True, "validateCertificateName": True},
+                "tls": {
+                    "serverCertificateThumbprints": ["str"],
+                    "serverX509Names": [{"issuerCertificateThumbprint": "str", "name": "str"}],
+                    "validateCertificateChain": True,
+                    "validateCertificateName": True,
+                },
                 "type": "str",
                 "url": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -181,7 +203,7 @@ class TestApiManagementBackendOperations(AzureMgmtRecordedTestCase):
             service_name="str",
             backend_id="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -194,7 +216,7 @@ class TestApiManagementBackendOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             backend_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

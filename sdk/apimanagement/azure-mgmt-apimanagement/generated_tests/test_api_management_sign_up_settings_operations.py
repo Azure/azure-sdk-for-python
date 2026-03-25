@@ -24,7 +24,7 @@ class TestApiManagementSignUpSettingsOperations(AzureMgmtRecordedTestCase):
         response = self.client.sign_up_settings.get_entity_tag(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -36,7 +36,7 @@ class TestApiManagementSignUpSettingsOperations(AzureMgmtRecordedTestCase):
         response = self.client.sign_up_settings.get(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -56,7 +56,7 @@ class TestApiManagementSignUpSettingsOperations(AzureMgmtRecordedTestCase):
                 "termsOfService": {"consentRequired": bool, "enabled": bool, "text": "str"},
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -75,7 +75,7 @@ class TestApiManagementSignUpSettingsOperations(AzureMgmtRecordedTestCase):
                 "termsOfService": {"consentRequired": bool, "enabled": bool, "text": "str"},
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

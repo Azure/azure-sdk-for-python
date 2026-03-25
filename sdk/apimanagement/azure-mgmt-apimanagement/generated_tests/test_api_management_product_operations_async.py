@@ -25,7 +25,7 @@ class TestApiManagementProductOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.product.list_by_service(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestApiManagementProductOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             product_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestApiManagementProductOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             product_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -65,7 +65,9 @@ class TestApiManagementProductOperationsAsync(AzureMgmtRecordedTestCase):
             service_name="str",
             product_id="str",
             parameters={
+                "application": {"entra": {"applicationId": "str", "audience": "str"}},
                 "approvalRequired": bool,
+                "authenticationType": ["str"],
                 "description": "str",
                 "displayName": "str",
                 "id": "str",
@@ -76,7 +78,7 @@ class TestApiManagementProductOperationsAsync(AzureMgmtRecordedTestCase):
                 "terms": "str",
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -91,7 +93,9 @@ class TestApiManagementProductOperationsAsync(AzureMgmtRecordedTestCase):
             product_id="str",
             if_match="str",
             parameters={
+                "application": {"entra": {"applicationId": "str", "audience": "str"}},
                 "approvalRequired": bool,
+                "authenticationType": ["str"],
                 "description": "str",
                 "displayName": "str",
                 "state": "str",
@@ -99,7 +103,7 @@ class TestApiManagementProductOperationsAsync(AzureMgmtRecordedTestCase):
                 "subscriptionsLimit": 0,
                 "terms": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -113,7 +117,7 @@ class TestApiManagementProductOperationsAsync(AzureMgmtRecordedTestCase):
             service_name="str",
             product_id="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -125,7 +129,7 @@ class TestApiManagementProductOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.product.list_by_tags(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

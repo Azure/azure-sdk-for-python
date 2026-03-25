@@ -24,7 +24,7 @@ class TestApiManagementIdentityProviderOperations(AzureMgmtRecordedTestCase):
         response = self.client.identity_provider.list_by_service(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestApiManagementIdentityProviderOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             identity_provider_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestApiManagementIdentityProviderOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             identity_provider_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -66,6 +66,7 @@ class TestApiManagementIdentityProviderOperations(AzureMgmtRecordedTestCase):
             parameters={
                 "allowedTenants": ["str"],
                 "authority": "str",
+                "certificateId": "str",
                 "clientId": "str",
                 "clientLibrary": "str",
                 "clientSecret": "str",
@@ -78,7 +79,7 @@ class TestApiManagementIdentityProviderOperations(AzureMgmtRecordedTestCase):
                 "signupPolicyName": "str",
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -95,6 +96,7 @@ class TestApiManagementIdentityProviderOperations(AzureMgmtRecordedTestCase):
             parameters={
                 "allowedTenants": ["str"],
                 "authority": "str",
+                "certificateId": "str",
                 "clientId": "str",
                 "clientLibrary": "str",
                 "clientSecret": "str",
@@ -105,7 +107,7 @@ class TestApiManagementIdentityProviderOperations(AzureMgmtRecordedTestCase):
                 "signupPolicyName": "str",
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -119,7 +121,7 @@ class TestApiManagementIdentityProviderOperations(AzureMgmtRecordedTestCase):
             service_name="str",
             identity_provider_name="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -132,7 +134,7 @@ class TestApiManagementIdentityProviderOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             identity_provider_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

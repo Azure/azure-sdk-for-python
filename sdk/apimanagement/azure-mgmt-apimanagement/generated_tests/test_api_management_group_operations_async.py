@@ -25,7 +25,7 @@ class TestApiManagementGroupOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.group.list_by_service(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestApiManagementGroupOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             group_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestApiManagementGroupOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             group_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -65,7 +65,7 @@ class TestApiManagementGroupOperationsAsync(AzureMgmtRecordedTestCase):
             service_name="str",
             group_id="str",
             parameters={"description": "str", "displayName": "str", "externalId": "str", "type": "str"},
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -80,7 +80,7 @@ class TestApiManagementGroupOperationsAsync(AzureMgmtRecordedTestCase):
             group_id="str",
             if_match="str",
             parameters={"description": "str", "displayName": "str", "externalId": "str", "type": "str"},
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -94,7 +94,7 @@ class TestApiManagementGroupOperationsAsync(AzureMgmtRecordedTestCase):
             service_name="str",
             group_id="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

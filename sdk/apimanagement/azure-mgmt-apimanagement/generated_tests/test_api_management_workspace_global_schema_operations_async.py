@@ -26,7 +26,7 @@ class TestApiManagementWorkspaceGlobalSchemaOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             service_name="str",
             workspace_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestApiManagementWorkspaceGlobalSchemaOperationsAsync(AzureMgmtRecordedTes
             service_name="str",
             workspace_id="str",
             schema_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestApiManagementWorkspaceGlobalSchemaOperationsAsync(AzureMgmtRecordedTes
             service_name="str",
             workspace_id="str",
             schema_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -79,7 +79,7 @@ class TestApiManagementWorkspaceGlobalSchemaOperationsAsync(AzureMgmtRecordedTes
                     "type": "str",
                     "value": {},
                 },
-                api_version="2024-05-01",
+                api_version="2025-03-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -95,7 +95,7 @@ class TestApiManagementWorkspaceGlobalSchemaOperationsAsync(AzureMgmtRecordedTes
             workspace_id="str",
             schema_id="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

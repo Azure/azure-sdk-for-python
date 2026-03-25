@@ -25,7 +25,7 @@ class TestApiManagementSignInSettingsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.sign_in_settings.get_entity_tag(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestApiManagementSignInSettingsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.sign_in_settings.get(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestApiManagementSignInSettingsOperationsAsync(AzureMgmtRecordedTestCase):
             service_name="str",
             if_match="str",
             parameters={"enabled": bool, "id": "str", "name": "str", "type": "str"},
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -64,7 +64,7 @@ class TestApiManagementSignInSettingsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             parameters={"enabled": bool, "id": "str", "name": "str", "type": "str"},
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

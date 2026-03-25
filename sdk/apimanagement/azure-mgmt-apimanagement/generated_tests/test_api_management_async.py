@@ -39,7 +39,7 @@ class TestApiManagementAsync(AzureMgmtRecordedTestCase):
                         }
                     },
                 },
-                api_version="2024-05-01",
+                api_version="2025-03-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

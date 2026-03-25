@@ -26,7 +26,7 @@ class TestApiManagementWorkspaceApiSchemaOperations(AzureMgmtRecordedTestCase):
             service_name="str",
             workspace_id="str",
             api_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -41,7 +41,7 @@ class TestApiManagementWorkspaceApiSchemaOperations(AzureMgmtRecordedTestCase):
             workspace_id="str",
             api_id="str",
             schema_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -56,7 +56,7 @@ class TestApiManagementWorkspaceApiSchemaOperations(AzureMgmtRecordedTestCase):
             workspace_id="str",
             api_id="str",
             schema_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -81,7 +81,7 @@ class TestApiManagementWorkspaceApiSchemaOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "value": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -97,7 +97,7 @@ class TestApiManagementWorkspaceApiSchemaOperations(AzureMgmtRecordedTestCase):
             api_id="str",
             schema_id="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

@@ -26,7 +26,7 @@ class TestApiManagementWorkspaceNamedValueOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             service_name="str",
             workspace_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestApiManagementWorkspaceNamedValueOperationsAsync(AzureMgmtRecordedTestC
             service_name="str",
             workspace_id="str",
             named_value_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestApiManagementWorkspaceNamedValueOperationsAsync(AzureMgmtRecordedTestC
             service_name="str",
             workspace_id="str",
             named_value_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -79,7 +79,7 @@ class TestApiManagementWorkspaceNamedValueOperationsAsync(AzureMgmtRecordedTestC
                     "type": "str",
                     "value": "str",
                 },
-                api_version="2024-05-01",
+                api_version="2025-03-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -103,7 +103,7 @@ class TestApiManagementWorkspaceNamedValueOperationsAsync(AzureMgmtRecordedTestC
                     "tags": ["str"],
                     "value": "str",
                 },
-                api_version="2024-05-01",
+                api_version="2025-03-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -119,7 +119,7 @@ class TestApiManagementWorkspaceNamedValueOperationsAsync(AzureMgmtRecordedTestC
             workspace_id="str",
             named_value_id="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -133,7 +133,7 @@ class TestApiManagementWorkspaceNamedValueOperationsAsync(AzureMgmtRecordedTestC
             service_name="str",
             workspace_id="str",
             named_value_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -148,7 +148,7 @@ class TestApiManagementWorkspaceNamedValueOperationsAsync(AzureMgmtRecordedTestC
                 service_name="str",
                 workspace_id="str",
                 named_value_id="str",
-                api_version="2024-05-01",
+                api_version="2025-03-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

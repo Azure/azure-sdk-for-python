@@ -25,7 +25,7 @@ class TestApiManagementGatewayHostnameConfigurationOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             service_name="str",
             gateway_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestApiManagementGatewayHostnameConfigurationOperations(AzureMgmtRecordedT
             service_name="str",
             gateway_id="str",
             hc_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestApiManagementGatewayHostnameConfigurationOperations(AzureMgmtRecordedT
             service_name="str",
             gateway_id="str",
             hc_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -78,7 +78,7 @@ class TestApiManagementGatewayHostnameConfigurationOperations(AzureMgmtRecordedT
                 "tls11Enabled": bool,
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -93,7 +93,7 @@ class TestApiManagementGatewayHostnameConfigurationOperations(AzureMgmtRecordedT
             gateway_id="str",
             hc_id="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

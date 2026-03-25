@@ -25,7 +25,7 @@ class TestApiManagementApiReleaseOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             api_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestApiManagementApiReleaseOperations(AzureMgmtRecordedTestCase):
             service_name="str",
             api_id="str",
             release_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestApiManagementApiReleaseOperations(AzureMgmtRecordedTestCase):
             service_name="str",
             api_id="str",
             release_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -76,7 +76,7 @@ class TestApiManagementApiReleaseOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "updatedDateTime": "2020-02-20 00:00:00",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -100,7 +100,7 @@ class TestApiManagementApiReleaseOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "updatedDateTime": "2020-02-20 00:00:00",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -115,7 +115,7 @@ class TestApiManagementApiReleaseOperations(AzureMgmtRecordedTestCase):
             api_id="str",
             release_id="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

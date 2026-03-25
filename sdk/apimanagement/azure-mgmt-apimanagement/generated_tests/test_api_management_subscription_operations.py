@@ -24,7 +24,7 @@ class TestApiManagementSubscriptionOperations(AzureMgmtRecordedTestCase):
         response = self.client.subscription.list(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestApiManagementSubscriptionOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             sid="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestApiManagementSubscriptionOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             sid="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -72,7 +72,7 @@ class TestApiManagementSubscriptionOperations(AzureMgmtRecordedTestCase):
                 "secondaryKey": "str",
                 "state": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -97,7 +97,7 @@ class TestApiManagementSubscriptionOperations(AzureMgmtRecordedTestCase):
                 "state": "str",
                 "stateComment": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -111,7 +111,7 @@ class TestApiManagementSubscriptionOperations(AzureMgmtRecordedTestCase):
             service_name="str",
             sid="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -124,7 +124,7 @@ class TestApiManagementSubscriptionOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             sid="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -137,7 +137,7 @@ class TestApiManagementSubscriptionOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             sid="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -150,7 +150,7 @@ class TestApiManagementSubscriptionOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             sid="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

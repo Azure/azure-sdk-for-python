@@ -25,7 +25,7 @@ class TestApiManagementWorkspaceApiOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             workspace_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestApiManagementWorkspaceApiOperations(AzureMgmtRecordedTestCase):
             service_name="str",
             workspace_id="str",
             api_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestApiManagementWorkspaceApiOperations(AzureMgmtRecordedTestCase):
             service_name="str",
             workspace_id="str",
             api_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -108,7 +108,7 @@ class TestApiManagementWorkspaceApiOperations(AzureMgmtRecordedTestCase):
                 "value": "str",
                 "wsdlSelector": {"wsdlEndpointName": "str", "wsdlServiceName": "str"},
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -149,7 +149,7 @@ class TestApiManagementWorkspaceApiOperations(AzureMgmtRecordedTestCase):
                 "termsOfServiceUrl": "str",
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -164,7 +164,7 @@ class TestApiManagementWorkspaceApiOperations(AzureMgmtRecordedTestCase):
             workspace_id="str",
             api_id="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

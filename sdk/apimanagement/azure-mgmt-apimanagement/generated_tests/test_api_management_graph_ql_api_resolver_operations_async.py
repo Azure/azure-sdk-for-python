@@ -26,7 +26,7 @@ class TestApiManagementGraphQLApiResolverOperationsAsync(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             service_name="str",
             api_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestApiManagementGraphQLApiResolverOperationsAsync(AzureMgmtRecordedTestCa
             service_name="str",
             api_id="str",
             resolver_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestApiManagementGraphQLApiResolverOperationsAsync(AzureMgmtRecordedTestCa
             service_name="str",
             api_id="str",
             resolver_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -76,7 +76,7 @@ class TestApiManagementGraphQLApiResolverOperationsAsync(AzureMgmtRecordedTestCa
                 "path": "str",
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -92,7 +92,7 @@ class TestApiManagementGraphQLApiResolverOperationsAsync(AzureMgmtRecordedTestCa
             resolver_id="str",
             if_match="str",
             parameters={"description": "str", "displayName": "str", "path": "str"},
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -107,7 +107,7 @@ class TestApiManagementGraphQLApiResolverOperationsAsync(AzureMgmtRecordedTestCa
             api_id="str",
             resolver_id="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

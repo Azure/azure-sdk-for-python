@@ -26,7 +26,7 @@ class TestApiManagementWorkspaceApiVersionSetOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             service_name="str",
             workspace_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestApiManagementWorkspaceApiVersionSetOperationsAsync(AzureMgmtRecordedTe
             service_name="str",
             workspace_id="str",
             version_set_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestApiManagementWorkspaceApiVersionSetOperationsAsync(AzureMgmtRecordedTe
             service_name="str",
             workspace_id="str",
             version_set_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -78,7 +78,7 @@ class TestApiManagementWorkspaceApiVersionSetOperationsAsync(AzureMgmtRecordedTe
                 "versionQueryName": "str",
                 "versioningScheme": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -100,7 +100,7 @@ class TestApiManagementWorkspaceApiVersionSetOperationsAsync(AzureMgmtRecordedTe
                 "versionQueryName": "str",
                 "versioningScheme": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -115,7 +115,7 @@ class TestApiManagementWorkspaceApiVersionSetOperationsAsync(AzureMgmtRecordedTe
             workspace_id="str",
             version_set_id="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

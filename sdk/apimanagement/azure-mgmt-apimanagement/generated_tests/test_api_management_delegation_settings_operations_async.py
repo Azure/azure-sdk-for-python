@@ -25,7 +25,7 @@ class TestApiManagementDelegationSettingsOperationsAsync(AzureMgmtRecordedTestCa
         response = await self.client.delegation_settings.get_entity_tag(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestApiManagementDelegationSettingsOperationsAsync(AzureMgmtRecordedTestCa
         response = await self.client.delegation_settings.get(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -59,7 +59,7 @@ class TestApiManagementDelegationSettingsOperationsAsync(AzureMgmtRecordedTestCa
                 "userRegistration": {"enabled": bool},
                 "validationKey": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -80,7 +80,7 @@ class TestApiManagementDelegationSettingsOperationsAsync(AzureMgmtRecordedTestCa
                 "userRegistration": {"enabled": bool},
                 "validationKey": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -92,7 +92,7 @@ class TestApiManagementDelegationSettingsOperationsAsync(AzureMgmtRecordedTestCa
         response = await self.client.delegation_settings.list_secrets(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

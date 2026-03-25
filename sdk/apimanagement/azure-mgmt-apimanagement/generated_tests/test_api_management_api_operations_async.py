@@ -25,7 +25,7 @@ class TestApiManagementApiOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.api.list_by_service(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestApiManagementApiOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             api_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestApiManagementApiOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             api_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -108,7 +108,7 @@ class TestApiManagementApiOperationsAsync(AzureMgmtRecordedTestCase):
                     "value": "str",
                     "wsdlSelector": {"wsdlEndpointName": "str", "wsdlServiceName": "str"},
                 },
-                api_version="2024-05-01",
+                api_version="2025-03-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -149,7 +149,7 @@ class TestApiManagementApiOperationsAsync(AzureMgmtRecordedTestCase):
                 "termsOfServiceUrl": "str",
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -164,7 +164,7 @@ class TestApiManagementApiOperationsAsync(AzureMgmtRecordedTestCase):
                 service_name="str",
                 api_id="str",
                 if_match="str",
-                api_version="2024-05-01",
+                api_version="2025-03-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -177,7 +177,7 @@ class TestApiManagementApiOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.api.list_by_tags(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -25,7 +25,7 @@ class TestApiManagementApiGatewayConfigConnectionOperationsAsync(AzureMgmtRecord
         response = self.client.api_gateway_config_connection.list_by_gateway(
             resource_group_name=resource_group.name,
             gateway_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestApiManagementApiGatewayConfigConnectionOperationsAsync(AzureMgmtRecord
             resource_group_name=resource_group.name,
             gateway_name="str",
             config_connection_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -62,7 +62,7 @@ class TestApiManagementApiGatewayConfigConnectionOperationsAsync(AzureMgmtRecord
                     "sourceId": "str",
                     "type": "str",
                 },
-                api_version="2024-05-01",
+                api_version="2025-03-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -78,7 +78,7 @@ class TestApiManagementApiGatewayConfigConnectionOperationsAsync(AzureMgmtRecord
                 gateway_name="str",
                 config_connection_name="str",
                 if_match="str",
-                api_version="2024-05-01",
+                api_version="2025-03-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

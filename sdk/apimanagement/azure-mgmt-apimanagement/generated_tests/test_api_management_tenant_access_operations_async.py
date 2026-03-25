@@ -25,7 +25,7 @@ class TestApiManagementTenantAccessOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.tenant_access.list_by_service(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestApiManagementTenantAccessOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             access_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestApiManagementTenantAccessOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             access_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -66,7 +66,7 @@ class TestApiManagementTenantAccessOperationsAsync(AzureMgmtRecordedTestCase):
             access_name="str",
             if_match="str",
             parameters={"enabled": bool, "primaryKey": "str", "principalId": "str", "secondaryKey": "str"},
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -81,7 +81,7 @@ class TestApiManagementTenantAccessOperationsAsync(AzureMgmtRecordedTestCase):
             access_name="str",
             if_match="str",
             parameters={"enabled": bool},
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -94,7 +94,7 @@ class TestApiManagementTenantAccessOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             access_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -107,7 +107,7 @@ class TestApiManagementTenantAccessOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             access_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -120,7 +120,7 @@ class TestApiManagementTenantAccessOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             access_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

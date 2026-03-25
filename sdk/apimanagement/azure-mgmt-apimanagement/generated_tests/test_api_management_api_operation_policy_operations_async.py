@@ -27,7 +27,7 @@ class TestApiManagementApiOperationPolicyOperationsAsync(AzureMgmtRecordedTestCa
             service_name="str",
             api_id="str",
             operation_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -42,7 +42,7 @@ class TestApiManagementApiOperationPolicyOperationsAsync(AzureMgmtRecordedTestCa
             api_id="str",
             operation_id="str",
             policy_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -57,7 +57,7 @@ class TestApiManagementApiOperationPolicyOperationsAsync(AzureMgmtRecordedTestCa
             api_id="str",
             operation_id="str",
             policy_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -73,7 +73,7 @@ class TestApiManagementApiOperationPolicyOperationsAsync(AzureMgmtRecordedTestCa
             operation_id="str",
             policy_id="str",
             parameters={"format": "xml", "id": "str", "name": "str", "type": "str", "value": "str"},
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -89,7 +89,7 @@ class TestApiManagementApiOperationPolicyOperationsAsync(AzureMgmtRecordedTestCa
             operation_id="str",
             policy_id="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

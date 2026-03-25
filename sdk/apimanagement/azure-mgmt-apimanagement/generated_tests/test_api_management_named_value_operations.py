@@ -24,7 +24,7 @@ class TestApiManagementNamedValueOperations(AzureMgmtRecordedTestCase):
         response = self.client.named_value.list_by_service(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestApiManagementNamedValueOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             named_value_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestApiManagementNamedValueOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             named_value_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -73,7 +73,7 @@ class TestApiManagementNamedValueOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "value": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -94,7 +94,7 @@ class TestApiManagementNamedValueOperations(AzureMgmtRecordedTestCase):
                 "tags": ["str"],
                 "value": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -108,7 +108,7 @@ class TestApiManagementNamedValueOperations(AzureMgmtRecordedTestCase):
             service_name="str",
             named_value_id="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -121,7 +121,7 @@ class TestApiManagementNamedValueOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             named_value_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -134,7 +134,7 @@ class TestApiManagementNamedValueOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             named_value_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

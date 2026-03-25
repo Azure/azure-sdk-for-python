@@ -28,7 +28,7 @@ class TestApiManagementWorkspaceApiOperationPolicyOperationsAsync(AzureMgmtRecor
             workspace_id="str",
             api_id="str",
             operation_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -44,7 +44,7 @@ class TestApiManagementWorkspaceApiOperationPolicyOperationsAsync(AzureMgmtRecor
             api_id="str",
             operation_id="str",
             policy_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -60,7 +60,7 @@ class TestApiManagementWorkspaceApiOperationPolicyOperationsAsync(AzureMgmtRecor
             api_id="str",
             operation_id="str",
             policy_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -77,7 +77,7 @@ class TestApiManagementWorkspaceApiOperationPolicyOperationsAsync(AzureMgmtRecor
             operation_id="str",
             policy_id="str",
             parameters={"format": "xml", "id": "str", "name": "str", "type": "str", "value": "str"},
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -94,7 +94,7 @@ class TestApiManagementWorkspaceApiOperationPolicyOperationsAsync(AzureMgmtRecor
             operation_id="str",
             policy_id="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

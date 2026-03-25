@@ -28,7 +28,7 @@ class TestApiManagementApiExportOperationsAsync(AzureMgmtRecordedTestCase):
             api_id="str",
             format="str",
             export="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

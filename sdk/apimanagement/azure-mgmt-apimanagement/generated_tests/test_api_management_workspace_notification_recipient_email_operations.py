@@ -26,7 +26,7 @@ class TestApiManagementWorkspaceNotificationRecipientEmailOperations(AzureMgmtRe
             service_name="str",
             workspace_id="str",
             notification_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -41,7 +41,7 @@ class TestApiManagementWorkspaceNotificationRecipientEmailOperations(AzureMgmtRe
             workspace_id="str",
             notification_name="str",
             email="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -56,7 +56,7 @@ class TestApiManagementWorkspaceNotificationRecipientEmailOperations(AzureMgmtRe
             workspace_id="str",
             notification_name="str",
             email="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -71,7 +71,7 @@ class TestApiManagementWorkspaceNotificationRecipientEmailOperations(AzureMgmtRe
             workspace_id="str",
             notification_name="str",
             email="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

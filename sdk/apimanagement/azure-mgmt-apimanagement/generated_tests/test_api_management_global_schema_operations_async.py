@@ -25,7 +25,7 @@ class TestApiManagementGlobalSchemaOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.global_schema.list_by_service(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestApiManagementGlobalSchemaOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             schema_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestApiManagementGlobalSchemaOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_name="str",
             schema_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -75,7 +75,7 @@ class TestApiManagementGlobalSchemaOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "value": {},
                 },
-                api_version="2024-05-01",
+                api_version="2025-03-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -90,7 +90,7 @@ class TestApiManagementGlobalSchemaOperationsAsync(AzureMgmtRecordedTestCase):
             service_name="str",
             schema_id="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

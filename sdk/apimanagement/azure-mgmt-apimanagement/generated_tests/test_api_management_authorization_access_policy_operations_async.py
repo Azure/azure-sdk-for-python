@@ -27,7 +27,7 @@ class TestApiManagementAuthorizationAccessPolicyOperationsAsync(AzureMgmtRecorde
             service_name="str",
             authorization_provider_id="str",
             authorization_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,7 +42,7 @@ class TestApiManagementAuthorizationAccessPolicyOperationsAsync(AzureMgmtRecorde
             authorization_provider_id="str",
             authorization_id="str",
             authorization_access_policy_id="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -65,7 +65,7 @@ class TestApiManagementAuthorizationAccessPolicyOperationsAsync(AzureMgmtRecorde
                 "tenantId": "str",
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -81,7 +81,7 @@ class TestApiManagementAuthorizationAccessPolicyOperationsAsync(AzureMgmtRecorde
             authorization_id="str",
             authorization_access_policy_id="str",
             if_match="str",
-            api_version="2024-05-01",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
