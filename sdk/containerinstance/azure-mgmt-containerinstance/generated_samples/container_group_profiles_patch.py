@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -30,7 +31,7 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.container_group_profiles.patch(
+    response = client.cg_profile.update(
         resource_group_name="demoResource",
         container_group_profile_name="demo1",
         properties={"tags": {"tag1key": "tag1Value", "tag2key": "tag2Value"}},
@@ -38,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerinstance/resource-manager/Microsoft.ContainerInstance/preview/2024-05-01-preview/examples/ContainerGroupProfilesPatch.json
+# x-ms-original-file: specification/containerinstance/resource-manager/Microsoft.ContainerInstance/ContainerInstance/stable/2025-09-01/examples/ContainerGroupProfilesPatch.json
 if __name__ == "__main__":
     main()

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -37,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/containerinstance/resource-manager/Microsoft.ContainerInstance/preview/2024-05-01-preview/examples/CachedImagesList.json
+# x-ms-original-file: specification/containerinstance/resource-manager/Microsoft.ContainerInstance/ContainerInstance/stable/2025-09-01/examples/CachedImagesList.json
 if __name__ == "__main__":
     main()

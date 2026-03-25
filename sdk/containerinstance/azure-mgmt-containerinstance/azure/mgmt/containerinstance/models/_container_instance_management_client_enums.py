@@ -10,6 +10,27 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AzureFileShareAccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Access tier for specific share. GpV2 account can choose between TransactionOptimized (default),
+    Hot, and Cool. FileStorage account can choose Premium. Learn more at:
+    https://learn.microsoft.com/en-us/rest/api/storagerp/file-shares/create?tabs=HTTP#shareaccesstier.
+    """
+
+    COOL = "Cool"
+    HOT = "Hot"
+    PREMIUM = "Premium"
+    TRANSACTION_OPTIMIZED = "TransactionOptimized"
+
+
+class AzureFileShareAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies how Container Groups can access the Azure file share i.e. all CG will share same
+    Azure file share or going to have exclusive file share.
+    """
+
+    SHARED = "Shared"
+    EXCLUSIVE = "Exclusive"
+
+
 class ContainerGroupIpAddressType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies if the IP is exposed to the public internet or private VNET."""
 
@@ -31,6 +52,24 @@ class ContainerGroupPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SPOT = "Spot"
 
 
+class ContainerGroupProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the container group. This only appears in the response."""
+
+    NOT_SPECIFIED = "NotSpecified"
+    ACCEPTED = "Accepted"
+    PENDING = "Pending"
+    UPDATING = "Updating"
+    CREATING = "Creating"
+    REPAIRING = "Repairing"
+    UNHEALTHY = "Unhealthy"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    SUCCEEDED = "Succeeded"
+    DELETING = "Deleting"
+    NOT_ACCESSIBLE = "NotAccessible"
+    PRE_PROVISIONED = "PreProvisioned"
+
+
 class ContainerGroupRestartPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Restart policy for all containers within the container group.
 
@@ -48,6 +87,7 @@ class ContainerGroupRestartPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ContainerGroupSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The container group SKU."""
 
+    NOT_SPECIFIED = "NotSpecified"
     STANDARD = "Standard"
     DEDICATED = "Dedicated"
     CONFIDENTIAL = "Confidential"
@@ -65,6 +105,15 @@ class ContainerNetworkProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     TCP = "TCP"
     UDP = "UDP"
+
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
 
 
 class DnsNameLabelReusePolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -93,11 +142,38 @@ class GpuSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V100 = "V100"
 
 
+class IdentityAccessLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The access level of an identity."""
+
+    ALL = "All"
+    SYSTEM = "System"
+    USER = "User"
+
+
 class LogAnalyticsLogType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The log type to be used."""
 
     CONTAINER_INSIGHTS = "ContainerInsights"
     CONTAINER_INSTANCE_LOGS = "ContainerInstanceLogs"
+
+
+class NGroupProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state, which only appears in the response."""
+
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    DELETING = "Deleting"
+    MIGRATING = "Migrating"
+
+
+class NGroupUpdateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """NGroupUpdateMode."""
+
+    MANUAL = "Manual"
+    ROLLING = "Rolling"
 
 
 class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):

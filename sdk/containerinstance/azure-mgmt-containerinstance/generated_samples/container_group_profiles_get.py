@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -30,13 +31,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.container_group_profiles.get(
+    response = client.cg_profile.get(
         resource_group_name="demo",
         container_group_profile_name="demo1",
     )
     print(response)
 
 
-# x-ms-original-file: specification/containerinstance/resource-manager/Microsoft.ContainerInstance/preview/2024-05-01-preview/examples/ContainerGroupProfilesGet.json
+# x-ms-original-file: specification/containerinstance/resource-manager/Microsoft.ContainerInstance/ContainerInstance/stable/2025-09-01/examples/ContainerGroupProfilesGet.json
 if __name__ == "__main__":
     main()

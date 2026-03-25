@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,20 +7,91 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import sys
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from collections.abc import MutableMapping
+import datetime
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
+
+
+class ApiEntityReference(_serialization.Model):
+    """The API entity reference.
+
+    :ivar id: The ARM resource id in the form of
+     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/...
+    :vartype id: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+        """
+        :keyword id: The ARM resource id in the form of
+         /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/...
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+
+
+class ApplicationGateway(_serialization.Model):
+    """Application Gateway the CG profile will use to interact with CGs in a backend pool.
+
+    :ivar resource: The Application Gateway ARM resource Id.
+    :vartype resource: str
+    :ivar backend_address_pools: List of Application Gateway Backend Address Pools.
+    :vartype backend_address_pools:
+     list[~azure.mgmt.containerinstance.models.ApplicationGatewayBackendAddressPool]
+    """
+
+    _attribute_map = {
+        "resource": {"key": "resource", "type": "str"},
+        "backend_address_pools": {"key": "backendAddressPools", "type": "[ApplicationGatewayBackendAddressPool]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource: Optional[str] = None,
+        backend_address_pools: Optional[list["_models.ApplicationGatewayBackendAddressPool"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource: The Application Gateway ARM resource Id.
+        :paramtype resource: str
+        :keyword backend_address_pools: List of Application Gateway Backend Address Pools.
+        :paramtype backend_address_pools:
+         list[~azure.mgmt.containerinstance.models.ApplicationGatewayBackendAddressPool]
+        """
+        super().__init__(**kwargs)
+        self.resource = resource
+        self.backend_address_pools = backend_address_pools
+
+
+class ApplicationGatewayBackendAddressPool(_serialization.Model):
+    """NGroups application gateway backend address pool.
+
+    :ivar resource: The application gateway backend address pool ARM resource Id.
+    :vartype resource: str
+    """
+
+    _attribute_map = {
+        "resource": {"key": "resource", "type": "str"},
+    }
+
+    def __init__(self, *, resource: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword resource: The application gateway backend address pool ARM resource Id.
+        :paramtype resource: str
+        """
+        super().__init__(**kwargs)
+        self.resource = resource
 
 
 class AzureFileVolume(_serialization.Model):
@@ -38,6 +109,9 @@ class AzureFileVolume(_serialization.Model):
     :vartype storage_account_name: str
     :ivar storage_account_key: The storage account access key used to access the Azure File share.
     :vartype storage_account_key: str
+    :ivar storage_account_key_reference: The reference to the storage account access key used to
+     access the Azure File share.
+    :vartype storage_account_key_reference: str
     """
 
     _validation = {
@@ -50,6 +124,7 @@ class AzureFileVolume(_serialization.Model):
         "read_only": {"key": "readOnly", "type": "bool"},
         "storage_account_name": {"key": "storageAccountName", "type": "str"},
         "storage_account_key": {"key": "storageAccountKey", "type": "str"},
+        "storage_account_key_reference": {"key": "storageAccountKeyReference", "type": "str"},
     }
 
     def __init__(
@@ -59,6 +134,7 @@ class AzureFileVolume(_serialization.Model):
         storage_account_name: str,
         read_only: Optional[bool] = None,
         storage_account_key: Optional[str] = None,
+        storage_account_key_reference: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -73,12 +149,16 @@ class AzureFileVolume(_serialization.Model):
         :keyword storage_account_key: The storage account access key used to access the Azure File
          share.
         :paramtype storage_account_key: str
+        :keyword storage_account_key_reference: The reference to the storage account access key used to
+         access the Azure File share.
+        :paramtype storage_account_key_reference: str
         """
         super().__init__(**kwargs)
         self.share_name = share_name
         self.read_only = read_only
         self.storage_account_name = storage_account_name
         self.storage_account_key = storage_account_key
+        self.storage_account_key_reference = storage_account_key_reference
 
 
 class CachedImages(_serialization.Model):
@@ -129,7 +209,7 @@ class CachedImagesListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.CachedImages"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.CachedImages"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of cached images.
@@ -182,12 +262,12 @@ class Capabilities(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.resource_type = None
-        self.os_type = None
-        self.location = None
-        self.ip_address_type = None
-        self.gpu = None
-        self.capabilities = None
+        self.resource_type: Optional[str] = None
+        self.os_type: Optional[str] = None
+        self.location: Optional[str] = None
+        self.ip_address_type: Optional[str] = None
+        self.gpu: Optional[str] = None
+        self.capabilities: Optional["_models.CapabilitiesCapabilities"] = None
 
 
 class CapabilitiesCapabilities(_serialization.Model):
@@ -218,9 +298,9 @@ class CapabilitiesCapabilities(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.max_memory_in_gb = None
-        self.max_cpu = None
-        self.max_gpu_count = None
+        self.max_memory_in_gb: Optional[float] = None
+        self.max_cpu: Optional[float] = None
+        self.max_gpu_count: Optional[float] = None
 
 
 class CapabilitiesListResult(_serialization.Model):
@@ -238,7 +318,7 @@ class CapabilitiesListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Capabilities"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Capabilities"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of capabilities.
@@ -280,7 +360,7 @@ class CloudErrorBody(_serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["_models.CloudErrorBody"]] = None,
+        details: Optional[list["_models.CloudErrorBody"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -334,7 +414,7 @@ class ConfigMap(_serialization.Model):
         "key_value_pairs": {"key": "keyValuePairs", "type": "{str}"},
     }
 
-    def __init__(self, *, key_value_pairs: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, key_value_pairs: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword key_value_pairs: The key value pairs dictionary in the config map.
         :paramtype key_value_pairs: dict[str, str]
@@ -343,7 +423,7 @@ class ConfigMap(_serialization.Model):
         self.key_value_pairs = key_value_pairs
 
 
-class Container(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class Container(_serialization.Model):
     """A container instance.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -401,11 +481,11 @@ class Container(_serialization.Model):  # pylint: disable=too-many-instance-attr
         *,
         name: str,
         image: Optional[str] = None,
-        command: Optional[List[str]] = None,
-        ports: Optional[List["_models.ContainerPort"]] = None,
-        environment_variables: Optional[List["_models.EnvironmentVariable"]] = None,
+        command: Optional[list[str]] = None,
+        ports: Optional[list["_models.ContainerPort"]] = None,
+        environment_variables: Optional[list["_models.EnvironmentVariable"]] = None,
         resources: Optional["_models.ResourceRequirements"] = None,
-        volume_mounts: Optional[List["_models.VolumeMount"]] = None,
+        volume_mounts: Optional[list["_models.VolumeMount"]] = None,
         liveness_probe: Optional["_models.ContainerProbe"] = None,
         readiness_probe: Optional["_models.ContainerProbe"] = None,
         security_context: Optional["_models.SecurityContextDefinition"] = None,
@@ -443,7 +523,7 @@ class Container(_serialization.Model):  # pylint: disable=too-many-instance-attr
         self.command = command
         self.ports = ports
         self.environment_variables = environment_variables
-        self.instance_view = None
+        self.instance_view: Optional["_models.ContainerPropertiesInstanceView"] = None
         self.resources = resources
         self.volume_mounts = volume_mounts
         self.liveness_probe = liveness_probe
@@ -491,7 +571,7 @@ class ContainerExec(_serialization.Model):
         "command": {"key": "command", "type": "[str]"},
     }
 
-    def __init__(self, *, command: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, command: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword command: The commands to execute within the container.
         :paramtype command: list[str]
@@ -584,7 +664,7 @@ class ContainerExecResponse(_serialization.Model):
         self.password = password
 
 
-class ContainerGroupProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ContainerGroupProperties(_serialization.Model):
     """The container group properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -596,6 +676,9 @@ class ContainerGroupProperties(_serialization.Model):  # pylint: disable=too-man
     :ivar provisioning_state: The provisioning state of the container group. This only appears in
      the response.
     :vartype provisioning_state: str
+    :ivar secret_references: The secret references that will be referenced within the container
+     group.
+    :vartype secret_references: list[~azure.mgmt.containerinstance.models.SecretReference]
     :ivar containers: The containers within the container group. Required.
     :vartype containers: list[~azure.mgmt.containerinstance.models.Container]
     :ivar image_registry_credentials: The image registry credentials by which the container group
@@ -603,7 +686,6 @@ class ContainerGroupProperties(_serialization.Model):  # pylint: disable=too-man
     :vartype image_registry_credentials:
      list[~azure.mgmt.containerinstance.models.ImageRegistryCredential]
     :ivar restart_policy: Restart policy for all containers within the container group.
-
 
      * ``Always`` Always restart
      * ``OnFailure`` Restart on failure
@@ -626,8 +708,8 @@ class ContainerGroupProperties(_serialization.Model):  # pylint: disable=too-man
     :vartype subnet_ids: list[~azure.mgmt.containerinstance.models.ContainerGroupSubnetId]
     :ivar dns_config: The DNS config information for a container group.
     :vartype dns_config: ~azure.mgmt.containerinstance.models.DnsConfiguration
-    :ivar sku: The SKU for a container group. Known values are: "Standard", "Dedicated", and
-     "Confidential".
+    :ivar sku: The SKU for a container group. Known values are: "NotSpecified", "Standard",
+     "Dedicated", and "Confidential".
     :vartype sku: str or ~azure.mgmt.containerinstance.models.ContainerGroupSku
     :ivar encryption_properties: The encryption properties for a container group.
     :vartype encryption_properties: ~azure.mgmt.containerinstance.models.EncryptionProperties
@@ -640,14 +722,16 @@ class ContainerGroupProperties(_serialization.Model):  # pylint: disable=too-man
      ~azure.mgmt.containerinstance.models.ConfidentialComputeProperties
     :ivar priority: The priority of the container group. Known values are: "Regular" and "Spot".
     :vartype priority: str or ~azure.mgmt.containerinstance.models.ContainerGroupPriority
+    :ivar identity_acls: The access control levels of the identities.
+    :vartype identity_acls: ~azure.mgmt.containerinstance.models.IdentityAcls
     :ivar container_group_profile: The reference container group profile properties.
     :vartype container_group_profile:
      ~azure.mgmt.containerinstance.models.ContainerGroupProfileReferenceDefinition
     :ivar standby_pool_profile: The reference standby pool profile properties.
     :vartype standby_pool_profile:
      ~azure.mgmt.containerinstance.models.StandbyPoolProfileDefinition
-    :ivar is_created_from_standby_pool: The flag indicating whether the container group is created
-     by standby pool.
+    :ivar is_created_from_standby_pool: The flag to determine whether the container group is
+     created from standby pool.
     :vartype is_created_from_standby_pool: bool
     """
 
@@ -661,6 +745,7 @@ class ContainerGroupProperties(_serialization.Model):  # pylint: disable=too-man
     _attribute_map = {
         "identity": {"key": "identity", "type": "ContainerGroupIdentity"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "secret_references": {"key": "properties.secretReferences", "type": "[SecretReference]"},
         "containers": {"key": "properties.containers", "type": "[Container]"},
         "image_registry_credentials": {
             "key": "properties.imageRegistryCredentials",
@@ -683,6 +768,7 @@ class ContainerGroupProperties(_serialization.Model):  # pylint: disable=too-man
             "type": "ConfidentialComputeProperties",
         },
         "priority": {"key": "properties.priority", "type": "str"},
+        "identity_acls": {"key": "properties.identityAcls", "type": "IdentityAcls"},
         "container_group_profile": {
             "key": "properties.containerGroupProfile",
             "type": "ContainerGroupProfileReferenceDefinition",
@@ -694,22 +780,24 @@ class ContainerGroupProperties(_serialization.Model):  # pylint: disable=too-man
     def __init__(
         self,
         *,
-        containers: List["_models.Container"],
+        containers: list["_models.Container"],
         identity: Optional["_models.ContainerGroupIdentity"] = None,
-        image_registry_credentials: Optional[List["_models.ImageRegistryCredential"]] = None,
+        secret_references: Optional[list["_models.SecretReference"]] = None,
+        image_registry_credentials: Optional[list["_models.ImageRegistryCredential"]] = None,
         restart_policy: Optional[Union[str, "_models.ContainerGroupRestartPolicy"]] = None,
         ip_address: Optional["_models.IpAddress"] = None,
         os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
-        volumes: Optional[List["_models.Volume"]] = None,
+        volumes: Optional[list["_models.Volume"]] = None,
         diagnostics: Optional["_models.ContainerGroupDiagnostics"] = None,
-        subnet_ids: Optional[List["_models.ContainerGroupSubnetId"]] = None,
+        subnet_ids: Optional[list["_models.ContainerGroupSubnetId"]] = None,
         dns_config: Optional["_models.DnsConfiguration"] = None,
         sku: Optional[Union[str, "_models.ContainerGroupSku"]] = None,
         encryption_properties: Optional["_models.EncryptionProperties"] = None,
-        init_containers: Optional[List["_models.InitContainerDefinition"]] = None,
-        extensions: Optional[List["_models.DeploymentExtensionSpec"]] = None,
+        init_containers: Optional[list["_models.InitContainerDefinition"]] = None,
+        extensions: Optional[list["_models.DeploymentExtensionSpec"]] = None,
         confidential_compute_properties: Optional["_models.ConfidentialComputeProperties"] = None,
         priority: Optional[Union[str, "_models.ContainerGroupPriority"]] = None,
+        identity_acls: Optional["_models.IdentityAcls"] = None,
         container_group_profile: Optional["_models.ContainerGroupProfileReferenceDefinition"] = None,
         standby_pool_profile: Optional["_models.StandbyPoolProfileDefinition"] = None,
         **kwargs: Any
@@ -717,6 +805,9 @@ class ContainerGroupProperties(_serialization.Model):  # pylint: disable=too-man
         """
         :keyword identity: The identity of the container group, if configured.
         :paramtype identity: ~azure.mgmt.containerinstance.models.ContainerGroupIdentity
+        :keyword secret_references: The secret references that will be referenced within the container
+         group.
+        :paramtype secret_references: list[~azure.mgmt.containerinstance.models.SecretReference]
         :keyword containers: The containers within the container group. Required.
         :paramtype containers: list[~azure.mgmt.containerinstance.models.Container]
         :keyword image_registry_credentials: The image registry credentials by which the container
@@ -725,10 +816,9 @@ class ContainerGroupProperties(_serialization.Model):  # pylint: disable=too-man
          list[~azure.mgmt.containerinstance.models.ImageRegistryCredential]
         :keyword restart_policy: Restart policy for all containers within the container group.
 
-
-         * ``Always`` Always restart
-         * ``OnFailure`` Restart on failure
-         * ``Never`` Never restart. Known values are: "Always", "OnFailure", and "Never".
+          * ``Always`` Always restart
+          * ``OnFailure`` Restart on failure
+          * ``Never`` Never restart. Known values are: "Always", "OnFailure", and "Never".
         :paramtype restart_policy: str or
          ~azure.mgmt.containerinstance.models.ContainerGroupRestartPolicy
         :keyword ip_address: The IP address type of the container group.
@@ -745,8 +835,8 @@ class ContainerGroupProperties(_serialization.Model):  # pylint: disable=too-man
         :paramtype subnet_ids: list[~azure.mgmt.containerinstance.models.ContainerGroupSubnetId]
         :keyword dns_config: The DNS config information for a container group.
         :paramtype dns_config: ~azure.mgmt.containerinstance.models.DnsConfiguration
-        :keyword sku: The SKU for a container group. Known values are: "Standard", "Dedicated", and
-         "Confidential".
+        :keyword sku: The SKU for a container group. Known values are: "NotSpecified", "Standard",
+         "Dedicated", and "Confidential".
         :paramtype sku: str or ~azure.mgmt.containerinstance.models.ContainerGroupSku
         :keyword encryption_properties: The encryption properties for a container group.
         :paramtype encryption_properties: ~azure.mgmt.containerinstance.models.EncryptionProperties
@@ -759,6 +849,8 @@ class ContainerGroupProperties(_serialization.Model):  # pylint: disable=too-man
          ~azure.mgmt.containerinstance.models.ConfidentialComputeProperties
         :keyword priority: The priority of the container group. Known values are: "Regular" and "Spot".
         :paramtype priority: str or ~azure.mgmt.containerinstance.models.ContainerGroupPriority
+        :keyword identity_acls: The access control levels of the identities.
+        :paramtype identity_acls: ~azure.mgmt.containerinstance.models.IdentityAcls
         :keyword container_group_profile: The reference container group profile properties.
         :paramtype container_group_profile:
          ~azure.mgmt.containerinstance.models.ContainerGroupProfileReferenceDefinition
@@ -768,14 +860,15 @@ class ContainerGroupProperties(_serialization.Model):  # pylint: disable=too-man
         """
         super().__init__(**kwargs)
         self.identity = identity
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
+        self.secret_references = secret_references
         self.containers = containers
         self.image_registry_credentials = image_registry_credentials
         self.restart_policy = restart_policy
         self.ip_address = ip_address
         self.os_type = os_type
         self.volumes = volumes
-        self.instance_view = None
+        self.instance_view: Optional["_models.ContainerGroupPropertiesInstanceView"] = None
         self.diagnostics = diagnostics
         self.subnet_ids = subnet_ids
         self.dns_config = dns_config
@@ -785,9 +878,10 @@ class ContainerGroupProperties(_serialization.Model):  # pylint: disable=too-man
         self.extensions = extensions
         self.confidential_compute_properties = confidential_compute_properties
         self.priority = priority
+        self.identity_acls = identity_acls
         self.container_group_profile = container_group_profile
         self.standby_pool_profile = standby_pool_profile
-        self.is_created_from_standby_pool = None
+        self.is_created_from_standby_pool: Optional[bool] = None
 
 
 class Resource(_serialization.Model):
@@ -828,8 +922,8 @@ class Resource(_serialization.Model):
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        zones: Optional[List[str]] = None,
+        tags: Optional[dict[str, str]] = None,
+        zones: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -841,15 +935,15 @@ class Resource(_serialization.Model):
         :paramtype zones: list[str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
         self.zones = zones
 
 
-class ContainerGroup(Resource, ContainerGroupProperties):  # pylint: disable=too-many-instance-attributes
+class ContainerGroup(Resource, ContainerGroupProperties):
     """A container group.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -861,6 +955,9 @@ class ContainerGroup(Resource, ContainerGroupProperties):  # pylint: disable=too
     :ivar provisioning_state: The provisioning state of the container group. This only appears in
      the response.
     :vartype provisioning_state: str
+    :ivar secret_references: The secret references that will be referenced within the container
+     group.
+    :vartype secret_references: list[~azure.mgmt.containerinstance.models.SecretReference]
     :ivar containers: The containers within the container group. Required.
     :vartype containers: list[~azure.mgmt.containerinstance.models.Container]
     :ivar image_registry_credentials: The image registry credentials by which the container group
@@ -868,7 +965,6 @@ class ContainerGroup(Resource, ContainerGroupProperties):  # pylint: disable=too
     :vartype image_registry_credentials:
      list[~azure.mgmt.containerinstance.models.ImageRegistryCredential]
     :ivar restart_policy: Restart policy for all containers within the container group.
-
 
      * ``Always`` Always restart
      * ``OnFailure`` Restart on failure
@@ -891,8 +987,8 @@ class ContainerGroup(Resource, ContainerGroupProperties):  # pylint: disable=too
     :vartype subnet_ids: list[~azure.mgmt.containerinstance.models.ContainerGroupSubnetId]
     :ivar dns_config: The DNS config information for a container group.
     :vartype dns_config: ~azure.mgmt.containerinstance.models.DnsConfiguration
-    :ivar sku: The SKU for a container group. Known values are: "Standard", "Dedicated", and
-     "Confidential".
+    :ivar sku: The SKU for a container group. Known values are: "NotSpecified", "Standard",
+     "Dedicated", and "Confidential".
     :vartype sku: str or ~azure.mgmt.containerinstance.models.ContainerGroupSku
     :ivar encryption_properties: The encryption properties for a container group.
     :vartype encryption_properties: ~azure.mgmt.containerinstance.models.EncryptionProperties
@@ -905,14 +1001,16 @@ class ContainerGroup(Resource, ContainerGroupProperties):  # pylint: disable=too
      ~azure.mgmt.containerinstance.models.ConfidentialComputeProperties
     :ivar priority: The priority of the container group. Known values are: "Regular" and "Spot".
     :vartype priority: str or ~azure.mgmt.containerinstance.models.ContainerGroupPriority
+    :ivar identity_acls: The access control levels of the identities.
+    :vartype identity_acls: ~azure.mgmt.containerinstance.models.IdentityAcls
     :ivar container_group_profile: The reference container group profile properties.
     :vartype container_group_profile:
      ~azure.mgmt.containerinstance.models.ContainerGroupProfileReferenceDefinition
     :ivar standby_pool_profile: The reference standby pool profile properties.
     :vartype standby_pool_profile:
      ~azure.mgmt.containerinstance.models.StandbyPoolProfileDefinition
-    :ivar is_created_from_standby_pool: The flag indicating whether the container group is created
-     by standby pool.
+    :ivar is_created_from_standby_pool: The flag to determine whether the container group is
+     created from standby pool.
     :vartype is_created_from_standby_pool: bool
     :ivar id: The resource id.
     :vartype id: str
@@ -941,6 +1039,7 @@ class ContainerGroup(Resource, ContainerGroupProperties):  # pylint: disable=too
     _attribute_map = {
         "identity": {"key": "identity", "type": "ContainerGroupIdentity"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "secret_references": {"key": "properties.secretReferences", "type": "[SecretReference]"},
         "containers": {"key": "properties.containers", "type": "[Container]"},
         "image_registry_credentials": {
             "key": "properties.imageRegistryCredentials",
@@ -963,6 +1062,7 @@ class ContainerGroup(Resource, ContainerGroupProperties):  # pylint: disable=too
             "type": "ConfidentialComputeProperties",
         },
         "priority": {"key": "properties.priority", "type": "str"},
+        "identity_acls": {"key": "properties.identityAcls", "type": "IdentityAcls"},
         "container_group_profile": {
             "key": "properties.containerGroupProfile",
             "type": "ContainerGroupProfileReferenceDefinition",
@@ -980,32 +1080,37 @@ class ContainerGroup(Resource, ContainerGroupProperties):  # pylint: disable=too
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        containers: List["_models.Container"],
+        containers: list["_models.Container"],
         identity: Optional["_models.ContainerGroupIdentity"] = None,
-        image_registry_credentials: Optional[List["_models.ImageRegistryCredential"]] = None,
+        secret_references: Optional[list["_models.SecretReference"]] = None,
+        image_registry_credentials: Optional[list["_models.ImageRegistryCredential"]] = None,
         restart_policy: Optional[Union[str, "_models.ContainerGroupRestartPolicy"]] = None,
         ip_address: Optional["_models.IpAddress"] = None,
         os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
-        volumes: Optional[List["_models.Volume"]] = None,
+        volumes: Optional[list["_models.Volume"]] = None,
         diagnostics: Optional["_models.ContainerGroupDiagnostics"] = None,
-        subnet_ids: Optional[List["_models.ContainerGroupSubnetId"]] = None,
+        subnet_ids: Optional[list["_models.ContainerGroupSubnetId"]] = None,
         dns_config: Optional["_models.DnsConfiguration"] = None,
         sku: Optional[Union[str, "_models.ContainerGroupSku"]] = None,
         encryption_properties: Optional["_models.EncryptionProperties"] = None,
-        init_containers: Optional[List["_models.InitContainerDefinition"]] = None,
-        extensions: Optional[List["_models.DeploymentExtensionSpec"]] = None,
+        init_containers: Optional[list["_models.InitContainerDefinition"]] = None,
+        extensions: Optional[list["_models.DeploymentExtensionSpec"]] = None,
         confidential_compute_properties: Optional["_models.ConfidentialComputeProperties"] = None,
         priority: Optional[Union[str, "_models.ContainerGroupPriority"]] = None,
+        identity_acls: Optional["_models.IdentityAcls"] = None,
         container_group_profile: Optional["_models.ContainerGroupProfileReferenceDefinition"] = None,
         standby_pool_profile: Optional["_models.StandbyPoolProfileDefinition"] = None,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        zones: Optional[List[str]] = None,
+        tags: Optional[dict[str, str]] = None,
+        zones: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword identity: The identity of the container group, if configured.
         :paramtype identity: ~azure.mgmt.containerinstance.models.ContainerGroupIdentity
+        :keyword secret_references: The secret references that will be referenced within the container
+         group.
+        :paramtype secret_references: list[~azure.mgmt.containerinstance.models.SecretReference]
         :keyword containers: The containers within the container group. Required.
         :paramtype containers: list[~azure.mgmt.containerinstance.models.Container]
         :keyword image_registry_credentials: The image registry credentials by which the container
@@ -1014,10 +1119,9 @@ class ContainerGroup(Resource, ContainerGroupProperties):  # pylint: disable=too
          list[~azure.mgmt.containerinstance.models.ImageRegistryCredential]
         :keyword restart_policy: Restart policy for all containers within the container group.
 
-
-         * ``Always`` Always restart
-         * ``OnFailure`` Restart on failure
-         * ``Never`` Never restart. Known values are: "Always", "OnFailure", and "Never".
+          * ``Always`` Always restart
+          * ``OnFailure`` Restart on failure
+          * ``Never`` Never restart. Known values are: "Always", "OnFailure", and "Never".
         :paramtype restart_policy: str or
          ~azure.mgmt.containerinstance.models.ContainerGroupRestartPolicy
         :keyword ip_address: The IP address type of the container group.
@@ -1034,8 +1138,8 @@ class ContainerGroup(Resource, ContainerGroupProperties):  # pylint: disable=too
         :paramtype subnet_ids: list[~azure.mgmt.containerinstance.models.ContainerGroupSubnetId]
         :keyword dns_config: The DNS config information for a container group.
         :paramtype dns_config: ~azure.mgmt.containerinstance.models.DnsConfiguration
-        :keyword sku: The SKU for a container group. Known values are: "Standard", "Dedicated", and
-         "Confidential".
+        :keyword sku: The SKU for a container group. Known values are: "NotSpecified", "Standard",
+         "Dedicated", and "Confidential".
         :paramtype sku: str or ~azure.mgmt.containerinstance.models.ContainerGroupSku
         :keyword encryption_properties: The encryption properties for a container group.
         :paramtype encryption_properties: ~azure.mgmt.containerinstance.models.EncryptionProperties
@@ -1048,6 +1152,8 @@ class ContainerGroup(Resource, ContainerGroupProperties):  # pylint: disable=too
          ~azure.mgmt.containerinstance.models.ConfidentialComputeProperties
         :keyword priority: The priority of the container group. Known values are: "Regular" and "Spot".
         :paramtype priority: str or ~azure.mgmt.containerinstance.models.ContainerGroupPriority
+        :keyword identity_acls: The access control levels of the identities.
+        :paramtype identity_acls: ~azure.mgmt.containerinstance.models.IdentityAcls
         :keyword container_group_profile: The reference container group profile properties.
         :paramtype container_group_profile:
          ~azure.mgmt.containerinstance.models.ContainerGroupProfileReferenceDefinition
@@ -1066,6 +1172,7 @@ class ContainerGroup(Resource, ContainerGroupProperties):  # pylint: disable=too
             tags=tags,
             zones=zones,
             identity=identity,
+            secret_references=secret_references,
             containers=containers,
             image_registry_credentials=image_registry_credentials,
             restart_policy=restart_policy,
@@ -1081,19 +1188,21 @@ class ContainerGroup(Resource, ContainerGroupProperties):  # pylint: disable=too
             extensions=extensions,
             confidential_compute_properties=confidential_compute_properties,
             priority=priority,
+            identity_acls=identity_acls,
             container_group_profile=container_group_profile,
             standby_pool_profile=standby_pool_profile,
             **kwargs
         )
         self.identity = identity
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
+        self.secret_references = secret_references
         self.containers = containers
         self.image_registry_credentials = image_registry_credentials
         self.restart_policy = restart_policy
         self.ip_address = ip_address
         self.os_type = os_type
         self.volumes = volumes
-        self.instance_view = None
+        self.instance_view: Optional["_models.ContainerGroupPropertiesInstanceView"] = None
         self.diagnostics = diagnostics
         self.subnet_ids = subnet_ids
         self.dns_config = dns_config
@@ -1103,12 +1212,13 @@ class ContainerGroup(Resource, ContainerGroupProperties):  # pylint: disable=too
         self.extensions = extensions
         self.confidential_compute_properties = confidential_compute_properties
         self.priority = priority
+        self.identity_acls = identity_acls
         self.container_group_profile = container_group_profile
         self.standby_pool_profile = standby_pool_profile
-        self.is_created_from_standby_pool = None
-        self.id = None
-        self.name = None
-        self.type = None
+        self.is_created_from_standby_pool: Optional[bool] = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
         self.zones = zones
@@ -1172,7 +1282,7 @@ class ContainerGroupIdentity(_serialization.Model):
         self,
         *,
         type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentities"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentities"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1187,8 +1297,8 @@ class ContainerGroupIdentity(_serialization.Model):
          ~azure.mgmt.containerinstance.models.UserAssignedIdentities]
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
@@ -1197,22 +1307,26 @@ class ContainerGroupListResult(_serialization.Model):
     """The container group list response that contains the container group properties.
 
     :ivar value: The list of container groups.
-    :vartype value: list[~azure.mgmt.containerinstance.models.ContainerGroup]
+    :vartype value: list[~azure.mgmt.containerinstance.models.ListResultContainerGroup]
     :ivar next_link: The URI to fetch the next page of container groups.
     :vartype next_link: str
     """
 
     _attribute_map = {
-        "value": {"key": "value", "type": "[ContainerGroup]"},
+        "value": {"key": "value", "type": "[ListResultContainerGroup]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ContainerGroup"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        value: Optional[list["_models.ListResultContainerGroup"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of container groups.
-        :paramtype value: list[~azure.mgmt.containerinstance.models.ContainerGroup]
+        :paramtype value: list[~azure.mgmt.containerinstance.models.ListResultContainerGroup]
         :keyword next_link: The URI to fetch the next page of container groups.
         :paramtype next_link: str
         """
@@ -1221,206 +1335,11 @@ class ContainerGroupListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class ContainerGroupProfileProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
-    """The container group profile properties.
+class ContainerGroupProfile(Resource):
+    """A container group profile object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar containers: The containers within the container group. Required.
-    :vartype containers: list[~azure.mgmt.containerinstance.models.Container]
-    :ivar image_registry_credentials: The image registry credentials by which the container group
-     is created from.
-    :vartype image_registry_credentials:
-     list[~azure.mgmt.containerinstance.models.ImageRegistryCredential]
-    :ivar restart_policy: Restart policy for all containers within the container group.
-
-
-     * ``Always`` Always restart
-     * ``OnFailure`` Restart on failure
-     * ``Never`` Never restart. Known values are: "Always", "OnFailure", and "Never".
-    :vartype restart_policy: str or
-     ~azure.mgmt.containerinstance.models.ContainerGroupRestartPolicy
-    :ivar ip_address: The IP address type of the container group.
-    :vartype ip_address: ~azure.mgmt.containerinstance.models.IpAddress
-    :ivar os_type: The operating system type required by the containers in the container group.
-     Required. Known values are: "Windows" and "Linux".
-    :vartype os_type: str or ~azure.mgmt.containerinstance.models.OperatingSystemTypes
-    :ivar volumes: The list of volumes that can be mounted by containers in this container group.
-    :vartype volumes: list[~azure.mgmt.containerinstance.models.Volume]
-    :ivar diagnostics: The diagnostic information for a container group.
-    :vartype diagnostics: ~azure.mgmt.containerinstance.models.ContainerGroupDiagnostics
-    :ivar sku: The SKU for a container group. Known values are: "Standard", "Dedicated", and
-     "Confidential".
-    :vartype sku: str or ~azure.mgmt.containerinstance.models.ContainerGroupSku
-    :ivar encryption_properties: The encryption properties for a container group.
-    :vartype encryption_properties: ~azure.mgmt.containerinstance.models.EncryptionProperties
-    :ivar init_containers: The init containers for a container group.
-    :vartype init_containers: list[~azure.mgmt.containerinstance.models.InitContainerDefinition]
-    :ivar extensions: extensions used by virtual kubelet.
-    :vartype extensions: list[~azure.mgmt.containerinstance.models.DeploymentExtensionSpec]
-    :ivar confidential_compute_properties: The properties for confidential container group.
-    :vartype confidential_compute_properties:
-     ~azure.mgmt.containerinstance.models.ConfidentialComputeProperties
-    :ivar priority: The priority of the container group. Known values are: "Regular" and "Spot".
-    :vartype priority: str or ~azure.mgmt.containerinstance.models.ContainerGroupPriority
-    :ivar revision: The container group profile current revision number. This only appears in the
-     response.
-    :vartype revision: int
-    """
-
-    _validation = {
-        "containers": {"required": True},
-        "os_type": {"required": True},
-        "revision": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "containers": {"key": "properties.containers", "type": "[Container]"},
-        "image_registry_credentials": {
-            "key": "properties.imageRegistryCredentials",
-            "type": "[ImageRegistryCredential]",
-        },
-        "restart_policy": {"key": "properties.restartPolicy", "type": "str"},
-        "ip_address": {"key": "properties.ipAddress", "type": "IpAddress"},
-        "os_type": {"key": "properties.osType", "type": "str"},
-        "volumes": {"key": "properties.volumes", "type": "[Volume]"},
-        "diagnostics": {"key": "properties.diagnostics", "type": "ContainerGroupDiagnostics"},
-        "sku": {"key": "properties.sku", "type": "str"},
-        "encryption_properties": {"key": "properties.encryptionProperties", "type": "EncryptionProperties"},
-        "init_containers": {"key": "properties.initContainers", "type": "[InitContainerDefinition]"},
-        "extensions": {"key": "properties.extensions", "type": "[DeploymentExtensionSpec]"},
-        "confidential_compute_properties": {
-            "key": "properties.confidentialComputeProperties",
-            "type": "ConfidentialComputeProperties",
-        },
-        "priority": {"key": "properties.priority", "type": "str"},
-        "revision": {"key": "properties.revision", "type": "int"},
-    }
-
-    def __init__(
-        self,
-        *,
-        containers: List["_models.Container"],
-        os_type: Union[str, "_models.OperatingSystemTypes"],
-        image_registry_credentials: Optional[List["_models.ImageRegistryCredential"]] = None,
-        restart_policy: Optional[Union[str, "_models.ContainerGroupRestartPolicy"]] = None,
-        ip_address: Optional["_models.IpAddress"] = None,
-        volumes: Optional[List["_models.Volume"]] = None,
-        diagnostics: Optional["_models.ContainerGroupDiagnostics"] = None,
-        sku: Optional[Union[str, "_models.ContainerGroupSku"]] = None,
-        encryption_properties: Optional["_models.EncryptionProperties"] = None,
-        init_containers: Optional[List["_models.InitContainerDefinition"]] = None,
-        extensions: Optional[List["_models.DeploymentExtensionSpec"]] = None,
-        confidential_compute_properties: Optional["_models.ConfidentialComputeProperties"] = None,
-        priority: Optional[Union[str, "_models.ContainerGroupPriority"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword containers: The containers within the container group. Required.
-        :paramtype containers: list[~azure.mgmt.containerinstance.models.Container]
-        :keyword image_registry_credentials: The image registry credentials by which the container
-         group is created from.
-        :paramtype image_registry_credentials:
-         list[~azure.mgmt.containerinstance.models.ImageRegistryCredential]
-        :keyword restart_policy: Restart policy for all containers within the container group.
-
-
-         * ``Always`` Always restart
-         * ``OnFailure`` Restart on failure
-         * ``Never`` Never restart. Known values are: "Always", "OnFailure", and "Never".
-        :paramtype restart_policy: str or
-         ~azure.mgmt.containerinstance.models.ContainerGroupRestartPolicy
-        :keyword ip_address: The IP address type of the container group.
-        :paramtype ip_address: ~azure.mgmt.containerinstance.models.IpAddress
-        :keyword os_type: The operating system type required by the containers in the container group.
-         Required. Known values are: "Windows" and "Linux".
-        :paramtype os_type: str or ~azure.mgmt.containerinstance.models.OperatingSystemTypes
-        :keyword volumes: The list of volumes that can be mounted by containers in this container
-         group.
-        :paramtype volumes: list[~azure.mgmt.containerinstance.models.Volume]
-        :keyword diagnostics: The diagnostic information for a container group.
-        :paramtype diagnostics: ~azure.mgmt.containerinstance.models.ContainerGroupDiagnostics
-        :keyword sku: The SKU for a container group. Known values are: "Standard", "Dedicated", and
-         "Confidential".
-        :paramtype sku: str or ~azure.mgmt.containerinstance.models.ContainerGroupSku
-        :keyword encryption_properties: The encryption properties for a container group.
-        :paramtype encryption_properties: ~azure.mgmt.containerinstance.models.EncryptionProperties
-        :keyword init_containers: The init containers for a container group.
-        :paramtype init_containers: list[~azure.mgmt.containerinstance.models.InitContainerDefinition]
-        :keyword extensions: extensions used by virtual kubelet.
-        :paramtype extensions: list[~azure.mgmt.containerinstance.models.DeploymentExtensionSpec]
-        :keyword confidential_compute_properties: The properties for confidential container group.
-        :paramtype confidential_compute_properties:
-         ~azure.mgmt.containerinstance.models.ConfidentialComputeProperties
-        :keyword priority: The priority of the container group. Known values are: "Regular" and "Spot".
-        :paramtype priority: str or ~azure.mgmt.containerinstance.models.ContainerGroupPriority
-        """
-        super().__init__(**kwargs)
-        self.containers = containers
-        self.image_registry_credentials = image_registry_credentials
-        self.restart_policy = restart_policy
-        self.ip_address = ip_address
-        self.os_type = os_type
-        self.volumes = volumes
-        self.diagnostics = diagnostics
-        self.sku = sku
-        self.encryption_properties = encryption_properties
-        self.init_containers = init_containers
-        self.extensions = extensions
-        self.confidential_compute_properties = confidential_compute_properties
-        self.priority = priority
-        self.revision = None
-
-
-class ContainerGroupProfile(Resource, ContainerGroupProfileProperties):  # pylint: disable=too-many-instance-attributes
-    """A container group profile.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar containers: The containers within the container group. Required.
-    :vartype containers: list[~azure.mgmt.containerinstance.models.Container]
-    :ivar image_registry_credentials: The image registry credentials by which the container group
-     is created from.
-    :vartype image_registry_credentials:
-     list[~azure.mgmt.containerinstance.models.ImageRegistryCredential]
-    :ivar restart_policy: Restart policy for all containers within the container group.
-
-
-     * ``Always`` Always restart
-     * ``OnFailure`` Restart on failure
-     * ``Never`` Never restart. Known values are: "Always", "OnFailure", and "Never".
-    :vartype restart_policy: str or
-     ~azure.mgmt.containerinstance.models.ContainerGroupRestartPolicy
-    :ivar ip_address: The IP address type of the container group.
-    :vartype ip_address: ~azure.mgmt.containerinstance.models.IpAddress
-    :ivar os_type: The operating system type required by the containers in the container group.
-     Required. Known values are: "Windows" and "Linux".
-    :vartype os_type: str or ~azure.mgmt.containerinstance.models.OperatingSystemTypes
-    :ivar volumes: The list of volumes that can be mounted by containers in this container group.
-    :vartype volumes: list[~azure.mgmt.containerinstance.models.Volume]
-    :ivar diagnostics: The diagnostic information for a container group.
-    :vartype diagnostics: ~azure.mgmt.containerinstance.models.ContainerGroupDiagnostics
-    :ivar sku: The SKU for a container group. Known values are: "Standard", "Dedicated", and
-     "Confidential".
-    :vartype sku: str or ~azure.mgmt.containerinstance.models.ContainerGroupSku
-    :ivar encryption_properties: The encryption properties for a container group.
-    :vartype encryption_properties: ~azure.mgmt.containerinstance.models.EncryptionProperties
-    :ivar init_containers: The init containers for a container group.
-    :vartype init_containers: list[~azure.mgmt.containerinstance.models.InitContainerDefinition]
-    :ivar extensions: extensions used by virtual kubelet.
-    :vartype extensions: list[~azure.mgmt.containerinstance.models.DeploymentExtensionSpec]
-    :ivar confidential_compute_properties: The properties for confidential container group.
-    :vartype confidential_compute_properties:
-     ~azure.mgmt.containerinstance.models.ConfidentialComputeProperties
-    :ivar priority: The priority of the container group. Known values are: "Regular" and "Spot".
-    :vartype priority: str or ~azure.mgmt.containerinstance.models.ContainerGroupPriority
-    :ivar revision: The container group profile current revision number. This only appears in the
-     response.
-    :vartype revision: int
     :ivar id: The resource id.
     :vartype id: str
     :ivar name: The resource name.
@@ -1433,160 +1352,210 @@ class ContainerGroupProfile(Resource, ContainerGroupProfileProperties):  # pylin
     :vartype tags: dict[str, str]
     :ivar zones: The zones for the container group.
     :vartype zones: list[str]
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.containerinstance.models.SystemData
+    :ivar sku: The SKU for a container group. Known values are: "NotSpecified", "Standard",
+     "Dedicated", and "Confidential".
+    :vartype sku: str or ~azure.mgmt.containerinstance.models.ContainerGroupSku
+    :ivar encryption_properties: The encryption properties for a container group.
+    :vartype encryption_properties: ~azure.mgmt.containerinstance.models.EncryptionProperties
+    :ivar containers: The containers within the container group.
+    :vartype containers: list[~azure.mgmt.containerinstance.models.Container]
+    :ivar init_containers: The init containers for a container group.
+    :vartype init_containers: list[~azure.mgmt.containerinstance.models.InitContainerDefinition]
+    :ivar extensions: extensions used by virtual kubelet.
+    :vartype extensions: list[~azure.mgmt.containerinstance.models.DeploymentExtensionSpec]
+    :ivar image_registry_credentials: The image registry credentials by which the container group
+     is created from.
+    :vartype image_registry_credentials:
+     list[~azure.mgmt.containerinstance.models.ImageRegistryCredential]
+    :ivar restart_policy: Restart policy for all containers within the container group.
+
+     * ``Always`` Always restart
+     * ``OnFailure`` Restart on failure
+     * ``Never`` Never restart. Known values are: "Always", "OnFailure", and "Never".
+    :vartype restart_policy: str or
+     ~azure.mgmt.containerinstance.models.ContainerGroupRestartPolicy
+    :ivar shutdown_grace_period: Shutdown grace period for containers in a container group.
+    :vartype shutdown_grace_period: ~datetime.datetime
+    :ivar ip_address: The IP address type of the container group.
+    :vartype ip_address: ~azure.mgmt.containerinstance.models.IpAddress
+    :ivar time_to_live: Post completion time to live for containers of a CG.
+    :vartype time_to_live: ~datetime.datetime
+    :ivar os_type: The operating system type required by the containers in the container group.
+     Known values are: "Windows" and "Linux".
+    :vartype os_type: str or ~azure.mgmt.containerinstance.models.OperatingSystemTypes
+    :ivar volumes: The list of volumes that can be mounted by containers in this container group.
+    :vartype volumes: list[~azure.mgmt.containerinstance.models.Volume]
+    :ivar diagnostics: The diagnostic information for a container group.
+    :vartype diagnostics: ~azure.mgmt.containerinstance.models.ContainerGroupDiagnostics
+    :ivar priority: The priority of the container group. Known values are: "Regular" and "Spot".
+    :vartype priority: str or ~azure.mgmt.containerinstance.models.ContainerGroupPriority
+    :ivar confidential_compute_properties: The properties for confidential container group.
+    :vartype confidential_compute_properties:
+     ~azure.mgmt.containerinstance.models.ConfidentialComputeProperties
+    :ivar security_context: The container security properties.
+    :vartype security_context: ~azure.mgmt.containerinstance.models.SecurityContextDefinition
+    :ivar revision: Container group profile current revision number.
+    :vartype revision: int
+    :ivar registered_revisions: Registered revisions are calculated at request time based off the
+     records in the table logs.
+    :vartype registered_revisions: list[int]
+    :ivar use_krypton: Gets or sets Krypton use property.
+    :vartype use_krypton: bool
     """
 
     _validation = {
-        "containers": {"required": True},
-        "os_type": {"required": True},
-        "revision": {"readonly": True},
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "revision": {"readonly": True},
+        "registered_revisions": {"readonly": True},
     }
 
     _attribute_map = {
-        "containers": {"key": "properties.containers", "type": "[Container]"},
-        "image_registry_credentials": {
-            "key": "properties.imageRegistryCredentials",
-            "type": "[ImageRegistryCredential]",
-        },
-        "restart_policy": {"key": "properties.restartPolicy", "type": "str"},
-        "ip_address": {"key": "properties.ipAddress", "type": "IpAddress"},
-        "os_type": {"key": "properties.osType", "type": "str"},
-        "volumes": {"key": "properties.volumes", "type": "[Volume]"},
-        "diagnostics": {"key": "properties.diagnostics", "type": "ContainerGroupDiagnostics"},
-        "sku": {"key": "properties.sku", "type": "str"},
-        "encryption_properties": {"key": "properties.encryptionProperties", "type": "EncryptionProperties"},
-        "init_containers": {"key": "properties.initContainers", "type": "[InitContainerDefinition]"},
-        "extensions": {"key": "properties.extensions", "type": "[DeploymentExtensionSpec]"},
-        "confidential_compute_properties": {
-            "key": "properties.confidentialComputeProperties",
-            "type": "ConfidentialComputeProperties",
-        },
-        "priority": {"key": "properties.priority", "type": "str"},
-        "revision": {"key": "properties.revision", "type": "int"},
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "location": {"key": "location", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
         "zones": {"key": "zones", "type": "[str]"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "sku": {"key": "properties.sku", "type": "str"},
+        "encryption_properties": {"key": "properties.encryptionProperties", "type": "EncryptionProperties"},
+        "containers": {"key": "properties.containers", "type": "[Container]"},
+        "init_containers": {"key": "properties.initContainers", "type": "[InitContainerDefinition]"},
+        "extensions": {"key": "properties.extensions", "type": "[DeploymentExtensionSpec]"},
+        "image_registry_credentials": {
+            "key": "properties.imageRegistryCredentials",
+            "type": "[ImageRegistryCredential]",
+        },
+        "restart_policy": {"key": "properties.restartPolicy", "type": "str"},
+        "shutdown_grace_period": {"key": "properties.shutdownGracePeriod", "type": "iso-8601"},
+        "ip_address": {"key": "properties.ipAddress", "type": "IpAddress"},
+        "time_to_live": {"key": "properties.timeToLive", "type": "iso-8601"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "volumes": {"key": "properties.volumes", "type": "[Volume]"},
+        "diagnostics": {"key": "properties.diagnostics", "type": "ContainerGroupDiagnostics"},
+        "priority": {"key": "properties.priority", "type": "str"},
+        "confidential_compute_properties": {
+            "key": "properties.confidentialComputeProperties",
+            "type": "ConfidentialComputeProperties",
+        },
+        "security_context": {"key": "properties.securityContext", "type": "SecurityContextDefinition"},
+        "revision": {"key": "properties.revision", "type": "int"},
+        "registered_revisions": {"key": "properties.registeredRevisions", "type": "[int]"},
+        "use_krypton": {"key": "properties.useKrypton", "type": "bool"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        containers: List["_models.Container"],
-        os_type: Union[str, "_models.OperatingSystemTypes"],
-        image_registry_credentials: Optional[List["_models.ImageRegistryCredential"]] = None,
-        restart_policy: Optional[Union[str, "_models.ContainerGroupRestartPolicy"]] = None,
-        ip_address: Optional["_models.IpAddress"] = None,
-        volumes: Optional[List["_models.Volume"]] = None,
-        diagnostics: Optional["_models.ContainerGroupDiagnostics"] = None,
+        location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
+        zones: Optional[list[str]] = None,
         sku: Optional[Union[str, "_models.ContainerGroupSku"]] = None,
         encryption_properties: Optional["_models.EncryptionProperties"] = None,
-        init_containers: Optional[List["_models.InitContainerDefinition"]] = None,
-        extensions: Optional[List["_models.DeploymentExtensionSpec"]] = None,
-        confidential_compute_properties: Optional["_models.ConfidentialComputeProperties"] = None,
+        containers: Optional[list["_models.Container"]] = None,
+        init_containers: Optional[list["_models.InitContainerDefinition"]] = None,
+        extensions: Optional[list["_models.DeploymentExtensionSpec"]] = None,
+        image_registry_credentials: Optional[list["_models.ImageRegistryCredential"]] = None,
+        restart_policy: Optional[Union[str, "_models.ContainerGroupRestartPolicy"]] = None,
+        shutdown_grace_period: Optional[datetime.datetime] = None,
+        ip_address: Optional["_models.IpAddress"] = None,
+        time_to_live: Optional[datetime.datetime] = None,
+        os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
+        volumes: Optional[list["_models.Volume"]] = None,
+        diagnostics: Optional["_models.ContainerGroupDiagnostics"] = None,
         priority: Optional[Union[str, "_models.ContainerGroupPriority"]] = None,
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        zones: Optional[List[str]] = None,
+        confidential_compute_properties: Optional["_models.ConfidentialComputeProperties"] = None,
+        security_context: Optional["_models.SecurityContextDefinition"] = None,
+        use_krypton: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword containers: The containers within the container group. Required.
-        :paramtype containers: list[~azure.mgmt.containerinstance.models.Container]
-        :keyword image_registry_credentials: The image registry credentials by which the container
-         group is created from.
-        :paramtype image_registry_credentials:
-         list[~azure.mgmt.containerinstance.models.ImageRegistryCredential]
-        :keyword restart_policy: Restart policy for all containers within the container group.
-
-
-         * ``Always`` Always restart
-         * ``OnFailure`` Restart on failure
-         * ``Never`` Never restart. Known values are: "Always", "OnFailure", and "Never".
-        :paramtype restart_policy: str or
-         ~azure.mgmt.containerinstance.models.ContainerGroupRestartPolicy
-        :keyword ip_address: The IP address type of the container group.
-        :paramtype ip_address: ~azure.mgmt.containerinstance.models.IpAddress
-        :keyword os_type: The operating system type required by the containers in the container group.
-         Required. Known values are: "Windows" and "Linux".
-        :paramtype os_type: str or ~azure.mgmt.containerinstance.models.OperatingSystemTypes
-        :keyword volumes: The list of volumes that can be mounted by containers in this container
-         group.
-        :paramtype volumes: list[~azure.mgmt.containerinstance.models.Volume]
-        :keyword diagnostics: The diagnostic information for a container group.
-        :paramtype diagnostics: ~azure.mgmt.containerinstance.models.ContainerGroupDiagnostics
-        :keyword sku: The SKU for a container group. Known values are: "Standard", "Dedicated", and
-         "Confidential".
-        :paramtype sku: str or ~azure.mgmt.containerinstance.models.ContainerGroupSku
-        :keyword encryption_properties: The encryption properties for a container group.
-        :paramtype encryption_properties: ~azure.mgmt.containerinstance.models.EncryptionProperties
-        :keyword init_containers: The init containers for a container group.
-        :paramtype init_containers: list[~azure.mgmt.containerinstance.models.InitContainerDefinition]
-        :keyword extensions: extensions used by virtual kubelet.
-        :paramtype extensions: list[~azure.mgmt.containerinstance.models.DeploymentExtensionSpec]
-        :keyword confidential_compute_properties: The properties for confidential container group.
-        :paramtype confidential_compute_properties:
-         ~azure.mgmt.containerinstance.models.ConfidentialComputeProperties
-        :keyword priority: The priority of the container group. Known values are: "Regular" and "Spot".
-        :paramtype priority: str or ~azure.mgmt.containerinstance.models.ContainerGroupPriority
         :keyword location: The resource location.
         :paramtype location: str
         :keyword tags: The resource tags.
         :paramtype tags: dict[str, str]
         :keyword zones: The zones for the container group.
         :paramtype zones: list[str]
+        :keyword sku: The SKU for a container group. Known values are: "NotSpecified", "Standard",
+         "Dedicated", and "Confidential".
+        :paramtype sku: str or ~azure.mgmt.containerinstance.models.ContainerGroupSku
+        :keyword encryption_properties: The encryption properties for a container group.
+        :paramtype encryption_properties: ~azure.mgmt.containerinstance.models.EncryptionProperties
+        :keyword containers: The containers within the container group.
+        :paramtype containers: list[~azure.mgmt.containerinstance.models.Container]
+        :keyword init_containers: The init containers for a container group.
+        :paramtype init_containers: list[~azure.mgmt.containerinstance.models.InitContainerDefinition]
+        :keyword extensions: extensions used by virtual kubelet.
+        :paramtype extensions: list[~azure.mgmt.containerinstance.models.DeploymentExtensionSpec]
+        :keyword image_registry_credentials: The image registry credentials by which the container
+         group is created from.
+        :paramtype image_registry_credentials:
+         list[~azure.mgmt.containerinstance.models.ImageRegistryCredential]
+        :keyword restart_policy: Restart policy for all containers within the container group.
+
+          * ``Always`` Always restart
+          * ``OnFailure`` Restart on failure
+          * ``Never`` Never restart. Known values are: "Always", "OnFailure", and "Never".
+        :paramtype restart_policy: str or
+         ~azure.mgmt.containerinstance.models.ContainerGroupRestartPolicy
+        :keyword shutdown_grace_period: Shutdown grace period for containers in a container group.
+        :paramtype shutdown_grace_period: ~datetime.datetime
+        :keyword ip_address: The IP address type of the container group.
+        :paramtype ip_address: ~azure.mgmt.containerinstance.models.IpAddress
+        :keyword time_to_live: Post completion time to live for containers of a CG.
+        :paramtype time_to_live: ~datetime.datetime
+        :keyword os_type: The operating system type required by the containers in the container group.
+         Known values are: "Windows" and "Linux".
+        :paramtype os_type: str or ~azure.mgmt.containerinstance.models.OperatingSystemTypes
+        :keyword volumes: The list of volumes that can be mounted by containers in this container
+         group.
+        :paramtype volumes: list[~azure.mgmt.containerinstance.models.Volume]
+        :keyword diagnostics: The diagnostic information for a container group.
+        :paramtype diagnostics: ~azure.mgmt.containerinstance.models.ContainerGroupDiagnostics
+        :keyword priority: The priority of the container group. Known values are: "Regular" and "Spot".
+        :paramtype priority: str or ~azure.mgmt.containerinstance.models.ContainerGroupPriority
+        :keyword confidential_compute_properties: The properties for confidential container group.
+        :paramtype confidential_compute_properties:
+         ~azure.mgmt.containerinstance.models.ConfidentialComputeProperties
+        :keyword security_context: The container security properties.
+        :paramtype security_context: ~azure.mgmt.containerinstance.models.SecurityContextDefinition
+        :keyword use_krypton: Gets or sets Krypton use property.
+        :paramtype use_krypton: bool
         """
-        super().__init__(
-            location=location,
-            tags=tags,
-            zones=zones,
-            containers=containers,
-            image_registry_credentials=image_registry_credentials,
-            restart_policy=restart_policy,
-            ip_address=ip_address,
-            os_type=os_type,
-            volumes=volumes,
-            diagnostics=diagnostics,
-            sku=sku,
-            encryption_properties=encryption_properties,
-            init_containers=init_containers,
-            extensions=extensions,
-            confidential_compute_properties=confidential_compute_properties,
-            priority=priority,
-            **kwargs
-        )
+        super().__init__(location=location, tags=tags, zones=zones, **kwargs)
+        self.system_data: Optional["_models.SystemData"] = None
+        self.sku = sku
+        self.encryption_properties = encryption_properties
         self.containers = containers
+        self.init_containers = init_containers
+        self.extensions = extensions
         self.image_registry_credentials = image_registry_credentials
         self.restart_policy = restart_policy
+        self.shutdown_grace_period = shutdown_grace_period
         self.ip_address = ip_address
+        self.time_to_live = time_to_live
         self.os_type = os_type
         self.volumes = volumes
         self.diagnostics = diagnostics
-        self.sku = sku
-        self.encryption_properties = encryption_properties
-        self.init_containers = init_containers
-        self.extensions = extensions
-        self.confidential_compute_properties = confidential_compute_properties
         self.priority = priority
-        self.revision = None
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = location
-        self.tags = tags
-        self.zones = zones
+        self.confidential_compute_properties = confidential_compute_properties
+        self.security_context = security_context
+        self.revision: Optional[int] = None
+        self.registered_revisions: Optional[list[int]] = None
+        self.use_krypton = use_krypton
 
 
 class ContainerGroupProfileListResult(_serialization.Model):
-    """The container group profile list response that contains the container group profile properties.
+    """The container group profile list response.
 
-    :ivar value: The list of container group profiles.
+    :ivar value: The list of ContainerGroupProfiles under a subscription or resource group.
     :vartype value: list[~azure.mgmt.containerinstance.models.ContainerGroupProfile]
-    :ivar next_link: The URI to fetch the next page of container group profiles.
+    :ivar next_link: The URI to fetch the next page of Container Group Profiles.
     :vartype next_link: str
     """
 
@@ -1598,14 +1567,14 @@ class ContainerGroupProfileListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.ContainerGroupProfile"]] = None,
+        value: Optional[list["_models.ContainerGroupProfile"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword value: The list of container group profiles.
+        :keyword value: The list of ContainerGroupProfiles under a subscription or resource group.
         :paramtype value: list[~azure.mgmt.containerinstance.models.ContainerGroupProfile]
-        :keyword next_link: The URI to fetch the next page of container group profiles.
+        :keyword next_link: The URI to fetch the next page of Container Group Profiles.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -1624,7 +1593,7 @@ class ContainerGroupProfilePatch(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1637,7 +1606,7 @@ class ContainerGroupProfileReferenceDefinition(_serialization.Model):
     """The container group profile reference.
 
     :ivar id: The container group profile reference id.This will be an ARM resource id in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/containerGroupProfiles/{containerGroupProfileName}'.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/containerGroupProfiles/{containerGroupProfileName}'.
     :vartype id: str
     :ivar revision: The container group profile reference revision.
     :vartype revision: int
@@ -1658,7 +1627,7 @@ class ContainerGroupProfileReferenceDefinition(_serialization.Model):
         """
         :keyword id: The container group profile reference id.This will be an ARM resource id in the
          form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/containerGroupProfiles/{containerGroupProfileName}'.  # pylint: disable=line-too-long
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/containerGroupProfiles/{containerGroupProfileName}'.
         :paramtype id: str
         :keyword revision: The container group profile reference revision.
         :paramtype revision: int
@@ -1666,6 +1635,68 @@ class ContainerGroupProfileReferenceDefinition(_serialization.Model):
         super().__init__(**kwargs)
         self.id = id
         self.revision = revision
+
+
+class ContainerGroupProfileStub(_serialization.Model):
+    """The object that contains a reference to a Container Group Profile and it's other related
+    properties.
+
+    :ivar resource: A reference to the container group profile ARM resource hosted in ACI RP.
+    :vartype resource: ~azure.mgmt.containerinstance.models.ApiEntityReference
+    :ivar revision: The revision of the CG profile is an optional property. If customer does not to
+     provide a revision then NGroups will pickup the latest revision of CGProfile.
+    :vartype revision: int
+    :ivar network_profile: A network profile for network settings of a ContainerGroupProfile.
+    :vartype network_profile: ~azure.mgmt.containerinstance.models.NetworkProfile
+    :ivar storage_profile: Storage profile for storage related settings of a container group
+     profile.
+    :vartype storage_profile: ~azure.mgmt.containerinstance.models.StorageProfile
+    :ivar container_group_properties: Container Group properties which can be set while creating or
+     updating the NGroups.
+    :vartype container_group_properties:
+     ~azure.mgmt.containerinstance.models.NGroupContainerGroupProperties
+    """
+
+    _attribute_map = {
+        "resource": {"key": "resource", "type": "ApiEntityReference"},
+        "revision": {"key": "revision", "type": "int"},
+        "network_profile": {"key": "networkProfile", "type": "NetworkProfile"},
+        "storage_profile": {"key": "storageProfile", "type": "StorageProfile"},
+        "container_group_properties": {"key": "containerGroupProperties", "type": "NGroupContainerGroupProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource: Optional["_models.ApiEntityReference"] = None,
+        revision: Optional[int] = None,
+        network_profile: Optional["_models.NetworkProfile"] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
+        container_group_properties: Optional["_models.NGroupContainerGroupProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource: A reference to the container group profile ARM resource hosted in ACI RP.
+        :paramtype resource: ~azure.mgmt.containerinstance.models.ApiEntityReference
+        :keyword revision: The revision of the CG profile is an optional property. If customer does not
+         to provide a revision then NGroups will pickup the latest revision of CGProfile.
+        :paramtype revision: int
+        :keyword network_profile: A network profile for network settings of a ContainerGroupProfile.
+        :paramtype network_profile: ~azure.mgmt.containerinstance.models.NetworkProfile
+        :keyword storage_profile: Storage profile for storage related settings of a container group
+         profile.
+        :paramtype storage_profile: ~azure.mgmt.containerinstance.models.StorageProfile
+        :keyword container_group_properties: Container Group properties which can be set while creating
+         or updating the NGroups.
+        :paramtype container_group_properties:
+         ~azure.mgmt.containerinstance.models.NGroupContainerGroupProperties
+        """
+        super().__init__(**kwargs)
+        self.resource = resource
+        self.revision = revision
+        self.network_profile = network_profile
+        self.storage_profile = storage_profile
+        self.container_group_properties = container_group_properties
 
 
 class ContainerGroupPropertiesInstanceView(_serialization.Model):
@@ -1692,8 +1723,8 @@ class ContainerGroupPropertiesInstanceView(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.events = None
-        self.state = None
+        self.events: Optional[list["_models.Event"]] = None
+        self.state: Optional[str] = None
 
 
 class ContainerGroupSubnetId(_serialization.Model):
@@ -1762,7 +1793,7 @@ class ContainerHttpGet(_serialization.Model):
         port: int,
         path: Optional[str] = None,
         scheme: Optional[Union[str, "_models.Scheme"]] = None,
-        http_headers: Optional[List["_models.HttpHeader"]] = None,
+        http_headers: Optional[list["_models.HttpHeader"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1915,10 +1946,10 @@ class ContainerPropertiesInstanceView(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.restart_count = None
-        self.current_state = None
-        self.previous_state = None
-        self.events = None
+        self.restart_count: Optional[int] = None
+        self.current_state: Optional["_models.ContainerState"] = None
+        self.previous_state: Optional["_models.ContainerState"] = None
+        self.events: Optional[list["_models.Event"]] = None
 
 
 class ContainerState(_serialization.Model):
@@ -1958,11 +1989,11 @@ class ContainerState(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.state = None
-        self.start_time = None
-        self.exit_code = None
-        self.finish_time = None
-        self.detail_status = None
+        self.state: Optional[str] = None
+        self.start_time: Optional[datetime.datetime] = None
+        self.exit_code: Optional[int] = None
+        self.finish_time: Optional[datetime.datetime] = None
+        self.detail_status: Optional[str] = None
 
 
 class DeploymentExtensionSpec(_serialization.Model):
@@ -2050,7 +2081,7 @@ class DnsConfiguration(_serialization.Model):
     def __init__(
         self,
         *,
-        name_servers: List[str],
+        name_servers: list[str],
         search_domains: Optional[str] = None,
         options: Optional[str] = None,
         **kwargs: Any
@@ -2067,6 +2098,113 @@ class DnsConfiguration(_serialization.Model):
         self.name_servers = name_servers
         self.search_domains = search_domains
         self.options = options
+
+
+class ElasticProfile(_serialization.Model):
+    """Describes the elastic profile of the NGroup.
+
+    :ivar desired_count:
+    :vartype desired_count: int
+    :ivar maintain_desired_count: Flag that indicates whether desiredCount should be maintained
+     when customer deletes SPECIFIC container groups (CGs) from the NGroups. In this case, new CGs
+     will be created by NGroup to compensate for the specific deleted ones.
+    :vartype maintain_desired_count: bool
+    :ivar container_group_naming_policy: Container Groups are named on a generic guid based naming
+     scheme/policy. Customer can modify naming policy to add prefix to CG names during scale out
+     operation.
+    :vartype container_group_naming_policy:
+     ~azure.mgmt.containerinstance.models.ElasticProfileContainerGroupNamingPolicy
+    """
+
+    _attribute_map = {
+        "desired_count": {"key": "desiredCount", "type": "int"},
+        "maintain_desired_count": {"key": "maintainDesiredCount", "type": "bool"},
+        "container_group_naming_policy": {
+            "key": "containerGroupNamingPolicy",
+            "type": "ElasticProfileContainerGroupNamingPolicy",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        desired_count: Optional[int] = None,
+        maintain_desired_count: Optional[bool] = None,
+        container_group_naming_policy: Optional["_models.ElasticProfileContainerGroupNamingPolicy"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword desired_count:
+        :paramtype desired_count: int
+        :keyword maintain_desired_count: Flag that indicates whether desiredCount should be maintained
+         when customer deletes SPECIFIC container groups (CGs) from the NGroups. In this case, new CGs
+         will be created by NGroup to compensate for the specific deleted ones.
+        :paramtype maintain_desired_count: bool
+        :keyword container_group_naming_policy: Container Groups are named on a generic guid based
+         naming scheme/policy. Customer can modify naming policy to add prefix to CG names during scale
+         out operation.
+        :paramtype container_group_naming_policy:
+         ~azure.mgmt.containerinstance.models.ElasticProfileContainerGroupNamingPolicy
+        """
+        super().__init__(**kwargs)
+        self.desired_count = desired_count
+        self.maintain_desired_count = maintain_desired_count
+        self.container_group_naming_policy = container_group_naming_policy
+
+
+class ElasticProfileContainerGroupNamingPolicy(_serialization.Model):
+    """Container Groups are named on a generic guid based naming scheme/policy. Customer can modify
+    naming policy to add prefix to CG names during scale out operation.
+
+    :ivar guid_naming_policy:
+    :vartype guid_naming_policy:
+     ~azure.mgmt.containerinstance.models.ElasticProfileContainerGroupNamingPolicyGuidNamingPolicy
+    """
+
+    _attribute_map = {
+        "guid_naming_policy": {
+            "key": "guidNamingPolicy",
+            "type": "ElasticProfileContainerGroupNamingPolicyGuidNamingPolicy",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        guid_naming_policy: Optional["_models.ElasticProfileContainerGroupNamingPolicyGuidNamingPolicy"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword guid_naming_policy:
+        :paramtype guid_naming_policy:
+         ~azure.mgmt.containerinstance.models.ElasticProfileContainerGroupNamingPolicyGuidNamingPolicy
+        """
+        super().__init__(**kwargs)
+        self.guid_naming_policy = guid_naming_policy
+
+
+class ElasticProfileContainerGroupNamingPolicyGuidNamingPolicy(_serialization.Model):  # pylint: disable=name-too-long
+    """ElasticProfileContainerGroupNamingPolicyGuidNamingPolicy.
+
+    :ivar prefix: The prefix can be used when there are tooling limitations (e.g. on the Azure
+     portal where CGs from multiple NGroups exist in the same RG). The prefix with the suffixed
+     resource name must still follow Azure resource naming guidelines.
+    :vartype prefix: str
+    """
+
+    _attribute_map = {
+        "prefix": {"key": "prefix", "type": "str"},
+    }
+
+    def __init__(self, *, prefix: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword prefix: The prefix can be used when there are tooling limitations (e.g. on the Azure
+         portal where CGs from multiple NGroups exist in the same RG). The prefix with the suffixed
+         resource name must still follow Azure resource naming guidelines.
+        :paramtype prefix: str
+        """
+        super().__init__(**kwargs)
+        self.prefix = prefix
 
 
 class EncryptionProperties(_serialization.Model):
@@ -2128,6 +2266,8 @@ class EnvironmentVariable(_serialization.Model):
     :vartype value: str
     :ivar secure_value: The value of the secure environment variable.
     :vartype secure_value: str
+    :ivar secure_value_reference: The reference of the secure environment variable.
+    :vartype secure_value_reference: str
     """
 
     _validation = {
@@ -2138,10 +2278,17 @@ class EnvironmentVariable(_serialization.Model):
         "name": {"key": "name", "type": "str"},
         "value": {"key": "value", "type": "str"},
         "secure_value": {"key": "secureValue", "type": "str"},
+        "secure_value_reference": {"key": "secureValueReference", "type": "str"},
     }
 
     def __init__(
-        self, *, name: str, value: Optional[str] = None, secure_value: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        name: str,
+        value: Optional[str] = None,
+        secure_value: Optional[str] = None,
+        secure_value_reference: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword name: The name of the environment variable. Required.
@@ -2150,11 +2297,106 @@ class EnvironmentVariable(_serialization.Model):
         :paramtype value: str
         :keyword secure_value: The value of the secure environment variable.
         :paramtype secure_value: str
+        :keyword secure_value_reference: The reference of the secure environment variable.
+        :paramtype secure_value_reference: str
         """
         super().__init__(**kwargs)
         self.name = name
         self.value = value
         self.secure_value = secure_value
+        self.secure_value_reference = secure_value_reference
+
+
+class ErrorAdditionalInfo(_serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: JSON
+    """
+
+    _validation = {
+        "type": {"readonly": True},
+        "info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
+
+
+class ErrorDetail(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.containerinstance.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.containerinstance.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.containerinstance.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.containerinstance.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
 
 
 class Event(_serialization.Model):
@@ -2197,12 +2439,106 @@ class Event(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.count = None
-        self.first_timestamp = None
-        self.last_timestamp = None
-        self.name = None
-        self.message = None
-        self.type = None
+        self.count: Optional[int] = None
+        self.first_timestamp: Optional[datetime.datetime] = None
+        self.last_timestamp: Optional[datetime.datetime] = None
+        self.name: Optional[str] = None
+        self.message: Optional[str] = None
+        self.type: Optional[str] = None
+
+
+class FileShare(_serialization.Model):
+    """File shares that can be mounted on container groups.
+
+    :ivar name:
+    :vartype name: str
+    :ivar resource_group_name:
+    :vartype resource_group_name: str
+    :ivar storage_account_name:
+    :vartype storage_account_name: str
+    :ivar properties:
+    :vartype properties: ~azure.mgmt.containerinstance.models.FileShareProperties
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "resource_group_name": {"key": "resourceGroupName", "type": "str"},
+        "storage_account_name": {"key": "storageAccountName", "type": "str"},
+        "properties": {"key": "properties", "type": "FileShareProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        resource_group_name: Optional[str] = None,
+        storage_account_name: Optional[str] = None,
+        properties: Optional["_models.FileShareProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name:
+        :paramtype name: str
+        :keyword resource_group_name:
+        :paramtype resource_group_name: str
+        :keyword storage_account_name:
+        :paramtype storage_account_name: str
+        :keyword properties:
+        :paramtype properties: ~azure.mgmt.containerinstance.models.FileShareProperties
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.resource_group_name = resource_group_name
+        self.storage_account_name = storage_account_name
+        self.properties = properties
+
+
+class FileShareProperties(_serialization.Model):
+    """FileShareProperties.
+
+    :ivar share_access_type: Specifies how Container Groups can access the Azure file share i.e.
+     all CG will share same Azure file share or going to have exclusive file share. Known values
+     are: "Shared" and "Exclusive".
+    :vartype share_access_type: str or
+     ~azure.mgmt.containerinstance.models.AzureFileShareAccessType
+    :ivar share_access_tier: Access tier for specific share. GpV2 account can choose between
+     TransactionOptimized (default), Hot, and Cool. FileStorage account can choose Premium. Learn
+     more at:
+     https://learn.microsoft.com/en-us/rest/api/storagerp/file-shares/create?tabs=HTTP#shareaccesstier.
+     Known values are: "Cool", "Hot", "Premium", and "TransactionOptimized".
+    :vartype share_access_tier: str or
+     ~azure.mgmt.containerinstance.models.AzureFileShareAccessTier
+    """
+
+    _attribute_map = {
+        "share_access_type": {"key": "shareAccessType", "type": "str"},
+        "share_access_tier": {"key": "shareAccessTier", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        share_access_type: Optional[Union[str, "_models.AzureFileShareAccessType"]] = None,
+        share_access_tier: Union[str, "_models.AzureFileShareAccessTier"] = "TransactionOptimized",
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword share_access_type: Specifies how Container Groups can access the Azure file share i.e.
+         all CG will share same Azure file share or going to have exclusive file share. Known values
+         are: "Shared" and "Exclusive".
+        :paramtype share_access_type: str or
+         ~azure.mgmt.containerinstance.models.AzureFileShareAccessType
+        :keyword share_access_tier: Access tier for specific share. GpV2 account can choose between
+         TransactionOptimized (default), Hot, and Cool. FileStorage account can choose Premium. Learn
+         more at:
+         https://learn.microsoft.com/en-us/rest/api/storagerp/file-shares/create?tabs=HTTP#shareaccesstier.
+         Known values are: "Cool", "Hot", "Premium", and "TransactionOptimized".
+        :paramtype share_access_tier: str or
+         ~azure.mgmt.containerinstance.models.AzureFileShareAccessTier
+        """
+        super().__init__(**kwargs)
+        self.share_access_type = share_access_type
+        self.share_access_tier = share_access_tier
 
 
 class GitRepoVolume(_serialization.Model):
@@ -2309,6 +2645,72 @@ class HttpHeader(_serialization.Model):
         self.value = value
 
 
+class IdentityAccessControl(_serialization.Model):
+    """The access control for an identity.
+
+    :ivar access: The access level of the identity. Known values are: "All", "System", and "User".
+    :vartype access: str or ~azure.mgmt.containerinstance.models.IdentityAccessLevel
+    :ivar identity: An identity.
+    :vartype identity: str
+    """
+
+    _attribute_map = {
+        "access": {"key": "access", "type": "str"},
+        "identity": {"key": "identity", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        access: Optional[Union[str, "_models.IdentityAccessLevel"]] = None,
+        identity: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword access: The access level of the identity. Known values are: "All", "System", and
+         "User".
+        :paramtype access: str or ~azure.mgmt.containerinstance.models.IdentityAccessLevel
+        :keyword identity: An identity.
+        :paramtype identity: str
+        """
+        super().__init__(**kwargs)
+        self.access = access
+        self.identity = identity
+
+
+class IdentityAcls(_serialization.Model):
+    """The access control levels of the identities.
+
+    :ivar default_access: The default access level. Known values are: "All", "System", and "User".
+    :vartype default_access: str or ~azure.mgmt.containerinstance.models.IdentityAccessLevel
+    :ivar acls: The access control levels for each identity.
+    :vartype acls: list[~azure.mgmt.containerinstance.models.IdentityAccessControl]
+    """
+
+    _attribute_map = {
+        "default_access": {"key": "defaultAccess", "type": "str"},
+        "acls": {"key": "acls", "type": "[IdentityAccessControl]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        default_access: Optional[Union[str, "_models.IdentityAccessLevel"]] = None,
+        acls: Optional[list["_models.IdentityAccessControl"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword default_access: The default access level. Known values are: "All", "System", and
+         "User".
+        :paramtype default_access: str or ~azure.mgmt.containerinstance.models.IdentityAccessLevel
+        :keyword acls: The access control levels for each identity.
+        :paramtype acls: list[~azure.mgmt.containerinstance.models.IdentityAccessControl]
+        """
+        super().__init__(**kwargs)
+        self.default_access = default_access
+        self.acls = acls
+
+
 class ImageRegistryCredential(_serialization.Model):
     """Image registry credential.
 
@@ -2321,6 +2723,8 @@ class ImageRegistryCredential(_serialization.Model):
     :vartype username: str
     :ivar password: The password for the private registry.
     :vartype password: str
+    :ivar password_reference: The reference for the private registry password.
+    :vartype password_reference: str
     :ivar identity: The identity for the private registry.
     :vartype identity: str
     :ivar identity_url: The identity URL for the private registry.
@@ -2335,6 +2739,7 @@ class ImageRegistryCredential(_serialization.Model):
         "server": {"key": "server", "type": "str"},
         "username": {"key": "username", "type": "str"},
         "password": {"key": "password", "type": "str"},
+        "password_reference": {"key": "passwordReference", "type": "str"},
         "identity": {"key": "identity", "type": "str"},
         "identity_url": {"key": "identityUrl", "type": "str"},
     }
@@ -2345,6 +2750,7 @@ class ImageRegistryCredential(_serialization.Model):
         server: str,
         username: Optional[str] = None,
         password: Optional[str] = None,
+        password_reference: Optional[str] = None,
         identity: Optional[str] = None,
         identity_url: Optional[str] = None,
         **kwargs: Any
@@ -2357,6 +2763,8 @@ class ImageRegistryCredential(_serialization.Model):
         :paramtype username: str
         :keyword password: The password for the private registry.
         :paramtype password: str
+        :keyword password_reference: The reference for the private registry password.
+        :paramtype password_reference: str
         :keyword identity: The identity for the private registry.
         :paramtype identity: str
         :keyword identity_url: The identity URL for the private registry.
@@ -2366,6 +2774,7 @@ class ImageRegistryCredential(_serialization.Model):
         self.server = server
         self.username = username
         self.password = password
+        self.password_reference = password_reference
         self.identity = identity
         self.identity_url = identity_url
 
@@ -2414,9 +2823,9 @@ class InitContainerDefinition(_serialization.Model):
         *,
         name: str,
         image: Optional[str] = None,
-        command: Optional[List[str]] = None,
-        environment_variables: Optional[List["_models.EnvironmentVariable"]] = None,
-        volume_mounts: Optional[List["_models.VolumeMount"]] = None,
+        command: Optional[list[str]] = None,
+        environment_variables: Optional[list["_models.EnvironmentVariable"]] = None,
+        volume_mounts: Optional[list["_models.VolumeMount"]] = None,
         security_context: Optional["_models.SecurityContextDefinition"] = None,
         **kwargs: Any
     ) -> None:
@@ -2440,7 +2849,7 @@ class InitContainerDefinition(_serialization.Model):
         self.image = image
         self.command = command
         self.environment_variables = environment_variables
-        self.instance_view = None
+        self.instance_view: Optional["_models.InitContainerPropertiesDefinitionInstanceView"] = None
         self.volume_mounts = volume_mounts
         self.security_context = security_context
 
@@ -2477,10 +2886,10 @@ class InitContainerPropertiesDefinitionInstanceView(_serialization.Model):  # py
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.restart_count = None
-        self.current_state = None
-        self.previous_state = None
-        self.events = None
+        self.restart_count: Optional[int] = None
+        self.current_state: Optional["_models.ContainerState"] = None
+        self.previous_state: Optional["_models.ContainerState"] = None
+        self.events: Optional[list["_models.Event"]] = None
 
 
 class IpAddress(_serialization.Model):
@@ -2532,7 +2941,7 @@ class IpAddress(_serialization.Model):
     def __init__(
         self,
         *,
-        ports: List["_models.Port"],
+        ports: list["_models.Port"],
         type: Union[str, "_models.ContainerGroupIpAddressType"],
         ip: Optional[str] = None,
         dns_name_label: Optional[str] = None,
@@ -2567,7 +2976,548 @@ class IpAddress(_serialization.Model):
         self.ip = ip
         self.dns_name_label = dns_name_label
         self.auto_generated_domain_name_label_scope = auto_generated_domain_name_label_scope
-        self.fqdn = None
+        self.fqdn: Optional[str] = None
+
+
+class ListResultContainerGroupProperties(_serialization.Model):
+    """Properties of container group part of list result.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar identity: The identity of the container group, if configured.
+    :vartype identity: ~azure.mgmt.containerinstance.models.ContainerGroupIdentity
+    :ivar provisioning_state: The provisioning state of the container group. This only appears in
+     the response. Known values are: "NotSpecified", "Accepted", "Pending", "Updating", "Creating",
+     "Repairing", "Unhealthy", "Failed", "Canceled", "Succeeded", "Deleting", "NotAccessible", and
+     "PreProvisioned".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerinstance.models.ContainerGroupProvisioningState
+    :ivar secret_references: The secret references that will be referenced within the container
+     group.
+    :vartype secret_references: list[~azure.mgmt.containerinstance.models.SecretReference]
+    :ivar containers: The containers within the container group. Required.
+    :vartype containers: list[~azure.mgmt.containerinstance.models.Container]
+    :ivar image_registry_credentials: The image registry credentials by which the container group
+     is created from.
+    :vartype image_registry_credentials:
+     list[~azure.mgmt.containerinstance.models.ImageRegistryCredential]
+    :ivar restart_policy: Restart policy for all containers within the container group.
+
+     * ``Always`` Always restart
+     * ``OnFailure`` Restart on failure
+     * ``Never`` Never restart. Known values are: "Always", "OnFailure", and "Never".
+    :vartype restart_policy: str or
+     ~azure.mgmt.containerinstance.models.ContainerGroupRestartPolicy
+    :ivar ip_address: The IP address type of the container group.
+    :vartype ip_address: ~azure.mgmt.containerinstance.models.IpAddress
+    :ivar os_type: The operating system type required by the containers in the container group.
+     Required. Known values are: "Windows" and "Linux".
+    :vartype os_type: str or ~azure.mgmt.containerinstance.models.OperatingSystemTypes
+    :ivar volumes: The list of volumes that can be mounted by containers in this container group.
+    :vartype volumes: list[~azure.mgmt.containerinstance.models.Volume]
+    :ivar diagnostics: The diagnostic information for a container group.
+    :vartype diagnostics: ~azure.mgmt.containerinstance.models.ContainerGroupDiagnostics
+    :ivar subnet_ids: The subnet resource IDs for a container group.
+    :vartype subnet_ids: list[~azure.mgmt.containerinstance.models.ContainerGroupSubnetId]
+    :ivar dns_config: The DNS config information for a container group.
+    :vartype dns_config: ~azure.mgmt.containerinstance.models.DnsConfiguration
+    :ivar sku: The SKU for a container group. Known values are: "NotSpecified", "Standard",
+     "Dedicated", and "Confidential".
+    :vartype sku: str or ~azure.mgmt.containerinstance.models.ContainerGroupSku
+    :ivar encryption_properties: The encryption properties for a container group.
+    :vartype encryption_properties: ~azure.mgmt.containerinstance.models.EncryptionProperties
+    :ivar init_containers: The init containers for a container group.
+    :vartype init_containers: list[~azure.mgmt.containerinstance.models.InitContainerDefinition]
+    :ivar extensions: extensions used by virtual kubelet.
+    :vartype extensions: list[~azure.mgmt.containerinstance.models.DeploymentExtensionSpec]
+    :ivar confidential_compute_properties: The properties for confidential container group.
+    :vartype confidential_compute_properties:
+     ~azure.mgmt.containerinstance.models.ConfidentialComputeProperties
+    :ivar priority: The priority of the container group. Known values are: "Regular" and "Spot".
+    :vartype priority: str or ~azure.mgmt.containerinstance.models.ContainerGroupPriority
+    :ivar identity_acls: The access control levels of the identities.
+    :vartype identity_acls: ~azure.mgmt.containerinstance.models.IdentityAcls
+    :ivar container_group_profile: The reference container group profile properties.
+    :vartype container_group_profile:
+     ~azure.mgmt.containerinstance.models.ContainerGroupProfileReferenceDefinition
+    :ivar standby_pool_profile: The reference standby pool profile properties.
+    :vartype standby_pool_profile:
+     ~azure.mgmt.containerinstance.models.StandbyPoolProfileDefinition
+    :ivar is_created_from_standby_pool: The flag to determine whether the container group is
+     created from standby pool.
+    :vartype is_created_from_standby_pool: bool
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+        "containers": {"required": True},
+        "os_type": {"required": True},
+        "is_created_from_standby_pool": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "identity": {"key": "identity", "type": "ContainerGroupIdentity"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "secret_references": {"key": "properties.secretReferences", "type": "[SecretReference]"},
+        "containers": {"key": "properties.containers", "type": "[Container]"},
+        "image_registry_credentials": {
+            "key": "properties.imageRegistryCredentials",
+            "type": "[ImageRegistryCredential]",
+        },
+        "restart_policy": {"key": "properties.restartPolicy", "type": "str"},
+        "ip_address": {"key": "properties.ipAddress", "type": "IpAddress"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "volumes": {"key": "properties.volumes", "type": "[Volume]"},
+        "diagnostics": {"key": "properties.diagnostics", "type": "ContainerGroupDiagnostics"},
+        "subnet_ids": {"key": "properties.subnetIds", "type": "[ContainerGroupSubnetId]"},
+        "dns_config": {"key": "properties.dnsConfig", "type": "DnsConfiguration"},
+        "sku": {"key": "properties.sku", "type": "str"},
+        "encryption_properties": {"key": "properties.encryptionProperties", "type": "EncryptionProperties"},
+        "init_containers": {"key": "properties.initContainers", "type": "[InitContainerDefinition]"},
+        "extensions": {"key": "properties.extensions", "type": "[DeploymentExtensionSpec]"},
+        "confidential_compute_properties": {
+            "key": "properties.confidentialComputeProperties",
+            "type": "ConfidentialComputeProperties",
+        },
+        "priority": {"key": "properties.priority", "type": "str"},
+        "identity_acls": {"key": "properties.identityAcls", "type": "IdentityAcls"},
+        "container_group_profile": {
+            "key": "properties.containerGroupProfile",
+            "type": "ContainerGroupProfileReferenceDefinition",
+        },
+        "standby_pool_profile": {"key": "properties.standbyPoolProfile", "type": "StandbyPoolProfileDefinition"},
+        "is_created_from_standby_pool": {"key": "properties.isCreatedFromStandbyPool", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        containers: list["_models.Container"],
+        os_type: Union[str, "_models.OperatingSystemTypes"],
+        identity: Optional["_models.ContainerGroupIdentity"] = None,
+        secret_references: Optional[list["_models.SecretReference"]] = None,
+        image_registry_credentials: Optional[list["_models.ImageRegistryCredential"]] = None,
+        restart_policy: Optional[Union[str, "_models.ContainerGroupRestartPolicy"]] = None,
+        ip_address: Optional["_models.IpAddress"] = None,
+        volumes: Optional[list["_models.Volume"]] = None,
+        diagnostics: Optional["_models.ContainerGroupDiagnostics"] = None,
+        subnet_ids: Optional[list["_models.ContainerGroupSubnetId"]] = None,
+        dns_config: Optional["_models.DnsConfiguration"] = None,
+        sku: Optional[Union[str, "_models.ContainerGroupSku"]] = None,
+        encryption_properties: Optional["_models.EncryptionProperties"] = None,
+        init_containers: Optional[list["_models.InitContainerDefinition"]] = None,
+        extensions: Optional[list["_models.DeploymentExtensionSpec"]] = None,
+        confidential_compute_properties: Optional["_models.ConfidentialComputeProperties"] = None,
+        priority: Optional[Union[str, "_models.ContainerGroupPriority"]] = None,
+        identity_acls: Optional["_models.IdentityAcls"] = None,
+        container_group_profile: Optional["_models.ContainerGroupProfileReferenceDefinition"] = None,
+        standby_pool_profile: Optional["_models.StandbyPoolProfileDefinition"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword identity: The identity of the container group, if configured.
+        :paramtype identity: ~azure.mgmt.containerinstance.models.ContainerGroupIdentity
+        :keyword secret_references: The secret references that will be referenced within the container
+         group.
+        :paramtype secret_references: list[~azure.mgmt.containerinstance.models.SecretReference]
+        :keyword containers: The containers within the container group. Required.
+        :paramtype containers: list[~azure.mgmt.containerinstance.models.Container]
+        :keyword image_registry_credentials: The image registry credentials by which the container
+         group is created from.
+        :paramtype image_registry_credentials:
+         list[~azure.mgmt.containerinstance.models.ImageRegistryCredential]
+        :keyword restart_policy: Restart policy for all containers within the container group.
+
+          * ``Always`` Always restart
+          * ``OnFailure`` Restart on failure
+          * ``Never`` Never restart. Known values are: "Always", "OnFailure", and "Never".
+        :paramtype restart_policy: str or
+         ~azure.mgmt.containerinstance.models.ContainerGroupRestartPolicy
+        :keyword ip_address: The IP address type of the container group.
+        :paramtype ip_address: ~azure.mgmt.containerinstance.models.IpAddress
+        :keyword os_type: The operating system type required by the containers in the container group.
+         Required. Known values are: "Windows" and "Linux".
+        :paramtype os_type: str or ~azure.mgmt.containerinstance.models.OperatingSystemTypes
+        :keyword volumes: The list of volumes that can be mounted by containers in this container
+         group.
+        :paramtype volumes: list[~azure.mgmt.containerinstance.models.Volume]
+        :keyword diagnostics: The diagnostic information for a container group.
+        :paramtype diagnostics: ~azure.mgmt.containerinstance.models.ContainerGroupDiagnostics
+        :keyword subnet_ids: The subnet resource IDs for a container group.
+        :paramtype subnet_ids: list[~azure.mgmt.containerinstance.models.ContainerGroupSubnetId]
+        :keyword dns_config: The DNS config information for a container group.
+        :paramtype dns_config: ~azure.mgmt.containerinstance.models.DnsConfiguration
+        :keyword sku: The SKU for a container group. Known values are: "NotSpecified", "Standard",
+         "Dedicated", and "Confidential".
+        :paramtype sku: str or ~azure.mgmt.containerinstance.models.ContainerGroupSku
+        :keyword encryption_properties: The encryption properties for a container group.
+        :paramtype encryption_properties: ~azure.mgmt.containerinstance.models.EncryptionProperties
+        :keyword init_containers: The init containers for a container group.
+        :paramtype init_containers: list[~azure.mgmt.containerinstance.models.InitContainerDefinition]
+        :keyword extensions: extensions used by virtual kubelet.
+        :paramtype extensions: list[~azure.mgmt.containerinstance.models.DeploymentExtensionSpec]
+        :keyword confidential_compute_properties: The properties for confidential container group.
+        :paramtype confidential_compute_properties:
+         ~azure.mgmt.containerinstance.models.ConfidentialComputeProperties
+        :keyword priority: The priority of the container group. Known values are: "Regular" and "Spot".
+        :paramtype priority: str or ~azure.mgmt.containerinstance.models.ContainerGroupPriority
+        :keyword identity_acls: The access control levels of the identities.
+        :paramtype identity_acls: ~azure.mgmt.containerinstance.models.IdentityAcls
+        :keyword container_group_profile: The reference container group profile properties.
+        :paramtype container_group_profile:
+         ~azure.mgmt.containerinstance.models.ContainerGroupProfileReferenceDefinition
+        :keyword standby_pool_profile: The reference standby pool profile properties.
+        :paramtype standby_pool_profile:
+         ~azure.mgmt.containerinstance.models.StandbyPoolProfileDefinition
+        """
+        super().__init__(**kwargs)
+        self.identity = identity
+        self.provisioning_state: Optional[Union[str, "_models.ContainerGroupProvisioningState"]] = None
+        self.secret_references = secret_references
+        self.containers = containers
+        self.image_registry_credentials = image_registry_credentials
+        self.restart_policy = restart_policy
+        self.ip_address = ip_address
+        self.os_type = os_type
+        self.volumes = volumes
+        self.diagnostics = diagnostics
+        self.subnet_ids = subnet_ids
+        self.dns_config = dns_config
+        self.sku = sku
+        self.encryption_properties = encryption_properties
+        self.init_containers = init_containers
+        self.extensions = extensions
+        self.confidential_compute_properties = confidential_compute_properties
+        self.priority = priority
+        self.identity_acls = identity_acls
+        self.container_group_profile = container_group_profile
+        self.standby_pool_profile = standby_pool_profile
+        self.is_created_from_standby_pool: Optional[bool] = None
+
+
+class ListResultContainerGroup(Resource, ListResultContainerGroupProperties):
+    """A container group part of the list result.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar identity: The identity of the container group, if configured.
+    :vartype identity: ~azure.mgmt.containerinstance.models.ContainerGroupIdentity
+    :ivar provisioning_state: The provisioning state of the container group. This only appears in
+     the response. Known values are: "NotSpecified", "Accepted", "Pending", "Updating", "Creating",
+     "Repairing", "Unhealthy", "Failed", "Canceled", "Succeeded", "Deleting", "NotAccessible", and
+     "PreProvisioned".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerinstance.models.ContainerGroupProvisioningState
+    :ivar secret_references: The secret references that will be referenced within the container
+     group.
+    :vartype secret_references: list[~azure.mgmt.containerinstance.models.SecretReference]
+    :ivar containers: The containers within the container group. Required.
+    :vartype containers: list[~azure.mgmt.containerinstance.models.Container]
+    :ivar image_registry_credentials: The image registry credentials by which the container group
+     is created from.
+    :vartype image_registry_credentials:
+     list[~azure.mgmt.containerinstance.models.ImageRegistryCredential]
+    :ivar restart_policy: Restart policy for all containers within the container group.
+
+     * ``Always`` Always restart
+     * ``OnFailure`` Restart on failure
+     * ``Never`` Never restart. Known values are: "Always", "OnFailure", and "Never".
+    :vartype restart_policy: str or
+     ~azure.mgmt.containerinstance.models.ContainerGroupRestartPolicy
+    :ivar ip_address: The IP address type of the container group.
+    :vartype ip_address: ~azure.mgmt.containerinstance.models.IpAddress
+    :ivar os_type: The operating system type required by the containers in the container group.
+     Required. Known values are: "Windows" and "Linux".
+    :vartype os_type: str or ~azure.mgmt.containerinstance.models.OperatingSystemTypes
+    :ivar volumes: The list of volumes that can be mounted by containers in this container group.
+    :vartype volumes: list[~azure.mgmt.containerinstance.models.Volume]
+    :ivar diagnostics: The diagnostic information for a container group.
+    :vartype diagnostics: ~azure.mgmt.containerinstance.models.ContainerGroupDiagnostics
+    :ivar subnet_ids: The subnet resource IDs for a container group.
+    :vartype subnet_ids: list[~azure.mgmt.containerinstance.models.ContainerGroupSubnetId]
+    :ivar dns_config: The DNS config information for a container group.
+    :vartype dns_config: ~azure.mgmt.containerinstance.models.DnsConfiguration
+    :ivar sku: The SKU for a container group. Known values are: "NotSpecified", "Standard",
+     "Dedicated", and "Confidential".
+    :vartype sku: str or ~azure.mgmt.containerinstance.models.ContainerGroupSku
+    :ivar encryption_properties: The encryption properties for a container group.
+    :vartype encryption_properties: ~azure.mgmt.containerinstance.models.EncryptionProperties
+    :ivar init_containers: The init containers for a container group.
+    :vartype init_containers: list[~azure.mgmt.containerinstance.models.InitContainerDefinition]
+    :ivar extensions: extensions used by virtual kubelet.
+    :vartype extensions: list[~azure.mgmt.containerinstance.models.DeploymentExtensionSpec]
+    :ivar confidential_compute_properties: The properties for confidential container group.
+    :vartype confidential_compute_properties:
+     ~azure.mgmt.containerinstance.models.ConfidentialComputeProperties
+    :ivar priority: The priority of the container group. Known values are: "Regular" and "Spot".
+    :vartype priority: str or ~azure.mgmt.containerinstance.models.ContainerGroupPriority
+    :ivar identity_acls: The access control levels of the identities.
+    :vartype identity_acls: ~azure.mgmt.containerinstance.models.IdentityAcls
+    :ivar container_group_profile: The reference container group profile properties.
+    :vartype container_group_profile:
+     ~azure.mgmt.containerinstance.models.ContainerGroupProfileReferenceDefinition
+    :ivar standby_pool_profile: The reference standby pool profile properties.
+    :vartype standby_pool_profile:
+     ~azure.mgmt.containerinstance.models.StandbyPoolProfileDefinition
+    :ivar is_created_from_standby_pool: The flag to determine whether the container group is
+     created from standby pool.
+    :vartype is_created_from_standby_pool: bool
+    :ivar id: The resource id.
+    :vartype id: str
+    :ivar name: The resource name.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar zones: The zones for the container group.
+    :vartype zones: list[str]
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+        "containers": {"required": True},
+        "os_type": {"required": True},
+        "is_created_from_standby_pool": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "identity": {"key": "identity", "type": "ContainerGroupIdentity"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "secret_references": {"key": "properties.secretReferences", "type": "[SecretReference]"},
+        "containers": {"key": "properties.containers", "type": "[Container]"},
+        "image_registry_credentials": {
+            "key": "properties.imageRegistryCredentials",
+            "type": "[ImageRegistryCredential]",
+        },
+        "restart_policy": {"key": "properties.restartPolicy", "type": "str"},
+        "ip_address": {"key": "properties.ipAddress", "type": "IpAddress"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "volumes": {"key": "properties.volumes", "type": "[Volume]"},
+        "diagnostics": {"key": "properties.diagnostics", "type": "ContainerGroupDiagnostics"},
+        "subnet_ids": {"key": "properties.subnetIds", "type": "[ContainerGroupSubnetId]"},
+        "dns_config": {"key": "properties.dnsConfig", "type": "DnsConfiguration"},
+        "sku": {"key": "properties.sku", "type": "str"},
+        "encryption_properties": {"key": "properties.encryptionProperties", "type": "EncryptionProperties"},
+        "init_containers": {"key": "properties.initContainers", "type": "[InitContainerDefinition]"},
+        "extensions": {"key": "properties.extensions", "type": "[DeploymentExtensionSpec]"},
+        "confidential_compute_properties": {
+            "key": "properties.confidentialComputeProperties",
+            "type": "ConfidentialComputeProperties",
+        },
+        "priority": {"key": "properties.priority", "type": "str"},
+        "identity_acls": {"key": "properties.identityAcls", "type": "IdentityAcls"},
+        "container_group_profile": {
+            "key": "properties.containerGroupProfile",
+            "type": "ContainerGroupProfileReferenceDefinition",
+        },
+        "standby_pool_profile": {"key": "properties.standbyPoolProfile", "type": "StandbyPoolProfileDefinition"},
+        "is_created_from_standby_pool": {"key": "properties.isCreatedFromStandbyPool", "type": "bool"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "zones": {"key": "zones", "type": "[str]"},
+    }
+
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        containers: list["_models.Container"],
+        os_type: Union[str, "_models.OperatingSystemTypes"],
+        identity: Optional["_models.ContainerGroupIdentity"] = None,
+        secret_references: Optional[list["_models.SecretReference"]] = None,
+        image_registry_credentials: Optional[list["_models.ImageRegistryCredential"]] = None,
+        restart_policy: Optional[Union[str, "_models.ContainerGroupRestartPolicy"]] = None,
+        ip_address: Optional["_models.IpAddress"] = None,
+        volumes: Optional[list["_models.Volume"]] = None,
+        diagnostics: Optional["_models.ContainerGroupDiagnostics"] = None,
+        subnet_ids: Optional[list["_models.ContainerGroupSubnetId"]] = None,
+        dns_config: Optional["_models.DnsConfiguration"] = None,
+        sku: Optional[Union[str, "_models.ContainerGroupSku"]] = None,
+        encryption_properties: Optional["_models.EncryptionProperties"] = None,
+        init_containers: Optional[list["_models.InitContainerDefinition"]] = None,
+        extensions: Optional[list["_models.DeploymentExtensionSpec"]] = None,
+        confidential_compute_properties: Optional["_models.ConfidentialComputeProperties"] = None,
+        priority: Optional[Union[str, "_models.ContainerGroupPriority"]] = None,
+        identity_acls: Optional["_models.IdentityAcls"] = None,
+        container_group_profile: Optional["_models.ContainerGroupProfileReferenceDefinition"] = None,
+        standby_pool_profile: Optional["_models.StandbyPoolProfileDefinition"] = None,
+        location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
+        zones: Optional[list[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword identity: The identity of the container group, if configured.
+        :paramtype identity: ~azure.mgmt.containerinstance.models.ContainerGroupIdentity
+        :keyword secret_references: The secret references that will be referenced within the container
+         group.
+        :paramtype secret_references: list[~azure.mgmt.containerinstance.models.SecretReference]
+        :keyword containers: The containers within the container group. Required.
+        :paramtype containers: list[~azure.mgmt.containerinstance.models.Container]
+        :keyword image_registry_credentials: The image registry credentials by which the container
+         group is created from.
+        :paramtype image_registry_credentials:
+         list[~azure.mgmt.containerinstance.models.ImageRegistryCredential]
+        :keyword restart_policy: Restart policy for all containers within the container group.
+
+          * ``Always`` Always restart
+          * ``OnFailure`` Restart on failure
+          * ``Never`` Never restart. Known values are: "Always", "OnFailure", and "Never".
+        :paramtype restart_policy: str or
+         ~azure.mgmt.containerinstance.models.ContainerGroupRestartPolicy
+        :keyword ip_address: The IP address type of the container group.
+        :paramtype ip_address: ~azure.mgmt.containerinstance.models.IpAddress
+        :keyword os_type: The operating system type required by the containers in the container group.
+         Required. Known values are: "Windows" and "Linux".
+        :paramtype os_type: str or ~azure.mgmt.containerinstance.models.OperatingSystemTypes
+        :keyword volumes: The list of volumes that can be mounted by containers in this container
+         group.
+        :paramtype volumes: list[~azure.mgmt.containerinstance.models.Volume]
+        :keyword diagnostics: The diagnostic information for a container group.
+        :paramtype diagnostics: ~azure.mgmt.containerinstance.models.ContainerGroupDiagnostics
+        :keyword subnet_ids: The subnet resource IDs for a container group.
+        :paramtype subnet_ids: list[~azure.mgmt.containerinstance.models.ContainerGroupSubnetId]
+        :keyword dns_config: The DNS config information for a container group.
+        :paramtype dns_config: ~azure.mgmt.containerinstance.models.DnsConfiguration
+        :keyword sku: The SKU for a container group. Known values are: "NotSpecified", "Standard",
+         "Dedicated", and "Confidential".
+        :paramtype sku: str or ~azure.mgmt.containerinstance.models.ContainerGroupSku
+        :keyword encryption_properties: The encryption properties for a container group.
+        :paramtype encryption_properties: ~azure.mgmt.containerinstance.models.EncryptionProperties
+        :keyword init_containers: The init containers for a container group.
+        :paramtype init_containers: list[~azure.mgmt.containerinstance.models.InitContainerDefinition]
+        :keyword extensions: extensions used by virtual kubelet.
+        :paramtype extensions: list[~azure.mgmt.containerinstance.models.DeploymentExtensionSpec]
+        :keyword confidential_compute_properties: The properties for confidential container group.
+        :paramtype confidential_compute_properties:
+         ~azure.mgmt.containerinstance.models.ConfidentialComputeProperties
+        :keyword priority: The priority of the container group. Known values are: "Regular" and "Spot".
+        :paramtype priority: str or ~azure.mgmt.containerinstance.models.ContainerGroupPriority
+        :keyword identity_acls: The access control levels of the identities.
+        :paramtype identity_acls: ~azure.mgmt.containerinstance.models.IdentityAcls
+        :keyword container_group_profile: The reference container group profile properties.
+        :paramtype container_group_profile:
+         ~azure.mgmt.containerinstance.models.ContainerGroupProfileReferenceDefinition
+        :keyword standby_pool_profile: The reference standby pool profile properties.
+        :paramtype standby_pool_profile:
+         ~azure.mgmt.containerinstance.models.StandbyPoolProfileDefinition
+        :keyword location: The resource location.
+        :paramtype location: str
+        :keyword tags: The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword zones: The zones for the container group.
+        :paramtype zones: list[str]
+        """
+        super().__init__(
+            location=location,
+            tags=tags,
+            zones=zones,
+            identity=identity,
+            secret_references=secret_references,
+            containers=containers,
+            image_registry_credentials=image_registry_credentials,
+            restart_policy=restart_policy,
+            ip_address=ip_address,
+            os_type=os_type,
+            volumes=volumes,
+            diagnostics=diagnostics,
+            subnet_ids=subnet_ids,
+            dns_config=dns_config,
+            sku=sku,
+            encryption_properties=encryption_properties,
+            init_containers=init_containers,
+            extensions=extensions,
+            confidential_compute_properties=confidential_compute_properties,
+            priority=priority,
+            identity_acls=identity_acls,
+            container_group_profile=container_group_profile,
+            standby_pool_profile=standby_pool_profile,
+            **kwargs
+        )
+        self.identity = identity
+        self.provisioning_state: Optional[Union[str, "_models.ContainerGroupProvisioningState"]] = None
+        self.secret_references = secret_references
+        self.containers = containers
+        self.image_registry_credentials = image_registry_credentials
+        self.restart_policy = restart_policy
+        self.ip_address = ip_address
+        self.os_type = os_type
+        self.volumes = volumes
+        self.diagnostics = diagnostics
+        self.subnet_ids = subnet_ids
+        self.dns_config = dns_config
+        self.sku = sku
+        self.encryption_properties = encryption_properties
+        self.init_containers = init_containers
+        self.extensions = extensions
+        self.confidential_compute_properties = confidential_compute_properties
+        self.priority = priority
+        self.identity_acls = identity_acls
+        self.container_group_profile = container_group_profile
+        self.standby_pool_profile = standby_pool_profile
+        self.is_created_from_standby_pool: Optional[bool] = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.location = location
+        self.tags = tags
+        self.zones = zones
+
+
+class LoadBalancer(_serialization.Model):
+    """LoadBalancer the CG profile will use to interact with CGs in a backend pool.
+
+    :ivar backend_address_pools: List of Load Balancer Backend Address Pools.
+    :vartype backend_address_pools:
+     list[~azure.mgmt.containerinstance.models.LoadBalancerBackendAddressPool]
+    """
+
+    _attribute_map = {
+        "backend_address_pools": {"key": "backendAddressPools", "type": "[LoadBalancerBackendAddressPool]"},
+    }
+
+    def __init__(
+        self, *, backend_address_pools: Optional[list["_models.LoadBalancerBackendAddressPool"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword backend_address_pools: List of Load Balancer Backend Address Pools.
+        :paramtype backend_address_pools:
+         list[~azure.mgmt.containerinstance.models.LoadBalancerBackendAddressPool]
+        """
+        super().__init__(**kwargs)
+        self.backend_address_pools = backend_address_pools
+
+
+class LoadBalancerBackendAddressPool(_serialization.Model):
+    """NGroups load balancer backend address pool.
+
+    :ivar resource: The Load Balancer backend address pool ARM resource Id.
+    :vartype resource: str
+    """
+
+    _attribute_map = {
+        "resource": {"key": "resource", "type": "str"},
+    }
+
+    def __init__(self, *, resource: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword resource: The Load Balancer backend address pool ARM resource Id.
+        :paramtype resource: str
+        """
+        super().__init__(**kwargs)
+        self.resource = resource
 
 
 class LogAnalytics(_serialization.Model):
@@ -2607,7 +3557,7 @@ class LogAnalytics(_serialization.Model):
         workspace_id: str,
         workspace_key: str,
         log_type: Optional[Union[str, "_models.LogAnalyticsLogType"]] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         workspace_resource_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -2650,6 +3600,534 @@ class Logs(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.content = content
+
+
+class NetworkProfile(_serialization.Model):
+    """A network profile for network settings of a ContainerGroupProfile. Used to manage load balancer
+    and application gateway backend pools, specifically updating the IP addresses of CGs within the
+    backend pool.
+
+    :ivar load_balancer: LoadBalancer the CG profile will use to interact with CGs in a backend
+     pool.
+    :vartype load_balancer: ~azure.mgmt.containerinstance.models.LoadBalancer
+    :ivar application_gateway: Application Gateway the CG profile will use to interact with CGs in
+     a backend pool.
+    :vartype application_gateway: ~azure.mgmt.containerinstance.models.ApplicationGateway
+    """
+
+    _attribute_map = {
+        "load_balancer": {"key": "loadBalancer", "type": "LoadBalancer"},
+        "application_gateway": {"key": "applicationGateway", "type": "ApplicationGateway"},
+    }
+
+    def __init__(
+        self,
+        *,
+        load_balancer: Optional["_models.LoadBalancer"] = None,
+        application_gateway: Optional["_models.ApplicationGateway"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword load_balancer: LoadBalancer the CG profile will use to interact with CGs in a backend
+         pool.
+        :paramtype load_balancer: ~azure.mgmt.containerinstance.models.LoadBalancer
+        :keyword application_gateway: Application Gateway the CG profile will use to interact with CGs
+         in a backend pool.
+        :paramtype application_gateway: ~azure.mgmt.containerinstance.models.ApplicationGateway
+        """
+        super().__init__(**kwargs)
+        self.load_balancer = load_balancer
+        self.application_gateway = application_gateway
+
+
+class NGroup(Resource):
+    """Describes the NGroups resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The resource id.
+    :vartype id: str
+    :ivar name: The resource name.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar zones: The zones for the container group.
+    :vartype zones: list[str]
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.containerinstance.models.SystemData
+    :ivar identity: The identity of the NGroup, if configured.
+    :vartype identity: ~azure.mgmt.containerinstance.models.NGroupIdentity
+    :ivar elastic_profile: The elastic profile.
+    :vartype elastic_profile: ~azure.mgmt.containerinstance.models.ElasticProfile
+    :ivar placement_profile: Provides options w.r.t allocation and management w.r.t certain
+     placement policies. These utilize capabilities provided by the underlying Azure infrastructure.
+     They are typically used for high availability scenarios. E.g., distributing CGs across fault
+     domains.
+    :vartype placement_profile: ~azure.mgmt.containerinstance.models.PlacementProfile
+    :ivar container_group_profiles: The Container Group Profiles that could be used in the NGroups
+     resource.
+    :vartype container_group_profiles:
+     list[~azure.mgmt.containerinstance.models.ContainerGroupProfileStub]
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Canceled", "Deleting", and
+     "Migrating".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerinstance.models.NGroupProvisioningState
+    :ivar update_profile: Used by the customer to specify the way to update the Container Groups in
+     NGroup.
+    :vartype update_profile: ~azure.mgmt.containerinstance.models.UpdateProfile
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "identity": {"key": "identity", "type": "NGroupIdentity"},
+        "elastic_profile": {"key": "properties.elasticProfile", "type": "ElasticProfile"},
+        "placement_profile": {"key": "properties.placementProfile", "type": "PlacementProfile"},
+        "container_group_profiles": {"key": "properties.containerGroupProfiles", "type": "[ContainerGroupProfileStub]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "update_profile": {"key": "properties.updateProfile", "type": "UpdateProfile"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
+        zones: Optional[list[str]] = None,
+        identity: Optional["_models.NGroupIdentity"] = None,
+        elastic_profile: Optional["_models.ElasticProfile"] = None,
+        placement_profile: Optional["_models.PlacementProfile"] = None,
+        container_group_profiles: Optional[list["_models.ContainerGroupProfileStub"]] = None,
+        update_profile: Optional["_models.UpdateProfile"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword location: The resource location.
+        :paramtype location: str
+        :keyword tags: The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword zones: The zones for the container group.
+        :paramtype zones: list[str]
+        :keyword identity: The identity of the NGroup, if configured.
+        :paramtype identity: ~azure.mgmt.containerinstance.models.NGroupIdentity
+        :keyword elastic_profile: The elastic profile.
+        :paramtype elastic_profile: ~azure.mgmt.containerinstance.models.ElasticProfile
+        :keyword placement_profile: Provides options w.r.t allocation and management w.r.t certain
+         placement policies. These utilize capabilities provided by the underlying Azure infrastructure.
+         They are typically used for high availability scenarios. E.g., distributing CGs across fault
+         domains.
+        :paramtype placement_profile: ~azure.mgmt.containerinstance.models.PlacementProfile
+        :keyword container_group_profiles: The Container Group Profiles that could be used in the
+         NGroups resource.
+        :paramtype container_group_profiles:
+         list[~azure.mgmt.containerinstance.models.ContainerGroupProfileStub]
+        :keyword update_profile: Used by the customer to specify the way to update the Container Groups
+         in NGroup.
+        :paramtype update_profile: ~azure.mgmt.containerinstance.models.UpdateProfile
+        """
+        super().__init__(location=location, tags=tags, zones=zones, **kwargs)
+        self.system_data: Optional["_models.SystemData"] = None
+        self.identity = identity
+        self.elastic_profile = elastic_profile
+        self.placement_profile = placement_profile
+        self.container_group_profiles = container_group_profiles
+        self.provisioning_state: Optional[Union[str, "_models.NGroupProvisioningState"]] = None
+        self.update_profile = update_profile
+
+
+class NGroupCGPropertyContainer(_serialization.Model):
+    """Container properties that can be provided with NGroups object.
+
+    :ivar name: container name.
+    :vartype name: str
+    :ivar properties: container properties.
+    :vartype properties: ~azure.mgmt.containerinstance.models.NGroupCGPropertyContainerProperties
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "NGroupCGPropertyContainerProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        properties: Optional["_models.NGroupCGPropertyContainerProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: container name.
+        :paramtype name: str
+        :keyword properties: container properties.
+        :paramtype properties: ~azure.mgmt.containerinstance.models.NGroupCGPropertyContainerProperties
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.properties = properties
+
+
+class NGroupCGPropertyContainerProperties(_serialization.Model):
+    """container properties.
+
+    :ivar volume_mounts:
+    :vartype volume_mounts: list[~azure.mgmt.containerinstance.models.VolumeMount]
+    """
+
+    _attribute_map = {
+        "volume_mounts": {"key": "volumeMounts", "type": "[VolumeMount]"},
+    }
+
+    def __init__(self, *, volume_mounts: Optional[list["_models.VolumeMount"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword volume_mounts:
+        :paramtype volume_mounts: list[~azure.mgmt.containerinstance.models.VolumeMount]
+        """
+        super().__init__(**kwargs)
+        self.volume_mounts = volume_mounts
+
+
+class NGroupCGPropertyVolume(_serialization.Model):
+    """Contains information about the volumes that can be mounted by Containers in the Container
+    Groups.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: The name of the volume. Required.
+    :vartype name: str
+    :ivar azure_file: The Azure File volume.
+    :vartype azure_file: ~azure.mgmt.containerinstance.models.AzureFileVolume
+    """
+
+    _validation = {
+        "name": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "azure_file": {"key": "azureFile", "type": "AzureFileVolume"},
+    }
+
+    def __init__(self, *, name: str, azure_file: Optional["_models.AzureFileVolume"] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: The name of the volume. Required.
+        :paramtype name: str
+        :keyword azure_file: The Azure File volume.
+        :paramtype azure_file: ~azure.mgmt.containerinstance.models.AzureFileVolume
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.azure_file = azure_file
+
+
+class NGroupContainerGroupProperties(_serialization.Model):
+    """Container Group properties which can be set while creating or updating the NGroups.
+
+    :ivar subnet_ids: Contains information about Virtual Network Subnet ARM Resource.
+    :vartype subnet_ids: list[~azure.mgmt.containerinstance.models.ContainerGroupSubnetId]
+    :ivar volumes: Contains information about the volumes that can be mounted by Containers in the
+     Container Groups.
+    :vartype volumes: list[~azure.mgmt.containerinstance.models.NGroupCGPropertyVolume]
+    :ivar containers: Contains information about Container which can be set while creating or
+     updating the NGroups.
+    :vartype containers: list[~azure.mgmt.containerinstance.models.NGroupCGPropertyContainer]
+    """
+
+    _attribute_map = {
+        "subnet_ids": {"key": "subnetIds", "type": "[ContainerGroupSubnetId]"},
+        "volumes": {"key": "volumes", "type": "[NGroupCGPropertyVolume]"},
+        "containers": {"key": "containers", "type": "[NGroupCGPropertyContainer]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        subnet_ids: Optional[list["_models.ContainerGroupSubnetId"]] = None,
+        volumes: Optional[list["_models.NGroupCGPropertyVolume"]] = None,
+        containers: Optional[list["_models.NGroupCGPropertyContainer"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword subnet_ids: Contains information about Virtual Network Subnet ARM Resource.
+        :paramtype subnet_ids: list[~azure.mgmt.containerinstance.models.ContainerGroupSubnetId]
+        :keyword volumes: Contains information about the volumes that can be mounted by Containers in
+         the Container Groups.
+        :paramtype volumes: list[~azure.mgmt.containerinstance.models.NGroupCGPropertyVolume]
+        :keyword containers: Contains information about Container which can be set while creating or
+         updating the NGroups.
+        :paramtype containers: list[~azure.mgmt.containerinstance.models.NGroupCGPropertyContainer]
+        """
+        super().__init__(**kwargs)
+        self.subnet_ids = subnet_ids
+        self.volumes = volumes
+        self.containers = containers
+
+
+class NGroupIdentity(_serialization.Model):
+    """Identity for the NGroup.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal id of the NGroup identity. This property will only be
+     provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant id associated with the NGroup. This property will only be provided
+     for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: The type of identity used for the NGroup. The type 'SystemAssigned, UserAssigned'
+     includes both an implicitly created identity and a set of user assigned identities. The type
+     'None' will remove any identities from the NGroup. Known values are: "SystemAssigned",
+     "UserAssigned", "SystemAssigned, UserAssigned", and "None".
+    :vartype type: str or ~azure.mgmt.containerinstance.models.ResourceIdentityType
+    :ivar user_assigned_identities: The list of user identities associated with the NGroup.
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.containerinstance.models.UserAssignedIdentities]
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentities}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentities"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: The type of identity used for the NGroup. The type 'SystemAssigned,
+         UserAssigned' includes both an implicitly created identity and a set of user assigned
+         identities. The type 'None' will remove any identities from the NGroup. Known values are:
+         "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", and "None".
+        :paramtype type: str or ~azure.mgmt.containerinstance.models.ResourceIdentityType
+        :keyword user_assigned_identities: The list of user identities associated with the NGroup.
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.containerinstance.models.UserAssignedIdentities]
+        """
+        super().__init__(**kwargs)
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
+
+
+class NGroupPatch(_serialization.Model):
+    """Describes the NGroups resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.containerinstance.models.SystemData
+    :ivar identity: The identity of the NGroup, if configured.
+    :vartype identity: ~azure.mgmt.containerinstance.models.NGroupIdentity
+    :ivar tags: The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar zones: The zones for the NGroup.
+    :vartype zones: list[str]
+    :ivar elastic_profile: The elastic profile.
+    :vartype elastic_profile: ~azure.mgmt.containerinstance.models.ElasticProfile
+    :ivar placement_profile: Provides options w.r.t allocation and management w.r.t certain
+     placement policies. These utilize capabilities provided by the underlying Azure infrastructure.
+     They are typically used for high availability scenarios. E.g., distributing CGs across fault
+     domains.
+    :vartype placement_profile: ~azure.mgmt.containerinstance.models.PlacementProfile
+    :ivar container_group_profiles: The Container Group Profiles that could be used in the NGroups
+     resource.
+    :vartype container_group_profiles:
+     list[~azure.mgmt.containerinstance.models.ContainerGroupProfileStub]
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Canceled", "Deleting", and
+     "Migrating".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerinstance.models.NGroupProvisioningState
+    :ivar update_profile: Used by the customer to specify the way to update the Container Groups in
+     NGroup.
+    :vartype update_profile: ~azure.mgmt.containerinstance.models.UpdateProfile
+    """
+
+    _validation = {
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "identity": {"key": "identity", "type": "NGroupIdentity"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "elastic_profile": {"key": "properties.elasticProfile", "type": "ElasticProfile"},
+        "placement_profile": {"key": "properties.placementProfile", "type": "PlacementProfile"},
+        "container_group_profiles": {"key": "properties.containerGroupProfiles", "type": "[ContainerGroupProfileStub]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "update_profile": {"key": "properties.updateProfile", "type": "UpdateProfile"},
+    }
+
+    def __init__(
+        self,
+        *,
+        identity: Optional["_models.NGroupIdentity"] = None,
+        tags: Optional[dict[str, str]] = None,
+        zones: Optional[list[str]] = None,
+        elastic_profile: Optional["_models.ElasticProfile"] = None,
+        placement_profile: Optional["_models.PlacementProfile"] = None,
+        container_group_profiles: Optional[list["_models.ContainerGroupProfileStub"]] = None,
+        update_profile: Optional["_models.UpdateProfile"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword identity: The identity of the NGroup, if configured.
+        :paramtype identity: ~azure.mgmt.containerinstance.models.NGroupIdentity
+        :keyword tags: The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword zones: The zones for the NGroup.
+        :paramtype zones: list[str]
+        :keyword elastic_profile: The elastic profile.
+        :paramtype elastic_profile: ~azure.mgmt.containerinstance.models.ElasticProfile
+        :keyword placement_profile: Provides options w.r.t allocation and management w.r.t certain
+         placement policies. These utilize capabilities provided by the underlying Azure infrastructure.
+         They are typically used for high availability scenarios. E.g., distributing CGs across fault
+         domains.
+        :paramtype placement_profile: ~azure.mgmt.containerinstance.models.PlacementProfile
+        :keyword container_group_profiles: The Container Group Profiles that could be used in the
+         NGroups resource.
+        :paramtype container_group_profiles:
+         list[~azure.mgmt.containerinstance.models.ContainerGroupProfileStub]
+        :keyword update_profile: Used by the customer to specify the way to update the Container Groups
+         in NGroup.
+        :paramtype update_profile: ~azure.mgmt.containerinstance.models.UpdateProfile
+        """
+        super().__init__(**kwargs)
+        self.system_data: Optional["_models.SystemData"] = None
+        self.identity = identity
+        self.tags = tags
+        self.zones = zones
+        self.elastic_profile = elastic_profile
+        self.placement_profile = placement_profile
+        self.container_group_profiles = container_group_profiles
+        self.provisioning_state: Optional[Union[str, "_models.NGroupProvisioningState"]] = None
+        self.update_profile = update_profile
+
+
+class NGroupSkus(_serialization.Model):
+    """The container probe, for liveness or readiness.
+
+    :ivar resource_type: The type of resource the sku is applied to.
+    :vartype resource_type: str
+    :ivar sku: The sku of the resource type.
+    :vartype sku: str
+    :ivar sku_capacity: The number of container groups of the NGroups.
+    :vartype sku_capacity: str
+    """
+
+    _attribute_map = {
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "sku": {"key": "sku", "type": "str"},
+        "sku_capacity": {"key": "skuCapacity", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_type: Optional[str] = None,
+        sku: Optional[str] = None,
+        sku_capacity: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource_type: The type of resource the sku is applied to.
+        :paramtype resource_type: str
+        :keyword sku: The sku of the resource type.
+        :paramtype sku: str
+        :keyword sku_capacity: The number of container groups of the NGroups.
+        :paramtype sku_capacity: str
+        """
+        super().__init__(**kwargs)
+        self.resource_type = resource_type
+        self.sku = sku
+        self.sku_capacity = sku_capacity
+
+
+class NGroupsListResult(_serialization.Model):
+    """The NGroups list response that contains the NGroups properties.
+
+    :ivar value: The list of NGroups.
+    :vartype value: list[~azure.mgmt.containerinstance.models.NGroup]
+    :ivar next_link: The URI to fetch the next page of NGroups.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[NGroup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[list["_models.NGroup"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The list of NGroups.
+        :paramtype value: list[~azure.mgmt.containerinstance.models.NGroup]
+        :keyword next_link: The URI to fetch the next page of NGroups.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class NGroupsSkusList(_serialization.Model):
+    """List of SKU definitions. NGroups offer a single sku.
+
+    :ivar value: The list of NGroups SKUs.
+    :vartype value: list[~azure.mgmt.containerinstance.models.NGroupSkus]
+    :ivar next_link: The URI to fetch the next page of NGroups SKUs.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[NGroupSkus]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[list["_models.NGroupSkus"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The list of NGroups SKUs.
+        :paramtype value: list[~azure.mgmt.containerinstance.models.NGroupSkus]
+        :keyword next_link: The URI to fetch the next page of NGroups SKUs.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class Operation(_serialization.Model):
@@ -2767,7 +4245,7 @@ class OperationListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of operations.
@@ -2778,6 +4256,31 @@ class OperationListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
+
+
+class PlacementProfile(_serialization.Model):
+    """Provides options w.r.t allocation and management w.r.t certain placement policies. These
+    utilize capabilities provided by the underlying Azure infrastructure. They are typically used
+    for high availability scenarios. E.g., distributing CGs across fault domains.
+
+    :ivar fault_domain_count: The number of fault domains to be used to spread CGs in the NGroups
+     resource. This can only be specified during NGroup creation and is immutable after that.
+    :vartype fault_domain_count: int
+    """
+
+    _attribute_map = {
+        "fault_domain_count": {"key": "faultDomainCount", "type": "int"},
+    }
+
+    def __init__(self, *, fault_domain_count: Optional[int] = None, **kwargs: Any) -> None:
+        """
+        :keyword fault_domain_count: The number of fault domains to be used to spread CGs in the
+         NGroups resource. This can only be specified during NGroup creation and is immutable after
+         that.
+        :paramtype fault_domain_count: int
+        """
+        super().__init__(**kwargs)
+        self.fault_domain_count = fault_domain_count
 
 
 class Port(_serialization.Model):
@@ -2932,6 +4435,48 @@ class ResourceRequirements(_serialization.Model):
         self.limits = limits
 
 
+class SecretReference(_serialization.Model):
+    """A secret reference.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: The identifier of the secret reference. Required.
+    :vartype name: str
+    :ivar identity: The ARM resource id of the managed identity that has access to the secret in
+     the key vault. Required.
+    :vartype identity: str
+    :ivar secret_reference_uri: The URI to the secret in key vault. Required.
+    :vartype secret_reference_uri: str
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "identity": {"required": True},
+        "secret_reference_uri": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "identity": {"key": "identity", "type": "str"},
+        "secret_reference_uri": {"key": "secretReferenceUri", "type": "str"},
+    }
+
+    def __init__(self, *, name: str, identity: str, secret_reference_uri: str, **kwargs: Any) -> None:
+        """
+        :keyword name: The identifier of the secret reference. Required.
+        :paramtype name: str
+        :keyword identity: The ARM resource id of the managed identity that has access to the secret in
+         the key vault. Required.
+        :paramtype identity: str
+        :keyword secret_reference_uri: The URI to the secret in key vault. Required.
+        :paramtype secret_reference_uri: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.identity = identity
+        self.secret_reference_uri = secret_reference_uri
+
+
 class SecurityContextCapabilitiesDefinition(_serialization.Model):
     """The capabilities to add or drop from a container.
 
@@ -2946,7 +4491,7 @@ class SecurityContextCapabilitiesDefinition(_serialization.Model):
         "drop": {"key": "drop", "type": "[str]"},
     }
 
-    def __init__(self, *, add: Optional[List[str]] = None, drop: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, add: Optional[list[str]] = None, drop: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword add: The capabilities to add to the container.
         :paramtype add: list[str]
@@ -3029,7 +4574,7 @@ class StandbyPoolProfileDefinition(_serialization.Model):
     """The standby pool profile reference.
 
     :ivar id: The standby pool profile reference id.This will be an ARM resource id in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyContainerGroupPools/{standbyPoolName}'.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyContainerGroupPools/{standbyPoolName}'.
     :vartype id: str
     :ivar fail_container_group_create_on_reuse_failure: The flag to determine whether ACI should
      fail the create request if the container group can not be obtained from standby pool.
@@ -3053,7 +4598,7 @@ class StandbyPoolProfileDefinition(_serialization.Model):
     ) -> None:
         """
         :keyword id: The standby pool profile reference id.This will be an ARM resource id in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyContainerGroupPools/{standbyPoolName}'.  # pylint: disable=line-too-long
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyContainerGroupPools/{standbyPoolName}'.
         :paramtype id: str
         :keyword fail_container_group_create_on_reuse_failure: The flag to determine whether ACI should
          fail the create request if the container group can not be obtained from standby pool.
@@ -3062,6 +4607,182 @@ class StandbyPoolProfileDefinition(_serialization.Model):
         super().__init__(**kwargs)
         self.id = id
         self.fail_container_group_create_on_reuse_failure = fail_container_group_create_on_reuse_failure
+
+
+class StorageProfile(_serialization.Model):
+    """Storage profile for storage related settings of a container group profile.
+
+    :ivar file_shares:
+    :vartype file_shares: list[~azure.mgmt.containerinstance.models.FileShare]
+    """
+
+    _attribute_map = {
+        "file_shares": {"key": "fileShares", "type": "[FileShare]"},
+    }
+
+    def __init__(self, *, file_shares: Optional[list["_models.FileShare"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword file_shares:
+        :paramtype file_shares: list[~azure.mgmt.containerinstance.models.FileShare]
+        """
+        super().__init__(**kwargs)
+        self.file_shares = file_shares
+
+
+class SystemData(_serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.containerinstance.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.containerinstance.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.containerinstance.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.containerinstance.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
+
+
+class UpdateProfile(_serialization.Model):
+    """Used by the customer to specify the way to update the Container Groups in NGroup.
+
+    :ivar update_mode: Known values are: "Manual" and "Rolling".
+    :vartype update_mode: str or ~azure.mgmt.containerinstance.models.NGroupUpdateMode
+    :ivar rolling_update_profile: This profile allows the customers to customize the rolling
+     update.
+    :vartype rolling_update_profile:
+     ~azure.mgmt.containerinstance.models.UpdateProfileRollingUpdateProfile
+    """
+
+    _attribute_map = {
+        "update_mode": {"key": "updateMode", "type": "str"},
+        "rolling_update_profile": {"key": "rollingUpdateProfile", "type": "UpdateProfileRollingUpdateProfile"},
+    }
+
+    def __init__(
+        self,
+        *,
+        update_mode: Optional[Union[str, "_models.NGroupUpdateMode"]] = None,
+        rolling_update_profile: Optional["_models.UpdateProfileRollingUpdateProfile"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword update_mode: Known values are: "Manual" and "Rolling".
+        :paramtype update_mode: str or ~azure.mgmt.containerinstance.models.NGroupUpdateMode
+        :keyword rolling_update_profile: This profile allows the customers to customize the rolling
+         update.
+        :paramtype rolling_update_profile:
+         ~azure.mgmt.containerinstance.models.UpdateProfileRollingUpdateProfile
+        """
+        super().__init__(**kwargs)
+        self.update_mode = update_mode
+        self.rolling_update_profile = rolling_update_profile
+
+
+class UpdateProfileRollingUpdateProfile(_serialization.Model):
+    """This profile allows the customers to customize the rolling update.
+
+    :ivar max_batch_percent: Maximum percentage of total Container Groups which can be updated
+     simultaneously by rolling update in one batch.
+    :vartype max_batch_percent: int
+    :ivar max_unhealthy_percent: Maximum percentage of the updated Container Groups which can be in
+     unhealthy state after each batch is updated.
+    :vartype max_unhealthy_percent: int
+    :ivar pause_time_between_batches: The wait time between batches after completing the one batch
+     of the rolling update and starting the next batch. The time duration should be specified in ISO
+     8601 format for duration.
+    :vartype pause_time_between_batches: str
+    :ivar in_place_update: Default is false. If set to true, the CGs will be updated in-place
+     instead of creating new CG and deleting old ones.
+    :vartype in_place_update: bool
+    """
+
+    _attribute_map = {
+        "max_batch_percent": {"key": "maxBatchPercent", "type": "int"},
+        "max_unhealthy_percent": {"key": "maxUnhealthyPercent", "type": "int"},
+        "pause_time_between_batches": {"key": "pauseTimeBetweenBatches", "type": "str"},
+        "in_place_update": {"key": "inPlaceUpdate", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        max_batch_percent: Optional[int] = None,
+        max_unhealthy_percent: Optional[int] = None,
+        pause_time_between_batches: Optional[str] = None,
+        in_place_update: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword max_batch_percent: Maximum percentage of total Container Groups which can be updated
+         simultaneously by rolling update in one batch.
+        :paramtype max_batch_percent: int
+        :keyword max_unhealthy_percent: Maximum percentage of the updated Container Groups which can be
+         in unhealthy state after each batch is updated.
+        :paramtype max_unhealthy_percent: int
+        :keyword pause_time_between_batches: The wait time between batches after completing the one
+         batch of the rolling update and starting the next batch. The time duration should be specified
+         in ISO 8601 format for duration.
+        :paramtype pause_time_between_batches: str
+        :keyword in_place_update: Default is false. If set to true, the CGs will be updated in-place
+         instead of creating new CG and deleting old ones.
+        :paramtype in_place_update: bool
+        """
+        super().__init__(**kwargs)
+        self.max_batch_percent = max_batch_percent
+        self.max_unhealthy_percent = max_unhealthy_percent
+        self.pause_time_between_batches = pause_time_between_batches
+        self.in_place_update = in_place_update
 
 
 class Usage(_serialization.Model):
@@ -3100,11 +4821,11 @@ class Usage(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.unit = None
-        self.current_value = None
-        self.limit = None
-        self.name = None
+        self.id: Optional[str] = None
+        self.unit: Optional[str] = None
+        self.current_value: Optional[int] = None
+        self.limit: Optional[int] = None
+        self.name: Optional["_models.UsageName"] = None
 
 
 class UsageListResult(_serialization.Model):
@@ -3127,7 +4848,7 @@ class UsageListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
+        self.value: Optional[list["_models.Usage"]] = None
 
 
 class UsageName(_serialization.Model):
@@ -3154,8 +4875,8 @@ class UsageName(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.localized_value = None
+        self.value: Optional[str] = None
+        self.localized_value: Optional[str] = None
 
 
 class UserAssignedIdentities(_serialization.Model):
@@ -3184,8 +4905,8 @@ class UserAssignedIdentities(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
 
 
 class Volume(_serialization.Model):
@@ -3201,6 +4922,8 @@ class Volume(_serialization.Model):
     :vartype empty_dir: JSON
     :ivar secret: The secret volume.
     :vartype secret: dict[str, str]
+    :ivar secret_reference: The secret reference volume.
+    :vartype secret_reference: dict[str, str]
     :ivar git_repo: The git repo volume.
     :vartype git_repo: ~azure.mgmt.containerinstance.models.GitRepoVolume
     """
@@ -3214,6 +4937,7 @@ class Volume(_serialization.Model):
         "azure_file": {"key": "azureFile", "type": "AzureFileVolume"},
         "empty_dir": {"key": "emptyDir", "type": "object"},
         "secret": {"key": "secret", "type": "{str}"},
+        "secret_reference": {"key": "secretReference", "type": "{str}"},
         "git_repo": {"key": "gitRepo", "type": "GitRepoVolume"},
     }
 
@@ -3223,7 +4947,8 @@ class Volume(_serialization.Model):
         name: str,
         azure_file: Optional["_models.AzureFileVolume"] = None,
         empty_dir: Optional[JSON] = None,
-        secret: Optional[Dict[str, str]] = None,
+        secret: Optional[dict[str, str]] = None,
+        secret_reference: Optional[dict[str, str]] = None,
         git_repo: Optional["_models.GitRepoVolume"] = None,
         **kwargs: Any
     ) -> None:
@@ -3236,6 +4961,8 @@ class Volume(_serialization.Model):
         :paramtype empty_dir: JSON
         :keyword secret: The secret volume.
         :paramtype secret: dict[str, str]
+        :keyword secret_reference: The secret reference volume.
+        :paramtype secret_reference: dict[str, str]
         :keyword git_repo: The git repo volume.
         :paramtype git_repo: ~azure.mgmt.containerinstance.models.GitRepoVolume
         """
@@ -3244,6 +4971,7 @@ class Volume(_serialization.Model):
         self.azure_file = azure_file
         self.empty_dir = empty_dir
         self.secret = secret
+        self.secret_reference = secret_reference
         self.git_repo = git_repo
 
 

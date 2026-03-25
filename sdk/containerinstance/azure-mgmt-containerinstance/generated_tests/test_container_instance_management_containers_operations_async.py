@@ -21,12 +21,12 @@ class TestContainerInstanceManagementContainersOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_logs(self, resource_group):
+    async def test_containers_list_logs(self, resource_group):
         response = await self.client.containers.list_logs(
             resource_group_name=resource_group.name,
             container_group_name="str",
             container_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -34,13 +34,13 @@ class TestContainerInstanceManagementContainersOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_execute_command(self, resource_group):
+    async def test_containers_execute_command(self, resource_group):
         response = await self.client.containers.execute_command(
             resource_group_name=resource_group.name,
             container_group_name="str",
             container_name="str",
             container_exec_request={"command": "str", "terminalSize": {"cols": 0, "rows": 0}},
-            api_version="2024-05-01-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -48,12 +48,12 @@ class TestContainerInstanceManagementContainersOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_attach(self, resource_group):
+    async def test_containers_attach(self, resource_group):
         response = await self.client.containers.attach(
             resource_group_name=resource_group.name,
             container_group_name="str",
             container_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself

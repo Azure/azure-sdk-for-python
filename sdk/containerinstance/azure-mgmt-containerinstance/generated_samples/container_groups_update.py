@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.containerinstance import ContainerInstanceManagementClient
     pip install azure-identity
     pip install azure-mgmt-containerinstance
 # USAGE
-    python container_groups_profile_create_or_update_create_priority.py
+    python container_groups_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,32 +31,21 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.container_group_profiles.create_or_update(
-        resource_group_name="demo",
-        container_group_profile_name="demo1",
-        container_group_profile={
-            "location": "eastus",
-            "properties": {
-                "containers": [
-                    {
-                        "name": "test-container-001",
-                        "properties": {
-                            "command": ["/bin/sh", "-c", "sleep 10"],
-                            "image": "alpine:latest",
-                            "resources": {"requests": {"cpu": 1, "memoryInGB": 1}},
-                        },
-                    }
-                ],
-                "osType": "Linux",
-                "priority": "Spot",
-                "restartPolicy": "Never",
-                "sku": "Standard",
-            },
+    response = client.container_groups.update(
+        resource_group_name="demoResource",
+        container_group_name="demo1",
+        resource={
+            "id": "str",
+            "location": "str",
+            "name": "str",
+            "tags": {"str": "str"},
+            "type": "str",
+            "zones": ["str"],
         },
     )
     print(response)
 
 
-# x-ms-original-file: specification/containerinstance/resource-manager/Microsoft.ContainerInstance/preview/2024-05-01-preview/examples/ContainerGroupsProfileCreateOrUpdate_CreatePriority.json
+# x-ms-original-file: specification/containerinstance/resource-manager/Microsoft.ContainerInstance/ContainerInstance/stable/2025-09-01/examples/ContainerGroupsUpdate.json
 if __name__ == "__main__":
     main()
