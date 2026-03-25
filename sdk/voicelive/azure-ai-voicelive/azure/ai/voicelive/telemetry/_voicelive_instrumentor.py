@@ -489,7 +489,7 @@ class _VoiceLiveInstrumentorPreview:
                 )
             finally:
                 if parent_token is not None:
-                    otel_context.detach(parent_token)
+                    otel_context.detach(parent_token)  # pyright: ignore[reportOptionalMemberAccess]
 
             if span is None:
                 return await original_send(conn_self, event, *args, **kwargs)
@@ -542,7 +542,7 @@ class _VoiceLiveInstrumentorPreview:
                 )
             finally:
                 if parent_token is not None:
-                    otel_context.detach(parent_token)
+                    otel_context.detach(parent_token)  # pyright: ignore[reportOptionalMemberAccess]
 
             if span is None:
                 return await original_recv(conn_self, *args, **kwargs)
@@ -690,7 +690,7 @@ class _VoiceLiveInstrumentorPreview:
                 )
             finally:
                 if parent_token is not None:
-                    otel_context.detach(parent_token)
+                    otel_context.detach(parent_token)  # pyright: ignore[reportOptionalMemberAccess]
 
             if span is None:
                 return await original_close(conn_self, *args, **kwargs)
