@@ -15,7 +15,7 @@ from itertools import islice
 from typing import (
     Any, AsyncIterator, Awaitable,
     Generator, Callable, cast, Dict,
-    Generic, IO, Optional, overload,
+    Generic, IO, Literal, Optional, overload,
     Tuple, TypeVar, Union, TYPE_CHECKING
 )
 
@@ -239,7 +239,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         config: "StorageConfiguration" = None,  # type: ignore [assignment]
         start_range: Optional[int] = None,
         end_range: Optional[int] = None,
-        validate_content: bool = None,  # type: ignore [assignment]
+        validate_content: Optional[Union[bool, Literal['crc64', 'md5']]] = None,
         encryption_options: Dict[str, Any] = None,  # type: ignore [assignment]
         max_concurrency: Optional[int] = None,
         name: str = None,  # type: ignore [assignment]

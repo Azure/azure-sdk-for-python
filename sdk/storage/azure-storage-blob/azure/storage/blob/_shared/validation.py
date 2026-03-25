@@ -8,7 +8,7 @@
 import hashlib
 from enum import Enum
 from io import SEEK_SET
-from typing import IO, cast, Literal, Union
+from typing import IO, Literal, Optional, Union, cast
 
 from azure.core import CaseInsensitiveEnumMeta
 
@@ -21,8 +21,45 @@ class ChecksumAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MD5 = "md5"
     CRC64 = "crc64"
 
+    @classmethod
+    def list(cls):
+        return list(map(lambda c: c.value, cls))
 
-def is_md5_validation(validate_content: Union[bool, Literal["md5", "crc64"]]) -> bool:
+
+def _verify_extensions(module: str) -> None:
+    try:
+        import azure.storage.extensions  # pylint: disable=unused-import
+    except ImportError as exc:
+        raise ValueError(f"The use of {module} requires the azure-storage-extensions package to be installed. "
+                         f"Please install this package and try again.") from exc
+
+
+def parse_validation_option(
+        validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]]
+) -> Optional[Union[bool, Literal['auto', 'crc64', 'md5']]]:
+    if validate_content is None:
+        return None
+
+    # Legacy support for bool
+    if isinstance(validate_content, bool):
+        return validate_content
+
+    if validate_content not in (ChecksumAlgorithm.list()):
+        raise ValueError("Invalid value for `validate_content` specified.")
+
+    # Resolve auto
+    if validate_content == ChecksumAlgorithm.AUTO:
+        validate_content = ChecksumAlgorithm.CRC64.value
+
+    if validate_content == ChecksumAlgorithm.CRC64:
+        _verify_extensions("crc64")
+
+    return validate_content
+
+
+def is_md5_validation(validate_content: Optional[Union[bool, Literal["md5", "crc64"]]]) -> bool:
+    if validate_content is None:
+        return False
     if isinstance(validate_content, bool):
         return validate_content
     return validate_content == ChecksumAlgorithm.MD5
