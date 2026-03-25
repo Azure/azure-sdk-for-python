@@ -18,19 +18,19 @@ from azure.core.polling.base_polling import (
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from ._models import CustomCredential as CustomCredentialGenerated
 from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
-from ._enums import _FoundryFeaturesOptInKeys
+from ._enums import FoundryFeaturesOptInKeys
 
 _FOUNDRY_FEATURES_HEADER_NAME: str = "Foundry-Features"
 """The HTTP header name used to opt in to Foundry preview features."""
 
 _BETA_OPERATION_FEATURE_HEADERS: dict = {
-    "evaluation_taxonomies": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
-    "evaluators": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
-    "insights": _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW.value,
-    "memory_stores": _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value,
-    "red_teams": _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW.value,
-    "schedules": _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW.value,
-    "toolsets": _FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW.value,
+    "evaluation_taxonomies": FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
+    "evaluators": FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
+    "insights": FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW.value,
+    "memory_stores": FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value,
+    "red_teams": FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW.value,
+    "schedules": FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW.value,
+    "toolsets": FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW.value,
 }
 """Foundry-Features header values keyed by beta sub-client property name."""
 
