@@ -482,13 +482,26 @@ class _VoiceLiveInstrumentorPreview:
 
             op_name = OperationName.SEND
             span_name = f"send {event_type}" if event_type else "send"
-            span = start_span(
-                op_name,
-                server_address=getattr(conn_self, "_telemetry_server_address", None),
-                port=getattr(conn_self, "_telemetry_port", None),
-                model=getattr(conn_self, "_telemetry_model", None),
-                span_name=span_name,
-            )
+
+            # Ensure the send span is parented under the connect span,
+            # even when called from a different asyncio task.
+            parent_span = getattr(conn_self, "_telemetry_span", None)
+            parent_token = None
+            if parent_span is not None and set_span_in_context is not None and otel_context is not None:
+                parent_ctx = set_span_in_context(parent_span.span_instance)
+                parent_token = otel_context.attach(parent_ctx)
+
+            try:
+                span = start_span(
+                    op_name,
+                    server_address=getattr(conn_self, "_telemetry_server_address", None),
+                    port=getattr(conn_self, "_telemetry_port", None),
+                    model=getattr(conn_self, "_telemetry_model", None),
+                    span_name=span_name,
+                )
+            finally:
+                if parent_token is not None:
+                    otel_context.detach(parent_token)
 
             if span is None:
                 return await original_send(conn_self, event, *args, **kwargs)
@@ -524,12 +537,24 @@ class _VoiceLiveInstrumentorPreview:
             if span_impl_type is None:
                 return await original_recv(conn_self, *args, **kwargs)
 
-            span = start_span(
-                OperationName.RECV,
-                server_address=getattr(conn_self, "_telemetry_server_address", None),
-                port=getattr(conn_self, "_telemetry_port", None),
-                model=getattr(conn_self, "_telemetry_model", None),
-            )
+            # Ensure the recv span is parented under the connect span,
+            # even when called from a different asyncio task.
+            parent_span = getattr(conn_self, "_telemetry_span", None)
+            parent_token = None
+            if parent_span is not None and set_span_in_context is not None and otel_context is not None:
+                parent_ctx = set_span_in_context(parent_span.span_instance)
+                parent_token = otel_context.attach(parent_ctx)
+
+            try:
+                span = start_span(
+                    OperationName.RECV,
+                    server_address=getattr(conn_self, "_telemetry_server_address", None),
+                    port=getattr(conn_self, "_telemetry_port", None),
+                    model=getattr(conn_self, "_telemetry_model", None),
+                )
+            finally:
+                if parent_token is not None:
+                    otel_context.detach(parent_token)
 
             if span is None:
                 return await original_recv(conn_self, *args, **kwargs)
@@ -661,11 +686,23 @@ class _VoiceLiveInstrumentorPreview:
             if span_impl_type is None:
                 return await original_close(conn_self, *args, **kwargs)
 
-            span = start_span(
-                OperationName.CLOSE,
-                server_address=getattr(conn_self, "_telemetry_server_address", None),
-                port=getattr(conn_self, "_telemetry_port", None),
-            )
+            # Ensure the close span is parented under the connect span,
+            # even when called from a different asyncio task.
+            parent_span = getattr(conn_self, "_telemetry_span", None)
+            parent_token = None
+            if parent_span is not None and set_span_in_context is not None and otel_context is not None:
+                parent_ctx = set_span_in_context(parent_span.span_instance)
+                parent_token = otel_context.attach(parent_ctx)
+
+            try:
+                span = start_span(
+                    OperationName.CLOSE,
+                    server_address=getattr(conn_self, "_telemetry_server_address", None),
+                    port=getattr(conn_self, "_telemetry_port", None),
+                )
+            finally:
+                if parent_token is not None:
+                    otel_context.detach(parent_token)
 
             if span is None:
                 return await original_close(conn_self, *args, **kwargs)
