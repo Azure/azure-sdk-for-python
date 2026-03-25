@@ -25,7 +25,7 @@ from ._models import (
 )
 
 
-def _lazy_data_getattr(self, name):
+def __getattr__(self, name):
     """Lazily initialize _data for subclasses that skip super().__init__()."""
     if name == "_data":
         object.__setattr__(self, "_data", {})
@@ -33,7 +33,7 @@ def _lazy_data_getattr(self, name):
     raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
 
-def _model_setattr(self, name, value):
+def __setattr__(self, name, value):
     """Route attribute writes through _RestField descriptors even when shadowed."""
     if not name.startswith("_"):
         for cls in type(self).__mro__:
@@ -44,7 +44,7 @@ def _model_setattr(self, name, value):
     object.__setattr__(self, name, value)
 
 
-def _model_getattribute(self, name):
+def __getattribute__(self, name):
     """Route attribute reads through _RestField descriptors even when shadowed."""
     if not name.startswith("_"):
         try:
@@ -57,15 +57,6 @@ def _model_getattribute(self, name):
                 return rf.__get__(self, type(self))
     return object.__getattribute__(self, name)
 
-
-_MyMutableMapping.__getattr__ = _lazy_data_getattr
-_MyMutableMapping.__setattr__ = _model_setattr
-_MyMutableMapping.__getattribute__ = _model_getattribute
-
-
-# ---------------------------------------------------------------------------
-# Model.__new__ patch — forward-reference resolution fix
-# ---------------------------------------------------------------------------
 # The original ``Model.__new__`` does ``rf._module = cls.__module__`` which
 # lets an external subclass (e.g. from azure-storage-file-datalake) overwrite
 # ``_module`` on the *shared* descriptor, corrupting type resolution for
@@ -73,10 +64,8 @@ _MyMutableMapping.__getattribute__ = _model_getattribute
 # against the module that *defined* the rest_field and uses that class's own
 # annotations (not merged subclass annotations) to avoid resolving to a type
 # whose ``__init__`` can't handle XML elements.
-# ---------------------------------------------------------------------------
 
-
-def _patched_model_new(cls, *args, **kwargs):
+def __new__(cls, *args, **kwargs):
     if f"{cls.__module__}.{cls.__qualname__}" not in cls._calculated:
         mros = cls.__mro__[:-9][::-1]
         attr_to_rest_field = {}
@@ -104,20 +93,18 @@ def _patched_model_new(cls, *args, **kwargs):
 
     return object.__new__(cls)
 
+_MyMutableMapping.__getattr__ = __getattr__
+_MyMutableMapping.__setattr__ = __setattr__
+_MyMutableMapping.__getattribute__ = __getattribute__
+_Model.__new__ = __new__
 
-_Model.__new__ = _patched_model_new
 
 
-# ---------------------------------------------------------------------------
-# Autorest serialization compatibility layer
-# ---------------------------------------------------------------------------
 # The old autorest Serializer/Deserializer relies on class-level
 # ``_attribute_map``, ``_validation``, ``_xml_map``, ``is_xml_model()``, and
 # ``_create_xml_node()`` — none of which exist on the new model_base.Model
 # subclasses.  The mixin and wrapper classes below add exactly those
 # attributes so the operations code can keep serializing/deserializing them.
-# ---------------------------------------------------------------------------
-
 
 def _create_xml_node(tag, prefix=None, ns=None):
     if prefix and ns:
@@ -228,9 +215,8 @@ class StaticWebsite(_AutorestCompatMixin, _GenStaticWebsite):
         "default_index_document_path": {"key": "DefaultIndexDocumentPath", "type": "str"},
     }
 
-# ---------------------------------------------------------------------------
-# Parameter group models
-# ---------------------------------------------------------------------------
+
+# Bringing back the parameter group models that were in the old generated code
 
 _ALL_VISIBILITY = ["read", "create", "update", "delete", "query"]
 
@@ -322,8 +308,6 @@ class SourceModifiedAccessConditions(_Model):
 class LeaseAccessConditions(_Model):
     lease_id: Optional[str] = rest_field(name="lease_id", visibility=_ALL_VISIBILITY)
 
-
-# ---------------------------------------------------------------------------
 
 __all__: List[str] = [
     "AccessPolicy",
