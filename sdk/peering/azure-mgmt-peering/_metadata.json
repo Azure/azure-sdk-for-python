@@ -1,11 +1,10 @@
 {
-  "commit": "661ae882e3b2a17c67ddae4e2bba36ddf3a3acc7",
+  "apiVersion": "2025-05-01",
+  "apiVersions": {
+    "Microsoft.Peering": "2025-05-01"
+  },
+  "commit": "e3083bc5d7f8d5a01e969ba71182339a64d8b21b",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.10.2",
-  "use": [
-    "@autorest/python@6.50.0",
-    "@autorest/modelerfour@4.27.0"
-  ],
-  "autorest_command": "autorest specification/peering/resource-manager/Microsoft.Peering/Peering/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=C:\\dev\\worktrees\\sdk-azure-mgmt-peering\\sdk --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/peering/resource-manager/Microsoft.Peering/Peering/readme.md"
+  "typespec_src": "specification/peering/resource-manager/Microsoft.Peering/Peering",
+  "emitterVersion": "0.61.1"
 }
