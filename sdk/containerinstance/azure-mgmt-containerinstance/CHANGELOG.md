@@ -2,7 +2,9 @@
 
 ## 10.2.0b2 (2026-03-25)
 
-skip changelog generation
+### Other Changes
+
+  - Migrated from Swagger to TypeSpec
 
 ## 10.2.0 (2026-03-25)
 
