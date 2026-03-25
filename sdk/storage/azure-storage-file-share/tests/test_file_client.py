@@ -57,6 +57,15 @@ class TestStorageFileClient(StorageRecordedTestCase):
         assert service.primary_endpoint.startswith('{}://{}.{}.core.windows.net/'.format(protocol, self.account_name, service_type)) is True
         assert service.secondary_endpoint.startswith('{}://{}-secondary.{}.core.windows.net/'.format(protocol, self.account_name, service_type)) is True
 
+    def validate_ipv6_account_endpoints(self, service, account_name, account_key, primary_endpoint, secondary_endpoint):
+        assert service is not None
+        assert service.scheme == "https"
+        assert service.account_name == account_name
+        assert service.credential.account_name == account_name
+        assert service.credential.account_key == account_key
+        assert service._hosts[LocationMode.PRIMARY] == primary_endpoint
+        assert service._hosts[LocationMode.SECONDARY] == secondary_endpoint
+
     # --Direct Parameters Test Cases --------------------------------------------
     @FileSharePreparer()
     def test_create_service_with_key(self, **kwargs):
@@ -232,13 +241,9 @@ class TestStorageFileClient(StorageRecordedTestCase):
                 directory_path=directory_path,
                 file_path=file_path
             )
-
-            assert service is not None
-            assert service.scheme == "https"
-            assert service.account_name == storage_account_name
-            assert service.credential.account_key == storage_account_key.secret
-            assert service._hosts[LocationMode.PRIMARY] == expected_primary
-            assert service._hosts[LocationMode.SECONDARY] == expected_secondary
+            self.validate_ipv6_account_endpoints(
+                service, storage_account_name, storage_account_key.secret, expected_primary, expected_secondary
+            )
 
             conn_str = (
                 "DefaultEndpointsProtocol=https;"
@@ -253,24 +258,39 @@ class TestStorageFileClient(StorageRecordedTestCase):
                 directory_path=directory_path,
                 file_path=file_path
             )
-
-            assert service is not None
-            assert service.scheme == "https"
-            assert service.account_name == storage_account_name
-            assert service.credential.account_key == storage_account_key.secret
-            assert service._hosts[LocationMode.PRIMARY] == expected_primary
-            assert service._hosts[LocationMode.SECONDARY] == expected_secondary
+            self.validate_ipv6_account_endpoints(
+                service, storage_account_name, storage_account_key.secret, expected_primary, expected_secondary
+            )
 
         service = ShareFileClient.from_file_url(
             file_url=f"{account_url}/{share_name}/{directory_path}/{file_path}-secondary",
             credential=storage_account_key.secret
         )
-        assert service is not None
-        assert service.scheme == "https"
-        assert service.account_name == storage_account_name
-        assert service.credential.account_key == storage_account_key.secret
-        assert service._hosts[LocationMode.PRIMARY] == expected_primary
-        assert service._hosts[LocationMode.SECONDARY] == expected_secondary
+        self.validate_ipv6_account_endpoints(
+            service, storage_account_name, storage_account_key.secret, expected_primary, expected_secondary
+        )
+
+    @FileSharePreparer()
+    def test_create_service_ipv6_custom_domain(self):
+        token_credential = self.get_credential(ShareServiceClient)
+
+        hostname= "github.com"
+        account_url = f"https://{hostname}"
+        for service_type in SERVICES.keys():
+            service = service_type(
+                account_url,
+                credential=token_credential,
+                share_name="foo",
+                directory_path="bar",
+                file_path="baz",
+                token_intent="backup"
+            )
+            assert service is not None
+            assert service.scheme == "https"
+            assert service.account_name is None
+            assert service.credential is not None
+            assert service._hosts[LocationMode.PRIMARY] == hostname
+            assert service._hosts[LocationMode.SECONDARY] == ""
 
     # --Connection String Test Cases --------------------------------------------
 

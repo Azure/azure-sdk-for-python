@@ -375,7 +375,7 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     def test_create_service_ipv6_custom_domain(self):
-        token_credential = self.get_credential(BlobServiceClient)
+        token_credential = self.get_credential(BlobServiceClient, is_async=True)
 
         hostname = "github.com"
         account_url = f"https://{hostname}"
