@@ -543,7 +543,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             except HttpResponseError:
                 pass
 
-        if not self._download_complete and self._request_options.get("modified_access_conditions") is not None:
+        if not self._download_complete and self._request_options.get("modified_access_conditions"):
             self._request_options["modified_access_conditions"].if_match = response.properties.etag
 
         return response
