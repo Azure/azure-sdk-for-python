@@ -115,10 +115,10 @@ def build_options(kwargs: dict[str, Any]) -> dict[str, Any]:
     for key, value in _COMMON_OPTIONS.items():
         if key in kwargs:
             options[value] = kwargs.pop(key)
-    if 'read_timeout' in kwargs:
-        options['read_timeout'] = kwargs['read_timeout']
-    if 'timeout' in kwargs:
-        options['timeout'] = kwargs['timeout']
+    if Constants.Kwargs.READ_TIMEOUT in kwargs:
+        options[Constants.Kwargs.READ_TIMEOUT] = kwargs[Constants.Kwargs.READ_TIMEOUT]
+    if Constants.Kwargs.TIMEOUT in kwargs:
+        options[Constants.Kwargs.TIMEOUT] = kwargs[Constants.Kwargs.TIMEOUT]
 
 
     options[Constants.OperationStartTime] = time.time()
