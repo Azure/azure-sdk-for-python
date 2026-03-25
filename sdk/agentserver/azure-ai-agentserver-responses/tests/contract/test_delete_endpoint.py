@@ -12,64 +12,61 @@ from starlette.applications import Starlette
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.responses.hosting import map_responses_server
+from azure.ai.agentserver.responses import response_handler
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from tests._helpers import EventGate, poll_until
 
 
-class _NoopResponseHandler:
+@response_handler
+def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler used to wire the hosting surface in contract tests."""
+    async def _events():
+        if False:  # pragma: no cover - required to keep async-generator shape.
+            yield None
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            if False:  # pragma: no cover - required to keep async-generator shape.
-                yield None
-
-        return _events()
+    return _events()
 
 
-class _DelayedResponseHandler:
+@response_handler
+def _delayed_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that keeps background execution in-flight for deterministic delete checks."""
+    async def _events():
+        if cancellation_signal.is_set():
+            return
+        await asyncio.sleep(0.5)
+        if cancellation_signal.is_set():
+            return
+        if False:  # pragma: no cover - required to keep async-generator shape.
+            yield None
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            if cancellation_signal.is_set():
-                return
-            await asyncio.sleep(0.5)
-            if cancellation_signal.is_set():
-                return
-            if False:  # pragma: no cover - required to keep async-generator shape.
-                yield None
-
-        return _events()
+    return _events()
 
 
 def _build_client(handler: Any | None = None) -> TestClient:
     app = Starlette()
-    map_responses_server(app, handler or _NoopResponseHandler())
+    map_responses_server(app, handler or _noop_response_handler)
     return TestClient(app)
 
 
-class _ThrowingBgHandler:
+@response_handler
+def _throwing_bg_handler(request: Any, context: Any, cancellation_signal: Any):
     """Background handler that raises immediately — produces status=failed."""
+    async def _events():
+        raise RuntimeError("Simulated handler failure")
+        if False:  # pragma: no cover - keep async generator shape.
+            yield None
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            raise RuntimeError("Simulated handler failure")
-            if False:  # pragma: no cover - keep async generator shape.
-                yield None
-
-        return _events()
+    return _events()
 
 
-class _IncompleteBgHandler:
+@response_handler
+def _incomplete_bg_handler(request: Any, context: Any, cancellation_signal: Any):
     """Background handler that emits an incomplete terminal event."""
+    async def _events():
+        yield {"type": "response.created", "payload": {"status": "in_progress", "output": []}}
+        yield {"type": "response.incomplete", "payload": {"status": "incomplete", "output": []}}
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            yield {"type": "response.created", "payload": {"status": "in_progress", "output": []}}
-            yield {"type": "response.incomplete", "payload": {"status": "incomplete", "output": []}}
-
-        return _events()
+    return _events()
 
 
 def test_delete__deletes_stored_completed_response() -> None:
@@ -97,7 +94,7 @@ def test_delete__deletes_stored_completed_response() -> None:
 
 
 def test_delete__returns_400_for_background_in_flight_response() -> None:
-    client = _build_client(_DelayedResponseHandler())
+    client = _build_client(_delayed_response_handler)
 
     create_response = client.post(
         "/responses",
@@ -201,17 +198,14 @@ def test_delete__cancel_returns_404_after_deletion() -> None:
     assert payload["error"].get("type") == "invalid_request_error"
 
 
-class _BlockingSyncResponseHandler:
-    """Handler that holds a sync request in-flight for concurrent operation tests."""
+def _make_blocking_sync_response_handler(started_gate: EventGate, release_gate: threading.Event):
+    """Factory for a handler that holds a sync request in-flight for concurrent operation tests."""
 
-    def __init__(self, started_gate: EventGate, release_gate: threading.Event) -> None:
-        self._started_gate = started_gate
-        self._release_gate = release_gate
-
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
+    @response_handler
+    def _handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
-            self._started_gate.signal(True)
-            while not self._release_gate.is_set():
+            started_gate.signal(True)
+            while not release_gate.is_set():
                 if cancellation_signal.is_set():
                     return
                 await asyncio.sleep(0.01)
@@ -220,12 +214,14 @@ class _BlockingSyncResponseHandler:
 
         return _events()
 
+    return _handler
+
 
 def test_delete__returns_404_for_non_bg_in_flight_response() -> None:
     """FR-024 — Non-background in-flight responses are not findable → DELETE 404."""
     started_gate = EventGate()
     release_gate = threading.Event()
-    handler = _BlockingSyncResponseHandler(started_gate, release_gate)
+    handler = _make_blocking_sync_response_handler(started_gate, release_gate)
     app = Starlette()
     map_responses_server(app, handler)
     client = TestClient(app)
@@ -270,7 +266,7 @@ def test_delete__returns_404_for_non_bg_in_flight_response() -> None:
 
 def test_delete__deletes_stored_failed_response() -> None:
     """B-6 — DELETE on a failed (terminal) stored response returns 200 with deleted=True."""
-    client = _build_client(_ThrowingBgHandler())
+    client = _build_client(_throwing_bg_handler)
 
     create_response = client.post(
         "/responses",
@@ -304,7 +300,7 @@ def test_delete__deletes_stored_failed_response() -> None:
 
 def test_delete__deletes_stored_incomplete_response() -> None:
     """B-6 — DELETE on an incomplete (terminal) stored response returns 200 with deleted=True."""
-    client = _build_client(_IncompleteBgHandler())
+    client = _build_client(_incomplete_bg_handler)
 
     create_response = client.post(
         "/responses",
@@ -338,7 +334,7 @@ def test_delete__deletes_stored_incomplete_response() -> None:
 
 def test_delete__deletes_stored_cancelled_response() -> None:
     """B-6 — DELETE on a cancelled (terminal) stored response returns 200 with deleted=True."""
-    client = _build_client(_DelayedResponseHandler())
+    client = _build_client(_delayed_response_handler)
 
     create_response = client.post(
         "/responses",

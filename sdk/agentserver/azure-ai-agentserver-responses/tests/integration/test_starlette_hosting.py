@@ -16,23 +16,23 @@ from starlette.testclient import TestClient
 from azure.ai.agentserver.responses.hosting import map_responses_server
 from azure.ai.agentserver.responses.hosting._observability import InMemoryCreateSpanHook
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
+from azure.ai.agentserver.responses import response_handler
 from tests._helpers import EventGate
 
 
-class _NoopResponseHandler:
+@response_handler
+def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler used to wire host integration tests."""
+    async def _events():
+        if False:  # pragma: no cover - keep async generator shape.
+            yield None
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            if False:  # pragma: no cover - keep async generator shape.
-                yield None
-
-        return _events()
+    return _events()
 
 
 def _build_client(*, prefix: str = "", options: ResponsesServerOptions | None = None) -> TestClient:
     app = Starlette()
-    map_responses_server(app, _NoopResponseHandler(), prefix=prefix, options=options)
+    map_responses_server(app, _noop_response_handler, prefix=prefix, options=options)
     return TestClient(app)
 
 
@@ -142,31 +142,31 @@ def test_hosting__create_emits_single_root_span_with_key_tags_and_identity_heade
 
 
 def test_hosting__stream_mode_surfaces_handler_output_item_and_content_events() -> None:
-    class _StreamingHandler:
-        def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-            async def _events():
-                from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
+    from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
-                stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
-                yield stream.emit_created()
-                yield stream.emit_in_progress()
+    @response_handler
+    def _streaming_handler(request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
+            yield stream.emit_created()
+            yield stream.emit_in_progress()
 
-                message_item = stream.add_output_item_message()
-                yield message_item.emit_added()
+            message_item = stream.add_output_item_message()
+            yield message_item.emit_added()
 
-                text_content = message_item.add_text_content()
-                yield text_content.emit_added()
-                yield text_content.emit_delta("hello")
-                yield text_content.emit_done()
-                yield message_item.emit_content_done(text_content)
-                yield message_item.emit_done()
+            text_content = message_item.add_text_content()
+            yield text_content.emit_added()
+            yield text_content.emit_delta("hello")
+            yield text_content.emit_done()
+            yield message_item.emit_content_done(text_content)
+            yield message_item.emit_done()
 
-                yield stream.emit_completed()
+            yield stream.emit_completed()
 
-            return _events()
+        return _events()
 
     app = Starlette()
-    map_responses_server(app, _StreamingHandler())
+    map_responses_server(app, _streaming_handler)
     client = TestClient(app)
 
     with client.stream(
@@ -193,31 +193,31 @@ def test_hosting__stream_mode_surfaces_handler_output_item_and_content_events() 
 
 
 def test_hosting__non_stream_mode_returns_completed_response_with_output_items() -> None:
-    class _NonStreamHandler:
-        def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-            async def _events():
-                from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
+    from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
-                stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
-                yield stream.emit_created()
-                yield stream.emit_in_progress()
+    @response_handler
+    def _non_stream_handler(request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
+            yield stream.emit_created()
+            yield stream.emit_in_progress()
 
-                message_item = stream.add_output_item_message()
-                yield message_item.emit_added()
+            message_item = stream.add_output_item_message()
+            yield message_item.emit_added()
 
-                text_content = message_item.add_text_content()
-                yield text_content.emit_added()
-                yield text_content.emit_delta("hello")
-                yield text_content.emit_done()
-                yield message_item.emit_content_done(text_content)
-                yield message_item.emit_done()
+            text_content = message_item.add_text_content()
+            yield text_content.emit_added()
+            yield text_content.emit_delta("hello")
+            yield text_content.emit_done()
+            yield message_item.emit_content_done(text_content)
+            yield message_item.emit_done()
 
-                yield stream.emit_completed()
+            yield stream.emit_completed()
 
-            return _events()
+        return _events()
 
     app = Starlette()
-    map_responses_server(app, _NonStreamHandler())
+    map_responses_server(app, _non_stream_handler)
     client = TestClient(app)
 
     response = client.post(
@@ -244,41 +244,36 @@ def test_hosting__non_stream_mode_returns_completed_response_with_output_items()
 
 @pytest.mark.skip(reason="Shutdown handler registration under investigation after _hosting.py refactor")
 def test_hosting__shutdown_signals_inflight_background_execution() -> None:
-    class _ShutdownAwareHandler:
-        def __init__(self, started_gate: EventGate, cancelled_gate: EventGate, shutdown_gate: EventGate) -> None:
-            self._started_gate = started_gate
-            self._cancelled_gate = cancelled_gate
-            self._shutdown_gate = shutdown_gate
-
-        def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-            async def _events():
-                yield {
-                    "type": "response.created",
-                    "payload": {
-                        "status": "in_progress",
-                        "output": [],
-                    },
-                }
-                self._started_gate.signal(True)
-
-                while True:
-                    if context.is_shutdown_requested:
-                        self._shutdown_gate.signal(True)
-                    if cancellation_signal.is_set():
-                        self._cancelled_gate.signal(True)
-                        return
-                    await asyncio.sleep(0.01)
-
-            return _events()
-
     started_gate = EventGate()
     cancelled_gate = EventGate()
     shutdown_gate = EventGate()
 
+    @response_handler
+    def _shutdown_aware_handler(request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            yield {
+                "type": "response.created",
+                "payload": {
+                    "status": "in_progress",
+                    "output": [],
+                },
+            }
+            started_gate.signal(True)
+
+            while True:
+                if context.is_shutdown_requested:
+                    shutdown_gate.signal(True)
+                if cancellation_signal.is_set():
+                    cancelled_gate.signal(True)
+                    return
+                await asyncio.sleep(0.01)
+
+        return _events()
+
     app = Starlette()
     map_responses_server(
         app,
-        _ShutdownAwareHandler(started_gate, cancelled_gate, shutdown_gate),
+        _shutdown_aware_handler,
         options=ResponsesServerOptions(shutdown_grace_period_seconds=2),
     )
 

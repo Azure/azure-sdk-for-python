@@ -20,6 +20,7 @@ from starlette.applications import Starlette
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.responses.hosting import map_responses_server
+from azure.ai.agentserver.responses import response_handler
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from tests._helpers import EventGate, poll_until
@@ -91,101 +92,93 @@ def _wait_for_terminal(
 # ════════════════════════════════════════════════════════════
 
 
-class _NoopHandler:
+@response_handler
+def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler — emits no events (framework auto-completes)."""
+    async def _events():
+        if False:  # pragma: no cover
+            yield None
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            if False:  # pragma: no cover
-                yield None
-
-        return _events()
+    return _events()
 
 
-class _SimpleTextHandler:
+@response_handler
+def _simple_text_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that emits created + completed with no output items."""
+    async def _events():
+        stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
+        yield stream.emit_created()
+        yield stream.emit_completed()
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
-            yield stream.emit_created()
-            yield stream.emit_completed()
-
-        return _events()
+    return _events()
 
 
-class _OutputProducingHandler:
+@response_handler
+def _output_producing_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that produces a single message output item with text 'hello'."""
+    async def _events():
+        stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
+        yield stream.emit_created()
+        yield stream.emit_in_progress()
+        message = stream.add_output_item_message()
+        yield message.emit_added()
+        text = message.add_text_content()
+        yield text.emit_added()
+        yield text.emit_delta("hello")
+        yield text.emit_done()
+        yield message.emit_content_done(text)
+        yield message.emit_done()
+        yield stream.emit_completed()
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
-            yield stream.emit_created()
-            yield stream.emit_in_progress()
-            message = stream.add_output_item_message()
-            yield message.emit_added()
-            text = message.add_text_content()
-            yield text.emit_added()
-            yield text.emit_delta("hello")
-            yield text.emit_done()
-            yield message.emit_content_done(text)
-            yield message.emit_done()
-            yield stream.emit_completed()
-
-        return _events()
+    return _events()
 
 
-class _ThrowingHandler:
+@response_handler
+def _throwing_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that raises after emitting created."""
+    async def _events():
+        stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
+        yield stream.emit_created()
+        raise RuntimeError("Simulated handler failure")
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
-            yield stream.emit_created()
-            raise RuntimeError("Simulated handler failure")
-
-        return _events()
+    return _events()
 
 
-class _IncompleteHandler:
+@response_handler
+def _incomplete_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that emits an incomplete terminal event."""
+    async def _events():
+        stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
+        yield stream.emit_created()
+        yield stream.emit_incomplete(reason="max_output_tokens")
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
-            yield stream.emit_created()
-            yield stream.emit_incomplete(reason="max_output_tokens")
-
-        return _events()
+    return _events()
 
 
-class _DelayedHandler:
+@response_handler
+def _delayed_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that sleeps briefly, checking for cancellation."""
+    async def _events():
+        if cancellation_signal.is_set():
+            return
+        await asyncio.sleep(0.25)
+        if cancellation_signal.is_set():
+            return
+        if False:  # pragma: no cover
+            yield None
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
+    return _events()
+
+
+def _make_blocking_sync_handler(
+    started_gate: EventGate, release_gate: threading.Event
+):
+    """Factory for a handler that blocks on a gate, for testing concurrent GET/Cancel on in-flight sync requests."""
+    @response_handler
+    def handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
-            if cancellation_signal.is_set():
-                return
-            await asyncio.sleep(0.25)
-            if cancellation_signal.is_set():
-                return
-            if False:  # pragma: no cover
-                yield None
-
-        return _events()
-
-
-class _BlockingSyncHandler:
-    """Handler that blocks on a gate, for testing concurrent GET/Cancel on in-flight sync requests."""
-
-    def __init__(self, started_gate: EventGate, release_gate: threading.Event) -> None:
-        self._started_gate = started_gate
-        self._release_gate = release_gate
-
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            self._started_gate.signal(True)
-            while not self._release_gate.is_set():
+            started_gate.signal(True)
+            while not release_gate.is_set():
                 if cancellation_signal.is_set():
                     return
                 await asyncio.sleep(0.01)
@@ -194,23 +187,18 @@ class _BlockingSyncHandler:
 
         return _events()
 
+    return handler
 
-class _TwoItemGatedHandler:
-    """Handler that emits two message output items with gates between them."""
 
-    def __init__(
-        self,
-        item1_emitted: EventGate,
-        item1_gate: threading.Event,
-        item2_emitted: EventGate,
-        item2_gate: threading.Event,
-    ) -> None:
-        self._item1_emitted = item1_emitted
-        self._item1_gate = item1_gate
-        self._item2_emitted = item2_emitted
-        self._item2_gate = item2_gate
-
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
+def _make_two_item_gated_handler(
+    item1_emitted: EventGate,
+    item1_gate: threading.Event,
+    item2_emitted: EventGate,
+    item2_gate: threading.Event,
+):
+    """Factory for a handler that emits two message output items with gates between them."""
+    @response_handler
+    def handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
             yield stream.emit_created()
@@ -226,8 +214,8 @@ class _TwoItemGatedHandler:
             yield msg1.emit_content_done(text1)
             yield msg1.emit_done()
 
-            self._item1_emitted.signal()
-            while not self._item1_gate.is_set():
+            item1_emitted.signal()
+            while not item1_gate.is_set():
                 if cancellation_signal.is_set():
                     return
                 await asyncio.sleep(0.01)
@@ -242,8 +230,8 @@ class _TwoItemGatedHandler:
             yield msg2.emit_content_done(text2)
             yield msg2.emit_done()
 
-            self._item2_emitted.signal()
-            while not self._item2_gate.is_set():
+            item2_emitted.signal()
+            while not item2_gate.is_set():
                 if cancellation_signal.is_set():
                     return
                 await asyncio.sleep(0.01)
@@ -252,10 +240,12 @@ class _TwoItemGatedHandler:
 
         return _events()
 
+    return handler
+
 
 def _build_client(handler: Any | None = None) -> TestClient:
     app = Starlette()
-    map_responses_server(app, handler or _NoopHandler())
+    map_responses_server(app, handler or _noop_handler)
     return TestClient(app)
 
 
@@ -319,7 +309,7 @@ class TestEphemeralStoreFalse:
     )
     def test_ephemeral_store_false_cross_api_returns_404(self, stream: bool, operation: str) -> None:
         """B14 — store=false responses are not retrievable."""
-        handler = _SimpleTextHandler() if stream else _NoopHandler()
+        handler = _simple_text_handler if stream else _noop_handler
         client = _build_client(handler)
 
         create_payload: dict[str, Any] = {
@@ -358,7 +348,7 @@ class TestEphemeralStoreFalse:
         The Python SDK returns 404 because store=false responses are not
         persisted, so the cancel endpoint cannot find them.
         """
-        handler = _SimpleTextHandler() if stream else _NoopHandler()
+        handler = _simple_text_handler if stream else _noop_handler
         client = _build_client(handler)
 
         create_payload: dict[str, Any] = {
@@ -406,7 +396,7 @@ class TestC1SyncStored:
         """B16 — non-bg in-flight → 404."""
         started_gate = EventGate()
         release_gate = threading.Event()
-        handler = _BlockingSyncHandler(started_gate, release_gate)
+        handler = _make_blocking_sync_handler(started_gate, release_gate)
         client = _build_client(handler)
         response_id = IdGenerator.new_response_id()
 
@@ -471,7 +461,7 @@ class TestC1SyncStored:
         """B1 — cancel requires background; non-bg → 400."""
         started_gate = EventGate()
         release_gate = threading.Event()
-        handler = _BlockingSyncHandler(started_gate, release_gate)
+        handler = _make_blocking_sync_handler(started_gate, release_gate)
         client = _build_client(handler)
         response_id = IdGenerator.new_response_id()
 
@@ -523,7 +513,7 @@ class TestC2StreamStored:
 
     def test_e7_stream_create_then_get_after_stream_ends_returns_200_completed(self) -> None:
         """B5 — JSON GET returns current snapshot."""
-        client = _build_client(_SimpleTextHandler())
+        client = _build_client(_simple_text_handler)
         response_id = _create_streaming_response(client)
 
         get_resp = client.get(f"/responses/{response_id}")
@@ -534,7 +524,7 @@ class TestC2StreamStored:
 
     def test_e9_stream_create_then_get_sse_replay_returns_400(self) -> None:
         """B2 — SSE replay requires background."""
-        client = _build_client(_SimpleTextHandler())
+        client = _build_client(_simple_text_handler)
         response_id = _create_streaming_response(client)
 
         get_resp = client.get(f"/responses/{response_id}?stream=true")
@@ -542,7 +532,7 @@ class TestC2StreamStored:
 
     def test_e10_stream_create_then_cancel_after_stream_ends_returns_400(self) -> None:
         """B1, B12 — cancel non-bg rejected."""
-        client = _build_client(_SimpleTextHandler())
+        client = _build_client(_simple_text_handler)
         response_id = _create_streaming_response(client)
 
         cancel_resp = client.post(f"/responses/{response_id}/cancel")
@@ -577,7 +567,7 @@ class TestC3BgPollStored:
         so the background execution might complete before the GET. We accept
         completed as well in that case.
         """
-        client = _build_client(_DelayedHandler())
+        client = _build_client(_delayed_handler)
 
         r = client.post(
             "/responses",
@@ -623,7 +613,7 @@ class TestC3BgPollStored:
 
     def test_e16_bg_create_cancel_then_get_returns_cancelled(self) -> None:
         """B7 — cancelled status; B11 — output cleared."""
-        client = _build_client(_DelayedHandler())
+        client = _build_client(_delayed_handler)
         response_id = _create_bg_response(client)
 
         cancel_resp = client.post(f"/responses/{response_id}/cancel")
@@ -649,7 +639,7 @@ class TestC3BgPollStored:
 
     def test_e18_bg_create_cancel_cancel_returns_200_idempotent(self) -> None:
         """B3 — cancel is idempotent."""
-        client = _build_client(_DelayedHandler())
+        client = _build_client(_delayed_handler)
         response_id = _create_bg_response(client)
 
         cancel1 = client.post(f"/responses/{response_id}/cancel")
@@ -673,7 +663,7 @@ class TestC3BgPollStored:
 
     def test_e36_bg_handler_throws_then_get_returns_failed(self) -> None:
         """B5, B6 — failed status invariants."""
-        client = _build_client(_ThrowingHandler())
+        client = _build_client(_throwing_handler)
         response_id = _create_bg_response(client)
         _wait_for_terminal(client, response_id)
 
@@ -689,7 +679,7 @@ class TestC3BgPollStored:
 
     def test_e37_bg_handler_incomplete_then_get_returns_incomplete(self) -> None:
         """B5, B6 — incomplete status invariants."""
-        client = _build_client(_IncompleteHandler())
+        client = _build_client(_incomplete_handler)
         response_id = _create_bg_response(client)
         _wait_for_terminal(client, response_id)
 
@@ -702,7 +692,7 @@ class TestC3BgPollStored:
 
     def test_e38_bg_handler_throws_then_cancel_returns_400(self) -> None:
         """B12 — cancel rejection on failed."""
-        client = _build_client(_ThrowingHandler())
+        client = _build_client(_throwing_handler)
         response_id = _create_bg_response(client)
         _wait_for_terminal(client, response_id)
 
@@ -712,7 +702,7 @@ class TestC3BgPollStored:
 
     def test_e39_bg_handler_incomplete_then_cancel_returns_400(self) -> None:
         """B12 — cancel rejection on incomplete (terminal status)."""
-        client = _build_client(_IncompleteHandler())
+        client = _build_client(_incomplete_handler)
         response_id = _create_bg_response(client)
         _wait_for_terminal(client, response_id)
 
@@ -726,7 +716,7 @@ class TestC3BgPollStored:
         Note: Fine-grained mid-stream gating across async/sync boundary
         is unreliable with Starlette TestClient, so we verify final state.
         """
-        client = _build_client(_OutputProducingHandler())
+        client = _build_client(_output_producing_handler)
         response_id = _create_bg_response(client)
         terminal = _wait_for_terminal(client, response_id)
 
@@ -747,7 +737,7 @@ class TestC4BgStreamStored:
 
     def test_e21_bg_stream_create_get_after_stream_ends_returns_completed(self) -> None:
         """B5."""
-        client = _build_client(_SimpleTextHandler())
+        client = _build_client(_simple_text_handler)
         response_id = _create_bg_streaming_response(client)
         _wait_for_terminal(client, response_id)
 
@@ -757,7 +747,7 @@ class TestC4BgStreamStored:
 
     def test_e22_bg_stream_completed_sse_replay_returns_all_events(self) -> None:
         """B4 — SSE replay; B9 — sequence numbers; B26 — terminal event."""
-        client = _build_client(_SimpleTextHandler())
+        client = _build_client(_simple_text_handler)
         response_id = _create_bg_streaming_response(client)
         _wait_for_terminal(client, response_id)
 
@@ -777,7 +767,7 @@ class TestC4BgStreamStored:
 
     def test_e23_bg_stream_sse_replay_with_starting_after_skips_events(self) -> None:
         """B4 — starting_after cursor."""
-        client = _build_client(_SimpleTextHandler())
+        client = _build_client(_simple_text_handler)
         response_id = _create_bg_streaming_response(client)
         _wait_for_terminal(client, response_id)
 
@@ -805,7 +795,7 @@ class TestC4BgStreamStored:
         bg+stream mid-stream cancel is tested in test_cross_api_e2e_async.py
         (E25) using the async ASGI client.
         """
-        client = _build_client(_DelayedHandler())
+        client = _build_client(_delayed_handler)
         response_id = _create_bg_response(client)
 
         cancel_resp = client.post(f"/responses/{response_id}/cancel")
@@ -820,7 +810,7 @@ class TestC4BgStreamStored:
 
     def test_e27_bg_stream_completed_then_cancel_returns_400(self) -> None:
         """B12 — cannot cancel completed."""
-        client = _build_client(_SimpleTextHandler())
+        client = _build_client(_simple_text_handler)
         response_id = _create_bg_streaming_response(client)
         _wait_for_terminal(client, response_id)
 
@@ -834,7 +824,7 @@ class TestC4BgStreamStored:
         Uses non-streaming bg path because the synchronous TestClient cannot
         issue concurrent requests during an active SSE stream.
         """
-        client = _build_client(_DelayedHandler())
+        client = _build_client(_delayed_handler)
         response_id = _create_bg_response(client)
 
         cancel1 = client.post(f"/responses/{response_id}/cancel")
@@ -847,7 +837,7 @@ class TestC4BgStreamStored:
 
     def test_e29_bg_stream_disconnect_then_get_returns_completed(self) -> None:
         """B18 — background responses unaffected by connection termination."""
-        client = _build_client(_SimpleTextHandler())
+        client = _build_client(_simple_text_handler)
         response_id = _create_bg_streaming_response(client)
         _wait_for_terminal(client, response_id)
 
@@ -857,7 +847,7 @@ class TestC4BgStreamStored:
 
     def test_e40_bg_stream_handler_throws_get_and_sse_replay_returns_failed(self) -> None:
         """B5, B6 — failed status invariants; B26 — terminal event."""
-        client = _build_client(_ThrowingHandler())
+        client = _build_client(_throwing_handler)
         response_id = _create_bg_streaming_response(client)
         _wait_for_terminal(client, response_id)
 
@@ -874,7 +864,7 @@ class TestC4BgStreamStored:
 
     def test_e41_bg_stream_handler_incomplete_get_and_sse_replay_returns_incomplete(self) -> None:
         """B5, B6 — incomplete status invariants; B26 — terminal event."""
-        client = _build_client(_IncompleteHandler())
+        client = _build_client(_incomplete_handler)
         response_id = _create_bg_streaming_response(client)
         _wait_for_terminal(client, response_id)
 
@@ -893,7 +883,7 @@ class TestC4BgStreamStored:
 
     def test_e42_bg_stream_sse_replay_starting_after_max_returns_empty(self) -> None:
         """B4 — starting_after >= max → empty stream."""
-        client = _build_client(_SimpleTextHandler())
+        client = _build_client(_simple_text_handler)
         response_id = _create_bg_streaming_response(client)
         _wait_for_terminal(client, response_id)
 
@@ -916,7 +906,7 @@ class TestC4BgStreamStored:
         Uses non-streaming bg path because the synchronous TestClient cannot
         issue concurrent requests during an active SSE stream.
         """
-        client = _build_client(_DelayedHandler())
+        client = _build_client(_delayed_handler)
         response_id = _create_bg_response(client)
 
         cancel_resp = client.post(f"/responses/{response_id}/cancel")

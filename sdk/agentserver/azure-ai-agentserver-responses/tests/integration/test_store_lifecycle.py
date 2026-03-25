@@ -12,22 +12,22 @@ from starlette.testclient import TestClient
 from tests._helpers import poll_until
 
 from azure.ai.agentserver.responses.hosting import map_responses_server
+from azure.ai.agentserver.responses import response_handler
 
 
-class _NoopResponseHandler:
+@response_handler
+def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler used to wire lifecycle integration tests."""
+    async def _events():
+        if False:  # pragma: no cover - keep async generator shape.
+            yield None
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            if False:  # pragma: no cover - keep async generator shape.
-                yield None
-
-        return _events()
+    return _events()
 
 
 def _build_client() -> TestClient:
     app = Starlette()
-    map_responses_server(app, _NoopResponseHandler())
+    map_responses_server(app, _noop_response_handler)
     return TestClient(app)
 
 

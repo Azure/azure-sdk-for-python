@@ -29,6 +29,7 @@ from starlette.applications import Starlette
 
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses.hosting import map_responses_server
+from azure.ai.agentserver.responses import response_handler
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
 
@@ -219,14 +220,13 @@ def _parse_sse_events(text: str) -> list[dict[str, Any]]:
 # ════════════════════════════════════════════════════════════
 
 
-class _GatedStreamHandler:
-    """Emits created + in_progress, then blocks until ``release`` is set."""
+def _make_gated_stream_handler():
+    """Factory for a handler that emits created + in_progress, then blocks until ``release`` is set."""
+    started = asyncio.Event()
+    release = asyncio.Event()
 
-    def __init__(self) -> None:
-        self.started = asyncio.Event()
-        self.release = asyncio.Event()
-
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
+    @response_handler
+    def handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -234,8 +234,8 @@ class _GatedStreamHandler:
             )
             yield stream.emit_created()
             yield stream.emit_in_progress()
-            self.started.set()
-            while not self.release.is_set():
+            started.set()
+            while not release.is_set():
                 if cancellation_signal.is_set():
                     return
                 await asyncio.sleep(0.01)
@@ -243,15 +243,18 @@ class _GatedStreamHandler:
 
         return _events()
 
+    handler.started = started  # type: ignore[attr-defined]
+    handler.release = release  # type: ignore[attr-defined]
+    return handler
 
-class _GatedStreamHandlerWithOutput:
-    """Emits created + in_progress + a partial message, then blocks."""
 
-    def __init__(self) -> None:
-        self.started = asyncio.Event()
-        self.release = asyncio.Event()
+def _make_gated_stream_handler_with_output():
+    """Factory for a handler that emits created + in_progress + a partial message, then blocks."""
+    started = asyncio.Event()
+    release = asyncio.Event()
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
+    @response_handler
+    def handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -266,8 +269,8 @@ class _GatedStreamHandlerWithOutput:
             yield text.emit_added()
             yield text.emit_delta("Hello")
 
-            self.started.set()
-            while not self.release.is_set():
+            started.set()
+            while not release.is_set():
                 if cancellation_signal.is_set():
                     return
                 await asyncio.sleep(0.01)
@@ -278,6 +281,10 @@ class _GatedStreamHandlerWithOutput:
             yield stream.emit_completed()
 
         return _events()
+
+    handler.started = started  # type: ignore[attr-defined]
+    handler.release = release  # type: ignore[attr-defined]
+    return handler
 
 
 # ════════════════════════════════════════════════════════════
@@ -290,7 +297,7 @@ class TestC2StreamStoredAsync:
 
     async def test_e8_stream_get_during_stream_returns_404(self) -> None:
         """B16 — non-bg in-flight → 404."""
-        handler = _GatedStreamHandler()
+        handler = _make_gated_stream_handler()
         client = _build_client(handler)
         response_id = IdGenerator.new_response_id()
 
@@ -328,7 +335,7 @@ class TestC2StreamStoredAsync:
 
     async def test_e11_stream_cancel_during_stream_returns_400(self) -> None:
         """B1 — cancel requires background; non-bg → 400."""
-        handler = _GatedStreamHandler()
+        handler = _make_gated_stream_handler()
         client = _build_client(handler)
         response_id = IdGenerator.new_response_id()
 
@@ -372,7 +379,7 @@ class TestC4BgStreamStoredAsync:
 
     async def test_e20_bg_stream_get_during_stream_returns_in_progress(self) -> None:
         """B5 — background responses accessible during in-progress."""
-        handler = _GatedStreamHandler()
+        handler = _make_gated_stream_handler()
         client = _build_client(handler)
         response_id = IdGenerator.new_response_id()
 
@@ -410,7 +417,7 @@ class TestC4BgStreamStoredAsync:
 
     async def test_e25_bg_stream_cancel_mid_stream_returns_cancelled(self) -> None:
         """B7, B11 — cancel mid-stream → cancelled with 0 output."""
-        handler = _GatedStreamHandler()
+        handler = _make_gated_stream_handler()
         client = _build_client(handler)
         response_id = IdGenerator.new_response_id()
 
@@ -449,7 +456,7 @@ class TestC4BgStreamStoredAsync:
 
     async def test_e43_bg_stream_get_during_stream_returns_partial_output(self) -> None:
         """B5, B23 — GET mid-stream returns partial output items."""
-        handler = _GatedStreamHandlerWithOutput()
+        handler = _make_gated_stream_handler_with_output()
         client = _build_client(handler)
         response_id = IdGenerator.new_response_id()
 
@@ -491,7 +498,7 @@ class TestC4BgStreamStoredAsync:
 
     async def test_bg_stream_cancel_terminal_sse_is_response_failed_with_cancelled(self) -> None:
         """B11, B26 — cancel mid-stream → terminal SSE event is response.failed with status cancelled."""
-        handler = _GatedStreamHandler()
+        handler = _make_gated_stream_handler()
         client = _build_client(handler)
         response_id = IdGenerator.new_response_id()
 

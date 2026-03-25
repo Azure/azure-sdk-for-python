@@ -12,22 +12,22 @@ from starlette.testclient import TestClient
 from tests._helpers import poll_until
 
 from azure.ai.agentserver.responses.hosting import map_responses_server
+from azure.ai.agentserver.responses import response_handler
 
 
-class _NoopResponseHandler:
+@response_handler
+def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler used to wire the hosting surface in contract tests."""
+    async def _events():
+        if False:  # pragma: no cover - required to keep async-generator shape.
+            yield None
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            if False:  # pragma: no cover - required to keep async-generator shape.
-                yield None
-
-        return _events()
+    return _events()
 
 
 def _build_client() -> TestClient:
     app = Starlette()
-    map_responses_server(app, _NoopResponseHandler())
+    map_responses_server(app, _noop_response_handler)
     return TestClient(app)
 
 
@@ -210,31 +210,31 @@ def test_create__background_mode_returns_immediate_then_reaches_terminal_state()
 
 
 def test_create__non_stream_returns_completed_response_with_output_items() -> None:
-    class _OutputProducingHandler:
-        def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-            async def _events():
-                from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
+    from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
-                stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
-                yield stream.emit_created()
-                yield stream.emit_in_progress()
+    @response_handler
+    def _output_producing_handler(request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
+            yield stream.emit_created()
+            yield stream.emit_in_progress()
 
-                message_item = stream.add_output_item_message()
-                yield message_item.emit_added()
+            message_item = stream.add_output_item_message()
+            yield message_item.emit_added()
 
-                text_content = message_item.add_text_content()
-                yield text_content.emit_added()
-                yield text_content.emit_delta("hello")
-                yield text_content.emit_done()
-                yield message_item.emit_content_done(text_content)
-                yield message_item.emit_done()
+            text_content = message_item.add_text_content()
+            yield text_content.emit_added()
+            yield text_content.emit_delta("hello")
+            yield text_content.emit_done()
+            yield message_item.emit_content_done(text_content)
+            yield message_item.emit_done()
 
-                yield stream.emit_completed()
+            yield stream.emit_completed()
 
-            return _events()
+        return _events()
 
     app = Starlette()
-    map_responses_server(app, _OutputProducingHandler())
+    map_responses_server(app, _output_producing_handler)
     client = TestClient(app)
 
     response = client.post(
@@ -260,31 +260,31 @@ def test_create__non_stream_returns_completed_response_with_output_items() -> No
 
 
 def test_create__background_non_stream_get_eventually_returns_output_items() -> None:
-    class _OutputProducingHandler:
-        def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-            async def _events():
-                from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
+    from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
-                stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
-                yield stream.emit_created()
-                yield stream.emit_in_progress()
+    @response_handler
+    def _output_producing_handler(request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
+            yield stream.emit_created()
+            yield stream.emit_in_progress()
 
-                message_item = stream.add_output_item_message()
-                yield message_item.emit_added()
+            message_item = stream.add_output_item_message()
+            yield message_item.emit_added()
 
-                text_content = message_item.add_text_content()
-                yield text_content.emit_added()
-                yield text_content.emit_delta("hello")
-                yield text_content.emit_done()
-                yield message_item.emit_content_done(text_content)
-                yield message_item.emit_done()
+            text_content = message_item.add_text_content()
+            yield text_content.emit_added()
+            yield text_content.emit_delta("hello")
+            yield text_content.emit_done()
+            yield message_item.emit_content_done(text_content)
+            yield message_item.emit_done()
 
-                yield stream.emit_completed()
+            yield stream.emit_completed()
 
-            return _events()
+        return _events()
 
     app = Starlette()
-    map_responses_server(app, _OutputProducingHandler())
+    map_responses_server(app, _output_producing_handler)
     client = TestClient(app)
 
     create_response = client.post(

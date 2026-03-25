@@ -5,11 +5,12 @@
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
+import inspect
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, AsyncIterable, Awaitable, Callable, Mapping, Protocol, Sequence, runtime_checkable
+from typing import Any, Awaitable, Callable, Mapping, Protocol, Sequence, runtime_checkable
 
-from .models._generated import CreateResponse, OutputItem, ResponseStreamEvent
+from .models._generated import OutputItem
 from .models import ResponseModeFlags
 
 OutputItemsLoader = Callable[[], Awaitable[Sequence[OutputItem]]]
@@ -147,27 +148,32 @@ class RuntimeResponseContext:
         return self._history_cache
 
 
-@runtime_checkable
-class ResponseHandler(Protocol):
-    """Primary async handler contract consumed by route orchestration.
+def response_handler(func: Callable) -> Callable:
+    """Register a function as a response handler.
 
-    Mirrors the referenced .NET ``IResponseHandler`` single-method design.
+    The decorated function must accept exactly three positional parameters:
+    ``(request, context, cancellation_signal)`` and return an
+    ``AsyncIterable`` of response stream events.
+
+    Validation is performed at decoration time so configuration errors
+    are surfaced immediately when the module is imported.
+
+    :param func: The handler function to register.
+    :type func: Callable
+    :returns: The same function, marked as a response handler.
+    :rtype: Callable
+    :raises TypeError: If ``func`` is not callable or does not accept exactly
+        three parameters.
     """
-
-    def create_async(
-        self,
-        request: CreateResponse,
-        context: ResponseContext,
-        cancellation_signal: asyncio.Event,
-    ) -> AsyncIterable[ResponseStreamEvent]:
-        """Yield the full response event stream for one create request.
-
-        :param request: The create response request payload.
-        :type request: CreateResponse
-        :param context: The runtime context for this response execution.
-        :type context: ResponseContext
-        :param cancellation_signal: An event that is set when cancellation is requested.
-        :type cancellation_signal: asyncio.Event
-        :returns: An async iterable of response stream events.
-        :rtype: AsyncIterable[ResponseStreamEvent]
-        """
+    if not callable(func):
+        raise TypeError("@response_handler must be applied to a callable")
+    sig = inspect.signature(func)
+    params = list(sig.parameters.values())
+    if len(params) != 3:
+        raise TypeError(
+            f"@response_handler: handler must accept exactly 3 parameters "
+            f"(request, context, cancellation_signal), got {len(params)}: "
+            f"{[p.name for p in params]}"
+        )
+    func._is_response_handler = True  # type: ignore[attr-defined]
+    return func

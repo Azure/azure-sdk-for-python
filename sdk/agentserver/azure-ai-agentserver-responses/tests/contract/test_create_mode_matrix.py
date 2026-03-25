@@ -16,17 +16,17 @@ from starlette.applications import Starlette
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.responses.hosting import map_responses_server
+from azure.ai.agentserver.responses import response_handler
 
 
-class _NoopResponseHandler:
+@response_handler
+def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler used to wire contract matrix tests."""
+    async def _events():
+        if False:  # pragma: no cover - keep async generator shape.
+            yield None
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            if False:  # pragma: no cover - keep async generator shape.
-                yield None
-
-        return _events()
+    return _events()
 
 
 @dataclass(frozen=True)
@@ -42,7 +42,7 @@ class _CreateModeCase:
 
 def _build_client() -> TestClient:
     app = Starlette()
-    map_responses_server(app, _NoopResponseHandler())
+    map_responses_server(app, _noop_response_handler)
     return TestClient(app)
 
 

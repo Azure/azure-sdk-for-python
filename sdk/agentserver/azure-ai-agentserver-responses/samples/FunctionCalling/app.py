@@ -16,6 +16,7 @@ import uvicorn
 from starlette.applications import Starlette
 from starlette.responses import JSONResponse
 
+from azure.ai.agentserver.responses import response_handler
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 from azure.ai.agentserver.responses.hosting import map_responses_server
 
@@ -53,49 +54,48 @@ def _extract_function_call_output(request_payload: dict[str, Any]) -> str | None
     return None
 
 
-class WeatherHandler:
+@response_handler
+def weather_handler(request: Any, context: Any, cancellation_signal: Any) -> AsyncIterable[dict[str, Any]]:
     """Two-turn function-calling sample handler."""
+    async def _events() -> AsyncIterable[dict[str, Any]]:
+        payload = _request_mapping(request)
+        tool_output = _extract_function_call_output(payload)
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any) -> AsyncIterable[dict[str, Any]]:
-        async def _events() -> AsyncIterable[dict[str, Any]]:
-            payload = _request_mapping(request)
-            tool_output = _extract_function_call_output(payload)
+        stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
 
-            stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
+        yield stream.emit_created()
+        yield stream.emit_in_progress()
 
-            yield stream.emit_created()
-            yield stream.emit_in_progress()
+        if tool_output is not None:
+            message_item = stream.add_output_item_message()
+            yield message_item.emit_added()
 
-            if tool_output is not None:
-                message_item = stream.add_output_item_message()
-                yield message_item.emit_added()
+            text_content = message_item.add_text_content()
+            yield text_content.emit_added()
 
-                text_content = message_item.add_text_content()
-                yield text_content.emit_added()
+            reply = f"The weather is: {tool_output}"
+            yield text_content.emit_delta(reply)
+            yield text_content.emit_done(reply)
+            yield message_item.emit_content_done(text_content)
+            yield message_item.emit_done()
+        else:
+            function_call = stream.add_output_item_function_call("get_weather", "call_weather_1")
+            yield function_call.emit_added()
 
-                reply = f"The weather is: {tool_output}"
-                yield text_content.emit_delta(reply)
-                yield text_content.emit_done(reply)
-                yield message_item.emit_content_done(text_content)
-                yield message_item.emit_done()
-            else:
-                function_call = stream.add_output_item_function_call("get_weather", "call_weather_1")
-                yield function_call.emit_added()
+            arguments = json.dumps({"location": "Seattle", "unit": "fahrenheit"})
+            yield function_call.emit_arguments_delta(arguments)
+            yield function_call.emit_arguments_done(arguments)
+            yield function_call.emit_done()
 
-                arguments = json.dumps({"location": "Seattle", "unit": "fahrenheit"})
-                yield function_call.emit_arguments_delta(arguments)
-                yield function_call.emit_arguments_done(arguments)
-                yield function_call.emit_done()
+        yield stream.emit_completed()
 
-            yield stream.emit_completed()
-
-        return _events()
+    return _events()
 
 
 def create_app() -> Starlette:
     app = Starlette()
     app.add_route("/ready", lambda request: JSONResponse({"status": "ready"}), methods=["GET"])
-    map_responses_server(app, WeatherHandler())
+    map_responses_server(app, weather_handler)
     return app
 
 

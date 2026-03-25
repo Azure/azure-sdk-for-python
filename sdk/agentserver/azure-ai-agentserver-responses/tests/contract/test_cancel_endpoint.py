@@ -13,102 +13,96 @@ from starlette.applications import Starlette
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.responses.hosting import map_responses_server
+from azure.ai.agentserver.responses import response_handler
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from tests._helpers import EventGate, poll_until
 
 
-class _NoopResponseHandler:
+@response_handler
+def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler used to wire the hosting surface in contract tests."""
+    async def _events():
+        if False:  # pragma: no cover - required to keep async-generator shape.
+            yield None
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            if False:  # pragma: no cover - required to keep async-generator shape.
-                yield None
-
-        return _events()
+    return _events()
 
 
-class _DelayedResponseHandler:
+@response_handler
+def _delayed_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that keeps background execution cancellable for a short period."""
+    async def _events():
+        if cancellation_signal.is_set():
+            return
+        await asyncio.sleep(0.25)
+        if cancellation_signal.is_set():
+            return
+        if False:  # pragma: no cover - keep async generator shape.
+            yield None
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            if cancellation_signal.is_set():
-                return
-            await asyncio.sleep(0.25)
-            if cancellation_signal.is_set():
-                return
-            if False:  # pragma: no cover - keep async generator shape.
-                yield None
-
-        return _events()
+    return _events()
 
 
-class _RaisingResponseHandler:
+@response_handler
+def _raising_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that raises to transition a background response into failed."""
+    async def _events():
+        raise RuntimeError("simulated handler failure")
+        if False:  # pragma: no cover - keep async generator shape.
+            yield None
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            raise RuntimeError("simulated handler failure")
-            if False:  # pragma: no cover - keep async generator shape.
-                yield None
-
-        return _events()
+    return _events()
 
 
-class _UnknownCancellationResponseHandler:
+@response_handler
+def _unknown_cancellation_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that raises an unknown cancellation exception source."""
+    async def _events():
+        raise asyncio.CancelledError("unknown cancellation source")
+        if False:  # pragma: no cover - keep async generator shape.
+            yield None
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            raise asyncio.CancelledError("unknown cancellation source")
-            if False:  # pragma: no cover - keep async generator shape.
-                yield None
-
-        return _events()
+    return _events()
 
 
-class _IncompleteResponseHandler:
+@response_handler
+def _incomplete_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that emits an explicit incomplete terminal response event."""
+    async def _events():
+        yield {
+            "type": "response.created",
+            "payload": {
+                "status": "queued",
+                "output": [],
+            },
+        }
+        yield {
+            "type": "response.in_progress",
+            "payload": {
+                "status": "in_progress",
+                "output": [],
+            },
+        }
+        yield {
+            "type": "response.incomplete",
+            "payload": {
+                "status": "incomplete",
+                "output": [],
+            },
+        }
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
+    return _events()
+
+
+def _make_blocking_sync_response_handler(
+    started_gate: EventGate, release_gate: threading.Event
+):
+    """Factory for a handler that holds a sync request in-flight for deterministic concurrent cancel checks."""
+    @response_handler
+    def handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
-            yield {
-                "type": "response.created",
-                "payload": {
-                    "status": "queued",
-                    "output": [],
-                },
-            }
-            yield {
-                "type": "response.in_progress",
-                "payload": {
-                    "status": "in_progress",
-                    "output": [],
-                },
-            }
-            yield {
-                "type": "response.incomplete",
-                "payload": {
-                    "status": "incomplete",
-                    "output": [],
-                },
-            }
-
-        return _events()
-
-
-class _BlockingSyncResponseHandler:
-    """Handler that holds a sync request in-flight for deterministic concurrent cancel checks."""
-
-    def __init__(self, started_gate: EventGate, release_gate: threading.Event) -> None:
-        self._started_gate = started_gate
-        self._release_gate = release_gate
-
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            self._started_gate.signal(True)
-            while not self._release_gate.is_set():
+            started_gate.signal(True)
+            while not release_gate.is_set():
                 if cancellation_signal.is_set():
                     return
                 await asyncio.sleep(0.01)
@@ -117,10 +111,12 @@ class _BlockingSyncResponseHandler:
 
         return _events()
 
+    return handler
+
 
 def _build_client(handler: Any | None = None) -> TestClient:
     app = Starlette()
-    map_responses_server(app, handler or _NoopResponseHandler())
+    map_responses_server(app, handler or _noop_response_handler)
     return TestClient(app)
 
 
@@ -179,7 +175,7 @@ def _assert_error(
 
 
 def test_cancel__cancels_background_response_and_clears_output() -> None:
-    client = _build_client(_DelayedResponseHandler())
+    client = _build_client(_delayed_response_handler)
 
     response_id = _create_background_response(client)
 
@@ -197,7 +193,7 @@ def test_cancel__cancels_background_response_and_clears_output() -> None:
 
 
 def test_cancel__is_idempotent_for_already_cancelled_response() -> None:
-    client = _build_client(_DelayedResponseHandler())
+    client = _build_client(_delayed_response_handler)
 
     response_id = _create_background_response(client)
 
@@ -227,7 +223,7 @@ def test_cancel__returns_400_for_completed_background_response() -> None:
 
 
 def test_cancel__returns_400_for_failed_background_response() -> None:
-    client = _build_client(_RaisingResponseHandler())
+    client = _build_client(_raising_response_handler)
     response_id = _create_background_response(client)
     _wait_for_status(client, response_id, "failed")
 
@@ -244,7 +240,7 @@ def test_cancel__returns_400_for_failed_background_response() -> None:
     reason="Known gap (S-024): unknown cancellation exceptions should map to handler-error path instead of escaping as CancelledError",
 )
 def test_cancel__unknown_cancellation_exception_is_treated_as_failed() -> None:
-    client = _build_client(_UnknownCancellationResponseHandler())
+    client = _build_client(_unknown_cancellation_response_handler)
     response_id = _create_background_response(client)
     _wait_for_status(client, response_id, "failed")
 
@@ -268,7 +264,7 @@ def test_cancel__background_stream_disconnect_does_not_cancel_handler() -> None:
 
 
 def test_cancel__returns_400_for_incomplete_background_response() -> None:
-    client = _build_client(_IncompleteResponseHandler())
+    client = _build_client(_incomplete_response_handler)
     response_id = _create_background_response(client)
     _wait_for_status(client, response_id, "incomplete")
 
@@ -308,7 +304,7 @@ def test_cancel__returns_400_for_synchronous_response() -> None:
 def test_cancel__returns_404_for_in_flight_synchronous_response() -> None:
     started_gate = EventGate()
     release_gate = threading.Event()
-    client = _build_client(_BlockingSyncResponseHandler(started_gate, release_gate))
+    client = _build_client(_make_blocking_sync_response_handler(started_gate, release_gate))
     response_id = IdGenerator.new_response_id()
 
     create_result: dict[str, Any] = {}
@@ -372,7 +368,7 @@ def test_cancel__returns_404_for_unknown_response_id() -> None:
 def test_cancel__from_queued_or_early_in_progress_succeeds() -> None:
     """B-11 — Cancel issued immediately after creation (queued/early in_progress) returns HTTP 200,
     status=cancelled, and output=[]."""
-    client = _build_client(_DelayedResponseHandler())
+    client = _build_client(_delayed_response_handler)
 
     create_response = client.post(
         "/responses",

@@ -12,56 +12,54 @@ from starlette.applications import Starlette
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.responses.hosting import map_responses_server
+from azure.ai.agentserver.responses import response_handler
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
 
-class _NoopResponseHandler:
+@response_handler
+def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler used to wire the hosting surface in contract tests."""
+    async def _events():
+        if False:  # pragma: no cover - required to keep async-generator shape.
+            yield None
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            if False:  # pragma: no cover - required to keep async-generator shape.
-                yield None
-
-        return _events()
+    return _events()
 
 
 def _build_client() -> TestClient:
     app = Starlette()
-    map_responses_server(app, _NoopResponseHandler())
+    map_responses_server(app, _noop_response_handler)
     return TestClient(app)
 
 
-class _ThrowingBeforeYieldHandler:
+@response_handler
+def _throwing_before_yield_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that raises before yielding any event.
 
     Used to test pre-creation error handling in SSE streaming mode.
     """
+    async def _events():
+        raise RuntimeError("Simulated pre-creation failure")
+        if False:  # pragma: no cover - keep async generator shape.
+            yield None
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            raise RuntimeError("Simulated pre-creation failure")
-            if False:  # pragma: no cover - keep async generator shape.
-                yield None
-
-        return _events()
+    return _events()
 
 
-class _ThrowingAfterCreatedHandler:
+@response_handler
+def _throwing_after_created_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that emits response.created then raises.
 
     Used to test post-creation error handling in SSE streaming mode.
     """
+    async def _events():
+        stream = ResponseEventStream(
+            response_id=context.response_id, model=getattr(request, "model", None)
+        )
+        yield stream.emit_created()
+        raise RuntimeError("Simulated post-creation failure")
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            stream = ResponseEventStream(
-                response_id=context.response_id, model=getattr(request, "model", None)
-            )
-            yield stream.emit_created()
-            raise RuntimeError("Simulated post-creation failure")
-
-        return _events()
+    return _events()
 
 
 def _collect_stream_events(response: Any) -> list[dict[str, Any]]:
@@ -203,22 +201,22 @@ def test_streaming__identity_fields_are_consistent_across_events() -> None:
 
 
 def test_streaming__forwards_emitted_event_before_late_handler_failure() -> None:
-    class _FailAfterFirstEventHandler:
-        def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-            async def _events():
-                yield {
-                    "type": "response.created",
-                    "payload": {
-                        "status": "in_progress",
-                    },
-                }
-                await asyncio.sleep(0)
-                raise RuntimeError("late stream failure")
+    @response_handler
+    def _fail_after_first_event_handler(request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            yield {
+                "type": "response.created",
+                "payload": {
+                    "status": "in_progress",
+                },
+            }
+            await asyncio.sleep(0)
+            raise RuntimeError("late stream failure")
 
-            return _events()
+        return _events()
 
     app = Starlette()
-    map_responses_server(app, _FailAfterFirstEventHandler())
+    map_responses_server(app, _fail_after_first_event_handler)
     client = TestClient(app)
 
     with client.stream(
@@ -326,7 +324,7 @@ def test_streaming__background_stream_may_include_response_queued_event() -> Non
 
 def test_streaming__pre_creation_handler_failure_produces_terminal_event() -> None:
     """B-4 — Handler raising before any yield in streaming mode → SSE stream terminates with a proper terminal event."""
-    handler = _ThrowingBeforeYieldHandler()
+    handler = _throwing_before_yield_handler
     app = Starlette()
     map_responses_server(app, handler)
     client = TestClient(app, raise_server_exceptions=False)
@@ -393,7 +391,7 @@ def test_streaming__response_in_progress_event_is_in_stream() -> None:
 
 def test_streaming__post_creation_error_yields_response_failed_not_error_event() -> None:
     """B-13 — Handler raising after response.created → terminal is response.failed, NOT a standalone error event."""
-    handler = _ThrowingAfterCreatedHandler()
+    handler = _throwing_after_created_handler
     app = Starlette()
     map_responses_server(app, handler)
     client = TestClient(app, raise_server_exceptions=False)

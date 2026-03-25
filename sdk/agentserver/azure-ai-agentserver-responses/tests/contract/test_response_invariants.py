@@ -12,63 +12,60 @@ from starlette.testclient import TestClient
 
 from azure.ai.agentserver.responses.hosting import map_responses_server
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
+from azure.ai.agentserver.responses import response_handler
 from tests._helpers import poll_until
 
 
-class _NoopHandler:
+@response_handler
+def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler — auto-completes."""
+    async def _events():
+        if False:  # pragma: no cover
+            yield None
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            if False:  # pragma: no cover
-                yield None
-
-        return _events()
+    return _events()
 
 
-class _ThrowingHandler:
+@response_handler
+def _throwing_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that raises after emitting created."""
+    async def _events():
+        stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
+        yield stream.emit_created()
+        raise RuntimeError("Simulated handler failure")
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
-            yield stream.emit_created()
-            raise RuntimeError("Simulated handler failure")
-
-        return _events()
+    return _events()
 
 
-class _IncompleteHandler:
+@response_handler
+def _incomplete_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that emits an incomplete terminal event."""
+    async def _events():
+        stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
+        yield stream.emit_created()
+        yield stream.emit_incomplete(reason="max_output_tokens")
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
-            yield stream.emit_created()
-            yield stream.emit_incomplete(reason="max_output_tokens")
-
-        return _events()
+    return _events()
 
 
-class _DelayedHandler:
+@response_handler
+def _delayed_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that sleeps briefly, checking for cancellation."""
+    async def _events():
+        if cancellation_signal.is_set():
+            return
+        await asyncio.sleep(0.25)
+        if cancellation_signal.is_set():
+            return
+        if False:  # pragma: no cover
+            yield None
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            if cancellation_signal.is_set():
-                return
-            await asyncio.sleep(0.25)
-            if cancellation_signal.is_set():
-                return
-            if False:  # pragma: no cover
-                yield None
-
-        return _events()
+    return _events()
 
 
 def _build_client(handler: Any | None = None) -> TestClient:
     app = Starlette()
-    map_responses_server(app, handler or _NoopHandler())
+    map_responses_server(app, handler or _noop_handler)
     return TestClient(app)
 
 
@@ -127,7 +124,7 @@ def test_completed_at__nonnull_only_for_completed_status() -> None:
 
 def test_completed_at__null_for_failed_status() -> None:
     """B6 — completed_at is null when status is failed."""
-    client = _build_client(_ThrowingHandler())
+    client = _build_client(_throwing_handler)
 
     create_response = client.post(
         "/responses",
@@ -152,7 +149,7 @@ def test_completed_at__null_for_failed_status() -> None:
 
 def test_completed_at__null_for_cancelled_status() -> None:
     """B6 — completed_at is null when status is cancelled."""
-    client = _build_client(_DelayedHandler())
+    client = _build_client(_delayed_handler)
 
     create_response = client.post(
         "/responses",
@@ -180,7 +177,7 @@ def test_completed_at__null_for_cancelled_status() -> None:
 
 def test_completed_at__null_for_incomplete_status() -> None:
     """B6 — completed_at is null when status is incomplete."""
-    client = _build_client(_IncompleteHandler())
+    client = _build_client(_incomplete_handler)
 
     create_response = client.post(
         "/responses",
@@ -340,7 +337,7 @@ def test_created_at__present_on_background_response() -> None:
 
 def test_response_error__shape_has_only_code_and_message() -> None:
     """B-8 — The error field on a failed response has code and message but NOT type or param."""
-    client = _build_client(_ThrowingHandler())
+    client = _build_client(_throwing_handler)
 
     create_response = client.post(
         "/responses",
@@ -378,7 +375,7 @@ def test_response_error__shape_has_only_code_and_message() -> None:
 
 def test_get__returns_200_for_failed_response() -> None:
     """B-12 — GET returns HTTP 200 for a response in failed status."""
-    client = _build_client(_ThrowingHandler())
+    client = _build_client(_throwing_handler)
 
     create_response = client.post(
         "/responses",
@@ -401,7 +398,7 @@ def test_get__returns_200_for_failed_response() -> None:
 
 def test_get__returns_200_for_incomplete_response() -> None:
     """B-12 — GET returns HTTP 200 for a response in incomplete status."""
-    client = _build_client(_IncompleteHandler())
+    client = _build_client(_incomplete_handler)
 
     create_response = client.post(
         "/responses",
@@ -424,7 +421,7 @@ def test_get__returns_200_for_incomplete_response() -> None:
 
 def test_get__returns_200_for_cancelled_response() -> None:
     """B-12 — GET returns HTTP 200 for a response in cancelled status."""
-    client = _build_client(_DelayedHandler())
+    client = _build_client(_delayed_handler)
 
     create_response = client.post(
         "/responses",
@@ -475,7 +472,7 @@ def test_error_field__null_for_completed_status() -> None:
 
 def test_error_field__null_for_cancelled_status() -> None:
     """B6 — error must be null for status=cancelled."""
-    client = _build_client(_DelayedHandler())
+    client = _build_client(_delayed_handler)
 
     create_response = client.post(
         "/responses",
@@ -506,33 +503,32 @@ def test_error_field__null_for_cancelled_status() -> None:
 # ════════════════════════════════════════════════════════
 
 
-class _OutputItemHandler:
+@response_handler
+def _output_item_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that emits a single output message item."""
+    async def _events():
+        stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
+        yield stream.emit_created()
+        yield stream.emit_in_progress()
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
-            yield stream.emit_created()
-            yield stream.emit_in_progress()
+        message_item = stream.add_output_item_message()
+        yield message_item.emit_added()
 
-            message_item = stream.add_output_item_message()
-            yield message_item.emit_added()
+        text_content = message_item.add_text_content()
+        yield text_content.emit_added()
+        yield text_content.emit_delta("hi")
+        yield text_content.emit_done()
+        yield message_item.emit_content_done(text_content)
+        yield message_item.emit_done()
 
-            text_content = message_item.add_text_content()
-            yield text_content.emit_added()
-            yield text_content.emit_delta("hi")
-            yield text_content.emit_done()
-            yield message_item.emit_content_done(text_content)
-            yield message_item.emit_done()
+        yield stream.emit_completed()
 
-            yield stream.emit_completed()
-
-        return _events()
+    return _events()
 
 
 def test_output_item__no_response_id_on_item() -> None:
     """Output items do not carry response_id — that field belongs on the Response only."""
-    client = _build_client(_OutputItemHandler())
+    client = _build_client(_output_item_handler)
 
     response = client.post(
         "/responses",
@@ -557,7 +553,7 @@ def test_output_item__no_response_id_on_item() -> None:
 def test_output_item__agent_reference_on_response_not_item() -> None:
     """agent_reference from the request is present on the Response but not on individual output items."""
     app = Starlette()
-    map_responses_server(app, _OutputItemHandler())
+    map_responses_server(app, _output_item_handler)
     client = TestClient(app)
 
     agent_ref = {"type": "agent_reference", "name": "my-agent", "version": "v2"}
@@ -700,7 +696,7 @@ def test_output__preserved_for_completed_response() -> None:
 
 def test_output__cleared_for_cancelled_response() -> None:
     """B-15 — output[] is cleared (empty list) when a response is cancelled."""
-    client = _build_client(_DelayedHandler())
+    client = _build_client(_delayed_handler)
 
     create_response = client.post(
         "/responses",

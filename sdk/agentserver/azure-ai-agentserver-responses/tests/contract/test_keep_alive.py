@@ -13,24 +13,18 @@ from starlette.testclient import TestClient
 
 from azure.ai.agentserver.responses.hosting import map_responses_server
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
+from azure.ai.agentserver.responses import response_handler
 
 
-class _SlowHandler:
-    """Handler that yields events with a configurable delay between them.
+def _make_slow_handler(delay_seconds: float = 0.5, event_count: int = 2):
+    """Factory for a handler that yields events with a configurable delay between them."""
 
-    This simulates a handler that does slow work between events,
-    allowing keep-alive comments to be interleaved.
-    """
-
-    def __init__(self, delay_seconds: float = 0.5, event_count: int = 2) -> None:
-        self._delay = delay_seconds
-        self._event_count = event_count
-
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
+    @response_handler
+    def _handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
-            for i in range(self._event_count):
+            for i in range(event_count):
                 if i > 0:
-                    await asyncio.sleep(self._delay)
+                    await asyncio.sleep(delay_seconds)
                 yield {
                     "type": "response.created" if i == 0 else "response.completed",
                     "payload": {
@@ -40,16 +34,17 @@ class _SlowHandler:
 
         return _events()
 
+    return _handler
 
-class _NoopHandler:
+
+@response_handler
+def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler producing an empty stream."""
+    async def _events():
+        if False:  # pragma: no cover
+            yield None
 
-    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
-        async def _events():
-            if False:  # pragma: no cover
-                yield None
-
-        return _events()
+    return _events()
 
 
 def _build_client(
@@ -59,7 +54,7 @@ def _build_client(
 ) -> TestClient:
     app = Starlette()
     options = ResponsesServerOptions(sse_keep_alive_interval_seconds=keep_alive_seconds)
-    map_responses_server(app, handler or _NoopHandler(), options=options)
+    map_responses_server(app, handler or _noop_handler, options=options)
     return TestClient(app)
 
 
@@ -122,7 +117,7 @@ def _stream_post(client: TestClient, **extra_json: Any) -> Any:
 
 def test_keep_alive__disabled_by_default_no_comment_frames() -> None:
     """When keep-alive is not configured, no SSE comment frames should appear."""
-    handler = _SlowHandler(delay_seconds=0.3, event_count=2)
+    handler = _make_slow_handler(delay_seconds=0.3, event_count=2)
     client = _build_client(handler)
 
     with _stream_post(client) as response:
@@ -140,7 +135,7 @@ def test_keep_alive__enabled_interleaves_comment_frames_during_slow_handler() ->
     """When keep-alive is enabled with a short interval, SSE comment frames
     should appear between handler events when the handler is slow."""
     # Handler delays 1.5s between events; keep-alive fires every 0.2s
-    handler = _SlowHandler(delay_seconds=1.5, event_count=2)
+    handler = _make_slow_handler(delay_seconds=1.5, event_count=2)
     client = _build_client(handler, keep_alive_seconds=1)
 
     with _stream_post(client) as response:
@@ -159,7 +154,7 @@ def test_keep_alive__enabled_interleaves_comment_frames_during_slow_handler() ->
 
 def test_keep_alive__comment_format_is_sse_compliant() -> None:
     """Keep-alive frames must be valid SSE comments (colon-prefixed)."""
-    handler = _SlowHandler(delay_seconds=1.5, event_count=2)
+    handler = _make_slow_handler(delay_seconds=1.5, event_count=2)
     client = _build_client(handler, keep_alive_seconds=1)
 
     with _stream_post(client) as response:
@@ -178,7 +173,7 @@ def test_keep_alive__comment_format_is_sse_compliant() -> None:
 def test_keep_alive__does_not_disrupt_event_stream_integrity() -> None:
     """Even with keep-alive enabled, all handler events should be present
     with correct types, ordering, and monotonic sequence numbers."""
-    handler = _SlowHandler(delay_seconds=1.5, event_count=2)
+    handler = _make_slow_handler(delay_seconds=1.5, event_count=2)
     client = _build_client(handler, keep_alive_seconds=1)
 
     with _stream_post(client) as response:
@@ -194,7 +189,7 @@ def test_keep_alive__does_not_disrupt_event_stream_integrity() -> None:
 
 def test_keep_alive__no_comments_after_stream_ends() -> None:
     """After the handler finishes, no trailing keep-alive comments should appear."""
-    handler = _SlowHandler(delay_seconds=0.0, event_count=2)
+    handler = _make_slow_handler(delay_seconds=0.0, event_count=2)
     client = _build_client(handler, keep_alive_seconds=1)
 
     with _stream_post(client) as response:
@@ -211,7 +206,7 @@ def test_keep_alive__no_comments_after_stream_ends() -> None:
 def test_keep_alive__fallback_stream_does_not_include_keep_alive() -> None:
     """When the handler yields no events (empty generator → fallback stream),
     keep-alive should not appear since the fallback stream is immediate."""
-    client = _build_client(_NoopHandler(), keep_alive_seconds=1)
+    client = _build_client(_noop_handler, keep_alive_seconds=1)
 
     with _stream_post(client) as response:
         assert response.status_code == 200

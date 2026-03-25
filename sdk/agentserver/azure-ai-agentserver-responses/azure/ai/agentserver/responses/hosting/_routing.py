@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import sys
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 from ._endpoint_handler import _ResponseEndpointHandler
 from ._observability import build_platform_server_header
@@ -18,8 +18,6 @@ from .._version import VERSION
 
 if TYPE_CHECKING:
     from starlette.applications import Starlette
-
-    from .._handlers import ResponseHandler
 
 
 _SDK_NAME = "azure-ai-agentserver-responses"
@@ -41,7 +39,7 @@ def _platform_header(options: ResponsesServerOptions) -> str:
 
 def map_responses_server(
     app: "Starlette",
-    handler: "ResponseHandler",
+    handler: Callable,
     *,
     prefix: str = "",
     options: ResponsesServerOptions | None = None,
@@ -51,11 +49,14 @@ def map_responses_server(
         raise ValueError("app is required")
     if handler is None:
         raise ValueError(
-            "No ResponseHandler implementation is registered. Provide a handler before calling map_responses_server()."
+            "No response handler registered. Decorate a function with @response_handler "
+            "and pass it to map_responses_server()."
         )
-    create_async = getattr(handler, "create_async", None)
-    if not callable(create_async):
-        raise TypeError("handler must define create_async(request, context, cancellation_signal)")
+    if not getattr(handler, "_is_response_handler", False):
+        raise TypeError(
+            "handler must be a function decorated with @response_handler"
+        )
+    create_async = handler
 
     normalized_prefix = prefix.strip()
     if normalized_prefix and not normalized_prefix.startswith("/"):
