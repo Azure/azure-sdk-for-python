@@ -420,16 +420,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         """
         lease = kwargs.pop('lease', None)
         access_conditions = get_access_conditions(lease)
+        mod_conditions = get_modify_conditions(kwargs)
         timeout = kwargs.pop('timeout', None)
-        # These are not accepted by the generated delete operation
-        kwargs.pop('match_condition', None)
-        kwargs.pop('etag', None)
         try:
             self._client.container.delete(
                 timeout=timeout,
                 lease_access_conditions=access_conditions,
-                if_modified_since=kwargs.pop('if_modified_since', None),
-                if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+                modified_access_conditions=mod_conditions,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
