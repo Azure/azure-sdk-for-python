@@ -7617,7 +7617,7 @@ class ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler(_Model):  # p
         super().__init__(*args, **kwargs)
 
 
-class ManagedNamespace(Resource):
+class ManagedNamespace(TrackedResource):
     """Namespace managed by ARM.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7631,12 +7631,12 @@ class ManagedNamespace(Resource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.containerservice.models.SystemData
-    :ivar properties: Properties of a namespace.
-    :vartype properties: ~azure.mgmt.containerservice.models.NamespaceProperties
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
+    :ivar properties: Properties of a namespace.
+    :vartype properties: ~azure.mgmt.containerservice.models.NamespaceProperties
     :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
      the normal etag convention.  Entity tags are used for comparing two or more entities from the
      same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
@@ -7648,10 +7648,6 @@ class ManagedNamespace(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Properties of a namespace."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
-    location: Optional[str] = rest_field(visibility=["read", "create"])
-    """The geo-location where the resource lives."""
     e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
     """If eTag is provided in the response body, it may also be provided as a header per the normal
      etag convention.  Entity tags are used for comparing two or more entities from the same
@@ -7662,9 +7658,9 @@ class ManagedNamespace(Resource):
     def __init__(
         self,
         *,
-        properties: Optional["_models.NamespaceProperties"] = None,
+        location: str,
         tags: Optional[dict[str, str]] = None,
-        location: Optional[str] = None,
+        properties: Optional["_models.NamespaceProperties"] = None,
     ) -> None: ...
 
     @overload

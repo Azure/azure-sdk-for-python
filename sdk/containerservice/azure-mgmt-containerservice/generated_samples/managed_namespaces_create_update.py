@@ -35,6 +35,7 @@ def main():
         resource_name="clustername1",
         managed_namespace_name="namespace1",
         parameters={
+            "location": "eastus2",
             "properties": {
                 "adoptionPolicy": "IfIdentical",
                 "annotations": {"annatationKey": "annatationValue"},

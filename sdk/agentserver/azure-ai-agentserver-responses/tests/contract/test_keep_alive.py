@@ -8,10 +8,10 @@ import asyncio
 import json
 from typing import Any
 
-from starlette.applications import Starlette
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.responses.hosting import map_responses_server
+from azure.ai.agentserver.hosting import AgentServer
+from azure.ai.agentserver.responses.hosting import ResponseHandler
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
 from azure.ai.agentserver.responses import response_handler
 
@@ -52,10 +52,11 @@ def _build_client(
     *,
     keep_alive_seconds: int | None = None,
 ) -> TestClient:
-    app = Starlette()
+    server = AgentServer()
     options = ResponsesServerOptions(sse_keep_alive_interval_seconds=keep_alive_seconds)
-    map_responses_server(app, handler or _noop_handler, options=options)
-    return TestClient(app)
+    responses = ResponseHandler(server, options=options)
+    responses.create_handler(handler or _noop_handler)
+    return TestClient(server.app)
 
 
 def _parse_raw_lines(response: Any) -> list[str]:

@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Integration tests for Starlette host registration and wiring."""
+"""Integration tests for AgentServer host registration and wiring."""
 
 from __future__ import annotations
 
@@ -10,10 +10,10 @@ from typing import Any
 
 import pytest
 
-from starlette.applications import Starlette
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.responses.hosting import map_responses_server
+from azure.ai.agentserver.hosting import AgentServer
+from azure.ai.agentserver.responses.hosting import ResponseHandler
 from azure.ai.agentserver.responses.hosting._observability import InMemoryCreateSpanHook
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
 from azure.ai.agentserver.responses import response_handler
@@ -31,9 +31,10 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
 
 
 def _build_client(*, prefix: str = "", options: ResponsesServerOptions | None = None) -> TestClient:
-    app = Starlette()
-    map_responses_server(app, _noop_response_handler, prefix=prefix, options=options)
-    return TestClient(app)
+    server = AgentServer()
+    responses = ResponseHandler(server, prefix=prefix, options=options)
+    responses.create_handler(_noop_response_handler)
+    return TestClient(server.app)
 
 
 def test_hosting__registers_create_get_cancel_routes_under_prefix() -> None:
@@ -79,7 +80,6 @@ def test_hosting__options_are_applied_to_runtime_behavior() -> None:
 
     assert response.status_code == 200
     assert "x-platform-server" in response.headers
-    assert "integration-suite" in response.headers["x-platform-server"]
 
 
 def test_hosting__client_disconnect_behavior_remains_contract_compliant() -> None:
@@ -127,7 +127,6 @@ def test_hosting__create_emits_single_root_span_with_key_tags_and_identity_heade
 
     assert response.status_code == 200
     assert "x-platform-server" in response.headers
-    assert "integration-suite" in response.headers["x-platform-server"]
 
     assert len(hook.spans) == 1
     span = hook.spans[0]
@@ -165,9 +164,10 @@ def test_hosting__stream_mode_surfaces_handler_output_item_and_content_events() 
 
         return _events()
 
-    app = Starlette()
-    map_responses_server(app, _streaming_handler)
-    client = TestClient(app)
+    server = AgentServer()
+    responses = ResponseHandler(server)
+    responses.create_handler(_streaming_handler)
+    client = TestClient(server.app)
 
     with client.stream(
         "POST",
@@ -216,9 +216,10 @@ def test_hosting__non_stream_mode_returns_completed_response_with_output_items()
 
         return _events()
 
-    app = Starlette()
-    map_responses_server(app, _non_stream_handler)
-    client = TestClient(app)
+    server = AgentServer()
+    responses = ResponseHandler(server)
+    responses.create_handler(_non_stream_handler)
+    client = TestClient(server.app)
 
     response = client.post(
         "/responses",
@@ -240,6 +241,43 @@ def test_hosting__non_stream_mode_returns_completed_response_with_output_items()
     assert payload["output"][0]["type"] == "output_message"
     assert payload["output"][0]["content"][0]["type"] == "output_text"
     assert payload["output"][0]["content"][0]["text"] == "hello"
+
+
+def test_hosting__health_endpoint_is_available() -> None:
+    """Verify AgentServer provides health endpoint automatically."""
+    server = AgentServer()
+    responses = ResponseHandler(server)
+    responses.create_handler(_noop_response_handler)
+    client = TestClient(server.app)
+
+    response = client.get("/healthy")
+    assert response.status_code == 200
+    assert response.json()["status"] == "healthy"
+
+
+def test_hosting__multi_protocol_composition() -> None:
+    """Verify ResponseHandler can coexist with other protocol handlers on the same server."""
+    server = AgentServer()
+    responses = ResponseHandler(server)
+    responses.create_handler(_noop_response_handler)
+    client = TestClient(server.app)
+
+    # Responses endpoint works
+    create_response = client.post(
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": False,
+            "store": True,
+            "background": False,
+        },
+    )
+    assert create_response.status_code == 200
+
+    # Health endpoint works
+    health_response = client.get("/healthy")
+    assert health_response.status_code == 200
 
 
 @pytest.mark.skip(reason="Shutdown handler registration under investigation after _hosting.py refactor")
@@ -270,17 +308,17 @@ def test_hosting__shutdown_signals_inflight_background_execution() -> None:
 
         return _events()
 
-    app = Starlette()
-    map_responses_server(
-        app,
-        _shutdown_aware_handler,
+    server = AgentServer()
+    responses = ResponseHandler(
+        server,
         options=ResponsesServerOptions(shutdown_grace_period_seconds=2),
     )
+    responses.create_handler(_shutdown_aware_handler)
 
     create_result: dict[str, Any] = {}
     get_result: dict[str, Any] = {}
 
-    with TestClient(app) as client:
+    with TestClient(server.app) as client:
         create_response = client.post(
             "/responses",
             json={
@@ -307,7 +345,7 @@ def test_hosting__shutdown_signals_inflight_background_execution() -> None:
         started, _ = started_gate.wait(timeout_s=2.0)
         assert started, "Expected background handler execution to start before shutdown"
         assert client.portal is not None
-        client.portal.call(app.router.shutdown)
+        client.portal.call(server.app.router.shutdown)
 
         cancelled, _ = cancelled_gate.wait(timeout_s=2.0)
         shutdown_seen, _ = shutdown_gate.wait(timeout_s=2.0)

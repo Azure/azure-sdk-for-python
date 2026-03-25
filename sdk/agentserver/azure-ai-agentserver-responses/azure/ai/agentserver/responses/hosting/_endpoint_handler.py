@@ -10,12 +10,13 @@ logic lives in :class:`_ResponseOrchestrator`.
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
-from contextlib import asynccontextmanager
 from copy import deepcopy
-from typing import Any, AsyncIterator
+from typing import TYPE_CHECKING, Any
 
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
+
+from azure.ai.agentserver.hosting import AgentLogger
 
 from .._handlers import ResponseContext
 from .._options import ResponsesServerOptions
@@ -47,6 +48,11 @@ from ._validation import parse_and_validate_create_response
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ..streaming._helpers import EVENT_TYPE
 
+if TYPE_CHECKING:
+    from azure.ai.agentserver.hosting import TracingHelper
+
+logger = AgentLogger.get()
+
 
 class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
     """HTTP-layer handler for all Responses API endpoints.
@@ -65,9 +71,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         orchestrator: _ResponseOrchestrator,
         runtime_state: _RuntimeState,
         runtime_options: ResponsesServerOptions,
-        response_headers: dict[str, str],
         sse_headers: dict[str, str],
-        sdk_name: str,
+        tracing: "TracingHelper | None" = None,
         provider: ResponseProviderProtocol,
         stream_provider: ResponseStreamProviderProtocol | None = None,
     ) -> None:
@@ -79,12 +84,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :type runtime_state: _RuntimeState
         :param runtime_options: Server runtime options.
         :type runtime_options: ResponsesServerOptions
-        :param response_headers: Base response headers for every response.
-        :type response_headers: dict[str, str]
-        :param sse_headers: Additional SSE-specific headers (merged with response_headers).
+        :param sse_headers: SSE-specific headers (e.g. connection, cache-control).
         :type sse_headers: dict[str, str]
-        :param sdk_name: SDK package name string for observability tags.
-        :type sdk_name: str
+        :param tracing: Optional tracing helper from hosting's AgentServer.
+        :type tracing: TracingHelper | None
         :param provider: Persistence provider for response envelopes and input items.
         :type provider: ResponseProviderProtocol
         :param stream_provider: Optional provider for SSE stream event persistence and replay.
@@ -93,9 +96,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         self._orchestrator = orchestrator
         self._runtime_state = runtime_state
         self._runtime_options = runtime_options
-        self._response_headers = response_headers
         self._sse_headers = sse_headers
-        self._sdk_name = sdk_name
+        self._tracing = tracing
         self._provider = provider
         self._stream_provider = stream_provider
         self._shutdown_requested: asyncio.Event = asyncio.Event()
@@ -115,6 +117,73 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             raise RuntimeError(f"Invalid lifecycle event state machine configuration: {exc}") from exc
 
     # ------------------------------------------------------------------
+    # Span attribute helper
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _safe_set_attrs(span: Any, attrs: dict[str, str]) -> None:
+        """Safely set attributes on an OTel span.
+
+        :param span: The OTel span, or *None*.
+        :type span: Any
+        :param attrs: Key-value attributes to set.
+        :type attrs: dict[str, str]
+        """
+        if span is None:
+            return
+        try:
+            for key, value in attrs.items():
+                span.set_attribute(key, value)
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.debug("Failed to set span attributes: %s", list(attrs.keys()), exc_info=True)
+
+    # ------------------------------------------------------------------
+    # Streaming response helpers
+    # ------------------------------------------------------------------
+
+    def _wrap_streaming_response(
+        self,
+        response: StreamingResponse,
+        otel_span: Any,
+        baggage_token: Any,
+    ) -> StreamingResponse:
+        """Wrap a streaming response's body iterator with tracing and baggage cleanup.
+
+        Two layers of wrapping are applied in order:
+
+        1. **Inner (tracing):** ``trace_stream`` wraps the body iterator so
+           the OTel span covers the full streaming duration and records any
+           errors that occur while yielding chunks.
+        2. **Outer (baggage cleanup):** A second async generator detaches the
+           W3C Baggage context *after* all chunks have been sent (or an
+           error occurs).
+
+        :param response: The ``StreamingResponse`` to wrap.
+        :param otel_span: The OTel span (or *None* when tracing is disabled).
+        :param baggage_token: Token from ``set_baggage`` (or *None*).
+        :return: The same response object, with its body_iterator replaced.
+        """
+        if self._tracing is None:
+            return response
+
+        # Inner wrap: trace_stream ends the span when iteration completes.
+        response.body_iterator = self._tracing.trace_stream(response.body_iterator, otel_span)
+
+        # Outer wrap: detach baggage after all chunks are sent.
+        original_iterator = response.body_iterator
+        tracing = self._tracing  # capture for the closure
+
+        async def _cleanup_iter():  # type: ignore[return-value]
+            try:
+                async for chunk in original_iterator:
+                    yield chunk
+            finally:
+                tracing.detach_baggage(baggage_token)
+
+        response.body_iterator = _cleanup_iter()
+        return response
+
+    # ------------------------------------------------------------------
     # Route handlers
     # ------------------------------------------------------------------
 
@@ -131,15 +200,21 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :rtype: Response
         """
         if self._is_draining:
-            return _service_unavailable("Server is shutting down.", self._response_headers)
+            return _service_unavailable("Server is shutting down.", {})
 
+        # Start tracing span using hosting's TracingHelper
+        otel_span = None
+        baggage_token = None
+        streaming_wrapped = False
+
+        # Also maintain CreateSpanHook for backward compat (tests etc.)
         span = start_create_span(
             "create_response",
             build_create_span_tags(
                 response_id=None,
                 model=None,
                 agent_reference=None,
-                service_name=self._sdk_name,
+                service_name="azure-ai-agentserver-responses",
             ),
             hook=self._runtime_options.create_span_hook,
         )
@@ -152,14 +227,18 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         except Exception as exc:  # pylint: disable=broad-exception-caught
             captured_error = exc
             span.end(captured_error)
-            return _error_response(exc, self._response_headers)
+            if self._tracing is not None:
+                self._tracing.end_span(otel_span, exc=exc)
+            return _error_response(exc, {})
 
         try:
             response_id, agent_reference = _resolve_identity_fields(parsed)
         except Exception as exc:  # pylint: disable=broad-exception-caught
             captured_error = exc
             span.end(captured_error)
-            return _error_response(exc, self._response_headers)
+            if self._tracing is not None:
+                self._tracing.end_span(otel_span, exc=exc)
+            return _error_response(exc, {})
 
         stream = bool(getattr(parsed, "stream", False))
         store = True if getattr(parsed, "store", None) is None else bool(parsed.store)
@@ -182,12 +261,28 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if context.is_shutdown_requested:
             cancellation_signal.set()
 
+        # Start OTel request span now that we have the response_id
+        if self._tracing is not None:
+            otel_span = self._tracing.start_request_span(
+                request.headers,
+                response_id,
+                span_operation="create_response",
+                operation_name="create_response",
+            )
+            self._safe_set_attrs(otel_span, {
+                "gen_ai.response.id": response_id,
+                "gen_ai.request.model": model or "",
+            })
+            baggage_token = self._tracing.set_baggage({
+                "response_id": response_id,
+            })
+
         span.set_tags(
             build_create_span_tags(
                 response_id=response_id,
                 model=model,
                 agent_reference=agent_reference,
-                service_name=self._sdk_name,
+                service_name="azure-ai-agentserver-responses",
             )
         )
 
@@ -206,25 +301,50 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             parsed=parsed,
         )
 
-        if stream:
-            return StreamingResponse(
-                self._orchestrator.run_stream(ctx),
-                media_type="text/event-stream",
-                headers=self._sse_headers,
-            )
+        try:
+            if stream:
+                sse_response = StreamingResponse(
+                    self._orchestrator.run_stream(ctx),
+                    media_type="text/event-stream",
+                    headers=self._sse_headers,
+                )
+                wrapped = self._wrap_streaming_response(sse_response, otel_span, baggage_token)
+                streaming_wrapped = True
+                return wrapped
 
-        if not background:
-            try:
-                snapshot = await self._orchestrator.run_sync(ctx)
-                return JSONResponse(snapshot, status_code=200, headers=self._response_headers)
-            except _HandlerError as exc:
-                return _error_response(exc.original, self._response_headers)
+            if not background:
+                try:
+                    snapshot = await self._orchestrator.run_sync(ctx)
+                    # End OTel span for non-streaming success
+                    if self._tracing is not None:
+                        self._tracing.end_span(otel_span)
+                    return JSONResponse(snapshot, status_code=200)
+                except _HandlerError as exc:
+                    if self._tracing is not None:
+                        self._tracing.end_span(otel_span, exc=exc.original)
+                    return _error_response(exc.original, {})
 
         try:
             snapshot = await self._orchestrator.run_background(ctx)
+            if self._tracing is not None:
+                self._tracing.end_span(otel_span)
             return JSONResponse(snapshot, status_code=200, headers=self._response_headers)
         except _HandlerError as exc:
+            if self._tracing is not None:
+                self._tracing.end_span(otel_span, exc=exc)
             return _error_response(exc.original, self._response_headers)
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            if self._tracing is not None:
+                self._tracing.end_span(otel_span, exc=exc)
+            raise
+        finally:
+            # For non-streaming responses (or error paths that returned
+            # before reaching _wrap_streaming_response), detach baggage
+            # immediately.  Streaming responses handle this in
+            # _wrap_streaming_response's cleanup iterator instead.
+            if not streaming_wrapped:
+                if self._tracing is not None:
+                    self._tracing.detach_baggage(baggage_token)
 
     async def handle_get(self, request: Request) -> Response:  # pylint: disable=too-many-return-statements
         """Route handler for ``GET /responses/{response_id}``.
@@ -241,7 +361,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         record = await self._runtime_state.get(response_id)
         if record is None:
             if await self._runtime_state.is_deleted(response_id):
-                return _deleted_response(response_id, self._response_headers)
+                return _deleted_response(response_id, {})
 
             stream_replay = request.query_params.get("stream", "false").lower() == "true"
             if not stream_replay:
@@ -250,7 +370,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 try:
                     response_obj = await self._provider.get_response_async(response_id)
                     snapshot = response_obj.as_dict()
-                    return JSONResponse(snapshot, status_code=200, headers=self._response_headers)
+                    return JSONResponse(snapshot, status_code=200)
                 except Exception:  # pylint: disable=broad-exception-caught
                     pass
             else:
@@ -267,7 +387,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                                 except ValueError:
                                     return _invalid_request(
                                         "starting_after must be an integer",
-                                        self._response_headers,
+                                        {},
                                         param="starting_after",
                                     )
                             filtered = [
@@ -282,7 +402,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     except Exception:  # pylint: disable=broad-exception-caught
                         pass
 
-            return _not_found(response_id, self._response_headers)
+            return _not_found(response_id, {})
 
         _refresh_background_status(record)
 
@@ -290,9 +410,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if stream_replay:
             if not record.replay_enabled:
                 return _invalid_mode(
-                    "stream replay is not available for this response; to enable SSE replay, " \
+                    "stream replay is not available for this response; to enable SSE replay, "
                     + "create the response with background=true",
-                    self._response_headers,
+                    {},
                     param="stream",
                 )
 
@@ -304,15 +424,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 except ValueError:
                     return _invalid_request(
                         "starting_after must be an integer",
-                        self._response_headers,
+                        {},
                         param="starting_after",
                     )
 
             # Live subscription: delivers buffered history + ongoing live events,
-            # then exits when the stream completes. Matches .NET SseReplayResult /
-            # IResponsesStreamProvider.SubscribeToEventsAsync() behaviour.
-            # record.subject is always set for bg+stream records (created in _live_stream
-            # before the record is registered in _runtime_state).
+            # then exits when the stream completes.
             _cursor = starting_after
 
             async def _stream_from_subject():
@@ -324,7 +441,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             )
 
         if not record.visible_via_get:
-            return _not_found(response_id, self._response_headers)
+            return _not_found(response_id, {})
 
         return JSONResponse(_RuntimeState.to_snapshot(record), status_code=200, headers=self._response_headers)
 
@@ -339,20 +456,20 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         response_id = request.path_params["response_id"]
         record = await self._runtime_state.get(response_id)
         if record is None:
-            return _not_found(response_id, self._response_headers)
+            return _not_found(response_id, {})
 
         _refresh_background_status(record)
 
         if record.mode_flags.background and record.status in {"queued", "in_progress"}:
             return _invalid_request(
                 "Cannot delete an in-flight response.",
-                self._response_headers,
+                {},
                 param="response_id",
             )
 
         deleted = await self._runtime_state.delete(response_id)
         if not deleted:
-            return _not_found(response_id, self._response_headers)
+            return _not_found(response_id, {})
 
         if record.mode_flags.store:
             try:
@@ -363,7 +480,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         return JSONResponse(
             {"id": response_id, "object": "response.deleted", "deleted": True},
             status_code=200,
-            headers=self._response_headers,
         )
 
     async def handle_cancel(self, request: Request) -> Response:  # pylint: disable=too-many-return-statements
@@ -377,14 +493,14 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         response_id = request.path_params["response_id"]
         record = await self._runtime_state.get(response_id)
         if record is None:
-            return _not_found(response_id, self._response_headers)
+            return _not_found(response_id, {})
 
         _refresh_background_status(record)
 
         if not record.mode_flags.background:
             return _invalid_request(
                 "Cannot cancel a synchronous response.",
-                self._response_headers,
+                {},
                 param="response_id",
             )
 
@@ -398,21 +514,21 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if record.status == "completed":
             return _invalid_request(
                 "Cannot cancel a completed response.",
-                self._response_headers,
+                {},
                 param="response_id",
             )
 
         if record.status == "failed":
             return _invalid_request(
                 "Cannot cancel a failed response.",
-                self._response_headers,
+                {},
                 param="response_id",
             )
 
         if record.status == "incomplete":
             return _invalid_request(
                 "Cannot cancel an incomplete response.",
-                self._response_headers,
+                {},
                 param="response_id",
             )
 
@@ -440,17 +556,17 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             limit = int(limit_raw)
         except ValueError:
             return _invalid_request(
-                "limit must be an integer between 1 and 100", self._response_headers, param="limit"
+                "limit must be an integer between 1 and 100", {}, param="limit"
             )
 
         if limit < 1 or limit > 100:
             return _invalid_request(
-                "limit must be between 1 and 100", self._response_headers, param="limit"
+                "limit must be between 1 and 100", {}, param="limit"
             )
 
         order = request.query_params.get("order", "desc").lower()
         if order not in {"asc", "desc"}:
-            return _invalid_request("order must be 'asc' or 'desc'", self._response_headers, param="order")
+            return _invalid_request("order must be 'asc' or 'desc'", {}, param="order")
 
         after = request.query_params.get("after")
         before = request.query_params.get("before")
@@ -460,15 +576,15 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 response_id, limit=100, ascending=True
             )
         except ValueError:
-            return _deleted_response(response_id, self._response_headers)
+            return _deleted_response(response_id, {})
         except KeyError:
             # Fall back to runtime_state for in-flight responses not yet persisted to provider
             try:
                 items = await self._runtime_state.get_input_items(response_id)
             except ValueError:
-                return _deleted_response(response_id, self._response_headers)
+                return _deleted_response(response_id, {})
             except KeyError:
-                return _not_found(response_id, self._response_headers)
+                return _not_found(response_id, {})
 
         ordered_items = items if order == "asc" else list(reversed(items))
         scoped_items = _apply_item_cursors(ordered_items, after=after, before=before)
@@ -488,7 +604,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 "has_more": has_more,
             },
             status_code=200,
-            headers=self._response_headers,
         )
 
     async def handle_shutdown(self) -> None:
@@ -532,27 +647,3 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             if asyncio.get_running_loop().time() >= deadline:
                 break
             await asyncio.sleep(0.05)
-
-    # ------------------------------------------------------------------
-    # Lifespan integration
-    # ------------------------------------------------------------------
-
-    def lifespan_context(self, original_lifespan: Any) -> Any:
-        """Wrap a Starlette lifespan context manager with shutdown handling.
-
-        :param original_lifespan: The existing app lifespan context manager.
-        :type original_lifespan: Any
-        :return: A new async context manager that calls :meth:`handle_shutdown` on exit.
-        :rtype: Any
-        """
-        handler = self
-
-        @asynccontextmanager
-        async def _lifespan_with_shutdown(app_instance: Any) -> AsyncIterator[None]:
-            async with original_lifespan(app_instance):
-                try:
-                    yield
-                finally:
-                    await handler.handle_shutdown()
-
-        return _lifespan_with_shutdown

@@ -1,105 +1,220 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Starlette hosting integration for the Responses server package."""
+"""Response protocol handler for AgentServer.
+
+Provides the Responses API endpoints and registers them with the
+``AgentServer`` on construction, following the same pattern as
+``InvocationHandler``.
+"""
 
 from __future__ import annotations
 
-import sys
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Callable, Optional
+
+from starlette.routing import Route
+
+from azure.ai.agentserver.hosting import AgentLogger
 
 from ._endpoint_handler import _ResponseEndpointHandler
-from ._observability import build_platform_server_header
-from .._options import ResponsesServerOptions
 from ._orchestrator import _ResponseOrchestrator
 from ._runtime_state import _RuntimeState
+from .._options import ResponsesServerOptions
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ..store._memory import InMemoryResponseProvider
-from .._version import VERSION
 
 if TYPE_CHECKING:
-    from starlette.applications import Starlette
+    from azure.ai.agentserver.hosting import AgentServer, TracingHelper
+
+logger = AgentLogger.get()
 
 
-_SDK_NAME = "azure-ai-agentserver-responses"
-_SDK_VERSION = VERSION
+class ResponseHandler:
+    """Response protocol handler that plugs into an ``AgentServer``.
 
+    Creates the Responses API endpoints and registers them with
+    the server.  Use the :meth:`create_handler` decorator to wire
+    a handler function to the create endpoint.
 
-def _runtime_marker() -> str:
-    return f"python/{sys.version_info.major}.{sys.version_info.minor}"
+    This design supports multi-protocol composition -- multiple protocol
+    handlers (e.g. ``InvocationHandler``, ``ResponseHandler``) can be
+    mounted onto the same ``AgentServer``.
 
+    Usage::
 
-def _platform_header(options: ResponsesServerOptions) -> str:
-    return build_platform_server_header(
-        sdk_name=_SDK_NAME,
-        version=_SDK_VERSION,
-        runtime=_runtime_marker(),
-        extra=options.additional_server_identity,
-    )
+        from azure.ai.agentserver.hosting import AgentServer
+        from azure.ai.agentserver.responses.hosting import ResponseHandler
 
+        server = AgentServer()
+        responses = ResponseHandler(server)
 
-def map_responses_server(
-    app: "Starlette",
-    handler: Callable,
-    *,
-    prefix: str = "",
-    options: ResponsesServerOptions | None = None,
-    provider: ResponseProviderProtocol | None = None,
-) -> None:
-    if app is None:
-        raise ValueError("app is required")
-    if handler is None:
-        raise ValueError(
-            "No response handler registered. Decorate a function with @response_handler "
-            "and pass it to map_responses_server()."
+        @responses.create_handler
+        def my_handler(request, context, cancellation_signal):
+            async def _events():
+                yield event
+            return _events()
+
+        server.run()
+
+    :param server: The ``AgentServer`` to register response protocol
+        routes with.
+    :type server: AgentServer
+    :param prefix: Optional URL prefix for all response routes
+        (e.g. ``"/v1"``).
+    :type prefix: str
+    :param options: Optional runtime options for the responses server.
+    :type options: ResponsesServerOptions | None
+    :param provider: Optional persistence provider for response
+        envelopes and input items.
+    :type provider: ResponseProviderProtocol | None
+    """
+
+    def __init__(
+        self,
+        server: "AgentServer",
+        *,
+        prefix: str = "",
+        options: ResponsesServerOptions | None = None,
+        provider: ResponseProviderProtocol | None = None,
+    ) -> None:
+        # Extract tracing from server
+        self._tracing: Optional["TracingHelper"] = server.tracing
+
+        # Handler slot — populated via @responses.create_handler decorator
+        self._create_fn: Optional[Callable] = None
+
+        # Normalize prefix
+        normalized_prefix = prefix.strip()
+        if normalized_prefix and not normalized_prefix.startswith("/"):
+            normalized_prefix = f"/{normalized_prefix}"
+        normalized_prefix = normalized_prefix.rstrip("/")
+
+        # Build internal components
+        runtime_options = options or ResponsesServerOptions()
+
+        # SSE-specific headers (x-platform-server is handled by hosting middleware)
+        sse_headers: dict[str, str] = {
+            "connection": "keep-alive",
+            "cache-control": "no-cache",
+            "x-accel-buffering": "no",
+        }
+
+        resolved_provider: ResponseProviderProtocol = provider if provider is not None else InMemoryResponseProvider()
+        stream_provider = resolved_provider if isinstance(resolved_provider, ResponseStreamProviderProtocol) else None
+        runtime_state = _RuntimeState()
+        orchestrator = _ResponseOrchestrator(
+            create_async=self._dispatch_create,
+            runtime_state=runtime_state,
+            runtime_options=runtime_options,
+            provider=resolved_provider,
+            stream_provider=stream_provider,
         )
-    if not getattr(handler, "_is_response_handler", False):
-        raise TypeError(
-            "handler must be a function decorated with @response_handler"
+        endpoint = _ResponseEndpointHandler(
+            orchestrator=orchestrator,
+            runtime_state=runtime_state,
+            runtime_options=runtime_options,
+            sse_headers=sse_headers,
+            tracing=self._tracing,
+            provider=resolved_provider,
+            stream_provider=stream_provider,
         )
-    create_async = handler
 
-    normalized_prefix = prefix.strip()
-    if normalized_prefix and not normalized_prefix.startswith("/"):
-        normalized_prefix = f"/{normalized_prefix}"
-    normalized_prefix = normalized_prefix.rstrip("/")
+        # Build and cache routes
+        self._routes: list[Route] = [
+            Route(
+                f"{normalized_prefix}/responses",
+                endpoint.handle_create,
+                methods=["POST"],
+                name="create_response",
+            ),
+            Route(
+                f"{normalized_prefix}/responses/{{response_id}}",
+                endpoint.handle_get,
+                methods=["GET"],
+                name="get_response",
+            ),
+            Route(
+                f"{normalized_prefix}/responses/{{response_id}}",
+                endpoint.handle_delete,
+                methods=["DELETE"],
+                name="delete_response",
+            ),
+            Route(
+                f"{normalized_prefix}/responses/{{response_id}}/cancel",
+                endpoint.handle_cancel,
+                methods=["POST"],
+                name="cancel_response",
+            ),
+            Route(
+                f"{normalized_prefix}/responses/{{response_id}}/input_items",
+                endpoint.handle_input_items,
+                methods=["GET"],
+                name="get_input_items",
+            ),
+        ]
 
-    runtime_options = options or ResponsesServerOptions()
-    response_headers = {"x-platform-server": _platform_header(runtime_options)}
-    sse_headers = {
-        **response_headers,
-        "connection": "keep-alive",
-        "cache-control": "no-cache",
-        "x-accel-buffering": "no",
-    }
+        # Register routes with the server
+        server.register_routes(self._routes)
 
-    resolved_provider: ResponseProviderProtocol = provider if provider is not None else InMemoryResponseProvider()
-    stream_provider = resolved_provider if isinstance(resolved_provider, ResponseStreamProviderProtocol) else None
-    runtime_state = _RuntimeState()
-    orchestrator = _ResponseOrchestrator(
-        create_async=create_async,
-        runtime_state=runtime_state,
-        runtime_options=runtime_options,
-        provider=resolved_provider,
-        stream_provider=stream_provider,
-    )
-    endpoint = _ResponseEndpointHandler(
-        orchestrator=orchestrator,
-        runtime_state=runtime_state,
-        runtime_options=runtime_options,
-        response_headers=response_headers,
-        sse_headers=sse_headers,
-        sdk_name=_SDK_NAME,
-        provider=resolved_provider,
-        stream_provider=stream_provider,
-    )
+        # Register shutdown handler with the server
+        server.shutdown_handler(endpoint.handle_shutdown)
 
-    app.add_route(f"{normalized_prefix}/responses", endpoint.handle_create, methods=["POST"])
-    app.add_route(f"{normalized_prefix}/responses/{{response_id}}", endpoint.handle_get, methods=["GET"])
-    app.add_route(f"{normalized_prefix}/responses/{{response_id}}", endpoint.handle_delete, methods=["DELETE"])
-    app.add_route(f"{normalized_prefix}/responses/{{response_id}}/cancel", endpoint.handle_cancel, methods=["POST"])
-    app.add_route(
-        f"{normalized_prefix}/responses/{{response_id}}/input_items",
-        endpoint.handle_input_items,
-        methods=["GET"],
-    )
-    app.router.lifespan_context = endpoint.lifespan_context(app.router.lifespan_context)
+    # ------------------------------------------------------------------
+    # Handler decorator
+    # ------------------------------------------------------------------
+
+    def create_handler(self, fn: Callable) -> Callable:
+        """Register a function as the create-response handler.
+
+        The function must be decorated with ``@response_handler`` first.
+
+        Usage::
+
+            @responses.create_handler
+            @response_handler
+            def my_handler(request, context, cancellation_signal):
+                async def _events():
+                    yield event
+                return _events()
+
+        Or equivalently (decorator order does not matter)::
+
+            @response_handler
+            @responses.create_handler
+            def my_handler(request, context, cancellation_signal):
+                ...
+
+        :param fn: A function decorated with ``@response_handler``.
+        :type fn: Callable
+        :return: The original function (unmodified).
+        :rtype: Callable
+        """
+        self._create_fn = fn
+        return fn
+
+    # ------------------------------------------------------------------
+    # Dispatch (internal)
+    # ------------------------------------------------------------------
+
+    def _dispatch_create(self, request, context, cancellation_signal):  # type: ignore[no-untyped-def]
+        """Dispatch to the registered create handler.
+
+        Called by the orchestrator when processing a create request.
+        """
+        if self._create_fn is None:
+            raise NotImplementedError(
+                "No create handler registered. Use the @responses.create_handler decorator."
+            )
+        return self._create_fn(request, context, cancellation_signal)
+
+    # ------------------------------------------------------------------
+    # Routes
+    # ------------------------------------------------------------------
+
+    @property
+    def routes(self) -> list[Route]:
+        """Starlette routes for the response protocol.
+
+        :return: A list of Route objects for the response endpoints.
+        :rtype: list[Route]
+        """
+        return self._routes
