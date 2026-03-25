@@ -807,17 +807,25 @@ class TestRealtimeService(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @VoiceLivePreparer()
-    @pytest.mark.flaky(reruns=1, reruns_delay=2)
-    @pytest.mark.parametrize("model", ["gpt-4o-realtime-preview"])
+    @pytest.mark.flaky(reruns=3, reruns_delay=2)
+    @pytest.mark.parametrize("model", ["gpt-realtime-mini"])
     @pytest.mark.parametrize(
-        "transcription_model", ["gpt-4o-transcribe", "gpt-4o-mini-transcribe", "gpt-4o-transcribe-diarize"]
+        "transcription_model",
+        [
+            "whisper-1",
+            "gpt-4o-transcribe",
+            "gpt-4o-mini-transcribe",
+            "gpt-4o-transcribe-diarize",
+            "azure-speech",
+            "mai-transcribe-1",
+        ],
     )
     @pytest.mark.parametrize("api_version", ["2025-05-01-preview", "2026-01-01-preview"])
     async def test_realtime_service_input_audio_transcription(
         self,
         test_data_dir: Path,
         model: str,
-        transcription_model: Literal["gpt-4o-transcribe", "gpt-4o-mini-transcribe", "gpt-4o-transcribe-diarize"],
+        transcription_model: Literal["whisper-1", "gpt-4o-transcribe", "gpt-4o-mini-transcribe", "gpt-4o-transcribe-diarize", "azure-speech", "mai-transcribe-1"],
         api_version: str,
         **kwargs,
     ):
@@ -832,12 +840,10 @@ class TestRealtimeService(AzureRecordedTestCase):
         ) as conn:
             input_audio_transcription = AudioInputTranscriptionOptions(
                 model=transcription_model,
-                language="en"
             )
             session = RequestSession(
                 input_audio_transcription=input_audio_transcription,
-                instructions="You are a helpful assistant. Please respond briefly.",
-                turn_detection=ServerVad(),
+                instructions="You are a helpful assistant.",
             )
 
             await conn.session.update(session=session)

@@ -4,19 +4,12 @@
 # license information.
 # -------------------------------------------------------------------------
 
-import sys
 import pytest
 from devtools_testutils import test_proxy, remove_batch_sanitizers
 from devtools_testutils.sanitizers import (
     add_remove_header_sanitizer,
     add_general_regex_sanitizer,
 )
-
-# Ignore async tests for Python < 3.5
-collect_ignore = []
-if sys.version_info < (3, 5):
-    collect_ignore.append("async_tests")
-
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
