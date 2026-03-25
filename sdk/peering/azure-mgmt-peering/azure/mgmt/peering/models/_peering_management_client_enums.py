@@ -31,6 +31,7 @@ class ConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ACTIVE = "Active"
     TYPE_CHANGE_REQUESTED = "TypeChangeRequested"
     TYPE_CHANGE_IN_PROGRESS = "TypeChangeInProgress"
+    EXTERNAL_BLOCKER = "ExternalBlocker"
 
 
 class DirectPeeringType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -44,6 +45,7 @@ class DirectPeeringType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     IX_RS = "IxRs"
     VOICE = "Voice"
     EDGE_ZONE_FOR_OPERATORS = "EdgeZoneForOperators"
+    PEER_PROP = "PeerProp"
 
 
 class Enum0(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -108,6 +110,7 @@ class PeeringLocationsDirectPeeringType(str, Enum, metaclass=CaseInsensitiveEnum
     IX_RS = "IxRs"
     VOICE = "Voice"
     EDGE_ZONE_FOR_OPERATORS = "EdgeZoneForOperators"
+    PEER_PROP = "PeerProp"
 
 
 class PeeringLocationsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -129,6 +132,14 @@ class PrefixValidationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNKNOWN = "Unknown"
 
 
+class Protocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The protocol of the traffic that will be sent for the connectivity probe."""
+
+    NONE = "None"
+    ICMP = "ICMP"
+    TCP = "TCP"
+
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning state of the resource."""
 
@@ -136,6 +147,7 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UPDATING = "Updating"
     DELETING = "Deleting"
     FAILED = "Failed"
+    CANCELED = "Canceled"
 
 
 class Role(str, Enum, metaclass=CaseInsensitiveEnumMeta):

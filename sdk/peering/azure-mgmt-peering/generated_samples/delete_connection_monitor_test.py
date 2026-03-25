@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.peering import PeeringManagementClient
 
 """
@@ -29,14 +31,13 @@ def main():
         subscription_id="subId",
     )
 
-    response = client.connection_monitor_tests.delete(
+    client.connection_monitor_tests.delete(
         resource_group_name="rgName",
         peering_service_name="peeringServiceName",
         connection_monitor_test_name="connectionMonitorTestName",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/peering/resource-manager/Microsoft.Peering/stable/2022-10-01/examples/DeleteConnectionMonitorTest.json
+# x-ms-original-file: specification/peering/resource-manager/Microsoft.Peering/Peering/stable/2025-05-01/examples/DeleteConnectionMonitorTest.json
 if __name__ == "__main__":
     main()
