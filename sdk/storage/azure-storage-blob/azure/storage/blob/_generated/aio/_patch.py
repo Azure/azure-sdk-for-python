@@ -12,10 +12,21 @@ from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import AsyncPipeline
+from azure.core.pipeline import policies
 
+from .._utils.serialization import Deserializer, Serializer
+from .operations import (
+    AppendBlobOperations,
+    BlobOperations,
+    BlockBlobOperations,
+    ContainerOperations,
+    PageBlobOperations,
+    ServiceOperations,
+)
 from ._client import BlobClient as GeneratedBlobClient
 from ._configuration import BlobClientConfiguration as GeneratedBlobClientConfiguration
 from .._patch import RangeHeaderPolicy
+from .._version import VERSION
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -46,7 +57,6 @@ class BlobClientConfiguration(GeneratedBlobClientConfiguration):
         self.credential = credential
         self.version = version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://storage.azure.com/.default"])
-        from .._version import VERSION
 
         kwargs.setdefault("sdk_moniker", "storage-blob/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
@@ -71,18 +81,7 @@ class AzureBlobStorage(GeneratedBlobClient):
     def __init__(
         self, url: str, credential: Optional["AsyncTokenCredential"] = None, *, pipeline: Any = None, **kwargs: Any
     ) -> None:
-        from azure.core.pipeline import policies
-
-        from .._utils.serialization import Deserializer, Serializer
-        from .operations import (
-            AppendBlobOperations,
-            BlobOperations,
-            BlockBlobOperations,
-            ContainerOperations,
-            PageBlobOperations,
-            ServiceOperations,
-        )
-
+        
         _endpoint = "{url}"
         self._config = BlobClientConfiguration(url=url, credential=credential, **kwargs)
 

@@ -12,7 +12,18 @@ from typing import Any, Optional, TYPE_CHECKING
 from azure.core import PipelineClient
 from azure.core.pipeline import Pipeline, PipelineRequest
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.pipeline import policies
 
+from ._utils.serialization import Deserializer, Serializer
+from .operations import (
+    AppendBlobOperations,
+    BlobOperations,
+    BlockBlobOperations,
+    ContainerOperations,
+    PageBlobOperations,
+    ServiceOperations,
+)
+from ._version import VERSION
 from ._client import BlobClient as GeneratedBlobClient
 from ._configuration import BlobClientConfiguration as GeneratedBlobClientConfiguration
 
@@ -54,7 +65,6 @@ class BlobClientConfiguration(GeneratedBlobClientConfiguration):
         self.credential = credential
         self.version = version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://storage.azure.com/.default"])
-        from ._version import VERSION
 
         kwargs.setdefault("sdk_moniker", "storage-blob/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
@@ -79,17 +89,6 @@ class AzureBlobStorage(GeneratedBlobClient):
     def __init__(
         self, url: str, credential: Optional["TokenCredential"] = None, *, pipeline: Any = None, **kwargs: Any
     ) -> None:
-        from azure.core.pipeline import policies
-
-        from ._utils.serialization import Deserializer, Serializer
-        from .operations import (
-            AppendBlobOperations,
-            BlobOperations,
-            BlockBlobOperations,
-            ContainerOperations,
-            PageBlobOperations,
-            ServiceOperations,
-        )
 
         _endpoint = "{url}"
         self._config = BlobClientConfiguration(url=url, credential=credential, **kwargs)
