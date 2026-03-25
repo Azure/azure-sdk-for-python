@@ -73,6 +73,41 @@ class TestApplicationInsightsSampler(unittest.TestCase):
             self.assertEqual(sampler._ratio, 1.0)
             self.assertEqual(sampler._sample_rate, 100.0)
 
+    @mock.patch.dict("os.environ", {}, clear=True)
+    def test_infinite_ratio_explicit(self):
+        # Infinite explicit ratio logs an error and defaults to 1.0
+        sampler = ApplicationInsightsSampler(float('inf'))
+        self.assertEqual(sampler._ratio, 1.0)
+        self.assertEqual(sampler._sample_rate, 100.0)
+        sampler = ApplicationInsightsSampler(float('-inf'))
+        self.assertEqual(sampler._ratio, 1.0)
+        self.assertEqual(sampler._sample_rate, 100.0)
+
+    def test_infinite_ratio_env_var(self):
+        # Infinite value from env var falls back to 1.0
+        with mock.patch.dict("os.environ", {"OTEL_TRACES_SAMPLER_ARG": "inf"}):
+            sampler = ApplicationInsightsSampler()
+            self.assertEqual(sampler._ratio, 1.0)
+            self.assertEqual(sampler._sample_rate, 100.0)
+        with mock.patch.dict("os.environ", {"OTEL_TRACES_SAMPLER_ARG": "-inf"}):
+            sampler = ApplicationInsightsSampler()
+            self.assertEqual(sampler._ratio, 1.0)
+            self.assertEqual(sampler._sample_rate, 100.0)
+
+    @mock.patch.dict("os.environ", {}, clear=True)
+    def test_nan_ratio_explicit(self):
+        # NaN explicit ratio logs an error and defaults to 1.0
+        sampler = ApplicationInsightsSampler(float('nan'))
+        self.assertEqual(sampler._ratio, 1.0)
+        self.assertEqual(sampler._sample_rate, 100.0)
+
+    def test_nan_ratio_env_var(self):
+        # NaN value from env var falls back to 1.0
+        with mock.patch.dict("os.environ", {"OTEL_TRACES_SAMPLER_ARG": "nan"}):
+            sampler = ApplicationInsightsSampler()
+            self.assertEqual(sampler._ratio, 1.0)
+            self.assertEqual(sampler._sample_rate, 100.0)
+
     @mock.patch("azure.monitor.opentelemetry.exporter.export.trace._sampling._get_DJB2_sample_score")
     def test_should_sample(self, score_mock):
         sampler = ApplicationInsightsSampler(0.75)

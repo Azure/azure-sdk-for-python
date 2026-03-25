@@ -214,6 +214,35 @@ class TestRateLimitedSampler(unittest.TestCase):
             sampler = RateLimitedSampler()
             self.assertEqual(sampler.get_description(), "RateLimitedSampler{5.0}")
 
+    # Test that infinite explicit traces per second logs error and defaults to 5.0
+    def test_infinite_traces_per_second_explicit(self):
+        with patch.dict("os.environ", {}, clear=True):
+            sampler = RateLimitedSampler(float('inf'))
+            self.assertEqual(sampler.get_description(), "RateLimitedSampler{5.0}")
+            sampler = RateLimitedSampler(float('-inf'))
+            self.assertEqual(sampler.get_description(), "RateLimitedSampler{5.0}")
+
+    # Test infinite value from env var falls back to 5.0
+    def test_infinite_traces_per_second_env_var(self):
+        with patch.dict("os.environ", {"OTEL_TRACES_SAMPLER_ARG": "inf"}):
+            sampler = RateLimitedSampler()
+            self.assertEqual(sampler.get_description(), "RateLimitedSampler{5.0}")
+        with patch.dict("os.environ", {"OTEL_TRACES_SAMPLER_ARG": "-inf"}):
+            sampler = RateLimitedSampler()
+            self.assertEqual(sampler.get_description(), "RateLimitedSampler{5.0}")
+
+    # Test that NaN explicit traces per second logs error and defaults to 5.0
+    def test_nan_traces_per_second_explicit(self):
+        with patch.dict("os.environ", {}, clear=True):
+            sampler = RateLimitedSampler(float('nan'))
+            self.assertEqual(sampler.get_description(), "RateLimitedSampler{5.0}")
+
+    # Test NaN value from env var falls back to 5.0
+    def test_nan_traces_per_second_env_var(self):
+        with patch.dict("os.environ", {"OTEL_TRACES_SAMPLER_ARG": "nan"}):
+            sampler = RateLimitedSampler()
+            self.assertEqual(sampler.get_description(), "RateLimitedSampler{5.0}")
+
     # Test sampling behavior with zero target rate
     def test_zero_rate_sampling(self):
         sampler = RateLimitedSampler(0.0)

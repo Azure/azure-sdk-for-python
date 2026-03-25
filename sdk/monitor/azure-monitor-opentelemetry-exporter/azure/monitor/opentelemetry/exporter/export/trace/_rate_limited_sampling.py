@@ -99,7 +99,8 @@ class RateLimitedSampler(Sampler):
         default_traces_per_second = 5.0
         if traces_per_second is not None:
             try:
-                if traces_per_second < 0.0:
+                traces_per_second = float(traces_per_second)
+                if not math.isfinite(traces_per_second) or traces_per_second < 0.0:
                     _logger.error(
                         _INVALID_TRACES_PER_SECOND_MESSAGE_NEGATIVE_VALUE, traces_per_second, default_traces_per_second
                     )
@@ -113,7 +114,7 @@ class RateLimitedSampler(Sampler):
             sampling_arg = os.environ.get(OTEL_TRACES_SAMPLER_ARG)
             try:
                 sampler_value = float(sampling_arg) if sampling_arg is not None else default_traces_per_second
-                if sampler_value < 0.0:
+                if not math.isfinite(sampler_value) or sampler_value < 0.0:
                     _logger.error(
                         _INVALID_TRACES_PER_SECOND_MESSAGE_NEGATIVE_VALUE, sampler_value, default_traces_per_second
                     )
@@ -121,7 +122,7 @@ class RateLimitedSampler(Sampler):
                 else:
                     _logger.info("Using rate limited sampler: %s traces per second", sampler_value)
                     traces_per_second = sampler_value
-            except ValueError as e:  # pylint: disable=unused-variable
+            except ValueError:
                 _logger.error(  # pylint: disable=C0301
                     _INVALID_TRACES_PER_SECOND_MESSAGE,
                     sampling_arg,

@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+import math
 import os
 from typing import Optional, Sequence
 from logging import getLogger
@@ -41,7 +42,8 @@ class ApplicationInsightsSampler(Sampler):
         default_sampling_ratio = 1.0
         if sampling_ratio is not None:
             try:
-                if sampling_ratio < 0.0 or sampling_ratio > 1.0:
+                sampling_ratio = float(sampling_ratio)
+                if not math.isfinite(sampling_ratio) or sampling_ratio < 0.0 or sampling_ratio > 1.0:
                     _logger.error(
                         "Invalid value '%s' for sampling ratio. "
                         "Sampling ratio must be in the range [0.0, 1.0]. "
@@ -59,7 +61,7 @@ class ApplicationInsightsSampler(Sampler):
             sampling_arg = os.environ.get(OTEL_TRACES_SAMPLER_ARG)
             try:
                 sampler_value = float(sampling_arg) if sampling_arg is not None else default_sampling_ratio
-                if sampler_value < 0.0 or sampler_value > 1.0:
+                if not math.isfinite(sampler_value) or sampler_value < 0.0 or sampler_value > 1.0:
                     _logger.error(
                         "Invalid value '%s' for OTEL_TRACES_SAMPLER_ARG. "
                         "It should be a value between 0 and 1. Defaulting to %s.",
@@ -70,7 +72,7 @@ class ApplicationInsightsSampler(Sampler):
                 else:
                     _logger.info("Using sampling ratio: %s", sampler_value)
                     sampling_ratio = sampler_value
-            except ValueError as e:  # pylint: disable=unused-variable
+            except ValueError:
                 _logger.error(  # pylint: disable=C
                     _INVALID_FLOAT_MESSAGE,
                     OTEL_TRACES_SAMPLER_ARG,
