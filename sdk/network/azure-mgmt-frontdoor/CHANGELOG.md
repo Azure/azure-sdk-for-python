@@ -29,17 +29,14 @@
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Model `BackendPool` moved instance variable `backends`, `load_balancing_settings`, `health_probe_settings` and `resource_state` under property `properties`
-  - Model `CustomHttpsConfiguration` deleted or renamed its instance variable `certificate_type`
-  - Model `CustomHttpsConfiguration` deleted or renamed its instance variable `vault`
-  - Model `CustomHttpsConfiguration` deleted or renamed its instance variable `secret_name`
-  - Model `CustomHttpsConfiguration` deleted or renamed its instance variable `secret_version`
+  - Model `CustomHttpsConfiguration` moved instance variable `certificate_type` under property `front_door_certificate_source_parameters`
+  - Model `CustomHttpsConfiguration` moved instance variable `vault`,  `secret_name` and `secret_version` under property `key_vault_certificate_source_parameters`
   - Model `ExperimentUpdateModel` moved instance variable `description` and `enabled_state` under property `properties`
   - Model `FrontDoor` moved instance variable `friendly_name`, `routing_rules`, `load_balancing_settings`, `health_probe_settings`, `backend_pools`, `frontend_endpoints`, `backend_pools_settings`, `enabled_state`, `resource_state`, `provisioning_state`, `cname`, `frontdoor_id`, `rules_engines` and `extended_properties` under property `properties`
   - Model `FrontendEndpoint` moved instance variable `host_name`, `session_affinity_enabled_state`, `session_affinity_ttl_seconds`, `web_application_firewall_policy_link`, `resource_state`, `custom_https_provisioning_state`, `custom_https_provisioning_substate` and `custom_https_configuration` under property `properties`
   - Model `HealthProbeSettingsModel` moved instance variable `path`, `protocol`, `interval_in_seconds`, `health_probe_method`, `enabled_state` and `resource_state` under property `properties`
   - Model `LoadBalancingSettingsModel` moved instance variable `sample_size`, `successful_samples_required`, `additional_latency_milliseconds` and `resource_state` under property `properties`
-  - Model `PolicySettings` deleted or renamed its instance variable `state`
-  - Model `PolicySettings` deleted or renamed its instance variable `scrubbing_rules`
+  - Model `PolicySettings` moved instance variable `state` and `scrubbing_rules` under property `log_scrubbing`
   - Model `ProfileUpdateModel` moved instance variable `enabled_state` under property `properties`
   - Model `RoutingRule` moved instance variable `frontend_endpoints`, `accepted_protocols`, `patterns_to_match`, `enabled_state`, `route_configuration`, `rules_engine`, `web_application_firewall_policy_link` and `resource_state` under property `properties`
   - Model `RulesEngine` moved instance variable `rules` and `resource_state` under property `properties`
