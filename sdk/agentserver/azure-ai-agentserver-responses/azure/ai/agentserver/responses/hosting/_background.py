@@ -46,7 +46,7 @@ async def _run_background_non_stream(
     :keyword cancellation_signal: Event signalling that cancellation was requested.
     :keyword type cancellation_signal: asyncio.Event
     :keyword record: The mutable execution record to update.
-    :keyword type record: _ExecutionRecord
+    :keyword type record: ResponseExecution
     :keyword response_id: The response ID for this execution.
     :keyword type response_id: str
     :keyword agent_reference: Normalized agent reference dictionary.
@@ -157,7 +157,7 @@ def _refresh_background_status(record: ResponseExecution) -> None:
     current runner state without triggering execution.
 
     :param record: The execution record to refresh.
-    :type record: _ExecutionRecord
+    :type record: ResponseExecution
     :return: None
     :rtype: None
     """

@@ -279,3 +279,184 @@ def test_get_replay__sse_response_headers_are_correct() -> None:
     assert headers.get("x-accel-buffering") == "no", (
         f"SSE replay X-Accel-Buffering must be no, got: {headers.get('x-accel-buffering')!r}"
     )
+
+
+# ══════════════════════════════════════════════════════════
+# Task 4.2 — _finalize_bg_stream / _finalize_non_bg_stream
+# ══════════════════════════════════════════════════════════
+
+
+def test_c2_sync_stream_stored_get_returns_200() -> None:
+    """T1 — store=True, bg=False, stream=True: POST then GET returns HTTP 200.
+
+    _finalize_non_bg_stream must register a ResponseExecution so that the
+    subsequent GET can find the stored non-background stream response.
+    """
+    client = _build_client()
+
+    with client.stream(
+        "POST",
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hello", "stream": True, "store": True, "background": False},
+    ) as create_response:
+        assert create_response.status_code == 200
+        events = _collect_replay_events(create_response)
+
+    assert events, "Expected at least one SSE event"
+    response_id = events[0]["data"]["response"].get("id")
+    assert isinstance(response_id, str)
+
+    get_response = client.get(f"/responses/{response_id}")
+    assert get_response.status_code == 200, (
+        f"_finalize_non_bg_stream must persist the record so GET returns 200, got {get_response.status_code}"
+    )
+    payload = get_response.json()
+    assert payload.get("status") in {"completed", "failed", "incomplete", "cancelled"}, (
+        f"Non-bg stored stream must be terminal after POST completes, got status={payload.get('status')!r}"
+    )
+
+
+def test_c4_bg_stream_get_sse_replay() -> None:
+    """T2 — store=True, bg=True, stream=True: POST complete, then GET ?stream=true returns SSE replay.
+
+    _finalize_bg_stream must complete the subject so that the subsequent
+    replay GET can iterate the historical events to completion.
+    """
+    client = _build_client()
+
+    with client.stream(
+        "POST",
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hello", "stream": True, "store": True, "background": True},
+    ) as create_response:
+        assert create_response.status_code == 200
+        create_events = _collect_replay_events(create_response)
+
+    assert create_events, "Expected at least one SSE event from POST"
+    response_id = create_events[0]["data"]["response"].get("id")
+    assert isinstance(response_id, str)
+
+    with client.stream("GET", f"/responses/{response_id}?stream=true") as replay_response:
+        assert replay_response.status_code == 200, (
+            f"bg+stream GET ?stream=true must return 200, got {replay_response.status_code}"
+        )
+        assert replay_response.headers.get("content-type", "").startswith("text/event-stream")
+        replay_events = _collect_replay_events(replay_response)
+
+    assert replay_events, "Expected at least one event in SSE replay"
+    replay_types = [e["type"] for e in replay_events]
+    terminal_types = {"response.completed", "response.failed", "response.incomplete"}
+    assert any(t in terminal_types for t in replay_types), (
+        f"SSE replay must include a terminal event, got: {replay_types}"
+    )
+    # Replay must start from the beginning (response.created should be present)
+    assert "response.created" in replay_types, (
+        f"SSE replay must include response.created, got: {replay_types}"
+    )
+
+
+def test_c6_non_stored_stream_no_get() -> None:
+    """T3 — store=False, bg=False, stream=True: GET returns HTTP 404.
+
+    _finalize_non_bg_stream must NOT register the execution record when
+    store=False, so a subsequent GET returns 404 (B-16 / C6 contract).
+    """
+    client = _build_client()
+
+    with client.stream(
+        "POST",
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hello", "stream": True, "store": False, "background": False},
+    ) as create_response:
+        assert create_response.status_code == 200
+        create_events = _collect_replay_events(create_response)
+
+    assert create_events, "Expected at least one SSE event from POST"
+    response_id = create_events[0]["data"]["response"].get("id")
+    assert isinstance(response_id, str)
+
+    get_response = client.get(f"/responses/{response_id}")
+    assert get_response.status_code == 404, (
+        f"store=False stream response must not be retrievable via GET (C6), got {get_response.status_code}"
+    )
+
+
+def test_bg_stream_cancelled_subject_completed() -> None:
+    """T4 — bg+stream response cancelled mid-stream: subject.complete() is called, no hang.
+
+    _finalize_bg_stream must call subject.complete() even when the record's
+    status is 'cancelled', so that live replay subscribers can exit cleanly.
+    """
+    from azure.ai.agentserver.responses import response_handler
+    from azure.ai.agentserver.responses._id_generator import IdGenerator
+    from tests._helpers import poll_until
+
+    gate_started: list[bool] = []
+    gate_proceed: list[bool] = []
+
+    @response_handler
+    def _blocking_bg_stream_handler(request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            yield {"type": "response.created", "payload": {"status": "in_progress", "output": []}}
+            gate_started.append(True)
+            # Block until cancelled
+            while not cancellation_signal.is_set():
+                import asyncio as _asyncio
+                await _asyncio.sleep(0.01)
+
+        return _events()
+
+    import asyncio
+    import threading
+    from starlette.applications import Starlette as _Starlette
+    from azure.ai.agentserver.responses.hosting import map_responses_server as _map
+
+    app = _Starlette()
+    _map(app, _blocking_bg_stream_handler)
+
+    response_id = IdGenerator.new_response_id()
+    stream_events_received: list[str] = []
+    stream_done = threading.Event()
+
+    def _stream_thread() -> None:
+        from starlette.testclient import TestClient as _TC
+        _client = _TC(app)
+        with _client.stream(
+            "POST",
+            "/responses",
+            json={
+                "response_id": response_id,
+                "model": "gpt-4o-mini",
+                "input": "hello",
+                "stream": True,
+                "store": True,
+                "background": True,
+            },
+        ) as resp:
+            for line in resp.iter_lines():
+                stream_events_received.append(line)
+        stream_done.set()
+
+    t = threading.Thread(target=_stream_thread, daemon=True)
+    t.start()
+
+    # Wait for handler to start
+    ok, _ = poll_until(
+        lambda: bool(gate_started),
+        timeout_s=5.0,
+        interval_s=0.02,
+        label="wait for bg stream handler to start",
+    )
+    assert ok, "Handler did not start within timeout"
+
+    # Cancel the response
+    from starlette.testclient import TestClient as _TC2
+    _cancel_client = _TC2(app)
+    cancel_resp = _cancel_client.post(f"/responses/{response_id}/cancel")
+    assert cancel_resp.status_code == 200
+
+    # The SSE stream should terminate (subject.complete() unblocks the iterator)
+    assert stream_done.wait(timeout=5.0), (
+        "_finalize_bg_stream must call subject.complete() so SSE stream terminates after cancel"
+    )
+    t.join(timeout=1.0)

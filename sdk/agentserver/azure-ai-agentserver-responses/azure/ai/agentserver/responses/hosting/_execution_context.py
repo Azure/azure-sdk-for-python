@@ -8,14 +8,17 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from typing import Any
 
 from .._handlers import ResponseContext
-from ..models.runtime import ResponseExecution
 
 
 class _ExecutionContext:  # pylint: disable=too-many-instance-attributes
-    """Holds all per-request state for a single create-response call.
+    """Holds all per-request *input* state for a single create-response call.
 
     Passed between the routing layer and the orchestrator to avoid
     large keyword-argument bundles on every internal function call.
+    All fields are set once at construction and treated as immutable by
+    the orchestrator.  Mutable in-flight state (accumulated events,
+    background record, captured error) lives in :class:`_PipelineState`
+    inside the orchestrator methods.
     """
 
     def __init__(
@@ -33,9 +36,6 @@ class _ExecutionContext:  # pylint: disable=too-many-instance-attributes
         context: ResponseContext,
         span: Any,
         parsed: Any,
-        captured_error: Exception | None = None,
-        bg_record: ResponseExecution | None = None,
-        handler_events: list[dict[str, Any]] | None = None,
     ) -> None:
         self.response_id = response_id
         """The assigned response identifier."""
@@ -61,9 +61,3 @@ class _ExecutionContext:  # pylint: disable=too-many-instance-attributes
         """Active observability span for this request."""
         self.parsed = parsed
         """Parsed ``CreateResponse`` model instance from the request body."""
-        self.captured_error = captured_error
-        """Exception captured during handler execution, set after the fact; ``None`` on success."""
-        self.bg_record: ResponseExecution | None = bg_record
-        """Background execution record created after the first handler event (background+stream only)."""
-        self.handler_events: list[dict[str, Any]] = handler_events if handler_events is not None else []
-        """Accumulated, normalized handler events emitted so far."""

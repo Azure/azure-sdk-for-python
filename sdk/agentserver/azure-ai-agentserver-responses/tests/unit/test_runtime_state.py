@@ -223,3 +223,16 @@ async def test_list_records_returns_all() -> None:
     assert len(records) == 2
     ids = {r.response_id for r in records}
     assert ids == {"caresp_iii0000000000000000000000000000", "caresp_jjj0000000000000000000000000000"}
+
+
+# ---------------------------------------------------------------------------
+# T1 (Task 7.1) – _ExecutionRecord is no longer exported from _runtime_state
+# ---------------------------------------------------------------------------
+
+def test_import_does_not_expose_execution_record() -> None:
+    """_ExecutionRecord was deleted in Task 7.1; the module must not export it."""
+    import importlib
+    mod = importlib.import_module("azure.ai.agentserver.responses.hosting._runtime_state")
+    assert not hasattr(mod, "_ExecutionRecord"), (
+        "_ExecutionRecord should have been removed from _runtime_state in Phase 7 / Task 7.1"
+    )

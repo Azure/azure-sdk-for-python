@@ -509,3 +509,337 @@ def test_create__ignores_unknown_fields_in_request_body() -> None:
     assert response.status_code == 200
     payload = response.json()
     assert payload.get("object") == "response"
+
+
+# ══════════════════════════════════════════════════════════
+# Task 4.1 — _process_handler_events sync contract tests
+# ══════════════════════════════════════════════════════════
+
+
+def test_sync_handler_exception_returns_500() -> None:
+    """T5 — Handler raises an exception; stream=False → HTTP 500.
+
+    B8 / B-13 for sync mode: any handler exception surfaces as HTTP 500.
+    """
+    from azure.ai.agentserver.responses import response_handler
+
+    @response_handler
+    def _raising_handler(request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            raise RuntimeError("Simulated handler failure")
+            if False:  # pragma: no cover
+                yield None
+
+        return _events()
+
+    app = Starlette()
+    map_responses_server(app, _raising_handler)
+    client = TestClient(app, raise_server_exceptions=False)
+
+    response = client.post(
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hello", "stream": False, "store": True, "background": False},
+    )
+
+    assert response.status_code == 500
+
+
+def test_sync_no_terminal_event_still_completes() -> None:
+    """T6 — Handler yields response.created + response.in_progress but no terminal; stream=False → HTTP 200, status=failed.
+
+    S-021: When the handler completes without emitting a terminal event, the library
+    synthesises a ``response.failed`` terminal.  Sync callers receive HTTP 200 with
+    a "failed" response body (not HTTP 500).
+    """
+    from azure.ai.agentserver.responses import response_handler
+    from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
+
+    @response_handler
+    def _no_terminal_handler(request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            stream = ResponseEventStream(
+                response_id=context.response_id, model=getattr(request, "model", None)
+            )
+            yield stream.emit_created()
+            yield stream.emit_in_progress()
+            # Intentionally omit terminal event (response.completed / response.failed)
+
+        return _events()
+
+    app = Starlette()
+    map_responses_server(app, _no_terminal_handler)
+    client = TestClient(app)
+
+    response = client.post(
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hello", "stream": False, "store": True, "background": False},
+    )
+
+    assert response.status_code == 200, (
+        f"S-021: sync no-terminal handler must return HTTP 200, got {response.status_code}"
+    )
+    payload = response.json()
+    assert payload.get("status") == "failed", (
+        f"S-021: synthesised terminal must set status to 'failed', got {payload.get('status')!r}"
+    )
+
+
+# ══════════════════════════════════════════════════════════
+# Phase 5 — Task 5.1: S-007 / S-008 / S-009 first-event contract tests
+# ══════════════════════════════════════════════════════════
+
+
+def test_s007_wrong_first_event_sync() -> None:
+    """T1 — Handler yields response.in_progress as first event; stream=False → HTTP 500.
+
+    S-007: The first event MUST be response.created.  Violations are treated as
+    pre-creation errors (B8) and map to HTTP 500 in sync mode.
+    Uses a raw dict to bypass ResponseEventStream internal ordering validation so
+    the orchestrator's _check_first_event_contract is the authority under test.
+    """
+    @response_handler
+    def _wrong_first_event_handler(request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            # Raw dict bypasses ResponseEventStream validation so _check_first_event_contract runs
+            yield {
+                "type": "response.in_progress",
+                "payload": {
+                    "status": "in_progress",
+                    "object": "response",
+                },
+            }
+
+        return _events()
+
+    app = Starlette()
+    map_responses_server(app, _wrong_first_event_handler)
+    client = TestClient(app, raise_server_exceptions=False)
+
+    response = client.post(
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hello", "stream": False, "store": True, "background": False},
+    )
+
+    assert response.status_code == 500, (
+        f"S-007 violation in sync mode must return HTTP 500, got {response.status_code}"
+    )
+
+
+def test_s007_wrong_first_event_stream() -> None:
+    """T2 — Handler yields response.in_progress as first event; stream=True → SSE contains only 'error'.
+
+    S-007: Violation → single standalone error event; no response.created in stream.
+    Uses a raw dict to bypass ResponseEventStream internal ordering validation.
+    """
+    @response_handler
+    def _wrong_first_event_handler(request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            yield {
+                "type": "response.in_progress",
+                "payload": {
+                    "status": "in_progress",
+                    "object": "response",
+                },
+            }
+
+        return _events()
+
+    app = Starlette()
+    map_responses_server(app, _wrong_first_event_handler)
+    client = TestClient(app, raise_server_exceptions=False)
+
+    import json as _json
+
+    events: list[dict[str, Any]] = []
+    with client.stream(
+        "POST",
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hello", "stream": True, "store": True, "background": False},
+    ) as response:
+        assert response.status_code == 200
+        current_type: str | None = None
+        current_data: str | None = None
+        for line in response.iter_lines():
+            if not line:
+                if current_type is not None:
+                    events.append({"type": current_type, "data": _json.loads(current_data) if current_data else {}})
+                current_type = None
+                current_data = None
+                continue
+            if line.startswith("event:"):
+                current_type = line.split(":", 1)[1].strip()
+            elif line.startswith("data:"):
+                current_data = line.split(":", 1)[1].strip()
+        if current_type is not None:
+            events.append({"type": current_type, "data": _json.loads(current_data) if current_data else {}})
+
+    event_types = [e["type"] for e in events]
+    assert event_types == ["error"], (
+        f"S-007 violation in stream mode must produce exactly ['error'], got: {event_types}"
+    )
+    assert "response.created" not in event_types
+
+
+def test_s008_mismatched_id_stream() -> None:
+    """T3 — Handler yields response.created with wrong id; stream=True → SSE contains only 'error'.
+
+    S-008: The id in response.created MUST equal the library-assigned response_id.
+    """
+    @response_handler
+    def _mismatched_id_handler(request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            # Emit response.created with a deliberately wrong id
+            yield {
+                "type": "response.created",
+                "payload": {
+                    "id": "caresp_WRONG00000000000000000000000000000000000000000000",
+                    "response_id": "caresp_WRONG00000000000000000000000000000000000000000000",
+                    "status": "queued",
+                    "object": "response",
+                },
+            }
+
+        return _events()
+
+    app = Starlette()
+    map_responses_server(app, _mismatched_id_handler)
+    client = TestClient(app, raise_server_exceptions=False)
+
+    import json as _json
+
+    events: list[dict[str, Any]] = []
+    with client.stream(
+        "POST",
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hello", "stream": True, "store": True, "background": False},
+    ) as response:
+        assert response.status_code == 200
+        current_type: str | None = None
+        current_data: str | None = None
+        for line in response.iter_lines():
+            if not line:
+                if current_type is not None:
+                    events.append({"type": current_type, "data": _json.loads(current_data) if current_data else {}})
+                current_type = None
+                current_data = None
+                continue
+            if line.startswith("event:"):
+                current_type = line.split(":", 1)[1].strip()
+            elif line.startswith("data:"):
+                current_data = line.split(":", 1)[1].strip()
+        if current_type is not None:
+            events.append({"type": current_type, "data": _json.loads(current_data) if current_data else {}})
+
+    event_types = [e["type"] for e in events]
+    assert event_types == ["error"], (
+        f"S-008 violation must produce exactly ['error'], got: {event_types}"
+    )
+
+
+def test_s009_terminal_status_on_created_stream() -> None:
+    """T4 — Handler yields response.created with terminal status; stream=True → SSE contains only 'error'.
+
+    S-009: The status in response.created MUST be non-terminal (queued or in_progress).
+    """
+    @response_handler
+    def _terminal_on_created_handler(request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            yield {
+                "type": "response.created",
+                "payload": {
+                    "status": "completed",
+                    "object": "response",
+                },
+            }
+
+        return _events()
+
+    app = Starlette()
+    map_responses_server(app, _terminal_on_created_handler)
+    client = TestClient(app, raise_server_exceptions=False)
+
+    import json as _json
+
+    events: list[dict[str, Any]] = []
+    with client.stream(
+        "POST",
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hello", "stream": True, "store": True, "background": False},
+    ) as response:
+        assert response.status_code == 200
+        current_type: str | None = None
+        current_data: str | None = None
+        for line in response.iter_lines():
+            if not line:
+                if current_type is not None:
+                    events.append({"type": current_type, "data": _json.loads(current_data) if current_data else {}})
+                current_type = None
+                current_data = None
+                continue
+            if line.startswith("event:"):
+                current_type = line.split(":", 1)[1].strip()
+            elif line.startswith("data:"):
+                current_data = line.split(":", 1)[1].strip()
+        if current_type is not None:
+            events.append({"type": current_type, "data": _json.loads(current_data) if current_data else {}})
+
+    event_types = [e["type"] for e in events]
+    assert event_types == ["error"], (
+        f"S-009 violation must produce exactly ['error'], got: {event_types}"
+    )
+
+
+def test_s007_valid_handler_not_affected() -> None:
+    """T5 — Compliant handler emits response.created with correct id; stream=True → normal SSE flow.
+
+    Regression: the S-007/S-008/S-009 validation must not block valid handlers.
+    """
+    from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
+
+    @response_handler
+    def _compliant_handler(request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            stream = ResponseEventStream(
+                response_id=context.response_id, model=getattr(request, "model", None)
+            )
+            yield stream.emit_created()
+            yield stream.emit_completed()
+
+        return _events()
+
+    app = Starlette()
+    map_responses_server(app, _compliant_handler)
+    client = TestClient(app)
+
+    import json as _json
+
+    events: list[dict[str, Any]] = []
+    with client.stream(
+        "POST",
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hello", "stream": True, "store": True, "background": False},
+    ) as response:
+        assert response.status_code == 200
+        current_type: str | None = None
+        current_data: str | None = None
+        for line in response.iter_lines():
+            if not line:
+                if current_type is not None:
+                    events.append({"type": current_type, "data": _json.loads(current_data) if current_data else {}})
+                current_type = None
+                current_data = None
+                continue
+            if line.startswith("event:"):
+                current_type = line.split(":", 1)[1].strip()
+            elif line.startswith("data:"):
+                current_data = line.split(":", 1)[1].strip()
+        if current_type is not None:
+            events.append({"type": current_type, "data": _json.loads(current_data) if current_data else {}})
+
+    event_types = [e["type"] for e in events]
+    assert "response.created" in event_types, (
+        f"Compliant handler must not be blocked; expected response.created in: {event_types}"
+    )
+    assert "error" not in event_types, (
+        f"Compliant handler must not produce error event; got: {event_types}"
+    )

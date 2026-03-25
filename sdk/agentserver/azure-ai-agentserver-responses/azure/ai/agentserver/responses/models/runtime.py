@@ -234,68 +234,27 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
                 if isinstance(output, list) and 0 <= output_index < len(output):
                     output[output_index] = deepcopy(item)
 
-    # ------------------------------------------------------------------
-    # Compat shims — bridge to _ExecutionRecord attribute names during the
-    # Phase 2 → Phase 7 transition.  Remove after Task 7.2.
-    # ------------------------------------------------------------------
-
-    @property
-    def background(self) -> bool:
-        """Compat: return mode_flags.background."""
-        return self.mode_flags.background
-
-    @property
-    def store(self) -> bool:
-        """Compat: return mode_flags.store."""
-        return self.mode_flags.store
-
-    @property
-    def stream(self) -> bool:
-        """Compat: return mode_flags.stream."""
-        return self.mode_flags.stream
-
     @property
     def agent_reference(self) -> dict[str, Any]:
-        """Compat: extract agent_reference from the stored response snapshot."""
+        """Extract agent_reference from the stored response snapshot.
+
+        :returns: The agent reference dict, or empty dict if no response snapshot is set.
+        :rtype: dict[str, Any]
+        """
         if self.response is not None:
             return self.response.get("agent_reference") or {}  # type: ignore[return-value]
         return {}
 
     @property
     def model(self) -> str | None:
-        """Compat: extract model name from the stored response snapshot."""
+        """Extract model name from the stored response snapshot.
+
+        :returns: The model name, or ``None`` if no response snapshot is set.
+        :rtype: str | None
+        """
         if self.response is not None:
             return self.response.get("model")  # type: ignore[return-value]
         return None
-
-    @property
-    def response_payload(self) -> dict[str, Any] | None:
-        """Compat: return the response snapshot as a plain dict (read-only copy)."""
-        if self.response is not None:
-            return self.response.as_dict()
-        return None
-
-    @response_payload.setter
-    def response_payload(self, value: dict[str, Any] | None) -> None:
-        """Compat: accept a plain dict and store it as the response snapshot."""
-        if isinstance(value, dict):
-            self.set_response_snapshot(Response(value))
-
-    def to_snapshot(self) -> dict[str, Any]:
-        """Compat: build a normalized response snapshot dict (mirrors _RuntimeState.to_snapshot)."""
-        if self.response is not None:
-            result: dict[str, Any] = self.response.as_dict()
-            result.setdefault("id", self.response_id)
-            result.setdefault("response_id", self.response_id)
-            result.setdefault("object", "response")
-            result["status"] = self.status
-            return result
-        return {
-            "id": self.response_id,
-            "response_id": self.response_id,
-            "object": "response",
-            "status": self.status,
-        }
 
 
 class StreamReplayState:

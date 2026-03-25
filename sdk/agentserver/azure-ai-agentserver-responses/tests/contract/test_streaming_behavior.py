@@ -419,3 +419,122 @@ def test_streaming__post_creation_error_yields_response_failed_not_error_event()
     assert "error" not in event_types, (
         f"Standalone 'error' event must not appear after response.created. Events: {event_types}"
     )
+
+
+# ══════════════════════════════════════════════════════════
+# Task 4.1 — _process_handler_events pipeline contract tests
+# ══════════════════════════════════════════════════════════
+
+
+def test_stream_pre_creation_error_emits_error_event() -> None:
+    """T1 — Handler raises before yielding; stream=True → SSE stream contains only a standalone error event.
+
+    B8: The standalone ``error`` event must be the only event; ``response.created`` must NOT appear.
+    """
+    app = Starlette()
+    map_responses_server(app, _throwing_before_yield_handler)
+    client = TestClient(app, raise_server_exceptions=False)
+
+    with client.stream(
+        "POST",
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hello", "stream": True, "store": True, "background": False},
+    ) as response:
+        assert response.status_code == 200
+        events = _collect_stream_events(response)
+
+    event_types = [e["type"] for e in events]
+    assert event_types == ["error"], (
+        f"Pre-creation error must produce exactly one 'error' event, got: {event_types}"
+    )
+    assert "response.created" not in event_types
+
+
+def test_stream_post_creation_error_emits_response_failed() -> None:
+    """T2 — Handler raises after response.created; stream=True → SSE ends with response.failed.
+
+    B-13: After response.created, handler failures surface as ``response.failed``, not raw ``error``.
+    """
+    app = Starlette()
+    map_responses_server(app, _throwing_after_created_handler)
+    client = TestClient(app, raise_server_exceptions=False)
+
+    with client.stream(
+        "POST",
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hello", "stream": True, "store": True, "background": False},
+    ) as response:
+        assert response.status_code == 200
+        events = _collect_stream_events(response)
+
+    event_types = [e["type"] for e in events]
+    assert "response.failed" in event_types, (
+        f"Expected response.failed terminal after post-creation error, got: {event_types}"
+    )
+    assert "error" not in event_types, (
+        f"No standalone error event expected after response.created, got: {event_types}"
+    )
+    # Exactly one terminal event
+    terminal_types = {"response.completed", "response.failed", "response.incomplete"}
+    assert sum(1 for t in event_types if t in terminal_types) == 1
+
+
+def test_stream_empty_handler_emits_full_lifecycle() -> None:
+    """T3 — Handler yields zero events; _process_handler_events synthesises full lifecycle.
+
+    The SSE stream must contain response.created → response.in_progress → response.completed.
+    """
+    app = Starlette()
+    map_responses_server(app, _noop_response_handler)
+    client = TestClient(app)
+
+    with client.stream(
+        "POST",
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hello", "stream": True, "store": True, "background": False},
+    ) as response:
+        assert response.status_code == 200
+        events = _collect_stream_events(response)
+
+    event_types = [e["type"] for e in events]
+    assert "response.created" in event_types, f"Missing response.created: {event_types}"
+    assert "response.in_progress" in event_types, f"Missing response.in_progress: {event_types}"
+    terminal_types = {"response.completed", "response.failed", "response.incomplete"}
+    assert any(t in terminal_types for t in event_types), (
+        f"Missing terminal event in: {event_types}"
+    )
+    # created must come before in_progress which must come before terminal
+    created_idx = event_types.index("response.created")
+    in_progress_idx = event_types.index("response.in_progress")
+    terminal_idx = next(i for i, t in enumerate(event_types) if t in terminal_types)
+    assert created_idx < in_progress_idx < terminal_idx, (
+        f"Lifecycle order violated: {event_types}"
+    )
+
+
+def test_stream_sequence_numbers_monotonic() -> None:
+    """T4 — SSE events from a streaming response have strictly monotonically increasing sequence numbers starting at 0."""
+    app = Starlette()
+    map_responses_server(app, _noop_response_handler)
+    client = TestClient(app)
+
+    with client.stream(
+        "POST",
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hello", "stream": True, "store": True, "background": False},
+    ) as response:
+        assert response.status_code == 200
+        events = _collect_stream_events(response)
+
+    assert events, "Expected at least one SSE event"
+    sequence_numbers = [e["data"].get("sequence_number") for e in events]
+    assert all(isinstance(sn, int) for sn in sequence_numbers), (
+        f"All events must carry an integer sequence_number, got: {sequence_numbers}"
+    )
+    assert sequence_numbers[0] == 0, f"First sequence_number must be 0, got {sequence_numbers[0]}"
+    assert sequence_numbers == sorted(sequence_numbers), (
+        f"Sequence numbers must be monotonically non-decreasing: {sequence_numbers}"
+    )
+    assert len(set(sequence_numbers)) == len(sequence_numbers), (
+        f"Sequence numbers must be unique (strictly increasing): {sequence_numbers}"
+    )

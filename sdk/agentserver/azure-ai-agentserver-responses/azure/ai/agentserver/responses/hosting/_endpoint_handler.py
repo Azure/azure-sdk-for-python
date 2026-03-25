@@ -38,13 +38,11 @@ from ._observability import build_create_span_tags, start_create_span
 from ._orchestrator import _HandlerError, _ResponseOrchestrator
 from ._request_parsing import (
     _apply_item_cursors,
-    _extract_input_items,
     _extract_item_id,
-    _extract_previous_response_id,
     _prevalidate_identity_payload,
     _resolve_identity_fields,
 )
-from ._runtime_state import _RuntimeState, _ExecutionRecord
+from ._runtime_state import _RuntimeState
 from ._validation import parse_and_validate_create_response
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ..streaming._helpers import EVENT_TYPE
@@ -167,8 +165,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         store = True if getattr(parsed, "store", None) is None else bool(parsed.store)
         background = bool(getattr(parsed, "background", False))
         model = getattr(parsed, "model", None)
-        input_items = _extract_input_items(payload)
-        previous_response_id = _extract_previous_response_id(payload)
+        input_items = [deepcopy(item) for item in (parsed.input or []) if isinstance(item, dict)]
+        previous_response_id: str | None = (
+            parsed.previous_response_id
+            if isinstance(parsed.previous_response_id, str) and parsed.previous_response_id
+            else None
+        )
         mode_flags = ResponseModeFlags(stream=stream, store=store, background=background)
         context = ResponseContext(
             response_id=response_id,
@@ -202,7 +204,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             context=context,
             span=span,
             parsed=parsed,
-            captured_error=captured_error,
         )
 
         if stream:
@@ -325,7 +326,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if not record.visible_via_get:
             return _not_found(response_id, self._response_headers)
 
-        return JSONResponse(record.to_snapshot(), status_code=200, headers=self._response_headers)
+        return JSONResponse(_RuntimeState.to_snapshot(record), status_code=200, headers=self._response_headers)
 
     async def handle_delete(self, request: Request) -> Response:
         """Route handler for ``DELETE /responses/{response_id}``.
@@ -342,7 +343,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         _refresh_background_status(record)
 
-        if record.background and record.status in {"queued", "in_progress"}:
+        if record.mode_flags.background and record.status in {"queued", "in_progress"}:
             return _invalid_request(
                 "Cannot delete an in-flight response.",
                 self._response_headers,
@@ -353,7 +354,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if not deleted:
             return _not_found(response_id, self._response_headers)
 
-        if record.store:
+        if record.mode_flags.store:
             try:
                 await self._provider.delete_response_async(response_id)
             except Exception:  # pylint: disable=broad-exception-caught
@@ -380,7 +381,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         _refresh_background_status(record)
 
-        if not record.background:
+        if not record.mode_flags.background:
             return _invalid_request(
                 "Cannot cancel a synchronous response.",
                 self._response_headers,
@@ -509,7 +510,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
             record.cancel_signal.set()
 
-            if record.background and record.status in {"queued", "in_progress"}:
+            if record.mode_flags.background and record.status in {"queued", "in_progress"}:
                 record.set_response_snapshot(
                     build_cancelled_response(record.response_id, record.agent_reference, record.model)
                 )
@@ -522,8 +523,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             pending = [
                 record
                 for record in records
-                if record.background
-                and record.background_execution_started
+                if record.mode_flags.background
+                and record.execution_task is not None
                 and record.status in {"queued", "in_progress"}
             ]
             if not pending:
