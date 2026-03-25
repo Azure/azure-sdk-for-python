@@ -45,23 +45,24 @@ clients, focusing on edge cases like:
 
 ### 1. Python environment
 
-These tests run against the **local editable install** of `azure-ai-ml`. Use the
-repo's venv (or any venv with the package installed):
+These tests run against a **pre-built wheel** of `azure-ai-ml` (a release
+candidate produced by the CI pipeline). Place the `.whl` file in this
+`scenario_tests/` folder and install it into a fresh venv:
 
 ```powershell
-# From the repo root — the venv at C:\Repos\azure-sdk-for-python\venv already
-# has azure-ai-ml and its dependencies installed in editable mode.
-& c:\Repos\azure-sdk-for-python\venv\Scripts\Activate.ps1
-```
+python -m venv .venv
+& .\.venv\Scripts\Activate.ps1
 
-If you need to set up a fresh venv:
-
-```powershell
-python -m venv venv
-& .\venv\Scripts\Activate.ps1
-pip install -e sdk/ml/azure-ai-ml
+# Install the RC wheel from this folder (the same wheel can be used for
+# sample testing and manual validation)
+pip install azure_ai_ml-<version>-py3-none-any.whl
 pip install pytest pytest-timeout azure-identity
 ```
+
+> **Tip:** You can also install directly by glob if there is exactly one wheel:
+> ```powershell
+> pip install (Get-Item *.whl).FullName
+> ```
 
 ### 2. Environment variables
 
@@ -118,9 +119,6 @@ python -m pytest test_scenario_connections_compute_jobs.py -v -s --timeout=900
 
 # Run all scenarios (may take 30+ minutes)
 python -m pytest . -v -s --timeout=1800
-
-# Run with the repo venv explicitly (if not activated)
-& c:\Repos\azure-sdk-for-python\venv\Scripts\python.exe -m pytest . -v -s
 ```
 
 ## Troubleshooting
@@ -129,7 +127,7 @@ python -m pytest . -v -s --timeout=1800
 |-------|-------|-----|
 | `ModuleNotFoundError: No module named 'devtools_testutils'` | Running from wrong directory; parent `conftest.py` is loaded | `cd` into `tests/scenario_tests/` before running |
 | `ModuleNotFoundError: No module named 'azure.mgmt'` | Missing `azure-mgmt-core` | `pip install azure-mgmt-core` |
-| `ModuleNotFoundError: No module named 'msrest'` | Missing `msrest` | `pip install msrest` (or `pip install -e sdk/ml/azure-ai-ml`) |
+| `ModuleNotFoundError: No module named 'msrest'` | Missing `msrest` | `pip install msrest` |
 | `KeyBasedAuthenticationNotPermitted` | Workspace storage has key auth disabled | Test will `pytest.skip()` automatically; or use a workspace with storage keys enabled |
 | `KeyError: 'ML_SUBSCRIPTION_ID'` | Env vars not set | Set `$env:ML_SUBSCRIPTION_ID` etc. |
 | `AttributeError: 'dict' object has no attribute '_to_compute_rest_object'` | Identity passed as dict instead of `IdentityConfiguration` | Already fixed — use `IdentityConfiguration(type="system_assigned")` |
