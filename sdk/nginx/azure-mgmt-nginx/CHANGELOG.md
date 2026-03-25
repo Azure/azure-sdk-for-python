@@ -1,5 +1,98 @@
 # Release History
 
+## 4.0.0 (2026-03-18)
+
+### Features Added
+
+  - Model `NginxManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `NginxManagementClient` added method `send_request`
+  - Client `NginxManagementClient` added operation group `nginx_deployment_waf_policies`
+  - Client `NginxManagementClient` added operation group `api_keys`
+  - Client `NginxManagementClient` added operation group `waf_policy`
+  - Client `NginxManagementClient` added operation group `default_waf_policy`
+  - Model `NginxCertificateProperties` added property `sha1_thumbprint`
+  - Model `NginxCertificateProperties` added property `key_vault_secret_version`
+  - Model `NginxCertificateProperties` added property `key_vault_secret_created`
+  - Model `NginxCertificateProperties` added property `certificate_error`
+  - Model `NginxDeploymentProperties` added property `auto_upgrade_profile`
+  - Model `NginxDeploymentProperties` added property `nginx_app_protect`
+  - Model `NginxDeploymentProperties` added property `dataplane_api_endpoint`
+  - Model `NginxDeploymentScalingProperties` added property `auto_scale_settings`
+  - Model `NginxDeploymentUpdateProperties` added property `network_profile`
+  - Model `NginxDeploymentUpdateProperties` added property `auto_upgrade_profile`
+  - Model `NginxDeploymentUpdateProperties` added property `nginx_app_protect`
+  - Added enum `ActionType`
+  - Added enum `ActivationState`
+  - Added model `AnalysisCreate`
+  - Added model `AnalysisCreateConfig`
+  - Added model `AnalysisDiagnostic`
+  - Added model `AnalysisResult`
+  - Added model `AnalysisResultData`
+  - Added model `AutoUpgradeProfile`
+  - Added model `DiagnosticItem`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ErrorResponse`
+  - Added enum `Level`
+  - Added model `NginxCertificateErrorResponseBody`
+  - Added model `NginxConfigurationProtectedFileRequest`
+  - Added model `NginxConfigurationProtectedFileResponse`
+  - Added model `NginxConfigurationRequest`
+  - Added model `NginxConfigurationRequestProperties`
+  - Added model `NginxConfigurationResponse`
+  - Added model `NginxConfigurationResponseProperties`
+  - Added model `NginxDeploymentApiKeyRequest`
+  - Added model `NginxDeploymentApiKeyRequestProperties`
+  - Added model `NginxDeploymentApiKeyResponse`
+  - Added model `NginxDeploymentApiKeyResponseProperties`
+  - Added model `NginxDeploymentDefaultWafPolicyListResponse`
+  - Added model `NginxDeploymentDefaultWafPolicyProperties`
+  - Added model `NginxDeploymentPropertiesNginxAppProtect`
+  - Added model `NginxDeploymentScalingPropertiesAutoScaleSettings`
+  - Added model `NginxDeploymentUpdatePropertiesNginxAppProtect`
+  - Added model `NginxDeploymentWafPolicy`
+  - Added model `NginxDeploymentWafPolicyAnalysisCreateRequest`
+  - Added model `NginxDeploymentWafPolicyAnalysisData`
+  - Added model `NginxDeploymentWafPolicyAnalysisResponse`
+  - Added model `NginxDeploymentWafPolicyApplyingStatus`
+  - Added enum `NginxDeploymentWafPolicyApplyingStatusCode`
+  - Added model `NginxDeploymentWafPolicyCompilingStatus`
+  - Added enum `NginxDeploymentWafPolicyCompilingStatusCode`
+  - Added model `NginxDeploymentWafPolicyError`
+  - Added model `NginxDeploymentWafPolicyMetadata`
+  - Added model `NginxDeploymentWafPolicyMetadataProperties`
+  - Added model `NginxDeploymentWafPolicyProperties`
+  - Added model `Operation`
+  - Added enum `Origin`
+  - Added model `ProxyResource`
+  - Added model `Resource`
+  - Added model `ScaleProfile`
+  - Added model `ScaleProfileCapacity`
+  - Added model `TrackedResource`
+  - Added model `WebApplicationFirewallComponentVersions`
+  - Added model `WebApplicationFirewallPackage`
+  - Added model `WebApplicationFirewallSettings`
+  - Added model `WebApplicationFirewallStatus`
+  - Operation group `ConfigurationsOperations` added method `analysis`
+  - Added operation group `ApiKeysOperations`
+  - Added operation group `DefaultWafPolicyOperations`
+  - Added operation group `NginxDeploymentWafPoliciesOperations`
+  - Added operation group `WafPolicyOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `NginxDeploymentProperties` deleted or renamed its instance variable `managed_resource_group`
+  - Deleted or renamed model `ErrorResponseBody`
+  - Deleted or renamed model `NginxConfiguration`
+  - Deleted or renamed model `NginxConfigurationProperties`
+  - Deleted or renamed model `OperationResult`
+  - Deleted or renamed model `ResourceProviderDefaultErrorResponse`
+
+### Other Changes
+
+  - Deleted models `NginxCertificateListResponse`/`NginxConfigurationListResponse`/`NginxDeploymentListResponse` which actually were not used by SDK users
+
 ## 3.1.0b3 (2026-02-10)
 
 ### Features Added
