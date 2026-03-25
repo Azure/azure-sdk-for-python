@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2025-08-01-preview",
+  "apiVersions": {
+    "Microsoft.AppLink": "2025-08-01-preview"
+  },
+  "commit": "fa796d6c7f53bdd2aa37a2559fca504722e137c4",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/applink/AppLink.Management",
+  "emitterVersion": "0.61.0"
+}
