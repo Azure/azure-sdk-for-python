@@ -2,7 +2,14 @@
 
 ## 4.11.0 (2026-03-23)
 
-skip changelog generation for data-plane package and please add changelog manually.
+### Features Added
+
+- Added support for service API version `2025-07-01`
+- Added `ip_addresses` and `uniform_resource_identifiers` properties to `SubjectAlternativeNames` model
+
+### Other Changes
+
+- Key Vault API version `2025-07-01` is now the default
 
 ## 4.10.1 (Unreleased)
 
