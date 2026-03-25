@@ -2,7 +2,84 @@
 
 ## 3.2.0b1 (2026-03-25)
 
-skip changelog generation
+### Features Added
+
+  - Client `RedisEnterpriseManagementClient` added method `send_request`
+  - Model `AccessPolicyAssignment` added property `system_data`
+  - Model `Cluster` added property `properties`
+  - Model `Cluster` added property `system_data`
+  - Model `ClusterUpdate` added property `properties`
+  - Model `Database` added property `properties`
+  - Model `Migration` added property `properties`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `PrivateLinkResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+
+### Breaking Changes
+
+  - Model `Cluster` deleted or renamed its instance variable `high_availability`
+  - Model `Cluster` deleted or renamed its instance variable `minimum_tls_version`
+  - Model `Cluster` deleted or renamed its instance variable `encryption`
+  - Model `Cluster` deleted or renamed its instance variable `maintenance_configuration`
+  - Model `Cluster` deleted or renamed its instance variable `host_name`
+  - Model `Cluster` deleted or renamed its instance variable `provisioning_state`
+  - Model `Cluster` deleted or renamed its instance variable `redundancy_mode`
+  - Model `Cluster` deleted or renamed its instance variable `resource_state`
+  - Model `Cluster` deleted or renamed its instance variable `redis_version`
+  - Model `Cluster` deleted or renamed its instance variable `private_endpoint_connections`
+  - Model `Cluster` deleted or renamed its instance variable `public_network_access`
+  - Model `ClusterUpdate` deleted or renamed its instance variable `high_availability`
+  - Model `ClusterUpdate` deleted or renamed its instance variable `minimum_tls_version`
+  - Model `ClusterUpdate` deleted or renamed its instance variable `encryption`
+  - Model `ClusterUpdate` deleted or renamed its instance variable `maintenance_configuration`
+  - Model `ClusterUpdate` deleted or renamed its instance variable `host_name`
+  - Model `ClusterUpdate` deleted or renamed its instance variable `provisioning_state`
+  - Model `ClusterUpdate` deleted or renamed its instance variable `redundancy_mode`
+  - Model `ClusterUpdate` deleted or renamed its instance variable `resource_state`
+  - Model `ClusterUpdate` deleted or renamed its instance variable `redis_version`
+  - Model `ClusterUpdate` deleted or renamed its instance variable `private_endpoint_connections`
+  - Model `ClusterUpdate` deleted or renamed its instance variable `public_network_access`
+  - Model `Database` deleted or renamed its instance variable `client_protocol`
+  - Model `Database` deleted or renamed its instance variable `port`
+  - Model `Database` deleted or renamed its instance variable `provisioning_state`
+  - Model `Database` deleted or renamed its instance variable `resource_state`
+  - Model `Database` deleted or renamed its instance variable `clustering_policy`
+  - Model `Database` deleted or renamed its instance variable `eviction_policy`
+  - Model `Database` deleted or renamed its instance variable `persistence`
+  - Model `Database` deleted or renamed its instance variable `modules`
+  - Model `Database` deleted or renamed its instance variable `geo_replication`
+  - Model `Database` deleted or renamed its instance variable `redis_version`
+  - Model `Database` deleted or renamed its instance variable `defer_upgrade`
+  - Model `Database` deleted or renamed its instance variable `access_keys_authentication`
+  - Model `DatabaseUpdate` deleted or renamed its instance variable `client_protocol`
+  - Model `DatabaseUpdate` deleted or renamed its instance variable `port`
+  - Model `DatabaseUpdate` deleted or renamed its instance variable `provisioning_state`
+  - Model `DatabaseUpdate` deleted or renamed its instance variable `resource_state`
+  - Model `DatabaseUpdate` deleted or renamed its instance variable `clustering_policy`
+  - Model `DatabaseUpdate` deleted or renamed its instance variable `eviction_policy`
+  - Model `DatabaseUpdate` deleted or renamed its instance variable `persistence`
+  - Model `DatabaseUpdate` deleted or renamed its instance variable `modules`
+  - Model `DatabaseUpdate` deleted or renamed its instance variable `geo_replication`
+  - Model `DatabaseUpdate` deleted or renamed its instance variable `redis_version`
+  - Model `DatabaseUpdate` deleted or renamed its instance variable `defer_upgrade`
+  - Model `DatabaseUpdate` deleted or renamed its instance variable `access_keys_authentication`
+  - Model `Migration` deleted or renamed its instance variable `source_type`
+  - Model `Migration` deleted or renamed its instance variable `target_resource_id`
+  - Model `Migration` deleted or renamed its instance variable `provisioning_state`
+  - Model `Migration` deleted or renamed its instance variable `status_details`
+  - Model `Migration` deleted or renamed its instance variable `creation_time`
+  - Model `Migration` deleted or renamed its instance variable `last_modified_time`
+  - Method `Module.__init__` removed default value `None` from its parameter `args`
+  - Method `Module.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
+  - Deleted or renamed model `AccessPolicyAssignmentList`
+  - Deleted or renamed model `ClusterList`
+  - Deleted or renamed model `DatabaseList`
+  - Deleted or renamed model `ErrorDetailAutoGenerated`
+  - Deleted or renamed model `ErrorResponseAutoGenerated`
+  - Deleted or renamed model `MigrationList`
+  - Deleted or renamed model `ProxyResourceAutoGenerated`
+  - Deleted or renamed model `ResourceAutoGenerated`
 
 ## 3.1.0 (2025-10-20)
 
