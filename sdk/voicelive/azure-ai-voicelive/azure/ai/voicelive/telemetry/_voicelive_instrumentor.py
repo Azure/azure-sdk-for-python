@@ -17,6 +17,7 @@ from typing import Any, Callable, Dict, Optional, Tuple
 from azure.core.settings import settings
 from azure.core.tracing import AbstractSpan
 
+from ..models._enums import ClientEventType, ServerEventType
 from ._utils import (
     AZ_AI_VOICELIVE_SYSTEM,
     ERROR_TYPE,
@@ -451,7 +452,7 @@ class _VoiceLiveInstrumentorPreview:
 
             # Track audio bytes for input_audio_buffer.append
             event_type_str = str(event_type) if event_type else ""
-            if "input_audio_buffer.append" in event_type_str:
+            if ClientEventType.INPUT_AUDIO_BUFFER_APPEND in event_type_str:
                 audio_data = None
                 if hasattr(event, "get"):
                     audio_data = event.get("audio")
@@ -466,17 +467,17 @@ class _VoiceLiveInstrumentorPreview:
                     conn_self._telemetry_audio_bytes_sent = current + audio_bytes
 
             # Track response.cancel for interruption count
-            if "response.cancel" in event_type_str:
+            if ClientEventType.RESPONSE_CANCEL in event_type_str:
                 current = getattr(conn_self, "_telemetry_interruption_count", 0)
                 conn_self._telemetry_interruption_count = current + 1
 
             # Track response.create timestamp for first-token latency
-            if "response.create" in event_type_str:
+            if ClientEventType.RESPONSE_CREATE in event_type_str:
                 conn_self._telemetry_response_create_time = time.monotonic()
                 conn_self._telemetry_first_token_latency_recorded = False
 
             # Extract audio format from session.update
-            if "session.update" in event_type_str:
+            if ClientEventType.SESSION_UPDATE in event_type_str:
                 instrumentor._extract_audio_format_from_send(conn_self, event)
 
             op_name = OperationName.SEND
@@ -577,11 +578,11 @@ class _VoiceLiveInstrumentorPreview:
                     instrumentor._add_recv_event(span, event_type_str if event_type else None, content_str)
 
                     # --- Session ID tracking ---
-                    if event_type_str in ("session.created", "session.updated"):
+                    if event_type_str in (ServerEventType.SESSION_CREATED, ServerEventType.SESSION_UPDATED):
                         instrumentor._extract_session_id(conn_self, result)
 
                     # --- First-token latency ---
-                    if event_type_str in ("response.audio.delta", "response.text.delta"):
+                    if event_type_str in (ServerEventType.RESPONSE_AUDIO_DELTA, ServerEventType.RESPONSE_TEXT_DELTA):
                         response_create_time = getattr(conn_self, "_telemetry_response_create_time", None)
                         already_recorded = getattr(conn_self, "_telemetry_first_token_latency_recorded", True)
                         if response_create_time is not None and not already_recorded:
@@ -594,7 +595,7 @@ class _VoiceLiveInstrumentorPreview:
                             conn_self._telemetry_first_token_latency_recorded = True
 
                     # --- Audio bytes received ---
-                    if event_type_str == "response.audio.delta":
+                    if event_type_str == ServerEventType.RESPONSE_AUDIO_DELTA:
                         delta = None
                         if hasattr(result, "get"):
                             delta = result.get("delta")
@@ -609,12 +610,12 @@ class _VoiceLiveInstrumentorPreview:
                             conn_self._telemetry_audio_bytes_received = current + audio_bytes
 
                     # --- Turn count ---
-                    if event_type_str == "response.done":
+                    if event_type_str == ServerEventType.RESPONSE_DONE:
                         current = getattr(conn_self, "_telemetry_turn_count", 0)
                         conn_self._telemetry_turn_count = current + 1
 
                     # --- Rate limit / error events ---
-                    if event_type_str in ("error", "rate_limits.updated"):
+                    if event_type_str in (ServerEventType.ERROR, "rate_limits.updated"):
                         instrumentor._add_rate_limit_event(span, event_type_str, result)
 
                     # Capture token usage if present on the event
