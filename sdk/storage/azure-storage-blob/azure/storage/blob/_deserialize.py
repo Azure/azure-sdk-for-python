@@ -86,7 +86,7 @@ def deserialize_ors_policies(policy_dictionary: Optional[Dict[str, str]]) -> Opt
 
     return result_list
 
-# TODO: iter_bytes and iter_raw return generators so for this we can't directly call obj.properties anymor
+# iter_bytes and iter_raw return generators
 class _DownloadResponse:
     """Wrapper for download response that holds the stream, properties, and content length.
 
