@@ -11,7 +11,6 @@ import logging
 from marshmallow import fields, post_load
 
 from azure.ai.ml._schema.assets.environment import AnonymousEnvironmentSchema, EnvironmentSchema
-from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml._schema.core.fields import (
     ArmVersionedStr,
     NestedField,
@@ -21,7 +20,9 @@ from azure.ai.ml._schema.core.fields import (
     VersionField,
 )
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.constants._common import AzureMLResourceType
 
+from .accelerator_map_schema import AcceleratorMapSchema
 from .probe_settings_schema import ProbeSettingsSchema
 from .request_settings_schema import RequestSettingsSchema
 
@@ -56,6 +57,7 @@ class DeploymentTemplateSchema(PathAwareSchema):
     )
     scoring_port = fields.Int()
     scoring_path = fields.Str()
+    accelerator_maps = fields.List(NestedField(AcceleratorMapSchema))
 
     @post_load
     def make(self, data, **kwargs):  # pylint: disable=unused-argument
