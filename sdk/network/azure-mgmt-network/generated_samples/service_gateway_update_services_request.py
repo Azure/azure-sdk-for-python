@@ -61,6 +61,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2025-05-01/examples/ServiceGatewayUpdateServicesRequest.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/Network/stable/2025-05-01/examples/ServiceGatewayUpdateServicesRequest.json
 if __name__ == "__main__":
     main()

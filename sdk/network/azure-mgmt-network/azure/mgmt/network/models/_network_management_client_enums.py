@@ -1172,7 +1172,6 @@ class Geo(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ME = "ME"
     OCEANIA = "OCEANIA"
     AQ = "AQ"
-    GLOBAL_ENUM = "GLOBAL"
 
 
 class GroupConnectivity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1401,7 +1400,6 @@ class LoadBalancerSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     REGIONAL = "Regional"
     GLOBAL = "Global"
-    GLOBAL_ENUM = "Global"
 
 
 class LoadDistribution(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1504,7 +1502,6 @@ class NextStep(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNKNOWN = "Unknown"
     CONTINUE = "Continue"
     TERMINATE = "Terminate"
-    CONTINUE_ENUM = "Continue"
 
 
 class NicTypeInRequest(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1817,7 +1814,6 @@ class PublicIPAddressSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     REGIONAL = "Regional"
     GLOBAL = "Global"
-    GLOBAL_ENUM = "Global"
 
 
 class PublicIPPrefixSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1832,7 +1828,6 @@ class PublicIPPrefixSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     REGIONAL = "Regional"
     GLOBAL = "Global"
-    GLOBAL_ENUM = "Global"
 
 
 class ResiliencyModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
