@@ -1,0 +1,27 @@
+{
+    "CrossLanguagePackageId": null,
+    "CrossLanguageDefinitionId": {
+        "azure.mgmt.servicegroups.models.ErrorAdditionalInfo": null,
+        "azure.mgmt.servicegroups.models.ErrorDetail": null,
+        "azure.mgmt.servicegroups.models.ErrorResponse": null,
+        "azure.mgmt.servicegroups.models.ParentServiceGroupProperties": null,
+        "azure.mgmt.servicegroups.models.Resource": null,
+        "azure.mgmt.servicegroups.models.ProxyResource": null,
+        "azure.mgmt.servicegroups.models.ServiceGroup": null,
+        "azure.mgmt.servicegroups.models.ServiceGroupCollectionResponse": null,
+        "azure.mgmt.servicegroups.models.ServiceGroupProperties": null,
+        "azure.mgmt.servicegroups.models.SystemData": null,
+        "azure.mgmt.servicegroups.models.CreatedByType": null,
+        "azure.mgmt.servicegroups.models.ProvisioningState": null,
+        "azure.mgmt.servicegroups.operations.ServiceGroupsOperations.get": null,
+        "azure.mgmt.servicegroups.aio.operations.ServiceGroupsOperations.get": null,
+        "azure.mgmt.servicegroups.operations.ServiceGroupsOperations.list_ancestors": null,
+        "azure.mgmt.servicegroups.aio.operations.ServiceGroupsOperations.list_ancestors": null,
+        "azure.mgmt.servicegroups.GroupsRPAPIs.begin_create_or_update_service_group": null,
+        "azure.mgmt.servicegroups.aio.GroupsRPAPIs.begin_create_or_update_service_group": null,
+        "azure.mgmt.servicegroups.GroupsRPAPIs.begin_update_service_group": null,
+        "azure.mgmt.servicegroups.aio.GroupsRPAPIs.begin_update_service_group": null,
+        "azure.mgmt.servicegroups.GroupsRPAPIs.begin_delete_service_group": null,
+        "azure.mgmt.servicegroups.aio.GroupsRPAPIs.begin_delete_service_group": null
+    }
+}
