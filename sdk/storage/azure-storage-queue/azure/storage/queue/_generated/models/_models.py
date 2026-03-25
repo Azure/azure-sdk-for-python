@@ -600,7 +600,7 @@ class PeekedMessage(_Model):
     )
     """The content of the Message. Required."""
 
-    _xml = {"attribute": False, "name": "PeekedMessage", "text": False, "unwrapped": False}
+    _xml = {"attribute": False, "name": "QueueMessage", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -896,7 +896,7 @@ class ReceivedMessage(_Model):
     )
     """The content of the message. Required."""
 
-    _xml = {"attribute": False, "name": "ReceivedMessage", "text": False, "unwrapped": False}
+    _xml = {"attribute": False, "name": "QueueMessage", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
@@ -1051,7 +1051,7 @@ class SentMessage(_Model):
     )
     """The time that the message will again become visible in the Queue. Required."""
 
-    _xml = {"attribute": False, "name": "SentMessage", "text": False, "unwrapped": False}
+    _xml = {"attribute": False, "name": "QueueMessage", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
