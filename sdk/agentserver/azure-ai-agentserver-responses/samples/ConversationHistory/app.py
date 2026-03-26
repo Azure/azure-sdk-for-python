@@ -11,7 +11,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import Any
 
-from azure.ai.agentserver.hosting import AgentServer
+from azure.ai.agentserver.core import AgentServer
 from azure.ai.agentserver.responses._response_context import ResponseContext
 from azure.ai.agentserver.responses.models._generated.sdk.models._types import InputParam
 from azure.ai.agentserver.responses.models._generated.sdk.models.models._models import CreateResponse, OutputItem

@@ -16,14 +16,14 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 from starlette.routing import Route
 
-from azure.ai.agentserver.hosting import (  # pylint: disable=no-name-in-module
+from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     AgentLogger,
     Constants,
     ErrorResponse,
 )
 
 if TYPE_CHECKING:
-    from azure.ai.agentserver.hosting import AgentServer, TracingHelper
+    from azure.ai.agentserver.core import AgentServer, TracingHelper
 
 from ._constants import InvocationConstants
 
@@ -43,7 +43,7 @@ class InvocationHandler:
 
     Usage::
 
-        from azure.ai.agentserver.hosting import AgentServer
+        from azure.ai.agentserver.core import AgentServer
         from azure.ai.agentserver.invocations import InvocationHandler
 
         server = AgentServer()

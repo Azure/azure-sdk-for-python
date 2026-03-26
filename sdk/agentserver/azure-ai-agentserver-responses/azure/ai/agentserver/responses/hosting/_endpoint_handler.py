@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING, Any
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
-from azure.ai.agentserver.hosting import AgentLogger
+from azure.ai.agentserver.core import AgentLogger
 from azure.ai.agentserver.responses.models._generated.sdk.models.models._models import CreateResponse
 
 from .._response_context import ResponseContext
@@ -51,7 +51,7 @@ from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtoc
 from ..streaming._helpers import EVENT_TYPE
 
 if TYPE_CHECKING:
-    from azure.ai.agentserver.hosting import TracingHelper
+    from azure.ai.agentserver.core import TracingHelper
 
 logger = AgentLogger.get()
 

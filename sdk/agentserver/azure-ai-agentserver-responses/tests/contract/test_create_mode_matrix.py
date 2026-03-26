@@ -13,7 +13,7 @@ from typing import Any
 import pytest
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.hosting import AgentServer
+from azure.ai.agentserver.core import AgentServer
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 
 

@@ -48,7 +48,7 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from azure.ai.agentserver.hosting import AgentServer
+from azure.ai.agentserver.core import AgentServer
 from azure.ai.agentserver.invocations import InvocationHandler
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream

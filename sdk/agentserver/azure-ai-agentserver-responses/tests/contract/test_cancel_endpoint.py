@@ -11,7 +11,7 @@ from typing import Any
 import pytest
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.hosting import AgentServer
+from azure.ai.agentserver.core import AgentServer
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from tests._helpers import EventGate, poll_until
