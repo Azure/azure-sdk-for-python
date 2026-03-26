@@ -18,19 +18,24 @@ Two classes are exported:
     most developers should use.
 """
 import asyncio
-import dataclasses
-import json
 import logging as _logging
 import os
 import pathlib
 import time
-import uuid
 from typing import Any, AsyncGenerator, Dict, Optional, Union
 
 from copilot import CopilotClient
 from copilot.generated.session_events import SessionEventType
-from copilot.types import PermissionRequestResult, ProviderConfig
-from opentelemetry import context as otel_context, trace
+
+# These types move between SDK versions/platforms. Try multiple paths.
+try:
+    from copilot import PermissionRequestResult, ProviderConfig
+except ImportError:
+    try:
+        from copilot.types import PermissionRequestResult, ProviderConfig
+    except ImportError:
+        PermissionRequestResult = None
+        ProviderConfig = dict
 
 from azure.ai.agentserver.core.constants import Constants
 from azure.ai.agentserver.core.logger import get_logger
@@ -51,7 +56,7 @@ from azure.ai.agentserver.core.server.base import FoundryCBAgent
 from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
 
 from ._copilot_request_converter import ConvertedAttachments, CopilotRequestConverter
-from ._copilot_response_converter import CopilotResponseConverter, CopilotStreamingResponseConverter
+from ._copilot_response_converter import CopilotResponseConverter
 from ._tool_acl import ToolAcl
 
 logger = get_logger()
@@ -187,13 +192,21 @@ class CopilotAdapter(FoundryCBAgent):
         if os.getenv("AZURE_AI_FOUNDRY_RESOURCE_URL") and not os.getenv("AZURE_AI_FOUNDRY_API_KEY"):
             from azure.identity import DefaultAzureCredential
             self._credential = DefaultAzureCredential()
+        else:
+            self._credential = None
 
     def _refresh_token_if_needed(self) -> Dict[str, Any]:
         """Return the session config, refreshing the bearer token if using Foundry."""
-        if self._credential is None or "provider" not in self._session_config:
+        if "provider" not in self._session_config:
             return self._session_config
-        token = self._credential.get_token(_COGNITIVE_SERVICES_SCOPE).token
-        self._session_config["provider"]["bearer_token"] = token
+
+        if self._credential is not None:
+            token = self._credential.get_token(_COGNITIVE_SERVICES_SCOPE).token
+            # ProviderConfig is a TypedDict (dict subclass) — dict-style access works.
+            self._session_config["provider"]["bearer_token"] = token
+            return self._session_config
+
+        # Static API key — no refresh needed
         return self._session_config
 
     async def _ensure_client(self) -> CopilotClient:
@@ -221,17 +234,22 @@ class CopilotAdapter(FoundryCBAgent):
 
         acl = self._acl
 
+        def _perm_result(**kwargs):
+            if PermissionRequestResult is not None:
+                return PermissionRequestResult(**kwargs)
+            return kwargs
+
         def _on_permission(req, _ctx):
             kind = getattr(req, "kind", "unknown")
             if acl is None:
                 logger.info(f"Auto-approving tool request (no ACL): kind={kind}")
-                return PermissionRequestResult(kind="approved")
+                return _perm_result(kind="approved")
             req_dict = vars(req) if not isinstance(req, dict) else req
             if acl.is_allowed(req_dict):
                 logger.info(f"ACL allowed tool request: kind={kind}")
-                return PermissionRequestResult(kind="approved")
+                return _perm_result(kind="approved")
             logger.warning(f"ACL denied tool request: kind={kind}")
-            return PermissionRequestResult(kind="denied-by-rules", rules=[])
+            return _perm_result(kind="denied-by-rules", rules=[])
 
         conversation_id = context.conversation_id
         session = self._sessions.get(conversation_id) if conversation_id else None
@@ -484,8 +502,16 @@ class GitHubCopilotAdapter(CopilotAdapter):
         return cls(project_root=str(root), **kwargs)
 
     async def _load_conversation_history(self, conversation_id: str) -> Optional[str]:
-        """Load prior conversation turns from Foundry for cold-start bootstrap."""
-        if not self._project_endpoint:
+        """Load prior conversation turns from Foundry for cold-start bootstrap.
+
+        Requires ``_project_endpoint`` and ``_create_openai_client`` from the
+        ``FoundryCBAgent`` base class.  If unavailable (e.g. older agentserver-core
+        version), history loading is silently skipped.
+        """
+        if not getattr(self, "_project_endpoint", None):
+            return None
+        if not hasattr(self, "_create_openai_client"):
+            logger.debug("Base class does not provide _create_openai_client — skipping history")
             return None
         try:
             openai_client = await self._create_openai_client()
@@ -532,9 +558,14 @@ class GitHubCopilotAdapter(CopilotAdapter):
             if history:
                 client = await self._ensure_client()
                 config = self._refresh_token_if_needed()
+                def _approve_all(req, _ctx):
+                    if PermissionRequestResult is not None:
+                        return PermissionRequestResult(kind="approved")
+                    return {"kind": "approved"}
+
                 session = await client.create_session(
                     **config,
-                    on_permission_request=lambda req, _ctx: PermissionRequestResult(kind="approved"),
+                    on_permission_request=_approve_all,
                 )
                 preamble = (
                     "The following is the prior conversation history. "

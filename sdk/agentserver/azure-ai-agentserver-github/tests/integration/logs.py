@@ -2,8 +2,7 @@
 """Stream live container console logs from a deployed hosted agent.
 
 Usage:
-    python scripts/logs.py --name my-agent --session <session-id>
-    python scripts/logs.py --name my-agent  # uses last session from invoke output
+    python tests/integration/logs.py --name my-agent --session <session-id>
 
 Environment (from .env or shell):
     AZURE_AI_PROJECT_ENDPOINT  — Foundry project endpoint
@@ -14,26 +13,20 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import subprocess
 import sys
 import urllib.error
 import urllib.request
 from pathlib import Path
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent  # azure-ai-agentserver-github/
+INTEGRATION_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = INTEGRATION_DIR.parent.parent  # azure-ai-agentserver-github/
+
+# Add integration dir to path for _token_cache import
+sys.path.insert(0, str(INTEGRATION_DIR))
+from _token_cache import get_access_token
 
 API_VERSION = "2025-05-15-preview"
 FOUNDRY_FEATURES = "HostedAgents=V1Preview"
-
-
-def get_access_token(resource: str = "https://ai.azure.com") -> str:
-    cmd = ["az", "account", "get-access-token", "--resource", resource, "--query", "accessToken", "-o", "tsv"]
-    is_win = sys.platform == "win32"
-    result = subprocess.run(cmd, capture_output=True, text=True, shell=is_win)
-    if result.returncode != 0:
-        print("Failed to get access token. Run 'az login' first.", file=sys.stderr)
-        sys.exit(1)
-    return result.stdout.strip()
 
 
 def get_agent_version(endpoint: str, name: str, token: str) -> str:
@@ -108,10 +101,14 @@ def main():
     parser.add_argument("--session", required=True, help="Session ID (from invoke output)")
     args = parser.parse_args()
 
-    env_path = PROJECT_ROOT / ".env"
-    if env_path.exists():
-        from dotenv import load_dotenv
-        load_dotenv(env_path)
+    for env_path in [INTEGRATION_DIR / ".env", PROJECT_ROOT / ".env"]:
+        if env_path.exists():
+            try:
+                from dotenv import load_dotenv
+                load_dotenv(env_path)
+            except ImportError:
+                pass
+            break
 
     endpoint = os.environ.get("AZURE_AI_PROJECT_ENDPOINT")
     if not endpoint:

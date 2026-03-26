@@ -20,7 +20,7 @@ keywords = ["azure", "azure sdk"]
 
 dependencies = [
     "azure-ai-agentserver-core",
-    "github-copilot-sdk>=0.1.33rc4",
+    "github-copilot-sdk==0.2.0",
     "opentelemetry-exporter-otlp-proto-http",
     "azure-identity",
     "PyYAML>=6.0",

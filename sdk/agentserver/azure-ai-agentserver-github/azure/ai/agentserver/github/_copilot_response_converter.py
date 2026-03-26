@@ -14,7 +14,6 @@ from azure.ai.agentserver.core.models.projects import (
     ResponseContentPartAddedEvent,
     ResponseContentPartDoneEvent,
     ResponseCreatedEvent,
-    ResponseError,
     ResponseFailedEvent,
     ResponseInProgressEvent,
     ResponseOutputItemAddedEvent,

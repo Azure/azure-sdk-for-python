@@ -14,9 +14,9 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import subprocess
 import sys
-import tempfile
+import urllib.error
+import urllib.request
 import uuid
 from pathlib import Path
 
@@ -24,14 +24,9 @@ INTEGRATION_DIR = Path(__file__).resolve().parent
 PACKAGE_ROOT = INTEGRATION_DIR.parent.parent
 TEST_AGENT_DIR = INTEGRATION_DIR / "test_agent"
 
-
-def run_az(args: list[str]) -> subprocess.CompletedProcess:
-    cmd = ["az"] + args
-    if sys.platform == "win32":
-        return subprocess.run(
-            cmd, capture_output=True, encoding="utf-8", errors="replace", shell=True,
-        )
-    return subprocess.run(cmd, capture_output=True, text=True)
+# Add integration dir to path for _token_cache import
+sys.path.insert(0, str(INTEGRATION_DIR))
+from _token_cache import get_access_token
 
 
 def generate_session_id() -> str:
@@ -44,38 +39,35 @@ def invoke_agent(endpoint: str, name: str, message: str, session_id: str | None 
 
     sid = session_id or generate_session_id()
 
-    body: dict = {
+    body = json.dumps({
         "input": message,
         "agent": {"name": name, "type": "agent_reference"},
         "session_id": sid,
         "store": True,
-    }
+    }).encode()
 
     print(f"Invoking agent '{name}'...")
     print(f"  Session: {sid}")
     print(f"  Message: {message}")
     print()
 
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
-        json.dump(body, f)
-        body_file = f.name
+    token = get_access_token()
+    req = urllib.request.Request(
+        url, data=body, method="POST",
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+        },
+    )
 
     try:
-        result = run_az([
-            "rest", "--method", "POST", "--url", url,
-            "--body", f"@{body_file}",
-            "--headers", "Content-Type=application/json",
-            "--resource", "https://ai.azure.com",
-        ])
-    finally:
-        os.unlink(body_file)
-
-    if result.returncode != 0:
+        with urllib.request.urlopen(req, timeout=180) as resp:
+            response = json.loads(resp.read())
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode("utf-8", errors="replace")
         print(f"Invocation failed.", file=sys.stderr)
-        print(result.stderr, file=sys.stderr)
+        print(f"ERROR: {e.reason}({error_body})", file=sys.stderr)
         sys.exit(1)
-
-    response = json.loads(result.stdout)
 
     output = response.get("output", [])
     for item in output:
