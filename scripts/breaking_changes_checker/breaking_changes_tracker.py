@@ -129,9 +129,15 @@ class BreakingChangesTracker:
     # Remove duplicate reporting of changes that apply to both sync and async package components
     def run_async_cleanup(self, changes_list: List) -> None:
         def _make_hashable(item):
-            """Convert an item to a hashable type (lists become tuples)."""
+            """Convert an item to a hashable type.
+
+            Lists become tuples, dicts become frozensets of items.
+            Other types are returned as-is (assumed hashable).
+            """
             if isinstance(item, list):
                 return tuple(_make_hashable(i) for i in item)
+            if isinstance(item, dict):
+                return frozenset((_make_hashable(k), _make_hashable(v)) for k, v in item.items())
             return item
 
         def _make_key(bc):

@@ -37,6 +37,13 @@ class _ClassNodeFound(Exception):
 
 
 class ClassTreeAnalyzer(ast.NodeVisitor):
+    """AST visitor that locates a ClassDef node by name.
+
+    Uses ``_ClassNodeFound`` exception to short-circuit the traversal once
+    the target class is found, since ``ast.NodeVisitor`` does not provide a
+    built-in early exit mechanism.
+    """
+
     def __init__(self, name: str) -> None:
         self.name = name
         self.cls_node = None
@@ -62,8 +69,8 @@ def _get_parsed_module(path: str) -> ast.Module:
     return _ast_cache[path]
 
 
-def _find_class_node(module: ast.Module, class_name: str) -> ast.ClassDef:
-    """Find and return the AST ClassDef node for the given class name."""
+def _find_class_node(module: ast.Module, class_name: str) -> Optional[ast.ClassDef]:
+    """Find and return the AST ClassDef node for the given class name, or None."""
     analyzer = ClassTreeAnalyzer(class_name)
     try:
         analyzer.visit(module)

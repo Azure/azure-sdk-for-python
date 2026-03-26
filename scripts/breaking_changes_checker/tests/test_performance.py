@@ -298,7 +298,16 @@ class TestASTCachePerformance:
 
         # Create a temporary Python file with multiple classes
         with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
-            f.write("class Foo:\n    x: int = 0\n\nclass Bar:\n    y: str = ''\n\nclass Baz:\n    z: float = 0.0\n")
+            f.write(
+                "class Foo:\n"
+                "    x: int = 0\n"
+                "\n"
+                "class Bar:\n"
+                "    y: str = ''\n"
+                "\n"
+                "class Baz:\n"
+                "    z: float = 0.0\n"
+            )
             temp_path = f.name
 
         try:
