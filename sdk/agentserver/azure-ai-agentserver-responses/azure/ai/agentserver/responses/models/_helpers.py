@@ -8,7 +8,7 @@ adapted for the Python code generator's native union types.
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import Any, Mapping, Optional, Union
 
 from azure.ai.agentserver.responses.models._generated.sdk.models._types import InputParam
 
@@ -26,6 +26,27 @@ from ._generated import (
     ToolChoiceOptions,
     ToolChoiceParam,
 )
+
+
+# ---------------------------------------------------------------------------
+# Internal utilities for dict-safe field access
+# ---------------------------------------------------------------------------
+
+
+def _get_field(obj: Any, field: str, default: Any = None) -> Any:
+    """Get *field* from a model instance or a plain dict."""
+    if isinstance(obj, dict):
+        return obj.get(field, default)
+    return getattr(obj, field, default)
+
+
+def _is_type(obj: Any, model_cls: type, type_value: str) -> bool:
+    """Check whether *obj* is *model_cls* or a dict with matching ``type``."""
+    if isinstance(obj, model_cls):
+        return True
+    if isinstance(obj, dict):
+        return obj.get("type") == type_value
+    return False
 
 
 # ---------------------------------------------------------------------------
@@ -49,12 +70,9 @@ def get_conversation_id(request: CreateResponse) -> Optional[str]:
         return None
     if isinstance(conv, str):
         return conv or None
-    if isinstance(conv, ConversationParam_2):
-        cid = conv.id
-        return cid if cid else None
-    # dict-style fallback (Model subclass supports Mapping)
-    raw_id = getattr(conv, "id", None)
-    return str(raw_id) if raw_id else None
+    # Model instance or plain dict
+    cid = _get_field(conv, "id")
+    return str(cid) if cid else None
 
 
 def get_input_expanded(request: CreateResponse) -> list[dict]:
@@ -100,10 +118,12 @@ def get_input_text(request: CreateResponse) -> str:
     items = get_input_expanded(request)
     texts: list[str] = []
     for item in items:
-        if isinstance(item, ItemMessage):
-            for part in item.content or []:
-                if isinstance(part, MessageContentInputTextContent):
-                    texts.append(part.text)
+        if _is_type(item, ItemMessage, "message"):
+            for part in _get_field(item, "content") or []:
+                if _is_type(part, MessageContentInputTextContent, "input_text"):
+                    text = _get_field(part, "text")
+                    if text is not None:
+                        texts.append(text)
     return "\n".join(texts)
 
 
@@ -135,6 +155,9 @@ def get_tool_choice_expanded(request: CreateResponse) -> Optional[ToolChoicePara
             f"Unrecognized tool_choice string value: '{normalized}'. "
             "Expected 'auto', 'required', or 'none'."
         )
+    # dict fallback — wrap in ToolChoiceParam if it has a "type" key
+    if isinstance(tc, dict) and "type" in tc:
+        return ToolChoiceParam(tc)
     return None
 
 
@@ -155,6 +178,10 @@ def get_conversation_expanded(request: CreateResponse) -> Optional[ConversationP
         return conv
     if isinstance(conv, str):
         return ConversationParam_2(id=conv) if conv else None
+    # dict fallback
+    if isinstance(conv, dict):
+        cid = conv.get("id")
+        return ConversationParam_2(id=cid) if cid else None
     return None
 
 
@@ -209,7 +236,7 @@ def get_output_item_id(item: OutputItem) -> str:
     :rtype: str
     :raises ValueError: If the item has no valid ``id``.
     """
-    item_id = getattr(item, "id", None)
+    item_id = _get_field(item, "id")
     if item_id is not None:
         return str(item_id)
 
@@ -244,7 +271,5 @@ def get_content_expanded(message: ItemMessage) -> list[MessageContent]:
     :returns: The message content parts.
     :rtype: list[MessageContent]
     """
-    return list(message.content) if message.content else []
-
-
-
+    content = _get_field(message, "content")
+    return list(content) if content else []

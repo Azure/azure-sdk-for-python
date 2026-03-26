@@ -10,6 +10,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Iterable
 
 from ..models._generated import Response
+from ..models._helpers import get_conversation_id
 from ..models.runtime import ResponseExecution, ResponseModeFlags, ResponseStatus, StreamEventRecord, StreamReplayState
 from ._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 
@@ -25,6 +26,7 @@ class _StoreEntry:
         expires_at: datetime | None = None,
         response: Response | None = None,
         input_item_ids: list[str] | None = None,
+        output_item_ids: list[str] | None = None,
         history_item_ids: list[str] | None = None,
         deleted: bool = False,
     ) -> None:
@@ -33,6 +35,7 @@ class _StoreEntry:
         self.expires_at = expires_at
         self.response = response
         self.input_item_ids = input_item_ids
+        self.output_item_ids = output_item_ids
         self.history_item_ids = history_item_ids
         self.deleted = deleted
 
@@ -86,6 +89,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
                     input_ids.append(item_id)
 
             history_ids = list(history_item_ids) if history_item_ids is not None else []
+            output_ids = self._store_output_items_unlocked(response)
             self._entries[response_id] = _StoreEntry(
                 execution=ResponseExecution(
                     response_id=response_id,
@@ -94,11 +98,12 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
                 replay=StreamReplayState(response_id=response_id),
                 response=deepcopy(response),
                 input_item_ids=input_ids,
+                output_item_ids=output_ids,
                 history_item_ids=history_ids,
                 deleted=False,
             )
 
-            conversation_id = self._extract_conversation_id(response)
+            conversation_id = get_conversation_id(response)
             if conversation_id is not None:
                 self._conversation_responses.setdefault(conversation_id, []).append(response_id)
 
@@ -138,6 +143,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
 
             entry.response = deepcopy(response)
             entry.execution.set_response_snapshot(deepcopy(response))
+            entry.output_item_ids = self._store_output_items_unlocked(response)
 
     async def delete_response_async(self, response_id: str) -> None:
         """Delete a stored response envelope by identifier.
@@ -254,9 +260,10 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
                 entry = self._entries.get(previous_response_id)
                 if entry is not None and not entry.deleted:
                     # Mirror .NET IResponsesProvider.GetHistoryItemIdsAsync:
-                    # return historyItemIds + inputItemIds of the previous response
+                    # return historyItemIds + inputItemIds + outputItemIds of the previous response
                     resolved.extend(entry.history_item_ids or [])
                     resolved.extend(entry.input_item_ids or [])
+                    resolved.extend(entry.output_item_ids or [])
 
             if conversation_id is not None:
                 for response_id in self._conversation_responses.get(conversation_id, []):
@@ -264,6 +271,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
                     if entry is None or entry.deleted:
                         continue
                     resolved.extend(entry.history_item_ids or [])
+                    resolved.extend(entry.input_item_ids or [])
+                    resolved.extend(entry.output_item_ids or [])
 
             if limit <= 0:
                 return []
@@ -555,6 +564,27 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
 
         return len(expired_ids)
 
+    def _store_output_items_unlocked(self, response: Response) -> list[str]:
+        """Extract output items from a response, store them in the item store, and return their IDs.
+
+        Must be called while holding ``self._lock``.
+
+        :param response: The response envelope whose output items should be stored.
+        :type response: ~azure.ai.agentserver.responses.models._generated.Response
+        :returns: Ordered list of output item IDs.
+        :rtype: list[str]
+        """
+        output = getattr(response, "output", None)
+        if not output:
+            return []
+        output_ids: list[str] = []
+        for item in output:
+            item_id = self._extract_item_id(item)
+            if item_id is not None:
+                self._item_store[item_id] = deepcopy(item)
+                output_ids.append(item_id)
+        return output_ids
+
     @staticmethod
     def _extract_item_id(item: Any) -> str | None:
         """Extract item identifier from object-like or mapping-like values.
@@ -574,20 +604,6 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
             return str(value) if value is not None else None
         value = getattr(item, "id", None)
         return str(value) if value is not None else None
-
-    @staticmethod
-    def _extract_conversation_id(response: Response) -> str | None:
-        """Extract conversation identifier if present on the response envelope.
-
-        :param response: The response envelope to inspect.
-        :type response: ~azure.ai.agentserver.responses.models._generated.Response
-        :returns: The conversation ID as a string, or ``None`` if not present.
-        :rtype: str | None
-        """
-        value = getattr(response, "conversation_id", None)
-        if value is None:
-            return None
-        return str(value)
 
     @staticmethod
     def _resolve_mode_flags_from_response(response: Response) -> ResponseModeFlags:
