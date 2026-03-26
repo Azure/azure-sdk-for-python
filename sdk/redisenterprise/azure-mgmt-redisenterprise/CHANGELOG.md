@@ -8,16 +8,13 @@
   - Client `RedisEnterpriseManagementClient` added operation group `migrations`
   - Client `RedisEnterpriseManagementClient` added operation group `migration`
   - Model `AccessPolicyAssignment` added property `system_data`
-  - Model `Cluster` added property `properties`
   - Model `Cluster` added property `system_data`
   - Model `ClusterCreateProperties` added property `maintenance_configuration`
   - Model `ClusterCreateProperties` added property `migrated_endpoint`
   - Model `ClusterProperties` added property `maintenance_configuration`
   - Model `ClusterProperties` added property `migrated_endpoint`
-  - Model `ClusterUpdate` added property `properties`
   - Model `ClusterUpdateProperties` added property `maintenance_configuration`
   - Model `ClusterUpdateProperties` added property `migrated_endpoint`
-  - Model `Database` added property `properties`
   - Model `PrivateEndpointConnection` added property `system_data`
   - Model `PrivateLinkResource` added property `system_data`
   - Model `Resource` added property `system_data`
@@ -37,43 +34,15 @@
   - Added model `MigrationValidationResponse`
   - Added model `MigrationValidationWarning`
   - Added enum `SourceType`
-  - Added model `MigrationOperations`
-  - Added model `MigrationsOperations`
+  - Added operation group `MigrationOperations`
+  - Added operation group `MigrationsOperations`
 
 ### Breaking Changes
 
-  - Model `Cluster` deleted or renamed its instance variable `high_availability`
-  - Model `Cluster` deleted or renamed its instance variable `minimum_tls_version`
-  - Model `Cluster` deleted or renamed its instance variable `encryption`
-  - Model `Cluster` deleted or renamed its instance variable `host_name`
-  - Model `Cluster` deleted or renamed its instance variable `provisioning_state`
-  - Model `Cluster` deleted or renamed its instance variable `redundancy_mode`
-  - Model `Cluster` deleted or renamed its instance variable `resource_state`
-  - Model `Cluster` deleted or renamed its instance variable `redis_version`
-  - Model `Cluster` deleted or renamed its instance variable `private_endpoint_connections`
-  - Model `Cluster` deleted or renamed its instance variable `public_network_access`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `high_availability`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `minimum_tls_version`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `encryption`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `host_name`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `provisioning_state`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `redundancy_mode`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `resource_state`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `redis_version`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `private_endpoint_connections`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `public_network_access`
-  - Model `Database` deleted or renamed its instance variable `client_protocol`
-  - Model `Database` deleted or renamed its instance variable `port`
-  - Model `Database` deleted or renamed its instance variable `provisioning_state`
-  - Model `Database` deleted or renamed its instance variable `resource_state`
-  - Model `Database` deleted or renamed its instance variable `clustering_policy`
-  - Model `Database` deleted or renamed its instance variable `eviction_policy`
-  - Model `Database` deleted or renamed its instance variable `persistence`
-  - Model `Database` deleted or renamed its instance variable `modules`
-  - Model `Database` deleted or renamed its instance variable `geo_replication`
-  - Model `Database` deleted or renamed its instance variable `redis_version`
-  - Model `Database` deleted or renamed its instance variable `defer_upgrade`
-  - Model `Database` deleted or renamed its instance variable `access_keys_authentication`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `Cluster` moved instance variable `high_availability`, `minimum_tls_version`, `encryption`, `host_name`, `provisioning_state`, `redundancy_mode`, `resource_state`, `redis_version`, `private_endpoint_connections` and `public_network_access` under property `properties`
+  - Model `ClusterUpdate` moved instance variable `high_availability`, `minimum_tls_version`, `encryption`, `host_name`, `provisioning_state`, `redundancy_mode`, `resource_state`, `redis_version`, `private_endpoint_connections` and `public_network_access` under property `properties`
+  - Model `Database` moved instance variable `client_protocol`, `port`, `provisioning_state`, `resource_state`, `clustering_policy`, `eviction_policy`, `persistence`, `modules`, `geo_replication`, `redis_version`, `defer_upgrade` and `access_keys_authentication` under property `properties`
   - Model `DatabaseUpdate` deleted or renamed its instance variable `client_protocol`
   - Model `DatabaseUpdate` deleted or renamed its instance variable `port`
   - Model `DatabaseUpdate` deleted or renamed its instance variable `provisioning_state`
@@ -86,15 +55,16 @@
   - Model `DatabaseUpdate` deleted or renamed its instance variable `redis_version`
   - Model `DatabaseUpdate` deleted or renamed its instance variable `defer_upgrade`
   - Model `DatabaseUpdate` deleted or renamed its instance variable `access_keys_authentication`
-  - Method `Module.__init__` removed default value `None` from its parameter `args`
+  - Parameter `args` of `Method Module.__init__` is now required
   - Method `Module.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
-  - Deleted or renamed model `AccessPolicyAssignmentList`
-  - Deleted or renamed model `ClusterList`
-  - Deleted or renamed model `DatabaseList`
   - Deleted or renamed model `ErrorDetailAutoGenerated`
   - Deleted or renamed model `ErrorResponseAutoGenerated`
   - Deleted or renamed model `ProxyResourceAutoGenerated`
   - Deleted or renamed model `ResourceAutoGenerated`
+
+### Other Changes
+
+  - Deleted model `AccessPolicyAssignmentList`/`ClusterList`/`DatabaseList` which actually were not used by SDK users
 
 ## 3.1.0 (2025-10-20)
 
