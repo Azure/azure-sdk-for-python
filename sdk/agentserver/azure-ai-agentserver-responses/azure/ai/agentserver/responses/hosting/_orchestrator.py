@@ -655,11 +655,55 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
         # --- Fast path: no keep-alive ---
         if not self._runtime_options.sse_keep_alive_enabled:
+            if not (ctx.background and ctx.store):
+                # Simple fast path for non-background streaming.
+                try:
+                    async for event in self._process_handler_events(ctx, state, handler_iterator):
+                        yield encode_sse_payload(event["type"], event["payload"])
+                finally:
+                    await _finalize()
+                return
+
+            # Background+stream without keep-alive: run the handler as an independent
+            # asyncio.Task so that finalization (including subject.complete()) is
+            # guaranteed to run even when the original SSE connection is dropped before
+            # all events are delivered.  Without this, _live_stream can be abandoned
+            # mid-iteration by Starlette (the async-generator finalizer may not fire
+            # promptly), leaving GET-replay subscribers blocked on await q.get() forever.
+            _SENTINEL_BG = object()
+            bg_queue: asyncio.Queue[object] = asyncio.Queue()
+
+            async def _bg_producer() -> None:
+                try:
+                    async for event in self._process_handler_events(ctx, state, handler_iterator):
+                        await bg_queue.put(encode_sse_payload(event["type"], event["payload"]))
+                except Exception as exc:  # pylint: disable=broad-exception-caught
+                    state.captured_error = exc
+                finally:
+                    # Always finalize (includes subject.complete()) — this runs even if
+                    # the original POST SSE connection was dropped and _live_stream is
+                    # never properly closed by Starlette.
+                    await _finalize()
+                    await bg_queue.put(_SENTINEL_BG)
+
+            bg_task = asyncio.create_task(_bg_producer())
             try:
-                async for event in self._process_handler_events(ctx, state, handler_iterator):
-                    yield encode_sse_payload(event["type"], event["payload"])
+                while True:
+                    item = await bg_queue.get()
+                    if item is _SENTINEL_BG:
+                        break
+                    yield item  # type: ignore[misc]
+            except Exception:  # pylint: disable=broad-exception-caught
+                pass  # SSE connection dropped; bg_task continues independently
             finally:
-                await _finalize()
+                # Wait for the handler task so _finalize() has run before we exit.
+                # Do NOT cancel it — background+stream must reach a terminal state
+                # regardless of client connectivity.
+                if not bg_task.done():
+                    try:
+                        await bg_task
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        pass
             return
 
         # --- Keep-alive path: merge handler events with periodic keep-alive comments ---

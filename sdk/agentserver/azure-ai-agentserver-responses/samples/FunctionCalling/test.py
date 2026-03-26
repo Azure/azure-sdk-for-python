@@ -32,13 +32,6 @@ def _assert_ok(response: requests.Response) -> None:
         raise RuntimeError(f"HTTP request failed: {response.status_code} {response.text}") from exc
 
 
-def _ready() -> None:
-    _print_header("Ready")
-    response = requests.get(f"{BASE_URL}/ready", timeout=10)
-    _assert_ok(response)
-    _pretty_print(response.json())
-
-
 def _turn_1_request_function_call() -> str:
     _print_header("Turn 1: Request function call")
     payload = {
@@ -103,7 +96,6 @@ def _turn_2_submit_function_output_streaming(call_id: str) -> None:
 
 
 def main() -> None:
-    _ready()
     call_id = _turn_1_request_function_call()
     _turn_2_submit_function_output(call_id)
     _turn_2_submit_function_output_streaming(call_id)

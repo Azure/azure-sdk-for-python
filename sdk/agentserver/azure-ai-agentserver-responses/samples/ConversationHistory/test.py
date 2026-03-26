@@ -31,13 +31,6 @@ def _assert_ok(response: requests.Response) -> None:
         raise RuntimeError(f"HTTP request failed: {response.status_code} {response.text}") from exc
 
 
-def _ready() -> None:
-    _print_header("Ready")
-    response = requests.get(f"{BASE_URL}/ready", timeout=10)
-    _assert_ok(response)
-    _pretty_print(response.json())
-
-
 def _create(payload: dict[str, Any]) -> dict[str, Any]:
     response = requests.post(f"{BASE_URL}/responses", json=payload, timeout=10)
     _assert_ok(response)
@@ -104,7 +97,6 @@ def _turn_4_stream(previous_response_id: str) -> None:
 
 
 def main() -> None:
-    _ready()
     response_1_id = _turn_1()
     response_2_id = _turn_2(response_1_id)
     response_3_id = _turn_3(response_2_id)
