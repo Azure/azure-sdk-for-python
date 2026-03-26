@@ -37,6 +37,6 @@ def main():
     )
 
 
-# x-ms-original-file: specification/policyinsights/resource-manager/Microsoft.PolicyInsights/stable/2024-10-01/examples/Attestations_DeleteResourceGroupScope.json
+# x-ms-original-file: specification/policyinsights/resource-manager/Microsoft.PolicyInsights/PolicyInsights/stable/2024-10-01/examples/Attestations_DeleteResourceGroupScope.json
 if __name__ == "__main__":
     main()

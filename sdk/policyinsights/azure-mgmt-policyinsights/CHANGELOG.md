@@ -1,5 +1,9 @@
 # Release History
 
+## 1.1.0b6 (2026-03-26)
+
+skip changelog generation
+
 ## 1.1.0b5 (2025-07-21)
 
 ### Features Added

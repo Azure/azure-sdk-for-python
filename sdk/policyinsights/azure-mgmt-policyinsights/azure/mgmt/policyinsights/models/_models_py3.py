@@ -9,7 +9,7 @@
 
 from collections.abc import MutableMapping
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
@@ -139,7 +139,7 @@ class Attestation(Resource):
         expires_on: Optional[datetime.datetime] = None,
         owner: Optional[str] = None,
         comments: Optional[str] = None,
-        evidence: Optional[List["_models.AttestationEvidence"]] = None,
+        evidence: Optional[list["_models.AttestationEvidence"]] = None,
         assessment_date: Optional[datetime.datetime] = None,
         metadata: Optional[JSON] = None,
         **kwargs: Any
@@ -235,7 +235,7 @@ class AttestationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.Attestation"]] = None
+        self.value: Optional[list["_models.Attestation"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -258,7 +258,7 @@ class CheckManagementGroupRestrictionsRequest(_serialization.Model):
         self,
         *,
         resource_details: Optional["_models.CheckRestrictionsResourceDetails"] = None,
-        pending_fields: Optional[List["_models.PendingField"]] = None,
+        pending_fields: Optional[list["_models.PendingField"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -300,7 +300,7 @@ class CheckRestrictionEvaluationDetails(_serialization.Model):
     def __init__(
         self,
         *,
-        evaluated_expressions: Optional[List["_models.ExpressionEvaluationDetails"]] = None,
+        evaluated_expressions: Optional[list["_models.ExpressionEvaluationDetails"]] = None,
         if_not_exists_details: Optional["_models.IfNotExistsEvaluationDetails"] = None,
         **kwargs: Any
     ) -> None:
@@ -347,7 +347,7 @@ class CheckRestrictionsRequest(_serialization.Model):
         self,
         *,
         resource_details: "_models.CheckRestrictionsResourceDetails",
-        pending_fields: Optional[List["_models.PendingField"]] = None,
+        pending_fields: Optional[list["_models.PendingField"]] = None,
         include_audit_effect: bool = False,
         **kwargs: Any
     ) -> None:
@@ -440,7 +440,7 @@ class CheckRestrictionsResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.field_restrictions: Optional[List["_models.FieldRestrictions"]] = None
+        self.field_restrictions: Optional[list["_models.FieldRestrictions"]] = None
         self.content_evaluation_result: Optional["_models.CheckRestrictionsResultContentEvaluationResult"] = None
 
 
@@ -457,7 +457,7 @@ class CheckRestrictionsResultContentEvaluationResult(_serialization.Model):  # p
     }
 
     def __init__(
-        self, *, policy_evaluations: Optional[List["_models.PolicyEvaluationResult"]] = None, **kwargs: Any
+        self, *, policy_evaluations: Optional[list["_models.PolicyEvaluationResult"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword policy_evaluations: Policy evaluation results against the given resource content. This
@@ -531,7 +531,7 @@ class ComponentEventDetails(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, Any]] = None,
+        additional_properties: Optional[dict[str, Any]] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         type: Optional[str] = None,
         name: Optional[str] = None,
@@ -654,7 +654,7 @@ class ComponentPolicyEvaluationDetails(_serialization.Model):
         :paramtype reason: str
         """
         super().__init__(**kwargs)
-        self.evaluated_expressions: Optional[List["_models.ComponentExpressionEvaluationDetails"]] = None
+        self.evaluated_expressions: Optional[list["_models.ComponentExpressionEvaluationDetails"]] = None
         self.reason = reason
 
 
@@ -815,7 +815,7 @@ class ComponentPolicyState(_serialization.Model):
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        additional_properties: Optional[Dict[str, Any]] = None,
+        additional_properties: Optional[dict[str, Any]] = None,
         policy_evaluation_details: Optional["_models.ComponentPolicyEvaluationDetails"] = None,
         **kwargs: Any
     ) -> None:
@@ -858,7 +858,7 @@ class ComponentPolicyState(_serialization.Model):
         self.policy_definition_reference_id: Optional[str] = None
         self.compliance_state: Optional[str] = None
         self.policy_evaluation_details = policy_evaluation_details
-        self.policy_definition_group_names: Optional[List[str]] = None
+        self.policy_definition_group_names: Optional[list[str]] = None
         self.policy_definition_version: Optional[str] = None
         self.policy_set_definition_version: Optional[str] = None
         self.policy_assignment_version: Optional[str] = None
@@ -891,7 +891,7 @@ class ComponentPolicyStatesQueryResults(_serialization.Model):
         *,
         odata_context: Optional[str] = None,
         odata_count: Optional[int] = None,
-        value: Optional[List["_models.ComponentPolicyState"]] = None,
+        value: Optional[list["_models.ComponentPolicyState"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -940,7 +940,7 @@ class ComponentStateDetails(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, Any]] = None,
+        additional_properties: Optional[dict[str, Any]] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         type: Optional[str] = None,
         name: Optional[str] = None,
@@ -1011,8 +1011,8 @@ class ErrorDefinition(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorDefinition"]] = None
-        self.additional_info: Optional[List["_models.TypedErrorInfo"]] = None
+        self.details: Optional[list["_models.ErrorDefinition"]] = None
+        self.additional_info: Optional[list["_models.TypedErrorInfo"]] = None
 
 
 class ErrorDefinitionAutoGenerated(_serialization.Model):
@@ -1054,8 +1054,8 @@ class ErrorDefinitionAutoGenerated(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorDefinitionAutoGenerated"]] = None
-        self.additional_info: Optional[List["_models.TypedErrorInfo"]] = None
+        self.details: Optional[list["_models.ErrorDefinitionAutoGenerated"]] = None
+        self.additional_info: Optional[list["_models.TypedErrorInfo"]] = None
 
 
 class ErrorDefinitionAutoGenerated2(_serialization.Model):
@@ -1097,8 +1097,8 @@ class ErrorDefinitionAutoGenerated2(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorDefinitionAutoGenerated2"]] = None
-        self.additional_info: Optional[List["_models.TypedErrorInfo"]] = None
+        self.details: Optional[list["_models.ErrorDefinitionAutoGenerated2"]] = None
+        self.additional_info: Optional[list["_models.TypedErrorInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -1276,7 +1276,7 @@ class FieldRestriction(_serialization.Model):
         super().__init__(**kwargs)
         self.result: Optional[Union[str, "_models.FieldRestrictionResult"]] = None
         self.default_value: Optional[str] = None
-        self.values: Optional[List[str]] = None
+        self.values: Optional[list[str]] = None
         self.policy: Optional["_models.PolicyReference"] = None
         self.policy_effect: Optional[str] = None
         self.reason: Optional[str] = None
@@ -1303,7 +1303,7 @@ class FieldRestrictions(_serialization.Model):
         "restrictions": {"key": "restrictions", "type": "[FieldRestriction]"},
     }
 
-    def __init__(self, *, restrictions: Optional[List["_models.FieldRestriction"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, restrictions: Optional[list["_models.FieldRestriction"]] = None, **kwargs: Any) -> None:
         """
         :keyword restrictions: The restrictions placed on that field by policy.
         :paramtype restrictions: list[~azure.mgmt.policyinsights.models.FieldRestriction]
@@ -1447,7 +1447,7 @@ class OperationsListResults(_serialization.Model):
     }
 
     def __init__(
-        self, *, odata_count: Optional[int] = None, value: Optional[List["_models.Operation"]] = None, **kwargs: Any
+        self, *, odata_count: Optional[int] = None, value: Optional[list["_models.Operation"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword odata_count: OData entity count; represents the number of operations returned.
@@ -1482,7 +1482,7 @@ class PendingField(_serialization.Model):
         "values": {"key": "values", "type": "[str]"},
     }
 
-    def __init__(self, *, field: str, values: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, field: str, values: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword field: The name of the field. This can be a top-level property like 'name' or 'type'
          or an Azure Policy field alias. Required.
@@ -1526,8 +1526,8 @@ class PolicyAssignmentSummary(_serialization.Model):
         policy_assignment_id: Optional[str] = None,
         policy_set_definition_id: Optional[str] = None,
         results: Optional["_models.SummaryResults"] = None,
-        policy_definitions: Optional[List["_models.PolicyDefinitionSummary"]] = None,
-        policy_groups: Optional[List["_models.PolicyGroupSummary"]] = None,
+        policy_definitions: Optional[list["_models.PolicyDefinitionSummary"]] = None,
+        policy_groups: Optional[list["_models.PolicyGroupSummary"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1579,7 +1579,7 @@ class PolicyDefinitionSummary(_serialization.Model):
         *,
         policy_definition_id: Optional[str] = None,
         policy_definition_reference_id: Optional[str] = None,
-        policy_definition_group_names: Optional[List[str]] = None,
+        policy_definition_group_names: Optional[list[str]] = None,
         effect: Optional[str] = None,
         results: Optional["_models.SummaryResults"] = None,
         **kwargs: Any
@@ -1694,7 +1694,7 @@ class PolicyEvaluationDetails(_serialization.Model):
     def __init__(
         self,
         *,
-        evaluated_expressions: Optional[List["_models.ExpressionEvaluationDetails"]] = None,
+        evaluated_expressions: Optional[list["_models.ExpressionEvaluationDetails"]] = None,
         if_not_exists_details: Optional["_models.IfNotExistsEvaluationDetails"] = None,
         **kwargs: Any
     ) -> None:
@@ -1872,7 +1872,7 @@ class PolicyEvent(_serialization.Model):
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        additional_properties: Optional[Dict[str, Any]] = None,
+        additional_properties: Optional[dict[str, Any]] = None,
         odata_id: Optional[str] = None,
         odata_context: Optional[str] = None,
         timestamp: Optional[datetime.datetime] = None,
@@ -1903,7 +1903,7 @@ class PolicyEvent(_serialization.Model):
         compliance_state: Optional[str] = None,
         tenant_id: Optional[str] = None,
         principal_oid: Optional[str] = None,
-        components: Optional[List["_models.ComponentEventDetails"]] = None,
+        components: Optional[list["_models.ComponentEventDetails"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2051,7 +2051,7 @@ class PolicyEventsQueryResults(_serialization.Model):
         odata_context: Optional[str] = None,
         odata_count: Optional[int] = None,
         odata_next_link: Optional[str] = None,
-        value: Optional[List["_models.PolicyEvent"]] = None,
+        value: Optional[list["_models.PolicyEvent"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2202,7 +2202,7 @@ class PolicyMetadataCollection(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.SlimPolicyMetadata"]] = None
+        self.value: Optional[list["_models.SlimPolicyMetadata"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -2482,7 +2482,7 @@ class PolicyState(_serialization.Model):
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        additional_properties: Optional[Dict[str, Any]] = None,
+        additional_properties: Optional[dict[str, Any]] = None,
         odata_id: Optional[str] = None,
         odata_context: Optional[str] = None,
         timestamp: Optional[datetime.datetime] = None,
@@ -2512,8 +2512,8 @@ class PolicyState(_serialization.Model):
         policy_definition_reference_id: Optional[str] = None,
         compliance_state: Optional[str] = None,
         policy_evaluation_details: Optional["_models.PolicyEvaluationDetails"] = None,
-        policy_definition_group_names: Optional[List[str]] = None,
-        components: Optional[List["_models.ComponentStateDetails"]] = None,
+        policy_definition_group_names: Optional[list[str]] = None,
+        components: Optional[list["_models.ComponentStateDetails"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2664,7 +2664,7 @@ class PolicyStatesQueryResults(_serialization.Model):
         odata_context: Optional[str] = None,
         odata_count: Optional[int] = None,
         odata_next_link: Optional[str] = None,
-        value: Optional[List["_models.PolicyState"]] = None,
+        value: Optional[list["_models.PolicyState"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2755,7 +2755,7 @@ class PolicyTrackedResourcesQueryResults(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.PolicyTrackedResource"]] = None
+        self.value: Optional[list["_models.PolicyTrackedResource"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -3131,7 +3131,7 @@ class RemediationDeploymentsListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.RemediationDeployment"]] = None
+        self.value: Optional[list["_models.RemediationDeployment"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -3187,7 +3187,7 @@ class RemediationFilters(_serialization.Model):
     }
 
     def __init__(
-        self, *, locations: Optional[List[str]] = None, resource_ids: Optional[List[str]] = None, **kwargs: Any
+        self, *, locations: Optional[list[str]] = None, resource_ids: Optional[list[str]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword locations: The resource locations that will be remediated.
@@ -3226,7 +3226,7 @@ class RemediationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.Remediation"]] = None
+        self.value: Optional[list["_models.Remediation"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -3345,7 +3345,7 @@ class SummarizeResults(_serialization.Model):
         *,
         odata_context: Optional[str] = None,
         odata_count: Optional[int] = None,
-        value: Optional[List["_models.Summary"]] = None,
+        value: Optional[list["_models.Summary"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3391,7 +3391,7 @@ class Summary(_serialization.Model):
         odata_id: Optional[str] = None,
         odata_context: Optional[str] = None,
         results: Optional["_models.SummaryResults"] = None,
-        policy_assignments: Optional[List["_models.PolicyAssignmentSummary"]] = None,
+        policy_assignments: Optional[list["_models.PolicyAssignmentSummary"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3454,9 +3454,9 @@ class SummaryResults(_serialization.Model):
         query_results_uri: Optional[str] = None,
         non_compliant_resources: Optional[int] = None,
         non_compliant_policies: Optional[int] = None,
-        resource_details: Optional[List["_models.ComplianceDetail"]] = None,
-        policy_details: Optional[List["_models.ComplianceDetail"]] = None,
-        policy_group_details: Optional[List["_models.ComplianceDetail"]] = None,
+        resource_details: Optional[list["_models.ComplianceDetail"]] = None,
+        policy_details: Optional[list["_models.ComplianceDetail"]] = None,
+        policy_group_details: Optional[list["_models.ComplianceDetail"]] = None,
         **kwargs: Any
     ) -> None:
         """

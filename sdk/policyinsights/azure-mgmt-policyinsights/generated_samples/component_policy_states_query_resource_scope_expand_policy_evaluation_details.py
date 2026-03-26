@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/policyinsights/resource-manager/Microsoft.PolicyInsights/stable/2024-10-01/examples/ComponentPolicyStates_QueryResourceScopeExpandPolicyEvaluationDetails.json
+# x-ms-original-file: specification/policyinsights/resource-manager/Microsoft.PolicyInsights/PolicyInsights/stable/2024-10-01/examples/ComponentPolicyStates_QueryResourceScopeExpandPolicyEvaluationDetails.json
 if __name__ == "__main__":
     main()

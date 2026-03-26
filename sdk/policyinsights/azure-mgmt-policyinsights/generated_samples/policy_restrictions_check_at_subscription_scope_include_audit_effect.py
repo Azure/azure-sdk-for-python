@@ -48,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/policyinsights/resource-manager/Microsoft.PolicyInsights/stable/2024-10-01/examples/PolicyRestrictions_CheckAtSubscriptionScopeIncludeAuditEffect.json
+# x-ms-original-file: specification/policyinsights/resource-manager/Microsoft.PolicyInsights/PolicyInsights/stable/2024-10-01/examples/PolicyRestrictions_CheckAtSubscriptionScopeIncludeAuditEffect.json
 if __name__ == "__main__":
     main()
