@@ -47,7 +47,11 @@ def main():
                         }
                     ],
                 },
-                "elasticityProfile": {"maxReadyCapacity": 1743, "refillPolicy": "always"},
+                "elasticityProfile": {
+                    "dynamicSizing": {"enabled": True},
+                    "maxReadyCapacity": 1743,
+                    "refillPolicy": "always",
+                },
                 "zones": ["1", "2", "3"],
             },
             "tags": {},
@@ -56,6 +60,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-01/StandbyContainerGroupPools_Update.json
+# x-ms-original-file: 2025-10-01/StandbyContainerGroupPools_Update.json
 if __name__ == "__main__":
     main()

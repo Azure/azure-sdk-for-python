@@ -1,4 +1,4 @@
 directory: specification/ai-foundry/data-plane/Foundry
-commit: 76b201bd18cda0e6718b176f1d06e266beb3702d
+commit: e50321286a093e4cd6c77edfa7162d73d142f594
 repo: Azure/azure-rest-api-specs
 additionalDirectories: 

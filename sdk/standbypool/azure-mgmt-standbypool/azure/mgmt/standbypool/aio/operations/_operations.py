@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -34,8 +34,8 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
-from ..._model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
-from ..._serialization import Deserializer, Serializer
+from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
+from ..._utils.serialization import Deserializer, Serializer
 from ..._validation import api_version_validation
 from ...operations._operations import (
     build_operations_list_request,
@@ -61,8 +61,9 @@ from ...operations._operations import (
 from .._configuration import StandbyPoolMgmtClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 JSON = MutableMapping[str, Any]
+List = list
 
 
 class Operations:
@@ -83,7 +84,7 @@ class Operations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.Operation"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Operation"]:
         """List the operations for the provider.
 
         :return: An iterator like instance of Operation
@@ -142,7 +143,10 @@ class Operations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -158,7 +162,10 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -225,6 +232,7 @@ class StandbyVirtualMachinePoolsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -239,11 +247,14 @@ class StandbyVirtualMachinePoolsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.StandbyVirtualMachinePoolResource, response.json())
 
@@ -295,6 +306,7 @@ class StandbyVirtualMachinePoolsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -308,14 +320,17 @@ class StandbyVirtualMachinePoolsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -515,6 +530,7 @@ class StandbyVirtualMachinePoolsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -528,7 +544,10 @@ class StandbyVirtualMachinePoolsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -536,7 +555,7 @@ class StandbyVirtualMachinePoolsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -746,6 +765,7 @@ class StandbyVirtualMachinePoolsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -760,11 +780,14 @@ class StandbyVirtualMachinePoolsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.StandbyVirtualMachinePoolResource, response.json())
 
@@ -776,7 +799,7 @@ class StandbyVirtualMachinePoolsOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.StandbyVirtualMachinePoolResource"]:
+    ) -> AsyncItemPaged["_models.StandbyVirtualMachinePoolResource"]:
         """List StandbyVirtualMachinePoolResource resources by resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -841,7 +864,10 @@ class StandbyVirtualMachinePoolsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.StandbyVirtualMachinePoolResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.StandbyVirtualMachinePoolResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -857,7 +883,10 @@ class StandbyVirtualMachinePoolsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -865,7 +894,7 @@ class StandbyVirtualMachinePoolsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.StandbyVirtualMachinePoolResource"]:
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.StandbyVirtualMachinePoolResource"]:
         """List StandbyVirtualMachinePoolResource resources by subscription ID.
 
         :return: An iterator like instance of StandbyVirtualMachinePoolResource
@@ -926,7 +955,10 @@ class StandbyVirtualMachinePoolsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.StandbyVirtualMachinePoolResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.StandbyVirtualMachinePoolResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -942,7 +974,10 @@ class StandbyVirtualMachinePoolsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1016,6 +1051,7 @@ class StandbyVirtualMachinesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1030,11 +1066,14 @@ class StandbyVirtualMachinesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.StandbyVirtualMachineResource, response.json())
 
@@ -1046,7 +1085,7 @@ class StandbyVirtualMachinesOperations:
     @distributed_trace
     def list_by_standby_virtual_machine_pool_resource(  # pylint: disable=name-too-long
         self, resource_group_name: str, standby_virtual_machine_pool_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.StandbyVirtualMachineResource"]:
+    ) -> AsyncItemPaged["_models.StandbyVirtualMachineResource"]:
         """List StandbyVirtualMachineResource resources by StandbyVirtualMachinePoolResource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1114,7 +1153,10 @@ class StandbyVirtualMachinesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.StandbyVirtualMachineResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.StandbyVirtualMachineResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1130,7 +1172,10 @@ class StandbyVirtualMachinesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1168,6 +1213,7 @@ class StandbyVirtualMachinePoolRuntimeViewsOperations:  # pylint: disable=name-t
                 "accept",
             ]
         },
+        api_versions_list=["2024-03-01-preview", "2024-03-01", "2025-03-01", "2025-10-01"],
     )
     async def get(
         self, resource_group_name: str, standby_virtual_machine_pool_name: str, runtime_view: str, **kwargs: Any
@@ -1215,6 +1261,7 @@ class StandbyVirtualMachinePoolRuntimeViewsOperations:  # pylint: disable=name-t
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1229,11 +1276,14 @@ class StandbyVirtualMachinePoolRuntimeViewsOperations:  # pylint: disable=name-t
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.StandbyVirtualMachinePoolRuntimeViewResource, response.json())
 
@@ -1254,10 +1304,11 @@ class StandbyVirtualMachinePoolRuntimeViewsOperations:  # pylint: disable=name-t
                 "accept",
             ]
         },
+        api_versions_list=["2024-03-01-preview", "2024-03-01", "2025-03-01", "2025-10-01"],
     )
     def list_by_standby_pool(
         self, resource_group_name: str, standby_virtual_machine_pool_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.StandbyVirtualMachinePoolRuntimeViewResource"]:
+    ) -> AsyncItemPaged["_models.StandbyVirtualMachinePoolRuntimeViewResource"]:
         """List StandbyVirtualMachinePoolRuntimeViewResource resources by
         StandbyVirtualMachinePoolResource.
 
@@ -1327,7 +1378,8 @@ class StandbyVirtualMachinePoolRuntimeViewsOperations:  # pylint: disable=name-t
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.StandbyVirtualMachinePoolRuntimeViewResource], deserialized.get("value", [])
+                List[_models.StandbyVirtualMachinePoolRuntimeViewResource],
+                deserialized.get("value", []),
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -1344,7 +1396,10 @@ class StandbyVirtualMachinePoolRuntimeViewsOperations:  # pylint: disable=name-t
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1411,6 +1466,7 @@ class StandbyContainerGroupPoolsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1425,11 +1481,14 @@ class StandbyContainerGroupPoolsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.StandbyContainerGroupPoolResource, response.json())
 
@@ -1481,6 +1540,7 @@ class StandbyContainerGroupPoolsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1494,14 +1554,17 @@ class StandbyContainerGroupPoolsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1701,6 +1764,7 @@ class StandbyContainerGroupPoolsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1714,7 +1778,10 @@ class StandbyContainerGroupPoolsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1722,7 +1789,7 @@ class StandbyContainerGroupPoolsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1932,6 +1999,7 @@ class StandbyContainerGroupPoolsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1946,11 +2014,14 @@ class StandbyContainerGroupPoolsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.StandbyContainerGroupPoolResource, response.json())
 
@@ -1962,7 +2033,7 @@ class StandbyContainerGroupPoolsOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.StandbyContainerGroupPoolResource"]:
+    ) -> AsyncItemPaged["_models.StandbyContainerGroupPoolResource"]:
         """List StandbyContainerGroupPoolResource resources by resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2027,7 +2098,10 @@ class StandbyContainerGroupPoolsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.StandbyContainerGroupPoolResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.StandbyContainerGroupPoolResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2043,7 +2117,10 @@ class StandbyContainerGroupPoolsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2051,7 +2128,7 @@ class StandbyContainerGroupPoolsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.StandbyContainerGroupPoolResource"]:
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.StandbyContainerGroupPoolResource"]:
         """List StandbyContainerGroupPoolResource resources by subscription ID.
 
         :return: An iterator like instance of StandbyContainerGroupPoolResource
@@ -2112,7 +2189,10 @@ class StandbyContainerGroupPoolsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.StandbyContainerGroupPoolResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.StandbyContainerGroupPoolResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2128,7 +2208,10 @@ class StandbyContainerGroupPoolsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2166,6 +2249,7 @@ class StandbyContainerGroupPoolRuntimeViewsOperations:  # pylint: disable=name-t
                 "accept",
             ]
         },
+        api_versions_list=["2024-03-01-preview", "2024-03-01", "2025-03-01", "2025-10-01"],
     )
     async def get(
         self, resource_group_name: str, standby_container_group_pool_name: str, runtime_view: str, **kwargs: Any
@@ -2213,6 +2297,7 @@ class StandbyContainerGroupPoolRuntimeViewsOperations:  # pylint: disable=name-t
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2227,11 +2312,14 @@ class StandbyContainerGroupPoolRuntimeViewsOperations:  # pylint: disable=name-t
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.StandbyContainerGroupPoolRuntimeViewResource, response.json())
 
@@ -2252,10 +2340,11 @@ class StandbyContainerGroupPoolRuntimeViewsOperations:  # pylint: disable=name-t
                 "accept",
             ]
         },
+        api_versions_list=["2024-03-01-preview", "2024-03-01", "2025-03-01", "2025-10-01"],
     )
     def list_by_standby_pool(
         self, resource_group_name: str, standby_container_group_pool_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.StandbyContainerGroupPoolRuntimeViewResource"]:
+    ) -> AsyncItemPaged["_models.StandbyContainerGroupPoolRuntimeViewResource"]:
         """List StandbyContainerGroupPoolRuntimeViewResource resources by
         StandbyContainerGroupPoolResource.
 
@@ -2325,7 +2414,8 @@ class StandbyContainerGroupPoolRuntimeViewsOperations:  # pylint: disable=name-t
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.StandbyContainerGroupPoolRuntimeViewResource], deserialized.get("value", [])
+                List[_models.StandbyContainerGroupPoolRuntimeViewResource],
+                deserialized.get("value", []),
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -2342,7 +2432,10 @@ class StandbyContainerGroupPoolRuntimeViewsOperations:  # pylint: disable=name-t
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
