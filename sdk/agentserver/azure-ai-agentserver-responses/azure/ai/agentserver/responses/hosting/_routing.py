@@ -1,9 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Response handler for AgentServer.
+"""Response handler for AgentHost.
 
 Provides the Responses API endpoints and registers them with the
-``AgentServer`` on construction, following the same pattern as
+``AgentHost`` on construction, following the same pattern as
 ``InvocationHandler``.
 """
 
@@ -23,13 +23,13 @@ from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtoc
 from ..store._memory import InMemoryResponseProvider
 
 if TYPE_CHECKING:
-    from azure.ai.agentserver.core import AgentServer, TracingHelper
+    from azure.ai.agentserver.core import AgentHost, TracingHelper
 
 logger = AgentLogger.get()
 
 
 class ResponseHandler:
-    """Response protocol handler that plugs into an ``AgentServer``.
+    """Response protocol handler that plugs into an ``AgentHost``.
 
     Creates the Responses API endpoints and registers them with
     the server.  Use the :meth:`create_handler` decorator to wire
@@ -37,14 +37,14 @@ class ResponseHandler:
 
     This design supports multi-protocol composition -- multiple protocol
     handlers (e.g. ``InvocationHandler``, ``ResponseHandler``) can be
-    mounted onto the same ``AgentServer``.
+    mounted onto the same ``AgentHost``.
 
     Usage::
 
-        from azure.ai.agentserver.core import AgentServer
+        from azure.ai.agentserver.core import AgentHost
         from azure.ai.agentserver.responses.hosting import ResponseHandler
 
-        server = AgentServer()
+        server = AgentHost()
         responses = ResponseHandler(server)
 
         @responses.create_handler
@@ -55,9 +55,9 @@ class ResponseHandler:
 
         server.run()
 
-    :param server: The ``AgentServer`` to register response protocol
+    :param server: The ``AgentHost`` to register response protocol
         routes with.
-    :type server: AgentServer
+    :type server: AgentHost
     :param prefix: Optional URL prefix for all response routes
         (e.g. ``"/v1"``).
     :type prefix: str
@@ -70,7 +70,7 @@ class ResponseHandler:
 
     def __init__(
         self,
-        server: "AgentServer",
+        server: "AgentHost",
         *,
         prefix: str = "",
         options: ResponsesServerOptions | None = None,

@@ -1,4 +1,4 @@
-# Azure AI AgentServer Core for Python
+# Azure AI AgentHost Core for Python
 
 The `azure-ai-agentserver-core` package provides the foundation host framework for building Azure AI Hosted Agent containers. It handles the protocol-agnostic infrastructure — health probes, graceful shutdown, OpenTelemetry tracing, and ASGI serving — so that protocol packages can focus on their endpoint logic.
 
@@ -22,16 +22,16 @@ pip install azure-ai-agentserver-core[tracing]
 
 ## Key concepts
 
-### AgentServer
+### AgentHost
 
-`AgentServer` is the host process for Azure AI Hosted Agent containers. It provides:
+`AgentHost` is the host process for Azure AI Hosted Agent containers. It provides:
 
 - **Health probe** — `GET /healthy` returns `200 OK` when the server is ready.
 - **Graceful shutdown** — On `SIGTERM` the server drains in-flight requests (default 30 s timeout) before exiting.
 - **OpenTelemetry tracing** — Automatic span creation with Azure Monitor and OTLP export when configured.
 - **Hypercorn ASGI server** — Serves on `0.0.0.0:${PORT:-8088}` with HTTP/1.1.
 
-Protocol packages (e.g. `azure-ai-agentserver-invocations`) plug into `AgentServer` by calling `register_routes()` to add their endpoints.
+Protocol packages (e.g. `azure-ai-agentserver-invocations`) plug into `AgentHost` by calling `register_routes()` to add their endpoints.
 
 ### Environment variables
 
@@ -48,14 +48,14 @@ Protocol packages (e.g. `azure-ai-agentserver-invocations`) plug into `AgentServ
 
 ## Examples
 
-`AgentServer` is typically used with a protocol package. The simplest setup with the invocations protocol:
+`AgentHost` is typically used with a protocol package. The simplest setup with the invocations protocol:
 
 ```python
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.invocations import InvocationHandler
 from starlette.responses import JSONResponse
 
-server = AgentServer()
+server = AgentHost()
 invocations = InvocationHandler(server)
 
 @invocations.invoke_handler
@@ -66,12 +66,12 @@ async def handle(request):
 server.run()
 ```
 
-### Using AgentServer standalone
+### Using AgentHost standalone
 
-For custom protocol implementations, use `AgentServer` directly and register your own routes:
+For custom protocol implementations, use `AgentHost` directly and register your own routes:
 
 ```python
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.routing import Route
@@ -79,7 +79,7 @@ from starlette.routing import Route
 async def my_endpoint(request: Request):
     return JSONResponse({"status": "ok"})
 
-server = AgentServer()
+server = AgentHost()
 server.register_routes([Route("/my-endpoint", my_endpoint, methods=["POST"])])
 server.run()
 ```
@@ -89,7 +89,7 @@ server.run()
 Register a cleanup function that runs during graceful shutdown:
 
 ```python
-server = AgentServer()
+server = AgentHost()
 
 @server.shutdown_handler
 async def on_shutdown():
@@ -102,7 +102,7 @@ async def on_shutdown():
 Tracing is enabled automatically when an Application Insights connection string is available:
 
 ```python
-server = AgentServer(
+server = AgentHost(
     application_insights_connection_string="InstrumentationKey=...",
 )
 ```
@@ -121,7 +121,7 @@ python my_agent.py
 Set the log level to `DEBUG` for detailed diagnostics:
 
 ```python
-server = AgentServer(log_level="DEBUG")
+server = AgentHost(log_level="DEBUG")
 ```
 
 Or via environment variable:

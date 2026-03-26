@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Logging facade for AgentServer.
+"""Logging facade for AgentHost.
 
 Usage::
 
@@ -14,7 +14,7 @@ import logging
 
 
 class AgentLogger:
-    """Logging facade for AgentServer.
+    """Logging facade for AgentHost.
 
     Provides library-scoped logger access under the
     ``azure.ai.agentserver`` namespace.

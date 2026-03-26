@@ -10,7 +10,7 @@ from typing import Any
 
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from tests._helpers import EventGate, poll_until
@@ -40,7 +40,7 @@ def _delayed_response_handler(request: Any, context: Any, cancellation_signal: A
 
 
 def _build_client(handler: Any | None = None) -> TestClient:
-    server = AgentServer()
+    server = AgentHost()
     responses = ResponseHandler(server)
     responses.create_handler(handler or _noop_response_handler)
     return TestClient(server.app)
@@ -239,7 +239,7 @@ def test_delete__returns_404_for_non_bg_in_flight_response() -> None:
     started_gate = EventGate()
     release_gate = threading.Event()
     handler = _make_blocking_sync_response_handler(started_gate, release_gate)
-    server = AgentServer()
+    server = AgentHost()
     responses = ResponseHandler(server)
     responses.create_handler(handler)
     client = TestClient(server.app)

@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Configuration resolution helpers for AgentServer hosting.
+"""Configuration resolution helpers for AgentHost hosting.
 
 Each ``resolve_*`` function follows the same hierarchy:
 1. Explicit argument (if not *None*)

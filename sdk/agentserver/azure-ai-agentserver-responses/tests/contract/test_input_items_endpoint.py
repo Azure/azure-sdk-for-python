@@ -8,7 +8,7 @@ from typing import Any
 
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 
 
@@ -22,7 +22,7 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
 
 
 def _build_client() -> TestClient:
-    server = AgentServer()
+    server = AgentHost()
     responses = ResponseHandler(server)
     responses.create_handler(_noop_response_handler)
     return TestClient(server.app)
@@ -357,7 +357,7 @@ def test_input_items_in_flight_fallback_to_runtime() -> None:
 
         return _events()
 
-    _server = AgentServer()
+    _server = AgentHost()
     _rhandler = ResponseHandler(_server)
     _rhandler.create_handler(_slow_handler)
     client = TestClient(_server.app, raise_server_exceptions=False)

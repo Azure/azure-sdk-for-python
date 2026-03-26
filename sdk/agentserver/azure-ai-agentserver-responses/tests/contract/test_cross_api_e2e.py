@@ -18,7 +18,7 @@ from typing import Any
 import pytest
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 from azure.ai.agentserver.responses._id_generator import IdGenerator
@@ -255,7 +255,7 @@ def _make_two_item_gated_handler(
 
 
 def _build_client(handler: Any | None = None) -> TestClient:
-    server = AgentServer()
+    server = AgentHost()
     responses = ResponseHandler(server)
     responses.create_handler(handler or _noop_handler)
     return TestClient(server.app)

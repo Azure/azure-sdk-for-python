@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Standardized error response builder for AgentServer.
+"""Standardized error response builder for AgentHost.
 
 Every error returned by the framework uses the shape::
 
@@ -20,7 +20,7 @@ from starlette.responses import JSONResponse
 
 
 class ErrorResponse:
-    """Standardized error response builder for AgentServer.
+    """Standardized error response builder for AgentHost.
 
     Provides a static factory method for building JSON error responses
     with the standard error envelope.

@@ -27,7 +27,7 @@ _HEALTHY_BODY = b'{"status":"healthy"}'
 _PLATFORM_SERVER_VALUE = "azure-ai-agentserver-core"
 
 # Sentinel attribute name set on the console handler to prevent adding duplicates
-# across multiple AgentServer instantiations.
+# across multiple AgentHost instantiations.
 _CONSOLE_HANDLER_ATTR = "_agentserver_console"
 
 
@@ -40,7 +40,7 @@ class _PlatformHeaderMiddleware(BaseHTTPMiddleware):
         return response
 
 
-class AgentServer:
+class AgentHost:
     """Agent server host framework with built-in protocol endpoints.
 
     Provides the protocol-agnostic infrastructure required by all Azure AI
@@ -56,10 +56,10 @@ class AgentServer:
 
     Usage::
 
-        from azure.ai.agentserver.core import AgentServer
+        from azure.ai.agentserver.core import AgentHost
         from azure.ai.agentserver.invocations import InvocationHandler
 
-        server = AgentServer()
+        server = AgentHost()
         invocations = InvocationHandler(server)
 
         @invocations.invoke_handler
@@ -234,7 +234,7 @@ class AgentServer:
         from hypercorn.asyncio import serve as _hypercorn_serve
 
         resolved_port = _config.resolve_port(port)
-        logger.info("AgentServer starting on %s:%s", host, resolved_port)
+        logger.info("AgentHost starting on %s:%s", host, resolved_port)
         config = self._build_hypercorn_config(host, resolved_port)
         asyncio.run(_hypercorn_serve(self.app, config))  # type: ignore[arg-type]  # Starlette is ASGI-compatible
 
@@ -252,7 +252,7 @@ class AgentServer:
         from hypercorn.asyncio import serve as _hypercorn_serve
 
         resolved_port = _config.resolve_port(port)
-        logger.info("AgentServer starting on %s:%s (async)", host, resolved_port)
+        logger.info("AgentHost starting on %s:%s (async)", host, resolved_port)
         config = self._build_hypercorn_config(host, resolved_port)
         await _hypercorn_serve(self.app, config)  # type: ignore[arg-type]  # Starlette is ASGI-compatible
 
@@ -265,12 +265,12 @@ class AgentServer:
 
         @contextlib.asynccontextmanager
         async def _lifespan(_app: Starlette) -> AsyncGenerator[None, None]:  # noqa: RUF029
-            logger.info("AgentServer started")
+            logger.info("AgentHost started")
             yield
 
             # --- SHUTDOWN: runs once when the server is stopping ---
             logger.info(
-                "AgentServer shutting down (graceful timeout=%ss)",
+                "AgentHost shutting down (graceful timeout=%ss)",
                 self._graceful_shutdown_timeout,
             )
             if self._graceful_shutdown_timeout == 0:

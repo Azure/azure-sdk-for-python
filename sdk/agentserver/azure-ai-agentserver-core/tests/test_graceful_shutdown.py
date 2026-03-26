@@ -9,7 +9,7 @@ from unittest import mock
 
 import pytest
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.core._config import resolve_graceful_shutdown_timeout
 from azure.ai.agentserver.core._constants import Constants
 
@@ -75,12 +75,12 @@ class TestHypercornConfig:
     """Verify _build_hypercorn_config passes the resolved timeout to Hypercorn."""
 
     def test_sync_run_passes_timeout(self) -> None:
-        agent = AgentServer(graceful_shutdown_timeout=15)
+        agent = AgentHost(graceful_shutdown_timeout=15)
         config = agent._build_hypercorn_config("127.0.0.1", 8000)
         assert config.graceful_timeout == 15.0
 
     def test_async_run_passes_timeout(self) -> None:
-        agent = AgentServer(graceful_shutdown_timeout=25)
+        agent = AgentHost(graceful_shutdown_timeout=25)
         config = agent._build_hypercorn_config("0.0.0.0", 9000)
         assert config.graceful_timeout == 25.0
 
@@ -88,7 +88,7 @@ class TestHypercornConfig:
         env = os.environ.copy()
         env.pop("AGENT_GRACEFUL_SHUTDOWN_TIMEOUT", None)
         with mock.patch.dict(os.environ, env, clear=True):
-            agent = AgentServer()
+            agent = AgentHost()
             config = agent._build_hypercorn_config("0.0.0.0", 8088)
             assert config.graceful_timeout == float(Constants.DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT)
 
@@ -101,7 +101,7 @@ class TestHypercornConfig:
 @pytest.mark.asyncio
 async def test_lifespan_shutdown_logs(caplog: pytest.LogCaptureFixture) -> None:
     """The lifespan shutdown phase logs the graceful timeout."""
-    agent = AgentServer(graceful_shutdown_timeout=7)
+    agent = AgentHost(graceful_shutdown_timeout=7)
 
     # Drive the lifespan manually via the ASGI interface.
     scope = {"type": "lifespan"}
@@ -134,7 +134,7 @@ async def test_lifespan_shutdown_logs(caplog: pytest.LogCaptureFixture) -> None:
 @pytest.mark.asyncio
 async def test_shutdown_handler_called() -> None:
     """The function registered via @shutdown_handler is called during shutdown."""
-    agent = AgentServer(graceful_shutdown_timeout=5)
+    agent = AgentHost(graceful_shutdown_timeout=5)
     called = False
 
     @agent.shutdown_handler
@@ -165,7 +165,7 @@ async def test_shutdown_handler_called() -> None:
 @pytest.mark.asyncio
 async def test_default_shutdown_is_noop() -> None:
     """When no shutdown handler is registered, shutdown succeeds silently."""
-    agent = AgentServer(graceful_shutdown_timeout=5)
+    agent = AgentHost(graceful_shutdown_timeout=5)
 
     scope = {"type": "lifespan"}
     startup_done = asyncio.Event()
@@ -195,7 +195,7 @@ async def test_default_shutdown_is_noop() -> None:
 @pytest.mark.asyncio
 async def test_failing_shutdown_is_logged(caplog: pytest.LogCaptureFixture) -> None:
     """A shutdown handler that raises is logged but does not crash the server."""
-    agent = AgentServer(graceful_shutdown_timeout=5)
+    agent = AgentHost(graceful_shutdown_timeout=5)
 
     @agent.shutdown_handler
     async def on_shutdown():
@@ -233,7 +233,7 @@ async def test_failing_shutdown_is_logged(caplog: pytest.LogCaptureFixture) -> N
 @pytest.mark.asyncio
 async def test_slow_shutdown_cancelled_with_warning(caplog: pytest.LogCaptureFixture) -> None:
     """A shutdown handler exceeding the timeout is cancelled and a warning is logged."""
-    agent = AgentServer(graceful_shutdown_timeout=1)
+    agent = AgentHost(graceful_shutdown_timeout=1)
 
     @agent.shutdown_handler
     async def on_shutdown():
@@ -269,7 +269,7 @@ async def test_slow_shutdown_cancelled_with_warning(caplog: pytest.LogCaptureFix
 @pytest.mark.asyncio
 async def test_fast_shutdown_completes_normally() -> None:
     """A shutdown handler that finishes within the timeout completes normally."""
-    agent = AgentServer(graceful_shutdown_timeout=10)
+    agent = AgentHost(graceful_shutdown_timeout=10)
     completed = False
 
     @agent.shutdown_handler
@@ -306,7 +306,7 @@ async def test_fast_shutdown_completes_normally() -> None:
 @pytest.mark.asyncio
 async def test_zero_timeout_skips_shutdown_handler() -> None:
     """When graceful_shutdown_timeout=0, the shutdown handler is skipped."""
-    agent = AgentServer(graceful_shutdown_timeout=0)
+    agent = AgentHost(graceful_shutdown_timeout=0)
     completed = False
 
     @agent.shutdown_handler

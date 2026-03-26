@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests for graceful shutdown with AgentServer."""
+"""Tests for graceful shutdown with AgentHost."""
 import asyncio
 import logging
 
@@ -10,7 +10,7 @@ from httpx import ASGITransport, AsyncClient
 from starlette.requests import Request
 from starlette.responses import Response
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.invocations import InvocationHandler
 
 
@@ -18,9 +18,9 @@ from azure.ai.agentserver.invocations import InvocationHandler
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _make_server_with_shutdown(**kwargs) -> tuple[AgentServer, list]:
-    """Create AgentServer with a tracked shutdown handler."""
-    server = AgentServer(**kwargs)
+def _make_server_with_shutdown(**kwargs) -> tuple[AgentHost, list]:
+    """Create AgentHost with a tracked shutdown handler."""
+    server = AgentHost(**kwargs)
     invocations = InvocationHandler(server)
     calls: list[str] = []
 
@@ -47,7 +47,7 @@ def test_shutdown_handler_registered():
 
 def test_shutdown_handler_not_registered():
     """Without @shutdown_handler, _shutdown_fn is None."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler
@@ -104,7 +104,7 @@ async def test_shutdown_handler_called_on_lifespan_exit():
 @pytest.mark.asyncio
 async def test_shutdown_handler_timeout(caplog):
     """Shutdown handler that exceeds timeout is warned about."""
-    server = AgentServer(graceful_shutdown_timeout=1)
+    server = AgentHost(graceful_shutdown_timeout=1)
     invocations = InvocationHandler(server)
     calls: list[str] = []
 
@@ -133,7 +133,7 @@ async def test_shutdown_handler_timeout(caplog):
 @pytest.mark.asyncio
 async def test_shutdown_handler_exception(caplog):
     """Shutdown handler that raises is caught and logged."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler
@@ -157,19 +157,19 @@ async def test_shutdown_handler_exception(caplog):
 
 def test_default_graceful_shutdown_timeout():
     """Default graceful shutdown timeout is 30 seconds."""
-    server = AgentServer()
+    server = AgentHost()
     assert server._graceful_shutdown_timeout == 30
 
 
 def test_custom_graceful_shutdown_timeout():
     """Custom graceful_shutdown_timeout is stored."""
-    server = AgentServer(graceful_shutdown_timeout=60)
+    server = AgentHost(graceful_shutdown_timeout=60)
     assert server._graceful_shutdown_timeout == 60
 
 
 def test_zero_graceful_shutdown_timeout():
     """Zero timeout disables the drain period."""
-    server = AgentServer(graceful_shutdown_timeout=0)
+    server = AgentHost(graceful_shutdown_timeout=0)
     assert server._graceful_shutdown_timeout == 0
 
 
@@ -195,7 +195,7 @@ async def test_health_endpoint_during_operation():
 @pytest.mark.asyncio
 async def test_no_shutdown_handler_is_noop():
     """Without a shutdown handler, lifespan exit succeeds silently."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler

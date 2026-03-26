@@ -1,10 +1,10 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Invocation protocol handler for AgentServer.
+"""Invocation protocol handler for AgentHost.
 
 Provides the invocation protocol endpoints and handler decorators.
-Registers routes with the ``AgentServer`` on construction.
+Registers routes with the ``AgentHost`` on construction.
 """
 import contextlib
 import os
@@ -23,7 +23,7 @@ from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
 )
 
 if TYPE_CHECKING:
-    from azure.ai.agentserver.core import AgentServer, TracingHelper
+    from azure.ai.agentserver.core import AgentHost, TracingHelper
 
 from ._constants import InvocationConstants
 
@@ -31,7 +31,7 @@ logger = AgentLogger.get()
 
 
 class InvocationHandler:
-    """Invocation protocol handler that plugs into an ``AgentServer``.
+    """Invocation protocol handler that plugs into an ``AgentHost``.
 
     Creates the invocation protocol endpoints and registers them with
     the server.  Use the decorator methods to wire handler functions
@@ -39,14 +39,14 @@ class InvocationHandler:
 
     This design supports multi-protocol composition — multiple protocol
     handlers (e.g. ``InvocationHandler``, ``ResponseHandler``) can be
-    mounted onto the same ``AgentServer``.
+    mounted onto the same ``AgentHost``.
 
     Usage::
 
-        from azure.ai.agentserver.core import AgentServer
+        from azure.ai.agentserver.core import AgentHost
         from azure.ai.agentserver.invocations import InvocationHandler
 
-        server = AgentServer()
+        server = AgentHost()
         invocations = InvocationHandler(server)
 
         @invocations.invoke_handler
@@ -55,9 +55,9 @@ class InvocationHandler:
 
         server.run()
 
-    :param server: The ``AgentServer`` to register invocation protocol
+    :param server: The ``AgentHost`` to register invocation protocol
         routes with.
-    :type server: AgentServer
+    :type server: AgentHost
     :param openapi_spec: Optional OpenAPI spec dict.  When provided, the spec
         is served at ``GET /invocations/docs/openapi.json``.
     :type openapi_spec: Optional[dict[str, Any]]
@@ -65,7 +65,7 @@ class InvocationHandler:
 
     def __init__(
         self,
-        server: "AgentServer",
+        server: "AgentHost",
         *,
         openapi_spec: Optional[dict[str, Any]] = None,
     ) -> None:

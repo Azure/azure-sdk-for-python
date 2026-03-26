@@ -5,7 +5,7 @@
 ### Features Added
 
 - Renamed package from `azure-ai-agentserver-hosting` to `azure-ai-agentserver-core`.
-- `AgentServer` host framework with health probe, graceful shutdown, and port binding.
+- `AgentHost` host framework with health probe, graceful shutdown, and port binding.
 - `TracingHelper` for OpenTelemetry tracing with Azure Monitor and OTLP exporters.
 - Auto-enable tracing when Application Insights or OTLP endpoint is configured.
 - W3C Trace Context propagation and `leaf_customer_span_id` baggage re-parenting.

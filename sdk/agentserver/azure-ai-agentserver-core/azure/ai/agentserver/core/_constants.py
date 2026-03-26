@@ -4,7 +4,7 @@
 
 
 class Constants:
-    """Well-known environment variables and defaults for AgentServer hosting."""
+    """Well-known environment variables and defaults for AgentHost hosting."""
 
     # Foundry identity
     FOUNDRY_AGENT_NAME = "FOUNDRY_AGENT_NAME"

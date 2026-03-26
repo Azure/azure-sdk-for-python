@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Edge-case tests for AgentServer + InvocationHandler."""
+"""Edge-case tests for AgentHost + InvocationHandler."""
 import asyncio
 import uuid
 
@@ -10,7 +10,7 @@ from httpx import ASGITransport, AsyncClient
 from starlette.requests import Request
 from starlette.responses import Response, StreamingResponse
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.invocations import InvocationHandler
 from conftest import SAMPLE_OPENAPI_SPEC
 
@@ -20,9 +20,9 @@ from conftest import SAMPLE_OPENAPI_SPEC
 # ---------------------------------------------------------------------------
 
 
-def _make_custom_header_agent() -> AgentServer:
+def _make_custom_header_agent() -> AgentHost:
     """Agent whose handler sets its own x-agent-invocation-id (should be overwritten)."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler
@@ -34,9 +34,9 @@ def _make_custom_header_agent() -> AgentServer:
     return server
 
 
-def _make_empty_streaming_agent() -> AgentServer:
+def _make_empty_streaming_agent() -> AgentHost:
     """Agent that returns an empty streaming response."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler
@@ -50,9 +50,9 @@ def _make_empty_streaming_agent() -> AgentServer:
     return server
 
 
-def _make_large_payload_agent() -> AgentServer:
+def _make_large_payload_agent() -> AgentHost:
     """Agent that echoes large payloads."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler
@@ -70,7 +70,7 @@ def _make_large_payload_agent() -> AgentServer:
 @pytest.mark.asyncio
 async def test_get_invocations_returns_405():
     """GET /invocations returns 405 Method Not Allowed."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler
@@ -86,7 +86,7 @@ async def test_get_invocations_returns_405():
 @pytest.mark.asyncio
 async def test_put_invocations_returns_405():
     """PUT /invocations returns 405 Method Not Allowed."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler
@@ -102,7 +102,7 @@ async def test_put_invocations_returns_405():
 @pytest.mark.asyncio
 async def test_delete_invocation_returns_405():
     """DELETE /invocations/{id} returns 405 Method Not Allowed."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler
@@ -118,7 +118,7 @@ async def test_delete_invocation_returns_405():
 @pytest.mark.asyncio
 async def test_post_openapi_json_returns_405():
     """POST /invocations/docs/openapi.json returns 405."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server, openapi_spec=SAMPLE_OPENAPI_SPEC)
 
     @invocations.invoke_handler
@@ -231,7 +231,7 @@ async def test_empty_streaming():
 @pytest.mark.asyncio
 async def test_streaming_has_invocation_id():
     """Streaming response has x-agent-invocation-id header."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler
@@ -294,7 +294,7 @@ async def test_invoke_cancel_get(async_storage_client):
 @pytest.mark.asyncio
 async def test_concurrent_invocations_get_unique_ids():
     """10 concurrent POSTs each get unique invocation IDs."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler

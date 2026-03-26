@@ -7,7 +7,7 @@ from httpx import ASGITransport, AsyncClient
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.invocations import InvocationHandler
 
 
@@ -80,13 +80,13 @@ async def test_get_after_cancel_returns_404(async_storage_client):
 
 
 # ---------------------------------------------------------------------------
-# GET error returns 500 (inline AgentServer)
+# GET error returns 500 (inline AgentHost)
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
 async def test_get_invocation_error_returns_500():
     """GET handler raising an exception returns 500."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler
@@ -105,13 +105,13 @@ async def test_get_invocation_error_returns_500():
 
 
 # ---------------------------------------------------------------------------
-# Cancel error returns 500 (inline AgentServer)
+# Cancel error returns 500 (inline AgentHost)
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
 async def test_cancel_invocation_error_returns_500():
     """Cancel handler raising an exception returns 500."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler

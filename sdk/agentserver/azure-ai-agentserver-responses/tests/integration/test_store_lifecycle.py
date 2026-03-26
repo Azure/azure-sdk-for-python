@@ -11,7 +11,7 @@ from starlette.testclient import TestClient
 
 from tests._helpers import poll_until
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 
 
@@ -35,7 +35,7 @@ def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any
 
 
 def _build_client() -> TestClient:
-    server = AgentServer()
+    server = AgentHost()
     responses = ResponseHandler(server)
     responses.create_handler(_noop_response_handler)
     return TestClient(server.app)
@@ -103,7 +103,7 @@ def test_store_lifecycle__background_completion_is_observed_deterministically() 
 
 
 def test_store_lifecycle__background_cancel_transition_is_deterministic() -> None:
-    server = AgentServer()
+    server = AgentHost()
     _responses = ResponseHandler(server)
     _responses.create_handler(_cancellable_bg_handler)
     client = TestClient(server.app)
