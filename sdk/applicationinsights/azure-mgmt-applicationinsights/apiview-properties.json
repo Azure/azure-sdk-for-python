@@ -1,0 +1,30 @@
+{
+    "CrossLanguagePackageId": null,
+    "CrossLanguageDefinitionId": {
+        "azure.mgmt.applicationinsights.v2022_06_15.models.HeaderField": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.models.TagsResource": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.models.WebtestsResource": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.models.WebTest": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.models.WebTestGeolocation": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.models.WebTestListResult": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.models.WebTestPropertiesConfiguration": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.models.WebTestPropertiesRequest": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.models.WebTestPropertiesValidationRules": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.models.WebTestPropertiesValidationRulesContentValidation": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.models.WebTestKind": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.operations.WebTestsOperations.list_by_resource_group": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.aio.operations.WebTestsOperations.list_by_resource_group": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.operations.WebTestsOperations.get": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.aio.operations.WebTestsOperations.get": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.operations.WebTestsOperations.create_or_update": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.aio.operations.WebTestsOperations.create_or_update": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.operations.WebTestsOperations.update_tags": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.aio.operations.WebTestsOperations.update_tags": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.operations.WebTestsOperations.delete": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.aio.operations.WebTestsOperations.delete": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.operations.WebTestsOperations.list": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.aio.operations.WebTestsOperations.list": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.operations.WebTestsOperations.list_by_component": null,
+        "azure.mgmt.applicationinsights.v2022_06_15.aio.operations.WebTestsOperations.list_by_component": null
+    }
+}

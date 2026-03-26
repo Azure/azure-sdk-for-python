@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.applicationinsights.aio import ApplicationInsightsManagementClient
+from azure.mgmt.applicationinsights.v2020_06_02_preview.aio import ApplicationInsightsManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -23,7 +23,7 @@ class TestApplicationInsightsManagementOperationsAsync(AzureMgmtRecordedTestCase
     @recorded_by_proxy_async
     async def test_operations_list(self, resource_group):
         response = self.client.operations.list(
-            api_version="2021-03-08",
+            api_version="2020-06-02-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

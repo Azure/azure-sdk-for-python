@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.applicationinsights import ApplicationInsightsManagementClient
+from azure.mgmt.applicationinsights.v2018_05_01_preview import ApplicationInsightsManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -24,7 +24,7 @@ class TestApplicationInsightsManagementProactiveDetectionConfigurationsOperation
         response = self.client.proactive_detection_configurations.list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2015-05-01",
+            api_version="2018-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestApplicationInsightsManagementProactiveDetectionConfigurationsOperation
             resource_group_name=resource_group.name,
             resource_name="str",
             configuration_id="str",
-            api_version="2015-05-01",
+            api_version="2018-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -51,11 +51,11 @@ class TestApplicationInsightsManagementProactiveDetectionConfigurationsOperation
             resource_name="str",
             configuration_id="str",
             proactive_detection_properties={
-                "customEmails": ["str"],
-                "enabled": bool,
-                "lastUpdatedTime": "str",
-                "name": "str",
-                "ruleDefinitions": {
+                "CustomEmails": ["str"],
+                "Enabled": bool,
+                "LastUpdatedTime": "str",
+                "Name": "str",
+                "RuleDefinitions": {
                     "Description": "str",
                     "DisplayName": "str",
                     "HelpUrl": "str",
@@ -65,9 +65,13 @@ class TestApplicationInsightsManagementProactiveDetectionConfigurationsOperation
                     "Name": "str",
                     "SupportsEmailNotifications": bool,
                 },
-                "sendEmailsToSubscriptionOwners": bool,
+                "SendEmailsToSubscriptionOwners": bool,
+                "id": "str",
+                "location": "str",
+                "name": "str",
+                "type": "str",
             },
-            api_version="2015-05-01",
+            api_version="2018-05-01-preview",
         )
 
         # please add some check logic here by yourself

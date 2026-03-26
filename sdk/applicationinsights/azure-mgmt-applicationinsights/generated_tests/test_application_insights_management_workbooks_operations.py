@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.applicationinsights import ApplicationInsightsManagementClient
+from azure.mgmt.applicationinsights.v2022_04_01 import ApplicationInsightsManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -23,7 +23,7 @@ class TestApplicationInsightsManagementWorkbooksOperations(AzureMgmtRecordedTest
     def test_workbooks_list_by_subscription(self, resource_group):
         response = self.client.workbooks.list_by_subscription(
             category="str",
-            api_version="2023-06-01",
+            api_version="2022-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -35,7 +35,7 @@ class TestApplicationInsightsManagementWorkbooksOperations(AzureMgmtRecordedTest
         response = self.client.workbooks.list_by_resource_group(
             resource_group_name=resource_group.name,
             category="str",
-            api_version="2023-06-01",
+            api_version="2022-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestApplicationInsightsManagementWorkbooksOperations(AzureMgmtRecordedTest
         response = self.client.workbooks.get(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-06-01",
+            api_version="2022-04-01",
         )
 
         # please add some check logic here by yourself
@@ -59,7 +59,7 @@ class TestApplicationInsightsManagementWorkbooksOperations(AzureMgmtRecordedTest
         response = self.client.workbooks.delete(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-06-01",
+            api_version="2022-04-01",
         )
 
         # please add some check logic here by yourself
@@ -104,7 +104,7 @@ class TestApplicationInsightsManagementWorkbooksOperations(AzureMgmtRecordedTest
                 "userId": "str",
                 "version": "str",
             },
-            api_version="2023-06-01",
+            api_version="2022-04-01",
         )
 
         # please add some check logic here by yourself
@@ -116,7 +116,7 @@ class TestApplicationInsightsManagementWorkbooksOperations(AzureMgmtRecordedTest
         response = self.client.workbooks.update(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-06-01",
+            api_version="2022-04-01",
         )
 
         # please add some check logic here by yourself
@@ -128,7 +128,7 @@ class TestApplicationInsightsManagementWorkbooksOperations(AzureMgmtRecordedTest
         response = self.client.workbooks.revisions_list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-06-01",
+            api_version="2022-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -141,7 +141,7 @@ class TestApplicationInsightsManagementWorkbooksOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             resource_name="str",
             revision_id="str",
-            api_version="2023-06-01",
+            api_version="2022-04-01",
         )
 
         # please add some check logic here by yourself
