@@ -10,14 +10,14 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 import os
 import logging
-from typing import Any, IO, Tuple, Optional, Union
+from typing import Any, Final, IO, Tuple, Optional, Union
 from pathlib import Path
 from urllib.parse import urlsplit
 from azure.storage.blob import ContainerClient
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from ._operations import BetaEvaluatorsOperations as BetaEvaluatorsOperationsGenerated, JSON
-from ..models._enums import FoundryFeaturesOptInKeys
+from ..models._enums import _FoundryFeaturesOptInKeys
 from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME
 from ..models._models import (
     CodeBasedEvaluatorDefinition,
@@ -26,7 +26,7 @@ from ..models._models import (
 
 logger = logging.getLogger(__name__)
 
-_EVALUATORS_FOUNDRY_FEATURES_VALUE = FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value
+_EVALUATORS_FOUNDRY_FEATURES_VALUE: Final[str] = _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value
 
 
 class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):

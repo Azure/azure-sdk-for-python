@@ -14,7 +14,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ._operations import EvaluationRulesOperations as GeneratedEvaluationRulesOperations, JSON
 from ... import models as _models
 from ...operations._patch_agents import _PREVIEW_FEATURE_REQUIRED_CODE, _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE
-from ...models._enums import FoundryFeaturesOptInKeys
+from ...models._enums import _FoundryFeaturesOptInKeys
 from ...models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 
 
@@ -105,10 +105,10 @@ class EvaluationRulesOperations(GeneratedEvaluationRulesOperations):
             headers = kwargs.get("headers")
             if headers is None:
                 kwargs["headers"] = {
-                    _FOUNDRY_FEATURES_HEADER_NAME: FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value
+                    _FOUNDRY_FEATURES_HEADER_NAME: _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value
                 }
             elif not _has_header_case_insensitive(headers, _FOUNDRY_FEATURES_HEADER_NAME):
-                headers[_FOUNDRY_FEATURES_HEADER_NAME] = FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value
+                headers[_FOUNDRY_FEATURES_HEADER_NAME] = _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value
                 kwargs["headers"] = headers
 
         try:
