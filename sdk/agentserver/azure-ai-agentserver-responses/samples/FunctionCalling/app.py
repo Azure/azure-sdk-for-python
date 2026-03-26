@@ -27,8 +27,8 @@ def _extract_function_call_output(request_payload: CreateResponse) -> str | None
     for item in items:
         if isinstance(item, str):
             continue
-        if item.type == ItemType.FUNCTION_CALL_OUTPUT:
-            return item.content.get("output")
+        if item.get("type") == ItemType.FUNCTION_CALL_OUTPUT:
+            return item.get("content", {}).get("output")
 
     return None
 

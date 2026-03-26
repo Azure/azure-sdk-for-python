@@ -14,7 +14,7 @@ from typing import Any
 from azure.ai.agentserver.hosting import AgentServer
 from azure.ai.agentserver.responses._response_context import ResponseContext
 from azure.ai.agentserver.responses.models._generated.sdk.models._types import InputParam
-from azure.ai.agentserver.responses.models._generated.sdk.models.models._models import CreateResponse, OutputItem, Messageou, OutputItemOutputMessage
+from azure.ai.agentserver.responses.models._generated.sdk.models.models._models import CreateResponse, OutputItem
 from azure.ai.agentserver.responses.models._helpers import get_input_text
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 from azure.ai.agentserver.responses.hosting import ResponseHandler
@@ -28,8 +28,8 @@ def _build_reply(current_input: str, history: Sequence[OutputItem]) -> str:
 
     history_messages = [item for item in history if getattr(item, "type", None) == "output_message"]
     turn_number = len(history_messages) + 1
-    last_message: OutputItemOutputMessage = history_messages[-1] if history_messages else None
-    last_text = last_message.content[0].text if last_message and last_message.content else "(no text)"
+    last_message = history_messages[-1] if history_messages else None
+    last_text = last_message["content"][0]["text"] if last_message and last_message.get("content") else "(no text)"
 
     return (
         f"[Turn {turn_number}] History has {len(history)} item(s). "
@@ -40,8 +40,8 @@ def _build_reply(current_input: str, history: Sequence[OutputItem]) -> str:
 server = AgentServer()
 responses = ResponseHandler(server, options=ResponsesServerOptions(default_fetch_history_count=20))
 
-@responses.create_handler()
-async def create_async(self, request: CreateResponse, context: ResponseContext, cancellation_signal: Any) -> AsyncIterable[dict[str, Any]]:
+@responses.create_handler
+async def create_async(request: CreateResponse, context: ResponseContext, cancellation_signal: Any) -> AsyncIterable[dict[str, Any]]:
     del cancellation_signal
 
     stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))

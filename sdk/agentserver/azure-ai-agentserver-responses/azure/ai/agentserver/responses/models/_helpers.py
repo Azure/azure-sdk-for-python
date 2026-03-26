@@ -57,7 +57,7 @@ def get_conversation_id(request: CreateResponse) -> Optional[str]:
     return str(raw_id) if raw_id else None
 
 
-def get_input_expanded(request: CreateResponse) -> list[InputParam]:
+def get_input_expanded(request: CreateResponse) -> list[dict]:
     """Normalize ``CreateResponse.input`` into a list of :class:`Item`.
 
     - If input is ``None``, returns ``[]``.
@@ -68,7 +68,7 @@ def get_input_expanded(request: CreateResponse) -> list[InputParam]:
     :param request: The create-response request.
     :type request: CreateResponse
     :returns: A list of input items.
-    :rtype: list[Item]
+    :rtype: list[dict]
     """
     inp = request.input
     if inp is None:
@@ -80,7 +80,7 @@ def get_input_expanded(request: CreateResponse) -> list[InputParam]:
                 status="completed",
                 role=MessageRole.USER,
                 content=[MessageContentInputTextContent(text=inp)],
-            )
+            ).as_dict()
         ]
     return list(inp)
 
@@ -163,7 +163,7 @@ def get_conversation_expanded(request: CreateResponse) -> Optional[ConversationP
 # ---------------------------------------------------------------------------
 
 
-def get_instruction_items(response: Response) -> list[Item]:
+def get_instruction_items(response: Response) -> list[dict]:
     """Expand ``Response.instructions`` into a list of :class:`Item`.
 
     - If instructions is ``None``, returns ``[]``.
@@ -186,7 +186,7 @@ def get_instruction_items(response: Response) -> list[Item]:
                 status="completed",
                 role=MessageRole.DEVELOPER,
                 content=[MessageContentInputTextContent(text=instr)],
-            )
+            ).as_dict()
         ]
     return list(instr)
 
