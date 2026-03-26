@@ -1,6 +1,6 @@
 # Azure AI AgentServer Invocations for Python
 
-The `azure-ai-agentserver-invocations` package provides the invocation protocol endpoints for Azure AI Hosted Agent containers. It plugs into the [`azure-ai-agentserver-hosting`](https://pypi.org/project/azure-ai-agentserver-hosting/) host framework and adds the full invocation lifecycle: `POST /invocations`, `GET /invocations/{id}`, `POST /invocations/{id}/cancel`, and `GET /invocations/docs/openapi.json`.
+The `azure-ai-agentserver-invocations` package provides the invocation protocol endpoints for Azure AI Hosted Agent containers. It plugs into the [`azure-ai-agentserver-core`](https://pypi.org/project/azure-ai-agentserver-core/) host framework and adds the full invocation lifecycle: `POST /invocations`, `GET /invocations/{id}`, `POST /invocations/{id}/cancel`, and `GET /invocations/docs/openapi.json`.
 
 ## Getting started
 
@@ -10,7 +10,7 @@ The `azure-ai-agentserver-invocations` package provides the invocation protocol 
 pip install azure-ai-agentserver-invocations
 ```
 
-This automatically installs `azure-ai-agentserver-hosting` as a dependency.
+This automatically installs `azure-ai-agentserver-core` as a dependency.
 
 ### Prerequisites
 
@@ -75,7 +75,7 @@ When tracing is enabled on the `AgentServer`, invocation spans are automatically
 ### Simple synchronous agent
 
 ```python
-from azure.ai.agentserver.hosting import AgentServer
+from azure.ai.agentserver.core import AgentServer
 from azure.ai.agentserver.invocations import InvocationHandler
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
@@ -97,7 +97,7 @@ server.run()
 import asyncio
 import json
 
-from azure.ai.agentserver.hosting import AgentServer
+from azure.ai.agentserver.core import AgentServer
 from azure.ai.agentserver.invocations import InvocationHandler
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
@@ -138,7 +138,7 @@ async def cancel_invocation(request: Request) -> Response:
 ```python
 import json
 
-from azure.ai.agentserver.hosting import AgentServer
+from azure.ai.agentserver.core import AgentServer
 from azure.ai.agentserver.invocations import InvocationHandler
 from starlette.requests import Request
 from starlette.responses import Response, StreamingResponse

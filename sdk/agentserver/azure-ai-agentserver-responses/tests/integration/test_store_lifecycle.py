@@ -11,7 +11,7 @@ from starlette.testclient import TestClient
 
 from tests._helpers import poll_until
 
-from azure.ai.agentserver.hosting import AgentServer
+from azure.ai.agentserver.core import AgentServer
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 
 

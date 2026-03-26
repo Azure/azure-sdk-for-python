@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Callable, Optional
 
 from starlette.routing import Route
 
-from azure.ai.agentserver.hosting import AgentLogger
+from azure.ai.agentserver.core import AgentLogger
 
 from ._endpoint_handler import _ResponseEndpointHandler
 from ._orchestrator import _ResponseOrchestrator
@@ -23,7 +23,7 @@ from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtoc
 from ..store._memory import InMemoryResponseProvider
 
 if TYPE_CHECKING:
-    from azure.ai.agentserver.hosting import AgentServer, TracingHelper
+    from azure.ai.agentserver.core import AgentServer, TracingHelper
 
 logger = AgentLogger.get()
 
@@ -41,7 +41,7 @@ class ResponseHandler:
 
     Usage::
 
-        from azure.ai.agentserver.hosting import AgentServer
+        from azure.ai.agentserver.core import AgentServer
         from azure.ai.agentserver.responses.hosting import ResponseHandler
 
         server = AgentServer()

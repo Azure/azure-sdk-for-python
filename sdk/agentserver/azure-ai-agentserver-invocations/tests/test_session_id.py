@@ -11,7 +11,7 @@ from httpx import ASGITransport, AsyncClient
 from starlette.requests import Request
 from starlette.responses import Response
 
-from azure.ai.agentserver.hosting import AgentServer
+from azure.ai.agentserver.core import AgentServer
 from azure.ai.agentserver.invocations import InvocationHandler
 from azure.ai.agentserver.invocations._constants import InvocationConstants
 

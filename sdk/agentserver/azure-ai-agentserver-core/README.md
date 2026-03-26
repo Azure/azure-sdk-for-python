@@ -1,105 +1,143 @@
-# Azure AI Agent Server Adapter for Python
+# Azure AI AgentServer Core for Python
 
+The `azure-ai-agentserver-core` package provides the foundation host framework for building Azure AI Hosted Agent containers. It handles the protocol-agnostic infrastructure — health probes, graceful shutdown, OpenTelemetry tracing, and ASGI serving — so that protocol packages can focus on their endpoint logic.
 
 ## Getting started
+
+### Install the package
 
 ```bash
 pip install azure-ai-agentserver-core
 ```
 
+To enable OpenTelemetry tracing with Azure Monitor and OTLP exporters:
+
+```bash
+pip install azure-ai-agentserver-core[tracing]
+```
+
+### Prerequisites
+
+- Python 3.10 or later
+
 ## Key concepts
 
-This is the core package for Azure AI Agent server. It hosts your agent as a container on the cloud.
+### AgentServer
 
-You can talk to your agent using azure-ai-project sdk.
+`AgentServer` is the host process for Azure AI Hosted Agent containers. It provides:
 
+- **Health probe** — `GET /healthy` returns `200 OK` when the server is ready.
+- **Graceful shutdown** — On `SIGTERM` the server drains in-flight requests (default 30 s timeout) before exiting.
+- **OpenTelemetry tracing** — Automatic span creation with Azure Monitor and OTLP export when configured.
+- **Hypercorn ASGI server** — Serves on `0.0.0.0:${PORT:-8088}` with HTTP/1.1.
+
+Protocol packages (e.g. `azure-ai-agentserver-invocations`) plug into `AgentServer` by calling `register_routes()` to add their endpoints.
+
+### Environment variables
+
+| Variable | Description | Default |
+|---|---|---|
+| `PORT` | Listen port | `8088` |
+| `FOUNDRY_AGENT_NAME` | Agent name (used in tracing) | `""` |
+| `FOUNDRY_AGENT_VERSION` | Agent version (used in tracing) | `""` |
+| `FOUNDRY_PROJECT_ENDPOINT` | Azure AI Foundry project endpoint | `""` |
+| `APPLICATIONINSIGHTS_CONNECTION_STRING` | Azure Monitor connection string | — |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | OTLP collector endpoint | — |
+| `AGENT_GRACEFUL_SHUTDOWN_TIMEOUT` | Shutdown drain timeout (seconds) | `30` |
+| `AGENT_LOG_LEVEL` | Log level (`DEBUG`, `INFO`, etc.) | `INFO` |
 
 ## Examples
 
-If your agent is not built using a supported framework such as LangGraph and Agent-framework, you can still make it compatible with Microsoft AI Foundry by manually implementing the predefined interface.
+`AgentServer` is typically used with a protocol package. The simplest setup with the invocations protocol:
 
 ```python
-import datetime
+from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.invocations import InvocationHandler
+from starlette.responses import JSONResponse
 
-from azure.ai.agentserver.core import FoundryCBAgent
-from azure.ai.agentserver.core.models import (
-    CreateResponse, 
-    Response as OpenAIResponse,
+server = AgentServer()
+invocations = InvocationHandler(server)
+
+@invocations.invoke_handler
+async def handle(request):
+    body = await request.json()
+    return JSONResponse({"greeting": f"Hello, {body['name']}!"})
+
+server.run()
+```
+
+### Using AgentServer standalone
+
+For custom protocol implementations, use `AgentServer` directly and register your own routes:
+
+```python
+from azure.ai.agentserver.core import AgentServer
+from starlette.requests import Request
+from starlette.responses import JSONResponse
+from starlette.routing import Route
+
+async def my_endpoint(request: Request):
+    return JSONResponse({"status": "ok"})
+
+server = AgentServer()
+server.register_routes([Route("/my-endpoint", my_endpoint, methods=["POST"])])
+server.run()
+```
+
+### Shutdown handler
+
+Register a cleanup function that runs during graceful shutdown:
+
+```python
+server = AgentServer()
+
+@server.shutdown_handler
+async def on_shutdown():
+    # Close database connections, flush buffers, etc.
+    pass
+```
+
+### Configuring tracing
+
+Tracing is enabled automatically when an Application Insights connection string is available:
+
+```python
+server = AgentServer(
+    application_insights_connection_string="InstrumentationKey=...",
 )
-from azure.ai.agentserver.core.models.projects import (
-    ItemContentOutputText,
-    ResponsesAssistantMessageItemResource,
-    ResponseTextDeltaEvent,
-    ResponseTextDoneEvent,
-)
+```
 
+Or via environment variable:
 
-def stream_events(text: str):
-    assembled = ""
-    for i, token in enumerate(text.split(" ")):
-        piece = token if i == len(text.split(" ")) - 1 else token + " "
-        assembled += piece
-        yield ResponseTextDeltaEvent(delta=piece)
-    # Done with text
-    yield ResponseTextDoneEvent(text=assembled)
-
-
-async def agent_run(request_body: CreateResponse):
-    agent = request_body.agent
-    print(f"agent:{agent}")
-
-    if request_body.stream:
-        return stream_events("I am mock agent with no intelligence in stream mode.")
-
-    # Build assistant output content
-    output_content = [
-        ItemContentOutputText(
-            text="I am mock agent with no intelligence.",
-            annotations=[],
-        )
-    ]
-
-    response = OpenAIResponse(
-        metadata={},
-        temperature=0.0,
-        top_p=0.0,
-        user="me",
-        id="id",
-        created_at=datetime.datetime.now(),
-        output=[
-            ResponsesAssistantMessageItemResource(
-                status="completed",
-                content=output_content,
-            )
-        ],
-    )
-    return response
-
-
-my_agent = FoundryCBAgent()
-my_agent.agent_run = agent_run
-
-if __name__ == "__main__":
-    my_agent.run()
-
+```bash
+export APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=..."
+python my_agent.py
 ```
 
 ## Troubleshooting
 
-First run your agent with azure-ai-agentserver-core locally.
+### Logging
 
-If it works on local by failed on cloud. Check your logs in the application insight connected to your Azure AI Foundry Project.
+Set the log level to `DEBUG` for detailed diagnostics:
 
+```python
+server = AgentServer(log_level="DEBUG")
+```
+
+Or via environment variable:
+
+```bash
+export AGENT_LOG_LEVEL=DEBUG
+```
 
 ### Reporting issues
 
-To report an issue with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues). Mention the package name "azure-ai-agents" in the title or content.
-
+To report an issue with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues).
 
 ## Next steps
 
-Please visit [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-core/samples) folder. There are several cases for you to build your agent with azure-ai-agentserver
-
+- Install [`azure-ai-agentserver-invocations`](https://pypi.org/project/azure-ai-agentserver-invocations/) to add the invocation protocol endpoints.
+- See the [container image spec](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver) for the full hosted agent contract.
 
 ## Contributing
 
@@ -117,3 +155,5 @@ This project has adopted the
 [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information,
 see the Code of Conduct FAQ or contact opencode@microsoft.com with any
 additional questions or comments.
+
+[code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

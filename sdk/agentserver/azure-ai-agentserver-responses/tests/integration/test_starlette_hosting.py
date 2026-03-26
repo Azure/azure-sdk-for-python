@@ -12,7 +12,7 @@ import pytest
 
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.hosting import AgentServer
+from azure.ai.agentserver.core import AgentServer
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 from azure.ai.agentserver.responses.hosting._observability import InMemoryCreateSpanHook
 from azure.ai.agentserver.responses._options import ResponsesServerOptions

@@ -11,7 +11,7 @@ from httpx import ASGITransport, AsyncClient
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
-from azure.ai.agentserver.hosting import AgentServer
+from azure.ai.agentserver.core import AgentServer
 from azure.ai.agentserver.invocations import InvocationHandler
 
 # ---------------------------------------------------------------------------
@@ -62,7 +62,7 @@ def _get_spans():
 
 def _make_tracing_server(**kwargs):
     """Create an AgentServer with tracing enabled."""
-    with patch("azure.ai.agentserver.hosting._tracing.TracingHelper._setup_azure_monitor"):
+    with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
         server = AgentServer(**kwargs)
     invocations = InvocationHandler(server)
 
@@ -76,7 +76,7 @@ def _make_tracing_server(**kwargs):
 
 def _make_tracing_server_with_get_cancel(**kwargs):
     """Create a tracing-enabled server with get/cancel handlers."""
-    with patch("azure.ai.agentserver.hosting._tracing.TracingHelper._setup_azure_monitor"):
+    with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
         server = AgentServer(**kwargs)
     invocations = InvocationHandler(server)
 
@@ -108,7 +108,7 @@ def _make_tracing_server_with_get_cancel(**kwargs):
 
 def _make_failing_tracing_server(**kwargs):
     """Create a tracing-enabled server whose handler raises."""
-    with patch("azure.ai.agentserver.hosting._tracing.TracingHelper._setup_azure_monitor"):
+    with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
         server = AgentServer(**kwargs)
     invocations = InvocationHandler(server)
 
@@ -121,7 +121,7 @@ def _make_failing_tracing_server(**kwargs):
 
 def _make_streaming_tracing_server(**kwargs):
     """Create a tracing-enabled server with streaming response."""
-    with patch("azure.ai.agentserver.hosting._tracing.TracingHelper._setup_azure_monitor"):
+    with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
         server = AgentServer(**kwargs)
     invocations = InvocationHandler(server)
 
@@ -246,7 +246,7 @@ async def test_cancel_invocation_creates_span():
 async def test_tracing_via_appinsights_env_var():
     """Tracing is enabled when APPLICATIONINSIGHTS_CONNECTION_STRING is set."""
     with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
-        with patch("azure.ai.agentserver.hosting._tracing.TracingHelper._setup_azure_monitor"):
+        with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
             server = AgentServer()
     invocations = InvocationHandler(server)
 
@@ -515,5 +515,5 @@ async def test_agent_name_only_in_span_name():
 @pytest.mark.asyncio
 async def test_project_endpoint_env_var():
     """FOUNDRY_PROJECT_ENDPOINT constant matches the expected env var name."""
-    from azure.ai.agentserver.hosting import Constants
+    from azure.ai.agentserver.core import Constants
     assert Constants.FOUNDRY_PROJECT_ENDPOINT == "FOUNDRY_PROJECT_ENDPOINT"

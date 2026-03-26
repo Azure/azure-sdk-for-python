@@ -1,27 +1,25 @@
 {
     "ignoreWords": [
-      "Agentic",
-      "UPIA",
-      "ANSII",
-      "inpainting",
-      "CSDL",
-      "azureai",
-      "GLEU",
-      "fstring",
-      "alnum",
-      "GENAI",
-      "Prereqs",
-      "mslearn",
-      "PYTHONIOENCODING",
-      "GETFL",
-      "DETFL",
-      "SETFL",
-      "Planifica"
+        "agentserver",
+        "appinsights",
+        "ASGI",
+        "autouse",
+        "caplog",
+        "genai",
+        "hypercorn",
+        "openapi",
+        "paramtype",
+        "pytestmark",
+        "rtype",
+        "starlette",
+        "traceparent",
+        "tracestate",
+        "tracecontext"
     ],
     "ignorePaths": [
-      "*.csv",
-      "*.json",
-      "*.rst",
-      "samples/**"
+        "*.csv",
+        "*.json",
+        "*.rst",
+        "samples/**"
     ]
-  }
+}
