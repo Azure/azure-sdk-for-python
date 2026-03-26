@@ -44,7 +44,7 @@ from .._file_client_helpers import (
     _upload_range_from_url_options,
 )
 from .._generated.aio import FileClient as AzureFileStorage
-from .._parser import _datetime_to_str, _get_file_permission, _parse_snapshot
+from .._parser import _datetime_to_str, _get_file_permission, _parse_snapshot, _strip_snapshot_from_url
 from .._serialize import (
     get_access_conditions,
     get_api_version,
@@ -55,7 +55,6 @@ from .._serialize import (
 )
 from .._shared.base_client import StorageAccountHostsMixin, parse_query
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str
-from .._client_helpers import _NoOpCredential, _strip_snapshot_from_url
 from .._shared.constants import DEFAULT_MAX_CONCURRENCY
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers, get_length
@@ -220,7 +219,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         self.file_request_intent = token_intent
         self._client = AzureFileStorage(
             url=_strip_snapshot_from_url(self.url),
-            credential=_NoOpCredential(),
             version=get_api_version(kwargs),
             pipeline=self._pipeline,
         )

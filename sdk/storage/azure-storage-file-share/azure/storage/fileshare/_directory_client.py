@@ -22,10 +22,9 @@ from ._directory_client_helpers import _format_url, _from_directory_url, _parse_
 from ._file_client import ShareFileClient
 from ._generated import FileClient as AzureFileStorage
 from ._models import DirectoryPropertiesPaged, Handle, HandlesPaged
-from ._parser import _datetime_to_str, _get_file_permission, _parse_snapshot
+from ._parser import _datetime_to_str, _get_file_permission, _parse_snapshot, _strip_snapshot_from_url
 from ._serialize import get_api_version, get_dest_access_conditions, get_rename_smb_properties
 from ._shared.base_client import parse_connection_str, parse_query, StorageAccountHostsMixin, TransportWrapper
-from ._client_helpers import _NoOpCredential, _strip_snapshot_from_url
 from ._shared.request_handlers import add_metadata_headers
 from ._shared.response_handlers import process_storage_error, return_response_headers
 
@@ -131,7 +130,6 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         self.file_request_intent = token_intent
         self._client = AzureFileStorage(
             url=_strip_snapshot_from_url(self.url),
-            credential=_NoOpCredential(),
             version=get_api_version(kwargs),
             pipeline=self._pipeline,
         )

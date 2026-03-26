@@ -19,11 +19,11 @@ from azure.core.pipeline import AsyncPipeline
 from .._generated.aio import FileClient as AzureFileStorage
 from .._generated.models import KeyInfo, StorageServiceProperties
 from .._models import CorsRule, service_properties_deserialize, ShareProperties
+from .._parser import _strip_snapshot_from_url
 from .._serialize import get_api_version
 from .._share_service_client_helpers import _parse_url
 from .._shared.base_client import StorageAccountHostsMixin, parse_query
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
-from .._client_helpers import _NoOpCredential, _strip_snapshot_from_url
 from .._shared.parser import _to_utc_datetime
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import parse_to_internal_user_delegation_key, process_storage_error
@@ -134,7 +134,6 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         self.file_request_intent = token_intent
         self._client = AzureFileStorage(
             url=_strip_snapshot_from_url(self.url),
-            credential=_NoOpCredential(),
             version=get_api_version(kwargs),
             pipeline=self._pipeline,
         )

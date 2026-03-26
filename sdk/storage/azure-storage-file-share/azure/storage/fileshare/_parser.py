@@ -58,3 +58,22 @@ def _parse_snapshot(
     if isinstance(snapshot, Dict):
         return cast(str, snapshot["snapshot"])
     return snapshot or path_snapshot
+
+
+def _strip_snapshot_from_url(url: str) -> str:
+    """Strip sharesnapshot and snapshot query params from a URL.
+
+    The generated client should receive a base URL without snapshot params,
+    since snapshots are passed per-operation.
+
+    :param str url: The full URL possibly containing snapshot query params.
+    :return: The URL with sharesnapshot and snapshot query params removed.
+    :rtype: str
+    """
+    if "?" not in url:
+        return url
+    base, qs = url.split("?", 1)
+    filtered = "&".join(
+        part for part in qs.split("&") if not part.startswith(("sharesnapshot=", "snapshot="))
+    )
+    return f"{base}?{filtered}" if filtered else base

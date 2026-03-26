@@ -22,11 +22,11 @@ from ._models import (
     SharePropertiesPaged,
     service_properties_deserialize,
 )
+from ._parser import _strip_snapshot_from_url
 from ._serialize import get_api_version
 from ._share_client import ShareClient
 from ._share_service_client_helpers import _parse_url
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
-from ._client_helpers import _NoOpCredential, _strip_snapshot_from_url
 from ._shared.parser import _to_utc_datetime
 from ._shared.response_handlers import parse_to_internal_user_delegation_key, process_storage_error
 
@@ -128,7 +128,6 @@ class ShareServiceClient(StorageAccountHostsMixin):
         self.file_request_intent = token_intent
         self._client = AzureFileStorage(
             url=_strip_snapshot_from_url(self.url),
-            credential=_NoOpCredential(),
             version=get_api_version(kwargs),
             pipeline=self._pipeline,
         )

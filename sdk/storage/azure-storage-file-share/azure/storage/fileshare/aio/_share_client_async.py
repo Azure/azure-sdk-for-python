@@ -20,12 +20,11 @@ from .._deserialize import deserialize_permission, deserialize_share_properties
 from .._generated.aio import FileClient as AzureFileStorage
 from .._generated.models import DeleteSnapshotsOptionType, ShareStats, SignedIdentifier, SignedIdentifiers
 from .._models import ShareProtocols
-from .._parser import _parse_snapshot
+from .._parser import _parse_snapshot, _strip_snapshot_from_url
 from .._share_client_helpers import _create_permission_for_share_options, _format_url, _from_share_url, _parse_url
 from .._shared.policies_async import ExponentialRetry
 from .._shared.base_client import parse_query, StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
-from .._client_helpers import _NoOpCredential, _strip_snapshot_from_url
 from .._shared.request_handlers import add_metadata_headers, serialize_iso
 from .._shared.response_handlers import process_storage_error, return_headers_and_deserialized, return_response_headers
 from .._serialize import get_access_conditions, get_api_version
@@ -128,7 +127,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
         self.file_request_intent = token_intent
         self._client = AzureFileStorage(
             url=_strip_snapshot_from_url(self.url),
-            credential=_NoOpCredential(),
             version=get_api_version(kwargs),
             pipeline=self._pipeline,
         )
