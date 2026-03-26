@@ -66,6 +66,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
         options = {}
         if request.excluded_locations:
             options[_Constants.Kwargs.EXCLUDED_LOCATIONS] = request.excluded_locations
+        options[_Constants.ContainerRID] = container_rid
         if request.pk_val:
             partition_key_value = request.pk_val
             # get the partition key range for the given partition key

@@ -23,6 +23,7 @@
 Cosmos database service.
 """
 from azure.cosmos._gone_retry_policy_base import _PartitionKeyRangeGoneRetryPolicyBase
+from azure.cosmos._constants import _Constants as Constants
 
 # pylint: disable=protected-access
 
@@ -31,12 +32,13 @@ class PartitionKeyRangeGoneRetryPolicy(_PartitionKeyRangeGoneRetryPolicyBase):
 
     def ShouldRetry(self, exception):
         self.exception = exception
-        collection_link = self._extract_collection_info()
+        collection_link, container_rid = self._extract_collection_info()
 
         if self.refresh_partition_key_range_cache:
             previous_routing_map = self._get_previous_routing_map(collection_link)
             if previous_routing_map is not None:
-                self.client.refresh_routing_map_provider(collection_link, previous_routing_map)
+                feed_options = {Constants.ContainerRID: container_rid} if container_rid else None
+                self.client.refresh_routing_map_provider(collection_link, previous_routing_map, feed_options)
             self.refresh_partition_key_range_cache = False
 
         return False

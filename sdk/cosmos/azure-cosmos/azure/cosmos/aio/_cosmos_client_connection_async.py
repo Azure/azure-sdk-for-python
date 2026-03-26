@@ -718,7 +718,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_link: str,
         sproc: dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> CosmosDict:
         """Creates a stored procedure in a collection.
 
@@ -1669,7 +1669,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.last_response_headers = last_response_headers
 
         # update session for request mutates data on server side
-        self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
+        self._UpdateSessionIfRequired(headers, result, last_response_headers)
         if response_hook:
             response_hook(last_response_headers, result)
         return CosmosDict(result, response_headers=last_response_headers)
@@ -2395,7 +2395,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         async def fetch_fn(options: Mapping[str, Any]) -> Tuple[list[dict[str, Any]], CaseInsensitiveDict]:
             await kwargs["containerProperties"](options)
             new_options = dict(options)
-            new_options["containerRID"] = self.__container_properties_cache[database_or_container_link]["_rid"]
+            new_options[Constants.ContainerRID] = self.__container_properties_cache[database_or_container_link]["_rid"]
             return (
                 await self.__QueryFeed(
                     path,
@@ -2494,7 +2494,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         async def fetch_fn(options: Mapping[str, Any]) -> Tuple[list[dict[str, Any]], CaseInsensitiveDict]:
             if collection_link in self.__container_properties_cache:
                 new_options = dict(options)
-                new_options["containerRID"] = self.__container_properties_cache[collection_link]["_rid"]
+                new_options[Constants.ContainerRID] = self.__container_properties_cache[collection_link]["_rid"]
                 options = new_options
             return (
                 await self.__QueryFeed(
@@ -2649,7 +2649,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         user_link: str,
         query: Optional[Union[str, dict[str, Any]]],
         options: Optional[Mapping[str, Any]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncItemPaged[dict[str, Any]]:
         """Queries permissions for a user.
 
@@ -3426,20 +3426,22 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     async def refresh_routing_map_provider(
             self,
             collection_link: Optional[str] = None,
-            previous_routing_map: Optional[Any] = None) -> None:
+            previous_routing_map: Optional[Any] = None,
+            feed_options: Optional[dict[str, Any]] = None) -> None:
         """Refreshes routing map provider.
 
-        If collection_rid and previous_routing_map are provided, refreshes only that collection incrementally.
+        If collection_link and previous_routing_map are provided, refreshes only that collection incrementally.
         Otherwise, it creates a new provider instance for a full refresh.
 
-        :param str collection_link: The collection link
+        :param str collection_link: The collection link.
         :param object previous_routing_map: The routing map that is considered stale.
+        :param dict feed_options: The feed options for the request.
         """
         if collection_link and previous_routing_map:
             # Force a refresh for a specific collection.
-            await self._routing_map_provider.get_or_refresh_routing_map_for_collection(
+            await self._routing_map_provider.get_routing_map(
                 collection_link,
-                feed_options={},
+                feed_options=feed_options if feed_options is not None else {},
                 force_refresh=True,
                 previous_routing_map=previous_routing_map
             )

@@ -8,8 +8,11 @@ import pytest
 from azure.cosmos._routing import routing_range as routing_range
 from azure.cosmos._routing.routing_map_provider import CollectionRoutingMap
 from azure.cosmos._routing.routing_map_provider import SmartRoutingMapProvider
+from azure.cosmos._routing.routing_map_provider import PartitionKeyRangeCache
+from azure.cosmos import http_constants
 
 from typing import Optional, Mapping, Any
+from unittest.mock import patch, MagicMock
 
 @pytest.mark.cosmosEmulator
 class TestRoutingMapProvider(unittest.TestCase):
@@ -18,7 +21,11 @@ class TestRoutingMapProvider(unittest.TestCase):
         def __init__(self, partition_key_ranges):
             self.partition_key_ranges = partition_key_ranges
 
-        def _ReadPartitionKeyRanges(self, collection_link: str, feed_options: Optional[Mapping[str, Any]] = None, **kwargs):
+        def _ReadPartitionKeyRanges(self, _collection_link: str, _feed_options: Optional[Mapping[str, Any]] = None, **kwargs):
+            # Call the response_hook if provided, to simulate real behavior
+            response_hook = kwargs.get('response_hook')
+            if response_hook:
+                response_hook({'etag': '"test-etag-1"'}, None)
             return self.partition_key_ranges
 
     def setUp(self):
@@ -177,13 +184,402 @@ class TestRoutingMapProvider(unittest.TestCase):
         overlapping_partition_key_ranges = self.get_overlapping_ranges(queryRanges)
         self.assertEqual(overlapping_partition_key_ranges, expected_overlapping_partition_key_ranges)
 
-    def validate_empty_query_ranges(self, smart_routing_map_provider, *queryRangesList):
+    def validate_empty_query_ranges(self, *queryRangesList):
         for queryRanges in queryRangesList:
             self.validate_overlapping_ranges_results(queryRanges, [])
 
     def get_overlapping_ranges(self, queryRanges):
         return self.smart_routing_map_provider.get_overlapping_ranges("dbs/db/colls/container", queryRanges)
 
+    def test_get_routing_map_caches_on_first_call(self):
+        """Initial call to get_routing_map fetches from service and caches the result."""
+        provider = PartitionKeyRangeCache(
+            TestRoutingMapProvider.MockedCosmosClientConnection(self.partition_key_ranges)
+        )
+        collection_link = "dbs/db/colls/container"
+
+        result = provider.get_routing_map(collection_link, feed_options={})
+
+        self.assertIsNotNone(result)
+        self.assertEqual(len(list(result._orderedPartitionKeyRanges)), 5)
+        # Verify it's cached
+        from azure.cosmos import _base
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+        self.assertIn(collection_id, provider._collection_routing_map_by_item)
+
+    def test_get_routing_map_returns_cached_on_second_call(self):
+        """Second call returns the same cached object without re-fetching."""
+        call_count = {'count': 0}
+        original_ranges = self.partition_key_ranges
+
+        class CountingClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
+                response_hook = kwargs.get('response_hook')
+                if response_hook:
+                    response_hook({'etag': '"test-etag-1"'}, None)
+                return original_ranges
+
+        provider = PartitionKeyRangeCache(CountingClient())
+        collection_link = "dbs/db/colls/container"
+
+        result1 = provider.get_routing_map(collection_link, feed_options={})
+        result2 = provider.get_routing_map(collection_link, feed_options={})
+
+        self.assertIs(result1, result2, "Second call should return the exact same cached object")
+        self.assertEqual(call_count['count'], 1, "Service should only be called once")
+
+    def test_get_routing_map_force_refresh(self):
+        """force_refresh=True causes a re-fetch even when cache is populated."""
+        call_count = {'count': 0}
+        original_ranges = self.partition_key_ranges
+
+        class CountingClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
+                response_hook = kwargs.get('response_hook')
+                if response_hook:
+                    response_hook({'etag': f'"test-etag-{call_count["count"]}"'}, None)
+                return original_ranges
+
+        provider = PartitionKeyRangeCache(CountingClient())
+        collection_link = "dbs/db/colls/container"
+
+        result1 = provider.get_routing_map(collection_link, feed_options={})
+        self.assertEqual(call_count['count'], 1)
+
+        result2 = provider.get_routing_map(
+            collection_link, feed_options={},
+            force_refresh=True, previous_routing_map=result1
+        )
+        self.assertEqual(call_count['count'], 2, "force_refresh should trigger a second fetch")
+        self.assertIsNotNone(result2)
+
+    def test_is_cache_stale_etag_logic(self):
+        """_is_cache_stale returns correct results for all ETag scenarios."""
+        provider = PartitionKeyRangeCache(
+            TestRoutingMapProvider.MockedCosmosClientConnection(self.partition_key_ranges)
+        )
+        collection_link = "dbs/db/colls/container"
+        from azure.cosmos import _base
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        # Populate cache
+        cached_map = provider.get_routing_map(collection_link, feed_options={})
+
+        # Case 1: None previous → False
+        self.assertFalse(provider._is_cache_stale(collection_id, None))
+
+        # Case 2: Same ETag → True (stale)
+        self.assertTrue(provider._is_cache_stale(collection_id, cached_map))
+
+        # Case 3: Different ETag -> False (already refreshed by someone else)
+        mock_map = MagicMock()
+        mock_map.change_feed_etag = "completely-different-etag"
+        self.assertFalse(provider._is_cache_stale(collection_id, mock_map))
+
+        # Case 4: Empty cache -> False
+        provider._collection_routing_map_by_item.clear()
+        mock_map2 = MagicMock()
+        mock_map2.change_feed_etag = cached_map.change_feed_etag
+        self.assertFalse(provider._is_cache_stale(collection_id, mock_map2))
+
+    def test_fetch_routing_map_fallback_recursion_guard(self):
+        """When a full load returns an incomplete map, returns None instead of recursing."""
+        incomplete_ranges = [
+            {'id': '0', 'minInclusive': '', 'maxExclusive': '80'}  # Gap from 80 to FF
+        ]
+
+        class IncompleteClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                response_hook = kwargs.get('response_hook')
+                if response_hook:
+                    response_hook({'etag': '"incomplete-etag"'}, None)
+                return incomplete_ranges
+
+        provider = PartitionKeyRangeCache(IncompleteClient())
+        from azure.cosmos import _base
+        collection_link = "dbs/db/colls/container"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        result = provider._fetch_routing_map(
+            collection_link=collection_link,
+            collection_id=collection_id,
+            previous_routing_map=None,
+            feed_options={},
+        )
+        self.assertIsNone(result, "Should return None when full load returns an incomplete map")
+
+    def test_fetch_routing_map_full_load_with_incomplete_ranges_returns_none(self):
+        """When a full load (previous_routing_map=None) returns gapped ranges, returns None immediately."""
+        incomplete_ranges = [
+            {'id': '0', 'minInclusive': '', 'maxExclusive': '80'}  # Gap from 80 to FF
+        ]
+
+        class IncompleteClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                response_hook = kwargs.get('response_hook')
+                if response_hook:
+                    response_hook({'etag': '"incomplete-etag"'}, None)
+                return incomplete_ranges
+
+        provider = PartitionKeyRangeCache(IncompleteClient())
+        from azure.cosmos import _base
+        collection_link = "dbs/db/colls/container"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        result = provider._fetch_routing_map(
+            collection_link=collection_link,
+            collection_id=collection_id,
+            previous_routing_map=None,
+            feed_options={},
+        )
+        self.assertIsNone(result, "Should return None when full load produces incomplete ranges")
+
+    def test_fetch_routing_map_incremental_with_parents(self):
+        """Incremental update correctly merges child ranges that reference a parent."""
+        # Build initial map with 2 ranges
+        initial_ranges = [
+            {'id': '0', 'minInclusive': '', 'maxExclusive': '80'},
+            {'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'}
+        ]
+        initial_map = CollectionRoutingMap.CompleteRoutingMap(
+            [(r, True) for r in initial_ranges],
+            'dbs/db/colls/container',
+            '"etag-1"'
+        )
+
+        # Simulate change feed returning children of range '0'
+        delta_ranges = [
+            {'id': '2', 'minInclusive': '', 'maxExclusive': '40', 'parents': ['0']},
+            {'id': '3', 'minInclusive': '40', 'maxExclusive': '80', 'parents': ['0']}
+        ]
+
+        class DeltaClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                response_hook = kwargs.get('response_hook')
+                if response_hook:
+                    response_hook({'etag': '"etag-2"'}, None)
+                return delta_ranges
+
+        provider = PartitionKeyRangeCache(DeltaClient())
+        from azure.cosmos import _base
+        collection_link = "dbs/db/colls/container"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        result = provider._fetch_routing_map(
+            collection_link=collection_link,
+            collection_id=collection_id,
+            previous_routing_map=initial_map,
+            feed_options={}
+        )
+
+        self.assertIsNotNone(result)
+        ranges = list(result._orderedPartitionKeyRanges)
+        self.assertEqual(len(ranges), 3, "Should have 3 ranges: 2 children + 1 unchanged")
+        self.assertEqual(ranges[0]['id'], '2')
+        self.assertEqual(ranges[1]['id'], '3')
+        self.assertEqual(ranges[2]['id'], '1')
+
+    def test_fetch_routing_map_incremental_missing_parent_falls_back(self):
+        """When incremental update has a child referencing a missing parent, falls back to full refresh."""
+        initial_ranges = [
+            {'id': '0', 'minInclusive': '', 'maxExclusive': '80'},
+            {'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'}
+        ]
+        initial_map = CollectionRoutingMap.CompleteRoutingMap(
+            [(r, True) for r in initial_ranges],
+            'dbs/db/colls/container',
+            '"etag-1"'
+        )
+
+        call_count = {'count': 0}
+
+        # Child references parent 'NONEXISTENT' which is not in the initial map
+        delta_ranges = [
+            {'id': '5', 'minInclusive': '', 'maxExclusive': '40', 'parents': ['NONEXISTENT']}
+        ]
+        # Full refresh returns complete valid data
+        full_ranges = [
+            {'id': '5', 'minInclusive': '', 'maxExclusive': '40'},
+            {'id': '6', 'minInclusive': '40', 'maxExclusive': '80'},
+            {'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'}
+        ]
+
+        class FallbackClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
+                response_hook = kwargs.get('response_hook')
+                if response_hook:
+                    response_hook({'etag': f'"etag-{call_count["count"]}"'}, None)
+                if call_count['count'] == 1:
+                    return delta_ranges
+                return full_ranges
+
+        provider = PartitionKeyRangeCache(FallbackClient())
+        from azure.cosmos import _base
+        collection_link = "dbs/db/colls/container"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        result = provider._fetch_routing_map(
+            collection_link=collection_link,
+            collection_id=collection_id,
+            previous_routing_map=initial_map,
+            feed_options={}
+        )
+
+        self.assertIsNotNone(result, "Should succeed via full refresh fallback")
+        self.assertEqual(call_count['count'], 2, "Should have called service twice (incremental + fallback)")
+        ranges = list(result._orderedPartitionKeyRanges)
+        self.assertEqual(len(ranges), 3)
+
+    def test_fetch_routing_map_cleans_if_none_match_on_fallback(self):
+        """When falling back from incremental to full load, stale IfNoneMatch is removed."""
+        initial_ranges = [
+            {'id': '0', 'minInclusive': '', 'maxExclusive': 'FF'}
+        ]
+        initial_map = CollectionRoutingMap.CompleteRoutingMap(
+            [(r, True) for r in initial_ranges],
+            'dbs/db/colls/container',
+            '"etag-old"'
+        )
+
+        captured_headers_list = []
+        call_count = {'count': 0}
+        full_ranges = [
+            {'id': '0', 'minInclusive': '', 'maxExclusive': 'FF'}
+        ]
+
+        class HeaderCapturingClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
+                headers = kwargs.get('headers', {})
+                captured_headers_list.append(headers.copy())
+                response_hook = kwargs.get('response_hook')
+                if response_hook:
+                    response_hook({'etag': f'"etag-{call_count["count"]}"'}, None)
+                if call_count['count'] == 1:
+                    # Return a child with missing parent to force fallback
+                    return [{'id': '99', 'minInclusive': '', 'maxExclusive': 'FF', 'parents': ['MISSING']}]
+                return full_ranges
+
+        provider = PartitionKeyRangeCache(HeaderCapturingClient())
+        from azure.cosmos import _base
+        collection_link = "dbs/db/colls/container"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        result = provider._fetch_routing_map(
+            collection_link=collection_link,
+            collection_id=collection_id,
+            previous_routing_map=initial_map,
+            feed_options={}
+        )
+
+        self.assertIsNotNone(result)
+        self.assertEqual(len(captured_headers_list), 2)
+
+        # First call (incremental) should have IfNoneMatch
+        self.assertIn(http_constants.HttpHeaders.IfNoneMatch, captured_headers_list[0])
+
+        # Second call (full load fallback) should NOT have IfNoneMatch
+        self.assertNotIn(http_constants.HttpHeaders.IfNoneMatch, captured_headers_list[1])
+
+    def test_fetch_routing_map_incremental_existing_range_no_parents(self):
+        """Incremental update correctly handles an existing range reappearing without parents (metadata update)."""
+        initial_ranges = [
+            {'id': '0', 'minInclusive': '', 'maxExclusive': '80'},
+            {'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'}
+        ]
+        initial_map = CollectionRoutingMap.CompleteRoutingMap(
+            [(r, True) for r in initial_ranges],
+            'dbs/db/colls/container',
+            '"etag-1"'
+        )
+
+        # Range '1' reappears with no parents (metadata update) + range '0' splits
+        delta_ranges = [
+            {'id': '2', 'minInclusive': '', 'maxExclusive': '40', 'parents': ['0']},
+            {'id': '3', 'minInclusive': '40', 'maxExclusive': '80', 'parents': ['0']},
+            {'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'},  # no parents — stable
+        ]
+
+        class DeltaClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                response_hook = kwargs.get('response_hook')
+                if response_hook:
+                    response_hook({'etag': '"etag-2"'}, None)
+                return delta_ranges
+
+        provider = PartitionKeyRangeCache(DeltaClient())
+        from azure.cosmos import _base
+        collection_link = "dbs/db/colls/container"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        result = provider._fetch_routing_map(
+            collection_link=collection_link,
+            collection_id=collection_id,
+            previous_routing_map=initial_map,
+            feed_options={}
+        )
+
+        self.assertIsNotNone(result)
+        ranges = list(result._orderedPartitionKeyRanges)
+        self.assertEqual(len(ranges), 3)
+        self.assertEqual(ranges[0]['id'], '2')
+        self.assertEqual(ranges[1]['id'], '3')
+        self.assertEqual(ranges[2]['id'], '1')
+
+    def test_fetch_routing_map_incremental_unknown_range_no_parents_falls_back(self):
+        """Incremental update with an unknown range ID and no parents (merge scenario) falls back to full refresh."""
+        initial_ranges = [
+            {'id': '0', 'minInclusive': '', 'maxExclusive': '40'},
+            {'id': '1', 'minInclusive': '40', 'maxExclusive': '80'},
+            {'id': '2', 'minInclusive': '80', 'maxExclusive': 'FF'}
+        ]
+        initial_map = CollectionRoutingMap.CompleteRoutingMap(
+            [(r, True) for r in initial_ranges],
+            'dbs/db/colls/container',
+            '"etag-1"'
+        )
+
+        call_count = {'count': 0}
+        # Range '7' is brand new with no parents — simulates a merge of '0' and '1'
+        delta_ranges = [
+            {'id': '7', 'minInclusive': '', 'maxExclusive': '80'},  # no parents, not in cache
+        ]
+        full_ranges = [
+            {'id': '7', 'minInclusive': '', 'maxExclusive': '80'},
+            {'id': '2', 'minInclusive': '80', 'maxExclusive': 'FF'}
+        ]
+
+        class MergeClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
+                response_hook = kwargs.get('response_hook')
+                if response_hook:
+                    response_hook({'etag': f'"etag-{call_count["count"]}"'}, None)
+                if call_count['count'] == 1:
+                    return delta_ranges
+                return full_ranges
+
+        provider = PartitionKeyRangeCache(MergeClient())
+        from azure.cosmos import _base
+        collection_link = "dbs/db/colls/container"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        result = provider._fetch_routing_map(
+            collection_link=collection_link,
+            collection_id=collection_id,
+            previous_routing_map=initial_map,
+            feed_options={}
+        )
+
+        self.assertIsNotNone(result, "Should succeed via full refresh fallback after merge detection")
+        self.assertEqual(call_count['count'], 2, "Should have called service twice (incremental + fallback)")
+        ranges = list(result._orderedPartitionKeyRanges)
+        self.assertEqual(len(ranges), 2)
+        self.assertEqual(ranges[0]['id'], '7')
+        self.assertEqual(ranges[1]['id'], '2')
 
 if __name__ == "__main__":
     # import sys;sys.argv = ['', 'Test.testName']

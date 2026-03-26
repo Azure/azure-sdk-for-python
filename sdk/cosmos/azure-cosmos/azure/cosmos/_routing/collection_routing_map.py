@@ -24,7 +24,7 @@ database service.
 """
 
 import bisect
-from typing import Optional
+from typing import Optional, Union
 
 from azure.cosmos._routing import routing_range
 from azure.cosmos._routing.routing_range import PartitionKeyRange
@@ -40,7 +40,7 @@ class CollectionRoutingMap(object):
 
     def __init__(
         self, range_by_id, range_by_info, ordered_partition_key_ranges, ordered_partition_info, collection_unique_id,
-            change_feed_next_if_none_match=None
+            change_feed_etag=None
     ):
         self._rangeById = range_by_id
         self._rangeByInfo = range_by_info
@@ -53,15 +53,15 @@ class CollectionRoutingMap(object):
         self._orderedPartitionInfo = ordered_partition_info
         self._collectionUniqueId = collection_unique_id
         # Add ETag support for change feed
-        self._changeFeedNextIfNoneMatch = change_feed_next_if_none_match
+        self._changeFeedEtag = change_feed_etag
 
     @property
-    def change_feed_next_if_none_match(self):
+    def change_feed_etag(self):
         """Gets the ETag for change feed continuation."""
-        return self._changeFeedNextIfNoneMatch
+        return self._changeFeedEtag
 
     @classmethod
-    def CompleteRoutingMap(cls, partition_key_range_info_tuple_list, collection_unique_id, change_feed_next_if_none_match=None):
+    def CompleteRoutingMap(cls, partition_key_range_info_tuple_list, collection_unique_id, change_feed_etag=None):
         rangeById = {}
         rangeByInfo = {}
 
@@ -77,7 +77,7 @@ class CollectionRoutingMap(object):
 
         if not CollectionRoutingMap.is_complete_set_of_range(partitionKeyOrderedRange):
             return None
-        return cls(rangeById, rangeByInfo, partitionKeyOrderedRange, orderedPartitionInfo, collection_unique_id, change_feed_next_if_none_match)
+        return cls(rangeById, rangeByInfo, partitionKeyOrderedRange, orderedPartitionInfo, collection_unique_id, change_feed_etag)
 
     def get_ordered_partition_key_ranges(self):
         """Gets the ordered partition key ranges
@@ -120,10 +120,11 @@ class CollectionRoutingMap(object):
             return None
         return t[0]
 
-    def get_overlapping_ranges(self, provided_partition_key_ranges):
+    def get_overlapping_ranges(self, provided_partition_key_ranges: Union[list, 'routing_range.Range']):
         """Gets the partition key ranges overlapping the provided ranges
 
-        :param list provided_partition_key_ranges: List of partition key ranges.
+        :param provided_partition_key_ranges: A single Range or a list of partition key ranges.
+        :type provided_partition_key_ranges: Union[list, routing_range.Range]
         :return: List of partition key ranges, where each is a dict.
         :rtype: list
         """
@@ -242,3 +243,53 @@ class CollectionRoutingMap(object):
             self._collectionUniqueId,
             new_change_feed_etag
         )
+
+
+def _build_routing_map_from_ranges(
+    ranges: list,
+    collection_id: str,
+    new_etag,
+    collection_link: str,
+    _logger
+) -> Optional['CollectionRoutingMap']:
+    """Build a complete routing map from a full load of partition key ranges.
+
+    Filters out parent (gone) ranges and validates that the remaining ranges
+    form a complete, gap-free partition key space. Returns None if the ranges
+    are incomplete.
+
+    This is shared between the sync and async PartitionKeyRangeCache to avoid
+    code duplication — the logic is purely synchronous.
+
+    :param list ranges: Raw partition key range dicts from the service.
+    :param str collection_id: The collection identifier used as the routing map key.
+    :param new_etag: The ETag from the change feed response.
+    :param str collection_link: The collection link, used for log messages.
+    :param _logger: Logger instance for error reporting.
+    :return: A complete CollectionRoutingMap, or None if the ranges are incomplete.
+    :rtype: Optional[CollectionRoutingMap]
+    """
+    gone_range_ids = set()
+    for r in ranges:
+        if PartitionKeyRange.Parents in r and r[PartitionKeyRange.Parents]:
+            gone_range_ids.update(r[PartitionKeyRange.Parents])
+
+    filtered_ranges = [r for r in ranges if r[PartitionKeyRange.Id] not in gone_range_ids]
+    range_tuples = [(r, True) for r in filtered_ranges]
+
+    routing_map = CollectionRoutingMap.CompleteRoutingMap(
+        range_tuples,
+        collection_id,
+        new_etag
+    )
+
+    if not routing_map:
+        _logger.error(
+            "Full load of routing map for collection '%s' failed: "
+            "the service returned an incomplete set of partition key ranges. "
+            "This can happen due to a transient service issue or a split completing mid-fetch.",
+            collection_link
+        )
+        return None
+
+    return routing_map

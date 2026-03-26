@@ -7,7 +7,6 @@ import pytest
 
 import azure.cosmos._routing.routing_range as routing_range
 from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
-from azure.cosmos._routing.routing_map_provider import PartitionKeyRangeCache
 
 
 @pytest.mark.cosmosEmulator
@@ -27,62 +26,6 @@ class TestCollectionRoutingMap(unittest.TestCase):
 
         self.assertEqual(len(overlapping_partition_key_ranges), len(partition_key_ranges))
         self.assertEqual(overlapping_partition_key_ranges, partition_key_ranges)
-
-    def test_partition_key_ranges_parent_filter(self):
-        # for large collection with thousands of partitions, a split may complete between the read partition key ranges query pages,
-        # causing the return map to have both the new children ranges and their ranges. This test is to verify the fix for that.
-
-        Id = 'id'
-        MinInclusive = 'minInclusive'
-        MaxExclusive = 'maxExclusive'
-        Parents = 'parents'
-
-        # create a complete set of partition key ranges
-        # some have parents as empty array while some don't have the parents 
-        partitionKeyRanges = \
-            [
-                {Id: "2",
-                 MinInclusive: "0000000050",
-                 MaxExclusive: "0000000070",
-                 Parents: []},
-                {Id: "0",
-                 MinInclusive: "",
-                 MaxExclusive: "0000000030"},
-                {Id: "1",
-                 MinInclusive: "0000000030",
-                 MaxExclusive: "0000000050"},
-                {Id: "3",
-                 MinInclusive: "0000000070",
-                 MaxExclusive: "FF",
-                 Parents: []}
-            ]
-
-        def get_range_id(r):
-            return r[Id]
-
-        # verify no thing is filtered out since there is no children ranges
-        filteredRanges = PartitionKeyRangeCache._discard_parent_ranges(partitionKeyRanges)
-        self.assertEqual(['2', '0', '1', '3'], list(map(get_range_id, filteredRanges)))
-
-        # add some children partition key ranges with parents Ids
-        # e.g., range 0 was split in to range 4 and 5, and then range 4 was split into range 6 and 7
-        partitionKeyRanges.append({Id: "6",
-                                   MinInclusive: "",
-                                   MaxExclusive: "0000000010",
-                                   Parents: ["0", "4"]})
-        partitionKeyRanges.append({Id: "7",
-                                   MinInclusive: "0000000010",
-                                   MaxExclusive: "0000000020",
-                                   Parents: ["0", "4"]})
-        partitionKeyRanges.append({Id: "5",
-                                   MinInclusive: "0000000020",
-                                   MaxExclusive: "0000000030",
-                                   Parents: ["0"]})
-
-        # verify the filtered range list has children ranges and the parent Ids are discarded
-        filteredRanges = PartitionKeyRangeCache._discard_parent_ranges(partitionKeyRanges)
-        expectedRanges = ['2', '1', '3', '6', '7', '5']
-        self.assertEqual(expectedRanges, list(map(get_range_id, filteredRanges)))
 
     def test_point_range_mapping(self):
         partition_key_ranges = [{u'id': u'0', u'minInclusive': u'', u'maxExclusive': u'1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'},
@@ -210,6 +153,87 @@ class TestCollectionRoutingMap(unittest.TestCase):
             , "")
 
         self.assertIsNotNone(crm)
+
+    def test_try_combine_valid_split(self):
+        """try_combine correctly merges child ranges from a split into the existing map."""
+        initial_ranges = [
+            ({'id': '0', 'minInclusive': '', 'maxExclusive': '80'}, True),
+            ({'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'}, True)
+        ]
+        crm = CollectionRoutingMap.CompleteRoutingMap(initial_ranges, 'coll1', '"etag-1"')
+        self.assertIsNotNone(crm)
+
+        # Simulate split: range '0' splits into '2' and '3'
+        new_ranges = [
+            ({'id': '2', 'minInclusive': '', 'maxExclusive': '40', 'parents': ['0']}, True),
+            ({'id': '3', 'minInclusive': '40', 'maxExclusive': '80', 'parents': ['0']}, True)
+        ]
+        result = crm.try_combine(new_ranges, '"etag-2"')
+
+        self.assertIsNotNone(result, "try_combine should succeed for a valid split")
+        ranges = list(result._orderedPartitionKeyRanges)
+        self.assertEqual(len(ranges), 3)
+        self.assertEqual(ranges[0]['id'], '2')
+        self.assertEqual(ranges[1]['id'], '3')
+        self.assertEqual(ranges[2]['id'], '1')
+        self.assertEqual(result.change_feed_etag, '"etag-2"')
+
+    def test_try_combine_incomplete_range_returns_none(self):
+        """try_combine returns None when merged ranges have a gap."""
+        initial_ranges = [
+            ({'id': '0', 'minInclusive': '', 'maxExclusive': 'FF'}, True)
+        ]
+        crm = CollectionRoutingMap.CompleteRoutingMap(initial_ranges, 'coll1', '"etag-1"')
+        self.assertIsNotNone(crm)
+
+        # Children leave a gap: 40-60 is missing
+        gapped_ranges = [
+            ({'id': '2', 'minInclusive': '', 'maxExclusive': '40', 'parents': ['0']}, True),
+            ({'id': '3', 'minInclusive': '60', 'maxExclusive': 'FF', 'parents': ['0']}, True)
+        ]
+        result = crm.try_combine(gapped_ranges, '"etag-2"')
+        self.assertIsNone(result, "try_combine should return None for incomplete range coverage")
+
+    def test_try_combine_preserves_stable_partitions(self):
+        """try_combine keeps unaffected partitions when only some split."""
+        initial_ranges = [
+            ({'id': '0', 'minInclusive': '', 'maxExclusive': '40'}, 'info_0'),
+            ({'id': '1', 'minInclusive': '40', 'maxExclusive': '80'}, 'info_1'),
+            ({'id': '2', 'minInclusive': '80', 'maxExclusive': 'FF'}, 'info_2')
+        ]
+        crm = CollectionRoutingMap.CompleteRoutingMap(initial_ranges, 'coll1', '"etag-1"')
+        self.assertIsNotNone(crm)
+
+        # Only range '1' splits into '3' and '4'; range '0' and '2' unchanged but '0' reappears in delta
+        delta = [
+            ({'id': '0', 'minInclusive': '', 'maxExclusive': '40'}, 'info_0'),  # stable, metadata update
+            ({'id': '3', 'minInclusive': '40', 'maxExclusive': '60', 'parents': ['1']}, 'info_1'),
+            ({'id': '4', 'minInclusive': '60', 'maxExclusive': '80', 'parents': ['1']}, 'info_1')
+        ]
+        result = crm.try_combine(delta, '"etag-2"')
+
+        self.assertIsNotNone(result, "try_combine should succeed for a partial split")
+        ranges = list(result._orderedPartitionKeyRanges)
+        self.assertEqual(len(ranges), 4)
+        ids = [r['id'] for r in ranges]
+        self.assertEqual(ids, ['0', '3', '4', '2'])
+
+        # Verify stable range '2' preserved its original range_info
+        self.assertEqual(result._orderedPartitionInfo[3], 'info_2')
+
+    def test_change_feed_etag_stored_and_accessible(self):
+        """CompleteRoutingMap stores the change_feed_etag and makes it accessible."""
+        ranges = [
+            ({'id': '0', 'minInclusive': '', 'maxExclusive': 'FF'}, True)
+        ]
+        crm = CollectionRoutingMap.CompleteRoutingMap(ranges, 'coll1', '"my-etag-123"')
+        self.assertIsNotNone(crm)
+        self.assertEqual(crm.change_feed_etag, '"my-etag-123"')
+
+        # Without etag
+        crm_no_etag = CollectionRoutingMap.CompleteRoutingMap(ranges, 'coll1')
+        self.assertIsNotNone(crm_no_etag)
+        self.assertIsNone(crm_no_etag.change_feed_etag)
 
 
 if __name__ == '__main__':

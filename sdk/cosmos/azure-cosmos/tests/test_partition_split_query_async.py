@@ -11,6 +11,8 @@ import pytest
 
 import test_config
 from azure.cosmos import PartitionKey
+from azure.cosmos import http_constants
+from azure.cosmos import _base
 from azure.cosmos.aio import CosmosClient, DatabaseProxy, ContainerProxy
 
 async def run_queries(container, iterations):
@@ -397,7 +399,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             collection_link = container.container_link
 
             # Get initial routing map
-            initial_map = await provider.get_or_refresh_routing_map_for_collection(
+            initial_map = await provider.get_routing_map(
                 collection_link=collection_link,
                 feed_options={}
             )
@@ -442,7 +444,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             provider._collection_routing_map_by_item.clear()
 
             # This should trigger the full refresh fallback path
-            refreshed_map = await provider.get_or_refresh_routing_map_for_collection(
+            refreshed_map = await provider.get_routing_map(
                 collection_link=collection_link,
                 feed_options={}
             )
@@ -530,7 +532,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
                 # Force refresh with stale map
                 provider._collection_routing_map_by_item.clear()
 
-                refreshed_map = await provider.get_or_refresh_routing_map_for_collection(
+                refreshed_map = await provider.get_routing_map(
                     collection_link=collection_link,
                     feed_options={},
                     previous_routing_map=initial_map  # Simulate stale cache
@@ -600,7 +602,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
                 provider._collection_routing_map_by_item.clear()
 
                 # Full refresh (no previous_routing_map)
-                refreshed_map = await provider.get_or_refresh_routing_map_for_collection(
+                refreshed_map = await provider.get_routing_map(
                     collection_link=collection_link,
                     feed_options={}
                 )
@@ -618,6 +620,418 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
                 assert len(results) == 30
 
                 print("Validated: Queries work after fallback")
+
+        finally:
+            await self.created_database.delete_container(container.id)
+
+    async def test_is_cache_stale_etag_comparison_async(self):
+        """
+        Validates _is_cache_stale() ETag logic:
+        - Returns True when cached map's ETag matches previous_routing_map's ETag (stale)
+        - Returns False when ETags differ (already refreshed by another thread)
+        - Returns False when previous_routing_map is None
+        - Returns False when cache is empty
+        """
+        from unittest.mock import MagicMock
+
+        container = await self.created_database.create_container(
+            id='test_stale_etag_async_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=400
+        )
+
+        try:
+            for i in range(10):
+                await container.create_item({'id': f'item_{i}', 'pk': f'pk_{i}', 'value': i})
+
+            # Populate cache
+            await run_queries(container, 1)
+
+            provider = container.client_connection._routing_map_provider
+            collection_link = container.container_link
+            collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+            cached_map = provider._collection_routing_map_by_item.get(collection_id)
+            assert cached_map is not None
+
+            # Case 1: previous_routing_map is None -> should return False
+            assert provider._is_cache_stale(collection_id, None) is False, \
+                "_is_cache_stale should return False when previous_routing_map is None"
+
+            # Case 2: ETags match -> should return True (cache is stale)
+            assert provider._is_cache_stale(collection_id, cached_map) is True, \
+                "_is_cache_stale should return True when ETags match"
+
+            # Case 3: ETags differ -> should return False (already refreshed)
+            fake_previous = MagicMock()
+            fake_previous.change_feed_etag = "fake-different-etag-12345"
+            assert provider._is_cache_stale(collection_id, fake_previous) is False, \
+                "_is_cache_stale should return False when ETags differ"
+
+            # Case 4: Cache is empty -> should return False
+            provider._collection_routing_map_by_item.clear()
+            real_previous = MagicMock()
+            real_previous.change_feed_etag = cached_map.change_feed_etag
+            assert provider._is_cache_stale(collection_id, real_previous) is False, \
+                "_is_cache_stale should return False when cache is empty"
+
+            print("Validated: _is_cache_stale ETag comparison logic works correctly")
+
+        finally:
+            await self.created_database.delete_container(container.id)
+
+    async def test_full_load_with_incomplete_ranges_returns_none_async(self):
+        """
+        Validates that a full load with incomplete ranges returns None immediately.
+        When a full load is performed (previous_routing_map=None) and the service
+        returns gapped ranges, _fetch_routing_map should return None without retrying —
+        there is no incremental state to fall back from.
+        """
+        container = await self.created_database.create_container(
+            id='test_fallback_guard_async_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=400
+        )
+
+        try:
+            for i in range(10):
+                await container.create_item({'id': f'item_{i}', 'pk': f'pk_{i}', 'value': i})
+
+            await run_queries(container, 1)
+
+            provider = container.client_connection._routing_map_provider
+            collection_link = container.container_link
+            collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+            # Create an incomplete range set that will cause CompleteRoutingMap to fail
+            incomplete_range = {
+                'id': 'incomplete_0',
+                'minInclusive': '',
+                'maxExclusive': '80',  # Gap from 80 to FF
+            }
+
+            async def mock_read_ranges(*args, **kwargs):
+                yield incomplete_range
+
+            with patch.object(
+                    container.client_connection,
+                    '_ReadPartitionKeyRanges',
+                    side_effect=mock_read_ranges
+            ):
+                # Full load with incomplete ranges should return None immediately
+                result = await provider._fetch_routing_map(
+                    collection_link=collection_link,
+                    collection_id=collection_id,
+                    previous_routing_map=None,
+                    feed_options={},
+                )
+
+                # Should return None instead of recursing infinitely
+                assert result is None, \
+                    "_fetch_routing_map should return None when full load produces incomplete ranges"
+
+            print("Validated: full load with incomplete ranges returns None without recursion")
+
+        finally:
+            await self.created_database.delete_container(container.id)
+
+    async def test_internal_pk_range_fetch_flag_is_set_async(self):
+        """
+        Validates that _fetch_routing_map sets the _internal_pk_range_fetch flag
+        in the options passed to _ReadPartitionKeyRanges. This flag prevents
+        infinite recursion when the PK range fetch itself gets a 410.
+        """
+        container = await self.created_database.create_container(
+            id='test_pk_flag_async_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=400
+        )
+
+        try:
+            for i in range(10):
+                await container.create_item({'id': f'item_{i}', 'pk': f'pk_{i}', 'value': i})
+
+            provider = container.client_connection._routing_map_provider
+            collection_link = container.container_link
+
+            captured_options = {}
+            original_read = container.client_connection._ReadPartitionKeyRanges
+
+            def spy_read_ranges(*args, **kwargs):
+                if len(args) > 1:
+                    captured_options.update(args[1])
+                return original_read(*args, **kwargs)
+
+            with patch.object(
+                    container.client_connection,
+                    '_ReadPartitionKeyRanges',
+                    side_effect=spy_read_ranges
+            ):
+                # Clear cache to force a fresh fetch
+                provider._collection_routing_map_by_item.clear()
+
+                routing_map = await provider.get_routing_map(
+                    collection_link=collection_link,
+                    feed_options={}
+                )
+
+                assert routing_map is not None
+                assert captured_options.get("_internal_pk_range_fetch") is True, \
+                    "_internal_pk_range_fetch flag should be set in options"
+
+            print("Validated: _internal_pk_range_fetch flag is correctly set")
+
+        finally:
+            await self.created_database.delete_container(container.id)
+
+    async def test_lock_free_fast_path_async(self):
+        """
+        Validates the lock-free fast path in get_routing_map().
+        When the cache is populated and no force_refresh is requested,
+        the map should be returned without acquiring the collection lock.
+        """
+        container = await self.created_database.create_container(
+            id='test_fast_path_async_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=400
+        )
+
+        try:
+            for i in range(10):
+                await container.create_item({'id': f'item_{i}', 'pk': f'pk_{i}', 'value': i})
+
+            # Populate cache
+            await run_queries(container, 1)
+
+            provider = container.client_connection._routing_map_provider
+            collection_link = container.container_link
+            collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+            # Verify cache is populated
+            cached_map = provider._collection_routing_map_by_item.get(collection_id)
+            assert cached_map is not None
+
+            # Spy on _get_lock_for_collection to verify it's NOT called on the fast path
+            lock_call_count = {'count': 0}
+            original_get_lock = provider._get_lock_for_collection
+
+            async def spy_get_lock(*args, **kwargs):
+                lock_call_count['count'] += 1
+                return await original_get_lock(*args, **kwargs)
+
+            with patch.object(provider, '_get_lock_for_collection', side_effect=spy_get_lock):
+                # This should hit the fast path — no lock acquisition
+                result = await provider.get_routing_map(
+                    collection_link=collection_link,
+                    feed_options={}
+                )
+
+                assert result is cached_map, "Should return the same cached map object"
+                assert lock_call_count['count'] == 0, \
+                    "Lock should NOT be acquired on the fast path"
+
+            # Now verify that force_refresh DOES acquire the lock
+            lock_call_count['count'] = 0
+            with patch.object(provider, '_get_lock_for_collection', side_effect=spy_get_lock):
+                result = await provider.get_routing_map(
+                    collection_link=collection_link,
+                    feed_options={},
+                    force_refresh=True
+                )
+                assert result is not None
+                assert lock_call_count['count'] == 1, \
+                    "Lock SHOULD be acquired when force_refresh=True"
+
+            print("Validated: Lock-free fast path works correctly")
+
+        finally:
+            await self.created_database.delete_container(container.id)
+
+    async def test_response_hook_chaining_async(self):
+        """
+        Validates that an upstream response_hook is preserved and called
+        alongside _fetch_routing_map's internal capture_response_hook.
+        Both hooks should receive the response headers.
+        """
+        container = await self.created_database.create_container(
+            id='test_hook_chain_async_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=400
+        )
+
+        try:
+            for i in range(10):
+                await container.create_item({'id': f'item_{i}', 'pk': f'pk_{i}', 'value': i})
+
+            provider = container.client_connection._routing_map_provider
+            collection_link = container.container_link
+            collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+            # Clear cache to force a fetch
+            provider._collection_routing_map_by_item.clear()
+
+            upstream_headers_captured = {}
+
+            def upstream_hook(headers, body):
+                upstream_headers_captured.update(headers)
+
+            # Call get_routing_map with an upstream response_hook in kwargs
+            result = await provider.get_routing_map(
+                collection_link=collection_link,
+                feed_options={},
+                response_hook=upstream_hook
+            )
+
+            assert result is not None, "Routing map should be returned"
+
+            # The internal hook should have captured the ETag (used for change_feed_etag)
+            assert result.change_feed_etag is not None, \
+                "Internal capture hook should have captured the ETag"
+
+            # The upstream hook should also have been called with headers
+            assert len(upstream_headers_captured) > 0, \
+                "Upstream response_hook should have been called with headers"
+
+            print("Validated: response_hook chaining works correctly")
+
+        finally:
+            await self.created_database.delete_container(container.id)
+
+    async def test_if_none_match_header_cleanup_on_fallback_async(self):
+        """
+        Validates that stale IfNoneMatch headers are removed when falling back
+        from incremental to full load. Without this cleanup, the full load would
+        receive only a delta, causing infinite recursion (Issue 1).
+        """
+        container = await self.created_database.create_container(
+            id='test_etag_cleanup_async_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=400
+        )
+
+        try:
+            for i in range(10):
+                await container.create_item({'id': f'item_{i}', 'pk': f'pk_{i}', 'value': i})
+
+            # Populate cache
+            await run_queries(container, 1)
+
+            provider = container.client_connection._routing_map_provider
+            collection_link = container.container_link
+            collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+            captured_headers_list = []
+            original_read = container.client_connection._ReadPartitionKeyRanges
+
+            call_count = {'count': 0}
+
+            def spy_read_ranges(*args, **kwargs):
+                call_count['count'] += 1
+                # Capture the headers from kwargs
+                headers = kwargs.get('headers', {})
+                captured_headers_list.append(headers.copy())
+
+                if call_count['count'] == 1:
+                    # First call (incremental): return a child with a missing parent
+                    # to trigger fallback
+                    fake_child = {
+                        'id': 'child_99',
+                        'minInclusive': '',
+                        'maxExclusive': 'FF',
+                        'parents': ['nonexistent_parent']
+                    }
+                    async def gen():
+                        yield fake_child
+                    return gen()
+                else:
+                    # Second call (full load fallback): return real data
+                    return original_read(*args, **kwargs)
+
+            cached_map = provider._collection_routing_map_by_item.get(collection_id)
+            assert cached_map is not None
+            assert cached_map.change_feed_etag is not None
+
+            with patch.object(
+                    container.client_connection,
+                    '_ReadPartitionKeyRanges',
+                    side_effect=spy_read_ranges
+            ):
+                # Force refresh with the stale map to trigger incremental path
+                result = await provider.get_routing_map(
+                    collection_link=collection_link,
+                    feed_options={},
+                    force_refresh=True,
+                    previous_routing_map=cached_map
+                )
+
+                assert result is not None
+
+                # Verify we made 2 calls: incremental (failed) + full load (fallback)
+                assert call_count['count'] == 2, \
+                    f"Expected 2 calls to _ReadPartitionKeyRanges, got {call_count['count']}"
+
+                # First call should have IfNoneMatch (incremental)
+                first_headers = captured_headers_list[0]
+                assert http_constants.HttpHeaders.IfNoneMatch in first_headers, \
+                    "First call (incremental) should have IfNoneMatch header"
+
+                # Second call (full load) should NOT have IfNoneMatch
+                second_headers = captured_headers_list[1]
+                assert http_constants.HttpHeaders.IfNoneMatch not in second_headers, \
+                    "Second call (full load fallback) should NOT have IfNoneMatch header"
+
+            print("Validated: IfNoneMatch header is correctly cleaned up on fallback")
+
+        finally:
+            await self.created_database.delete_container(container.id)
+
+    async def test_force_refresh_with_stale_previous_routing_map_async(self):
+        """
+        Validates get_routing_map(force_refresh=True, previous_routing_map=stale_map)
+        correctly refreshes the cache and queries continue working.
+        This tests the targeted refresh path used by the 410 retry policy.
+        """
+        container = await self.created_database.create_container(
+            id='test_force_refresh_async_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=400
+        )
+
+        try:
+            for i in range(20):
+                await container.create_item({'id': f'item_{i}', 'pk': f'pk_{i}', 'value': i})
+
+            # Populate cache
+            await run_queries(container, 1)
+
+            provider = container.client_connection._routing_map_provider
+            collection_link = container.container_link
+            collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+            # Capture the current map as the "stale" previous map
+            stale_map = provider._collection_routing_map_by_item.get(collection_id)
+            assert stale_map is not None
+            original_etag = stale_map.change_feed_etag
+
+            # Force refresh with the stale map — simulates what the gone retry policy does
+            refreshed_map = await provider.get_routing_map(
+                collection_link=collection_link,
+                feed_options={},
+                force_refresh=True,
+                previous_routing_map=stale_map
+            )
+
+            assert refreshed_map is not None
+            assert len(list(refreshed_map._orderedPartitionKeyRanges)) >= 1
+
+            # Verify queries still work after force refresh
+            results = [item async for item in container.query_items(
+                query='SELECT * FROM c',
+            )]
+            assert len(results) == 20, \
+                f"Expected 20 items after force refresh, got {len(results)}"
+
+            print("Validated: Force refresh with previous_routing_map works correctly")
 
         finally:
             await self.created_database.delete_container(container.id)

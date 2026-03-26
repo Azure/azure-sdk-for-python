@@ -63,7 +63,8 @@ class _DocumentProducer(object):
             return self._client.QueryFeed(path, collection_id, query, options, partition_key_target_range["id"],
                                           response_hook=response_hook, raw_response_hook=raw_response_hook)
 
-        self._ex_context = _DefaultQueryExecutionContext(client, self._options, fetch_fn)
+        self._ex_context = _DefaultQueryExecutionContext(client, self._options, fetch_fn,
+                                                         resource_link=collection_link)
 
     def __lt__(self, other):
         return self._doc_producer_comp.compare(self, other) < 0

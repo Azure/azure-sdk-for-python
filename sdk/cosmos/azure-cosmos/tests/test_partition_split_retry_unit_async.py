@@ -35,18 +35,31 @@ class MockGlobalEndpointManager:
         return False
 
 
+class MockRoutingMapProvider:
+    """Mock routing map provider with a collection routing map cache."""
+    def __init__(self):
+        self._collection_routing_map_by_item = {}
+
+
 class MockClient:
     """Mock Cosmos client for testing partition split retry logic."""
     def __init__(self):
         self._global_endpoint_manager = MockGlobalEndpointManager()
+        self._routing_map_provider = MockRoutingMapProvider()
         self.refresh_routing_map_provider_call_count = 0
+        self.last_refresh_collection_link = None
+        self.last_refresh_previous_map = None
 
-    def refresh_routing_map_provider(self):
+    async def refresh_routing_map_provider(self, collection_link=None, previous_routing_map=None, feed_options=None):
         self.refresh_routing_map_provider_call_count += 1
+        self.last_refresh_collection_link = collection_link
+        self.last_refresh_previous_map = previous_routing_map
 
     def reset_counts(self):
         """Reset call counts for reuse in tests."""
         self.refresh_routing_map_provider_call_count = 0
+        self.last_refresh_collection_link = None
+        self.last_refresh_previous_map = None
 
 
 def create_410_partition_split_error():
@@ -311,7 +324,111 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         assert pk_refresh_calls == 0, \
             f"PK range query should have 0 refresh calls, got {pk_refresh_calls}"
 
+    @patch('azure.cosmos.aio._retry_utility_async.ExecuteAsync')
+    async def test_targeted_refresh_with_resource_link_async(self, mock_execute):
+        """
+        Test that when resource_link is provided and a cached routing map exists,
+        the 410 retry uses targeted refresh (passing collection_link and previous_map)
+        instead of the global refresh.
+        """
+        mock_client = MockClient()
+        # Simulate a cached routing map for this collection
+        fake_routing_map = {"etag": "fake-etag", "ranges": ["range1"]}
+        mock_client._routing_map_provider._collection_routing_map_by_item[
+            "dbs/testdb/colls/testcoll"
+        ] = fake_routing_map
 
-if __name__ == "__main__":
-    unittest.main()
+        expected_docs = [{"id": "success"}]
+        call_count = [0]
 
+        async def execute_side_effect(*args, **kwargs):
+            call_count[0] += 1
+            if call_count[0] == 1:
+                raise create_410_partition_split_error()
+            return expected_docs
+
+        mock_execute.side_effect = execute_side_effect
+
+        async def mock_fetch_function(options):
+            return (expected_docs, {})
+
+        resource_link = "dbs/testdb/colls/testcoll"
+        context = _DefaultQueryExecutionContext(
+            mock_client, {}, mock_fetch_function, resource_link=resource_link
+        )
+        result = await context._fetch_items_helper_with_retries(mock_fetch_function)
+
+        assert call_count[0] == 2, "Should have retried once after 410"
+        assert mock_client.refresh_routing_map_provider_call_count == 1
+        # Verify targeted refresh was used (collection_link and previous_map passed)
+        assert mock_client.last_refresh_collection_link == resource_link, \
+            "Should pass collection_link for targeted refresh"
+        assert mock_client.last_refresh_previous_map == fake_routing_map, \
+            "Should pass previous routing map for targeted refresh"
+        assert result == expected_docs
+
+    @patch('azure.cosmos.aio._retry_utility_async.ExecuteAsync')
+    async def test_global_refresh_fallback_without_resource_link_async(self, mock_execute):
+        """
+        Test that when no resource_link is provided, the 410 retry falls back
+        to the global refresh (no arguments to refresh_routing_map_provider).
+        """
+        mock_client = MockClient()
+        expected_docs = [{"id": "success"}]
+        call_count = [0]
+
+        async def execute_side_effect(*args, **kwargs):
+            call_count[0] += 1
+            if call_count[0] == 1:
+                raise create_410_partition_split_error()
+            return expected_docs
+
+        mock_execute.side_effect = execute_side_effect
+
+        async def mock_fetch_function(options):
+            return (expected_docs, {})
+
+        # No resource_link — should use global refresh
+        context = _DefaultQueryExecutionContext(mock_client, {}, mock_fetch_function)
+        result = await context._fetch_items_helper_with_retries(mock_fetch_function)
+
+        assert mock_client.refresh_routing_map_provider_call_count == 1
+        assert mock_client.last_refresh_collection_link is None, \
+            "Should NOT pass collection_link when resource_link is not set"
+        assert mock_client.last_refresh_previous_map is None, \
+            "Should NOT pass previous_map when resource_link is not set"
+        assert result == expected_docs
+
+    @patch('azure.cosmos.aio._retry_utility_async.ExecuteAsync')
+    async def test_global_refresh_fallback_when_no_cached_map_async(self, mock_execute):
+        """
+        Test that when resource_link is provided but there's no cached routing map
+        for that collection, the 410 retry falls back to the global refresh.
+        """
+        mock_client = MockClient()
+        expected_docs = [{"id": "success"}]
+        call_count = [0]
+
+        async def execute_side_effect(*args, **kwargs):
+            call_count[0] += 1
+            if call_count[0] == 1:
+                raise create_410_partition_split_error()
+            return expected_docs
+
+        mock_execute.side_effect = execute_side_effect
+
+        async def mock_fetch_function(options):
+            return (expected_docs, {})
+
+        # resource_link provided but no cached map for it
+        resource_link = "dbs/testdb/colls/testcoll"
+        context = _DefaultQueryExecutionContext(
+            mock_client, {}, mock_fetch_function, resource_link=resource_link
+        )
+        result = await context._fetch_items_helper_with_retries(mock_fetch_function)
+
+        assert mock_client.refresh_routing_map_provider_call_count == 1
+        # Falls back to global refresh because no cached map exists
+        assert mock_client.last_refresh_collection_link is None, \
+            "Should fall back to global refresh when no cached map exists"
+        assert result == expected_docs

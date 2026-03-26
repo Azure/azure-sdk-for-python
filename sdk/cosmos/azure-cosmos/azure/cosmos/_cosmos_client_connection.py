@@ -1267,7 +1267,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             if collection_link in self.__container_properties_cache:
                 # TODO: This will make deep copy. Check if this has any performance impact
                 new_options = dict(options)
-                new_options["containerRID"] = self.__container_properties_cache[collection_link]["_rid"]
+                new_options[Constants.ContainerRID] = self.__container_properties_cache[collection_link]["_rid"]
                 options = new_options
             return self.__QueryFeed(
                 path,
@@ -3559,20 +3559,22 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def refresh_routing_map_provider(
             self,
             collection_link: Optional[str] = None,
-            previous_routing_map: Optional[Any] = None) -> None:
+            previous_routing_map: Optional[Any] = None,
+            feed_options: Optional[dict[str, Any]] = None) -> None:
         """Refreshes routing map provider.
 
-        If collection_rid and previous_routing_map are provided, refreshes only that collection incrementally.
+        If collection_link and previous_routing_map are provided, refreshes only that collection incrementally.
         Otherwise, it creates a new provider instance for a full refresh.
 
         :param str collection_link: The collection link.
         :param object previous_routing_map: The routing map that is considered stale.
+        :param dict feed_options: The feed options for the request.
         """
         if collection_link and previous_routing_map:
             # Force a refresh for a specific collection.
-            self._routing_map_provider.get_or_refresh_routing_map_for_collection(
+            self._routing_map_provider.get_routing_map(
                 collection_link,
-                feed_options = {},
+                feed_options = feed_options if feed_options is not None else {},
                 force_refresh=True,
                 previous_routing_map=previous_routing_map
             )

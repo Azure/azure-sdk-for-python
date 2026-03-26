@@ -84,7 +84,8 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         """
         super(_ProxyQueryExecutionContext, self).__init__(client, options)
 
-        self._execution_context = _DefaultQueryExecutionContext(client, options, fetch_function)
+        self._execution_context = _DefaultQueryExecutionContext(client, options, fetch_function,
+                                                                resource_link=resource_link)
         self._resource_link = resource_link
         self._query = query
         self._fetch_function = fetch_function

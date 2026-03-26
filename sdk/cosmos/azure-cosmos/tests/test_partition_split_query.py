@@ -16,6 +16,7 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from unittest.mock import patch, MagicMock
 from azure.cosmos import http_constants
 from azure.cosmos import _base
+from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
 
 
 def run_queries(container, iterations):
@@ -405,7 +406,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             collection_link = container.container_link
 
             # Get initial routing map
-            initial_map = provider.get_or_refresh_routing_map_for_collection(
+            initial_map = provider.get_routing_map(
                 collection_link=collection_link,
                 feed_options={}
             )
@@ -450,7 +451,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             provider._collection_routing_map_by_item.clear()
 
             # This should trigger the full refresh fallback path
-            refreshed_map = provider.get_or_refresh_routing_map_for_collection(
+            refreshed_map = provider.get_routing_map(
                 collection_link=collection_link,
                 feed_options={}
             )
@@ -536,7 +537,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
                 # Force refresh with stale map
                 provider._collection_routing_map_by_item.clear()
 
-                refreshed_map = provider.get_or_refresh_routing_map_for_collection(
+                refreshed_map = provider.get_routing_map(
                     collection_link=collection_link,
                     feed_options={},
                     previous_routing_map=initial_map  # Simulate stale cache
@@ -605,7 +606,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
                 provider._collection_routing_map_by_item.clear()
 
                 # Full refresh (no previous_routing_map)
-                refreshed_map = provider.get_or_refresh_routing_map_for_collection(
+                refreshed_map = provider.get_routing_map(
                     collection_link=collection_link,
                     feed_options={}
                 )
@@ -624,6 +625,431 @@ class TestPartitionSplitQuery(unittest.TestCase):
                 assert len(results) == 30
 
                 print("Validated: Queries work after fallback")
+
+        finally:
+            self.database.delete_container(container.id)
+
+    def test_etag_staleness_detection_across_all_scenarios(self):
+        """Verifies that the cache correctly detects whether a refresh is needed by
+        comparing ETags. The ETag is a version stamp from the change feed — when two
+        maps have the same ETag, it means nobody has refreshed yet (stale). This test
+        checks all four scenarios:
+
+        1. No previous map provided -> not stale (nothing to compare against)
+        2. ETags match -> stale (nobody refreshed since the caller last looked)
+        3. ETags differ -> not stale (another thread already refreshed)
+        4. Cache is empty -> not stale (empty cache is handled separately as initial load)
+        """
+        container = self.database.create_container(
+            id='test_stale_etag_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=400
+        )
+
+        try:
+            for i in range(10):
+                container.create_item({'id': f'item_{i}', 'pk': f'pk_{i}', 'value': i})
+
+            # Populate cache
+            run_queries(container, 1)
+
+            provider = container.client_connection._routing_map_provider
+            collection_link = container.container_link
+            collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+            cached_map = provider._collection_routing_map_by_item.get(collection_id)
+            assert cached_map is not None
+
+            # Case 1: previous_routing_map is None -> should return False
+            assert provider._is_cache_stale(collection_id, None) is False, \
+                "_is_cache_stale should return False when previous_routing_map is None"
+
+            # Case 2: ETags match -> should return True (cache is stale)
+            assert provider._is_cache_stale(collection_id, cached_map) is True, \
+                "_is_cache_stale should return True when ETags match"
+
+            # Case 3: ETags differ -> should return False (already refreshed)
+            fake_previous = MagicMock()
+            fake_previous.change_feed_etag = "fake-different-etag-12345"
+            assert provider._is_cache_stale(collection_id, fake_previous) is False, \
+                "_is_cache_stale should return False when ETags differ"
+
+            # Case 4: Cache is empty -> should return False
+            provider._collection_routing_map_by_item.clear()
+            real_previous = MagicMock()
+            real_previous.change_feed_etag = cached_map.change_feed_etag
+            assert provider._is_cache_stale(collection_id, real_previous) is False, \
+                "_is_cache_stale should return False when cache is empty"
+
+            print("Validated: _is_cache_stale ETag comparison logic works correctly")
+
+        finally:
+            self.database.delete_container(container.id)
+
+    def test_full_refresh_fallback_stops_infinite_recursion(self):
+        """Verifies that the SDK does not recurse infinitely when a full refresh from
+        the service returns an incomplete set of partition ranges.
+
+        When a full load is performed (previous_routing_map=None) and the service
+        returns gapped ranges, _fetch_routing_map must return None immediately —
+        there is no incremental state to fall back from, and repeating the
+        identical request would produce the same result."""
+        container = self.database.create_container(
+            id='test_fallback_guard_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=400
+        )
+
+        try:
+            for i in range(10):
+                container.create_item({'id': f'item_{i}', 'pk': f'pk_{i}', 'value': i})
+
+            run_queries(container, 1)
+
+            provider = container.client_connection._routing_map_provider
+            collection_link = container.container_link
+            collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+            # Create an incomplete range set that will cause CompleteRoutingMap to fail
+            incomplete_range = {
+                'id': 'incomplete_0',
+                'minInclusive': '',
+                'maxExclusive': '80',  # Gap from 80 to FF
+            }
+
+            def mock_read_ranges(*args, **kwargs):
+                return iter([incomplete_range])
+
+            with patch.object(
+                    container.client_connection,
+                    '_ReadPartitionKeyRanges',
+                    side_effect=mock_read_ranges
+            ):
+                # Full load with incomplete ranges should return None immediately
+                result = provider._fetch_routing_map(
+                    collection_link=collection_link,
+                    collection_id=collection_id,
+                    previous_routing_map=None,
+                    feed_options={},
+                )
+
+                # Should return None instead of recursing infinitely
+                assert result is None, \
+                    "_fetch_routing_map should return None when full load produces incomplete ranges"
+
+            print("Validated: full load with incomplete ranges returns None without recursion")
+
+        finally:
+            self.database.delete_container(container.id)
+
+    def test_pk_range_fetch_sets_recursion_prevention_flag(self):
+        """Verifies that when the SDK fetches partition key ranges, it sets a special
+        flag (_internal_pk_range_fetch) in the request options.
+
+        This flag exists to break a specific infinite loop: if the PK range fetch itself
+        gets a 410 (partition gone) error, the retry logic would normally try to refresh
+        the routing map — which would call the PK range fetch again — creating an endless
+        cycle. The flag tells the retry logic to skip the refresh and let the 410 propagate."""
+        container = self.database.create_container(
+            id='test_pk_flag_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=400
+        )
+
+        try:
+            for i in range(10):
+                container.create_item({'id': f'item_{i}', 'pk': f'pk_{i}', 'value': i})
+
+            provider = container.client_connection._routing_map_provider
+            collection_link = container.container_link
+
+            captured_options = {}
+            original_read = container.client_connection._ReadPartitionKeyRanges
+
+            def spy_read_ranges(*args, **kwargs):
+                if len(args) > 1:
+                    captured_options.update(args[1])
+                return original_read(*args, **kwargs)
+
+            with patch.object(
+                    container.client_connection,
+                    '_ReadPartitionKeyRanges',
+                    side_effect=spy_read_ranges
+            ):
+                # Clear cache to force a fresh fetch
+                provider._collection_routing_map_by_item.clear()
+
+                routing_map = provider.get_routing_map(
+                    collection_link=collection_link,
+                    feed_options={}
+                )
+
+                assert routing_map is not None
+                assert captured_options.get("_internal_pk_range_fetch") is True, \
+                    "_internal_pk_range_fetch flag should be set in options"
+
+            print("Validated: _internal_pk_range_fetch flag is correctly set")
+
+        finally:
+            self.database.delete_container(container.id)
+
+    def test_cached_map_returned_without_lock(self):
+        """Verifies that when the routing map is already cached and no refresh is needed,
+        get_routing_map returns it immediately without acquiring the per-collection lock.
+
+        This is important for performance: in a read-heavy workload, every query needs to
+        look up the routing map. If every lookup acquired a lock, threads would contend
+        unnecessarily. The fast path (dict lookup without locking) avoids this. This test
+        also confirms that force_refresh=True correctly bypasses the fast path and does
+        acquire the lock."""
+        container = self.database.create_container(
+            id='test_fast_path_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=400
+        )
+
+        try:
+            for i in range(10):
+                container.create_item({'id': f'item_{i}', 'pk': f'pk_{i}', 'value': i})
+
+            # Populate cache
+            run_queries(container, 1)
+
+            provider = container.client_connection._routing_map_provider
+            collection_link = container.container_link
+            collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+            # Verify cache is populated
+            cached_map = provider._collection_routing_map_by_item.get(collection_id)
+            assert cached_map is not None
+
+            # Spy on _get_lock_for_collection to verify it's NOT called on the fast path
+            lock_call_count = {'count': 0}
+            original_get_lock = provider._get_lock_for_collection
+
+            def spy_get_lock(*args, **kwargs):
+                lock_call_count['count'] += 1
+                return original_get_lock(*args, **kwargs)
+
+            with patch.object(provider, '_get_lock_for_collection', side_effect=spy_get_lock):
+                # This should hit the fast path — no lock acquisition
+                result = provider.get_routing_map(
+                    collection_link=collection_link,
+                    feed_options={}
+                )
+
+                assert result is cached_map, "Should return the same cached map object"
+                assert lock_call_count['count'] == 0, \
+                    "Lock should NOT be acquired on the fast path"
+
+            # Now verify that force_refresh DOES acquire the lock
+            lock_call_count['count'] = 0
+            with patch.object(provider, '_get_lock_for_collection', side_effect=spy_get_lock):
+                result = provider.get_routing_map(
+                    collection_link=collection_link,
+                    feed_options={},
+                    force_refresh=True
+                )
+                assert result is not None
+                assert lock_call_count['count'] == 1, \
+                    "Lock SHOULD be acquired when force_refresh=True"
+
+            print("Validated: Lock-free fast path works correctly")
+
+        finally:
+            self.database.delete_container(container.id)
+
+    def test_upstream_response_hook_preserved_during_routing_map_fetch(self):
+        """Verifies that when a caller passes a response_hook callback, it is still
+        invoked even though _fetch_routing_map also installs its own internal hook to
+        capture the change feed ETag.
+
+        Without proper hook chaining, either the caller's hook would be silently dropped,
+        or the SDK would crash with 'got multiple values for keyword argument'. This test
+        confirms both hooks are called and both receive the response headers."""
+        container = self.database.create_container(
+            id='test_hook_chain_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=400
+        )
+
+        try:
+            for i in range(10):
+                container.create_item({'id': f'item_{i}', 'pk': f'pk_{i}', 'value': i})
+
+            provider = container.client_connection._routing_map_provider
+            collection_link = container.container_link
+            collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+            # Clear cache to force a fetch
+            provider._collection_routing_map_by_item.clear()
+
+            upstream_headers_captured = {}
+
+            def upstream_hook(headers, body):
+                upstream_headers_captured.update(headers)
+
+            # Call get_routing_map with an upstream response_hook in kwargs
+            result = provider.get_routing_map(
+                collection_link=collection_link,
+                feed_options={},
+                response_hook=upstream_hook
+            )
+
+            assert result is not None, "Routing map should be returned"
+
+            # The internal hook should have captured the ETag (used for change_feed_etag)
+            assert result.change_feed_etag is not None, \
+                "Internal capture hook should have captured the ETag"
+
+            # The upstream hook should also have been called with headers
+            assert len(upstream_headers_captured) > 0, \
+                "Upstream response_hook should have been called with headers"
+
+            print("Validated: response_hook chaining works correctly")
+
+        finally:
+            self.database.delete_container(container.id)
+
+    def test_stale_etag_header_removed_on_full_refresh_fallback(self):
+        """Verifies that when an incremental update fails and the SDK falls back to a
+        full refresh, the stale If-None-Match header is removed from the request.
+
+        The If-None-Match header tells the service 'give me only changes since this ETag'.
+        If it leaks into the full refresh request, the service returns a delta instead of
+        the complete set of ranges, which causes the full refresh to fail too — leading to
+        infinite recursion. This test confirms the header is present on the first call
+        (incremental) and absent on the second call (full refresh)."""
+        container = self.database.create_container(
+            id='test_etag_cleanup_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=400
+        )
+
+        try:
+            for i in range(10):
+                container.create_item({'id': f'item_{i}', 'pk': f'pk_{i}', 'value': i})
+
+            # Populate cache
+            run_queries(container, 1)
+
+            provider = container.client_connection._routing_map_provider
+            collection_link = container.container_link
+            collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+            captured_headers_list = []
+            original_read = container.client_connection._ReadPartitionKeyRanges
+
+            call_count = {'count': 0}
+
+            def spy_read_ranges(*args, **kwargs):
+                call_count['count'] += 1
+                # Capture the headers from kwargs
+                headers = kwargs.get('headers', {})
+                captured_headers_list.append(headers.copy())
+
+                if call_count['count'] == 1:
+                    # First call (incremental): return a child with a missing parent
+                    # to trigger fallback
+                    fake_child = {
+                        'id': 'child_99',
+                        'minInclusive': '',
+                        'maxExclusive': 'FF',
+                        'parents': ['nonexistent_parent']
+                    }
+                    return iter([fake_child])
+                else:
+                    # Second call (full load fallback): return real data
+                    return original_read(*args, **kwargs)
+
+            cached_map = provider._collection_routing_map_by_item.get(collection_id)
+            assert cached_map is not None
+            assert cached_map.change_feed_etag is not None
+
+            with patch.object(
+                    container.client_connection,
+                    '_ReadPartitionKeyRanges',
+                    side_effect=spy_read_ranges
+            ):
+                # Force refresh with the stale map to trigger incremental path
+                result = provider.get_routing_map(
+                    collection_link=collection_link,
+                    feed_options={},
+                    force_refresh=True,
+                    previous_routing_map=cached_map
+                )
+
+                assert result is not None
+
+                # Verify we made 2 calls: incremental (failed) + full load (fallback)
+                assert call_count['count'] == 2, \
+                    f"Expected 2 calls to _ReadPartitionKeyRanges, got {call_count['count']}"
+
+                # First call should have IfNoneMatch (incremental)
+                first_headers = captured_headers_list[0]
+                assert http_constants.HttpHeaders.IfNoneMatch in first_headers, \
+                    "First call (incremental) should have IfNoneMatch header"
+
+                # Second call (full load) should NOT have IfNoneMatch
+                second_headers = captured_headers_list[1]
+                assert http_constants.HttpHeaders.IfNoneMatch not in second_headers, \
+                    "Second call (full load fallback) should NOT have IfNoneMatch header"
+
+            print("Validated: IfNoneMatch header is correctly cleaned up on fallback")
+
+        finally:
+            self.database.delete_container(container.id)
+
+    def test_targeted_refresh_with_stale_map_keeps_queries_working(self):
+        """Verifies the end-to-end targeted refresh path: the SDK caches a routing map,
+        then force-refreshes it using the old map as a reference (simulating what the 410
+        retry policy does after a partition split), and confirms that queries still return
+        correct results afterward.
+
+        This is the most important refresh path in production — it's how the SDK recovers
+        from partition splits without disrupting the user's queries."""
+        container = self.database.create_container(
+            id='test_force_refresh_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=400
+        )
+
+        try:
+            for i in range(20):
+                container.create_item({'id': f'item_{i}', 'pk': f'pk_{i}', 'value': i})
+
+            # Populate cache
+            run_queries(container, 1)
+
+            provider = container.client_connection._routing_map_provider
+            collection_link = container.container_link
+            collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+            # Capture the current map as the "stale" previous map
+            stale_map = provider._collection_routing_map_by_item.get(collection_id)
+            assert stale_map is not None
+            original_etag = stale_map.change_feed_etag
+
+            # Force refresh with the stale map — simulates what the gone retry policy does
+            refreshed_map = provider.get_routing_map(
+                collection_link=collection_link,
+                feed_options={},
+                force_refresh=True,
+                previous_routing_map=stale_map
+            )
+
+            assert refreshed_map is not None
+            assert len(list(refreshed_map._orderedPartitionKeyRanges)) >= 1
+
+            # Verify queries still work after force refresh
+            results = list(container.query_items(
+                query='SELECT * FROM c',
+                enable_cross_partition_query=True
+            ))
+            assert len(results) == 20, \
+                f"Expected 20 items after force refresh, got {len(results)}"
+
+            print("Validated: Force refresh with previous_routing_map works correctly")
 
         finally:
             self.database.delete_container(container.id)

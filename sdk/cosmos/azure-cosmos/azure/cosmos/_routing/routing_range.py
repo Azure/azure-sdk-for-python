@@ -236,6 +236,57 @@ class Range(object):
         return (normalized_parent_range.min <= normalized_child_range.min and
                 normalized_parent_range.max >= normalized_child_range.max)
 
+
+def _second_range_is_after_first_range(range1, range2):
+    """Checks if range2 starts strictly after range1 ends (no overlap).
+
+    :param Range range1: The first range.
+    :param Range range2: The second range.
+    :return: True if range2 is entirely after range1, False if they overlap.
+    :rtype: bool
+    """
+    if range1.max > range2.min:
+        return False
+
+    if range2.min == range1.max and range1.isMaxInclusive and range2.isMinInclusive:
+        return False
+
+    return True
+
+
+def _is_sorted_and_non_overlapping(ranges):
+    """Validates that a list of ranges is sorted and non-overlapping.
+
+    :param list ranges: List of Range objects.
+    :return: True if sorted and non-overlapping, False otherwise.
+    :rtype: bool
+    """
+    for idx, r in list(enumerate(ranges))[1:]:
+        previous_r = ranges[idx - 1]
+        if not _second_range_is_after_first_range(previous_r, r):
+            return False
+    return True
+
+
+def _subtract_range(r, partition_key_range):
+    """Evaluates and returns r - partition_key_range
+
+    :param dict partition_key_range: Partition key range.
+    :param Range r: query range.
+    :return: The subtract r - partition_key_range.
+    :rtype: Range
+    """
+    left = max(partition_key_range[PartitionKeyRange.MaxExclusive], r.min)
+
+    if left == r.min:
+        leftInclusive = r.isMinInclusive
+    else:
+        leftInclusive = False
+
+    queryRange = Range(left, r.max, leftInclusive, r.isMaxInclusive)
+    return queryRange
+
+
 class PartitionKeyRangeWrapper(object):
     """Internal class for a representation of a unique partition for an account
     """

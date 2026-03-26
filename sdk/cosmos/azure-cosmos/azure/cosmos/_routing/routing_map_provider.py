@@ -26,9 +26,14 @@ import threading
 import logging
 from typing import Dict, Any, Optional, List, TYPE_CHECKING
 from .. import _base, http_constants
-from .collection_routing_map import CollectionRoutingMap
+from .collection_routing_map import CollectionRoutingMap, _build_routing_map_from_ranges
 from . import routing_range
-from .routing_range import PartitionKeyRange
+from .routing_range import (
+    PartitionKeyRange,
+    _second_range_is_after_first_range,
+    _is_sorted_and_non_overlapping,
+    _subtract_range,
+)
 from ..exceptions import CosmosHttpResponseError
 
 if TYPE_CHECKING:
@@ -47,7 +52,7 @@ class PartitionKeyRangeCache(object):
     """
     page_size_change_feed = "-1"  # Return all available changes
 
-    def __init__(self, client: "CosmosClientConnection"):
+    def __init__(self, client: Any):
         """
         Constructor
         """
@@ -81,7 +86,7 @@ class PartitionKeyRangeCache(object):
             return self._collection_locks[collection_id]
 
     # pylint: disable=invalid-name
-    def get_or_refresh_routing_map_for_collection(
+    def get_routing_map(
             self,
             collection_link: str,
             feed_options: Optional[Dict[str, Any]],
@@ -106,18 +111,31 @@ class PartitionKeyRangeCache(object):
         """
 
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        # First check (no lock) for the fast path.
+        # If no refresh is forced and the map is already cached, return it
+        # immediately without acquiring the lock to avoid contention.
+        if not force_refresh:
+            cached_map = self._collection_routing_map_by_item.get(collection_id)
+            if cached_map:
+                return cached_map
+
         # Acquire a lock specific to this collection ID. This prevents race
         # conditions where multiple threads try to refresh the same map.
         collection_lock = self._get_lock_for_collection(collection_id)
         with collection_lock:
+            # Second check (with lock) to see if another thread already did the work.
             existing_routing_map = self._collection_routing_map_by_item.get(collection_id)
 
             # Determine if a refresh or initial load is needed.
+            # Note: _is_cache_stale() only compares ETags — it returns False when the cache is empty.
+            # That's intentional: the empty-cache case is handled separately by is_initial_load.
             is_initial_load = not existing_routing_map
-            needs_refresh = force_refresh or self.should_force_refresh(collection_id, previous_routing_map)
+            needs_refresh = force_refresh or self._is_cache_stale(collection_id, previous_routing_map)
 
             if is_initial_load or needs_refresh:
-                # If refresh is forced by a stale previous_routing_map, use it as the base for the incremental update.
+                # If refresh is forced by a stale previous_routing_map, use it as the base for the incremental
+                # update.
                 # Otherwise, use the map currently in the cache.
                 base_routing_map: Optional[CollectionRoutingMap]
                 if needs_refresh and previous_routing_map:
@@ -125,7 +143,7 @@ class PartitionKeyRangeCache(object):
                 else:
                     base_routing_map = existing_routing_map
 
-                new_routing_map = self._get_routing_map_with_change_feed(
+                new_routing_map = self._fetch_routing_map(
                     collection_link,
                     collection_id,
                     base_routing_map,
@@ -138,12 +156,19 @@ class PartitionKeyRangeCache(object):
 
             return self._collection_routing_map_by_item.get(collection_id)
 
-    def should_force_refresh(
+    def _is_cache_stale(
             self,
             collection_id: str,
             previous_routing_map: Optional[CollectionRoutingMap]
     ) -> bool:
-        """Determines if a forced refresh of the routing map is necessary.
+        """Checks if the cached routing map is stale by comparing ETags.
+
+        This method only concerns itself with ETag comparison. It returns False
+        when there is no previous_routing_map or when the cache is empty (no
+        current_map). Returning False for an empty cache is intentional — this
+        method's contract is strictly "are two existing maps equal?", not "does
+        the cache need populating". The caller (get_routing_map) handles the
+        empty-cache case separately via its own ``is_initial_load`` check.
 
         This method checks if the currently cached routing map is potentially
         stale compared to a provided `previous_routing_map`. A forced refresh
@@ -165,11 +190,11 @@ class PartitionKeyRangeCache(object):
             return False
 
         # If ETags match, cache might be stale
-        return (previous_routing_map.change_feed_next_if_none_match ==
-                current_map.change_feed_next_if_none_match)
+        return (previous_routing_map.change_feed_etag ==
+                current_map.change_feed_etag)
 
     # pylint: disable=too-many-statements
-    def _get_routing_map_with_change_feed(
+    def _fetch_routing_map(
             self,
             collection_link: str,
             collection_id: str,
@@ -193,7 +218,7 @@ class PartitionKeyRangeCache(object):
         :type previous_routing_map: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap
         :param feed_options: Options for the change feed request.
         :type feed_options: dict or None
-        :return: The new or updated CollectionRoutingMap, or None if an update fails and fallback is triggered.
+        :return: The new or updated CollectionRoutingMap, or None if retrieval fails.
         :rtype: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap or None
         """
         ranges: List[Dict[str, Any]] = []
@@ -209,16 +234,40 @@ class PartitionKeyRangeCache(object):
             nonlocal response_headers
             response_headers = headers
 
+        # Pop any upstream response_hook from kwargs to avoid a TypeError
+        # when we pass our own capture_response_hook explicitly to _ReadPartitionKeyRanges.
+        # If an upstream hook exists, chain it so both hooks are called.
+        upstream_hook = kwargs.pop('response_hook', None)
+        if upstream_hook:
+            original_capture = capture_response_hook
+
+            def capture_response_hook(headers: Dict[str, Any], body,  # type: ignore[misc]
+                                      _upstream=upstream_hook):
+                original_capture(headers, body)
+                if _upstream is not None:
+                    _upstream(headers, body)
+
         # Sanitize options to only include those relevant for a PKRange read.
         change_feed_options = _base.format_pk_range_options(feed_options if feed_options is not None else {})
+
+        # Set the flag to prevent infinite recursion: if this PK range fetch itself gets a 410,
+        # the downstream retry loop in _DefaultQueryExecutionContext will see this flag and skip
+        # calling refresh_routing_map_provider() again, which would re-enter _fetch_routing_map().
+        change_feed_options["_internal_pk_range_fetch"] = True
 
         # Prepare headers for change feed
         headers = kwargs.get('headers', {}).copy()
         headers[http_constants.HttpHeaders.PageSize] = self.page_size_change_feed
         headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
 
-        if previous_routing_map and previous_routing_map.change_feed_next_if_none_match:
-            headers[http_constants.HttpHeaders.IfNoneMatch] = previous_routing_map.change_feed_next_if_none_match
+        if previous_routing_map and previous_routing_map.change_feed_etag:
+            headers[http_constants.HttpHeaders.IfNoneMatch] = previous_routing_map.change_feed_etag
+        else:
+            # Ensure no stale IfNoneMatch header leaks from a previous incremental attempt
+            # into a full-load request. Without this, a recursive fallback call (with
+            # previous_routing_map=None) would inherit the old ETag from kwargs, causing the
+            # service to return only a delta instead of the complete set of ranges.
+            headers.pop(http_constants.HttpHeaders.IfNoneMatch, None)
 
         kwargs['headers'] = headers
 
@@ -238,20 +287,10 @@ class PartitionKeyRangeCache(object):
         new_etag = response_headers.get(http_constants.HttpHeaders.ETag)
 
         if not previous_routing_map:
-            # Initial load - create complete routing map
-            gone_range_ids = set()
-            for r in ranges:
-                if PartitionKeyRange.Parents in r and r[PartitionKeyRange.Parents]:
-                    gone_range_ids.update(r[PartitionKeyRange.Parents])
-
-            filtered_ranges = [r for r in ranges if r[PartitionKeyRange.Id] not in gone_range_ids]
-            range_tuples = [(r, True) for r in filtered_ranges]
-
-            routing_map = CollectionRoutingMap.CompleteRoutingMap(
-                range_tuples,
-                collection_id,
-                new_etag
-            )
+            # Initial load - create complete routing map from full range set
+            routing_map = _build_routing_map_from_ranges(ranges, collection_id, new_etag, collection_link, logger)
+            if not routing_map:
+                return None
         else:
             # Incremental update - combine with existing map
             range_tuples = []
@@ -266,14 +305,13 @@ class PartitionKeyRangeCache(object):
                         range_info = parent_range_tuple[1]  # Get the range_info from the parent
                         range_tuples.append((r, range_info))
                     else:
-                        # This would be an inconsistent state from the server. Force a full refresh by clearing the cache for the collection and retrying.
                         logger.warning(
                             "Incremental update failed: Parent range '%s' not found in routing map "
                             "for collection '%s'. Falling back to full refresh.",
                             parent_id, collection_link
                         )
                         self._collection_routing_map_by_item.pop(collection_id, None)
-                        return self._get_routing_map_with_change_feed(collection_link, collection_id, None,
+                        return self._fetch_routing_map(collection_link, collection_id, None,
                                                                       feed_options, **kwargs)
                 else:
                     range_id = r[PartitionKeyRange.Id]
@@ -288,20 +326,20 @@ class PartitionKeyRangeCache(object):
                             range_id, collection_link
                         )
                         self._collection_routing_map_by_item.pop(collection_id, None)
-                        return self._get_routing_map_with_change_feed(collection_link, collection_id, None,
+                        return self._fetch_routing_map(collection_link, collection_id, None,
                                                                       feed_options, **kwargs)
 
             routing_map = previous_routing_map.try_combine(range_tuples, new_etag or "")
-        if not routing_map:
-            # This can happen if the combination results in an incomplete map.
-            # Force a full refresh by clearing the cache for the collection and retrying.
-            logger.warning(
-                "Incremental merge resulted in incomplete routing map for collection '%s'. "
-                "Falling back to full refresh.",
-                collection_link
-            )
-            self._collection_routing_map_by_item.pop(collection_id, None)
-            return self._get_routing_map_with_change_feed(collection_link, collection_id, None, feed_options, **kwargs)
+            if not routing_map:
+                # Incremental merge resulted in an incomplete map.
+                # Fall back to a full refresh.
+                logger.warning(
+                    "Incremental merge resulted in incomplete routing map for collection '%s'. "
+                    "Falling back to full refresh.",
+                    collection_link
+                )
+                self._collection_routing_map_by_item.pop(collection_id, None)
+                return self._fetch_routing_map(collection_link, collection_id, None, feed_options, **kwargs)
 
         return routing_map
 
@@ -318,9 +356,7 @@ class PartitionKeyRangeCache(object):
         if not partition_key_ranges:
             return []  # Avoid unnecessary network call if there are no ranges to check
 
-        routing_map = self.get_or_refresh_routing_map_for_collection(collection_link, feed_options, **kwargs)
-        if not routing_map:
-            raise RuntimeError(f"Routing map for collection {collection_link} not found.")
+        routing_map = self.get_routing_map(collection_link, feed_options, **kwargs)
 
         ranges = routing_map.get_overlapping_ranges(partition_key_ranges)
         return ranges
@@ -332,7 +368,7 @@ class PartitionKeyRangeCache(object):
             feed_options: Dict[str, Any],
             **kwargs: Dict[str, Any]
     ) -> Optional[Dict[str, Any]]:
-        routing_map = self.get_or_refresh_routing_map_for_collection(
+        routing_map = self.get_routing_map(
             collection_link,
             feed_options,
             force_refresh=False,
@@ -344,54 +380,7 @@ class PartitionKeyRangeCache(object):
 
         return routing_map.get_range_by_partition_key_range_id(partition_key_range_id)
 
-    @staticmethod
-    def _discard_parent_ranges(partitionKeyRanges):
-        parentIds = set()
-        for r in partitionKeyRanges:
-            if isinstance(r, dict) and PartitionKeyRange.Parents in r:
-                for parentId in r[PartitionKeyRange.Parents]:
-                    parentIds.add(parentId)
-        return (r for r in partitionKeyRanges if r[PartitionKeyRange.Id] not in parentIds)
 
-
-def _second_range_is_after_first_range(range1, range2):
-    if range1.max > range2.min:
-        ##r.min < #previous_r.max
-        return False
-
-    if range2.min == range1.max and range1.isMaxInclusive and range2.isMinInclusive:
-        # the inclusive ending endpoint of previous_r is the same as the inclusive beginning endpoint of r
-        return False
-
-    return True
-
-
-def _is_sorted_and_non_overlapping(ranges):
-    for idx, r in list(enumerate(ranges))[1:]:
-        previous_r = ranges[idx - 1]
-        if not _second_range_is_after_first_range(previous_r, r):
-            return False
-    return True
-
-
-def _subtract_range(r, partition_key_range):
-    """Evaluates and returns r - partition_key_range
-
-    :param dict partition_key_range: Partition key range.
-    :param routing_range.Range r: query range.
-    :return: The subtract r - partition_key_range.
-    :rtype: routing_range.Range
-    """
-
-    left = max(partition_key_range[routing_range.PartitionKeyRange.MaxExclusive], r.min)
-
-    if left == r.min:
-        leftInclusive = r.isMinInclusive
-    else:
-        leftInclusive = False
-
-    queryRange = routing_range.Range(left, r.max, leftInclusive, r.isMaxInclusive)
-    return queryRange
 
 
 class SmartRoutingMapProvider(PartitionKeyRangeCache):
@@ -402,9 +391,7 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
 
     def get_overlapping_ranges(self, collection_link, partition_key_ranges, feed_options=None, **kwargs):
         if not partition_key_ranges:
-            return super(SmartRoutingMapProvider, self).get_overlapping_ranges(
-                collection_link, [], feed_options, **kwargs
-            )
+            return []  # Return empty list directly instead of delegating to parent
 
         if not _is_sorted_and_non_overlapping(partition_key_ranges):
             raise ValueError("the list of ranges is not a non-overlapping sorted ranges")

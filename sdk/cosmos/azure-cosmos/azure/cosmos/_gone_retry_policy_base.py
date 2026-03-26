@@ -35,16 +35,21 @@ class _PartitionKeyRangeGoneRetryPolicyBase:
         self.kwargs = kwargs
 
     def _extract_collection_info(self):
-        """Extract collection link and RID from request."""
+        """Extract collection link and RID from request.
+
+        :return: A tuple of (collection_link, container_rid). Either or both may be None.
+        :rtype: tuple[str, str]
+        """
         collection_link = None
+        container_rid = None
         if len(self.args) > 3:
             request = self.args[3]
             if hasattr(request, 'headers'):
-                collection_rid = request.headers.get(http_constants.HttpHeaders.IntendedCollectionRID)
-                cached_properties = self.client._container_properties_cache.get(collection_rid)
+                container_rid = request.headers.get(http_constants.HttpHeaders.IntendedCollectionRID)
+                cached_properties = self.client._container_properties_cache.get(container_rid)
                 if cached_properties:
                     collection_link = cached_properties.get("container_link")
-        return collection_link
+        return collection_link, container_rid
 
     def _get_previous_routing_map(self, collection_link):
         """Gets the cached routing map for a specific collection.
