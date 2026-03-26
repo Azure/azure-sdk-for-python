@@ -94,9 +94,19 @@ def test_pyproject_update_check_override():
 
 
 def test_pyproject_get_lib_deps():
-    all_packages, _ = get_lib_deps(discover_repo_root())
+    all_packages, _ = get_lib_deps(discover_repo_root(), "azure*")
     # Ensure that libraries with pyproject.toml files are fetched correctly; azure-keyvault-keys is an example
     pyproject_info = all_packages["azure-keyvault-keys"]
     assert pyproject_info["version"]
     assert pyproject_info["source"]
     assert len(pyproject_info["deps"]) > 0
+
+
+def test_pyproject_get_lib_deps_scoped():
+    all_packages, _ = get_lib_deps(discover_repo_root(), "azure-core, azure-storage-blob")
+    # Ensure that libraries with pyproject.toml files are fetched correctly; azure-core is an example
+    pyproject_info = all_packages["azure-core"]
+    assert pyproject_info["version"]
+    assert pyproject_info["source"]
+    assert len(pyproject_info["deps"]) > 0
+    assert len(all_packages) == 2

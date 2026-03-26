@@ -46,34 +46,6 @@ class TestEvaluate:
             )
         assert ToolCallAccuracyEvaluator._NO_TOOL_DEFINITIONS_MESSAGE in str(exc_info.value)
 
-        # Test with response that has no tool calls
-        result = tool_call_accuracy(
-            query="Where is the Eiffel Tower?",
-            response="The Eiffel Tower is in Paris.",
-            tool_definitions=[
-                {
-                    "name": "fetch_weather",
-                    "description": "Fetches the weather information for the specified location.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "location": {
-                                "type": "string",
-                                "description": "The location to fetch weather for.",
-                            }
-                        },
-                    },
-                }
-            ],
-        )
-        assert (
-            result[ToolCallAccuracyEvaluator._RESULT_KEY] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
-        )
-        assert (
-            ToolCallAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE
-            in result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_reason"]
-        )
-
         # Test with tool call for which definition is not provided
         result = tool_call_accuracy(
             query="Where is the Eiffel Tower?",

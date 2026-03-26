@@ -40,7 +40,6 @@ import base64
 from datetime import datetime
 import logging
 import queue
-import signal
 from typing import Union, Optional, TYPE_CHECKING, cast
 
 from azure.core.credentials import AzureKeyCredential
@@ -514,14 +513,6 @@ def main():
         voice=args.voice,
         instructions=args.instructions,
     )
-
-    # Setup signal handlers for graceful shutdown
-    def signal_handler(_sig, _frame):
-        logger.info("Received shutdown signal")
-        raise KeyboardInterrupt()
-
-    signal.signal(signal.SIGINT, signal_handler)
-    signal.signal(signal.SIGTERM, signal_handler)
 
     # Start the assistant
     try:
