@@ -1,5 +1,192 @@
 # Release History
 
+## 15.0.0b1 (2026-03-26)
+
+### Features Added
+
+  - Client `CognitiveServicesManagementClient` added method `send_request`
+  - Client `CognitiveServicesManagementClient` added operation group `subscription_rai_policy`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_tool_labels`
+  - Client `CognitiveServicesManagementClient` added operation group `agent_applications`
+  - Client `CognitiveServicesManagementClient` added operation group `compute_operations`
+  - Client `CognitiveServicesManagementClient` added operation group `test_rai_external_safety_provider`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_external_safety_provider`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_external_safety_providers`
+  - Client `CognitiveServicesManagementClient` added operation group `outbound_rule`
+  - Client `CognitiveServicesManagementClient` added operation group `managed_network_settings`
+  - Client `CognitiveServicesManagementClient` added operation group `outbound_rules`
+  - Client `CognitiveServicesManagementClient` added operation group `managed_network_provisions`
+  - Client `CognitiveServicesManagementClient` added operation group `agent_deployments`
+  - Model `AccountProperties` added property `foundry_auto_upgrade`
+  - Model `CapabilityHostProperties` added property `enable_public_hosting_environment`
+  - Enum `ConnectionAuthType` added member `ACCOUNT_MANAGED_IDENTITY`
+  - Enum `ConnectionAuthType` added member `AGENTIC_IDENTITY_TOKEN`
+  - Enum `ConnectionAuthType` added member `AGENTIC_USER`
+  - Enum `ConnectionAuthType` added member `AGENT_USER_IMPERSONATION`
+  - Enum `ConnectionAuthType` added member `DELEGATED_SAS`
+  - Enum `ConnectionAuthType` added member `PROJECT_MANAGED_IDENTITY`
+  - Enum `ConnectionAuthType` added member `USER_ENTRA_TOKEN`
+  - Enum `ConnectionCategory` added member `API_MANAGEMENT`
+  - Enum `ConnectionCategory` added member `APP_CONFIG`
+  - Enum `ConnectionCategory` added member `APP_INSIGHTS`
+  - Enum `ConnectionCategory` added member `AZURE_CONTAINER_APP_ENVIRONMENT`
+  - Enum `ConnectionCategory` added member `AZURE_KEY_VAULT`
+  - Enum `ConnectionCategory` added member `DATABRICKS`
+  - Enum `ConnectionCategory` added member `GROUNDING_WITH_BING_SEARCH`
+  - Enum `ConnectionCategory` added member `GROUNDING_WITH_CUSTOM_SEARCH`
+  - Enum `ConnectionCategory` added member `MICROSOFT_FABRIC`
+  - Enum `ConnectionCategory` added member `MODEL_GATEWAY`
+  - Enum `ConnectionCategory` added member `POWER_PLATFORM_ENVIRONMENT`
+  - Enum `ConnectionCategory` added member `REMOTE_A2_A`
+  - Enum `ConnectionCategory` added member `REMOTE_TOOL`
+  - Enum `ConnectionCategory` added member `SHAREPOINT`
+  - Model `DeploymentProperties` added property `service_tier`
+  - Model `DeploymentProperties` added property `deployment_state`
+  - Model `DeploymentProperties` added property `routing`
+  - Model `ModelSkuCapacityProperties` added property `scope_id`
+  - Model `ModelSkuCapacityProperties` added property `scope_type`
+  - Model `RaiPolicyContentFilter` added property `action`
+  - Enum `RaiPolicyContentSource` added member `POST_RUN`
+  - Enum `RaiPolicyContentSource` added member `POST_TOOL_CALL`
+  - Enum `RaiPolicyContentSource` added member `PRE_RUN`
+  - Enum `RaiPolicyContentSource` added member `PRE_TOOL_CALL`
+  - Model `RaiPolicyProperties` added property `safety_providers`
+  - Model `ResourceSkuRestrictions` added property `values_property`
+  - Model `Usage` added property `scope_type`
+  - Model `Usage` added property `scope_id`
+  - Added model `AgentApplication`
+  - Added model `AgentDeployment`
+  - Added model `AgentDeploymentProperties`
+  - Added enum `AgentDeploymentProvisioningState`
+  - Added enum `AgentDeploymentState`
+  - Added enum `AgentDeploymentType`
+  - Added enum `AgentProtocol`
+  - Added model `AgentProtocolVersion`
+  - Added model `AgentReference`
+  - Added model `AgentReferenceProperties`
+  - Added model `AgentReferenceResourceArmPaginatedResult`
+  - Added model `AgenticApplicationProperties`
+  - Added enum `AgenticApplicationProvisioningState`
+  - Added model `ApplicationAuthorizationPolicy`
+  - Added model `ApplicationTrafficRoutingPolicy`
+  - Added model `AssignedIdentity`
+  - Added enum `BuiltInAuthorizationScheme`
+  - Added model `ChannelsBuiltInAuthorizationPolicy`
+  - Added model `ComputeOperationStatus`
+  - Added model `ComputeOperationStatusProperties`
+  - Added enum `ComputeOperationStatusType`
+  - Added model `DeploymentRouting`
+  - Added enum `DeploymentState`
+  - Added enum `FirewallSku`
+  - Added model `FoundryAutoUpgrade`
+  - Added enum `FoundryAutoUpgradeMode`
+  - Added model `FqdnOutboundRule`
+  - Added model `HostedAgentDeployment`
+  - Added enum `IdentityKind`
+  - Added enum `IdentityManagementType`
+  - Added enum `IdentityProvisioningState`
+  - Added enum `IsolationMode`
+  - Added model `ManagedAgentDeployment`
+  - Added enum `ManagedNetworkKind`
+  - Added model `ManagedNetworkProvisionOptions`
+  - Added model `ManagedNetworkProvisionStatus`
+  - Added enum `ManagedNetworkProvisioningState`
+  - Added model `ManagedNetworkSettings`
+  - Added model `ManagedNetworkSettingsBasicResource`
+  - Added model `ManagedNetworkSettingsEx`
+  - Added model `ManagedNetworkSettingsProperties`
+  - Added model `ManagedNetworkSettingsPropertiesBasicResource`
+  - Added enum `ManagedNetworkStatus`
+  - Added model `OrganizationSharedBuiltInAuthorizationPolicy`
+  - Added model `OutboundRule`
+  - Added model `OutboundRuleBasicResource`
+  - Added model `OutboundRuleListResult`
+  - Added model `PrivateEndpointOutboundRule`
+  - Added model `PrivateEndpointOutboundRuleDestination`
+  - Added model `ProjectCapabilityHost`
+  - Added model `ProjectCapabilityHostProperties`
+  - Added enum `QuotaScopeType`
+  - Added enum `RaiActionType`
+  - Added model `RaiExternalSafetyProvider`
+  - Added model `RaiExternalSafetyProviderProperties`
+  - Added model `RaiExternalSafetyProviderSchema`
+  - Added model `RaiExternalSafetyProviderSchemaProperties`
+  - Added model `RaiSafetyProviderConfig`
+  - Added model `RaiToolLabel`
+  - Added model `RaiToolLabelProperties`
+  - Added model `RaiToolLabelPropertiesAccountScope`
+  - Added model `RaiToolLabelPropertiesProjectScopesItem`
+  - Added model `RoleBasedBuiltInAuthorizationPolicy`
+  - Added enum `RoutingMode`
+  - Added enum `RuleAction`
+  - Added enum `RuleCategory`
+  - Added enum `RuleStatus`
+  - Added enum `RuleType`
+  - Added model `SafetyProviderConfig`
+  - Added model `ServiceTagOutboundRule`
+  - Added model `ServiceTagOutboundRuleDestination`
+  - Added enum `ServiceTier`
+  - Added enum `TrafficRoutingProtocol`
+  - Added model `TrafficRoutingRule`
+  - Added model `VersionedAgentReference`
+  - Model `AccountCapabilityHostsOperations` added method `list`
+  - Model `DeploymentsOperations` added method `pause`
+  - Model `DeploymentsOperations` added method `resume`
+  - Model `ProjectCapabilityHostsOperations` added method `list`
+  - Added model `AgentApplicationsOperations`
+  - Added model `AgentDeploymentsOperations`
+  - Added model `ComputeOperationsOperations`
+  - Added model `ManagedNetworkProvisionsOperations`
+  - Added model `ManagedNetworkSettingsOperations`
+  - Added model `OutboundRuleOperations`
+  - Added model `OutboundRulesOperations`
+  - Added model `RaiExternalSafetyProviderOperations`
+  - Added model `RaiExternalSafetyProvidersOperations`
+  - Added model `RaiToolLabelsOperations`
+  - Added model `SubscriptionRaiPolicyOperations`
+  - Added model `TestRaiExternalSafetyProviderOperations`
+
+### Breaking Changes
+
+  - Client `CognitiveServicesManagementClient` deleted or renamed instance variable `url`
+  - Method `CognitiveServicesManagementClient.calculate_model_capacity` inserted a `positional_or_keyword` parameter `parameters`
+  - Method `CognitiveServicesManagementClient.calculate_model_capacity` deleted or renamed its parameter `model` of kind `positional_or_keyword`
+  - Method `CognitiveServicesManagementClient.calculate_model_capacity` deleted or renamed its parameter `sku_name` of kind `positional_or_keyword`
+  - Method `CognitiveServicesManagementClient.calculate_model_capacity` deleted or renamed its parameter `workloads` of kind `positional_or_keyword`
+  - Method `CognitiveServicesManagementClient.check_domain_availability` inserted a `positional_or_keyword` parameter `parameters`
+  - Method `CognitiveServicesManagementClient.check_domain_availability` deleted or renamed its parameter `subdomain_name` of kind `positional_or_keyword`
+  - Method `CognitiveServicesManagementClient.check_domain_availability` deleted or renamed its parameter `type` of kind `positional_or_keyword`
+  - Method `CognitiveServicesManagementClient.check_domain_availability` deleted or renamed its parameter `kind` of kind `positional_or_keyword`
+  - Method `CognitiveServicesManagementClient.check_sku_availability` inserted a `positional_or_keyword` parameter `parameters`
+  - Method `CognitiveServicesManagementClient.check_sku_availability` deleted or renamed its parameter `skus` of kind `positional_or_keyword`
+  - Method `CognitiveServicesManagementClient.check_sku_availability` deleted or renamed its parameter `kind` of kind `positional_or_keyword`
+  - Method `CognitiveServicesManagementClient.check_sku_availability` deleted or renamed its parameter `type` of kind `positional_or_keyword`
+  - Model `CustomKeys` deleted or renamed its instance variable `keys`
+  - Model `ResourceSkuRestrictions` deleted or renamed its instance variable `values`
+  - Deleted or renamed model `AzureEntityResource`
+  - Deleted or renamed model `ConnectionPropertiesV2BasicResourceArmPaginatedResult`
+  - Deleted or renamed model `DefenderForAISettingResult`
+  - Deleted or renamed model `ErrorDetailAutoGenerated`
+  - Deleted or renamed model `ErrorResponseAutoGenerated`
+  - Deleted or renamed model `NetworkSecurityPerimeterConfigurationList`
+  - Deleted or renamed model `RaiBlockListItemsResult`
+  - Deleted or renamed model `RaiTopicResult`
+  - Method `AccountConnectionsOperations.list` changed its parameter `target` from `positional_or_keyword` to `keyword_only`
+  - Method `AccountConnectionsOperations.list` changed its parameter `category` from `positional_or_keyword` to `keyword_only`
+  - Method `AccountConnectionsOperations.list` changed its parameter `include_all` from `positional_or_keyword` to `keyword_only`
+  - Method `AccountsOperations.regenerate_key` inserted a `positional_or_keyword` parameter `parameters`
+  - Method `AccountsOperations.regenerate_key` deleted or renamed its parameter `key_name` of kind `positional_or_keyword`
+  - Method `LocationBasedModelCapacitiesOperations.list` changed its parameter `model_format` from `positional_or_keyword` to `keyword_only`
+  - Method `LocationBasedModelCapacitiesOperations.list` changed its parameter `model_name` from `positional_or_keyword` to `keyword_only`
+  - Method `LocationBasedModelCapacitiesOperations.list` changed its parameter `model_version` from `positional_or_keyword` to `keyword_only`
+  - Method `ModelCapacitiesOperations.list` changed its parameter `model_format` from `positional_or_keyword` to `keyword_only`
+  - Method `ModelCapacitiesOperations.list` changed its parameter `model_name` from `positional_or_keyword` to `keyword_only`
+  - Method `ModelCapacitiesOperations.list` changed its parameter `model_version` from `positional_or_keyword` to `keyword_only`
+  - Method `ProjectConnectionsOperations.list` changed its parameter `target` from `positional_or_keyword` to `keyword_only`
+  - Method `ProjectConnectionsOperations.list` changed its parameter `category` from `positional_or_keyword` to `keyword_only`
+  - Method `ProjectConnectionsOperations.list` changed its parameter `include_all` from `positional_or_keyword` to `keyword_only`
+  - Method `AccountsOperations.regenerate_key` re-ordered its parameters from `['self', 'resource_group_name', 'account_name', 'key_name', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'parameters', 'kwargs']`
+
 ## 14.1.0 (2025-10-24)
 
 ### Features Added
