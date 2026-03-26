@@ -173,6 +173,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_eval_catalog_prompt_based_evaluators.py",  # For some reason fails with 500 (Internal server error)
                 "sample_eval_upload_custom_evaluator.py",  # TODO: Need to add recordings
                 "sample_eval_upload_friendly_evaluator.py",  # TODO: Need to add recordings
+                "sample_evaluations_graders.alt.py", # Need to remove "image_tag": "2025-05-08" from the recordings, once .alt.py relplaces the original
             ],
         ),
     )

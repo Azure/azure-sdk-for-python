@@ -9,6 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from typing import List, Dict, Mapping, Optional, Any, Tuple
+from ._patch_typedict import EvalGraderAzureAIEvaluator
 from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
 from azure.core.polling.base_polling import (
     LROBasePolling,
@@ -346,9 +347,10 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
 
 
 __all__: List[str] = [
-    "CustomCredential",
-    "UpdateMemoriesLROPoller",
     "AsyncUpdateMemoriesLROPoller",
+    "CustomCredential",
+    "EvalGraderAzureAIEvaluator",
+    "UpdateMemoriesLROPoller",
 ]  # Add all objects you want publicly available to users at this package level
 
 

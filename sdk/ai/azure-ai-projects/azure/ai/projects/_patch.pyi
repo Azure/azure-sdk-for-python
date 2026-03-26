@@ -8,32 +8,16 @@ Overrides get_openai_client() return type so that evals.create() accepts
 Azure-specific grader types in addition to the standard OpenAI graders.
 """
 
-from typing import Any, Dict, Iterable, Union, Optional
-from typing_extensions import Literal, Required, TypedDict
-
-import httpx
-from openai import OpenAI as OpenAIClient
-from openai._types import Body, Omit, Query, Headers, NotGiven
+from typing import Any, Iterable, Union, Optional
+from httpx import Timeout
+from openai import NotGiven, Omit, OpenAI as OpenAIClient
+from openai._types import Body, Query, Headers
 from openai.resources.evals.evals import Evals
 from openai.types.eval_create_params import DataSourceConfig, TestingCriterion
 from openai.types.eval_create_response import EvalCreateResponse
 from openai.types.shared_params.metadata import Metadata
-from openai.types.graders import (
-    LabelModelGraderParam,
-    StringCheckGraderParam,
-    TextSimilarityGraderParam,
-    PythonGraderParam,
-    ScoreModelGraderParam,
-)
-
 from ._client import AIProjectClient as AIProjectClientGenerated
-
-class AzureAIGraderCoherenceParam(TypedDict, total=False):
-    type: Required[Literal["azure_ai_evaluator"]]
-    name: Required[str]
-    evaluator_name: str
-    initialization_parameters: Dict[str, str]
-    data_mapping: Dict[str, str]
+from .models import EvalGraderAzureAIEvaluator
 
 class _AzureEvals(Evals):
     def create(
@@ -43,15 +27,15 @@ class _AzureEvals(Evals):
         testing_criteria: Iterable[
             Union[
                 TestingCriterion,
-                AzureAIGraderCoherenceParam,
+                EvalGraderAzureAIEvaluator,
             ]
         ],
-        metadata: Optional[Metadata] | Omit = ...,
+        metadata: Optional[Metadata] | Omit | None = ...,
         name: str | Omit = ...,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = ...,
+        timeout: float | Timeout | NotGiven | None = ...,
     ) -> EvalCreateResponse: ...
 
 class OpenAI(OpenAIClient):
