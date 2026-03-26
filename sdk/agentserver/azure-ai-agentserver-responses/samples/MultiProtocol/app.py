@@ -51,6 +51,7 @@ from starlette.responses import JSONResponse, Response
 from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.invocations import InvocationHandler
 from azure.ai.agentserver.responses.hosting import ResponseHandler
+from azure.ai.agentserver.responses.models import get_input_text
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
 
@@ -123,21 +124,7 @@ def echo_response_handler(
         yield stream.emit_in_progress()
 
         # Extract input text
-        raw_input = getattr(request, "input", None)
-        if isinstance(raw_input, str):
-            echo_text = raw_input
-        elif isinstance(raw_input, list):
-            # Collect text from input items
-            parts = []
-            for item in raw_input:
-                if isinstance(item, dict):
-                    content = item.get("content", [])
-                    for c in (content if isinstance(content, list) else []):
-                        if isinstance(c, dict) and c.get("type") == "input_text":
-                            parts.append(c.get("text", ""))
-            echo_text = " ".join(parts) if parts else str(raw_input)
-        else:
-            echo_text = str(raw_input) if raw_input else "Hello!"
+        echo_text = get_input_text(request) or "hello!"
 
         # Emit an output message with text content
         message_item = stream.add_output_item_message()
