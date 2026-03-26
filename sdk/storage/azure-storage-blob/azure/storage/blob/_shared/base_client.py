@@ -33,7 +33,6 @@ from azure.core.pipeline.policies import (
     RedirectPolicy,
     UserAgentPolicy,
 )
-from tests.settings.settings_real import SECONDARY_STORAGE_ACCOUNT_NAME
 
 from .authentication import SharedKeyCredentialPolicy
 from .constants import (
