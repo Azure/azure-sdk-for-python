@@ -31,6 +31,11 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "
 _LOGGER = logging.getLogger(__name__)
 
 
+class _ClassNodeFound(Exception):
+    """Raised to short-circuit AST traversal when the target class is found."""
+    pass
+
+
 class ClassTreeAnalyzer(ast.NodeVisitor):
     def __init__(self, name: str) -> None:
         self.name = name
@@ -39,7 +44,32 @@ class ClassTreeAnalyzer(ast.NodeVisitor):
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
         if node.name == self.name:
             self.cls_node = node
+            raise _ClassNodeFound()  # Break out of entire traversal immediately
         self.generic_visit(node)
+
+
+# Module-level cache for parsed AST trees, keyed by file path.
+# This avoids re-reading and re-parsing the same source file when
+# multiple classes (or the same class for properties + overloads) share a file.
+_ast_cache: Dict[str, ast.Module] = {}
+
+
+def _get_parsed_module(path: str) -> ast.Module:
+    """Return the parsed AST for the given file path, using a cache."""
+    if path not in _ast_cache:
+        with open(path, "r", encoding="utf-8-sig") as source:
+            _ast_cache[path] = ast.parse(source.read())
+    return _ast_cache[path]
+
+
+def _find_class_node(module: ast.Module, class_name: str) -> ast.ClassDef:
+    """Find and return the AST ClassDef node for the given class name."""
+    analyzer = ClassTreeAnalyzer(class_name)
+    try:
+        analyzer.visit(module)
+    except _ClassNodeFound:
+        pass
+    return analyzer.cls_node
 
 
 def test_find_modules(pkg_root_path: str) -> Dict:
@@ -183,12 +213,8 @@ def get_properties(cls: Type) -> Dict:
     attribute_names = {}
 
     path = inspect.getsourcefile(cls)
-    with open(path, "r", encoding="utf-8-sig") as source:
-        module = ast.parse(source.read())
-
-    analyzer = ClassTreeAnalyzer(cls.__name__)
-    analyzer.visit(module)
-    cls_node = analyzer.cls_node
+    module = _get_parsed_module(path)
+    cls_node = _find_class_node(module, cls.__name__)
     extract_base_classes = True if hasattr(cls_node, "bases") else False
 
     if extract_base_classes:
@@ -196,15 +222,12 @@ def get_properties(cls: Type) -> Dict:
         for base_class in base_classes:
             try:
                 path = inspect.getsourcefile(base_class)
-                with open(path, "r", encoding="utf-8-sig") as source:
-                    module = ast.parse(source.read())
+                module = _get_parsed_module(path)
             except (TypeError, SyntaxError):
                 _LOGGER.info(f"Unable to create ast of {base_class}")
                 continue  # was a built-in, e.g. "object", Exception, or a Model from msrest fails here
 
-            analyzer = ClassTreeAnalyzer(base_class.__name__)
-            analyzer.visit(module)
-            cls_node = analyzer.cls_node
+            cls_node = _find_class_node(module, base_class.__name__)
             if cls_node:
                 get_property_names(cls_node, attribute_names)
             else:
@@ -320,12 +343,8 @@ def create_parameters(args: ast.arg) -> Dict:
 
 def get_overloads(cls: Type, cls_methods: Dict):
     path = inspect.getsourcefile(cls)
-    with open(path, "r", encoding="utf-8-sig") as source:
-        module = ast.parse(source.read())
-
-    analyzer = ClassTreeAnalyzer(cls.__name__)
-    analyzer.visit(module)
-    cls_node = analyzer.cls_node
+    module = _get_parsed_module(path)
+    cls_node = _find_class_node(module, cls.__name__)
     extract_base_classes = check_base_classes(cls_node)
 
     if extract_base_classes:
@@ -333,15 +352,12 @@ def get_overloads(cls: Type, cls_methods: Dict):
         for base_class in base_classes:
             try:
                 path = inspect.getsourcefile(base_class)
-                with open(path, "r", encoding="utf-8-sig") as source:
-                    module = ast.parse(source.read())
+                module = _get_parsed_module(path)
             except (TypeError, SyntaxError):
                 _LOGGER.info(f"Unable to create ast of {base_class}")
                 continue  # was a built-in, e.g. "object", Exception, or a Model from msrest fails here
 
-            analyzer = ClassTreeAnalyzer(base_class.__name__)
-            analyzer.visit(module)
-            cls_node = analyzer.cls_node
+            cls_node = _find_class_node(module, base_class.__name__)
             if cls_node:
                 get_overload_data(cls_node, cls_methods)
             else:
@@ -418,6 +434,7 @@ def resolve_module_name(module_name: str, target_module: str) -> str:
 
 
 def build_library_report(target_module: str) -> Dict:
+    _ast_cache.clear()  # Clear AST cache to avoid stale data between runs
     module = importlib.import_module(target_module)
     modules = test_find_modules(module.__path__[0])
 
