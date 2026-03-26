@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `extra_headers` support to `OpenAIModelConfiguration` to allow passing custom HTTP headers.
+
 ### Breaking Changes
 
 ### Bugs Fixed
