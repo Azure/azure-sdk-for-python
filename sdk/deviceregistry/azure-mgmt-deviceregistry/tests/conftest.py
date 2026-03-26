@@ -33,3 +33,7 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
+
+    # CMS flow test sanitizers — scrub device UUIDs and certificate signing requests
+    add_body_key_sanitizer(json_path="$..uuid", value="00000000-0000-0000-0000-000000000000")
+    add_body_key_sanitizer(json_path="$..certificateSigningRequest", value="-----BEGIN CERTIFICATE REQUEST-----\nSANITIZED\n-----END CERTIFICATE REQUEST-----")
