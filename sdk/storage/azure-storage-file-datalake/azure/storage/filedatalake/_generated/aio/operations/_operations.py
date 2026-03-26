@@ -200,7 +200,6 @@ class FileSystemOperations:
     @distributed_trace_async
     async def create(
         self,
-        filesystem: str,
         *,
         resource: Union[str, _models.FileSystemResourceType],
         properties: Optional[str] = None,
@@ -210,8 +209,6 @@ class FileSystemOperations:
         """Create a FileSystem rooted at the specified location. If the FileSystem already exists, the
         operation fails. This operation does not support conditional HTTP requests.
 
-        :param filesystem: The filesystem identifier. Required.
-        :type filesystem: str
         :keyword resource: The value must be "filesystem" for all filesystem operations. "filesystem"
          Required.
         :paramtype resource: str or
@@ -246,7 +243,6 @@ class FileSystemOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_file_system_create_request(
-            filesystem=filesystem,
             resource=resource,
             properties=properties,
             timeout=timeout,
@@ -293,7 +289,6 @@ class FileSystemOperations:
     @distributed_trace_async
     async def set_properties(
         self,
-        filesystem: str,
         *,
         resource: Union[str, _models.FileSystemResourceType],
         properties: Optional[str] = None,
@@ -306,8 +301,6 @@ class FileSystemOperations:
         information, see `Specifying Conditional Headers for Blob Service Operations
         <https://learn.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
 
-        :param filesystem: The filesystem identifier. Required.
-        :type filesystem: str
         :keyword resource: The value must be "filesystem" for all filesystem operations. "filesystem"
          Required.
         :paramtype resource: str or
@@ -348,7 +341,6 @@ class FileSystemOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_file_system_set_properties_request(
-            filesystem=filesystem,
             resource=resource,
             properties=properties,
             if_modified_since=if_modified_since,
@@ -393,17 +385,10 @@ class FileSystemOperations:
 
     @distributed_trace_async
     async def get_properties(
-        self,
-        filesystem: str,
-        *,
-        resource: Union[str, _models.FileSystemResourceType],
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, *, resource: Union[str, _models.FileSystemResourceType], timeout: Optional[int] = None, **kwargs: Any
     ) -> bool:
         """All system and user-defined filesystem properties are specified in the response headers.
 
-        :param filesystem: The filesystem identifier. Required.
-        :type filesystem: str
         :keyword resource: The value must be "filesystem" for all filesystem operations. "filesystem"
          Required.
         :paramtype resource: str or
@@ -430,7 +415,6 @@ class FileSystemOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_file_system_get_properties_request(
-            filesystem=filesystem,
             resource=resource,
             timeout=timeout,
             version=self._config.version,
@@ -478,7 +462,6 @@ class FileSystemOperations:
     @distributed_trace_async
     async def delete(
         self,
-        filesystem: str,
         *,
         resource: Union[str, _models.FileSystemResourceType],
         if_modified_since: Optional[datetime.datetime] = None,
@@ -496,8 +479,6 @@ class FileSystemOperations:
         information, see `Specifying Conditional Headers for Blob Service Operations
         <https://learn.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
 
-        :param filesystem: The filesystem identifier. Required.
-        :type filesystem: str
         :keyword resource: The value must be "filesystem" for all filesystem operations. "filesystem"
          Required.
         :paramtype resource: str or
@@ -530,7 +511,6 @@ class FileSystemOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_file_system_delete_request(
-            filesystem=filesystem,
             resource=resource,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -573,7 +553,6 @@ class FileSystemOperations:
     @distributed_trace_async
     async def list_paths(
         self,
-        filesystem: str,
         *,
         recursive: bool,
         continuation: Optional[str] = None,
@@ -586,8 +565,6 @@ class FileSystemOperations:
     ) -> _models.PathList:
         """List FileSystem paths and their properties.
 
-        :param filesystem: The filesystem identifier. Required.
-        :type filesystem: str
         :keyword recursive: Required. Required.
         :paramtype recursive: bool
         :keyword continuation: Optional. When deleting a directory, the number of paths that are
@@ -635,7 +612,6 @@ class FileSystemOperations:
         cls: ClsType[_models.PathList] = kwargs.pop("cls", None)
 
         _request = build_file_system_list_paths_request(
-            filesystem=filesystem,
             recursive=recursive,
             continuation=continuation,
             path=path,
@@ -698,7 +674,6 @@ class FileSystemOperations:
     @distributed_trace_async
     async def list_blob_hierarchy_segment(
         self,
-        filesystem: str,
         *,
         prefix: Optional[str] = None,
         delimiter: Optional[str] = None,
@@ -711,8 +686,6 @@ class FileSystemOperations:
     ) -> _models.ListBlobsHierarchySegmentResponse:
         """The List Blobs operation returns a list of the blobs under the specified container.
 
-        :param filesystem: The filesystem identifier. Required.
-        :type filesystem: str
         :keyword prefix: Filters results to filesystems within the specified prefix. Default value is
          None.
         :paramtype prefix: str
@@ -762,7 +735,6 @@ class FileSystemOperations:
         cls: ClsType[_models.ListBlobsHierarchySegmentResponse] = kwargs.pop("cls", None)
 
         _request = build_file_system_list_blob_hierarchy_segment_request(
-            filesystem=filesystem,
             prefix=prefix,
             delimiter=delimiter,
             marker=marker,
@@ -840,8 +812,6 @@ class PathOperations:
     @distributed_trace_async
     async def create(  # pylint: disable=too-many-locals
         self,
-        filesystem: str,
-        path: str,
         *,
         resource: Optional[Union[str, _models.PathResourceType]] = None,
         mode: Optional[Union[str, _models.PathRenameMode]] = None,
@@ -886,10 +856,6 @@ class PathOperations:
         <https://learn.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
         To fail if the destination already exists, use a conditional request with If-None-Match: "*".
 
-        :param filesystem: The filesystem identifier. Required.
-        :type filesystem: str
-        :param path: The file or directory path. Required.
-        :type path: str
         :keyword resource: Required only for Create File and Create Directory. The value must be "file"
          or "directory". Known values are: "directory" and "file". Default value is None.
         :paramtype resource: str or ~azure.storage.filedatalake._generated.models.PathResourceType
@@ -1039,8 +1005,6 @@ class PathOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_path_create_request(
-            filesystem=filesystem,
-            path=path,
             resource=resource,
             mode=mode,
             continuation=continuation,
@@ -1123,8 +1087,6 @@ class PathOperations:
     @distributed_trace_async
     async def update(  # pylint: disable=too-many-locals
         self,
-        filesystem: str,
-        path: str,
         body: bytes,
         *,
         action: Union[str, _models.PathUpdateAction],
@@ -1163,10 +1125,6 @@ class PathOperations:
         `Specifying Conditional Headers for Blob Service Operations
         <https://learn.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
 
-        :param filesystem: The filesystem identifier. Required.
-        :type filesystem: str
-        :param path: The file or directory path. Required.
-        :type path: str
         :param body: Initial data. Required.
         :type body: bytes
         :keyword action: The action must be "append" to upload data to be appended to a file, "flush"
@@ -1319,8 +1277,6 @@ class PathOperations:
         _content = body
 
         _request = build_path_update_request(
-            filesystem=filesystem,
-            path=path,
             action=action,
             max_records=max_records,
             continuation=continuation,
@@ -1412,10 +1368,8 @@ class PathOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def lease(  # pylint: disable=too-many-locals
+    async def lease(
         self,
-        filesystem: str,
-        path: str,
         *,
         lease_action: Union[str, _models.PathLeaseAction],
         lease_duration: Optional[int] = None,
@@ -1434,10 +1388,6 @@ class PathOperations:
         for Blob Service Operations
         <https://learn.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
 
-        :param filesystem: The filesystem identifier. Required.
-        :type filesystem: str
-        :param path: The file or directory path. Required.
-        :type path: str
         :keyword lease_action: There are five lease actions: "acquire", "break", "change", "renew", and
          "release". Use "acquire" and specify the "x-ms-proposed-lease-id" and "x-ms-lease-duration" to
          acquire a new lease. Use "break" to break an existing lease. When a lease is broken, the lease
@@ -1501,8 +1451,6 @@ class PathOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_path_lease_request(
-            filesystem=filesystem,
-            path=path,
             lease_action=lease_action,
             lease_duration=lease_duration,
             lease_break_period=lease_break_period,
@@ -1553,10 +1501,8 @@ class PathOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def read(  # pylint: disable=too-many-locals
+    async def read(
         self,
-        filesystem: str,
-        path: str,
         *,
         range: Optional[str] = None,
         lease_id: Optional[str] = None,
@@ -1576,10 +1522,6 @@ class PathOperations:
         for Blob Service Operations
         <https://learn.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
 
-        :param filesystem: The filesystem identifier. Required.
-        :type filesystem: str
-        :param path: The file or directory path. Required.
-        :type path: str
         :keyword range: The HTTP Range request header specifies one or more byte ranges of the resource
          to be retrieved. Default value is None.
         :paramtype range: str
@@ -1641,8 +1583,6 @@ class PathOperations:
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_path_read_request(
-            filesystem=filesystem,
-            path=path,
             range=range,
             lease_id=lease_id,
             range_get_content_md5=range_get_content_md5,
@@ -1724,8 +1664,6 @@ class PathOperations:
     @distributed_trace_async
     async def get_properties(
         self,
-        filesystem: str,
-        path: str,
         *,
         action: Optional[Union[str, _models.PathGetPropertiesAction]] = None,
         upn: Optional[bool] = None,
@@ -1743,10 +1681,6 @@ class PathOperations:
         `Specifying Conditional Headers for Blob Service Operations
         <https://learn.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
 
-        :param filesystem: The filesystem identifier. Required.
-        :type filesystem: str
-        :param path: The file or directory path. Required.
-        :type path: str
         :keyword action: Optional. If the value is "getStatus" only the system defined properties for
          the path are returned. If the value is "getAccessControl" the access control list is returned
          in the response headers (Hierarchical Namespace must be enabled for the account), otherwise the
@@ -1802,8 +1736,6 @@ class PathOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_path_get_properties_request(
-            filesystem=filesystem,
-            path=path,
             action=action,
             upn=upn,
             lease_id=lease_id,
@@ -1887,8 +1819,6 @@ class PathOperations:
     @distributed_trace_async
     async def delete(
         self,
-        filesystem: str,
-        path: str,
         *,
         recursive: Optional[bool] = None,
         continuation: Optional[str] = None,
@@ -1905,10 +1835,6 @@ class PathOperations:
         information, see `Specifying Conditional Headers for Blob Service Operations
         <https://learn.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
 
-        :param filesystem: The filesystem identifier. Required.
-        :type filesystem: str
-        :param path: The file or directory path. Required.
-        :type path: str
         :keyword recursive: Required. Default value is None.
         :paramtype recursive: bool
         :keyword continuation: Optional. When deleting a directory, the number of paths that are
@@ -1965,8 +1891,6 @@ class PathOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_path_delete_request(
-            filesystem=filesystem,
-            path=path,
             recursive=recursive,
             continuation=continuation,
             lease_id=lease_id,
@@ -2014,10 +1938,8 @@ class PathOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def set_access_control(  # pylint: disable=too-many-locals
+    async def set_access_control(
         self,
-        filesystem: str,
-        path: str,
         *,
         lease_id: Optional[str] = None,
         owner: Optional[str] = None,
@@ -2033,10 +1955,6 @@ class PathOperations:
     ) -> None:
         """Set the owner, group, permissions, or access control list for a path.
 
-        :param filesystem: The filesystem identifier. Required.
-        :type filesystem: str
-        :param path: The file or directory path. Required.
-        :type path: str
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
@@ -2094,8 +2012,6 @@ class PathOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_path_set_access_control_request(
-            filesystem=filesystem,
-            path=path,
             lease_id=lease_id,
             owner=owner,
             group=group,
@@ -2146,8 +2062,6 @@ class PathOperations:
     @distributed_trace_async
     async def set_access_control_recursive(
         self,
-        filesystem: str,
-        path: str,
         *,
         mode: Union[str, _models.PathSetAccessControlRecursiveMode],
         continuation: Optional[str] = None,
@@ -2159,10 +2073,6 @@ class PathOperations:
     ) -> _models.SetAccessControlRecursiveResponse:
         """Set the access control list for a path and sub-paths.
 
-        :param filesystem: The filesystem identifier. Required.
-        :type filesystem: str
-        :param path: The file or directory path. Required.
-        :type path: str
         :keyword mode: Mode "set" sets POSIX access control rights on files and directories, "modify"
          modifies one or more POSIX access control rights that pre-exist on files and directories,
          "remove" removes one or more POSIX access control rights that were present earlier on files and
@@ -2213,8 +2123,6 @@ class PathOperations:
         cls: ClsType[_models.SetAccessControlRecursiveResponse] = kwargs.pop("cls", None)
 
         _request = build_path_set_access_control_recursive_request(
-            filesystem=filesystem,
-            path=path,
             mode=mode,
             continuation=continuation,
             force_flag=force_flag,
@@ -2274,8 +2182,6 @@ class PathOperations:
     @distributed_trace_async
     async def flush_data(  # pylint: disable=too-many-locals
         self,
-        filesystem: str,
-        path: str,
         *,
         position: Optional[int] = None,
         retain_uncommitted_data: Optional[bool] = None,
@@ -2303,10 +2209,6 @@ class PathOperations:
     ) -> None:
         """Set the owner, group, permissions, or access control list for a path.
 
-        :param filesystem: The filesystem identifier. Required.
-        :type filesystem: str
-        :param path: The file or directory path. Required.
-        :type path: str
         :keyword position: This parameter allows the caller to upload data in parallel and control the
          order in which it is appended to the file. It is required when uploading data to be appended to
          the file and when flushing previously uploaded data to the file. The value must be the position
@@ -2420,8 +2322,6 @@ class PathOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_path_flush_data_request(
-            filesystem=filesystem,
-            path=path,
             position=position,
             retain_uncommitted_data=retain_uncommitted_data,
             close=close,
@@ -2492,8 +2392,6 @@ class PathOperations:
     @distributed_trace_async
     async def append_data(  # pylint: disable=too-many-locals
         self,
-        filesystem: str,
-        path: str,
         body: bytes,
         *,
         position: Optional[int] = None,
@@ -2515,10 +2413,6 @@ class PathOperations:
     ) -> None:
         """Append data to the file.
 
-        :param filesystem: The filesystem identifier. Required.
-        :type filesystem: str
-        :param path: The file or directory path. Required.
-        :type path: str
         :param body: Initial data. Required.
         :type body: bytes
         :keyword position: This parameter allows the caller to upload data in parallel and control the
@@ -2600,8 +2494,6 @@ class PathOperations:
         _content = body
 
         _request = build_path_append_data_request(
-            filesystem=filesystem,
-            path=path,
             position=position,
             content_length=content_length,
             transactional_content_hash=transactional_content_hash,
@@ -2672,8 +2564,6 @@ class PathOperations:
     @distributed_trace_async
     async def set_expiry(
         self,
-        filesystem: str,
-        path: str,
         *,
         expiry_options: Union[str, _models.PathExpiryOptions],
         expires_on: Optional[str] = None,
@@ -2682,10 +2572,6 @@ class PathOperations:
     ) -> None:
         """Sets the time a blob will expire and be deleted.
 
-        :param filesystem: The filesystem identifier. Required.
-        :type filesystem: str
-        :param path: The file or directory path. Required.
-        :type path: str
         :keyword expiry_options: Required. Indicates mode of the expiry time. Known values are:
          "NeverExpire", "RelativeToCreation", "RelativeToNow", and "Absolute". Required.
         :paramtype expiry_options: str or
@@ -2714,8 +2600,6 @@ class PathOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_path_set_expiry_request(
-            filesystem=filesystem,
-            path=path,
             expiry_options=expiry_options,
             expires_on=expires_on,
             timeout=timeout,
@@ -2758,20 +2642,10 @@ class PathOperations:
 
     @distributed_trace_async
     async def undelete(
-        self,
-        filesystem: str,
-        path: str,
-        *,
-        undelete_source: Optional[str] = None,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, *, undelete_source: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
         """Undelete a path that was previously soft deleted.
 
-        :param filesystem: The filesystem identifier. Required.
-        :type filesystem: str
-        :param path: The file or directory path. Required.
-        :type path: str
         :keyword undelete_source: Only for hierarchical namespace enabled accounts. Optional. The path
          of the soft deleted blob to undelete. Default value is None.
         :paramtype undelete_source: str
@@ -2797,8 +2671,6 @@ class PathOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_path_undelete_request(
-            filesystem=filesystem,
-            path=path,
             undelete_source=undelete_source,
             timeout=timeout,
             version=self._config.version,

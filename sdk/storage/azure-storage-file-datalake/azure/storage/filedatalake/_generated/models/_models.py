@@ -734,9 +734,7 @@ class PathItem(_Model):
     permissions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The POSIX access permissions."""
     encryption_scope: Optional[str] = rest_field(
-        name="encryptionScope",
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "EncryptionScope", "text": False, "unwrapped": False},
+        name="encryptionScope", visibility=["read", "create", "update", "delete", "query"]
     )
     """The name of the encryption scope under which the blob is encrypted."""
     creation_time: Optional[str] = rest_field(
@@ -748,9 +746,7 @@ class PathItem(_Model):
     )
     """The expiry time."""
     encryption_context: Optional[str] = rest_field(
-        name="encryptionContext",
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "EncryptionContext", "text": False, "unwrapped": False},
+        name="EncryptionContext", visibility=["read", "create", "update", "delete", "query"]
     )
     """The encryption context."""
 
