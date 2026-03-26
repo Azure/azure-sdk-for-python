@@ -588,6 +588,64 @@ class GitHubCopilotAdapter(CopilotAdapter):
         root = pathlib.Path(project_path).resolve()
         return cls(project_root=str(root), **kwargs)
 
+    async def initialize(self):
+        """Discover and cache the best model at startup (if not already configured).
+
+        Call after construction and before ``run()``.  If ``AZURE_AI_FOUNDRY_MODEL``
+        is set or a model is already in the session config, discovery is skipped.
+        """
+        resource_url = self._session_config.get("_foundry_resource_url")
+        if not resource_url:
+            return  # Not using Foundry models — nothing to discover
+        if self._session_config.get("model"):
+            logger.info(f"Model already configured: {self._session_config['model']}")
+            return
+
+        try:
+            from ._foundry_model_discovery import discover_foundry_deployments, get_default_model
+            from ._model_cache import ModelCache
+
+            cache = ModelCache()
+            cached = cache.get_cache_info(resource_url)
+            if cached and cached.get("selected_model"):
+                self._session_config["model"] = cached["selected_model"]
+                logger.info(f"Using cached model: {cached['selected_model']} (age: {cached['age_hours']:.1f}h)")
+                return
+
+            # Need a token for discovery
+            if self._credential is not None:
+                from azure.identity import DefaultAzureCredential
+                token = self._credential.get_token("https://management.azure.com/.default").token
+                deployments = await discover_foundry_deployments(
+                    resource_url=resource_url,
+                    access_token=token,
+                    management_token=token,
+                )
+                if deployments:
+                    selected = get_default_model(deployments)
+                    if selected:
+                        self._session_config["model"] = selected
+                        cache.set_selected_model(
+                            resource_url=resource_url,
+                            model_name=selected,
+                            deployments=[{
+                                "name": d.name,
+                                "model_name": d.model_name,
+                                "model_version": d.model_version,
+                                "model_format": d.model_format,
+                                "token_rate_limit": d.token_rate_limit,
+                            } for d in deployments],
+                        )
+                        logger.info(f"Auto-selected model: {selected}")
+                    else:
+                        logger.warning("No suitable model found during discovery")
+                else:
+                    logger.warning("No deployments found during discovery")
+            else:
+                logger.info("No credential available for model discovery — set AZURE_AI_FOUNDRY_MODEL manually")
+        except Exception:
+            logger.warning("Model discovery failed — set AZURE_AI_FOUNDRY_MODEL manually", exc_info=True)
+
     async def _load_conversation_history(self, conversation_id: str) -> Optional[str]:
         """Load prior conversation turns from Foundry for cold-start bootstrap.
 
