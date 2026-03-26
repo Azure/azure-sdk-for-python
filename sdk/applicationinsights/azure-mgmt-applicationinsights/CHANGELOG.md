@@ -2,7 +2,32 @@
 
 ## 5.0.0b2 (2026-03-26)
 
-skip changelog generation
+### Breaking Changes
+
+  - Package structure changed from multi-api versioned modules to a flat single-client module. Versioned import paths like `from azure.mgmt.applicationinsights.v2020_02_02.models import ...` are no longer available.
+  - Removed operation group `MyWorkbooksOperations`
+  - Removed operation group `ComponentCurrentPricingPlanOperations`
+  - Removed operation group `EASubscriptionListMigrationDateOperations`
+  - Removed operation group `EASubscriptionMigrateToNewPricingModelOperations`
+  - Removed operation group `EASubscriptionRollbackToLegacyPricingModelOperations`
+  - Renamed operation group `WebTestLocationsOperations` to `webTestLocationsOperations`
+  - Removed model `MyWorkbook`
+  - Removed model `MyWorkbookError`
+  - Removed model `MyWorkbookManagedIdentity`
+  - Removed model `MyWorkbookManagedIdentityType`
+  - Removed model `MyWorkbookResource`
+  - Removed model `MyWorkbookUserAssignedIdentities`
+  - Removed model `MyWorkbooksListResult`
+  - Removed model `ApplicationInsightsComponentPricingPlan`
+  - Removed model `EASubscriptionMigrationDate`
+  - Removed model `SharedTypeKind`
+  - Removed model `WebTestKindEnum`
+  - Removed model `Kind`
+  - Removed model `WorkbookResource`
+
+### Other Changes
+
+  - Migrated from Swagger to TypeSpec
 
 ## 5.0.0b1 (2025-07-24)
 
