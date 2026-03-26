@@ -48,7 +48,6 @@ async def create_async(request: CreateResponse, context: ResponseContext, cancel
     yield stream.emit_in_progress()
 
     history = await context.get_history_async()
-    input_items = await context.get_input_items_async()
     current_input = get_input_text(request)
     reply = _build_reply(current_input, history)
 
