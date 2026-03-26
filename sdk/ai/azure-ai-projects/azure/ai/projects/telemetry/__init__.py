@@ -6,4 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.0.2"
+from ._ai_project_instrumentor import AIProjectInstrumentor
+from ._trace_function import trace_function
+
+__all__ = ["AIProjectInstrumentor", "trace_function"]
