@@ -19,7 +19,9 @@
 
 ### Breaking Changes
 
-  - Deleted or renamed client `ContainerInstanceManagementClient`
+  - Renamed model `ContainerGroupProperties` to `ContainerGroupPropertiesProperties`
+  - Renamed model `ListResultContainerGroupProperties` to `ListResultContainerGroupPropertiesProperties`
+  - Renamed model `ContainerGroupPropertiesInstanceView` to `ContainerGroupPropertiesPropertiesInstanceView`
   - Model `ContainerGroup` deleted or renamed its instance variable `provisioning_state`
   - Model `ContainerGroup` deleted or renamed its instance variable `secret_references`
   - Model `ContainerGroup` deleted or renamed its instance variable `containers`
@@ -74,9 +76,6 @@
   - Model `NGroupPatch` deleted or renamed its instance variable `container_group_profiles`
   - Model `NGroupPatch` deleted or renamed its instance variable `provisioning_state`
   - Model `NGroupPatch` deleted or renamed its instance variable `update_profile`
-  - Deleted or renamed model `ContainerGroupProperties`
-  - Deleted or renamed model `ContainerGroupPropertiesInstanceView`
-  - Deleted or renamed model `ListResultContainerGroupProperties`
   - Deleted or renamed model `NGroupSkus`
   - Deleted or renamed model `NGroupsSkusList`
   - Method `ContainersOperations.list_logs` changed its parameter `tail` from `positional_or_keyword` to `keyword_only`
