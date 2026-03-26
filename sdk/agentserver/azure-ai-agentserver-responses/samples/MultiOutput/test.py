@@ -31,13 +31,6 @@ def _assert_ok(response: requests.Response) -> None:
         raise RuntimeError(f"HTTP request failed: {response.status_code} {response.text}") from exc
 
 
-def _ready() -> None:
-    _print_header("Ready")
-    response = requests.get(f"{BASE_URL}/ready", timeout=10)
-    _assert_ok(response)
-    _pretty_print(response.json())
-
-
 def _default_mode() -> None:
     _print_header("Default mode (JSON) - reasoning + message")
     payload = {"model": "test"}
@@ -62,7 +55,6 @@ def _stream_mode() -> None:
 
 
 def main() -> None:
-    _ready()
     _default_mode()
     _stream_mode()
 

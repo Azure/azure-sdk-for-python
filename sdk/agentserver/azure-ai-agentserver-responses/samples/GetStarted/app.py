@@ -37,7 +37,7 @@ def my_handler(request: CreateResponse, context: ResponseContext, cancellation_s
         text_content = message_item.add_text_content()
         yield text_content.emit_added()
         yield text_content.emit_delta("Hello from the Python GettingStarted sample!")
-        yield text_content.emit_done()
+        yield text_content.emit_done("Hello from the Python GettingStarted sample!")
         yield message_item.emit_content_done(text_content)
 
         yield message_item.emit_done()
