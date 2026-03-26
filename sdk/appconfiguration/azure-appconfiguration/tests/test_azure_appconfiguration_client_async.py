@@ -4,16 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 import copy
-import functools
 import json
 import re
 import time
 from uuid import uuid4
 from datetime import datetime, timezone
+import functools
+from unittest.mock import patch, MagicMock
 import pytest
-from asynctestcase import AsyncAppConfigTestCase
-from devtools_testutils import EnvironmentVariableLoader, set_custom_default_matcher
-from devtools_testutils.aio import recorded_by_proxy_async
 from consts import (
     KEY,
     LABEL,
@@ -22,8 +20,12 @@ from consts import (
     LABEL_RESERVED_CHARS,
     PAGE_SIZE,
     KEY_UUID,
+    APPCONFIGURATION_ENDPOINT_STRING,
     APPCONFIGURATION_CONNECTION_STRING,
 )
+from devtools_testutils import EnvironmentVariableLoader, set_custom_default_matcher
+from devtools_testutils.aio import recorded_by_proxy_async
+from asynctestcase import AsyncAppConfigTestCase
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceModifiedError,
@@ -47,16 +49,16 @@ from azure.appconfiguration.aio import AzureAppConfigurationClient
 AppConfigPreparer = functools.partial(
     EnvironmentVariableLoader,
     "appconfiguration",
-    appconfiguration_connection_string=APPCONFIGURATION_CONNECTION_STRING,
+    appconfiguration_endpoint_string=APPCONFIGURATION_ENDPOINT_STRING,
 )
 
 
-class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disable=too-many-public-methods
+class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):  # pylint: disable=too-many-public-methods
     # method: add_configuration_setting
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_add_configuration_setting(self, appconfiguration_connection_string):
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_add_configuration_setting(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             test_config_setting = ConfigurationSetting(
                 key=KEY + "_ADD",
                 label=LABEL,
@@ -89,8 +91,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
     # method: set_configuration_setting
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_set_existing_configuration_setting_label_etag(self, appconfiguration_connection_string):
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_set_configuration_setting(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             to_set_kv = self.create_config_setting()
             to_set_kv.value = to_set_kv.value + "a"
             to_set_kv.tags = {"a": "b", "c": "d"}
@@ -107,8 +109,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_set_configuration_setting_wrong_etag(self, appconfiguration_connection_string):
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_set_configuration_setting_wrong_etag(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             to_set_kv = self.create_config_setting()
             to_set_kv.value = to_set_kv.value + "a"
             to_set_kv.tags = {"a": "b", "c": "d"}
@@ -119,10 +121,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
     # method: get_configuration_setting
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_get_configuration_setting_no_label(self, appconfiguration_connection_string):
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_get_configuration_setting_no_label(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             compare_kv = self.create_config_setting_no_label()
-            await self.add_for_test(client, compare_kv)
+            await client.set_configuration_setting(compare_kv)
             fetched_kv = await client.get_configuration_setting(compare_kv.key)
             assert (
                 fetched_kv.key == compare_kv.key
@@ -136,10 +138,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
     # method: get_configuration_setting
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_get_configuration_setting(self, appconfiguration_connection_string):
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_get_configuration_setting(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             compare_kv = self.create_config_setting()
-            await self.add_for_test(client, compare_kv)
+            await client.set_configuration_setting(compare_kv)
             fetched_kv = await client.get_configuration_setting(compare_kv.key, compare_kv.label)
             assert (
                 fetched_kv.key == compare_kv.key
@@ -153,18 +155,18 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_get_non_existing_configuration_setting(self, appconfiguration_connection_string):
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_get_non_existing_configuration_setting(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             compare_kv = self.create_config_setting()
             with pytest.raises(ResourceNotFoundError):
                 await client.get_configuration_setting(compare_kv.key, compare_kv.label + "a")
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_get_configuration_setting_with_etag(self, appconfiguration_connection_string):
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_get_configuration_setting_with_etag(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             compare_kv = self.create_config_setting()
-            await self.add_for_test(client, compare_kv)
+            await client.set_configuration_setting(compare_kv)
             compare_kv = await client.get_configuration_setting(compare_kv.key, compare_kv.label)
 
             # test get with wrong etag
@@ -182,10 +184,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
     # method: delete_configuration_setting
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_delete_configuration_setting_with_key_no_label(self, appconfiguration_connection_string):
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_delete_configuration_setting_with_key_no_label(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             to_delete_kv = self.create_config_setting_no_label()
-            await self.add_for_test(client, to_delete_kv)
+            await client.set_configuration_setting(to_delete_kv)
             deleted_kv = await client.delete_configuration_setting(key=to_delete_kv.key, label=to_delete_kv.label)
             assert deleted_kv is not None
             with pytest.raises(ResourceNotFoundError):
@@ -193,10 +195,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_delete_configuration_setting_with_key_label(self, appconfiguration_connection_string):
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_delete_configuration_setting_with_key_label(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             to_delete_kv = self.create_config_setting()
-            await self.add_for_test(client, to_delete_kv)
+            await client.set_configuration_setting(to_delete_kv)
             deleted_kv = await client.delete_configuration_setting(key=to_delete_kv.key, label=to_delete_kv.label)
             assert deleted_kv is not None
             with pytest.raises(ResourceNotFoundError):
@@ -204,17 +206,17 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_delete_not_existing_configuration_setting(self, appconfiguration_connection_string):
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_delete_not_existing_configuration_setting(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             deleted_kv = await client.delete_configuration_setting("not_exist_" + KEY)
             assert deleted_kv is None
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_delete_configuration_setting_with_etag(self, appconfiguration_connection_string):
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_delete_configuration_setting_with_etag(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             to_delete_kv = self.create_config_setting_no_label()
-            await self.add_for_test(client, to_delete_kv)
+            await client.set_configuration_setting(to_delete_kv)
             to_delete_kv = await client.get_configuration_setting(to_delete_kv.key, to_delete_kv.label)
 
             # test delete with wrong etag
@@ -231,11 +233,11 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
     # method: list_configuration_settings
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_list_configuration_settings_key_label(self, appconfiguration_connection_string):
+    async def test_list_configuration_settings_key_label(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        await self.set_up(appconfiguration_connection_string)
-        items = await self.convert_to_list(self.client.list_configuration_settings(key_filter=KEY, label_filter=LABEL))
+        await self.set_up(appconfiguration_endpoint_string)
+        items = await self.convert_to_list(self.client.list_configuration_settings(label_filter=LABEL, key_filter=KEY))
         assert len(items) == 1
         assert all(x.key == KEY and x.label == LABEL for x in items)
 
@@ -250,6 +252,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
         assert str(ex.value) == (
             "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
         )
+
         with pytest.raises(TypeError) as ex:
             await self.client.list_configuration_settings("None", key_filter="MyKey")
         assert (
@@ -266,10 +269,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_list_configuration_settings_only_label(self, appconfiguration_connection_string):
+    async def test_list_configuration_settings_only_label(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        await self.set_up(appconfiguration_connection_string)
+        await self.set_up(appconfiguration_endpoint_string)
         items = await self.convert_to_list(self.client.list_configuration_settings(label_filter=LABEL))
         assert len(items) == 1
         assert all(x.label == LABEL for x in items)
@@ -277,10 +280,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_list_configuration_settings_only_key(self, appconfiguration_connection_string):
+    async def test_list_configuration_settings_only_key(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        await self.set_up(appconfiguration_connection_string)
+        await self.set_up(appconfiguration_endpoint_string)
         items = await self.convert_to_list(self.client.list_configuration_settings(key_filter=KEY))
         assert len(items) == 2
         assert all(x.key == KEY for x in items)
@@ -288,10 +291,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_list_configuration_settings_with_tags_filter(self, appconfiguration_connection_string):
+    async def test_list_configuration_settings_with_tags_filter(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        await self.set_up(appconfiguration_connection_string)
+        await self.set_up(appconfiguration_endpoint_string)
         items = await self.convert_to_list(self.client.list_configuration_settings(tags_filter=["tag1=value1"]))
         assert len(items) == 1
         assert items[0].key == KEY
@@ -300,10 +303,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_list_configuration_settings_fields(self, appconfiguration_connection_string):
+    async def test_list_configuration_settings_fields(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        await self.set_up(appconfiguration_connection_string)
+        await self.set_up(appconfiguration_endpoint_string)
         items = await self.convert_to_list(
             self.client.list_configuration_settings(key_filter="*", label_filter=LABEL, fields=["key", "content_type"])
         )
@@ -313,10 +316,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_list_configuration_settings_reserved_chars(self, appconfiguration_connection_string):
+    async def test_list_configuration_settings_reserved_chars(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        async with self.create_client(appconfiguration_connection_string) as client:
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             reserved_char_kv = ConfigurationSetting(key=KEY, label=LABEL_RESERVED_CHARS, value=TEST_VALUE)
             reserved_char_kv = await client.add_configuration_setting(reserved_char_kv)
             escaped_label = re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", LABEL_RESERVED_CHARS)
@@ -325,12 +328,14 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
             assert all(x.label == LABEL_RESERVED_CHARS for x in items)
             await client.delete_configuration_setting(reserved_char_kv.key)
 
+    # NOTE: Label filter does not support wildcard at beginning on filters.
+    # https://learn.microsoft.com/azure/azure-app-configuration/rest-api-key-value#supported-filters
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_list_configuration_settings_contains(self, appconfiguration_connection_string):
+    async def test_list_configuration_settings_contains(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        await self.set_up(appconfiguration_connection_string)
+        await self.set_up(appconfiguration_endpoint_string)
         items = await self.convert_to_list(self.client.list_configuration_settings(label_filter=LABEL + "*"))
         assert len(items) == 1
         assert all(x.label == LABEL for x in items)
@@ -338,12 +343,12 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_list_configuration_settings_correct_etag(self, appconfiguration_connection_string):
+    async def test_list_configuration_settings_correct_etag(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        async with self.create_client(appconfiguration_connection_string) as client:
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             to_list_kv = self.create_config_setting()
-            await self.add_for_test(client, to_list_kv)
+            await client.set_configuration_setting(to_list_kv)
             to_list_kv = await client.get_configuration_setting(to_list_kv.key, to_list_kv.label)
             custom_headers = {"If-Match": to_list_kv.etag}
             items = await self.convert_to_list(
@@ -357,10 +362,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_list_configuration_settings_multi_pages(self, appconfiguration_connection_string):
+    async def test_list_configuration_settings_multi_pages(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        async with self.create_client(appconfiguration_connection_string) as client:
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             # create PAGE_SIZE+1 configuration settings to have at least two pages
             try:
                 [
@@ -391,23 +396,23 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_list_configuration_settings_null_label(self, appconfiguration_connection_string):
+    async def test_list_configuration_settings_null_label(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        await self.set_up(appconfiguration_connection_string)
+        await self.set_up(appconfiguration_endpoint_string)
         items = await self.convert_to_list(self.client.list_configuration_settings(label_filter="\0"))
         assert len(items) > 0
         await self.tear_down()
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_list_configuration_settings_only_accepttime(self, appconfiguration_connection_string, **kwargs):
+    async def test_list_configuration_settings_only_accepttime(self, appconfiguration_endpoint_string, **kwargs):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
         recorded_variables = kwargs.pop("variables", {})
         recorded_variables.setdefault("timestamp", str(datetime.now(timezone.utc)))
 
-        async with self.create_client(appconfiguration_connection_string) as client:
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             # Confirm all configuration settings are cleaned up
             current_config_settings = await self.convert_to_list(client.list_configuration_settings())
             if len(current_config_settings) != 0:
@@ -428,10 +433,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
     # method: list_revisions
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_list_revisions_key_label(self, appconfiguration_connection_string):
+    async def test_list_revisions_key_label(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        await self.set_up(appconfiguration_connection_string)
+        await self.set_up(appconfiguration_endpoint_string)
         to_list = self.create_config_setting()
         items = await self.convert_to_list(
             self.client.list_revisions(label_filter=to_list.label, key_filter=to_list.key)
@@ -442,10 +447,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_list_revisions_only_label(self, appconfiguration_connection_string):
+    async def test_list_revisions_only_label(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        await self.set_up(appconfiguration_connection_string)
+        await self.set_up(appconfiguration_endpoint_string)
         items = await self.convert_to_list(self.client.list_revisions(label_filter=LABEL))
         assert len(items) >= 1
         assert all(x.label == LABEL for x in items)
@@ -453,10 +458,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_list_revisions_key_no_label(self, appconfiguration_connection_string):
+    async def test_list_revisions_key_no_label(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        await self.set_up(appconfiguration_connection_string)
+        await self.set_up(appconfiguration_endpoint_string)
         items = await self.convert_to_list(self.client.list_revisions(key_filter=KEY))
         assert len(items) >= 1
         assert all(x.key == KEY for x in items)
@@ -464,10 +469,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_list_revisions_with_tags_filter(self, appconfiguration_connection_string):
+    async def test_list_revisions_with_tags_filter(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        await self.set_up(appconfiguration_connection_string)
+        await self.set_up(appconfiguration_endpoint_string)
         items = await self.convert_to_list(self.client.list_revisions(tags_filter=["tag1=value1"]))
         assert len(items) >= 1
         assert all(x.key == KEY for x in items)
@@ -476,10 +481,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_list_revisions_fields(self, appconfiguration_connection_string):
+    async def test_list_revisions_fields(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        await self.set_up(appconfiguration_connection_string)
+        await self.set_up(appconfiguration_endpoint_string)
         items = await self.convert_to_list(
             self.client.list_revisions(key_filter="*", label_filter=LABEL, fields=["key", "content_type"])
         )
@@ -488,10 +493,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_list_revisions_correct_etag(self, appconfiguration_connection_string):
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_list_revisions_correct_etag(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             to_list_kv = self.create_config_setting()
-            await self.add_for_test(client, to_list_kv)
+            await client.set_configuration_setting(to_list_kv)
             to_list_kv = await client.get_configuration_setting(to_list_kv.key, to_list_kv.label)
             custom_headers = {"If-Match": to_list_kv.etag}
             items = await self.convert_to_list(
@@ -505,10 +510,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
     # method: set_read_only
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_set_read_only(self, appconfiguration_connection_string):
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_set_read_only(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             to_set_kv = self.create_config_setting()
-            await self.add_for_test(client, to_set_kv)
+            await client.set_configuration_setting(to_set_kv)
             to_set_kv = await client.get_configuration_setting(to_set_kv.key, to_set_kv.label)
 
             read_only_kv = await client.set_read_only(to_set_kv)
@@ -525,10 +530,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_set_read_only_with_wrong_etag(self, appconfiguration_connection_string):
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_set_read_only_with_wrong_etag(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             to_set_kv = self.create_config_setting()
-            await self.add_for_test(client, to_set_kv)
+            await client.set_configuration_setting(to_set_kv)
             to_set_kv = await client.get_configuration_setting(to_set_kv.key, to_set_kv.label)
 
             to_set_kv.etag = "wrong etag"
@@ -539,8 +544,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_sync_tokens_with_configuration_setting(self, appconfiguration_connection_string):
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_sync_tokens_with_configuration_setting(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             sync_tokens = copy.deepcopy(client._sync_token_policy._sync_tokens)
             sync_token_header = self._order_dict(sync_tokens)
             sync_token_header = ",".join(str(x) for x in sync_token_header.values())
@@ -578,8 +583,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_sync_tokens_with_feature_flag_configuration_setting(self, appconfiguration_connection_string):
-        await self.set_up(appconfiguration_connection_string)
+    async def test_sync_tokens_with_feature_flag_configuration_setting(self, appconfiguration_endpoint_string):
+        await self.set_up(appconfiguration_endpoint_string)
         new = FeatureFlagConfigurationSetting(
             "custom",
             enabled=True,
@@ -641,8 +646,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_config_setting_feature_flag(self, appconfiguration_connection_string):
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_config_setting_feature_flag(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             feature_flag = FeatureFlagConfigurationSetting("test_feature", enabled=True)
 
             set_flag = await client.set_configuration_setting(feature_flag)
@@ -660,7 +665,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
             assert temp["enabled"] == False
             assert temp["conditions"] == set_flag_value["conditions"]
 
-            c = json.loads(copy.deepcopy(changed_flag.value))
+            c = json.loads(changed_flag.value)
             c["enabled"] = True
             changed_flag.value = json.dumps(c)
             assert changed_flag.enabled == True
@@ -686,8 +691,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_config_setting_secret_reference(self, appconfiguration_connection_string):
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_config_setting_secret_reference(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             secret_reference = SecretReferenceConfigurationSetting(
                 "ConnectionString", "https://test-test.vault.azure.net/secrets/connectionString"
             )
@@ -715,8 +720,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_feature_filter_targeting(self, appconfiguration_connection_string):
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_feature_filter_targeting(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             new = FeatureFlagConfigurationSetting(
                 "newflag",
                 enabled=True,
@@ -776,8 +781,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_feature_filter_time_window(self, appconfiguration_connection_string):
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_feature_filter_time_window(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             new = FeatureFlagConfigurationSetting(
                 "time_window",
                 enabled=True,
@@ -803,8 +808,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_feature_filter_custom(self, appconfiguration_connection_string):
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_feature_filter_custom(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             new = FeatureFlagConfigurationSetting(
                 "custom",
                 enabled=True,
@@ -822,8 +827,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_feature_filter_multiple(self, appconfiguration_connection_string):
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_feature_filter_multiple(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             new = FeatureFlagConfigurationSetting(
                 "custom",
                 enabled=True,
@@ -867,21 +872,21 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_feature_custom_fields(self, appconfiguration_connection_string):
-        custom_fields = {
-            "variants": [
-                {"name": "Off", "configuration_value": "Off", "status_override": "Enabled"},
-                {"name": "On", "configuration_value": "On", "status_override": "Disabled"},
-            ],
-            "allocation": {
-                "percentile": [{"variant": "Off", "from": 0, "to": 100}],
-                "user": [{"variant": "Off", "users": ["Adam"]}],
-                "seed": "adfsasdfzsd",
-                "default_when_enabled": "Off",
-                "default_when_disabled": "Off",
-            },
-        }
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_feature_custom_fields(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
+            custom_fields = {
+                "variants": [
+                    {"name": "Off", "configuration_value": "Off", "status_override": "Enabled"},
+                    {"name": "On", "configuration_value": "On", "status_override": "Disabled"},
+                ],
+                "allocation": {
+                    "percentile": [{"variant": "Off", "from": 0, "to": 100}],
+                    "user": [{"variant": "Off", "users": ["Adam"]}],
+                    "seed": "adfsasdfzsd",
+                    "default_when_enabled": "Off",
+                    "default_when_disabled": "Off",
+                },
+            }
             new = FeatureFlagConfigurationSetting(
                 "Beta",
                 description="Matt's variant FF",
@@ -895,8 +900,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_breaking_with_feature_flag_configuration_setting(self, appconfiguration_connection_string):
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_breaking_with_feature_flag_configuration_setting(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             new = FeatureFlagConfigurationSetting(
                 "breaking1",
                 enabled=True,
@@ -989,8 +994,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_breaking_with_secret_reference_configuration_setting(self, appconfiguration_connection_string):
-        async with self.create_client(appconfiguration_connection_string) as client:
+    async def test_breaking_with_secret_reference_configuration_setting(self, appconfiguration_endpoint_string):
+        async with self.create_client(appconfiguration_endpoint_string) as client:
             new = SecretReferenceConfigurationSetting("aref", "notaurl")  # cspell:disable-line
             await client.set_configuration_setting(new)
             await client.get_configuration_setting(new.key)
@@ -1006,10 +1011,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_create_snapshot(self, appconfiguration_connection_string, **kwargs):
+    async def test_create_snapshot(self, appconfiguration_endpoint_string, **kwargs):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        await self.set_up(appconfiguration_connection_string)
+        await self.set_up(appconfiguration_endpoint_string)
 
         variables = kwargs.pop("variables", {})
         dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", str(int(time.time())))
@@ -1034,10 +1039,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_update_snapshot_status(self, appconfiguration_connection_string, **kwargs):
+    async def test_update_snapshot_status(self, appconfiguration_endpoint_string, **kwargs):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        await self.set_up(appconfiguration_connection_string)
+        await self.set_up(appconfiguration_endpoint_string)
 
         variables = kwargs.pop("variables", {})
         dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", str(int(time.time())))
@@ -1060,10 +1065,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_update_snapshot_status_with_etag(self, appconfiguration_connection_string, **kwargs):
+    async def test_update_snapshot_status_with_etag(self, appconfiguration_endpoint_string, **kwargs):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        await self.set_up(appconfiguration_connection_string)
+        await self.set_up(appconfiguration_endpoint_string)
 
         variables = kwargs.pop("variables", {})
         dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", str(int(time.time())))
@@ -1088,10 +1093,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_list_snapshots(self, appconfiguration_connection_string, **kwargs):
+    async def test_list_snapshots(self, appconfiguration_endpoint_string, **kwargs):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        await self.set_up(appconfiguration_connection_string)
+        await self.set_up(appconfiguration_endpoint_string)
 
         result = await self.convert_to_list(self.client.list_snapshots(status=["ready"]))
         initial_snapshots = len(result)
@@ -1123,10 +1128,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_list_snapshot_configuration_settings(self, appconfiguration_connection_string, **kwargs):
+    async def test_list_snapshot_configuration_settings(self, appconfiguration_endpoint_string, **kwargs):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        await self.set_up(appconfiguration_connection_string)
+        await self.set_up(appconfiguration_endpoint_string)
 
         variables = kwargs.pop("variables", {})
         dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", str(int(time.time())))
@@ -1156,10 +1161,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_monitor_configuration_settings_by_page_etag(self, appconfiguration_connection_string):
+    async def test_monitor_configuration_settings_by_page_etag(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        await self.set_up(appconfiguration_connection_string)
+        await self.set_up(appconfiguration_endpoint_string)
         # prepare 200 configuration settings
         for i in range(200):
             await self.client.set_configuration_setting(
@@ -1219,7 +1224,6 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
         )
         iterator = items.by_page(match_conditions=new_match_conditions)
         changed_pages = [page async for page in iterator]
-
         # Should yield 0 pages
         assert len(changed_pages) == 0
 
@@ -1228,8 +1232,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
-    async def test_list_labels(self, appconfiguration_connection_string):
-        await self.set_up(appconfiguration_connection_string)
+    async def test_list_labels(self, appconfiguration_endpoint_string):
+        await self.set_up(appconfiguration_endpoint_string)
 
         rep = await self.convert_to_list(self.client.list_labels())
         assert len(list(rep)) >= 2
@@ -1256,6 +1260,12 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
 
 
 class TestAppConfigurationClientUnitTest:
+    def test_type_error(self):
+        with pytest.raises(TypeError):
+            _ = FeatureFlagConfigurationSetting("blah", value="blah")
+        with pytest.raises(TypeError):
+            _ = SecretReferenceConfigurationSetting("blah", value="blah")  # pylint: disable=no-value-for-parameter
+
     @pytest.mark.asyncio
     async def test_mock_policies(self):
         from azure.core.pipeline.transport import HttpResponse, AsyncHttpTransport
@@ -1298,3 +1308,34 @@ class TestAppConfigurationClientUnitTest:
 
         # Reset the actual method
         AppConfigRequestsCredentialsPolicy._signed_request = temp
+
+    @pytest.mark.asyncio
+    async def test_from_connection_string(self):
+        connection_string = "Endpoint=https://fake_app_config.azconfig-test.io;Id=fake-id;Secret=fakesecret="
+        client = AzureAppConfigurationClient.from_connection_string(connection_string)
+        assert client._impl._config.endpoint == "https://fake_app_config.azconfig-test.io"
+        await client.close()
+
+    def test_from_connection_string_invalid(self):
+        with pytest.raises(ValueError):
+            AzureAppConfigurationClient.from_connection_string("invalid_connection_string")
+        with pytest.raises(ValueError):
+            AzureAppConfigurationClient.from_connection_string("Endpoint=;Id=;Secret=")
+        with pytest.raises(ValueError):
+            AzureAppConfigurationClient.from_connection_string("Endpoint=https://fake.io;Id=abc")
+
+    @pytest.mark.asyncio
+    async def test_from_connection_string_mock_policies(self):
+        connection_string = "Endpoint=https://fake_app_config.azconfig-test.io;Id=fake-id;Secret=fakesecret="
+        with patch(
+            "azure.appconfiguration.aio._azure_appconfiguration_client_async.AppConfigRequestsCredentialsPolicy"
+        ) as mock_policy_cls:
+            mock_policy = MagicMock()
+            mock_policy_cls.return_value = mock_policy
+            client = AzureAppConfigurationClient.from_connection_string(connection_string)
+            mock_policy_cls.assert_called_once()
+            args, _ = mock_policy_cls.call_args
+            # Verify the credential, endpoint, and id_credential are passed correctly
+            assert args[1] == "https://fake_app_config.azconfig-test.io"
+            assert args[2] == "fake-id"
+            await client.close()
