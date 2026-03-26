@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
     pip install azure-identity
     pip install azure-mgmt-redisenterprise
 # USAGE
-    python redis_enterprise_list_by_resource_group.py
+    python redis_enterprise_migration_validate.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +31,18 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.redis_enterprise.list_by_resource_group(
+    response = client.migrations.validate(
         resource_group_name="rg1",
+        cluster_name="cache1",
+        body={
+            "forceMigrate": False,
+            "skipDataMigration": True,
+            "sourceResourceId": "/subscriptions/e7b5a9d2-6b6a-4d2f-9143-20d9a10f5b8f/resourceGroups/rg1/providers/Microsoft.Cache/redis/cache1",
+        },
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: 2025-08-01-preview/RedisEnterpriseListByResourceGroup.json
+# x-ms-original-file: 2025-08-01-preview/RedisEnterpriseMigrationValidate.json
 if __name__ == "__main__":
     main()

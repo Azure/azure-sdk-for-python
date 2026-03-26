@@ -14,17 +14,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestRedisEnterpriseManagementPrivateEndpointConnectionsOperations(AzureMgmtRecordedTestCase):
+class TestRedisEnterpriseManagementMigrationOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(RedisEnterpriseManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_private_endpoint_connections_get(self, resource_group):
-        response = self.client.private_endpoint_connections.get(
+    def test_migration_get(self, resource_group):
+        response = self.client.migration.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            private_endpoint_connection_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,24 +31,14 @@ class TestRedisEnterpriseManagementPrivateEndpointConnectionsOperations(AzureMgm
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_private_endpoint_connections_begin_put(self, resource_group):
-        response = self.client.private_endpoint_connections.begin_put(
+    def test_migration_begin_start(self, resource_group):
+        response = self.client.migration.begin_start(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            private_endpoint_connection_name="str",
-            properties={
+            parameters={
                 "id": "str",
                 "name": "str",
-                "properties": {
-                    "privateLinkServiceConnectionState": {
-                        "actionsRequired": "str",
-                        "description": "str",
-                        "status": "str",
-                    },
-                    "groupIds": ["str"],
-                    "privateEndpoint": {"id": "str"},
-                    "provisioningState": "str",
-                },
+                "properties": "migration_properties",
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -67,23 +56,22 @@ class TestRedisEnterpriseManagementPrivateEndpointConnectionsOperations(AzureMgm
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_private_endpoint_connections_begin_delete(self, resource_group):
-        response = self.client.private_endpoint_connections.begin_delete(
+    def test_migration_list(self, resource_group):
+        response = self.client.migration.list(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            private_endpoint_connection_name="str",
-        ).result()  # call '.result()' to poll until service return final result
-
+        )
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_private_endpoint_connections_list(self, resource_group):
-        response = self.client.private_endpoint_connections.list(
+    def test_migration_begin_cancel(self, resource_group):
+        response = self.client.migration.begin_cancel(
             resource_group_name=resource_group.name,
             cluster_name="str",
-        )
-        result = [r for r in response]
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...

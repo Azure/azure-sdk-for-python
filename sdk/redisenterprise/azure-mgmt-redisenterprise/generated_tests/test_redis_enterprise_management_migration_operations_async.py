@@ -15,18 +15,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestRedisEnterpriseManagementAccessPolicyAssignmentOperationsAsync(AzureMgmtRecordedTestCase):
+class TestRedisEnterpriseManagementMigrationOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(RedisEnterpriseManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_access_policy_assignment_get(self, resource_group):
-        response = await self.client.access_policy_assignment.get(
+    async def test_migration_get(self, resource_group):
+        response = await self.client.migration.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            database_name="str",
-            access_policy_assignment_name="str",
         )
 
         # please add some check logic here by yourself
@@ -34,17 +32,15 @@ class TestRedisEnterpriseManagementAccessPolicyAssignmentOperationsAsync(AzureMg
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_access_policy_assignment_begin_create_update(self, resource_group):
+    async def test_migration_begin_start(self, resource_group):
         response = await (
-            await self.client.access_policy_assignment.begin_create_update(
+            await self.client.migration.begin_start(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
-                database_name="str",
-                access_policy_assignment_name="str",
                 parameters={
                     "id": "str",
                     "name": "str",
-                    "properties": {"accessPolicyName": "str", "user": {"objectId": "str"}, "provisioningState": "str"},
+                    "properties": "migration_properties",
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",
@@ -63,27 +59,24 @@ class TestRedisEnterpriseManagementAccessPolicyAssignmentOperationsAsync(AzureMg
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_access_policy_assignment_begin_delete(self, resource_group):
-        response = await (
-            await self.client.access_policy_assignment.begin_delete(
-                resource_group_name=resource_group.name,
-                cluster_name="str",
-                database_name="str",
-                access_policy_assignment_name="str",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
+    async def test_migration_list(self, resource_group):
+        response = self.client.migration.list(
+            resource_group_name=resource_group.name,
+            cluster_name="str",
+        )
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_access_policy_assignment_list(self, resource_group):
-        response = self.client.access_policy_assignment.list(
-            resource_group_name=resource_group.name,
-            cluster_name="str",
-            database_name="str",
-        )
-        result = [r async for r in response]
+    async def test_migration_begin_cancel(self, resource_group):
+        response = await (
+            await self.client.migration.begin_cancel(
+                resource_group_name=resource_group.name,
+                cluster_name="str",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...

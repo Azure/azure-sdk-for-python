@@ -15,7 +15,7 @@ from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
     pip install azure-identity
     pip install azure-mgmt-redisenterprise
 # USAGE
-    python redis_enterprise_list_by_resource_group.py
+    python redis_enterprise_migration_cancel.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,12 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.redis_enterprise.list_by_resource_group(
+    client.migration.begin_cancel(
         resource_group_name="rg1",
-    )
-    for item in response:
-        print(item)
+        cluster_name="cache1",
+    ).result()
 
 
-# x-ms-original-file: 2025-08-01-preview/RedisEnterpriseListByResourceGroup.json
+# x-ms-original-file: 2025-08-01-preview/RedisEnterpriseMigrationCancel.json
 if __name__ == "__main__":
     main()
