@@ -13,14 +13,13 @@ from urllib.parse import urlparse
 ALLOWED_HOST_SUFFIXES: Tuple[str, ...] = (
     ".asm.skype.com",
     ".asyncgw.teams.microsoft.com",
-    ".blob.core.windows.net",
 )
 
 
 def validate_recording_url(recording_url: str, parameter_name: str) -> None:
     """
     Validate that a recording URL points to Azure Communication Services
-    or Azure Blob Storage endpoint before credentials are attached.
+    endpoint before credentials are attached.
     This prevents credential exfiltration via SSRF attacks.
 
     :param recording_url: The recording URL to validate.
@@ -55,6 +54,5 @@ def validate_recording_url(recording_url: str, parameter_name: str) -> None:
     if not is_valid_endpoint:
         raise ValueError(
             f"{parameter_name} host '{host}' is not a valid Azure Communication Services recording endpoint. "
-            "Only URLs pointing to *.asm.skype.com, *.asyncgw.teams.microsoft.com, "
-            "or Azure Blob Storage (*.blob.core.windows.net) are allowed."
+            "Only URLs pointing to *.asm.skype.com, *.asyncgw.teams.microsoft.com are allowed."
         )
