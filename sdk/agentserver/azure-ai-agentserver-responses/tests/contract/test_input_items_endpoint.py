@@ -254,3 +254,168 @@ def test_input_items_returns_history_plus_current_input_in_desc_order() -> None:
     assert payload.get("first_id") == "msg_curr_001"
     assert payload.get("last_id") == "msg_hist_001"
     assert payload.get("has_more") is False
+
+
+# ---------------------------------------------------------------------------
+# Task 6.1 — input_items sourced from parsed model
+# ---------------------------------------------------------------------------
+
+def test_input_items_string_input_treated_as_empty() -> None:
+    """T1: string input (not a list) should produce an empty input_items list."""
+    client = _build_client()
+
+    # Send a create request where 'input' is a plain string, not a list.
+    create_response = client.post(
+        "/responses",
+        json={"model": "gpt-4o-mini", "stream": False, "store": True, "input": "hello"},
+    )
+    assert create_response.status_code == 200
+    response_id = create_response.json().get("id")
+    assert isinstance(response_id, str)
+
+    response = client.get(f"/responses/{response_id}/input_items")
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload.get("data") == []
+    assert payload.get("has_more") is False
+
+
+def test_input_items_list_input_preserved() -> None:
+    """T2: list input items are preserved and retrievable via GET /input_items."""
+    client = _build_client()
+
+    item = {"id": "msg_x01", "type": "message", "role": "user", "content": [{"type": "input_text", "text": "hi"}]}
+    response_id = _create_response(client, input_items=[item])
+
+    response = client.get(f"/responses/{response_id}/input_items?order=asc")
+    assert response.status_code == 200
+    payload = response.json()
+    assert len(payload.get("data", [])) == 1
+    assert payload["data"][0].get("id") == "msg_x01"
+    assert payload["data"][0].get("type") == "message"
+
+
+def test_previous_response_id_propagated() -> None:
+    """T3: previous_response_id is propagated so input_items chain walk works."""
+    client = _build_client()
+
+    parent_id = _create_response(
+        client,
+        input_items=[_message_input("msg_parent_001", "parent-item")],
+    )
+    child_id = _create_response(
+        client,
+        input_items=[_message_input("msg_child_001", "child-item")],
+        previous_response_id=parent_id,
+    )
+
+    response = client.get(f"/responses/{child_id}/input_items?order=asc")
+    assert response.status_code == 200
+    payload = response.json()
+    ids = [item.get("id") for item in payload.get("data", [])]
+    # Both parent and child items appear, parent first in ascending order.
+    assert "msg_parent_001" in ids
+    assert "msg_child_001" in ids
+    assert ids.index("msg_parent_001") < ids.index("msg_child_001")
+
+
+def test_empty_previous_response_id_handled() -> None:
+    """T4: an empty string for previous_response_id should not raise; treated as absent."""
+    client = _build_client()
+
+    create_response = client.post(
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "stream": False,
+            "store": True,
+            "input": [],
+            "previous_response_id": "",
+        },
+    )
+    # The server should accept the request (empty string treated as absent).
+    assert create_response.status_code == 200
+    response_id = create_response.json().get("id")
+    assert isinstance(response_id, str)
+
+    response = client.get(f"/responses/{response_id}/input_items")
+    assert response.status_code == 200
+
+
+# ---------------------------------------------------------------------------
+# Task 6.2 — provider/runtime_state branch alignment + pagination edge cases
+# ---------------------------------------------------------------------------
+
+def test_input_items_in_flight_fallback_to_runtime() -> None:
+    """T3: in-progress background response serves input_items from runtime_state."""
+    import asyncio
+    from azure.ai.agentserver.responses import response_handler
+
+    # Handler that sleeps indefinitely so the response stays in_progress
+    @response_handler
+    def _slow_handler(request: Any, context: Any, cancellation_signal: Any):  # type: ignore[no-redef]
+        async def _events():
+            await asyncio.sleep(60)  # Keep response in-flight
+            if False:  # pragma: no cover
+                yield None
+
+        return _events()
+
+    _server = AgentServer()
+    _rhandler = ResponseHandler(_server)
+    _rhandler.create_handler(_slow_handler)
+    client = TestClient(_server.app, raise_server_exceptions=False)
+
+    item = _message_input("inflight_msg_001", "in-flight-content")
+    payload: Any = {
+        "model": "gpt-4o-mini",
+        "stream": False,
+        "store": True,
+        "background": True,
+        "input": [item],
+    }
+    create_response = client.post("/responses", json=payload)
+    assert create_response.status_code == 200
+    response_id = create_response.json().get("id")
+    assert isinstance(response_id, str)
+
+    # GET /input_items while the response is still in-flight (in runtime_state, not yet in provider)
+    items_response = client.get(f"/responses/{response_id}/input_items")
+    assert items_response.status_code == 200
+    items_payload = items_response.json()
+    assert items_payload.get("object") == "list"
+    item_ids = [i.get("id") for i in items_payload.get("data", [])]
+    assert "inflight_msg_001" in item_ids
+
+
+def test_input_items_limit_boundary_1() -> None:
+    """T4: limit=1 returns exactly one item."""
+    client = _build_client()
+
+    response_id = _create_response(
+        client,
+        input_items=[
+            _message_input("msg_a", "a"),
+            _message_input("msg_b", "b"),
+        ],
+    )
+
+    response = client.get(f"/responses/{response_id}/input_items?limit=1")
+    assert response.status_code == 200
+    payload = response.json()
+    assert len(payload.get("data", [])) == 1
+    assert payload.get("has_more") is True
+
+
+def test_input_items_limit_boundary_100() -> None:
+    """T5: limit=100 returns at most 100 items."""
+    client = _build_client()
+
+    input_items = [_message_input(f"msg_{i:03d}", f"item-{i}") for i in range(1, 51)]
+    response_id = _create_response(client, input_items=input_items)
+
+    response = client.get(f"/responses/{response_id}/input_items?order=asc&limit=100")
+    assert response.status_code == 200
+    payload = response.json()
+    assert len(payload.get("data", [])) == 50
+    assert payload.get("has_more") is False

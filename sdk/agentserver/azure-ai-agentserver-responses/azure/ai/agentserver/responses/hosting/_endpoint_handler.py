@@ -18,14 +18,15 @@ from starlette.responses import JSONResponse, Response, StreamingResponse
 
 from azure.ai.agentserver.hosting import AgentLogger
 
-from .._handlers import RuntimeResponseContext
+from .._handlers import ResponseContext
 from .._options import ResponsesServerOptions
 from ..models import ResponseModeFlags
 from ..streaming._helpers import _encode_sse
 from ..streaming._sse import encode_sse_payload
 from ..streaming._state_machine import LifecycleStateMachineError, normalize_lifecycle_events
-from ._background import _refresh_background_status, _try_execute_background_runner
+from ._background import _refresh_background_status
 from ._execution_context import _ExecutionContext
+from ..models.runtime import build_cancelled_response
 from ._http_errors import (
     _deleted_response,
     _error_response,
@@ -38,9 +39,7 @@ from ._observability import build_create_span_tags, start_create_span
 from ._orchestrator import _HandlerError, _ResponseOrchestrator
 from ._request_parsing import (
     _apply_item_cursors,
-    _extract_input_items,
     _extract_item_id,
-    _extract_previous_response_id,
     _prevalidate_identity_payload,
     _resolve_identity_fields,
 )
@@ -72,6 +71,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         orchestrator: _ResponseOrchestrator,
         runtime_state: _RuntimeState,
         runtime_options: ResponsesServerOptions,
+        response_headers: dict[str, str],
         sse_headers: dict[str, str],
         tracing: "TracingHelper | None" = None,
         provider: ResponseProviderProtocol,
@@ -85,6 +85,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :type runtime_state: _RuntimeState
         :param runtime_options: Server runtime options.
         :type runtime_options: ResponsesServerOptions
+        :param response_headers: Headers to include on all responses.
+        :type response_headers: dict[str, str]
         :param sse_headers: SSE-specific headers (e.g. connection, cache-control).
         :type sse_headers: dict[str, str]
         :param tracing: Optional tracing helper from hosting's AgentServer.
@@ -97,6 +99,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         self._orchestrator = orchestrator
         self._runtime_state = runtime_state
         self._runtime_options = runtime_options
+        self._response_headers = response_headers
         self._sse_headers = sse_headers
         self._tracing = tracing
         self._provider = provider
@@ -245,10 +248,14 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         store = True if getattr(parsed, "store", None) is None else bool(parsed.store)
         background = bool(getattr(parsed, "background", False))
         model = getattr(parsed, "model", None)
-        input_items = _extract_input_items(payload)
-        previous_response_id = _extract_previous_response_id(payload)
+        input_items = [deepcopy(item) for item in (parsed.input or []) if isinstance(item, dict)]
+        previous_response_id: str | None = (
+            parsed.previous_response_id
+            if isinstance(parsed.previous_response_id, str) and parsed.previous_response_id
+            else None
+        )
         mode_flags = ResponseModeFlags(stream=stream, store=store, background=background)
-        context = RuntimeResponseContext(
+        context = ResponseContext(
             response_id=response_id,
             mode_flags=mode_flags,
             raw_body=payload,
@@ -296,7 +303,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             context=context,
             span=span,
             parsed=parsed,
-            captured_error=captured_error,
         )
 
         try:
@@ -323,10 +329,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     return _error_response(exc.original, {})
 
             snapshot = await self._orchestrator.run_background(ctx)
-            # End OTel span for background (queued immediately)
             if self._tracing is not None:
                 self._tracing.end_span(otel_span)
-            return JSONResponse(snapshot, status_code=200)
+            return JSONResponse(snapshot, status_code=200, headers=self._response_headers)
+        except _HandlerError as exc:
+            if self._tracing is not None:
+                self._tracing.end_span(otel_span, exc=exc)
+            return _error_response(exc.original, self._response_headers)
         except Exception as exc:  # pylint: disable=broad-exception-caught
             if self._tracing is not None:
                 self._tracing.end_span(otel_span, exc=exc)
@@ -398,7 +407,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
             return _not_found(response_id, {})
 
-        await _try_execute_background_runner(record)
         _refresh_background_status(record)
 
         stream_replay = request.query_params.get("stream", "false").lower() == "true"
@@ -438,7 +446,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if not record.visible_via_get:
             return _not_found(response_id, {})
 
-        return JSONResponse(record.to_snapshot(), status_code=200)
+        return JSONResponse(_RuntimeState.to_snapshot(record), status_code=200, headers=self._response_headers)
 
     async def handle_delete(self, request: Request) -> Response:
         """Route handler for ``DELETE /responses/{response_id}``.
@@ -455,7 +463,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         _refresh_background_status(record)
 
-        if record.background and record.status in {"queued", "in_progress"}:
+        if record.mode_flags.background and record.status in {"queued", "in_progress"}:
             return _invalid_request(
                 "Cannot delete an in-flight response.",
                 {},
@@ -466,7 +474,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if not deleted:
             return _not_found(response_id, {})
 
-        if record.store:
+        if record.mode_flags.store:
             try:
                 await self._provider.delete_response_async(response_id)
             except Exception:  # pylint: disable=broad-exception-caught
@@ -492,7 +500,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         _refresh_background_status(record)
 
-        if not record.background:
+        if not record.mode_flags.background:
             return _invalid_request(
                 "Cannot cancel a synchronous response.",
                 {},
@@ -500,20 +508,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             )
 
         if record.status == "cancelled":
-            if not isinstance(record.response_payload, dict):
-                record.response_payload = {
-                    "id": record.response_id,
-                    "response_id": record.response_id,
-                    "agent_reference": deepcopy(record.agent_reference),
-                    "object": "response",
-                    "status": "cancelled",
-                    "model": record.model,
-                    "output": [],
-                }
-            else:
-                record.response_payload["status"] = "cancelled"
-                record.response_payload["output"] = []
-            return JSONResponse(record.to_snapshot(), status_code=200)
+            # Idempotent: ensure the response snapshot reflects cancelled state
+            record.set_response_snapshot(
+                build_cancelled_response(record.response_id, record.agent_reference, record.model)
+            )
+            return JSONResponse(_RuntimeState.to_snapshot(record), status_code=200, headers=self._response_headers)
 
         if record.status == "completed":
             return _invalid_request(
@@ -536,18 +535,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 param="response_id",
             )
 
-        record.status = "cancelled"
+        record.set_response_snapshot(
+            build_cancelled_response(record.response_id, record.agent_reference, record.model)
+        )
         record.cancel_signal.set()
-        record.response_payload = {
-            "id": record.response_id,
-            "response_id": record.response_id,
-            "agent_reference": deepcopy(record.agent_reference),
-            "object": "response",
-            "status": "cancelled",
-            "model": record.model,
-            "output": [],
-        }
-        return JSONResponse(record.to_snapshot(), status_code=200)
+        record.transition_to("cancelled")
+        return JSONResponse(_RuntimeState.to_snapshot(record), status_code=200, headers=self._response_headers)
 
     async def handle_input_items(self, request: Request) -> Response:
         """Route handler for ``GET /responses/{response_id}/input_items``.
@@ -635,17 +628,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
             record.cancel_signal.set()
 
-            if record.background and record.status in {"queued", "in_progress"}:
-                record.status = "cancelled"
-                record.response_payload = {
-                    "id": record.response_id,
-                    "response_id": record.response_id,
-                    "agent_reference": deepcopy(record.agent_reference),
-                    "object": "response",
-                    "status": "cancelled",
-                    "model": record.model,
-                    "output": [],
-                }
+            if record.mode_flags.background and record.status in {"queued", "in_progress"}:
+                record.set_response_snapshot(
+                    build_cancelled_response(record.response_id, record.agent_reference, record.model)
+                )
+                record.transition_to("cancelled")
 
         deadline = asyncio.get_running_loop().time() + float(
             self._runtime_options.shutdown_grace_period_seconds
@@ -654,8 +641,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             pending = [
                 record
                 for record in records
-                if record.background
-                and record.background_execution_started
+                if record.mode_flags.background
+                and record.execution_task is not None
                 and record.status in {"queued", "in_progress"}
             ]
             if not pending:

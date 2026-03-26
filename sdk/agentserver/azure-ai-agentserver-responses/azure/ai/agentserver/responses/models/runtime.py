@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
+from copy import deepcopy
 from datetime import datetime, timezone
 from typing import Any, Literal, Mapping
 
@@ -92,6 +93,11 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         cancel_requested: bool = False,
         client_disconnected: bool = False,
         response_created_seen: bool = False,
+        subject: Any | None = None,
+        cancel_signal: asyncio.Event | None = None,
+        input_items: list[dict[str, Any]] | None = None,
+        previous_response_id: str | None = None,
+        response_context: Any | None = None,
     ) -> None:
         self.response_id = response_id
         self.mode_flags = mode_flags
@@ -104,6 +110,13 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         self.cancel_requested = cancel_requested
         self.client_disconnected = client_disconnected
         self.response_created_seen = response_created_seen
+        self.subject = subject
+        self.cancel_signal = cancel_signal if cancel_signal is not None else asyncio.Event()
+        self.input_items: list[dict[str, Any]] = input_items if input_items is not None else []
+        self.previous_response_id = previous_response_id
+        self.response_context = response_context
+        self.response_created_signal: asyncio.Event = asyncio.Event()
+        self.response_failed_before_events: bool = False
 
     def transition_to(self, next_status: ResponseStatus) -> None:
         """Transition this execution to a valid lifecycle status.
@@ -155,6 +168,94 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         self.response = response
         self.updated_at = datetime.now(timezone.utc)
 
+    @property
+    def replay_enabled(self) -> bool:
+        """SSE replay is only available for background+stream+store responses.
+
+        :returns: True if this execution supports SSE replay.
+        :rtype: bool
+        """
+        return self.mode_flags.stream and self.mode_flags.store and self.mode_flags.background
+
+    @property
+    def visible_via_get(self) -> bool:
+        """Non-streaming stored responses are retrievable via GET after completion.
+
+        :returns: True if this execution can be retrieved via GET.
+        :rtype: bool
+        """
+        return self.mode_flags.store
+
+    def apply_event(self, normalized: dict[str, Any], all_events: list[dict[str, Any]]) -> None:
+        """Apply a normalised stream event — updates self.response and self.status.
+
+        Does nothing if the execution is already ``"cancelled"``.
+
+        :param normalized: The normalised event dictionary (``{"type": ..., "payload": {...}}``).
+        :type normalized: dict[str, Any]
+        :param all_events: The full ordered list of handler events seen so far
+            (used to extract the latest response snapshot).
+        :type all_events: list[dict[str, Any]]
+        """
+        # Lazy imports to avoid circular dependency (models.runtime ← streaming._helpers ← models.__init__)
+        from ..streaming._internals import _RESPONSE_SNAPSHOT_EVENT_TYPES  # pylint: disable=import-outside-toplevel
+        from ..streaming._helpers import _extract_response_snapshot_from_events  # pylint: disable=import-outside-toplevel
+
+        if self.status == "cancelled":
+            return
+        event_type = normalized.get("type")
+        payload = normalized.get("payload", {})
+        if event_type in _RESPONSE_SNAPSHOT_EVENT_TYPES:
+            agent_reference = (
+                self.response.get("agent_reference") if self.response is not None else {}  # type: ignore[union-attr]
+            ) or {}
+            model = self.response.get("model") if self.response is not None else None  # type: ignore[union-attr]
+            snapshot = _extract_response_snapshot_from_events(
+                all_events,
+                response_id=self.response_id,
+                agent_reference=agent_reference,
+                model=model,
+            )
+            self.set_response_snapshot(Response(snapshot))
+            resolved = snapshot.get("status")
+            if isinstance(resolved, str):
+                self.status = resolved
+        elif event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value:
+            item = payload.get("item")
+            if isinstance(item, dict) and self.response is not None:
+                output = self.response.setdefault("output", [])
+                if isinstance(output, list):
+                    output.append(deepcopy(item))
+        elif event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value:
+            item = payload.get("item")
+            output_index = payload.get("output_index")
+            if isinstance(item, dict) and isinstance(output_index, int) and self.response is not None:
+                output = self.response.get("output", [])
+                if isinstance(output, list) and 0 <= output_index < len(output):
+                    output[output_index] = deepcopy(item)
+
+    @property
+    def agent_reference(self) -> dict[str, Any]:
+        """Extract agent_reference from the stored response snapshot.
+
+        :returns: The agent reference dict, or empty dict if no response snapshot is set.
+        :rtype: dict[str, Any]
+        """
+        if self.response is not None:
+            return self.response.get("agent_reference") or {}  # type: ignore[return-value]
+        return {}
+
+    @property
+    def model(self) -> str | None:
+        """Extract model name from the stored response snapshot.
+
+        :returns: The model name, or ``None`` if no response snapshot is set.
+        :rtype: str | None
+        """
+        if self.response is not None:
+            return self.response.get("model")  # type: ignore[return-value]
+        return None
+
 
 class StreamReplayState:
     """Persisted stream replay state for one response identifier."""
@@ -192,3 +293,73 @@ class StreamReplayState:
         :rtype: bool
         """
         return bool(self.events and self.events[-1].terminal)
+
+
+def build_cancelled_response(
+    response_id: str,
+    agent_reference: dict[str, Any],
+    model: str | None,
+    created_at: datetime | None = None,
+) -> Response:
+    """Build a Response object representing a cancelled terminal state.
+
+    :param response_id: The response identifier.
+    :type response_id: str
+    :param agent_reference: The agent reference metadata dict.
+    :type agent_reference: dict[str, Any]
+    :param model: Optional model identifier.
+    :type model: str | None
+    :param created_at: Optional creation timestamp; defaults to now if omitted.
+    :type created_at: datetime | None
+    :returns: A Response object with status ``"cancelled"`` and empty output.
+    :rtype: Response
+    """
+    payload: dict[str, Any] = {
+        "id": response_id,
+        "response_id": response_id,
+        "agent_reference": deepcopy(agent_reference),
+        "object": "response",
+        "status": "cancelled",
+        "model": model,
+        "output": [],
+    }
+    if created_at is not None:
+        payload["created_at"] = created_at.isoformat()
+    return Response(payload)
+
+
+def build_failed_response(
+    response_id: str,
+    agent_reference: dict[str, Any],
+    model: str | None,
+    created_at: datetime | None = None,
+    error_message: str = "An internal server error occurred.",
+) -> Response:
+    """Build a Response object representing a failed terminal state.
+
+    :param response_id: The response identifier.
+    :type response_id: str
+    :param agent_reference: The agent reference metadata dict.
+    :type agent_reference: dict[str, Any]
+    :param model: Optional model identifier.
+    :type model: str | None
+    :param created_at: Optional creation timestamp; defaults to now if omitted.
+    :type created_at: datetime | None
+    :param error_message: Human-readable error message.
+    :type error_message: str
+    :returns: A Response object with status ``"failed"`` and empty output.
+    :rtype: Response
+    """
+    payload: dict[str, Any] = {
+        "id": response_id,
+        "response_id": response_id,
+        "agent_reference": deepcopy(agent_reference),
+        "object": "response",
+        "status": "failed",
+        "model": model,
+        "output": [],
+        "error": {"code": "server_error", "message": error_message},
+    }
+    if created_at is not None:
+        payload["created_at"] = created_at.isoformat()
+    return Response(payload)

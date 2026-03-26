@@ -11,12 +11,9 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import Any
 
-import uvicorn
-from starlette.applications import Starlette
-from starlette.responses import JSONResponse
-
+from azure.ai.agentserver.hosting import AgentServer
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
-from azure.ai.agentserver.responses.hosting import map_responses_server
+from azure.ai.agentserver.responses.hosting import ResponseHandler
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
 
 
@@ -131,16 +128,13 @@ class ConversationHandler:
         yield stream.emit_completed()
 
 
-def create_app() -> Starlette:
-    app = Starlette()
-    app.add_route("/ready", lambda request: JSONResponse({"status": "ready"}), methods=["GET"])
-    map_responses_server(app, ConversationHandler(), options=ResponsesServerOptions(default_fetch_history_count=20))
-    return app
+server = AgentServer()
+responses = ResponseHandler(server, options=ResponsesServerOptions(default_fetch_history_count=20))
+responses.create_handler(ConversationHandler())
 
 
 def main() -> None:
-    app = create_app()
-    uvicorn.run(app, host="127.0.0.1", port=5103)
+    server.run(host="127.0.0.1", port=5103)
 
 
 if __name__ == "__main__":

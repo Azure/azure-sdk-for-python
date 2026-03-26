@@ -9,8 +9,6 @@ from typing import Any, Iterable, Protocol, runtime_checkable
 from ..models._generated import Response
 
 
-
-
 @runtime_checkable
 class ResponseProviderProtocol(Protocol):
     """Protocol aligned with the .NET ``IResponsesProvider`` contract.

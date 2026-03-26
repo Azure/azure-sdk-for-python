@@ -8,20 +8,23 @@ Run:
 
 from __future__ import annotations
 
+import asyncio
 from collections.abc import AsyncIterable
 from typing import Any
 
-import uvicorn
-from starlette.applications import Starlette
-from starlette.responses import JSONResponse
-
-from azure.ai.agentserver.responses import response_handler
+from azure.ai.agentserver.hosting import AgentServer
+from azure.ai.agentserver.responses import ResponseContext
+from azure.ai.agentserver.responses.models._generated import CreateResponse
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
-from azure.ai.agentserver.responses.hosting import map_responses_server
+from azure.ai.agentserver.responses.hosting import ResponseHandler
 
 
-@response_handler
-def my_handler(request: Any, context: Any, cancellation_signal: Any) -> AsyncIterable[dict[str, Any]]:
+server = AgentServer()
+responses = ResponseHandler(server)
+
+
+@responses.create_handler
+def my_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event) -> AsyncIterable[dict[str, Any]]:
     async def _events() -> AsyncIterable[dict[str, Any]]:
         stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
 
@@ -44,16 +47,8 @@ def my_handler(request: Any, context: Any, cancellation_signal: Any) -> AsyncIte
     return _events()
 
 
-def create_app() -> Starlette:
-    app = Starlette()
-    app.add_route("/ready", lambda request: JSONResponse({"status": "ready"}), methods=["GET"])
-    map_responses_server(app, my_handler)
-    return app
-
-
 def main() -> None:
-    app = create_app()
-    uvicorn.run(app, host="127.0.0.1", port=5100)
+    server.run(host="127.0.0.1", port=5100)
 
 
 if __name__ == "__main__":

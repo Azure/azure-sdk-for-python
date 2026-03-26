@@ -61,6 +61,30 @@ def _throwing_bg_handler(request: Any, context: Any, cancellation_signal: Any):
 
 
 @response_handler
+def _throwing_after_created_bg_handler(request: Any, context: Any, cancellation_signal: Any):
+    """Background handler that emits response.created then raises — produces status=failed.
+
+    Phase 3: by yielding response.created first, the POST returns HTTP 200 instead of 500.
+    """
+    async def _events():
+        yield {"type": "response.created", "payload": {"status": "in_progress", "output": []}}
+        raise RuntimeError("Simulated handler failure")
+
+    return _events()
+
+
+@response_handler
+def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any):
+    """Handler that emits response.created then blocks until cancelled (Phase 3)."""
+    async def _events():
+        yield {"type": "response.created", "payload": {"status": "in_progress", "output": []}}
+        while not cancellation_signal.is_set():
+            await asyncio.sleep(0.01)
+
+    return _events()
+
+
+@response_handler
 def _incomplete_bg_handler(request: Any, context: Any, cancellation_signal: Any):
     """Background handler that emits an incomplete terminal event."""
     async def _events():
@@ -95,7 +119,7 @@ def test_delete__deletes_stored_completed_response() -> None:
 
 
 def test_delete__returns_400_for_background_in_flight_response() -> None:
-    client = _build_client(_delayed_response_handler)
+    client = _build_client(_cancellable_bg_handler)
 
     create_response = client.post(
         "/responses",
@@ -268,7 +292,7 @@ def test_delete__returns_404_for_non_bg_in_flight_response() -> None:
 
 def test_delete__deletes_stored_failed_response() -> None:
     """B-6 — DELETE on a failed (terminal) stored response returns 200 with deleted=True."""
-    client = _build_client(_throwing_bg_handler)
+    client = _build_client(_throwing_after_created_bg_handler)
 
     create_response = client.post(
         "/responses",
@@ -336,7 +360,7 @@ def test_delete__deletes_stored_incomplete_response() -> None:
 
 def test_delete__deletes_stored_cancelled_response() -> None:
     """B-6 — DELETE on a cancelled (terminal) stored response returns 200 with deleted=True."""
-    client = _build_client(_delayed_response_handler)
+    client = _build_client(_cancellable_bg_handler)
 
     create_response = client.post(
         "/responses",
