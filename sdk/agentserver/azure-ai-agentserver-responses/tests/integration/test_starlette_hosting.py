@@ -16,11 +16,9 @@ from azure.ai.agentserver.hosting import AgentServer
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 from azure.ai.agentserver.responses.hosting._observability import InMemoryCreateSpanHook
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
-from azure.ai.agentserver.responses import response_handler
 from tests._helpers import EventGate
 
 
-@response_handler
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler used to wire host integration tests."""
     async def _events():
@@ -143,7 +141,6 @@ def test_hosting__create_emits_single_root_span_with_key_tags_and_identity_heade
 def test_hosting__stream_mode_surfaces_handler_output_item_and_content_events() -> None:
     from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
-    @response_handler
     def _streaming_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
@@ -195,7 +192,6 @@ def test_hosting__stream_mode_surfaces_handler_output_item_and_content_events() 
 def test_hosting__non_stream_mode_returns_completed_response_with_output_items() -> None:
     from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
-    @response_handler
     def _non_stream_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
@@ -286,7 +282,6 @@ def test_hosting__shutdown_signals_inflight_background_execution() -> None:
     cancelled_gate = EventGate()
     shutdown_gate = EventGate()
 
-    @response_handler
     def _shutdown_aware_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             yield {

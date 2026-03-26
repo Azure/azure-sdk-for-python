@@ -47,8 +47,11 @@ def _check_first_event_contract(normalized: dict[str, Any], response_id: str) ->
     - S-009: The ``status`` in ``response.created`` MUST be non-terminal.
 
     :param normalized: Normalised first event dict.
+    :type normalized: dict[str, Any]
     :param response_id: Library-assigned response identifier.
+    :type response_id: str
     :return: Violation message string, or ``None`` if no violation.
+    :rtype: str | None
     """
     event_type = normalized.get("type")
     payload = normalized.get("payload") or {}
@@ -637,6 +640,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         bg record registration, B-13 / S-021 / S-019 terminal events) to
         :meth:`_process_handler_events`.  This method only encodes each event
         dict to SSE and handles keep-alive comment injection.
+
+        :param ctx: Current execution context.
+        :type ctx: _ExecutionContext
+        :returns: Async iterator of SSE-encoded strings.
+        :rtype: AsyncIterator[str]
         """
         new_stream_counter()
         state = _PipelineState()

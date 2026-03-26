@@ -4,21 +4,26 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-
 import pytest
 
 from azure.ai.agentserver.responses.hosting._validation import parse_create_response, to_api_error_response, validate_create_response
 from azure.ai.agentserver.responses.models.errors import RequestValidationError
 
 
-@dataclass
 class _FakeCreateRequest:
-    store: bool | None = True
-    background: bool = False
-    stream: bool | None = False
-    stream_options: object | None = None
-    model: str | None = "gpt-4o-mini"
+    def __init__(
+        self,
+        store: bool | None = True,
+        background: bool = False,
+        stream: bool | None = False,
+        stream_options: object | None = None,
+        model: str | None = "gpt-4o-mini",
+    ) -> None:
+        self.store = store
+        self.background = background
+        self.stream = stream
+        self.stream_options = stream_options
+        self.model = model
 
 
 def test_validation__non_object_payload_returns_invalid_request() -> None:

@@ -21,14 +21,12 @@ from __future__ import annotations
 
 import asyncio
 import json as _json
-from dataclasses import dataclass
 from typing import Any
 
 import pytest
 from azure.ai.agentserver.hosting import AgentServer
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses.hosting import ResponseHandler
-from azure.ai.agentserver.responses import response_handler
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
 
@@ -37,13 +35,13 @@ from azure.ai.agentserver.responses.streaming._event_stream import ResponseEvent
 # ════════════════════════════════════════════════════════════
 
 
-@dataclass
 class _AsgiResponse:
     """Result of a non-streaming ASGI request."""
 
-    status_code: int
-    body: bytes
-    headers: list[tuple[bytes, bytes]]
+    def __init__(self, status_code: int, body: bytes, headers: list[tuple[bytes, bytes]]) -> None:
+        self.status_code = status_code
+        self.body = body
+        self.headers = headers
 
     def json(self) -> Any:
         return _json.loads(self.body)
@@ -225,7 +223,6 @@ def _make_gated_stream_handler():
     started = asyncio.Event()
     release = asyncio.Event()
 
-    @response_handler
     def handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             stream = ResponseEventStream(
@@ -253,7 +250,6 @@ def _make_gated_stream_handler_with_output():
     started = asyncio.Event()
     release = asyncio.Event()
 
-    @response_handler
     def handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             stream = ResponseEventStream(

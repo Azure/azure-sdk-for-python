@@ -7,7 +7,9 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 from typing import Any
 
-from .._handlers import ResponseContext
+from azure.ai.agentserver.responses.models._generated.sdk.models._types import InputParam
+
+from .._response_context import ResponseContext
 
 
 class _ExecutionContext:  # pylint: disable=too-many-instance-attributes
@@ -30,12 +32,13 @@ class _ExecutionContext:  # pylint: disable=too-many-instance-attributes
         store: bool,
         background: bool,
         stream: bool,
-        input_items: list[Any],
+        input_items: list[InputParam],
         previous_response_id: str | None,
+        conversation_id: str | None,
         cancellation_signal: asyncio.Event,
-        context: ResponseContext,
         span: Any,
         parsed: Any,
+        context: ResponseContext | None = None,
     ) -> None:
         self.response_id = response_id
         """The assigned response identifier."""
@@ -53,10 +56,13 @@ class _ExecutionContext:  # pylint: disable=too-many-instance-attributes
         """Extracted input items from the request body."""
         self.previous_response_id = previous_response_id
         """Previous response ID for conversation chaining, or ``None``."""
+        self.conversation_id = conversation_id
+        """Conversation ID for grouping related responses, or ``None``."""
         self.cancellation_signal = cancellation_signal
         """Event signalling that the client has requested cancellation."""
-        self.context = context
-        """Runtime response context for this request."""
+        self.context: ResponseContext | None = context
+        """Runtime response context for this request.  Set after construction
+        via :meth:`_ResponseEndpointHandler._create_response_context`."""
         self.span = span
         """Active observability span for this request."""
         self.parsed = parsed

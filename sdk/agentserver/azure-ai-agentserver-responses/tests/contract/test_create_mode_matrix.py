@@ -8,7 +8,6 @@ These cases mirror C1-C8 in docs/api-behaviour-contract.md.
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
 from typing import Any
 
 import pytest
@@ -16,10 +15,8 @@ from starlette.testclient import TestClient
 
 from azure.ai.agentserver.hosting import AgentServer
 from azure.ai.agentserver.responses.hosting import ResponseHandler
-from azure.ai.agentserver.responses import response_handler
 
 
-@response_handler
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler used to wire contract matrix tests."""
     async def _events():
@@ -29,15 +26,24 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
     return _events()
 
 
-@dataclass(frozen=True)
 class _CreateModeCase:
-    id: str
-    store: bool
-    background: bool
-    stream: bool
-    expected_http: int
-    expected_content_prefix: str
-    expected_get_status: int | None = None
+    def __init__(
+        self,
+        id: str,
+        store: bool,
+        background: bool,
+        stream: bool,
+        expected_http: int,
+        expected_content_prefix: str,
+        expected_get_status: int | None = None,
+    ) -> None:
+        self.id = id
+        self.store = store
+        self.background = background
+        self.stream = stream
+        self.expected_http = expected_http
+        self.expected_content_prefix = expected_content_prefix
+        self.expected_get_status = expected_get_status
 
 
 def _build_client() -> TestClient:

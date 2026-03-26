@@ -13,12 +13,10 @@ from starlette.testclient import TestClient
 
 from azure.ai.agentserver.hosting import AgentServer
 from azure.ai.agentserver.responses.hosting import ResponseHandler
-from azure.ai.agentserver.responses import response_handler
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from tests._helpers import EventGate, poll_until
 
 
-@response_handler
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler used to wire the hosting surface in contract tests."""
     async def _events():
@@ -28,7 +26,6 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
     return _events()
 
 
-@response_handler
 def _delayed_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that keeps background execution cancellable for a short period."""
     async def _events():
@@ -43,7 +40,6 @@ def _delayed_response_handler(request: Any, context: Any, cancellation_signal: A
     return _events()
 
 
-@response_handler
 def _cancellable_bg_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that emits response.created then blocks until cancelled.
 
@@ -65,7 +61,6 @@ def _cancellable_bg_response_handler(request: Any, context: Any, cancellation_si
     return _events()
 
 
-@response_handler
 def _raising_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that raises to transition a background response into failed."""
     async def _events():
@@ -76,7 +71,6 @@ def _raising_response_handler(request: Any, context: Any, cancellation_signal: A
     return _events()
 
 
-@response_handler
 def _unknown_cancellation_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that raises an unknown cancellation exception source."""
     async def _events():
@@ -87,7 +81,6 @@ def _unknown_cancellation_response_handler(request: Any, context: Any, cancellat
     return _events()
 
 
-@response_handler
 def _incomplete_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that emits an explicit incomplete terminal response event."""
     async def _events():
@@ -120,7 +113,6 @@ def _make_blocking_sync_response_handler(
     started_gate: EventGate, release_gate: threading.Event
 ):
     """Factory for a handler that holds a sync request in-flight for deterministic concurrent cancel checks."""
-    @response_handler
     def handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             started_gate.signal(True)
@@ -251,7 +243,6 @@ def test_cancel__returns_400_for_failed_background_response() -> None:
     """
     from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
-    @response_handler
     def _raising_before_events(req: Any, ctx: Any, sig: Any):
         async def _ev():
             raise RuntimeError("simulated handler failure")

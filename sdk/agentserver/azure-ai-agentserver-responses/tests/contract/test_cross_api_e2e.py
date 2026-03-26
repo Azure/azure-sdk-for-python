@@ -20,7 +20,6 @@ from starlette.testclient import TestClient
 
 from azure.ai.agentserver.hosting import AgentServer
 from azure.ai.agentserver.responses.hosting import ResponseHandler
-from azure.ai.agentserver.responses import response_handler
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from tests._helpers import EventGate, poll_until
@@ -92,7 +91,6 @@ def _wait_for_terminal(
 # ════════════════════════════════════════════════════════════
 
 
-@response_handler
 def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler — emits no events (framework auto-completes)."""
     async def _events():
@@ -102,7 +100,6 @@ def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
-@response_handler
 def _simple_text_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that emits created + completed with no output items."""
     async def _events():
@@ -113,7 +110,6 @@ def _simple_text_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
-@response_handler
 def _output_producing_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that produces a single message output item with text 'hello'."""
     async def _events():
@@ -133,7 +129,6 @@ def _output_producing_handler(request: Any, context: Any, cancellation_signal: A
     return _events()
 
 
-@response_handler
 def _throwing_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that raises after emitting created."""
     async def _events():
@@ -144,7 +139,6 @@ def _throwing_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
-@response_handler
 def _incomplete_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that emits an incomplete terminal event."""
     async def _events():
@@ -155,7 +149,6 @@ def _incomplete_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
-@response_handler
 def _delayed_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that sleeps briefly, checking for cancellation."""
     async def _events():
@@ -170,7 +163,6 @@ def _delayed_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
-@response_handler
 def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that emits response.created then blocks until cancelled.
 
@@ -195,7 +187,6 @@ def _make_blocking_sync_handler(
     started_gate: EventGate, release_gate: threading.Event
 ):
     """Factory for a handler that blocks on a gate, for testing concurrent GET/Cancel on in-flight sync requests."""
-    @response_handler
     def handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             started_gate.signal(True)
@@ -218,7 +209,6 @@ def _make_two_item_gated_handler(
     item2_gate: threading.Event,
 ):
     """Factory for a handler that emits two message output items with gates between them."""
-    @response_handler
     def handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))

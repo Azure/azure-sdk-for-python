@@ -13,13 +13,11 @@ from starlette.testclient import TestClient
 from azure.ai.agentserver.hosting import AgentServer
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
-from azure.ai.agentserver.responses import response_handler
 
 
 def _make_slow_handler(delay_seconds: float = 0.5, event_count: int = 2):
     """Factory for a handler that yields events with a configurable delay between them."""
 
-    @response_handler
     def _handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             for i in range(event_count):
@@ -37,7 +35,6 @@ def _make_slow_handler(delay_seconds: float = 0.5, event_count: int = 2):
     return _handler
 
 
-@response_handler
 def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler producing an empty stream."""
     async def _events():

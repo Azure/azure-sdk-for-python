@@ -4,16 +4,14 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-
 from azure.ai.agentserver.responses.streaming import _sse
 
 
-@dataclass
 class _FakeEvent:
-    type: str
-    sequence_number: int
-    text: str
+    def __init__(self, type: str, sequence_number: int, text: str) -> None:
+        self.type = type
+        self.sequence_number = sequence_number
+        self.text = text
 
 
 def test_sse_writer__encodes_event_and_data_lines_with_separator() -> None:

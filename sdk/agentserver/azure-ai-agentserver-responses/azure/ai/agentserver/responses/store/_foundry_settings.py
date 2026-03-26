@@ -31,6 +31,8 @@ class FoundryStorageSettings:
 
         :raises EnvironmentError: If the variable is missing or empty.
         :raises ValueError: If the variable does not contain a valid absolute URL.
+        :returns: A new :class:`FoundryStorageSettings` configured from the environment.
+        :rtype: FoundryStorageSettings
         """
         value = os.environ.get(_PROJECT_ENDPOINT_ENV_VAR)
         if not value:
@@ -51,9 +53,9 @@ class FoundryStorageSettings:
 
         :param path: The resource path segment, e.g. ``responses/abc123``.
         :type path: str
-        :param extra_params: Additional query parameters; values are URL-encoded automatically.
-        :type extra_params: str
+        :keyword str extra_params: Additional query parameters; values are URL-encoded automatically.
         :returns: The complete URL string.
+        :rtype: str
         """
         url = f"{self.storage_base_url}{path}?api-version={_encode(_API_VERSION)}"
         for key, value in extra_params.items():

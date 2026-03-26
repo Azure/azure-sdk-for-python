@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Response protocol handler for AgentServer.
+"""Response handler for AgentServer.
 
 Provides the Responses API endpoints and registers them with the
 ``AgentServer`` on construction, following the same pattern as
@@ -97,8 +97,10 @@ class ResponseHandler:
             "x-accel-buffering": "no",
         }
 
-        resolved_provider: ResponseProviderProtocol = provider if provider is not None else InMemoryResponseProvider()
-        stream_provider = resolved_provider if isinstance(resolved_provider, ResponseStreamProviderProtocol) else None
+        resolved_provider: ResponseProviderProtocol = provider if provider is not None \
+                                                        else InMemoryResponseProvider()
+        stream_provider = resolved_provider if isinstance(resolved_provider, ResponseStreamProviderProtocol) \
+                                else None
         runtime_state = _RuntimeState()
         orchestrator = _ResponseOrchestrator(
             create_async=self._dispatch_create,
@@ -165,25 +167,19 @@ class ResponseHandler:
     def create_handler(self, fn: Callable) -> Callable:
         """Register a function as the create-response handler.
 
-        The function must be decorated with ``@response_handler`` first.
+        The handler function must accept exactly three positional parameters:
+        ``(request, context, cancellation_signal)`` and return an
+        ``AsyncIterable`` of response stream events.
 
         Usage::
 
             @responses.create_handler
-            @response_handler
             def my_handler(request, context, cancellation_signal):
                 async def _events():
                     yield event
                 return _events()
 
-        Or equivalently (decorator order does not matter)::
-
-            @response_handler
-            @responses.create_handler
-            def my_handler(request, context, cancellation_signal):
-                ...
-
-        :param fn: A function decorated with ``@response_handler``.
+        :param fn: A callable accepting (request, context, cancellation_signal).
         :type fn: Callable
         :return: The original function (unmodified).
         :rtype: Callable
@@ -199,6 +195,15 @@ class ResponseHandler:
         """Dispatch to the registered create handler.
 
         Called by the orchestrator when processing a create request.
+
+        :param request: The parsed create-response request.
+        :type request: Any
+        :param context: The response context for the request.
+        :type context: Any
+        :param cancellation_signal: The cancellation signal for the request.
+        :type cancellation_signal: Any
+        :returns: The result from the registered create handler callable.
+        :rtype: Any
         """
         if self._create_fn is None:
             raise NotImplementedError(

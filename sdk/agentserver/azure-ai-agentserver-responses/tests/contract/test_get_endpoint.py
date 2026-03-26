@@ -11,10 +11,8 @@ from starlette.testclient import TestClient
 
 from azure.ai.agentserver.hosting import AgentServer
 from azure.ai.agentserver.responses.hosting import ResponseHandler
-from azure.ai.agentserver.responses import response_handler
 
 
-@response_handler
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler used to wire the hosting surface in contract tests."""
     async def _events():
@@ -388,14 +386,12 @@ def test_bg_stream_cancelled_subject_completed() -> None:
     _finalize_bg_stream must call subject.complete() even when the record's
     status is 'cancelled', so that live replay subscribers can exit cleanly.
     """
-    from azure.ai.agentserver.responses import response_handler
     from azure.ai.agentserver.responses._id_generator import IdGenerator
     from tests._helpers import poll_until
 
     gate_started: list[bool] = []
     gate_proceed: list[bool] = []
 
-    @response_handler
     def _blocking_bg_stream_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             yield {"type": "response.created", "payload": {"status": "in_progress", "output": []}}

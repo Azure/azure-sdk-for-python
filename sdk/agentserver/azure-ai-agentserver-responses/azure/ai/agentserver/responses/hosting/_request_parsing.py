@@ -233,3 +233,22 @@ def _resolve_identity_fields(parsed: Any) -> tuple[str, dict[str, Any]]:
             else getattr(parsed, "agent_reference", None)
     )
     return response_id, agent_reference
+
+
+def _resolve_conversation_id(parsed: Any) -> str | None:
+    """Extract the conversation ID from a parsed ``CreateResponse`` request.
+
+    Handles both a plain string value and a ``ConversationParam_2`` object
+    (which carries the ID in its ``.id`` attribute).
+
+    :param parsed: The parsed ``CreateResponse`` model instance.
+    :type parsed: Any
+    :returns: The conversation ID string, or ``None`` if not present.
+    :rtype: str | None
+    """
+    raw = getattr(parsed, "conversation", None)
+    if isinstance(raw, str):
+        return raw or None
+    if raw is not None and hasattr(raw, "id"):
+        return str(raw.id) or None
+    return None

@@ -63,6 +63,7 @@ def _extract_error_message(response: httpx.Response, status: int) -> str:
     :param status: The HTTP status code of the response.
     :type status: int
     :returns: A human-readable error message string.
+    :rtype: str
     """
     try:
         body = response.text
