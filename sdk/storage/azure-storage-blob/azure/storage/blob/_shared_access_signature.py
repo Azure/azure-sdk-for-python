@@ -180,7 +180,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         sas.add_encryption_scope(**kwargs)
 
         if is_directory:
-            sas.add_directory_depth(blob_name)
+            sas.add_directory_depth(blob_name, kwargs.pop('sdd', None))
 
         sas.add_info_for_hns_account(**kwargs)
         sas.add_resource_signature(
@@ -319,17 +319,17 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
     def add_timestamp(self, timestamp):
         self._add_query(BlobQueryStringConstants.SIGNED_TIMESTAMP, timestamp)
 
-    def add_directory_depth(self, blob_name):
-        if blob_name == "" or blob_name == "/":
-            depth = 0
-        else:
-            depth = len(blob_name.strip("/").split("/"))
-        self._add_query(QueryStringConstants.SIGNED_DIRECTORY_DEPTH, str(depth))
+    def add_directory_depth(self, blob_name, sdd):
+        # sdd may be provided from Datalake
+        # If not provided, it will be manually computed from blob_name
+        if sdd is None:
+            if blob_name == "" or blob_name == "/":
+                sdd = 0
+            else:
+                sdd = len(blob_name.strip("/").split("/"))
+        self._add_query(QueryStringConstants.SIGNED_DIRECTORY_DEPTH, str(sdd))
 
     def add_info_for_hns_account(self, **kwargs):
-        sdd = kwargs.pop('sdd', None)
-        if sdd is not None:
-            self._add_query(QueryStringConstants.SIGNED_DIRECTORY_DEPTH, str(sdd))
         self._add_query(QueryStringConstants.SIGNED_AUTHORIZED_OID, kwargs.pop('preauthorized_agent_object_id', None))
         self._add_query(QueryStringConstants.SIGNED_UNAUTHORIZED_OID, kwargs.pop('agent_object_id', None))
         self._add_query(QueryStringConstants.SIGNED_CORRELATION_ID, kwargs.pop('correlation_id', None))
