@@ -272,6 +272,11 @@ class CopilotAdapter(FoundryCBAgent):
                 async for event in _iter_copilot_events(session, prompt, attachments=converted_attachments.attachments):
                     if event.type == SessionEventType.ASSISTANT_MESSAGE and event.data and event.data.content:
                         text = event.data.content
+                    elif event.type == SessionEventType.SESSION_ERROR and event.data:
+                        error_msg = getattr(event.data, "message", None) or getattr(event.data, "content", None) or repr(event.data)
+                        logger.error(f"Copilot session error: {error_msg}")
+                        if not text:
+                            text = f"(Agent error: {error_msg})"
             finally:
                 converted_attachments.cleanup()
             return CopilotResponseConverter.to_response(text, context)

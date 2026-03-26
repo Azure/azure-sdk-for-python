@@ -28,8 +28,10 @@ adapter.run()
 | `AZURE_AI_PROJECT_ENDPOINT` | Yes | Foundry project endpoint |
 | `GITHUB_TOKEN` | For dev | Fine-grained PAT with Copilot Requests Read-only scope |
 | `AZURE_AI_FOUNDRY_RESOURCE_URL` | For BYOK | Foundry resource URL for Managed Identity auth |
+| `AZURE_AI_FOUNDRY_API_KEY` | Optional | Static API key (skips Managed Identity) |
 | `COPILOT_MODEL` | No | Model deployment name (default: `gpt-4.1` for BYOK, `gpt-5` for GitHub) |
 | `TOOL_ACL_PATH` | Recommended | Path to YAML tool ACL file |
+| `LOG_LEVEL` | No | Set to `DEBUG` for verbose container logs |
 
 ## Key concepts
 

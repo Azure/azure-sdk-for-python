@@ -17,7 +17,7 @@ Create a `.env` file in this directory or `test_agent/`:
 
 ```
 AZURE_AI_PROJECT_ENDPOINT=https://<account>.services.ai.azure.com/api/projects/<project>
-GITHUB_TOKEN=ghp_...
+GITHUB_TOKEN=github_pat_...
 ```
 
 Deploy:

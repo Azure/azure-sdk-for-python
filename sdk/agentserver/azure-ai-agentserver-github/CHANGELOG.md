@@ -9,7 +9,5 @@
 - `GitHubCopilotAdapter`: Convenience subclass with skill directory discovery and conversation history bootstrap.
 - `ToolAcl`: YAML-based tool permission gating (shell, read, write, url, mcp).
 - BYOK authentication via `DefaultAzureCredential` (Managed Identity) or static API key.
-- Full OpenTelemetry integration (agent invocation spans + per-tool execution spans).
 - Streaming and non-streaming response modes.
-- Deferred done-events to avoid SSE burst-then-close race at ingress.
-- Session idle safety net for forced completion.
+- Robust cross-platform SDK imports (handles version/platform differences in `github-copilot-sdk`).
