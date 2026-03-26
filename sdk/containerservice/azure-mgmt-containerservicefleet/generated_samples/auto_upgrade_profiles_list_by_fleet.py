@@ -31,13 +31,13 @@ def main():
     )
 
     response = client.auto_upgrade_profiles.list_by_fleet(
-        resource_group_name="rg1",
+        resource_group_name="rgfleets",
         fleet_name="fleet1",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2025-08-01-preview/AutoUpgradeProfiles_ListByFleet.json
+# x-ms-original-file: 2026-02-01-preview/AutoUpgradeProfiles_ListByFleet.json
 if __name__ == "__main__":
     main()

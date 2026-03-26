@@ -1,5 +1,57 @@
 # Release History
 
+## 41.0.0 (2026-03-17)
+
+### Features Added
+
+  - Client `ContainerServiceClient` added method `send_request`
+  - Model `AdvancedNetworking` added property `performance`
+  - Model `AdvancedNetworkingSecurity` added property `transit_encryption`
+  - Model `AgentPool` added property `properties`
+  - Model `AgentPool` added property `system_data`
+  - Model `AgentPoolUpgradeProfile` added property `system_data`
+  - Model `IstioComponents` added property `proxy_redirection_mechanism`
+  - Model `Machine` added property `system_data`
+  - Model `ManagedClusterAccessProfile` added property `properties`
+  - Model `ManagedClusterHTTPProxyConfig` added property `enabled`
+  - Model `ManagedClusterUpgradeProfile` added property `system_data`
+  - Model `OperationValue` added property `display`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `RunCommandResult` added property `properties`
+  - Added enum `AccelerationMode`
+  - Added model `AccessProfile`
+  - Added model `AdvancedNetworkingPerformance`
+  - Added model `AdvancedNetworkingSecurityTransitEncryption`
+  - Added model `AgentPoolManagedClusterAgentPoolProfileProperties`
+  - Added model `CommandResultProperties`
+  - Added model `OperationValueDisplay`
+  - Added enum `ProxyRedirectionMechanism`
+  - Added enum `TransitEncryptionType`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Renamed enum `IpFamily` to `IPFamily`
+  - Model `AgentPool` moved instance variables `e_tag`, `count`, `vm_size`, `os_disk_size_gb`, `os_disk_type`, `kubelet_disk_type`, `workload_runtime`, `message_of_the_day`, `vnet_subnet_id`, `pod_subnet_id`, `pod_ip_allocation_mode`, `max_pods`, `os_type`, `os_sku`, `max_count`, `min_count`, `enable_auto_scaling`, `scale_down_mode`, `type_properties_type`, `mode`, `orchestrator_version`, `current_orchestrator_version`, `node_image_version`, `upgrade_settings`, `provisioning_state`, `power_state`, `availability_zones`, `enable_node_public_ip`, `node_public_ip_prefix_id`, `scale_set_priority`, `scale_set_eviction_policy`, `spot_max_price`, `tags`, `node_labels`, `node_taints`, `proximity_placement_group_id`, `kubelet_config`, `linux_os_config`, `enable_encryption_at_host`, `enable_ultra_ssd`, `enable_fips`, `gpu_instance_profile`, `creation_data`, `capacity_reservation_group_id`, `host_group_id`, `network_profile`, `windows_profile`, `security_profile`, `gpu_profile`, `gateway_profile`, `virtual_machines_profile`, `virtual_machine_nodes_status`, `status` and `local_dns_profile` under property `properties`
+  - Model `ManagedClusterAccessProfile` moved instance variable `kube_config` under property `properties`
+  - Model `OperationValue` moved instance variables `operation`, `resource`, `description` and `provider` under property `display`
+  - Model `RunCommandResult` moved instance variables `provisioning_state`, `exit_code`, `started_at`, `finished_at`, `logs` and `reason` under property `properties`
+  - Model `KubernetesVersionListResult` renamed its instance variable `values` to `values_property`
+  - Method `AgentPoolsOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `AgentPoolsOperations.begin_delete` changed its parameter `ignore_pod_disruption_budget` from `positional_or_keyword` to `keyword_only`
+  - Method `AgentPoolsOperations.begin_delete` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `ManagedClustersOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `ManagedClustersOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `ManagedClustersOperations.begin_update_tags` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `ManagedClustersOperations.list_cluster_admin_credentials` changed its parameter `server_fqdn` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagedClustersOperations.list_cluster_monitoring_user_credentials` changed its parameter `server_fqdn` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagedClustersOperations.list_cluster_user_credentials` changed its parameter `server_fqdn`/`format` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `MeshRevisionProfileList`/`MeshUpgradeProfileList`/`OutboundEnvironmentEndpointCollection`/`SubResource` which actually were not used by SDK users
+
 ## 41.0.0b3 (2025-12-22)
 
 ### Features Added
