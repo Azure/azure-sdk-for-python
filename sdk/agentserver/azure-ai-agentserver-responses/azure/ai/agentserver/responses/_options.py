@@ -21,7 +21,6 @@ class ResponsesServerOptions:
     def __init__(
         self,
         *,
-        default_fetch_history_count_value: int = 100,
         additional_server_identity: str | None = None,
         default_model: str | None = None,
         default_fetch_history_count: int = 100,
@@ -29,7 +28,6 @@ class ResponsesServerOptions:
         shutdown_grace_period_seconds: int = 10,
         create_span_hook: Any | None = None,
     ) -> None:
-        self.default_fetch_history_count_value = default_fetch_history_count_value
         self.additional_server_identity = additional_server_identity
         self.default_model = default_model
         self.default_fetch_history_count = default_fetch_history_count
