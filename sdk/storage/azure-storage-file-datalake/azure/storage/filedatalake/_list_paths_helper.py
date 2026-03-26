@@ -171,7 +171,7 @@ class PathPropertiesPaged(PageIterator):
     def _get_next_cb(self, continuation_token):
         try:
             return self._command(
-                self.recursive,
+                recursive=self.recursive,
                 continuation=continuation_token or None,
                 path=self.path,
                 max_results=self.results_per_page,

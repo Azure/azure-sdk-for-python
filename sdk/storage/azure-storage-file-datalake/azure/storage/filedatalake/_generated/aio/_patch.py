@@ -10,7 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
-from azure.core.pipeline import Pipeline
+from azure.core.pipeline import AsyncPipeline
 
 from ._client import DataLakeClient as GeneratedDataLakeClient
 from .._patch import DataLakeClientConfiguration, RangeHeaderPolicy
@@ -36,7 +36,7 @@ class AzureDataLakeStorageRESTAPI(GeneratedDataLakeClient):
         self._config = DataLakeClientConfiguration(url=url, credential=credential, **kwargs)
 
         if pipeline is not None:
-            _wrapped_pipeline = Pipeline(
+            _wrapped_pipeline = AsyncPipeline(
                 transport=pipeline._transport,
                 policies=[RangeHeaderPolicy()] + list(pipeline._impl_policies),
             )

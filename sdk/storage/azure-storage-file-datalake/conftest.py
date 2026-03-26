@@ -16,6 +16,8 @@ from devtools_testutils import (
     add_uri_string_sanitizer,
     test_proxy,
     remove_batch_sanitizers,
+    add_remove_header_sanitizer,
+    set_custom_default_matcher,
 )
 
 # Ignore async tests for PyPy
@@ -42,3 +44,6 @@ def add_sanitizers(test_proxy):
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3493: $..name
     remove_batch_sanitizers(["AZSDK3493"])
+
+    add_remove_header_sanitizer(headers="Accept")
+    set_custom_default_matcher(ignore_query_ordering=True)
