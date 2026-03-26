@@ -320,8 +320,10 @@ async def test_send_prompt_async_success_flow(
     mock_poll.assert_called_once_with("mock-op-id")
     mock_process.assert_called_once_with({"status": "succeeded", "raw": "poll_result"})
 
-    assert len(response.message_pieces) == 1
-    response_piece = response.message_pieces[0]
+    assert isinstance(response, list)
+    assert len(response) == 1
+    assert len(response[0].message_pieces) == 1
+    response_piece = response[0].message_pieces[0]
     assert response_piece.role == "assistant"
     assert json.loads(response_piece.converted_value) == {"processed": "final_content"}
 
@@ -369,8 +371,10 @@ async def test_send_prompt_async_exception_fallback(rai_target, mock_prompt_requ
         assert call_count >= 5, f"Expected at least 5 retries but got {call_count}"
 
         # Verify we got a valid response with the expected structure
-        assert len(response.message_pieces) == 1
-        response_piece = response.message_pieces[0]
+        assert isinstance(response, list)
+        assert len(response) == 1
+        assert len(response[0].message_pieces) == 1
+        response_piece = response[0].message_pieces[0]
         assert response_piece.role == "assistant"
         # Check if the response is the fallback JSON with expected fields
         fallback_content = json.loads(response_piece.converted_value)
