@@ -60,9 +60,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
      When preview features are enabled, the client libraries sends the HTTP request header `Foundry-Features`
      with the appropriate value in all relevant calls to the service.
     :type allow_preview: bool
-    :keyword api_version: The API version to use for this operation. Known values are "v1" and
-     None. Default value is "v1". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "v1". Default
+     value is "v1". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -201,14 +200,10 @@ class _AuthSecretsFilter(logging.Filter):
         r"(?i)(['\"]authorization['\"]\ *:\ *['\"])bearer\s+[^'\"]+(['\"])",
     )
 
-    _API_KEY_HEADER_DICT_PATTERN = re.compile(
-        r"(?i)(['\"]api-key['\"]\ *:\ *['\"])[^'\"]+(['\"])",
-    )
-
     def filter(self, record: logging.LogRecord) -> bool:
         rendered = record.getMessage()
-        redacted = self._AUTH_HEADER_DICT_PATTERN.sub(r"\1Bearer <REDACTED>\2", rendered)
-        redacted = self._API_KEY_HEADER_DICT_PATTERN.sub(r"\1<REDACTED>\2", redacted)
+        #redacted = self._AUTH_HEADER_DICT_PATTERN.sub(r"\1Bearer <REDACTED>\2", rendered)
+        redacted = rendered
         if redacted != rendered:
             # Replace the pre-formatted content so handlers emit sanitized output.
             record.msg = redacted

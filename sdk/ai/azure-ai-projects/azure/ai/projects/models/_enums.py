@@ -11,7 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Feature opt-in keys for agent definition operations supporting hosted or workflow agents."""
+    """Opt-in keys for defining preview Hosted or Workflow Agents."""
 
     HOSTED_AGENTS_V1_PREVIEW = "HostedAgents=V1Preview"
     """HOSTED_AGENTS_V1_PREVIEW."""
@@ -359,7 +359,7 @@ class EvaluatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of FoundryFeaturesOptInKeys."""
+    """Opt-in keys for enabling preview Foundry features."""
 
     EVALUATIONS_V1_PREVIEW = "Evaluations=V1Preview"
     """EVALUATIONS_V1_PREVIEW."""

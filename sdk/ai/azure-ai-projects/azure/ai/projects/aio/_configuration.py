@@ -36,9 +36,8 @@ class AIProjectClientConfiguration:  # pylint: disable=too-many-instance-attribu
     :param allow_preview: Whether to enable preview features. Must be specified and set to True to
      enable preview features. Default value is None.
     :type allow_preview: bool
-    :keyword api_version: The API version to use for this operation. Known values are "v1" and
-     None. Default value is "v1". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "v1". Default
+     value is "v1". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -67,7 +66,7 @@ class AIProjectClientConfiguration:  # pylint: disable=too-many-instance-attribu
 
     def _infer_policy(self, **kwargs):
         if isinstance(self.credential, AzureKeyCredential):
-            return policies.AzureKeyCredentialPolicy(self.credential, "api-key", **kwargs)
+            return policies.AzureKeyCredentialPolicy(self.credential, "Authorization", prefix="Bearer", **kwargs)
         if hasattr(self.credential, "get_token"):
             return policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
         raise TypeError(f"Unsupported credential: {self.credential}")
