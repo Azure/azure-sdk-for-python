@@ -15,7 +15,7 @@ from azure.mgmt.kubernetesconfiguration.extensions import KubernetesConfiguratio
     pip install azure-identity
     pip install azure-mgmt-kubernetesconfiguration-extensions
 # USAGE
-    python list_extensions.py
+    python get_extension_with_management_details.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,16 +30,16 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.extensions.list(
+    response = client.extensions.get(
         resource_group_name="rg1",
-        cluster_rp="Microsoft.Kubernetes",
-        cluster_resource_name="connectedClusters",
+        cluster_rp="Microsoft.ContainerService",
+        cluster_resource_name="managedClusters",
         cluster_name="clusterName1",
+        extension_name="azureVote",
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: 2025-03-01/ListExtensions.json
+# x-ms-original-file: 2025-03-01/GetExtensionWithManagementDetails.json
 if __name__ == "__main__":
     main()

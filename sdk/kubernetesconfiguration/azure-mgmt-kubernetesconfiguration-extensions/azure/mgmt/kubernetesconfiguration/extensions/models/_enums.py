@@ -14,9 +14,23 @@ class AKSIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The identity type."""
 
     SYSTEM_ASSIGNED = "SystemAssigned"
-    """SystemAssigned."""
+    """SystemAssigned identity."""
     USER_ASSIGNED = "UserAssigned"
-    """UserAssigned."""
+    """UserAssigned identity."""
+    WORKLOAD = "Workload"
+    """Workload identity."""
+
+
+class AutoUpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The upgrade mode for auto upgrade. The default is "compatible"."""
+
+    NONE = "none"
+    """The extension will not be automatically upgraded."""
+    PATCH = "patch"
+    """The extension will be automatically upgraded to the latest patch version within the minor
+    version."""
+    COMPATIBLE = "compatible"
+    """The extension will be automatically upgraded to compatible versions as determined by the user."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -36,28 +50,28 @@ class LevelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Level of the status."""
 
     ERROR = "Error"
-    """Error."""
+    """Indicates an error status from the extension."""
     WARNING = "Warning"
-    """Warning."""
+    """Indicates a warning status from the extension."""
     INFORMATION = "Information"
-    """Information."""
+    """Indicates an informational status from the extension."""
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning state of the resource."""
 
     SUCCEEDED = "Succeeded"
-    """Succeeded."""
+    """Resource has been created."""
     FAILED = "Failed"
-    """Failed."""
+    """Resource creation failed."""
     CANCELED = "Canceled"
-    """Canceled."""
+    """Resource creation was canceled."""
     CREATING = "Creating"
-    """Creating."""
+    """Resource is being created."""
     UPDATING = "Updating"
-    """Updating."""
+    """Resource is being updated."""
     DELETING = "Deleting"
-    """Deleting."""
+    """Resource is being deleted."""
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
