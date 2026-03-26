@@ -170,9 +170,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
 
         resource = 'bs' if snapshot else 'b'
         resource = 'bv' if version_id else resource
-        if is_directory:
-            resource = 'd'
-            sas.add_directory_depth(blob_name)
+        resource = 'd' if is_directory else resource
         sas.add_resource(resource)
 
         sas.add_timestamp(snapshot or version_id)
@@ -180,6 +178,10 @@ class BlobSharedAccessSignature(SharedAccessSignature):
                                           content_encoding, content_language,
                                           content_type)
         sas.add_encryption_scope(**kwargs)
+
+        if is_directory:
+            sas.add_directory_depth(blob_name)
+
         sas.add_info_for_hns_account(**kwargs)
         sas.add_resource_signature(
             self.account_name,
