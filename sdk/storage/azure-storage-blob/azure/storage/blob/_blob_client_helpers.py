@@ -58,8 +58,8 @@ from ._shared.request_handlers import (
 from ._shared.response_handlers import return_headers_and_deserialized, return_response_headers
 from ._shared.uploads import IterStreamer
 from ._shared.uploads_async import AsyncIterStreamer
+from ._shared.validation import parse_validation_option
 from ._upload_helpers import _any_conditions
-from ._validation import parse_validation_option
 
 if TYPE_CHECKING:
     from urllib.parse import ParseResult

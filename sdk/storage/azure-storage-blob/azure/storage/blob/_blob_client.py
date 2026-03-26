@@ -65,6 +65,7 @@ from ._models import BlobBlock, BlobProperties, BlobQueryError, BlobType, PageRa
 from ._quick_query_helper import BlobQueryReader
 from ._shared.base_client import parse_connection_str, StorageAccountHostsMixin, TransportWrapper
 from ._shared.response_handlers import process_storage_error, return_response_headers
+from ._shared.validation import ChecksumAlgorithm, parse_validation_option
 from ._serialize import (
     get_access_conditions,
     get_api_version,
@@ -76,7 +77,6 @@ from ._upload_helpers import (
     upload_block_blob,
     upload_page_blob
 )
-from ._validation import ChecksumAlgorithm, parse_validation_option
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential

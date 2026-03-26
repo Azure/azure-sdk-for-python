@@ -77,7 +77,7 @@ from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import process_storage_error, return_response_headers
-from .._validation import ChecksumAlgorithm, parse_validation_option
+from .._shared.validation import ChecksumAlgorithm, parse_validation_option
 
 if TYPE_CHECKING:
     from azure.core import MatchConditions
