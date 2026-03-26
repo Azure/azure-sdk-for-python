@@ -266,8 +266,9 @@ class CopilotAdapter(FoundryCBAgent):
             logger.info(f"Reusing session for conversation {conversation_id!r}")
 
         if not context.stream:
-            # Non-streaming: collect events, extract final text.
+            # Non-streaming: collect events, extract final text + consent requests.
             text = ""
+            oauth_items = []
             try:
                 async for event in _iter_copilot_events(session, prompt, attachments=converted_attachments.attachments):
                     if event.type == SessionEventType.ASSISTANT_MESSAGE and event.data and event.data.content:
@@ -277,9 +278,19 @@ class CopilotAdapter(FoundryCBAgent):
                         logger.error(f"Copilot session error: {error_msg}")
                         if not text:
                             text = f"(Agent error: {error_msg})"
+                    elif event.type == SessionEventType.MCP_OAUTH_REQUIRED and event.data:
+                        consent_url = getattr(event.data, "url", "") or ""
+                        server_label = getattr(event.data, "server_name", "") or getattr(event.data, "name", "") or "unknown"
+                        logger.info(f"MCP OAuth consent required: server={server_label} url={consent_url}")
+                        oauth_items.append({
+                            "type": "oauth_consent_request",
+                            "id": context.id_generator.generate_message_id(),
+                            "consent_link": consent_url,
+                            "server_label": server_label,
+                        })
             finally:
                 converted_attachments.cleanup()
-            return CopilotResponseConverter.to_response(text, context)
+            return CopilotResponseConverter.to_response(text, context, extra_output=oauth_items)
 
         # Streaming
         return self._run_streaming(session, prompt, converted_attachments, context)
@@ -366,6 +377,8 @@ class CopilotAdapter(FoundryCBAgent):
 
         # 3. Stream text from Copilot SDK
         full_text = ""
+        oauth_consent_items = []  # Collect MCP OAuth consent requests
+        output_index = 0  # Track output item index for additional items
         try:
             async for event in _iter_copilot_events(session, prompt, attachments=converted_attachments.attachments):
                 if event.type == SessionEventType.ASSISTANT_MESSAGE_DELTA and event.data and event.data.content:
@@ -390,6 +403,17 @@ class CopilotAdapter(FoundryCBAgent):
                             "content_index": 0,
                             "delta": full_text,
                         })
+                elif event.type == SessionEventType.MCP_OAUTH_REQUIRED and event.data:
+                    # MCP server needs OAuth consent — collect for output
+                    consent_url = getattr(event.data, "url", "") or ""
+                    server_label = getattr(event.data, "server_name", "") or getattr(event.data, "name", "") or "unknown"
+                    logger.info(f"MCP OAuth consent required: server={server_label} url={consent_url}")
+                    oauth_consent_items.append({
+                        "type": "oauth_consent_request",
+                        "id": context.id_generator.generate_message_id(),
+                        "consent_link": consent_url,
+                        "server_label": server_label,
+                    })
         except Exception as exc:
             logger.exception("Agent streaming failed")
             full_text = f"Error: {exc}"
@@ -420,10 +444,29 @@ class CopilotAdapter(FoundryCBAgent):
             "output_index": 0,
             "item": final_item,
         })
+
+        # Emit MCP OAuth consent request items (if any)
+        all_output = [final_item]
+        for idx, consent_item in enumerate(oauth_consent_items):
+            output_idx = idx + 1
+            yield ResponseOutputItemAddedEvent({
+                "type": "response.output_item.added",
+                "sequence_number": _seq(),
+                "output_index": output_idx,
+                "item": consent_item,
+            })
+            yield ResponseOutputItemDoneEvent({
+                "type": "response.output_item.done",
+                "sequence_number": _seq(),
+                "output_index": output_idx,
+                "item": consent_item,
+            })
+            all_output.append(consent_item)
+
         yield ResponseCompletedEvent({
             "type": "response.completed",
             "sequence_number": _seq(),
-            "response": _resp("completed", output=[final_item]),
+            "response": _resp("completed", output=all_output),
         })
 
     # ------------------------------------------------------------------
