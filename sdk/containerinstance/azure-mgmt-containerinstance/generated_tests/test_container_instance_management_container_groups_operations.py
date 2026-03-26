@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerinstance import ContainerInstanceClient
+from azure.mgmt.containerinstance import ContainerInstanceManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,9 +14,9 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContainerInstanceContainerGroupsOperations(AzureMgmtRecordedTestCase):
+class TestContainerInstanceManagementContainerGroupsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ContainerInstanceClient)
+        self.client = self.create_mgmt_client(ContainerInstanceManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
@@ -36,7 +36,6 @@ class TestContainerInstanceContainerGroupsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             container_group_name="str",
             container_group={
-                "location": "str",
                 "properties": {
                     "containers": [
                         {
@@ -262,6 +261,7 @@ class TestContainerInstanceContainerGroupsOperations(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
+                "location": "str",
                 "name": "str",
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",

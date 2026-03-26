@@ -1,7 +1,7 @@
 {
   "azure.mgmt.containerinstance": {
     "class_nodes": {
-      "ContainerInstanceClient": {
+      "ContainerInstanceManagementClient": {
         "type": null,
         "methods": {
           "__init__": {
@@ -5566,13 +5566,13 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "location": {
-                    "type": "str",
+                  "properties": {
+                    "type": "_models.ContainerGroupProperties",
                     "default": null,
                     "param_type": "keyword_only"
                   },
-                  "properties": {
-                    "type": "_models.ContainerGroupPropertiesProperties",
+                  "location": {
+                    "type": "Optional[str]",
                     "default": null,
                     "param_type": "keyword_only"
                   },
@@ -5761,7 +5761,7 @@
           }
         },
         "properties": {
-          "location": null,
+          "location": "Optional",
           "tags": "Optional",
           "zones": "Optional",
           "identity": "Optional",
@@ -7530,7 +7530,7 @@
           "container_group_properties": "Optional"
         }
       },
-      "ContainerGroupPropertiesProperties": {
+      "ContainerGroupProperties": {
         "type": null,
         "methods": {
           "__init__": {
@@ -7846,7 +7846,7 @@
           "is_created_from_standby_pool": "Optional"
         }
       },
-      "ContainerGroupPropertiesPropertiesInstanceView": {
+      "ContainerGroupPropertiesInstanceView": {
         "type": null,
         "methods": {
           "__init__": {
@@ -15091,7 +15091,7 @@
                     "param_type": "positional_or_keyword"
                   },
                   "properties": {
-                    "type": "_models.ListResultContainerGroupPropertiesProperties",
+                    "type": "_models.ListResultContainerGroupProperties",
                     "default": null,
                     "param_type": "keyword_only"
                   },
@@ -15112,6 +15112,48 @@
                   },
                   "identity": {
                     "type": "Optional[_models.ContainerGroupIdentity]",
+                    "default": null,
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": null
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "mapping": {
+                    "type": "Mapping[str, Any]",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  }
+                },
+                "is_async": false,
+                "return_type": null
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "location": {
+                    "type": "Optional[str]",
+                    "default": null,
+                    "param_type": "keyword_only"
+                  },
+                  "tags": {
+                    "type": "Optional[dict[str, str]]",
+                    "default": null,
+                    "param_type": "keyword_only"
+                  },
+                  "zones": {
+                    "type": "Optional[list[str]]",
                     "default": null,
                     "param_type": "keyword_only"
                   }
@@ -15285,17 +15327,17 @@
           }
         },
         "properties": {
+          "identity": "Optional",
+          "properties": null,
           "id": "Optional",
           "name": "Optional",
           "type": "Optional",
           "location": "Optional",
           "tags": "Optional",
-          "zones": "Optional",
-          "identity": "Optional",
-          "properties": null
+          "zones": "Optional"
         }
       },
-      "ListResultContainerGroupPropertiesProperties": {
+      "ListResultContainerGroupProperties": {
         "type": null,
         "methods": {
           "__init__": {
@@ -23369,7 +23411,7 @@
   },
   "azure.mgmt.containerinstance.aio": {
     "class_nodes": {
-      "ContainerInstanceClient": {
+      "ContainerInstanceManagementClient": {
         "type": null,
         "methods": {
           "__init__": {

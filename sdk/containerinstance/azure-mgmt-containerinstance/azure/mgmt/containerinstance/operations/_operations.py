@@ -33,7 +33,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
-from .._configuration import ContainerInstanceClientConfiguration
+from .._configuration import ContainerInstanceManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
@@ -1002,14 +1002,16 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerinstance.ContainerInstanceClient`'s
+        :class:`~azure.mgmt.containerinstance.ContainerInstanceManagementClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerInstanceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ContainerInstanceManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1109,14 +1111,16 @@ class ContainerGroupsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerinstance.ContainerInstanceClient`'s
+        :class:`~azure.mgmt.containerinstance.ContainerInstanceManagementClient`'s
         :attr:`container_groups` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerInstanceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ContainerInstanceManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2321,14 +2325,16 @@ class NGroupsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerinstance.ContainerInstanceClient`'s
+        :class:`~azure.mgmt.containerinstance.ContainerInstanceManagementClient`'s
         :attr:`ngroups` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerInstanceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ContainerInstanceManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3533,14 +3539,16 @@ class CGProfileOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerinstance.ContainerInstanceClient`'s
+        :class:`~azure.mgmt.containerinstance.ContainerInstanceManagementClient`'s
         :attr:`cg_profile` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerInstanceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ContainerInstanceManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4240,14 +4248,16 @@ class ContainersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerinstance.ContainerInstanceClient`'s
+        :class:`~azure.mgmt.containerinstance.ContainerInstanceManagementClient`'s
         :attr:`containers` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerInstanceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ContainerInstanceManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4625,14 +4635,16 @@ class CGProfilesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerinstance.ContainerInstanceClient`'s
+        :class:`~azure.mgmt.containerinstance.ContainerInstanceManagementClient`'s
         :attr:`cg_profiles` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerInstanceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ContainerInstanceManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4835,14 +4847,16 @@ class LocationOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerinstance.ContainerInstanceClient`'s
+        :class:`~azure.mgmt.containerinstance.ContainerInstanceManagementClient`'s
         :attr:`location` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerInstanceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ContainerInstanceManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5136,14 +5150,16 @@ class SubnetServiceAssociationLinkOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerinstance.ContainerInstanceClient`'s
+        :class:`~azure.mgmt.containerinstance.ContainerInstanceManagementClient`'s
         :attr:`subnet_service_association_link` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerInstanceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ContainerInstanceManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

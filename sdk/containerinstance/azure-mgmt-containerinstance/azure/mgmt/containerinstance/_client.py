@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import ContainerInstanceClientConfiguration
+from ._configuration import ContainerInstanceManagementClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     CGProfileOperations,
@@ -35,7 +35,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ContainerInstanceClient:  # pylint: disable=too-many-instance-attributes
+class ContainerInstanceManagementClient:  # pylint: disable=too-many-instance-attributes
     """// (missing-service-description) Add service description.
 
     :ivar operations: Operations operations
@@ -64,8 +64,8 @@ class ContainerInstanceClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2025-09-01"
-     and None. Default value is "2025-09-01". Note that overriding this default value may result in
+    :keyword api_version: The API version to use for this operation. Known values are "2025-09-01".
+     Default value is "2025-09-01". Note that overriding this default value may result in
      unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -87,7 +87,7 @@ class ContainerInstanceClient:  # pylint: disable=too-many-instance-attributes
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = ContainerInstanceClientConfiguration(
+        self._config = ContainerInstanceManagementClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

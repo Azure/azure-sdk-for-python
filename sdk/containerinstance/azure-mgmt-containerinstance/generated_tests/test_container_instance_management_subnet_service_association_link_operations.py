@@ -6,28 +6,25 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerinstance.aio import ContainerInstanceClient
+from azure.mgmt.containerinstance import ContainerInstanceManagementClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
-from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContainerInstanceSubnetServiceAssociationLinkOperationsAsync(AzureMgmtRecordedTestCase):
+class TestContainerInstanceManagementSubnetServiceAssociationLinkOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ContainerInstanceClient, is_async=True)
+        self.client = self.create_mgmt_client(ContainerInstanceManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_subnet_service_association_link_begin_delete(self, resource_group):
-        response = await (
-            await self.client.subnet_service_association_link.begin_delete(
-                resource_group_name=resource_group.name,
-                virtual_network_name="str",
-                subnet_name="str",
-            )
+    @recorded_by_proxy
+    def test_subnet_service_association_link_begin_delete(self, resource_group):
+        response = self.client.subnet_service_association_link.begin_delete(
+            resource_group_name=resource_group.name,
+            virtual_network_name="str",
+            subnet_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

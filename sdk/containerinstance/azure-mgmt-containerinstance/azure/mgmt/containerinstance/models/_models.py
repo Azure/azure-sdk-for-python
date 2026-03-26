@@ -678,7 +678,7 @@ class ContainerGroup(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.containerinstance.models.SystemData
-    :ivar location: The resource location. Required.
+    :ivar location: The resource location.
     :vartype location: str
     :ivar tags: The resource tags.
     :vartype tags: dict[str, str]
@@ -687,11 +687,11 @@ class ContainerGroup(ProxyResource):
     :ivar identity: The identity of the container group, if configured.
     :vartype identity: ~azure.mgmt.containerinstance.models.ContainerGroupIdentity
     :ivar properties: The container group properties. Required.
-    :vartype properties: ~azure.mgmt.containerinstance.models.ContainerGroupPropertiesProperties
+    :vartype properties: ~azure.mgmt.containerinstance.models.ContainerGroupProperties
     """
 
-    location: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The resource location. Required."""
+    location: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The resource location."""
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The resource tags."""
     zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -700,7 +700,7 @@ class ContainerGroup(ProxyResource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The identity of the container group, if configured."""
-    properties: "_models.ContainerGroupPropertiesProperties" = rest_field(
+    properties: "_models.ContainerGroupProperties" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The container group properties. Required."""
@@ -734,8 +734,8 @@ class ContainerGroup(ProxyResource):
     def __init__(
         self,
         *,
-        location: str,
-        properties: "_models.ContainerGroupPropertiesProperties",
+        properties: "_models.ContainerGroupProperties",
+        location: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
         zones: Optional[list[str]] = None,
         identity: Optional["_models.ContainerGroupIdentity"] = None,
@@ -1241,7 +1241,7 @@ class ContainerGroupProfileStub(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerGroupPropertiesProperties(_Model):
+class ContainerGroupProperties(_Model):
     """The container group properties.
 
     :ivar provisioning_state: The provisioning state of the container group. This only appears in
@@ -1272,7 +1272,7 @@ class ContainerGroupPropertiesProperties(_Model):
     :vartype volumes: list[~azure.mgmt.containerinstance.models.Volume]
     :ivar instance_view: The instance view of the container group. Only valid in response.
     :vartype instance_view:
-     ~azure.mgmt.containerinstance.models.ContainerGroupPropertiesPropertiesInstanceView
+     ~azure.mgmt.containerinstance.models.ContainerGroupPropertiesInstanceView
     :ivar diagnostics: The diagnostic information for a container group.
     :vartype diagnostics: ~azure.mgmt.containerinstance.models.ContainerGroupDiagnostics
     :ivar subnet_ids: The subnet resource IDs for a container group.
@@ -1337,7 +1337,7 @@ class ContainerGroupPropertiesProperties(_Model):
      \"Windows\" and \"Linux\"."""
     volumes: Optional[list["_models.Volume"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of volumes that can be mounted by containers in this container group."""
-    instance_view: Optional["_models.ContainerGroupPropertiesPropertiesInstanceView"] = rest_field(
+    instance_view: Optional["_models.ContainerGroupPropertiesInstanceView"] = rest_field(
         name="instanceView", visibility=["read"]
     )
     """The instance view of the container group. Only valid in response."""
@@ -1429,7 +1429,7 @@ class ContainerGroupPropertiesProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerGroupPropertiesPropertiesInstanceView(_Model):  # pylint: disable=name-too-long
+class ContainerGroupPropertiesInstanceView(_Model):
     """The instance view of the container group. Only valid in response.
 
     :ivar events: The events of this container group.
@@ -2786,7 +2786,57 @@ class IpAddress(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ListResultContainerGroup(_Model):
+class Resource(_Model):
+    """The Resource model definition.
+
+    :ivar id: The resource id.
+    :vartype id: str
+    :ivar name: The resource name.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar zones: The zones for the container group.
+    :vartype zones: list[str]
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """The resource id."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The resource name."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The resource type."""
+    location: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The resource location."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The resource tags."""
+    zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The zones for the container group."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
+        zones: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ListResultContainerGroup(Resource):
     """A container group part of the list result.
 
     :ivar id: The resource id.
@@ -2804,27 +2854,14 @@ class ListResultContainerGroup(_Model):
     :ivar identity: The identity of the container group, if configured.
     :vartype identity: ~azure.mgmt.containerinstance.models.ContainerGroupIdentity
     :ivar properties: The container group properties. Required.
-    :vartype properties:
-     ~azure.mgmt.containerinstance.models.ListResultContainerGroupPropertiesProperties
+    :vartype properties: ~azure.mgmt.containerinstance.models.ListResultContainerGroupProperties
     """
 
-    id: Optional[str] = rest_field(visibility=["read"])
-    """The resource id."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """The resource name."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """The resource type."""
-    location: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The resource location."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The resource tags."""
-    zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The zones for the container group."""
     identity: Optional["_models.ContainerGroupIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The identity of the container group, if configured."""
-    properties: "_models.ListResultContainerGroupPropertiesProperties" = rest_field(
+    properties: "_models.ListResultContainerGroupProperties" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The container group properties. Required."""
@@ -2857,7 +2894,7 @@ class ListResultContainerGroup(_Model):
     def __init__(
         self,
         *,
-        properties: "_models.ListResultContainerGroupPropertiesProperties",
+        properties: "_models.ListResultContainerGroupProperties",
         location: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
         zones: Optional[list[str]] = None,
@@ -2893,7 +2930,7 @@ class ListResultContainerGroup(_Model):
             super().__setattr__(key, value)
 
 
-class ListResultContainerGroupPropertiesProperties(_Model):  # pylint: disable=name-too-long
+class ListResultContainerGroupProperties(_Model):
     """The container group properties.
 
     :ivar provisioning_state: The provisioning state of the container group. This only appears in
@@ -3865,56 +3902,6 @@ class Port(_Model):
         *,
         port: int,
         protocol: Optional[Union[str, "_models.ContainerGroupNetworkProtocol"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class Resource(_Model):
-    """The Resource model definition.
-
-    :ivar id: The resource id.
-    :vartype id: str
-    :ivar name: The resource name.
-    :vartype name: str
-    :ivar type: The resource type.
-    :vartype type: str
-    :ivar location: The resource location.
-    :vartype location: str
-    :ivar tags: The resource tags.
-    :vartype tags: dict[str, str]
-    :ivar zones: The zones for the container group.
-    :vartype zones: list[str]
-    """
-
-    id: Optional[str] = rest_field(visibility=["read"])
-    """The resource id."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """The resource name."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """The resource type."""
-    location: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The resource location."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The resource tags."""
-    zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The zones for the container group."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        tags: Optional[dict[str, str]] = None,
-        zones: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload

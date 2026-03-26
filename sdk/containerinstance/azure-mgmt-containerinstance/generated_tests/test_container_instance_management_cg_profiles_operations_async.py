@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerinstance.aio import ContainerInstanceClient
+from azure.mgmt.containerinstance.aio import ContainerInstanceManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,35 +15,23 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContainerInstanceLocationOperationsAsync(AzureMgmtRecordedTestCase):
+class TestContainerInstanceManagementCGProfilesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ContainerInstanceClient, is_async=True)
+        self.client = self.create_mgmt_client(ContainerInstanceManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_location_list_usage(self, resource_group):
-        response = self.client.location.list_usage(
-            location="str",
-        )
+    async def test_cg_profiles_list_by_subscription(self, resource_group):
+        response = self.client.cg_profiles.list_by_subscription()
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_location_list_cached_images(self, resource_group):
-        response = self.client.location.list_cached_images(
-            location="str",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_location_list_capabilities(self, resource_group):
-        response = self.client.location.list_capabilities(
-            location="str",
+    async def test_cg_profiles_list_by_resource_group(self, resource_group):
+        response = self.client.cg_profiles.list_by_resource_group(
+            resource_group_name=resource_group.name,
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

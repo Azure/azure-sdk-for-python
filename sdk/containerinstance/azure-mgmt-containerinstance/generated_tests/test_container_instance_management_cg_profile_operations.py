@@ -6,23 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerinstance.aio import ContainerInstanceClient
+from azure.mgmt.containerinstance import ContainerInstanceManagementClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
-from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContainerInstanceCGProfileOperationsAsync(AzureMgmtRecordedTestCase):
+class TestContainerInstanceManagementCGProfileOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ContainerInstanceClient, is_async=True)
+        self.client = self.create_mgmt_client(ContainerInstanceManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_cg_profile_get_by_revision_number(self, resource_group):
-        response = await self.client.cg_profile.get_by_revision_number(
+    @recorded_by_proxy
+    def test_cg_profile_get_by_revision_number(self, resource_group):
+        response = self.client.cg_profile.get_by_revision_number(
             resource_group_name=resource_group.name,
             container_group_profile_name="str",
             revision_number="str",
@@ -32,20 +31,20 @@ class TestContainerInstanceCGProfileOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_cg_profile_list_all_revisions(self, resource_group):
+    @recorded_by_proxy
+    def test_cg_profile_list_all_revisions(self, resource_group):
         response = self.client.cg_profile.list_all_revisions(
             resource_group_name=resource_group.name,
             container_group_profile_name="str",
         )
-        result = [r async for r in response]
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_cg_profile_get(self, resource_group):
-        response = await self.client.cg_profile.get(
+    @recorded_by_proxy
+    def test_cg_profile_get(self, resource_group):
+        response = self.client.cg_profile.get(
             resource_group_name=resource_group.name,
             container_group_profile_name="str",
         )
@@ -54,9 +53,9 @@ class TestContainerInstanceCGProfileOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_cg_profile_create_or_update(self, resource_group):
-        response = await self.client.cg_profile.create_or_update(
+    @recorded_by_proxy
+    def test_cg_profile_create_or_update(self, resource_group):
+        response = self.client.cg_profile.create_or_update(
             resource_group_name=resource_group.name,
             container_group_profile_name="str",
             container_group_profile={
@@ -291,9 +290,9 @@ class TestContainerInstanceCGProfileOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_cg_profile_update(self, resource_group):
-        response = await self.client.cg_profile.update(
+    @recorded_by_proxy
+    def test_cg_profile_update(self, resource_group):
+        response = self.client.cg_profile.update(
             resource_group_name=resource_group.name,
             container_group_profile_name="str",
             properties={"tags": {"str": "str"}},
@@ -303,9 +302,9 @@ class TestContainerInstanceCGProfileOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_cg_profile_delete(self, resource_group):
-        response = await self.client.cg_profile.delete(
+    @recorded_by_proxy
+    def test_cg_profile_delete(self, resource_group):
+        response = self.client.cg_profile.delete(
             resource_group_name=resource_group.name,
             container_group_profile_name="str",
         )

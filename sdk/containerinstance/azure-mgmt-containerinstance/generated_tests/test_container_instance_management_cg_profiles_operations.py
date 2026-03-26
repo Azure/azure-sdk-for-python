@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerinstance import ContainerInstanceClient
+from azure.mgmt.containerinstance import ContainerInstanceManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,18 +14,24 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContainerInstanceSubnetServiceAssociationLinkOperations(AzureMgmtRecordedTestCase):
+class TestContainerInstanceManagementCGProfilesOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ContainerInstanceClient)
+        self.client = self.create_mgmt_client(ContainerInstanceManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_subnet_service_association_link_begin_delete(self, resource_group):
-        response = self.client.subnet_service_association_link.begin_delete(
-            resource_group_name=resource_group.name,
-            virtual_network_name="str",
-            subnet_name="str",
-        ).result()  # call '.result()' to poll until service return final result
+    def test_cg_profiles_list_by_subscription(self, resource_group):
+        response = self.client.cg_profiles.list_by_subscription()
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
 
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_cg_profiles_list_by_resource_group(self, resource_group):
+        response = self.client.cg_profiles.list_by_resource_group(
+            resource_group_name=resource_group.name,
+        )
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

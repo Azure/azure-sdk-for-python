@@ -6,22 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerinstance import ContainerInstanceClient
+from azure.mgmt.containerinstance.aio import ContainerInstanceManagementClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContainerInstanceContainersOperations(AzureMgmtRecordedTestCase):
+class TestContainerInstanceManagementContainersOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ContainerInstanceClient)
+        self.client = self.create_mgmt_client(ContainerInstanceManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_containers_list_logs(self, resource_group):
-        response = self.client.containers.list_logs(
+    @recorded_by_proxy_async
+    async def test_containers_list_logs(self, resource_group):
+        response = await self.client.containers.list_logs(
             resource_group_name=resource_group.name,
             container_group_name="str",
             container_name="str",
@@ -31,9 +32,9 @@ class TestContainerInstanceContainersOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_containers_execute_command(self, resource_group):
-        response = self.client.containers.execute_command(
+    @recorded_by_proxy_async
+    async def test_containers_execute_command(self, resource_group):
+        response = await self.client.containers.execute_command(
             resource_group_name=resource_group.name,
             container_group_name="str",
             container_name="str",
@@ -44,9 +45,9 @@ class TestContainerInstanceContainersOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_containers_attach(self, resource_group):
-        response = self.client.containers.attach(
+    @recorded_by_proxy_async
+    async def test_containers_attach(self, resource_group):
+        response = await self.client.containers.attach(
             resource_group_name=resource_group.name,
             container_group_name="str",
             container_name="str",

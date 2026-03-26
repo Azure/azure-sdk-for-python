@@ -3,8 +3,8 @@
   "apiVersions": {
     "Microsoft.ContainerInstance": "2025-09-01"
   },
-  "commit": "87fd8965461f54b715bb5762be007bb1d10f6f82",
+  "commit": "1d786ebb3dd70468c532496d3e4b12fb1c936b00",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/containerinstance/resource-manager/Microsoft.ContainerInstance/ContainerInstance",
-  "emitterVersion": "0.61.0"
+  "emitterVersion": "0.61.1"
 }
