@@ -54,6 +54,19 @@ class AgentProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RESPONSES."""
 
 
+class AssetTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of job input/output asset."""
+
+    URI_FILE = "uri_file"
+    """URI file asset."""
+    URI_FOLDER = "uri_folder"
+    """URI folder asset."""
+    SAFETENSORS_MODEL = "safetensors_model"
+    """Safetensors model asset."""
+    LITERAL = "literal"
+    """Literal value (inputs only)."""
+
+
 class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Strategies for attacks."""
 
@@ -375,6 +388,8 @@ class FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TOOLSET_V1_PREVIEW."""
     AGENT_ENDPOINT_V1_PREVIEW = "AgentEndpoints=V1Preview"
     """AGENT_ENDPOINT_V1_PREVIEW."""
+    JOBS_V1_PREVIEW = "Jobs=V1Preview"
+    """JOBS_V1_PREVIEW."""
 
 
 class FunctionShellToolParamEnvironmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -432,6 +447,21 @@ class InputFidelity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """LOW."""
 
 
+class InputOutputModes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the input/output data delivery mode."""
+
+    READ_ONLY_MOUNT = "ReadOnlyMount"
+    """Read-only mount mode."""
+    READ_WRITE_MOUNT = "ReadWriteMount"
+    """Read-write mount mode."""
+    DOWNLOAD = "Download"
+    """Download mode."""
+    DIRECT = "Direct"
+    """Direct mode."""
+    UPLOAD = "Upload"
+    """Upload mode."""
+
+
 class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The request of the insights."""
 
@@ -441,6 +471,24 @@ class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cluster Insight on an Agent."""
     EVALUATION_COMPARISON = "EvaluationComparison"
     """Evaluation Comparison."""
+
+
+class JobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of a job."""
+
+    COMMAND = "Command"
+    """Command job."""
+
+
+class ListViewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies which jobs to include in a list result based on their lifecycle state."""
+
+    ACTIVE_ONLY = "ActiveOnly"
+    """Show only active (non-archived) jobs."""
+    ARCHIVED_ONLY = "ArchivedOnly"
+    """Show only archived jobs."""
+    ALL = "All"
+    """Show all jobs regardless of archived state."""
 
 
 class MemoryItemKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -16,6 +16,7 @@ from ._patch_evaluators_async import BetaEvaluatorsOperations
 from ._patch_telemetry_async import TelemetryOperations
 from ._patch_connections_async import ConnectionsOperations
 from ._patch_memories_async import BetaMemoryStoresOperations
+from ._patch_jobs_async import TrainingJobsOperations
 from ...operations._patch import _BETA_OPERATION_FEATURE_HEADERS, _OperationMethodHeaderProxy
 from ._operations import (
     BetaEvaluationTaxonomiesOperations,
@@ -54,6 +55,8 @@ class BetaOperations(GeneratedBetaOperations):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+        # Swap generated jobs sub-client with the patched flat-CommandJob version
+        self.training.jobs = TrainingJobsOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes upload()
         self.evaluators = BetaEvaluatorsOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes begin_update_memories
@@ -81,6 +84,7 @@ __all__: List[str] = [
     "DatasetsOperations",
     "EvaluationRulesOperations",
     "TelemetryOperations",
+    "TrainingJobsOperations",
 ]  # Add all objects you want publicly available to users at this package level
 
 
