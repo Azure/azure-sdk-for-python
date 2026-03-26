@@ -5,7 +5,6 @@
 # ------------------------------------
 # cSpell:disable
 
-import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
@@ -28,7 +27,7 @@ class TestAgentCodeInterpreterAsync(TestBase):
         without any file uploads or downloads - just pure code execution.
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
         agent_name = "code-interpreter-simple-agent-async"
 
         async with (

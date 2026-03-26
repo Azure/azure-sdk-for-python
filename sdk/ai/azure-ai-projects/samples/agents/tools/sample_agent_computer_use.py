@@ -23,7 +23,7 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
     2) (Optional) COMPUTER_USE_MODEL_DEPLOYMENT_NAME - The deployment name of the computer-use-preview model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
@@ -31,21 +31,21 @@ USAGE:
 
 import os
 from dotenv import load_dotenv
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, ComputerUsePreviewTool
 
 # Import shared helper functions
-from computer_use_util import (
+from computer_use_util import (  # pylint: disable=import-error
     SearchState,
     load_screenshot_assets,
     handle_computer_action_and_take_screenshot,
     print_final_output,
 )
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import PromptAgentDefinition, ComputerUsePreviewTool
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
@@ -61,7 +61,7 @@ with (
         print("Successfully loaded screenshot assets")
     except FileNotFoundError:
         print("Failed to load required screenshot assets. Please ensure the asset files exist in ../assets/")
-        exit(1)
+        exit(1)  # pylint: disable=consider-using-sys-exit
 
     # [START tool_declaration]
     tool = ComputerUsePreviewTool(display_width=1026, display_height=769, environment="windows")
@@ -72,8 +72,8 @@ with (
         definition=PromptAgentDefinition(
             model=os.environ.get("COMPUTER_USE_MODEL_DEPLOYMENT_NAME", "computer-use-preview"),
             instructions="""
-            You are a computer automation assistant. 
-            
+            You are a computer automation assistant.
+
             Be direct and efficient. When you reach the search results page, read and describe the actual search result titles and descriptions you can see.
             """,
             tools=[tool],

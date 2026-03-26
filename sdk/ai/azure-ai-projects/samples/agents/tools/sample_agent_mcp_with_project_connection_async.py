@@ -16,9 +16,9 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv aiohttp
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
     3) MCP_PROJECT_CONNECTION_ID - The connection resource ID in Custom keys
        with key equals to "Authorization" and value to be "Bearer <your GitHub PAT token>".
@@ -28,14 +28,14 @@ USAGE:
 import os
 import asyncio
 from dotenv import load_dotenv
+from openai.types.responses.response_input_param import McpApprovalResponse, ResponseInputParam
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition, MCPTool, Tool
-from openai.types.responses.response_input_param import McpApprovalResponse, ResponseInputParam
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 
 async def main():
@@ -58,7 +58,7 @@ async def main():
         agent = await project_client.agents.create_version(
             agent_name="MyAgent",
             definition=PromptAgentDefinition(
-                model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+                model=os.environ["FOUNDRY_MODEL_NAME"],
                 instructions="Use MCP tools as needed",
                 tools=tools,
             ),

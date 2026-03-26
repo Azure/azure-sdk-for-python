@@ -18,6 +18,38 @@ from azure.core.polling.base_polling import (
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from ._models import CustomCredential as CustomCredentialGenerated
 from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
+from ._enums import FoundryFeaturesOptInKeys
+
+_FOUNDRY_FEATURES_HEADER_NAME: str = "Foundry-Features"
+"""The HTTP header name used to opt in to Foundry preview features."""
+
+_BETA_OPERATION_FEATURE_HEADERS: dict = {
+    "evaluation_taxonomies": FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
+    "evaluators": FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
+    "insights": FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW.value,
+    "memory_stores": FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value,
+    "red_teams": FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW.value,
+    "schedules": FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW.value,
+    "toolsets": FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW.value,
+}
+"""Foundry-Features header values keyed by beta sub-client property name."""
+
+
+def _has_header_case_insensitive(headers: Any, header_name: str) -> bool:
+    """Return True if headers already contains the provided header name.
+
+    :param headers: The headers mapping to search.
+    :type headers: Any
+    :param header_name: The header name to look for (case-insensitive).
+    :type header_name: str
+    :return: True if the header is present, False otherwise.
+    :rtype: bool
+    """
+    try:
+        header_name_lower = header_name.lower()
+        return any(str(key).lower() == header_name_lower for key in headers)
+    except Exception:  # pylint: disable=broad-except
+        return False
 
 
 class CustomCredential(CustomCredentialGenerated, discriminator="CustomKeys"):
@@ -68,7 +100,7 @@ _FINISHED = frozenset(["completed", "superseded", "failed"])
 _FAILED = frozenset(["failed"])
 
 
-class UpdateMemoriesLROPollingMethod(LROBasePolling):
+class _UpdateMemoriesLROPollingMethod(LROBasePolling):
     """A custom polling method implementation for Memory Store updates."""
 
     @property
@@ -139,7 +171,7 @@ class UpdateMemoriesLROPollingMethod(LROBasePolling):
             _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
 
 
-class AsyncUpdateMemoriesLROPollingMethod(AsyncLROBasePolling):
+class _AsyncUpdateMemoriesLROPollingMethod(AsyncLROBasePolling):
     """A custom polling method implementation for Memory Store updates."""
 
     @property
@@ -213,7 +245,7 @@ class AsyncUpdateMemoriesLROPollingMethod(AsyncLROBasePolling):
 class UpdateMemoriesLROPoller(LROPoller[MemoryStoreUpdateCompletedResult]):
     """Custom LROPoller for Memory Store update operations."""
 
-    _polling_method: "UpdateMemoriesLROPollingMethod"
+    _polling_method: "_UpdateMemoriesLROPollingMethod"
 
     @property
     def update_id(self) -> str:
@@ -263,7 +295,7 @@ class UpdateMemoriesLROPoller(LROPoller[MemoryStoreUpdateCompletedResult]):
 class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResult]):
     """Custom AsyncLROPoller for Memory Store update operations."""
 
-    _polling_method: "AsyncUpdateMemoriesLROPollingMethod"
+    _polling_method: "_AsyncUpdateMemoriesLROPollingMethod"
 
     @property
     def update_id(self) -> str:
@@ -315,8 +347,6 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
 
 __all__: List[str] = [
     "CustomCredential",
-    "UpdateMemoriesLROPollingMethod",
-    "AsyncUpdateMemoriesLROPollingMethod",
     "UpdateMemoriesLROPoller",
     "AsyncUpdateMemoriesLROPoller",
 ]  # Add all objects you want publicly available to users at this package level

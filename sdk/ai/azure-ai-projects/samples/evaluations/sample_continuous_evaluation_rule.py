@@ -28,10 +28,10 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_AGENT_NAME - The name of the AI agent to use for evaluation.
-    3) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) FOUNDRY_AGENT_NAME - The name of the AI agent to use for evaluation.
+    3) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
@@ -50,7 +50,7 @@ from azure.ai.projects.models import (
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
@@ -61,9 +61,9 @@ with (
     # Create agent
 
     agent = project_client.agents.create_version(
-        agent_name=os.environ["AZURE_AI_AGENT_NAME"],
+        agent_name=os.environ["FOUNDRY_AGENT_NAME"],
         definition=PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="You are a helpful assistant that answers general questions",
         ),
     )
@@ -118,7 +118,7 @@ with (
             conversation_id=conversation.id,
             items=[{"type": "message", "role": "user", "content": f"Question {i}: What is the capital city?"}],
         )
-        print(f"Added a user message to the conversation")
+        print("Added a user message to the conversation")
 
         response = openai_client.responses.create(
             conversation=conversation.id,
@@ -145,7 +145,7 @@ with (
 
     MAX_LOOP = 20
     for _ in range(0, MAX_LOOP):
-        print(f"Waiting for eval run to complete...")
+        print("Waiting for eval run to complete...")
 
         eval_run_list = openai_client.evals.runs.list(
             eval_id=eval_object.id,

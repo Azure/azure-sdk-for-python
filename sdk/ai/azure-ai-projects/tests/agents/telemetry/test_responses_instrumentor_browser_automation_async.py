@@ -8,7 +8,16 @@ Async tests for ResponsesInstrumentor with browser automation agents.
 """
 
 import os
+import json
 import pytest
+from gen_ai_trace_verifier import GenAiTraceVerifier  # pylint: disable=import-error
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import RecordedTransport
+from test_base import servicePreparer
+from test_ai_instrumentor_base import (  # pylint: disable=import-error
+    TestAiAgentsInstrumentorBase,
+    CONTENT_TRACING_ENV_VARIABLE,
+)
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
 from azure.ai.projects.telemetry._utils import (
     OPERATION_NAME_INVOKE_AGENT,
@@ -16,22 +25,11 @@ from azure.ai.projects.telemetry._utils import (
     _set_use_message_events,
     RESPONSES_PROVIDER,
 )
-from azure.core.settings import settings
-from gen_ai_trace_verifier import GenAiTraceVerifier
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition
-
-from test_base import servicePreparer
-from test_ai_instrumentor_base import (
-    TestAiAgentsInstrumentorBase,
-    CONTENT_TRACING_ENV_VARIABLE,
-)
-
-import json
+from azure.core.settings import settings
 
 settings.tracing_implementation = "OpenTelemetry"
-_utils._span_impl_type = settings.tracing_implementation()
+_utils._span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
 
 
 @pytest.mark.skip(
@@ -40,6 +38,8 @@ _utils._span_impl_type = settings.tracing_implementation()
 class TestResponsesInstrumentorBrowserAutomationAsync(TestAiAgentsInstrumentorBase):
     """Async tests for ResponsesInstrumentor with browser automation agents."""
 
+    # pylint: disable=too-many-nested-blocks
+
     # ========================================
     # Async Browser Automation Tests - Non-Streaming
     # ========================================
@@ -47,7 +47,9 @@ class TestResponsesInstrumentorBrowserAutomationAsync(TestAiAgentsInstrumentorBa
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_browser_automation_non_streaming_with_content_recording(self, **kwargs):
+    async def test_async_browser_automation_non_streaming_with_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-statements,too-many-nested-blocks
         """Test asynchronous browser automation agent with non-streaming and content recording enabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -62,7 +64,7 @@ class TestResponsesInstrumentorBrowserAutomationAsync(TestAiAgentsInstrumentorBa
         assert AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
         browser_automation_connection_id = kwargs.get("browser_automation_project_connection_id")
         assert deployment_name is not None
         if browser_automation_connection_id is None:
@@ -179,7 +181,9 @@ class TestResponsesInstrumentorBrowserAutomationAsync(TestAiAgentsInstrumentorBa
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_browser_automation_non_streaming_without_content_recording(self, **kwargs):
+    async def test_async_browser_automation_non_streaming_without_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-statements,too-many-nested-blocks
         """Test asynchronous browser automation agent with non-streaming and content recording disabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -193,7 +197,7 @@ class TestResponsesInstrumentorBrowserAutomationAsync(TestAiAgentsInstrumentorBa
         assert not AIProjectInstrumentor().is_content_recording_enabled()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
         browser_automation_connection_id = kwargs.get("browser_automation_project_connection_id")
         assert deployment_name is not None
         if browser_automation_connection_id is None:
@@ -305,7 +309,9 @@ class TestResponsesInstrumentorBrowserAutomationAsync(TestAiAgentsInstrumentorBa
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_browser_automation_streaming_with_content_recording(self, **kwargs):
+    async def test_async_browser_automation_streaming_with_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-statements,too-many-nested-blocks
         """Test asynchronous browser automation agent with streaming and content recording enabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -315,7 +321,7 @@ class TestResponsesInstrumentorBrowserAutomationAsync(TestAiAgentsInstrumentorBa
         self.setup_telemetry()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
         browser_automation_connection_id = kwargs.get("browser_automation_project_connection_id")
         assert deployment_name is not None
         if browser_automation_connection_id is None:
@@ -430,7 +436,9 @@ class TestResponsesInstrumentorBrowserAutomationAsync(TestAiAgentsInstrumentorBa
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_browser_automation_streaming_without_content_recording(self, **kwargs):
+    async def test_async_browser_automation_streaming_without_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-statements,too-many-nested-blocks
         """Test asynchronous browser automation agent with streaming and content recording disabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -440,7 +448,7 @@ class TestResponsesInstrumentorBrowserAutomationAsync(TestAiAgentsInstrumentorBa
         self.setup_telemetry()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
         browser_automation_connection_id = kwargs.get("browser_automation_project_connection_id")
         assert deployment_name is not None
         if browser_automation_connection_id is None:

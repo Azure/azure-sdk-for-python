@@ -1,13 +1,13 @@
-# pylint: disable=too-many-lines,line-too-long,useless-suppression
+# pylint: disable=too-many-lines,line-too-long,useless-suppression,broad-exception-caught
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 # cSpell:disable
 
-import pytest
 import time
 from typing import Final
+import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport, is_live, is_live_and_not_recording
 from azure.core.exceptions import ResourceNotFoundError
@@ -26,7 +26,7 @@ class TestAgentMemorySearch(TestBase):
     )
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_agent_memory_search(self, **kwargs):
+    def test_agent_memory_search(self, **kwargs):  # pylint: disable=too-many-statements
         """
         Test agent with Memory Search tool for contextual memory retrieval.
 
@@ -54,7 +54,7 @@ class TestAgentMemorySearch(TestBase):
         DELETE /memory_stores/{memory_store_name}            project_client.beta.memory_stores.delete()
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
         chat_model = kwargs.get("memory_store_chat_model_deployment_name")
         embedding_model = kwargs.get("memory_store_embedding_model_deployment_name")
 

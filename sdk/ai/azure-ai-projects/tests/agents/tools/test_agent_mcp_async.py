@@ -5,12 +5,11 @@
 # ------------------------------------
 # cSpell:disable
 
-import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
-from azure.ai.projects.models import PromptAgentDefinition, MCPTool, Tool
 from openai.types.responses.response_input_param import McpApprovalResponse, ResponseInputParam
+from azure.ai.projects.models import PromptAgentDefinition, MCPTool, Tool
 
 
 class TestAgentMCPAsync(TestBase):
@@ -21,7 +20,7 @@ class TestAgentMCPAsync(TestBase):
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_mcp_basic_async(self, **kwargs):
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         async with (
             self.create_async_client(operation_group="agents", **kwargs) as project_client,

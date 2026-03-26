@@ -5,13 +5,12 @@
 # ------------------------------------
 import os
 import re
-import pytest
-from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import DatasetVersion, DatasetType
-from azure.ai.projects.models._enums import ConnectionType
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import is_live, add_general_regex_sanitizer
+from azure.ai.projects.aio import AIProjectClient
+from azure.ai.projects.models import DatasetVersion, DatasetType
+from azure.ai.projects.models._enums import ConnectionType
 from azure.core.exceptions import HttpResponseError
 
 # Construct the paths to the data folder and data file used in this test
@@ -38,7 +37,7 @@ class TestDatasetsAsync(TestBase):
 
         async with self.create_async_client(**kwargs) as project_client:
 
-            print(f"Get the default Azure Storage connection to use for uploading files.")
+            print("Get the default Azure Storage connection to use for uploading files.")
             connection_name = (await project_client.connections.get_default(ConnectionType.AZURE_STORAGE_ACCOUNT)).name
             print(
                 f"[test_datasets_upload_file] Upload a single file and create a new Dataset `{dataset_name}`, version `{dataset_version}`, to reference the file."
@@ -91,6 +90,7 @@ class TestDatasetsAsync(TestBase):
             print(dataset_credential)
             TestBase.validate_dataset_credential(dataset_credential)
 
+            # pylint: disable=pointless-string-statement
             """
             print("[test_datasets_upload_file] List latest versions of all Datasets:")
             empty = True
@@ -138,7 +138,7 @@ class TestDatasetsAsync(TestBase):
     @recorded_by_proxy_async
     async def test_datasets_upload_folder_async(self, **kwargs):
 
-        endpoint = kwargs.pop("azure_ai_project_endpoint")
+        endpoint = kwargs.pop("foundry_project_endpoint")
         print("\n=====> Endpoint:", endpoint)
 
         dataset_name = self.test_datasets_params["dataset_name_4"]
@@ -153,7 +153,7 @@ class TestDatasetsAsync(TestBase):
             credential=self.get_credential(AIProjectClient, is_async=True),
         ) as project_client:
 
-            print(f"Get the default Azure Storage connection to use for uploading files.")
+            print("Get the default Azure Storage connection to use for uploading files.")
             connection_name = (await project_client.connections.get_default(ConnectionType.AZURE_STORAGE_ACCOUNT)).name
             print(
                 f"[test_datasets_upload_folder] Upload files in a folder (including sub-folders) and create a new version `{dataset_version}` in the same Dataset, to reference the files."

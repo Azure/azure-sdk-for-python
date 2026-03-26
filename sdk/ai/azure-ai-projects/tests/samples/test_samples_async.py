@@ -17,6 +17,7 @@ from test_samples_helpers import (
     get_sample_env_vars,
     memories_instructions,
     agents_instructions,
+    chat_completions_instructions,
     resource_management_instructions,
 )
 
@@ -50,8 +51,6 @@ class TestSamplesAsync(AzureRecordedTestCase):
         await executor.execute_async()
         await executor.validate_print_calls_by_llm_async(
             instructions=agent_tools_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-            model=kwargs["azure_ai_model_deployment_name"],
         )
 
     @pytest.mark.parametrize(
@@ -75,8 +74,6 @@ class TestSamplesAsync(AzureRecordedTestCase):
         await executor.execute_async()
         await executor.validate_print_calls_by_llm_async(
             instructions=memories_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-            model=kwargs["azure_ai_model_deployment_name"],
         )
 
     @pytest.mark.parametrize(
@@ -95,8 +92,6 @@ class TestSamplesAsync(AzureRecordedTestCase):
         await executor.execute_async()
         await executor.validate_print_calls_by_llm_async(
             instructions=agents_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-            model=kwargs["azure_ai_model_deployment_name"],
         )
 
     @pytest.mark.parametrize(
@@ -117,8 +112,6 @@ class TestSamplesAsync(AzureRecordedTestCase):
         await executor.execute_async()
         await executor.validate_print_calls_by_llm_async(
             instructions=resource_management_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-            model=kwargs["azure_ai_model_deployment_name"],
         )
 
     @pytest.mark.parametrize(
@@ -139,8 +132,6 @@ class TestSamplesAsync(AzureRecordedTestCase):
         await executor.execute_async()
         await executor.validate_print_calls_by_llm_async(
             instructions=resource_management_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-            model=kwargs["azure_ai_model_deployment_name"],
         )
 
     @pytest.mark.parametrize(
@@ -159,8 +150,6 @@ class TestSamplesAsync(AzureRecordedTestCase):
         await executor.execute_async()
         await executor.validate_print_calls_by_llm_async(
             instructions=resource_management_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-            model=kwargs["azure_ai_model_deployment_name"],
         )
 
     @pytest.mark.parametrize(
@@ -184,6 +173,22 @@ class TestSamplesAsync(AzureRecordedTestCase):
             # Proxy server probably not able to parse the captured print content
             await executor.validate_print_calls_by_llm_async(
                 instructions=resource_management_instructions,
-                project_endpoint=kwargs["azure_ai_project_endpoint"],
-                model=kwargs["azure_ai_model_deployment_name"],
             )
+
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_async_sample_paths(
+            "chat_completions",
+            samples_to_skip=[],
+        ),
+    )
+    @servicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_chat_completions_samples(self, sample_path: str, **kwargs) -> None:
+        env_vars = get_sample_env_vars(kwargs)
+        executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        await executor.execute_async()
+        await executor.validate_print_calls_by_llm_async(
+            instructions=chat_completions_instructions,
+        )
