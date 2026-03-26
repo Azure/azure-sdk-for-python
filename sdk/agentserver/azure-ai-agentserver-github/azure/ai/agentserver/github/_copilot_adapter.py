@@ -82,6 +82,32 @@ class _HealthCheckFilter(_logging.Filter):
 
 
 # ---------------------------------------------------------------------------
+# URL derivation
+# ---------------------------------------------------------------------------
+
+def _derive_resource_url_from_project_endpoint(project_endpoint: str) -> str:
+    """Derive AZURE_AI_FOUNDRY_RESOURCE_URL from AZURE_AI_PROJECT_ENDPOINT.
+
+    Converts ``https://<resource>.services.ai.azure.com/api/projects/<project>``
+    to ``https://<resource>.cognitiveservices.azure.com``.
+    """
+    from urllib.parse import urlparse
+
+    parsed = urlparse(project_endpoint)
+    hostname = parsed.hostname or ""
+
+    for project_pat, resource_pat in [
+        (".services.ai.azure.com", ".cognitiveservices.azure.com"),
+        (".services.ai.azure.cn", ".cognitiveservices.azure.cn"),
+        (".services.ai.azure.us", ".cognitiveservices.azure.us"),
+    ]:
+        if project_pat in hostname:
+            return f"https://{hostname.replace(project_pat, resource_pat)}"
+
+    raise ValueError(f"Cannot derive RESOURCE_URL from: {project_endpoint}")
+
+
+# ---------------------------------------------------------------------------
 # Session config builder
 # ---------------------------------------------------------------------------
 
@@ -96,7 +122,16 @@ def _build_session_config() -> Dict[str, Any]:
     or a static API key.
     """
     foundry_url = os.getenv("AZURE_AI_FOUNDRY_RESOURCE_URL")
-    model = os.getenv("COPILOT_MODEL", "gpt-4.1")
+    project_endpoint = os.getenv("AZURE_AI_PROJECT_ENDPOINT")
+    model = os.getenv("AZURE_AI_FOUNDRY_MODEL") or os.getenv("COPILOT_MODEL")
+
+    # Auto-derive RESOURCE_URL from PROJECT_ENDPOINT if not set
+    if not foundry_url and project_endpoint:
+        try:
+            foundry_url = _derive_resource_url_from_project_endpoint(project_endpoint)
+            logger.info(f"Auto-derived RESOURCE_URL from PROJECT_ENDPOINT: {foundry_url}")
+        except ValueError as e:
+            logger.warning(f"Could not derive RESOURCE_URL: {e}")
 
     if foundry_url:
         base_url = foundry_url.rstrip("/") + "/openai/v1/"
@@ -105,28 +140,30 @@ def _build_session_config() -> Dict[str, Any]:
         if api_key:
             logger.info(f"BYOK mode (API key): {base_url}")
             return {
-                "model": model,
+                "model": model or "gpt-4.1",
                 "provider": ProviderConfig(
                     type="openai",
                     base_url=base_url,
                     bearer_token=api_key,
                     wire_api="responses",
                 ),
+                "_foundry_resource_url": foundry_url,
             }
 
         logger.info(f"BYOK mode (Managed Identity): {base_url}")
         return {
-            "model": model,
+            "model": model or "gpt-4.1",
             "provider": ProviderConfig(
                 type="openai",
                 base_url=base_url,
                 bearer_token="placeholder",  # refreshed before first use
                 wire_api="responses",
             ),
+            "_foundry_resource_url": foundry_url,
         }
 
     # Fallback: default GitHub Copilot models
-    return {"model": os.getenv("COPILOT_MODEL", "gpt-5")}
+    return {"model": model or os.getenv("COPILOT_MODEL", "gpt-5")}
 
 
 # ---------------------------------------------------------------------------
@@ -259,7 +296,9 @@ class CopilotAdapter(FoundryCBAgent):
                 f"Creating new Copilot session"
                 + (f" for conversation {conversation_id!r}" if conversation_id else "")
             )
-            session = await client.create_session(**config, on_permission_request=_on_permission)
+            # Filter out internal flags (starting with _) before passing to SDK
+            sdk_config = {k: v for k, v in config.items() if not k.startswith("_")}
+            session = await client.create_session(**sdk_config, on_permission_request=_on_permission)
             if conversation_id:
                 self._sessions[conversation_id] = session
         else:
@@ -611,8 +650,9 @@ class GitHubCopilotAdapter(CopilotAdapter):
                         return PermissionRequestResult(kind="approved")
                     return {"kind": "approved"}
 
+                sdk_config = {k: v for k, v in config.items() if not k.startswith("_")}
                 session = await client.create_session(
-                    **config,
+                    **sdk_config,
                     on_permission_request=_approve_all,
                 )
                 preamble = (
