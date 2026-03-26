@@ -30,13 +30,12 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.subnets.begin_prepare_network_policies(
+    client.subnets.begin_prepare_network_policies(
         resource_group_name="rg1",
         virtual_network_name="test-vnet",
         subnet_name="subnet1",
         prepare_network_policies_request_parameters={"serviceName": "Microsoft.Sql/managedInstances"},
     ).result()
-    print(response)
 
 
 # x-ms-original-file: 2025-05-01/SubnetPrepareNetworkPolicies.json

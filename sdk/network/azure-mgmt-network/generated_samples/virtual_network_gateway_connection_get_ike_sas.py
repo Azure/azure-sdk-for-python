@@ -30,10 +30,11 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.virtual_network_gateway_connections.begin_get_ike_sas(
+    response = client.virtual_network_gateway_connections.begin_get_ike_sas(
         resource_group_name="rg1",
         virtual_network_gateway_connection_name="vpngwcn1",
     ).result()
+    print(response)
 
 
 # x-ms-original-file: 2025-05-01/VirtualNetworkGatewayConnectionGetIkeSas.json

@@ -24,8 +24,8 @@ class TestNetworkManagementVipSwapOperations(AzureMgmtRecordedTestCase):
         response = self.client.vip_swap.get(
             group_name="str",
             resource_name="str",
-            singleton_resource="str",
             api_version="2025-05-01",
+            singleton_resource="swap",
         )
 
         # please add some check logic here by yourself
@@ -37,9 +37,9 @@ class TestNetworkManagementVipSwapOperations(AzureMgmtRecordedTestCase):
         response = self.client.vip_swap.begin_create(
             group_name="str",
             resource_name="str",
-            singleton_resource="str",
             parameters={"id": "str", "name": "str", "properties": {"slotType": "str"}, "type": "str"},
             api_version="2025-05-01",
+            singleton_resource="swap",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

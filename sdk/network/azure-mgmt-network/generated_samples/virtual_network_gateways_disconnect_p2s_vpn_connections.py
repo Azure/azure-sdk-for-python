@@ -30,12 +30,11 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.virtual_network_gateways.begin_disconnect_virtual_network_gateway_vpn_connections(
+    client.virtual_network_gateways.begin_disconnect_virtual_network_gateway_vpn_connections(
         resource_group_name="vpn-gateway-test",
         virtual_network_gateway_name="vpngateway",
         request={"vpnConnectionIds": ["vpnconnId1", "vpnconnId2"]},
     ).result()
-    print(response)
 
 
 # x-ms-original-file: 2025-05-01/VirtualNetworkGatewaysDisconnectP2sVpnConnections.json

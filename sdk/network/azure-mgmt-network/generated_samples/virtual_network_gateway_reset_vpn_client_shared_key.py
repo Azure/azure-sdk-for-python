@@ -30,11 +30,10 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.virtual_network_gateways.begin_reset_vpn_client_shared_key(
+    client.virtual_network_gateways.begin_reset_vpn_client_shared_key(
         resource_group_name="rg1",
         virtual_network_gateway_name="vpngw",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: 2025-05-01/VirtualNetworkGatewayResetVpnClientSharedKey.json

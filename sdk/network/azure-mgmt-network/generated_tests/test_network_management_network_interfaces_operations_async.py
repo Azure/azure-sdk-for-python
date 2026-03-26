@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -18,6 +19,7445 @@ AZURE_LOCATION = "eastus"
 class TestNetworkManagementNetworkInterfacesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(NetworkManagementClient, is_async=True)
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_network_interfaces_get_cloud_service_network_interface(self, resource_group):
+        response = await self.client.network_interfaces.get_cloud_service_network_interface(
+            resource_group_name=resource_group.name,
+            cloud_service_name="str",
+            role_instance_name="str",
+            network_interface_name="str",
+            api_version="2025-05-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_network_interfaces_list_cloud_service_role_instance_network_interfaces(self, resource_group):
+        response = self.client.network_interfaces.list_cloud_service_role_instance_network_interfaces(
+            resource_group_name=resource_group.name,
+            cloud_service_name="str",
+            role_instance_name="str",
+            api_version="2025-05-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_network_interfaces_get_virtual_machine_scale_set_network_interface(self, resource_group):
+        response = await self.client.network_interfaces.get_virtual_machine_scale_set_network_interface(
+            resource_group_name=resource_group.name,
+            virtual_machine_scale_set_name="str",
+            virtualmachine_index="str",
+            network_interface_name="str",
+            api_version="2018-10-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_network_interfaces_list_virtual_machine_scale_set_vm_network_interfaces(self, resource_group):
+        response = self.client.network_interfaces.list_virtual_machine_scale_set_vm_network_interfaces(
+            resource_group_name=resource_group.name,
+            virtual_machine_scale_set_name="str",
+            virtualmachine_index="str",
+            api_version="2018-10-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_network_interfaces_get(self, resource_group):
+        response = await self.client.network_interfaces.get(
+            resource_group_name=resource_group.name,
+            network_interface_name="str",
+            api_version="2025-05-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_network_interfaces_begin_create_or_update(self, resource_group):
+        response = await (
+            await self.client.network_interfaces.begin_create_or_update(
+                resource_group_name=resource_group.name,
+                network_interface_name="str",
+                parameters={
+                    "etag": "str",
+                    "extendedLocation": {"name": "str", "type": "str"},
+                    "id": "str",
+                    "location": "str",
+                    "name": "str",
+                    "properties": {
+                        "auxiliaryMode": "str",
+                        "auxiliarySku": "str",
+                        "defaultOutboundConnectivityEnabled": bool,
+                        "disableTcpStateTracking": bool,
+                        "dnsSettings": {
+                            "appliedDnsServers": ["str"],
+                            "dnsServers": ["str"],
+                            "internalDnsNameLabel": "str",
+                            "internalDomainNameSuffix": "str",
+                            "internalFqdn": "str",
+                        },
+                        "dscpConfiguration": {"id": "str"},
+                        "enableAcceleratedNetworking": bool,
+                        "enableIPForwarding": bool,
+                        "hostedWorkloads": ["str"],
+                        "ipConfigurations": [
+                            {
+                                "etag": "str",
+                                "id": "str",
+                                "name": "str",
+                                "properties": {
+                                    "applicationGatewayBackendAddressPools": [
+                                        {
+                                            "etag": "str",
+                                            "id": "str",
+                                            "name": "str",
+                                            "properties": {
+                                                "backendAddresses": [{"fqdn": "str", "ipAddress": "str"}],
+                                                "backendIPConfigurations": [...],
+                                                "provisioningState": "str",
+                                            },
+                                            "type": "str",
+                                        }
+                                    ],
+                                    "applicationSecurityGroups": [
+                                        {
+                                            "etag": "str",
+                                            "id": "str",
+                                            "location": "str",
+                                            "name": "str",
+                                            "properties": {"provisioningState": "str", "resourceGuid": "str"},
+                                            "tags": {"str": "str"},
+                                            "type": "str",
+                                        }
+                                    ],
+                                    "gatewayLoadBalancer": {"id": "str"},
+                                    "loadBalancerBackendAddressPools": [
+                                        {
+                                            "etag": "str",
+                                            "id": "str",
+                                            "name": "str",
+                                            "properties": {
+                                                "backendIPConfigurations": [...],
+                                                "drainPeriodInSeconds": 0,
+                                                "inboundNatRules": [{"id": "str"}],
+                                                "loadBalancerBackendAddresses": [
+                                                    {
+                                                        "name": "str",
+                                                        "properties": {
+                                                            "adminState": "str",
+                                                            "inboundNatRulesPortMapping": [
+                                                                {
+                                                                    "backendPort": 0,
+                                                                    "frontendPort": 0,
+                                                                    "inboundNatRuleName": "str",
+                                                                }
+                                                            ],
+                                                            "ipAddress": "str",
+                                                            "loadBalancerFrontendIPConfiguration": {"id": "str"},
+                                                            "networkInterfaceIPConfiguration": {"id": "str"},
+                                                            "subnet": {"id": "str"},
+                                                            "virtualNetwork": {"id": "str"},
+                                                        },
+                                                    }
+                                                ],
+                                                "loadBalancingRules": [{"id": "str"}],
+                                                "location": "str",
+                                                "outboundRule": {"id": "str"},
+                                                "outboundRules": [{"id": "str"}],
+                                                "provisioningState": "str",
+                                                "syncMode": "str",
+                                                "tunnelInterfaces": [
+                                                    {"identifier": 0, "port": 0, "protocol": "str", "type": "str"}
+                                                ],
+                                                "virtualNetwork": {"id": "str"},
+                                            },
+                                            "type": "str",
+                                        }
+                                    ],
+                                    "loadBalancerInboundNatRules": [
+                                        {
+                                            "etag": "str",
+                                            "id": "str",
+                                            "name": "str",
+                                            "properties": {
+                                                "backendAddressPool": {"id": "str"},
+                                                "backendIPConfiguration": ...,
+                                                "backendPort": 0,
+                                                "enableFloatingIP": bool,
+                                                "enableTcpReset": bool,
+                                                "frontendIPConfiguration": {"id": "str"},
+                                                "frontendPort": 0,
+                                                "frontendPortRangeEnd": 0,
+                                                "frontendPortRangeStart": 0,
+                                                "idleTimeoutInMinutes": 0,
+                                                "protocol": "str",
+                                                "provisioningState": "str",
+                                            },
+                                            "type": "str",
+                                        }
+                                    ],
+                                    "primary": bool,
+                                    "privateIPAddress": "str",
+                                    "privateIPAddressPrefixLength": 0,
+                                    "privateIPAddressVersion": "str",
+                                    "privateIPAllocationMethod": "str",
+                                    "privateLinkConnectionProperties": {
+                                        "fqdns": ["str"],
+                                        "groupId": "str",
+                                        "requiredMemberName": "str",
+                                    },
+                                    "provisioningState": "str",
+                                    "publicIPAddress": {
+                                        "etag": "str",
+                                        "extendedLocation": {"name": "str", "type": "str"},
+                                        "id": "str",
+                                        "location": "str",
+                                        "name": "str",
+                                        "properties": {
+                                            "ddosSettings": {
+                                                "ddosProtectionPlan": {"id": "str"},
+                                                "protectionMode": "str",
+                                            },
+                                            "deleteOption": "str",
+                                            "dnsSettings": {
+                                                "domainNameLabel": "str",
+                                                "domainNameLabelScope": "str",
+                                                "fqdn": "str",
+                                                "reverseFqdn": "str",
+                                            },
+                                            "idleTimeoutInMinutes": 0,
+                                            "ipAddress": "str",
+                                            "ipConfiguration": {
+                                                "etag": "str",
+                                                "id": "str",
+                                                "name": "str",
+                                                "properties": {
+                                                    "privateIPAddress": "str",
+                                                    "privateIPAllocationMethod": "str",
+                                                    "provisioningState": "str",
+                                                    "publicIPAddress": ...,
+                                                    "subnet": {
+                                                        "etag": "str",
+                                                        "id": "str",
+                                                        "name": "str",
+                                                        "properties": {
+                                                            "addressPrefix": "str",
+                                                            "addressPrefixes": ["str"],
+                                                            "applicationGatewayIPConfigurations": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "provisioningState": "str",
+                                                                        "subnet": {"id": "str"},
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "defaultOutboundAccess": bool,
+                                                            "delegations": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "actions": ["str"],
+                                                                        "provisioningState": "str",
+                                                                        "serviceName": "str",
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "ipAllocations": [{"id": "str"}],
+                                                            "ipConfigurationProfiles": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "provisioningState": "str",
+                                                                        "subnet": ...,
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "ipConfigurations": [...],
+                                                            "ipamPoolPrefixAllocations": [
+                                                                {
+                                                                    "allocatedAddressPrefixes": ["str"],
+                                                                    "numberOfIpAddresses": "str",
+                                                                    "pool": {"id": "str"},
+                                                                }
+                                                            ],
+                                                            "natGateway": {"id": "str"},
+                                                            "networkSecurityGroup": {
+                                                                "etag": "str",
+                                                                "id": "str",
+                                                                "location": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "defaultSecurityRules": [
+                                                                        {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "access": "str",
+                                                                                "direction": "str",
+                                                                                "priority": 0,
+                                                                                "protocol": "str",
+                                                                                "description": "str",
+                                                                                "destinationAddressPrefix": "str",
+                                                                                "destinationAddressPrefixes": ["str"],
+                                                                                "destinationApplicationSecurityGroups": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "location": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "provisioningState": "str",
+                                                                                            "resourceGuid": "str",
+                                                                                        },
+                                                                                        "tags": {"str": "str"},
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "destinationPortRange": "str",
+                                                                                "destinationPortRanges": ["str"],
+                                                                                "provisioningState": "str",
+                                                                                "sourceAddressPrefix": "str",
+                                                                                "sourceAddressPrefixes": ["str"],
+                                                                                "sourceApplicationSecurityGroups": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "location": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "provisioningState": "str",
+                                                                                            "resourceGuid": "str",
+                                                                                        },
+                                                                                        "tags": {"str": "str"},
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "sourcePortRange": "str",
+                                                                                "sourcePortRanges": ["str"],
+                                                                            },
+                                                                            "type": "str",
+                                                                        }
+                                                                    ],
+                                                                    "flowLogs": [
+                                                                        {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "identity": {
+                                                                                "principalId": "str",
+                                                                                "tenantId": "str",
+                                                                                "type": "str",
+                                                                                "userAssignedIdentities": {
+                                                                                    "str": {
+                                                                                        "clientId": "str",
+                                                                                        "principalId": "str",
+                                                                                    }
+                                                                                },
+                                                                            },
+                                                                            "location": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "storageId": "str",
+                                                                                "targetResourceId": "str",
+                                                                                "enabled": bool,
+                                                                                "enabledFilteringCriteria": "str",
+                                                                                "flowAnalyticsConfiguration": {
+                                                                                    "networkWatcherFlowAnalyticsConfiguration": {
+                                                                                        "enabled": bool,
+                                                                                        "trafficAnalyticsInterval": 0,
+                                                                                        "workspaceId": "str",
+                                                                                        "workspaceRegion": "str",
+                                                                                        "workspaceResourceId": "str",
+                                                                                    }
+                                                                                },
+                                                                                "format": {"type": "str", "version": 0},
+                                                                                "provisioningState": "str",
+                                                                                "recordTypes": "str",
+                                                                                "retentionPolicy": {
+                                                                                    "days": 0,
+                                                                                    "enabled": bool,
+                                                                                },
+                                                                                "targetResourceGuid": "str",
+                                                                            },
+                                                                            "tags": {"str": "str"},
+                                                                            "type": "str",
+                                                                        }
+                                                                    ],
+                                                                    "flushConnection": bool,
+                                                                    "networkInterfaces": [...],
+                                                                    "provisioningState": "str",
+                                                                    "resourceGuid": "str",
+                                                                    "securityRules": [
+                                                                        {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "access": "str",
+                                                                                "direction": "str",
+                                                                                "priority": 0,
+                                                                                "protocol": "str",
+                                                                                "description": "str",
+                                                                                "destinationAddressPrefix": "str",
+                                                                                "destinationAddressPrefixes": ["str"],
+                                                                                "destinationApplicationSecurityGroups": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "location": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "provisioningState": "str",
+                                                                                            "resourceGuid": "str",
+                                                                                        },
+                                                                                        "tags": {"str": "str"},
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "destinationPortRange": "str",
+                                                                                "destinationPortRanges": ["str"],
+                                                                                "provisioningState": "str",
+                                                                                "sourceAddressPrefix": "str",
+                                                                                "sourceAddressPrefixes": ["str"],
+                                                                                "sourceApplicationSecurityGroups": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "location": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "provisioningState": "str",
+                                                                                            "resourceGuid": "str",
+                                                                                        },
+                                                                                        "tags": {"str": "str"},
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "sourcePortRange": "str",
+                                                                                "sourcePortRanges": ["str"],
+                                                                            },
+                                                                            "type": "str",
+                                                                        }
+                                                                    ],
+                                                                    "subnets": [...],
+                                                                },
+                                                                "tags": {"str": "str"},
+                                                                "type": "str",
+                                                            },
+                                                            "privateEndpointNetworkPolicies": "str",
+                                                            "privateEndpoints": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "extendedLocation": {"name": "str", "type": "str"},
+                                                                    "id": "str",
+                                                                    "location": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "applicationSecurityGroups": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "location": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "provisioningState": "str",
+                                                                                    "resourceGuid": "str",
+                                                                                },
+                                                                                "tags": {"str": "str"},
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "customDnsConfigs": [
+                                                                            {"fqdn": "str", "ipAddresses": ["str"]}
+                                                                        ],
+                                                                        "customNetworkInterfaceName": "str",
+                                                                        "ipConfigurations": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "groupId": "str",
+                                                                                    "memberName": "str",
+                                                                                    "privateIPAddress": "str",
+                                                                                },
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "ipVersionType": "str",
+                                                                        "manualPrivateLinkServiceConnections": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "groupIds": ["str"],
+                                                                                    "privateLinkServiceConnectionState": {
+                                                                                        "actionsRequired": "str",
+                                                                                        "description": "str",
+                                                                                        "status": "str",
+                                                                                    },
+                                                                                    "privateLinkServiceId": "str",
+                                                                                    "provisioningState": "str",
+                                                                                    "requestMessage": "str",
+                                                                                },
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "networkInterfaces": [...],
+                                                                        "privateLinkServiceConnections": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "groupIds": ["str"],
+                                                                                    "privateLinkServiceConnectionState": {
+                                                                                        "actionsRequired": "str",
+                                                                                        "description": "str",
+                                                                                        "status": "str",
+                                                                                    },
+                                                                                    "privateLinkServiceId": "str",
+                                                                                    "provisioningState": "str",
+                                                                                    "requestMessage": "str",
+                                                                                },
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "provisioningState": "str",
+                                                                        "subnet": ...,
+                                                                    },
+                                                                    "tags": {"str": "str"},
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "privateLinkServiceNetworkPolicies": "str",
+                                                            "provisioningState": "str",
+                                                            "purpose": "str",
+                                                            "resourceNavigationLinks": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "link": "str",
+                                                                        "linkedResourceType": "str",
+                                                                        "provisioningState": "str",
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "routeTable": {
+                                                                "etag": "str",
+                                                                "id": "str",
+                                                                "location": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "disableBgpRoutePropagation": bool,
+                                                                    "provisioningState": "str",
+                                                                    "resourceGuid": "str",
+                                                                    "routes": [
+                                                                        {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "nextHopType": "str",
+                                                                                "addressPrefix": "str",
+                                                                                "hasBgpOverride": bool,
+                                                                                "nextHopIpAddress": "str",
+                                                                                "provisioningState": "str",
+                                                                            },
+                                                                            "type": "str",
+                                                                        }
+                                                                    ],
+                                                                    "subnets": [...],
+                                                                },
+                                                                "tags": {"str": "str"},
+                                                                "type": "str",
+                                                            },
+                                                            "serviceAssociationLinks": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "allowDelete": bool,
+                                                                        "link": "str",
+                                                                        "linkedResourceType": "str",
+                                                                        "locations": ["str"],
+                                                                        "provisioningState": "str",
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "serviceEndpointPolicies": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "kind": "str",
+                                                                    "location": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "contextualServiceEndpointPolicies": ["str"],
+                                                                        "provisioningState": "str",
+                                                                        "resourceGuid": "str",
+                                                                        "serviceAlias": "str",
+                                                                        "serviceEndpointPolicyDefinitions": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "description": "str",
+                                                                                    "provisioningState": "str",
+                                                                                    "service": "str",
+                                                                                    "serviceResources": ["str"],
+                                                                                },
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "subnets": [...],
+                                                                    },
+                                                                    "tags": {"str": "str"},
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "serviceEndpoints": [
+                                                                {
+                                                                    "locations": ["str"],
+                                                                    "networkIdentifier": {"id": "str"},
+                                                                    "provisioningState": "str",
+                                                                    "service": "str",
+                                                                }
+                                                            ],
+                                                            "serviceGateway": {"id": "str"},
+                                                            "sharingScope": "str",
+                                                        },
+                                                        "type": "str",
+                                                    },
+                                                },
+                                            },
+                                            "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                            "linkedPublicIPAddress": ...,
+                                            "migrationPhase": "str",
+                                            "natGateway": {
+                                                "etag": "str",
+                                                "id": "str",
+                                                "location": "str",
+                                                "name": "str",
+                                                "properties": {
+                                                    "idleTimeoutInMinutes": 0,
+                                                    "provisioningState": "str",
+                                                    "publicIpAddresses": [{"id": "str"}],
+                                                    "publicIpAddressesV6": [{"id": "str"}],
+                                                    "publicIpPrefixes": [{"id": "str"}],
+                                                    "publicIpPrefixesV6": [{"id": "str"}],
+                                                    "resourceGuid": "str",
+                                                    "serviceGateway": {"id": "str"},
+                                                    "sourceVirtualNetwork": {"id": "str"},
+                                                    "subnets": [{"id": "str"}],
+                                                },
+                                                "sku": {"name": "str"},
+                                                "tags": {"str": "str"},
+                                                "type": "str",
+                                                "zones": ["str"],
+                                            },
+                                            "provisioningState": "str",
+                                            "publicIPAddressVersion": "str",
+                                            "publicIPAllocationMethod": "str",
+                                            "publicIPPrefix": {"id": "str"},
+                                            "resourceGuid": "str",
+                                            "servicePublicIPAddress": ...,
+                                        },
+                                        "sku": {"name": "str", "tier": "str"},
+                                        "tags": {"str": "str"},
+                                        "type": "str",
+                                        "zones": ["str"],
+                                    },
+                                    "subnet": {
+                                        "etag": "str",
+                                        "id": "str",
+                                        "name": "str",
+                                        "properties": {
+                                            "addressPrefix": "str",
+                                            "addressPrefixes": ["str"],
+                                            "applicationGatewayIPConfigurations": [
+                                                {
+                                                    "etag": "str",
+                                                    "id": "str",
+                                                    "name": "str",
+                                                    "properties": {"provisioningState": "str", "subnet": {"id": "str"}},
+                                                    "type": "str",
+                                                }
+                                            ],
+                                            "defaultOutboundAccess": bool,
+                                            "delegations": [
+                                                {
+                                                    "etag": "str",
+                                                    "id": "str",
+                                                    "name": "str",
+                                                    "properties": {
+                                                        "actions": ["str"],
+                                                        "provisioningState": "str",
+                                                        "serviceName": "str",
+                                                    },
+                                                    "type": "str",
+                                                }
+                                            ],
+                                            "ipAllocations": [{"id": "str"}],
+                                            "ipConfigurationProfiles": [
+                                                {
+                                                    "etag": "str",
+                                                    "id": "str",
+                                                    "name": "str",
+                                                    "properties": {"provisioningState": "str", "subnet": ...},
+                                                    "type": "str",
+                                                }
+                                            ],
+                                            "ipConfigurations": [
+                                                {
+                                                    "etag": "str",
+                                                    "id": "str",
+                                                    "name": "str",
+                                                    "properties": {
+                                                        "privateIPAddress": "str",
+                                                        "privateIPAllocationMethod": "str",
+                                                        "provisioningState": "str",
+                                                        "publicIPAddress": {
+                                                            "etag": "str",
+                                                            "extendedLocation": {"name": "str", "type": "str"},
+                                                            "id": "str",
+                                                            "location": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "ddosSettings": {
+                                                                    "ddosProtectionPlan": {"id": "str"},
+                                                                    "protectionMode": "str",
+                                                                },
+                                                                "deleteOption": "str",
+                                                                "dnsSettings": {
+                                                                    "domainNameLabel": "str",
+                                                                    "domainNameLabelScope": "str",
+                                                                    "fqdn": "str",
+                                                                    "reverseFqdn": "str",
+                                                                },
+                                                                "idleTimeoutInMinutes": 0,
+                                                                "ipAddress": "str",
+                                                                "ipConfiguration": ...,
+                                                                "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                "linkedPublicIPAddress": ...,
+                                                                "migrationPhase": "str",
+                                                                "natGateway": {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "location": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "idleTimeoutInMinutes": 0,
+                                                                        "provisioningState": "str",
+                                                                        "publicIpAddresses": [{"id": "str"}],
+                                                                        "publicIpAddressesV6": [{"id": "str"}],
+                                                                        "publicIpPrefixes": [{"id": "str"}],
+                                                                        "publicIpPrefixesV6": [{"id": "str"}],
+                                                                        "resourceGuid": "str",
+                                                                        "serviceGateway": {"id": "str"},
+                                                                        "sourceVirtualNetwork": {"id": "str"},
+                                                                        "subnets": [{"id": "str"}],
+                                                                    },
+                                                                    "sku": {"name": "str"},
+                                                                    "tags": {"str": "str"},
+                                                                    "type": "str",
+                                                                    "zones": ["str"],
+                                                                },
+                                                                "provisioningState": "str",
+                                                                "publicIPAddressVersion": "str",
+                                                                "publicIPAllocationMethod": "str",
+                                                                "publicIPPrefix": {"id": "str"},
+                                                                "resourceGuid": "str",
+                                                                "servicePublicIPAddress": ...,
+                                                            },
+                                                            "sku": {"name": "str", "tier": "str"},
+                                                            "tags": {"str": "str"},
+                                                            "type": "str",
+                                                            "zones": ["str"],
+                                                        },
+                                                        "subnet": ...,
+                                                    },
+                                                }
+                                            ],
+                                            "ipamPoolPrefixAllocations": [
+                                                {
+                                                    "allocatedAddressPrefixes": ["str"],
+                                                    "numberOfIpAddresses": "str",
+                                                    "pool": {"id": "str"},
+                                                }
+                                            ],
+                                            "natGateway": {"id": "str"},
+                                            "networkSecurityGroup": {
+                                                "etag": "str",
+                                                "id": "str",
+                                                "location": "str",
+                                                "name": "str",
+                                                "properties": {
+                                                    "defaultSecurityRules": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "access": "str",
+                                                                "direction": "str",
+                                                                "priority": 0,
+                                                                "protocol": "str",
+                                                                "description": "str",
+                                                                "destinationAddressPrefix": "str",
+                                                                "destinationAddressPrefixes": ["str"],
+                                                                "destinationApplicationSecurityGroups": [
+                                                                    {
+                                                                        "etag": "str",
+                                                                        "id": "str",
+                                                                        "location": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "provisioningState": "str",
+                                                                            "resourceGuid": "str",
+                                                                        },
+                                                                        "tags": {"str": "str"},
+                                                                        "type": "str",
+                                                                    }
+                                                                ],
+                                                                "destinationPortRange": "str",
+                                                                "destinationPortRanges": ["str"],
+                                                                "provisioningState": "str",
+                                                                "sourceAddressPrefix": "str",
+                                                                "sourceAddressPrefixes": ["str"],
+                                                                "sourceApplicationSecurityGroups": [
+                                                                    {
+                                                                        "etag": "str",
+                                                                        "id": "str",
+                                                                        "location": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "provisioningState": "str",
+                                                                            "resourceGuid": "str",
+                                                                        },
+                                                                        "tags": {"str": "str"},
+                                                                        "type": "str",
+                                                                    }
+                                                                ],
+                                                                "sourcePortRange": "str",
+                                                                "sourcePortRanges": ["str"],
+                                                            },
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "flowLogs": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "identity": {
+                                                                "principalId": "str",
+                                                                "tenantId": "str",
+                                                                "type": "str",
+                                                                "userAssignedIdentities": {
+                                                                    "str": {"clientId": "str", "principalId": "str"}
+                                                                },
+                                                            },
+                                                            "location": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "storageId": "str",
+                                                                "targetResourceId": "str",
+                                                                "enabled": bool,
+                                                                "enabledFilteringCriteria": "str",
+                                                                "flowAnalyticsConfiguration": {
+                                                                    "networkWatcherFlowAnalyticsConfiguration": {
+                                                                        "enabled": bool,
+                                                                        "trafficAnalyticsInterval": 0,
+                                                                        "workspaceId": "str",
+                                                                        "workspaceRegion": "str",
+                                                                        "workspaceResourceId": "str",
+                                                                    }
+                                                                },
+                                                                "format": {"type": "str", "version": 0},
+                                                                "provisioningState": "str",
+                                                                "recordTypes": "str",
+                                                                "retentionPolicy": {"days": 0, "enabled": bool},
+                                                                "targetResourceGuid": "str",
+                                                            },
+                                                            "tags": {"str": "str"},
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "flushConnection": bool,
+                                                    "networkInterfaces": [...],
+                                                    "provisioningState": "str",
+                                                    "resourceGuid": "str",
+                                                    "securityRules": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "access": "str",
+                                                                "direction": "str",
+                                                                "priority": 0,
+                                                                "protocol": "str",
+                                                                "description": "str",
+                                                                "destinationAddressPrefix": "str",
+                                                                "destinationAddressPrefixes": ["str"],
+                                                                "destinationApplicationSecurityGroups": [
+                                                                    {
+                                                                        "etag": "str",
+                                                                        "id": "str",
+                                                                        "location": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "provisioningState": "str",
+                                                                            "resourceGuid": "str",
+                                                                        },
+                                                                        "tags": {"str": "str"},
+                                                                        "type": "str",
+                                                                    }
+                                                                ],
+                                                                "destinationPortRange": "str",
+                                                                "destinationPortRanges": ["str"],
+                                                                "provisioningState": "str",
+                                                                "sourceAddressPrefix": "str",
+                                                                "sourceAddressPrefixes": ["str"],
+                                                                "sourceApplicationSecurityGroups": [
+                                                                    {
+                                                                        "etag": "str",
+                                                                        "id": "str",
+                                                                        "location": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "provisioningState": "str",
+                                                                            "resourceGuid": "str",
+                                                                        },
+                                                                        "tags": {"str": "str"},
+                                                                        "type": "str",
+                                                                    }
+                                                                ],
+                                                                "sourcePortRange": "str",
+                                                                "sourcePortRanges": ["str"],
+                                                            },
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "subnets": [...],
+                                                },
+                                                "tags": {"str": "str"},
+                                                "type": "str",
+                                            },
+                                            "privateEndpointNetworkPolicies": "str",
+                                            "privateEndpoints": [
+                                                {
+                                                    "etag": "str",
+                                                    "extendedLocation": {"name": "str", "type": "str"},
+                                                    "id": "str",
+                                                    "location": "str",
+                                                    "name": "str",
+                                                    "properties": {
+                                                        "applicationSecurityGroups": [
+                                                            {
+                                                                "etag": "str",
+                                                                "id": "str",
+                                                                "location": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "provisioningState": "str",
+                                                                    "resourceGuid": "str",
+                                                                },
+                                                                "tags": {"str": "str"},
+                                                                "type": "str",
+                                                            }
+                                                        ],
+                                                        "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
+                                                        "customNetworkInterfaceName": "str",
+                                                        "ipConfigurations": [
+                                                            {
+                                                                "etag": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "groupId": "str",
+                                                                    "memberName": "str",
+                                                                    "privateIPAddress": "str",
+                                                                },
+                                                                "type": "str",
+                                                            }
+                                                        ],
+                                                        "ipVersionType": "str",
+                                                        "manualPrivateLinkServiceConnections": [
+                                                            {
+                                                                "etag": "str",
+                                                                "id": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "groupIds": ["str"],
+                                                                    "privateLinkServiceConnectionState": {
+                                                                        "actionsRequired": "str",
+                                                                        "description": "str",
+                                                                        "status": "str",
+                                                                    },
+                                                                    "privateLinkServiceId": "str",
+                                                                    "provisioningState": "str",
+                                                                    "requestMessage": "str",
+                                                                },
+                                                                "type": "str",
+                                                            }
+                                                        ],
+                                                        "networkInterfaces": [...],
+                                                        "privateLinkServiceConnections": [
+                                                            {
+                                                                "etag": "str",
+                                                                "id": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "groupIds": ["str"],
+                                                                    "privateLinkServiceConnectionState": {
+                                                                        "actionsRequired": "str",
+                                                                        "description": "str",
+                                                                        "status": "str",
+                                                                    },
+                                                                    "privateLinkServiceId": "str",
+                                                                    "provisioningState": "str",
+                                                                    "requestMessage": "str",
+                                                                },
+                                                                "type": "str",
+                                                            }
+                                                        ],
+                                                        "provisioningState": "str",
+                                                        "subnet": ...,
+                                                    },
+                                                    "tags": {"str": "str"},
+                                                    "type": "str",
+                                                }
+                                            ],
+                                            "privateLinkServiceNetworkPolicies": "str",
+                                            "provisioningState": "str",
+                                            "purpose": "str",
+                                            "resourceNavigationLinks": [
+                                                {
+                                                    "etag": "str",
+                                                    "id": "str",
+                                                    "name": "str",
+                                                    "properties": {
+                                                        "link": "str",
+                                                        "linkedResourceType": "str",
+                                                        "provisioningState": "str",
+                                                    },
+                                                    "type": "str",
+                                                }
+                                            ],
+                                            "routeTable": {
+                                                "etag": "str",
+                                                "id": "str",
+                                                "location": "str",
+                                                "name": "str",
+                                                "properties": {
+                                                    "disableBgpRoutePropagation": bool,
+                                                    "provisioningState": "str",
+                                                    "resourceGuid": "str",
+                                                    "routes": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "nextHopType": "str",
+                                                                "addressPrefix": "str",
+                                                                "hasBgpOverride": bool,
+                                                                "nextHopIpAddress": "str",
+                                                                "provisioningState": "str",
+                                                            },
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "subnets": [...],
+                                                },
+                                                "tags": {"str": "str"},
+                                                "type": "str",
+                                            },
+                                            "serviceAssociationLinks": [
+                                                {
+                                                    "etag": "str",
+                                                    "id": "str",
+                                                    "name": "str",
+                                                    "properties": {
+                                                        "allowDelete": bool,
+                                                        "link": "str",
+                                                        "linkedResourceType": "str",
+                                                        "locations": ["str"],
+                                                        "provisioningState": "str",
+                                                    },
+                                                    "type": "str",
+                                                }
+                                            ],
+                                            "serviceEndpointPolicies": [
+                                                {
+                                                    "etag": "str",
+                                                    "id": "str",
+                                                    "kind": "str",
+                                                    "location": "str",
+                                                    "name": "str",
+                                                    "properties": {
+                                                        "contextualServiceEndpointPolicies": ["str"],
+                                                        "provisioningState": "str",
+                                                        "resourceGuid": "str",
+                                                        "serviceAlias": "str",
+                                                        "serviceEndpointPolicyDefinitions": [
+                                                            {
+                                                                "etag": "str",
+                                                                "id": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "description": "str",
+                                                                    "provisioningState": "str",
+                                                                    "service": "str",
+                                                                    "serviceResources": ["str"],
+                                                                },
+                                                                "type": "str",
+                                                            }
+                                                        ],
+                                                        "subnets": [...],
+                                                    },
+                                                    "tags": {"str": "str"},
+                                                    "type": "str",
+                                                }
+                                            ],
+                                            "serviceEndpoints": [
+                                                {
+                                                    "locations": ["str"],
+                                                    "networkIdentifier": {"id": "str"},
+                                                    "provisioningState": "str",
+                                                    "service": "str",
+                                                }
+                                            ],
+                                            "serviceGateway": {"id": "str"},
+                                            "sharingScope": "str",
+                                        },
+                                        "type": "str",
+                                    },
+                                    "virtualNetworkTaps": [
+                                        {
+                                            "etag": "str",
+                                            "id": "str",
+                                            "location": "str",
+                                            "name": "str",
+                                            "properties": {
+                                                "destinationLoadBalancerFrontEndIPConfiguration": {
+                                                    "etag": "str",
+                                                    "id": "str",
+                                                    "name": "str",
+                                                    "properties": {
+                                                        "gatewayLoadBalancer": {"id": "str"},
+                                                        "inboundNatPools": [{"id": "str"}],
+                                                        "inboundNatRules": [{"id": "str"}],
+                                                        "loadBalancingRules": [{"id": "str"}],
+                                                        "outboundRules": [{"id": "str"}],
+                                                        "privateIPAddress": "str",
+                                                        "privateIPAddressVersion": "str",
+                                                        "privateIPAllocationMethod": "str",
+                                                        "provisioningState": "str",
+                                                        "publicIPAddress": {
+                                                            "etag": "str",
+                                                            "extendedLocation": {"name": "str", "type": "str"},
+                                                            "id": "str",
+                                                            "location": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "ddosSettings": {
+                                                                    "ddosProtectionPlan": {"id": "str"},
+                                                                    "protectionMode": "str",
+                                                                },
+                                                                "deleteOption": "str",
+                                                                "dnsSettings": {
+                                                                    "domainNameLabel": "str",
+                                                                    "domainNameLabelScope": "str",
+                                                                    "fqdn": "str",
+                                                                    "reverseFqdn": "str",
+                                                                },
+                                                                "idleTimeoutInMinutes": 0,
+                                                                "ipAddress": "str",
+                                                                "ipConfiguration": {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "privateIPAddress": "str",
+                                                                        "privateIPAllocationMethod": "str",
+                                                                        "provisioningState": "str",
+                                                                        "publicIPAddress": ...,
+                                                                        "subnet": {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "addressPrefix": "str",
+                                                                                "addressPrefixes": ["str"],
+                                                                                "applicationGatewayIPConfigurations": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "provisioningState": "str",
+                                                                                            "subnet": {"id": "str"},
+                                                                                        },
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "defaultOutboundAccess": bool,
+                                                                                "delegations": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "actions": ["str"],
+                                                                                            "provisioningState": "str",
+                                                                                            "serviceName": "str",
+                                                                                        },
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "ipAllocations": [{"id": "str"}],
+                                                                                "ipConfigurationProfiles": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "provisioningState": "str",
+                                                                                            "subnet": ...,
+                                                                                        },
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "ipConfigurations": [...],
+                                                                                "ipamPoolPrefixAllocations": [
+                                                                                    {
+                                                                                        "allocatedAddressPrefixes": [
+                                                                                            "str"
+                                                                                        ],
+                                                                                        "numberOfIpAddresses": "str",
+                                                                                        "pool": {"id": "str"},
+                                                                                    }
+                                                                                ],
+                                                                                "natGateway": {"id": "str"},
+                                                                                "networkSecurityGroup": {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "location": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "defaultSecurityRules": [
+                                                                                            {
+                                                                                                "etag": "str",
+                                                                                                "id": "str",
+                                                                                                "name": "str",
+                                                                                                "properties": {
+                                                                                                    "access": "str",
+                                                                                                    "direction": "str",
+                                                                                                    "priority": 0,
+                                                                                                    "protocol": "str",
+                                                                                                    "description": "str",
+                                                                                                    "destinationAddressPrefix": "str",
+                                                                                                    "destinationAddressPrefixes": [
+                                                                                                        "str"
+                                                                                                    ],
+                                                                                                    "destinationApplicationSecurityGroups": [
+                                                                                                        {
+                                                                                                            "etag": "str",
+                                                                                                            "id": "str",
+                                                                                                            "location": "str",
+                                                                                                            "name": "str",
+                                                                                                            "properties": {
+                                                                                                                "provisioningState": "str",
+                                                                                                                "resourceGuid": "str",
+                                                                                                            },
+                                                                                                            "tags": {
+                                                                                                                "str": "str"
+                                                                                                            },
+                                                                                                            "type": "str",
+                                                                                                        }
+                                                                                                    ],
+                                                                                                    "destinationPortRange": "str",
+                                                                                                    "destinationPortRanges": [
+                                                                                                        "str"
+                                                                                                    ],
+                                                                                                    "provisioningState": "str",
+                                                                                                    "sourceAddressPrefix": "str",
+                                                                                                    "sourceAddressPrefixes": [
+                                                                                                        "str"
+                                                                                                    ],
+                                                                                                    "sourceApplicationSecurityGroups": [
+                                                                                                        {
+                                                                                                            "etag": "str",
+                                                                                                            "id": "str",
+                                                                                                            "location": "str",
+                                                                                                            "name": "str",
+                                                                                                            "properties": {
+                                                                                                                "provisioningState": "str",
+                                                                                                                "resourceGuid": "str",
+                                                                                                            },
+                                                                                                            "tags": {
+                                                                                                                "str": "str"
+                                                                                                            },
+                                                                                                            "type": "str",
+                                                                                                        }
+                                                                                                    ],
+                                                                                                    "sourcePortRange": "str",
+                                                                                                    "sourcePortRanges": [
+                                                                                                        "str"
+                                                                                                    ],
+                                                                                                },
+                                                                                                "type": "str",
+                                                                                            }
+                                                                                        ],
+                                                                                        "flowLogs": [
+                                                                                            {
+                                                                                                "etag": "str",
+                                                                                                "id": "str",
+                                                                                                "identity": {
+                                                                                                    "principalId": "str",
+                                                                                                    "tenantId": "str",
+                                                                                                    "type": "str",
+                                                                                                    "userAssignedIdentities": {
+                                                                                                        "str": {
+                                                                                                            "clientId": "str",
+                                                                                                            "principalId": "str",
+                                                                                                        }
+                                                                                                    },
+                                                                                                },
+                                                                                                "location": "str",
+                                                                                                "name": "str",
+                                                                                                "properties": {
+                                                                                                    "storageId": "str",
+                                                                                                    "targetResourceId": "str",
+                                                                                                    "enabled": bool,
+                                                                                                    "enabledFilteringCriteria": "str",
+                                                                                                    "flowAnalyticsConfiguration": {
+                                                                                                        "networkWatcherFlowAnalyticsConfiguration": {
+                                                                                                            "enabled": bool,
+                                                                                                            "trafficAnalyticsInterval": 0,
+                                                                                                            "workspaceId": "str",
+                                                                                                            "workspaceRegion": "str",
+                                                                                                            "workspaceResourceId": "str",
+                                                                                                        }
+                                                                                                    },
+                                                                                                    "format": {
+                                                                                                        "type": "str",
+                                                                                                        "version": 0,
+                                                                                                    },
+                                                                                                    "provisioningState": "str",
+                                                                                                    "recordTypes": "str",
+                                                                                                    "retentionPolicy": {
+                                                                                                        "days": 0,
+                                                                                                        "enabled": bool,
+                                                                                                    },
+                                                                                                    "targetResourceGuid": "str",
+                                                                                                },
+                                                                                                "tags": {"str": "str"},
+                                                                                                "type": "str",
+                                                                                            }
+                                                                                        ],
+                                                                                        "flushConnection": bool,
+                                                                                        "networkInterfaces": [...],
+                                                                                        "provisioningState": "str",
+                                                                                        "resourceGuid": "str",
+                                                                                        "securityRules": [
+                                                                                            {
+                                                                                                "etag": "str",
+                                                                                                "id": "str",
+                                                                                                "name": "str",
+                                                                                                "properties": {
+                                                                                                    "access": "str",
+                                                                                                    "direction": "str",
+                                                                                                    "priority": 0,
+                                                                                                    "protocol": "str",
+                                                                                                    "description": "str",
+                                                                                                    "destinationAddressPrefix": "str",
+                                                                                                    "destinationAddressPrefixes": [
+                                                                                                        "str"
+                                                                                                    ],
+                                                                                                    "destinationApplicationSecurityGroups": [
+                                                                                                        {
+                                                                                                            "etag": "str",
+                                                                                                            "id": "str",
+                                                                                                            "location": "str",
+                                                                                                            "name": "str",
+                                                                                                            "properties": {
+                                                                                                                "provisioningState": "str",
+                                                                                                                "resourceGuid": "str",
+                                                                                                            },
+                                                                                                            "tags": {
+                                                                                                                "str": "str"
+                                                                                                            },
+                                                                                                            "type": "str",
+                                                                                                        }
+                                                                                                    ],
+                                                                                                    "destinationPortRange": "str",
+                                                                                                    "destinationPortRanges": [
+                                                                                                        "str"
+                                                                                                    ],
+                                                                                                    "provisioningState": "str",
+                                                                                                    "sourceAddressPrefix": "str",
+                                                                                                    "sourceAddressPrefixes": [
+                                                                                                        "str"
+                                                                                                    ],
+                                                                                                    "sourceApplicationSecurityGroups": [
+                                                                                                        {
+                                                                                                            "etag": "str",
+                                                                                                            "id": "str",
+                                                                                                            "location": "str",
+                                                                                                            "name": "str",
+                                                                                                            "properties": {
+                                                                                                                "provisioningState": "str",
+                                                                                                                "resourceGuid": "str",
+                                                                                                            },
+                                                                                                            "tags": {
+                                                                                                                "str": "str"
+                                                                                                            },
+                                                                                                            "type": "str",
+                                                                                                        }
+                                                                                                    ],
+                                                                                                    "sourcePortRange": "str",
+                                                                                                    "sourcePortRanges": [
+                                                                                                        "str"
+                                                                                                    ],
+                                                                                                },
+                                                                                                "type": "str",
+                                                                                            }
+                                                                                        ],
+                                                                                        "subnets": [...],
+                                                                                    },
+                                                                                    "tags": {"str": "str"},
+                                                                                    "type": "str",
+                                                                                },
+                                                                                "privateEndpointNetworkPolicies": "str",
+                                                                                "privateEndpoints": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "extendedLocation": {
+                                                                                            "name": "str",
+                                                                                            "type": "str",
+                                                                                        },
+                                                                                        "id": "str",
+                                                                                        "location": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "applicationSecurityGroups": [
+                                                                                                {
+                                                                                                    "etag": "str",
+                                                                                                    "id": "str",
+                                                                                                    "location": "str",
+                                                                                                    "name": "str",
+                                                                                                    "properties": {
+                                                                                                        "provisioningState": "str",
+                                                                                                        "resourceGuid": "str",
+                                                                                                    },
+                                                                                                    "tags": {
+                                                                                                        "str": "str"
+                                                                                                    },
+                                                                                                    "type": "str",
+                                                                                                }
+                                                                                            ],
+                                                                                            "customDnsConfigs": [
+                                                                                                {
+                                                                                                    "fqdn": "str",
+                                                                                                    "ipAddresses": [
+                                                                                                        "str"
+                                                                                                    ],
+                                                                                                }
+                                                                                            ],
+                                                                                            "customNetworkInterfaceName": "str",
+                                                                                            "ipConfigurations": [
+                                                                                                {
+                                                                                                    "etag": "str",
+                                                                                                    "name": "str",
+                                                                                                    "properties": {
+                                                                                                        "groupId": "str",
+                                                                                                        "memberName": "str",
+                                                                                                        "privateIPAddress": "str",
+                                                                                                    },
+                                                                                                    "type": "str",
+                                                                                                }
+                                                                                            ],
+                                                                                            "ipVersionType": "str",
+                                                                                            "manualPrivateLinkServiceConnections": [
+                                                                                                {
+                                                                                                    "etag": "str",
+                                                                                                    "id": "str",
+                                                                                                    "name": "str",
+                                                                                                    "properties": {
+                                                                                                        "groupIds": [
+                                                                                                            "str"
+                                                                                                        ],
+                                                                                                        "privateLinkServiceConnectionState": {
+                                                                                                            "actionsRequired": "str",
+                                                                                                            "description": "str",
+                                                                                                            "status": "str",
+                                                                                                        },
+                                                                                                        "privateLinkServiceId": "str",
+                                                                                                        "provisioningState": "str",
+                                                                                                        "requestMessage": "str",
+                                                                                                    },
+                                                                                                    "type": "str",
+                                                                                                }
+                                                                                            ],
+                                                                                            "networkInterfaces": [...],
+                                                                                            "privateLinkServiceConnections": [
+                                                                                                {
+                                                                                                    "etag": "str",
+                                                                                                    "id": "str",
+                                                                                                    "name": "str",
+                                                                                                    "properties": {
+                                                                                                        "groupIds": [
+                                                                                                            "str"
+                                                                                                        ],
+                                                                                                        "privateLinkServiceConnectionState": {
+                                                                                                            "actionsRequired": "str",
+                                                                                                            "description": "str",
+                                                                                                            "status": "str",
+                                                                                                        },
+                                                                                                        "privateLinkServiceId": "str",
+                                                                                                        "provisioningState": "str",
+                                                                                                        "requestMessage": "str",
+                                                                                                    },
+                                                                                                    "type": "str",
+                                                                                                }
+                                                                                            ],
+                                                                                            "provisioningState": "str",
+                                                                                            "subnet": ...,
+                                                                                        },
+                                                                                        "tags": {"str": "str"},
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "privateLinkServiceNetworkPolicies": "str",
+                                                                                "provisioningState": "str",
+                                                                                "purpose": "str",
+                                                                                "resourceNavigationLinks": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "link": "str",
+                                                                                            "linkedResourceType": "str",
+                                                                                            "provisioningState": "str",
+                                                                                        },
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "routeTable": {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "location": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "disableBgpRoutePropagation": bool,
+                                                                                        "provisioningState": "str",
+                                                                                        "resourceGuid": "str",
+                                                                                        "routes": [
+                                                                                            {
+                                                                                                "etag": "str",
+                                                                                                "id": "str",
+                                                                                                "name": "str",
+                                                                                                "properties": {
+                                                                                                    "nextHopType": "str",
+                                                                                                    "addressPrefix": "str",
+                                                                                                    "hasBgpOverride": bool,
+                                                                                                    "nextHopIpAddress": "str",
+                                                                                                    "provisioningState": "str",
+                                                                                                },
+                                                                                                "type": "str",
+                                                                                            }
+                                                                                        ],
+                                                                                        "subnets": [...],
+                                                                                    },
+                                                                                    "tags": {"str": "str"},
+                                                                                    "type": "str",
+                                                                                },
+                                                                                "serviceAssociationLinks": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "allowDelete": bool,
+                                                                                            "link": "str",
+                                                                                            "linkedResourceType": "str",
+                                                                                            "locations": ["str"],
+                                                                                            "provisioningState": "str",
+                                                                                        },
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "serviceEndpointPolicies": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "kind": "str",
+                                                                                        "location": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "contextualServiceEndpointPolicies": [
+                                                                                                "str"
+                                                                                            ],
+                                                                                            "provisioningState": "str",
+                                                                                            "resourceGuid": "str",
+                                                                                            "serviceAlias": "str",
+                                                                                            "serviceEndpointPolicyDefinitions": [
+                                                                                                {
+                                                                                                    "etag": "str",
+                                                                                                    "id": "str",
+                                                                                                    "name": "str",
+                                                                                                    "properties": {
+                                                                                                        "description": "str",
+                                                                                                        "provisioningState": "str",
+                                                                                                        "service": "str",
+                                                                                                        "serviceResources": [
+                                                                                                            "str"
+                                                                                                        ],
+                                                                                                    },
+                                                                                                    "type": "str",
+                                                                                                }
+                                                                                            ],
+                                                                                            "subnets": [...],
+                                                                                        },
+                                                                                        "tags": {"str": "str"},
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "serviceEndpoints": [
+                                                                                    {
+                                                                                        "locations": ["str"],
+                                                                                        "networkIdentifier": {
+                                                                                            "id": "str"
+                                                                                        },
+                                                                                        "provisioningState": "str",
+                                                                                        "service": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "serviceGateway": {"id": "str"},
+                                                                                "sharingScope": "str",
+                                                                            },
+                                                                            "type": "str",
+                                                                        },
+                                                                    },
+                                                                },
+                                                                "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                "linkedPublicIPAddress": ...,
+                                                                "migrationPhase": "str",
+                                                                "natGateway": {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "location": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "idleTimeoutInMinutes": 0,
+                                                                        "provisioningState": "str",
+                                                                        "publicIpAddresses": [{"id": "str"}],
+                                                                        "publicIpAddressesV6": [{"id": "str"}],
+                                                                        "publicIpPrefixes": [{"id": "str"}],
+                                                                        "publicIpPrefixesV6": [{"id": "str"}],
+                                                                        "resourceGuid": "str",
+                                                                        "serviceGateway": {"id": "str"},
+                                                                        "sourceVirtualNetwork": {"id": "str"},
+                                                                        "subnets": [{"id": "str"}],
+                                                                    },
+                                                                    "sku": {"name": "str"},
+                                                                    "tags": {"str": "str"},
+                                                                    "type": "str",
+                                                                    "zones": ["str"],
+                                                                },
+                                                                "provisioningState": "str",
+                                                                "publicIPAddressVersion": "str",
+                                                                "publicIPAllocationMethod": "str",
+                                                                "publicIPPrefix": {"id": "str"},
+                                                                "resourceGuid": "str",
+                                                                "servicePublicIPAddress": ...,
+                                                            },
+                                                            "sku": {"name": "str", "tier": "str"},
+                                                            "tags": {"str": "str"},
+                                                            "type": "str",
+                                                            "zones": ["str"],
+                                                        },
+                                                        "publicIPPrefix": {"id": "str"},
+                                                        "subnet": {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "addressPrefix": "str",
+                                                                "addressPrefixes": ["str"],
+                                                                "applicationGatewayIPConfigurations": [
+                                                                    {
+                                                                        "etag": "str",
+                                                                        "id": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "provisioningState": "str",
+                                                                            "subnet": {"id": "str"},
+                                                                        },
+                                                                        "type": "str",
+                                                                    }
+                                                                ],
+                                                                "defaultOutboundAccess": bool,
+                                                                "delegations": [
+                                                                    {
+                                                                        "etag": "str",
+                                                                        "id": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "actions": ["str"],
+                                                                            "provisioningState": "str",
+                                                                            "serviceName": "str",
+                                                                        },
+                                                                        "type": "str",
+                                                                    }
+                                                                ],
+                                                                "ipAllocations": [{"id": "str"}],
+                                                                "ipConfigurationProfiles": [
+                                                                    {
+                                                                        "etag": "str",
+                                                                        "id": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "provisioningState": "str",
+                                                                            "subnet": ...,
+                                                                        },
+                                                                        "type": "str",
+                                                                    }
+                                                                ],
+                                                                "ipConfigurations": [
+                                                                    {
+                                                                        "etag": "str",
+                                                                        "id": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "privateIPAddress": "str",
+                                                                            "privateIPAllocationMethod": "str",
+                                                                            "provisioningState": "str",
+                                                                            "publicIPAddress": {
+                                                                                "etag": "str",
+                                                                                "extendedLocation": {
+                                                                                    "name": "str",
+                                                                                    "type": "str",
+                                                                                },
+                                                                                "id": "str",
+                                                                                "location": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "ddosSettings": {
+                                                                                        "ddosProtectionPlan": {
+                                                                                            "id": "str"
+                                                                                        },
+                                                                                        "protectionMode": "str",
+                                                                                    },
+                                                                                    "deleteOption": "str",
+                                                                                    "dnsSettings": {
+                                                                                        "domainNameLabel": "str",
+                                                                                        "domainNameLabelScope": "str",
+                                                                                        "fqdn": "str",
+                                                                                        "reverseFqdn": "str",
+                                                                                    },
+                                                                                    "idleTimeoutInMinutes": 0,
+                                                                                    "ipAddress": "str",
+                                                                                    "ipConfiguration": ...,
+                                                                                    "ipTags": [
+                                                                                        {
+                                                                                            "ipTagType": "str",
+                                                                                            "tag": "str",
+                                                                                        }
+                                                                                    ],
+                                                                                    "linkedPublicIPAddress": ...,
+                                                                                    "migrationPhase": "str",
+                                                                                    "natGateway": {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "location": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "idleTimeoutInMinutes": 0,
+                                                                                            "provisioningState": "str",
+                                                                                            "publicIpAddresses": [
+                                                                                                {"id": "str"}
+                                                                                            ],
+                                                                                            "publicIpAddressesV6": [
+                                                                                                {"id": "str"}
+                                                                                            ],
+                                                                                            "publicIpPrefixes": [
+                                                                                                {"id": "str"}
+                                                                                            ],
+                                                                                            "publicIpPrefixesV6": [
+                                                                                                {"id": "str"}
+                                                                                            ],
+                                                                                            "resourceGuid": "str",
+                                                                                            "serviceGateway": {
+                                                                                                "id": "str"
+                                                                                            },
+                                                                                            "sourceVirtualNetwork": {
+                                                                                                "id": "str"
+                                                                                            },
+                                                                                            "subnets": [{"id": "str"}],
+                                                                                        },
+                                                                                        "sku": {"name": "str"},
+                                                                                        "tags": {"str": "str"},
+                                                                                        "type": "str",
+                                                                                        "zones": ["str"],
+                                                                                    },
+                                                                                    "provisioningState": "str",
+                                                                                    "publicIPAddressVersion": "str",
+                                                                                    "publicIPAllocationMethod": "str",
+                                                                                    "publicIPPrefix": {"id": "str"},
+                                                                                    "resourceGuid": "str",
+                                                                                    "servicePublicIPAddress": ...,
+                                                                                },
+                                                                                "sku": {"name": "str", "tier": "str"},
+                                                                                "tags": {"str": "str"},
+                                                                                "type": "str",
+                                                                                "zones": ["str"],
+                                                                            },
+                                                                            "subnet": ...,
+                                                                        },
+                                                                    }
+                                                                ],
+                                                                "ipamPoolPrefixAllocations": [
+                                                                    {
+                                                                        "allocatedAddressPrefixes": ["str"],
+                                                                        "numberOfIpAddresses": "str",
+                                                                        "pool": {"id": "str"},
+                                                                    }
+                                                                ],
+                                                                "natGateway": {"id": "str"},
+                                                                "networkSecurityGroup": {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "location": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "defaultSecurityRules": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "access": "str",
+                                                                                    "direction": "str",
+                                                                                    "priority": 0,
+                                                                                    "protocol": "str",
+                                                                                    "description": "str",
+                                                                                    "destinationAddressPrefix": "str",
+                                                                                    "destinationAddressPrefixes": [
+                                                                                        "str"
+                                                                                    ],
+                                                                                    "destinationApplicationSecurityGroups": [
+                                                                                        {
+                                                                                            "etag": "str",
+                                                                                            "id": "str",
+                                                                                            "location": "str",
+                                                                                            "name": "str",
+                                                                                            "properties": {
+                                                                                                "provisioningState": "str",
+                                                                                                "resourceGuid": "str",
+                                                                                            },
+                                                                                            "tags": {"str": "str"},
+                                                                                            "type": "str",
+                                                                                        }
+                                                                                    ],
+                                                                                    "destinationPortRange": "str",
+                                                                                    "destinationPortRanges": ["str"],
+                                                                                    "provisioningState": "str",
+                                                                                    "sourceAddressPrefix": "str",
+                                                                                    "sourceAddressPrefixes": ["str"],
+                                                                                    "sourceApplicationSecurityGroups": [
+                                                                                        {
+                                                                                            "etag": "str",
+                                                                                            "id": "str",
+                                                                                            "location": "str",
+                                                                                            "name": "str",
+                                                                                            "properties": {
+                                                                                                "provisioningState": "str",
+                                                                                                "resourceGuid": "str",
+                                                                                            },
+                                                                                            "tags": {"str": "str"},
+                                                                                            "type": "str",
+                                                                                        }
+                                                                                    ],
+                                                                                    "sourcePortRange": "str",
+                                                                                    "sourcePortRanges": ["str"],
+                                                                                },
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "flowLogs": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "identity": {
+                                                                                    "principalId": "str",
+                                                                                    "tenantId": "str",
+                                                                                    "type": "str",
+                                                                                    "userAssignedIdentities": {
+                                                                                        "str": {
+                                                                                            "clientId": "str",
+                                                                                            "principalId": "str",
+                                                                                        }
+                                                                                    },
+                                                                                },
+                                                                                "location": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "storageId": "str",
+                                                                                    "targetResourceId": "str",
+                                                                                    "enabled": bool,
+                                                                                    "enabledFilteringCriteria": "str",
+                                                                                    "flowAnalyticsConfiguration": {
+                                                                                        "networkWatcherFlowAnalyticsConfiguration": {
+                                                                                            "enabled": bool,
+                                                                                            "trafficAnalyticsInterval": 0,
+                                                                                            "workspaceId": "str",
+                                                                                            "workspaceRegion": "str",
+                                                                                            "workspaceResourceId": "str",
+                                                                                        }
+                                                                                    },
+                                                                                    "format": {
+                                                                                        "type": "str",
+                                                                                        "version": 0,
+                                                                                    },
+                                                                                    "provisioningState": "str",
+                                                                                    "recordTypes": "str",
+                                                                                    "retentionPolicy": {
+                                                                                        "days": 0,
+                                                                                        "enabled": bool,
+                                                                                    },
+                                                                                    "targetResourceGuid": "str",
+                                                                                },
+                                                                                "tags": {"str": "str"},
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "flushConnection": bool,
+                                                                        "networkInterfaces": [...],
+                                                                        "provisioningState": "str",
+                                                                        "resourceGuid": "str",
+                                                                        "securityRules": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "access": "str",
+                                                                                    "direction": "str",
+                                                                                    "priority": 0,
+                                                                                    "protocol": "str",
+                                                                                    "description": "str",
+                                                                                    "destinationAddressPrefix": "str",
+                                                                                    "destinationAddressPrefixes": [
+                                                                                        "str"
+                                                                                    ],
+                                                                                    "destinationApplicationSecurityGroups": [
+                                                                                        {
+                                                                                            "etag": "str",
+                                                                                            "id": "str",
+                                                                                            "location": "str",
+                                                                                            "name": "str",
+                                                                                            "properties": {
+                                                                                                "provisioningState": "str",
+                                                                                                "resourceGuid": "str",
+                                                                                            },
+                                                                                            "tags": {"str": "str"},
+                                                                                            "type": "str",
+                                                                                        }
+                                                                                    ],
+                                                                                    "destinationPortRange": "str",
+                                                                                    "destinationPortRanges": ["str"],
+                                                                                    "provisioningState": "str",
+                                                                                    "sourceAddressPrefix": "str",
+                                                                                    "sourceAddressPrefixes": ["str"],
+                                                                                    "sourceApplicationSecurityGroups": [
+                                                                                        {
+                                                                                            "etag": "str",
+                                                                                            "id": "str",
+                                                                                            "location": "str",
+                                                                                            "name": "str",
+                                                                                            "properties": {
+                                                                                                "provisioningState": "str",
+                                                                                                "resourceGuid": "str",
+                                                                                            },
+                                                                                            "tags": {"str": "str"},
+                                                                                            "type": "str",
+                                                                                        }
+                                                                                    ],
+                                                                                    "sourcePortRange": "str",
+                                                                                    "sourcePortRanges": ["str"],
+                                                                                },
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "subnets": [...],
+                                                                    },
+                                                                    "tags": {"str": "str"},
+                                                                    "type": "str",
+                                                                },
+                                                                "privateEndpointNetworkPolicies": "str",
+                                                                "privateEndpoints": [
+                                                                    {
+                                                                        "etag": "str",
+                                                                        "extendedLocation": {
+                                                                            "name": "str",
+                                                                            "type": "str",
+                                                                        },
+                                                                        "id": "str",
+                                                                        "location": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "applicationSecurityGroups": [
+                                                                                {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "location": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "provisioningState": "str",
+                                                                                        "resourceGuid": "str",
+                                                                                    },
+                                                                                    "tags": {"str": "str"},
+                                                                                    "type": "str",
+                                                                                }
+                                                                            ],
+                                                                            "customDnsConfigs": [
+                                                                                {"fqdn": "str", "ipAddresses": ["str"]}
+                                                                            ],
+                                                                            "customNetworkInterfaceName": "str",
+                                                                            "ipConfigurations": [
+                                                                                {
+                                                                                    "etag": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "groupId": "str",
+                                                                                        "memberName": "str",
+                                                                                        "privateIPAddress": "str",
+                                                                                    },
+                                                                                    "type": "str",
+                                                                                }
+                                                                            ],
+                                                                            "ipVersionType": "str",
+                                                                            "manualPrivateLinkServiceConnections": [
+                                                                                {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "groupIds": ["str"],
+                                                                                        "privateLinkServiceConnectionState": {
+                                                                                            "actionsRequired": "str",
+                                                                                            "description": "str",
+                                                                                            "status": "str",
+                                                                                        },
+                                                                                        "privateLinkServiceId": "str",
+                                                                                        "provisioningState": "str",
+                                                                                        "requestMessage": "str",
+                                                                                    },
+                                                                                    "type": "str",
+                                                                                }
+                                                                            ],
+                                                                            "networkInterfaces": [...],
+                                                                            "privateLinkServiceConnections": [
+                                                                                {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "groupIds": ["str"],
+                                                                                        "privateLinkServiceConnectionState": {
+                                                                                            "actionsRequired": "str",
+                                                                                            "description": "str",
+                                                                                            "status": "str",
+                                                                                        },
+                                                                                        "privateLinkServiceId": "str",
+                                                                                        "provisioningState": "str",
+                                                                                        "requestMessage": "str",
+                                                                                    },
+                                                                                    "type": "str",
+                                                                                }
+                                                                            ],
+                                                                            "provisioningState": "str",
+                                                                            "subnet": ...,
+                                                                        },
+                                                                        "tags": {"str": "str"},
+                                                                        "type": "str",
+                                                                    }
+                                                                ],
+                                                                "privateLinkServiceNetworkPolicies": "str",
+                                                                "provisioningState": "str",
+                                                                "purpose": "str",
+                                                                "resourceNavigationLinks": [
+                                                                    {
+                                                                        "etag": "str",
+                                                                        "id": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "link": "str",
+                                                                            "linkedResourceType": "str",
+                                                                            "provisioningState": "str",
+                                                                        },
+                                                                        "type": "str",
+                                                                    }
+                                                                ],
+                                                                "routeTable": {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "location": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "disableBgpRoutePropagation": bool,
+                                                                        "provisioningState": "str",
+                                                                        "resourceGuid": "str",
+                                                                        "routes": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "nextHopType": "str",
+                                                                                    "addressPrefix": "str",
+                                                                                    "hasBgpOverride": bool,
+                                                                                    "nextHopIpAddress": "str",
+                                                                                    "provisioningState": "str",
+                                                                                },
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "subnets": [...],
+                                                                    },
+                                                                    "tags": {"str": "str"},
+                                                                    "type": "str",
+                                                                },
+                                                                "serviceAssociationLinks": [
+                                                                    {
+                                                                        "etag": "str",
+                                                                        "id": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "allowDelete": bool,
+                                                                            "link": "str",
+                                                                            "linkedResourceType": "str",
+                                                                            "locations": ["str"],
+                                                                            "provisioningState": "str",
+                                                                        },
+                                                                        "type": "str",
+                                                                    }
+                                                                ],
+                                                                "serviceEndpointPolicies": [
+                                                                    {
+                                                                        "etag": "str",
+                                                                        "id": "str",
+                                                                        "kind": "str",
+                                                                        "location": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "contextualServiceEndpointPolicies": [
+                                                                                "str"
+                                                                            ],
+                                                                            "provisioningState": "str",
+                                                                            "resourceGuid": "str",
+                                                                            "serviceAlias": "str",
+                                                                            "serviceEndpointPolicyDefinitions": [
+                                                                                {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "description": "str",
+                                                                                        "provisioningState": "str",
+                                                                                        "service": "str",
+                                                                                        "serviceResources": ["str"],
+                                                                                    },
+                                                                                    "type": "str",
+                                                                                }
+                                                                            ],
+                                                                            "subnets": [...],
+                                                                        },
+                                                                        "tags": {"str": "str"},
+                                                                        "type": "str",
+                                                                    }
+                                                                ],
+                                                                "serviceEndpoints": [
+                                                                    {
+                                                                        "locations": ["str"],
+                                                                        "networkIdentifier": {"id": "str"},
+                                                                        "provisioningState": "str",
+                                                                        "service": "str",
+                                                                    }
+                                                                ],
+                                                                "serviceGateway": {"id": "str"},
+                                                                "sharingScope": "str",
+                                                            },
+                                                            "type": "str",
+                                                        },
+                                                    },
+                                                    "type": "str",
+                                                    "zones": ["str"],
+                                                },
+                                                "destinationNetworkInterfaceIPConfiguration": ...,
+                                                "destinationPort": 0,
+                                                "networkInterfaceTapConfigurations": [
+                                                    {
+                                                        "etag": "str",
+                                                        "id": "str",
+                                                        "name": "str",
+                                                        "properties": {
+                                                            "provisioningState": "str",
+                                                            "virtualNetworkTap": ...,
+                                                        },
+                                                        "type": "str",
+                                                    }
+                                                ],
+                                                "provisioningState": "str",
+                                                "resourceGuid": "str",
+                                            },
+                                            "tags": {"str": "str"},
+                                            "type": "str",
+                                        }
+                                    ],
+                                },
+                                "type": "str",
+                            }
+                        ],
+                        "macAddress": "str",
+                        "migrationPhase": "str",
+                        "networkSecurityGroup": {
+                            "etag": "str",
+                            "id": "str",
+                            "location": "str",
+                            "name": "str",
+                            "properties": {
+                                "defaultSecurityRules": [
+                                    {
+                                        "etag": "str",
+                                        "id": "str",
+                                        "name": "str",
+                                        "properties": {
+                                            "access": "str",
+                                            "direction": "str",
+                                            "priority": 0,
+                                            "protocol": "str",
+                                            "description": "str",
+                                            "destinationAddressPrefix": "str",
+                                            "destinationAddressPrefixes": ["str"],
+                                            "destinationApplicationSecurityGroups": [
+                                                {
+                                                    "etag": "str",
+                                                    "id": "str",
+                                                    "location": "str",
+                                                    "name": "str",
+                                                    "properties": {"provisioningState": "str", "resourceGuid": "str"},
+                                                    "tags": {"str": "str"},
+                                                    "type": "str",
+                                                }
+                                            ],
+                                            "destinationPortRange": "str",
+                                            "destinationPortRanges": ["str"],
+                                            "provisioningState": "str",
+                                            "sourceAddressPrefix": "str",
+                                            "sourceAddressPrefixes": ["str"],
+                                            "sourceApplicationSecurityGroups": [
+                                                {
+                                                    "etag": "str",
+                                                    "id": "str",
+                                                    "location": "str",
+                                                    "name": "str",
+                                                    "properties": {"provisioningState": "str", "resourceGuid": "str"},
+                                                    "tags": {"str": "str"},
+                                                    "type": "str",
+                                                }
+                                            ],
+                                            "sourcePortRange": "str",
+                                            "sourcePortRanges": ["str"],
+                                        },
+                                        "type": "str",
+                                    }
+                                ],
+                                "flowLogs": [
+                                    {
+                                        "etag": "str",
+                                        "id": "str",
+                                        "identity": {
+                                            "principalId": "str",
+                                            "tenantId": "str",
+                                            "type": "str",
+                                            "userAssignedIdentities": {
+                                                "str": {"clientId": "str", "principalId": "str"}
+                                            },
+                                        },
+                                        "location": "str",
+                                        "name": "str",
+                                        "properties": {
+                                            "storageId": "str",
+                                            "targetResourceId": "str",
+                                            "enabled": bool,
+                                            "enabledFilteringCriteria": "str",
+                                            "flowAnalyticsConfiguration": {
+                                                "networkWatcherFlowAnalyticsConfiguration": {
+                                                    "enabled": bool,
+                                                    "trafficAnalyticsInterval": 0,
+                                                    "workspaceId": "str",
+                                                    "workspaceRegion": "str",
+                                                    "workspaceResourceId": "str",
+                                                }
+                                            },
+                                            "format": {"type": "str", "version": 0},
+                                            "provisioningState": "str",
+                                            "recordTypes": "str",
+                                            "retentionPolicy": {"days": 0, "enabled": bool},
+                                            "targetResourceGuid": "str",
+                                        },
+                                        "tags": {"str": "str"},
+                                        "type": "str",
+                                    }
+                                ],
+                                "flushConnection": bool,
+                                "networkInterfaces": [...],
+                                "provisioningState": "str",
+                                "resourceGuid": "str",
+                                "securityRules": [
+                                    {
+                                        "etag": "str",
+                                        "id": "str",
+                                        "name": "str",
+                                        "properties": {
+                                            "access": "str",
+                                            "direction": "str",
+                                            "priority": 0,
+                                            "protocol": "str",
+                                            "description": "str",
+                                            "destinationAddressPrefix": "str",
+                                            "destinationAddressPrefixes": ["str"],
+                                            "destinationApplicationSecurityGroups": [
+                                                {
+                                                    "etag": "str",
+                                                    "id": "str",
+                                                    "location": "str",
+                                                    "name": "str",
+                                                    "properties": {"provisioningState": "str", "resourceGuid": "str"},
+                                                    "tags": {"str": "str"},
+                                                    "type": "str",
+                                                }
+                                            ],
+                                            "destinationPortRange": "str",
+                                            "destinationPortRanges": ["str"],
+                                            "provisioningState": "str",
+                                            "sourceAddressPrefix": "str",
+                                            "sourceAddressPrefixes": ["str"],
+                                            "sourceApplicationSecurityGroups": [
+                                                {
+                                                    "etag": "str",
+                                                    "id": "str",
+                                                    "location": "str",
+                                                    "name": "str",
+                                                    "properties": {"provisioningState": "str", "resourceGuid": "str"},
+                                                    "tags": {"str": "str"},
+                                                    "type": "str",
+                                                }
+                                            ],
+                                            "sourcePortRange": "str",
+                                            "sourcePortRanges": ["str"],
+                                        },
+                                        "type": "str",
+                                    }
+                                ],
+                                "subnets": [
+                                    {
+                                        "etag": "str",
+                                        "id": "str",
+                                        "name": "str",
+                                        "properties": {
+                                            "addressPrefix": "str",
+                                            "addressPrefixes": ["str"],
+                                            "applicationGatewayIPConfigurations": [
+                                                {
+                                                    "etag": "str",
+                                                    "id": "str",
+                                                    "name": "str",
+                                                    "properties": {"provisioningState": "str", "subnet": {"id": "str"}},
+                                                    "type": "str",
+                                                }
+                                            ],
+                                            "defaultOutboundAccess": bool,
+                                            "delegations": [
+                                                {
+                                                    "etag": "str",
+                                                    "id": "str",
+                                                    "name": "str",
+                                                    "properties": {
+                                                        "actions": ["str"],
+                                                        "provisioningState": "str",
+                                                        "serviceName": "str",
+                                                    },
+                                                    "type": "str",
+                                                }
+                                            ],
+                                            "ipAllocations": [{"id": "str"}],
+                                            "ipConfigurationProfiles": [
+                                                {
+                                                    "etag": "str",
+                                                    "id": "str",
+                                                    "name": "str",
+                                                    "properties": {"provisioningState": "str", "subnet": ...},
+                                                    "type": "str",
+                                                }
+                                            ],
+                                            "ipConfigurations": [
+                                                {
+                                                    "etag": "str",
+                                                    "id": "str",
+                                                    "name": "str",
+                                                    "properties": {
+                                                        "privateIPAddress": "str",
+                                                        "privateIPAllocationMethod": "str",
+                                                        "provisioningState": "str",
+                                                        "publicIPAddress": {
+                                                            "etag": "str",
+                                                            "extendedLocation": {"name": "str", "type": "str"},
+                                                            "id": "str",
+                                                            "location": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "ddosSettings": {
+                                                                    "ddosProtectionPlan": {"id": "str"},
+                                                                    "protectionMode": "str",
+                                                                },
+                                                                "deleteOption": "str",
+                                                                "dnsSettings": {
+                                                                    "domainNameLabel": "str",
+                                                                    "domainNameLabelScope": "str",
+                                                                    "fqdn": "str",
+                                                                    "reverseFqdn": "str",
+                                                                },
+                                                                "idleTimeoutInMinutes": 0,
+                                                                "ipAddress": "str",
+                                                                "ipConfiguration": ...,
+                                                                "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                "linkedPublicIPAddress": ...,
+                                                                "migrationPhase": "str",
+                                                                "natGateway": {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "location": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "idleTimeoutInMinutes": 0,
+                                                                        "provisioningState": "str",
+                                                                        "publicIpAddresses": [{"id": "str"}],
+                                                                        "publicIpAddressesV6": [{"id": "str"}],
+                                                                        "publicIpPrefixes": [{"id": "str"}],
+                                                                        "publicIpPrefixesV6": [{"id": "str"}],
+                                                                        "resourceGuid": "str",
+                                                                        "serviceGateway": {"id": "str"},
+                                                                        "sourceVirtualNetwork": {"id": "str"},
+                                                                        "subnets": [{"id": "str"}],
+                                                                    },
+                                                                    "sku": {"name": "str"},
+                                                                    "tags": {"str": "str"},
+                                                                    "type": "str",
+                                                                    "zones": ["str"],
+                                                                },
+                                                                "provisioningState": "str",
+                                                                "publicIPAddressVersion": "str",
+                                                                "publicIPAllocationMethod": "str",
+                                                                "publicIPPrefix": {"id": "str"},
+                                                                "resourceGuid": "str",
+                                                                "servicePublicIPAddress": ...,
+                                                            },
+                                                            "sku": {"name": "str", "tier": "str"},
+                                                            "tags": {"str": "str"},
+                                                            "type": "str",
+                                                            "zones": ["str"],
+                                                        },
+                                                        "subnet": ...,
+                                                    },
+                                                }
+                                            ],
+                                            "ipamPoolPrefixAllocations": [
+                                                {
+                                                    "allocatedAddressPrefixes": ["str"],
+                                                    "numberOfIpAddresses": "str",
+                                                    "pool": {"id": "str"},
+                                                }
+                                            ],
+                                            "natGateway": {"id": "str"},
+                                            "networkSecurityGroup": ...,
+                                            "privateEndpointNetworkPolicies": "str",
+                                            "privateEndpoints": [
+                                                {
+                                                    "etag": "str",
+                                                    "extendedLocation": {"name": "str", "type": "str"},
+                                                    "id": "str",
+                                                    "location": "str",
+                                                    "name": "str",
+                                                    "properties": {
+                                                        "applicationSecurityGroups": [
+                                                            {
+                                                                "etag": "str",
+                                                                "id": "str",
+                                                                "location": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "provisioningState": "str",
+                                                                    "resourceGuid": "str",
+                                                                },
+                                                                "tags": {"str": "str"},
+                                                                "type": "str",
+                                                            }
+                                                        ],
+                                                        "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
+                                                        "customNetworkInterfaceName": "str",
+                                                        "ipConfigurations": [
+                                                            {
+                                                                "etag": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "groupId": "str",
+                                                                    "memberName": "str",
+                                                                    "privateIPAddress": "str",
+                                                                },
+                                                                "type": "str",
+                                                            }
+                                                        ],
+                                                        "ipVersionType": "str",
+                                                        "manualPrivateLinkServiceConnections": [
+                                                            {
+                                                                "etag": "str",
+                                                                "id": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "groupIds": ["str"],
+                                                                    "privateLinkServiceConnectionState": {
+                                                                        "actionsRequired": "str",
+                                                                        "description": "str",
+                                                                        "status": "str",
+                                                                    },
+                                                                    "privateLinkServiceId": "str",
+                                                                    "provisioningState": "str",
+                                                                    "requestMessage": "str",
+                                                                },
+                                                                "type": "str",
+                                                            }
+                                                        ],
+                                                        "networkInterfaces": [...],
+                                                        "privateLinkServiceConnections": [
+                                                            {
+                                                                "etag": "str",
+                                                                "id": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "groupIds": ["str"],
+                                                                    "privateLinkServiceConnectionState": {
+                                                                        "actionsRequired": "str",
+                                                                        "description": "str",
+                                                                        "status": "str",
+                                                                    },
+                                                                    "privateLinkServiceId": "str",
+                                                                    "provisioningState": "str",
+                                                                    "requestMessage": "str",
+                                                                },
+                                                                "type": "str",
+                                                            }
+                                                        ],
+                                                        "provisioningState": "str",
+                                                        "subnet": ...,
+                                                    },
+                                                    "tags": {"str": "str"},
+                                                    "type": "str",
+                                                }
+                                            ],
+                                            "privateLinkServiceNetworkPolicies": "str",
+                                            "provisioningState": "str",
+                                            "purpose": "str",
+                                            "resourceNavigationLinks": [
+                                                {
+                                                    "etag": "str",
+                                                    "id": "str",
+                                                    "name": "str",
+                                                    "properties": {
+                                                        "link": "str",
+                                                        "linkedResourceType": "str",
+                                                        "provisioningState": "str",
+                                                    },
+                                                    "type": "str",
+                                                }
+                                            ],
+                                            "routeTable": {
+                                                "etag": "str",
+                                                "id": "str",
+                                                "location": "str",
+                                                "name": "str",
+                                                "properties": {
+                                                    "disableBgpRoutePropagation": bool,
+                                                    "provisioningState": "str",
+                                                    "resourceGuid": "str",
+                                                    "routes": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "nextHopType": "str",
+                                                                "addressPrefix": "str",
+                                                                "hasBgpOverride": bool,
+                                                                "nextHopIpAddress": "str",
+                                                                "provisioningState": "str",
+                                                            },
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "subnets": [...],
+                                                },
+                                                "tags": {"str": "str"},
+                                                "type": "str",
+                                            },
+                                            "serviceAssociationLinks": [
+                                                {
+                                                    "etag": "str",
+                                                    "id": "str",
+                                                    "name": "str",
+                                                    "properties": {
+                                                        "allowDelete": bool,
+                                                        "link": "str",
+                                                        "linkedResourceType": "str",
+                                                        "locations": ["str"],
+                                                        "provisioningState": "str",
+                                                    },
+                                                    "type": "str",
+                                                }
+                                            ],
+                                            "serviceEndpointPolicies": [
+                                                {
+                                                    "etag": "str",
+                                                    "id": "str",
+                                                    "kind": "str",
+                                                    "location": "str",
+                                                    "name": "str",
+                                                    "properties": {
+                                                        "contextualServiceEndpointPolicies": ["str"],
+                                                        "provisioningState": "str",
+                                                        "resourceGuid": "str",
+                                                        "serviceAlias": "str",
+                                                        "serviceEndpointPolicyDefinitions": [
+                                                            {
+                                                                "etag": "str",
+                                                                "id": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "description": "str",
+                                                                    "provisioningState": "str",
+                                                                    "service": "str",
+                                                                    "serviceResources": ["str"],
+                                                                },
+                                                                "type": "str",
+                                                            }
+                                                        ],
+                                                        "subnets": [...],
+                                                    },
+                                                    "tags": {"str": "str"},
+                                                    "type": "str",
+                                                }
+                                            ],
+                                            "serviceEndpoints": [
+                                                {
+                                                    "locations": ["str"],
+                                                    "networkIdentifier": {"id": "str"},
+                                                    "provisioningState": "str",
+                                                    "service": "str",
+                                                }
+                                            ],
+                                            "serviceGateway": {"id": "str"},
+                                            "sharingScope": "str",
+                                        },
+                                        "type": "str",
+                                    }
+                                ],
+                            },
+                            "tags": {"str": "str"},
+                            "type": "str",
+                        },
+                        "nicType": "str",
+                        "primary": bool,
+                        "privateEndpoint": {
+                            "etag": "str",
+                            "extendedLocation": {"name": "str", "type": "str"},
+                            "id": "str",
+                            "location": "str",
+                            "name": "str",
+                            "properties": {
+                                "applicationSecurityGroups": [
+                                    {
+                                        "etag": "str",
+                                        "id": "str",
+                                        "location": "str",
+                                        "name": "str",
+                                        "properties": {"provisioningState": "str", "resourceGuid": "str"},
+                                        "tags": {"str": "str"},
+                                        "type": "str",
+                                    }
+                                ],
+                                "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
+                                "customNetworkInterfaceName": "str",
+                                "ipConfigurations": [
+                                    {
+                                        "etag": "str",
+                                        "name": "str",
+                                        "properties": {
+                                            "groupId": "str",
+                                            "memberName": "str",
+                                            "privateIPAddress": "str",
+                                        },
+                                        "type": "str",
+                                    }
+                                ],
+                                "ipVersionType": "str",
+                                "manualPrivateLinkServiceConnections": [
+                                    {
+                                        "etag": "str",
+                                        "id": "str",
+                                        "name": "str",
+                                        "properties": {
+                                            "groupIds": ["str"],
+                                            "privateLinkServiceConnectionState": {
+                                                "actionsRequired": "str",
+                                                "description": "str",
+                                                "status": "str",
+                                            },
+                                            "privateLinkServiceId": "str",
+                                            "provisioningState": "str",
+                                            "requestMessage": "str",
+                                        },
+                                        "type": "str",
+                                    }
+                                ],
+                                "networkInterfaces": [...],
+                                "privateLinkServiceConnections": [
+                                    {
+                                        "etag": "str",
+                                        "id": "str",
+                                        "name": "str",
+                                        "properties": {
+                                            "groupIds": ["str"],
+                                            "privateLinkServiceConnectionState": {
+                                                "actionsRequired": "str",
+                                                "description": "str",
+                                                "status": "str",
+                                            },
+                                            "privateLinkServiceId": "str",
+                                            "provisioningState": "str",
+                                            "requestMessage": "str",
+                                        },
+                                        "type": "str",
+                                    }
+                                ],
+                                "provisioningState": "str",
+                                "subnet": {
+                                    "etag": "str",
+                                    "id": "str",
+                                    "name": "str",
+                                    "properties": {
+                                        "addressPrefix": "str",
+                                        "addressPrefixes": ["str"],
+                                        "applicationGatewayIPConfigurations": [
+                                            {
+                                                "etag": "str",
+                                                "id": "str",
+                                                "name": "str",
+                                                "properties": {"provisioningState": "str", "subnet": {"id": "str"}},
+                                                "type": "str",
+                                            }
+                                        ],
+                                        "defaultOutboundAccess": bool,
+                                        "delegations": [
+                                            {
+                                                "etag": "str",
+                                                "id": "str",
+                                                "name": "str",
+                                                "properties": {
+                                                    "actions": ["str"],
+                                                    "provisioningState": "str",
+                                                    "serviceName": "str",
+                                                },
+                                                "type": "str",
+                                            }
+                                        ],
+                                        "ipAllocations": [{"id": "str"}],
+                                        "ipConfigurationProfiles": [
+                                            {
+                                                "etag": "str",
+                                                "id": "str",
+                                                "name": "str",
+                                                "properties": {"provisioningState": "str", "subnet": ...},
+                                                "type": "str",
+                                            }
+                                        ],
+                                        "ipConfigurations": [
+                                            {
+                                                "etag": "str",
+                                                "id": "str",
+                                                "name": "str",
+                                                "properties": {
+                                                    "privateIPAddress": "str",
+                                                    "privateIPAllocationMethod": "str",
+                                                    "provisioningState": "str",
+                                                    "publicIPAddress": {
+                                                        "etag": "str",
+                                                        "extendedLocation": {"name": "str", "type": "str"},
+                                                        "id": "str",
+                                                        "location": "str",
+                                                        "name": "str",
+                                                        "properties": {
+                                                            "ddosSettings": {
+                                                                "ddosProtectionPlan": {"id": "str"},
+                                                                "protectionMode": "str",
+                                                            },
+                                                            "deleteOption": "str",
+                                                            "dnsSettings": {
+                                                                "domainNameLabel": "str",
+                                                                "domainNameLabelScope": "str",
+                                                                "fqdn": "str",
+                                                                "reverseFqdn": "str",
+                                                            },
+                                                            "idleTimeoutInMinutes": 0,
+                                                            "ipAddress": "str",
+                                                            "ipConfiguration": ...,
+                                                            "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                            "linkedPublicIPAddress": ...,
+                                                            "migrationPhase": "str",
+                                                            "natGateway": {
+                                                                "etag": "str",
+                                                                "id": "str",
+                                                                "location": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "idleTimeoutInMinutes": 0,
+                                                                    "provisioningState": "str",
+                                                                    "publicIpAddresses": [{"id": "str"}],
+                                                                    "publicIpAddressesV6": [{"id": "str"}],
+                                                                    "publicIpPrefixes": [{"id": "str"}],
+                                                                    "publicIpPrefixesV6": [{"id": "str"}],
+                                                                    "resourceGuid": "str",
+                                                                    "serviceGateway": {"id": "str"},
+                                                                    "sourceVirtualNetwork": {"id": "str"},
+                                                                    "subnets": [{"id": "str"}],
+                                                                },
+                                                                "sku": {"name": "str"},
+                                                                "tags": {"str": "str"},
+                                                                "type": "str",
+                                                                "zones": ["str"],
+                                                            },
+                                                            "provisioningState": "str",
+                                                            "publicIPAddressVersion": "str",
+                                                            "publicIPAllocationMethod": "str",
+                                                            "publicIPPrefix": {"id": "str"},
+                                                            "resourceGuid": "str",
+                                                            "servicePublicIPAddress": ...,
+                                                        },
+                                                        "sku": {"name": "str", "tier": "str"},
+                                                        "tags": {"str": "str"},
+                                                        "type": "str",
+                                                        "zones": ["str"],
+                                                    },
+                                                    "subnet": ...,
+                                                },
+                                            }
+                                        ],
+                                        "ipamPoolPrefixAllocations": [
+                                            {
+                                                "allocatedAddressPrefixes": ["str"],
+                                                "numberOfIpAddresses": "str",
+                                                "pool": {"id": "str"},
+                                            }
+                                        ],
+                                        "natGateway": {"id": "str"},
+                                        "networkSecurityGroup": {
+                                            "etag": "str",
+                                            "id": "str",
+                                            "location": "str",
+                                            "name": "str",
+                                            "properties": {
+                                                "defaultSecurityRules": [
+                                                    {
+                                                        "etag": "str",
+                                                        "id": "str",
+                                                        "name": "str",
+                                                        "properties": {
+                                                            "access": "str",
+                                                            "direction": "str",
+                                                            "priority": 0,
+                                                            "protocol": "str",
+                                                            "description": "str",
+                                                            "destinationAddressPrefix": "str",
+                                                            "destinationAddressPrefixes": ["str"],
+                                                            "destinationApplicationSecurityGroups": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "location": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "provisioningState": "str",
+                                                                        "resourceGuid": "str",
+                                                                    },
+                                                                    "tags": {"str": "str"},
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "destinationPortRange": "str",
+                                                            "destinationPortRanges": ["str"],
+                                                            "provisioningState": "str",
+                                                            "sourceAddressPrefix": "str",
+                                                            "sourceAddressPrefixes": ["str"],
+                                                            "sourceApplicationSecurityGroups": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "location": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "provisioningState": "str",
+                                                                        "resourceGuid": "str",
+                                                                    },
+                                                                    "tags": {"str": "str"},
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "sourcePortRange": "str",
+                                                            "sourcePortRanges": ["str"],
+                                                        },
+                                                        "type": "str",
+                                                    }
+                                                ],
+                                                "flowLogs": [
+                                                    {
+                                                        "etag": "str",
+                                                        "id": "str",
+                                                        "identity": {
+                                                            "principalId": "str",
+                                                            "tenantId": "str",
+                                                            "type": "str",
+                                                            "userAssignedIdentities": {
+                                                                "str": {"clientId": "str", "principalId": "str"}
+                                                            },
+                                                        },
+                                                        "location": "str",
+                                                        "name": "str",
+                                                        "properties": {
+                                                            "storageId": "str",
+                                                            "targetResourceId": "str",
+                                                            "enabled": bool,
+                                                            "enabledFilteringCriteria": "str",
+                                                            "flowAnalyticsConfiguration": {
+                                                                "networkWatcherFlowAnalyticsConfiguration": {
+                                                                    "enabled": bool,
+                                                                    "trafficAnalyticsInterval": 0,
+                                                                    "workspaceId": "str",
+                                                                    "workspaceRegion": "str",
+                                                                    "workspaceResourceId": "str",
+                                                                }
+                                                            },
+                                                            "format": {"type": "str", "version": 0},
+                                                            "provisioningState": "str",
+                                                            "recordTypes": "str",
+                                                            "retentionPolicy": {"days": 0, "enabled": bool},
+                                                            "targetResourceGuid": "str",
+                                                        },
+                                                        "tags": {"str": "str"},
+                                                        "type": "str",
+                                                    }
+                                                ],
+                                                "flushConnection": bool,
+                                                "networkInterfaces": [...],
+                                                "provisioningState": "str",
+                                                "resourceGuid": "str",
+                                                "securityRules": [
+                                                    {
+                                                        "etag": "str",
+                                                        "id": "str",
+                                                        "name": "str",
+                                                        "properties": {
+                                                            "access": "str",
+                                                            "direction": "str",
+                                                            "priority": 0,
+                                                            "protocol": "str",
+                                                            "description": "str",
+                                                            "destinationAddressPrefix": "str",
+                                                            "destinationAddressPrefixes": ["str"],
+                                                            "destinationApplicationSecurityGroups": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "location": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "provisioningState": "str",
+                                                                        "resourceGuid": "str",
+                                                                    },
+                                                                    "tags": {"str": "str"},
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "destinationPortRange": "str",
+                                                            "destinationPortRanges": ["str"],
+                                                            "provisioningState": "str",
+                                                            "sourceAddressPrefix": "str",
+                                                            "sourceAddressPrefixes": ["str"],
+                                                            "sourceApplicationSecurityGroups": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "location": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "provisioningState": "str",
+                                                                        "resourceGuid": "str",
+                                                                    },
+                                                                    "tags": {"str": "str"},
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "sourcePortRange": "str",
+                                                            "sourcePortRanges": ["str"],
+                                                        },
+                                                        "type": "str",
+                                                    }
+                                                ],
+                                                "subnets": [...],
+                                            },
+                                            "tags": {"str": "str"},
+                                            "type": "str",
+                                        },
+                                        "privateEndpointNetworkPolicies": "str",
+                                        "privateEndpoints": [...],
+                                        "privateLinkServiceNetworkPolicies": "str",
+                                        "provisioningState": "str",
+                                        "purpose": "str",
+                                        "resourceNavigationLinks": [
+                                            {
+                                                "etag": "str",
+                                                "id": "str",
+                                                "name": "str",
+                                                "properties": {
+                                                    "link": "str",
+                                                    "linkedResourceType": "str",
+                                                    "provisioningState": "str",
+                                                },
+                                                "type": "str",
+                                            }
+                                        ],
+                                        "routeTable": {
+                                            "etag": "str",
+                                            "id": "str",
+                                            "location": "str",
+                                            "name": "str",
+                                            "properties": {
+                                                "disableBgpRoutePropagation": bool,
+                                                "provisioningState": "str",
+                                                "resourceGuid": "str",
+                                                "routes": [
+                                                    {
+                                                        "etag": "str",
+                                                        "id": "str",
+                                                        "name": "str",
+                                                        "properties": {
+                                                            "nextHopType": "str",
+                                                            "addressPrefix": "str",
+                                                            "hasBgpOverride": bool,
+                                                            "nextHopIpAddress": "str",
+                                                            "provisioningState": "str",
+                                                        },
+                                                        "type": "str",
+                                                    }
+                                                ],
+                                                "subnets": [...],
+                                            },
+                                            "tags": {"str": "str"},
+                                            "type": "str",
+                                        },
+                                        "serviceAssociationLinks": [
+                                            {
+                                                "etag": "str",
+                                                "id": "str",
+                                                "name": "str",
+                                                "properties": {
+                                                    "allowDelete": bool,
+                                                    "link": "str",
+                                                    "linkedResourceType": "str",
+                                                    "locations": ["str"],
+                                                    "provisioningState": "str",
+                                                },
+                                                "type": "str",
+                                            }
+                                        ],
+                                        "serviceEndpointPolicies": [
+                                            {
+                                                "etag": "str",
+                                                "id": "str",
+                                                "kind": "str",
+                                                "location": "str",
+                                                "name": "str",
+                                                "properties": {
+                                                    "contextualServiceEndpointPolicies": ["str"],
+                                                    "provisioningState": "str",
+                                                    "resourceGuid": "str",
+                                                    "serviceAlias": "str",
+                                                    "serviceEndpointPolicyDefinitions": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "description": "str",
+                                                                "provisioningState": "str",
+                                                                "service": "str",
+                                                                "serviceResources": ["str"],
+                                                            },
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "subnets": [...],
+                                                },
+                                                "tags": {"str": "str"},
+                                                "type": "str",
+                                            }
+                                        ],
+                                        "serviceEndpoints": [
+                                            {
+                                                "locations": ["str"],
+                                                "networkIdentifier": {"id": "str"},
+                                                "provisioningState": "str",
+                                                "service": "str",
+                                            }
+                                        ],
+                                        "serviceGateway": {"id": "str"},
+                                        "sharingScope": "str",
+                                    },
+                                    "type": "str",
+                                },
+                            },
+                            "tags": {"str": "str"},
+                            "type": "str",
+                        },
+                        "privateLinkService": {
+                            "etag": "str",
+                            "extendedLocation": {"name": "str", "type": "str"},
+                            "id": "str",
+                            "location": "str",
+                            "name": "str",
+                            "properties": {
+                                "accessMode": "str",
+                                "alias": "str",
+                                "autoApproval": {"subscriptions": ["str"]},
+                                "destinationIPAddress": "str",
+                                "enableProxyProtocol": bool,
+                                "fqdns": ["str"],
+                                "ipConfigurations": [
+                                    {
+                                        "etag": "str",
+                                        "id": "str",
+                                        "name": "str",
+                                        "properties": {
+                                            "primary": bool,
+                                            "privateIPAddress": "str",
+                                            "privateIPAddressVersion": "str",
+                                            "privateIPAllocationMethod": "str",
+                                            "provisioningState": "str",
+                                            "subnet": {
+                                                "etag": "str",
+                                                "id": "str",
+                                                "name": "str",
+                                                "properties": {
+                                                    "addressPrefix": "str",
+                                                    "addressPrefixes": ["str"],
+                                                    "applicationGatewayIPConfigurations": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "provisioningState": "str",
+                                                                "subnet": {"id": "str"},
+                                                            },
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "defaultOutboundAccess": bool,
+                                                    "delegations": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "actions": ["str"],
+                                                                "provisioningState": "str",
+                                                                "serviceName": "str",
+                                                            },
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "ipAllocations": [{"id": "str"}],
+                                                    "ipConfigurationProfiles": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "name": "str",
+                                                            "properties": {"provisioningState": "str", "subnet": ...},
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "ipConfigurations": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "privateIPAddress": "str",
+                                                                "privateIPAllocationMethod": "str",
+                                                                "provisioningState": "str",
+                                                                "publicIPAddress": {
+                                                                    "etag": "str",
+                                                                    "extendedLocation": {"name": "str", "type": "str"},
+                                                                    "id": "str",
+                                                                    "location": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "ddosSettings": {
+                                                                            "ddosProtectionPlan": {"id": "str"},
+                                                                            "protectionMode": "str",
+                                                                        },
+                                                                        "deleteOption": "str",
+                                                                        "dnsSettings": {
+                                                                            "domainNameLabel": "str",
+                                                                            "domainNameLabelScope": "str",
+                                                                            "fqdn": "str",
+                                                                            "reverseFqdn": "str",
+                                                                        },
+                                                                        "idleTimeoutInMinutes": 0,
+                                                                        "ipAddress": "str",
+                                                                        "ipConfiguration": ...,
+                                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                        "linkedPublicIPAddress": ...,
+                                                                        "migrationPhase": "str",
+                                                                        "natGateway": {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "location": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "idleTimeoutInMinutes": 0,
+                                                                                "provisioningState": "str",
+                                                                                "publicIpAddresses": [{"id": "str"}],
+                                                                                "publicIpAddressesV6": [{"id": "str"}],
+                                                                                "publicIpPrefixes": [{"id": "str"}],
+                                                                                "publicIpPrefixesV6": [{"id": "str"}],
+                                                                                "resourceGuid": "str",
+                                                                                "serviceGateway": {"id": "str"},
+                                                                                "sourceVirtualNetwork": {"id": "str"},
+                                                                                "subnets": [{"id": "str"}],
+                                                                            },
+                                                                            "sku": {"name": "str"},
+                                                                            "tags": {"str": "str"},
+                                                                            "type": "str",
+                                                                            "zones": ["str"],
+                                                                        },
+                                                                        "provisioningState": "str",
+                                                                        "publicIPAddressVersion": "str",
+                                                                        "publicIPAllocationMethod": "str",
+                                                                        "publicIPPrefix": {"id": "str"},
+                                                                        "resourceGuid": "str",
+                                                                        "servicePublicIPAddress": ...,
+                                                                    },
+                                                                    "sku": {"name": "str", "tier": "str"},
+                                                                    "tags": {"str": "str"},
+                                                                    "type": "str",
+                                                                    "zones": ["str"],
+                                                                },
+                                                                "subnet": ...,
+                                                            },
+                                                        }
+                                                    ],
+                                                    "ipamPoolPrefixAllocations": [
+                                                        {
+                                                            "allocatedAddressPrefixes": ["str"],
+                                                            "numberOfIpAddresses": "str",
+                                                            "pool": {"id": "str"},
+                                                        }
+                                                    ],
+                                                    "natGateway": {"id": "str"},
+                                                    "networkSecurityGroup": {
+                                                        "etag": "str",
+                                                        "id": "str",
+                                                        "location": "str",
+                                                        "name": "str",
+                                                        "properties": {
+                                                            "defaultSecurityRules": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "access": "str",
+                                                                        "direction": "str",
+                                                                        "priority": 0,
+                                                                        "protocol": "str",
+                                                                        "description": "str",
+                                                                        "destinationAddressPrefix": "str",
+                                                                        "destinationAddressPrefixes": ["str"],
+                                                                        "destinationApplicationSecurityGroups": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "location": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "provisioningState": "str",
+                                                                                    "resourceGuid": "str",
+                                                                                },
+                                                                                "tags": {"str": "str"},
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "destinationPortRange": "str",
+                                                                        "destinationPortRanges": ["str"],
+                                                                        "provisioningState": "str",
+                                                                        "sourceAddressPrefix": "str",
+                                                                        "sourceAddressPrefixes": ["str"],
+                                                                        "sourceApplicationSecurityGroups": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "location": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "provisioningState": "str",
+                                                                                    "resourceGuid": "str",
+                                                                                },
+                                                                                "tags": {"str": "str"},
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "sourcePortRange": "str",
+                                                                        "sourcePortRanges": ["str"],
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "flowLogs": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "identity": {
+                                                                        "principalId": "str",
+                                                                        "tenantId": "str",
+                                                                        "type": "str",
+                                                                        "userAssignedIdentities": {
+                                                                            "str": {
+                                                                                "clientId": "str",
+                                                                                "principalId": "str",
+                                                                            }
+                                                                        },
+                                                                    },
+                                                                    "location": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "storageId": "str",
+                                                                        "targetResourceId": "str",
+                                                                        "enabled": bool,
+                                                                        "enabledFilteringCriteria": "str",
+                                                                        "flowAnalyticsConfiguration": {
+                                                                            "networkWatcherFlowAnalyticsConfiguration": {
+                                                                                "enabled": bool,
+                                                                                "trafficAnalyticsInterval": 0,
+                                                                                "workspaceId": "str",
+                                                                                "workspaceRegion": "str",
+                                                                                "workspaceResourceId": "str",
+                                                                            }
+                                                                        },
+                                                                        "format": {"type": "str", "version": 0},
+                                                                        "provisioningState": "str",
+                                                                        "recordTypes": "str",
+                                                                        "retentionPolicy": {"days": 0, "enabled": bool},
+                                                                        "targetResourceGuid": "str",
+                                                                    },
+                                                                    "tags": {"str": "str"},
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "flushConnection": bool,
+                                                            "networkInterfaces": [...],
+                                                            "provisioningState": "str",
+                                                            "resourceGuid": "str",
+                                                            "securityRules": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "access": "str",
+                                                                        "direction": "str",
+                                                                        "priority": 0,
+                                                                        "protocol": "str",
+                                                                        "description": "str",
+                                                                        "destinationAddressPrefix": "str",
+                                                                        "destinationAddressPrefixes": ["str"],
+                                                                        "destinationApplicationSecurityGroups": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "location": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "provisioningState": "str",
+                                                                                    "resourceGuid": "str",
+                                                                                },
+                                                                                "tags": {"str": "str"},
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "destinationPortRange": "str",
+                                                                        "destinationPortRanges": ["str"],
+                                                                        "provisioningState": "str",
+                                                                        "sourceAddressPrefix": "str",
+                                                                        "sourceAddressPrefixes": ["str"],
+                                                                        "sourceApplicationSecurityGroups": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "location": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "provisioningState": "str",
+                                                                                    "resourceGuid": "str",
+                                                                                },
+                                                                                "tags": {"str": "str"},
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "sourcePortRange": "str",
+                                                                        "sourcePortRanges": ["str"],
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "subnets": [...],
+                                                        },
+                                                        "tags": {"str": "str"},
+                                                        "type": "str",
+                                                    },
+                                                    "privateEndpointNetworkPolicies": "str",
+                                                    "privateEndpoints": [
+                                                        {
+                                                            "etag": "str",
+                                                            "extendedLocation": {"name": "str", "type": "str"},
+                                                            "id": "str",
+                                                            "location": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "applicationSecurityGroups": [
+                                                                    {
+                                                                        "etag": "str",
+                                                                        "id": "str",
+                                                                        "location": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "provisioningState": "str",
+                                                                            "resourceGuid": "str",
+                                                                        },
+                                                                        "tags": {"str": "str"},
+                                                                        "type": "str",
+                                                                    }
+                                                                ],
+                                                                "customDnsConfigs": [
+                                                                    {"fqdn": "str", "ipAddresses": ["str"]}
+                                                                ],
+                                                                "customNetworkInterfaceName": "str",
+                                                                "ipConfigurations": [
+                                                                    {
+                                                                        "etag": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "groupId": "str",
+                                                                            "memberName": "str",
+                                                                            "privateIPAddress": "str",
+                                                                        },
+                                                                        "type": "str",
+                                                                    }
+                                                                ],
+                                                                "ipVersionType": "str",
+                                                                "manualPrivateLinkServiceConnections": [
+                                                                    {
+                                                                        "etag": "str",
+                                                                        "id": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "groupIds": ["str"],
+                                                                            "privateLinkServiceConnectionState": {
+                                                                                "actionsRequired": "str",
+                                                                                "description": "str",
+                                                                                "status": "str",
+                                                                            },
+                                                                            "privateLinkServiceId": "str",
+                                                                            "provisioningState": "str",
+                                                                            "requestMessage": "str",
+                                                                        },
+                                                                        "type": "str",
+                                                                    }
+                                                                ],
+                                                                "networkInterfaces": [...],
+                                                                "privateLinkServiceConnections": [
+                                                                    {
+                                                                        "etag": "str",
+                                                                        "id": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "groupIds": ["str"],
+                                                                            "privateLinkServiceConnectionState": {
+                                                                                "actionsRequired": "str",
+                                                                                "description": "str",
+                                                                                "status": "str",
+                                                                            },
+                                                                            "privateLinkServiceId": "str",
+                                                                            "provisioningState": "str",
+                                                                            "requestMessage": "str",
+                                                                        },
+                                                                        "type": "str",
+                                                                    }
+                                                                ],
+                                                                "provisioningState": "str",
+                                                                "subnet": ...,
+                                                            },
+                                                            "tags": {"str": "str"},
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "privateLinkServiceNetworkPolicies": "str",
+                                                    "provisioningState": "str",
+                                                    "purpose": "str",
+                                                    "resourceNavigationLinks": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "link": "str",
+                                                                "linkedResourceType": "str",
+                                                                "provisioningState": "str",
+                                                            },
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "routeTable": {
+                                                        "etag": "str",
+                                                        "id": "str",
+                                                        "location": "str",
+                                                        "name": "str",
+                                                        "properties": {
+                                                            "disableBgpRoutePropagation": bool,
+                                                            "provisioningState": "str",
+                                                            "resourceGuid": "str",
+                                                            "routes": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "nextHopType": "str",
+                                                                        "addressPrefix": "str",
+                                                                        "hasBgpOverride": bool,
+                                                                        "nextHopIpAddress": "str",
+                                                                        "provisioningState": "str",
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "subnets": [...],
+                                                        },
+                                                        "tags": {"str": "str"},
+                                                        "type": "str",
+                                                    },
+                                                    "serviceAssociationLinks": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "allowDelete": bool,
+                                                                "link": "str",
+                                                                "linkedResourceType": "str",
+                                                                "locations": ["str"],
+                                                                "provisioningState": "str",
+                                                            },
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "serviceEndpointPolicies": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "kind": "str",
+                                                            "location": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "contextualServiceEndpointPolicies": ["str"],
+                                                                "provisioningState": "str",
+                                                                "resourceGuid": "str",
+                                                                "serviceAlias": "str",
+                                                                "serviceEndpointPolicyDefinitions": [
+                                                                    {
+                                                                        "etag": "str",
+                                                                        "id": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "description": "str",
+                                                                            "provisioningState": "str",
+                                                                            "service": "str",
+                                                                            "serviceResources": ["str"],
+                                                                        },
+                                                                        "type": "str",
+                                                                    }
+                                                                ],
+                                                                "subnets": [...],
+                                                            },
+                                                            "tags": {"str": "str"},
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "serviceEndpoints": [
+                                                        {
+                                                            "locations": ["str"],
+                                                            "networkIdentifier": {"id": "str"},
+                                                            "provisioningState": "str",
+                                                            "service": "str",
+                                                        }
+                                                    ],
+                                                    "serviceGateway": {"id": "str"},
+                                                    "sharingScope": "str",
+                                                },
+                                                "type": "str",
+                                            },
+                                        },
+                                        "type": "str",
+                                    }
+                                ],
+                                "loadBalancerFrontendIpConfigurations": [
+                                    {
+                                        "etag": "str",
+                                        "id": "str",
+                                        "name": "str",
+                                        "properties": {
+                                            "gatewayLoadBalancer": {"id": "str"},
+                                            "inboundNatPools": [{"id": "str"}],
+                                            "inboundNatRules": [{"id": "str"}],
+                                            "loadBalancingRules": [{"id": "str"}],
+                                            "outboundRules": [{"id": "str"}],
+                                            "privateIPAddress": "str",
+                                            "privateIPAddressVersion": "str",
+                                            "privateIPAllocationMethod": "str",
+                                            "provisioningState": "str",
+                                            "publicIPAddress": {
+                                                "etag": "str",
+                                                "extendedLocation": {"name": "str", "type": "str"},
+                                                "id": "str",
+                                                "location": "str",
+                                                "name": "str",
+                                                "properties": {
+                                                    "ddosSettings": {
+                                                        "ddosProtectionPlan": {"id": "str"},
+                                                        "protectionMode": "str",
+                                                    },
+                                                    "deleteOption": "str",
+                                                    "dnsSettings": {
+                                                        "domainNameLabel": "str",
+                                                        "domainNameLabelScope": "str",
+                                                        "fqdn": "str",
+                                                        "reverseFqdn": "str",
+                                                    },
+                                                    "idleTimeoutInMinutes": 0,
+                                                    "ipAddress": "str",
+                                                    "ipConfiguration": {
+                                                        "etag": "str",
+                                                        "id": "str",
+                                                        "name": "str",
+                                                        "properties": {
+                                                            "privateIPAddress": "str",
+                                                            "privateIPAllocationMethod": "str",
+                                                            "provisioningState": "str",
+                                                            "publicIPAddress": ...,
+                                                            "subnet": {
+                                                                "etag": "str",
+                                                                "id": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "addressPrefix": "str",
+                                                                    "addressPrefixes": ["str"],
+                                                                    "applicationGatewayIPConfigurations": [
+                                                                        {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "provisioningState": "str",
+                                                                                "subnet": {"id": "str"},
+                                                                            },
+                                                                            "type": "str",
+                                                                        }
+                                                                    ],
+                                                                    "defaultOutboundAccess": bool,
+                                                                    "delegations": [
+                                                                        {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "actions": ["str"],
+                                                                                "provisioningState": "str",
+                                                                                "serviceName": "str",
+                                                                            },
+                                                                            "type": "str",
+                                                                        }
+                                                                    ],
+                                                                    "ipAllocations": [{"id": "str"}],
+                                                                    "ipConfigurationProfiles": [
+                                                                        {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "provisioningState": "str",
+                                                                                "subnet": ...,
+                                                                            },
+                                                                            "type": "str",
+                                                                        }
+                                                                    ],
+                                                                    "ipConfigurations": [...],
+                                                                    "ipamPoolPrefixAllocations": [
+                                                                        {
+                                                                            "allocatedAddressPrefixes": ["str"],
+                                                                            "numberOfIpAddresses": "str",
+                                                                            "pool": {"id": "str"},
+                                                                        }
+                                                                    ],
+                                                                    "natGateway": {"id": "str"},
+                                                                    "networkSecurityGroup": {
+                                                                        "etag": "str",
+                                                                        "id": "str",
+                                                                        "location": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "defaultSecurityRules": [
+                                                                                {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "access": "str",
+                                                                                        "direction": "str",
+                                                                                        "priority": 0,
+                                                                                        "protocol": "str",
+                                                                                        "description": "str",
+                                                                                        "destinationAddressPrefix": "str",
+                                                                                        "destinationAddressPrefixes": [
+                                                                                            "str"
+                                                                                        ],
+                                                                                        "destinationApplicationSecurityGroups": [
+                                                                                            {
+                                                                                                "etag": "str",
+                                                                                                "id": "str",
+                                                                                                "location": "str",
+                                                                                                "name": "str",
+                                                                                                "properties": {
+                                                                                                    "provisioningState": "str",
+                                                                                                    "resourceGuid": "str",
+                                                                                                },
+                                                                                                "tags": {"str": "str"},
+                                                                                                "type": "str",
+                                                                                            }
+                                                                                        ],
+                                                                                        "destinationPortRange": "str",
+                                                                                        "destinationPortRanges": [
+                                                                                            "str"
+                                                                                        ],
+                                                                                        "provisioningState": "str",
+                                                                                        "sourceAddressPrefix": "str",
+                                                                                        "sourceAddressPrefixes": [
+                                                                                            "str"
+                                                                                        ],
+                                                                                        "sourceApplicationSecurityGroups": [
+                                                                                            {
+                                                                                                "etag": "str",
+                                                                                                "id": "str",
+                                                                                                "location": "str",
+                                                                                                "name": "str",
+                                                                                                "properties": {
+                                                                                                    "provisioningState": "str",
+                                                                                                    "resourceGuid": "str",
+                                                                                                },
+                                                                                                "tags": {"str": "str"},
+                                                                                                "type": "str",
+                                                                                            }
+                                                                                        ],
+                                                                                        "sourcePortRange": "str",
+                                                                                        "sourcePortRanges": ["str"],
+                                                                                    },
+                                                                                    "type": "str",
+                                                                                }
+                                                                            ],
+                                                                            "flowLogs": [
+                                                                                {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "identity": {
+                                                                                        "principalId": "str",
+                                                                                        "tenantId": "str",
+                                                                                        "type": "str",
+                                                                                        "userAssignedIdentities": {
+                                                                                            "str": {
+                                                                                                "clientId": "str",
+                                                                                                "principalId": "str",
+                                                                                            }
+                                                                                        },
+                                                                                    },
+                                                                                    "location": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "storageId": "str",
+                                                                                        "targetResourceId": "str",
+                                                                                        "enabled": bool,
+                                                                                        "enabledFilteringCriteria": "str",
+                                                                                        "flowAnalyticsConfiguration": {
+                                                                                            "networkWatcherFlowAnalyticsConfiguration": {
+                                                                                                "enabled": bool,
+                                                                                                "trafficAnalyticsInterval": 0,
+                                                                                                "workspaceId": "str",
+                                                                                                "workspaceRegion": "str",
+                                                                                                "workspaceResourceId": "str",
+                                                                                            }
+                                                                                        },
+                                                                                        "format": {
+                                                                                            "type": "str",
+                                                                                            "version": 0,
+                                                                                        },
+                                                                                        "provisioningState": "str",
+                                                                                        "recordTypes": "str",
+                                                                                        "retentionPolicy": {
+                                                                                            "days": 0,
+                                                                                            "enabled": bool,
+                                                                                        },
+                                                                                        "targetResourceGuid": "str",
+                                                                                    },
+                                                                                    "tags": {"str": "str"},
+                                                                                    "type": "str",
+                                                                                }
+                                                                            ],
+                                                                            "flushConnection": bool,
+                                                                            "networkInterfaces": [...],
+                                                                            "provisioningState": "str",
+                                                                            "resourceGuid": "str",
+                                                                            "securityRules": [
+                                                                                {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "access": "str",
+                                                                                        "direction": "str",
+                                                                                        "priority": 0,
+                                                                                        "protocol": "str",
+                                                                                        "description": "str",
+                                                                                        "destinationAddressPrefix": "str",
+                                                                                        "destinationAddressPrefixes": [
+                                                                                            "str"
+                                                                                        ],
+                                                                                        "destinationApplicationSecurityGroups": [
+                                                                                            {
+                                                                                                "etag": "str",
+                                                                                                "id": "str",
+                                                                                                "location": "str",
+                                                                                                "name": "str",
+                                                                                                "properties": {
+                                                                                                    "provisioningState": "str",
+                                                                                                    "resourceGuid": "str",
+                                                                                                },
+                                                                                                "tags": {"str": "str"},
+                                                                                                "type": "str",
+                                                                                            }
+                                                                                        ],
+                                                                                        "destinationPortRange": "str",
+                                                                                        "destinationPortRanges": [
+                                                                                            "str"
+                                                                                        ],
+                                                                                        "provisioningState": "str",
+                                                                                        "sourceAddressPrefix": "str",
+                                                                                        "sourceAddressPrefixes": [
+                                                                                            "str"
+                                                                                        ],
+                                                                                        "sourceApplicationSecurityGroups": [
+                                                                                            {
+                                                                                                "etag": "str",
+                                                                                                "id": "str",
+                                                                                                "location": "str",
+                                                                                                "name": "str",
+                                                                                                "properties": {
+                                                                                                    "provisioningState": "str",
+                                                                                                    "resourceGuid": "str",
+                                                                                                },
+                                                                                                "tags": {"str": "str"},
+                                                                                                "type": "str",
+                                                                                            }
+                                                                                        ],
+                                                                                        "sourcePortRange": "str",
+                                                                                        "sourcePortRanges": ["str"],
+                                                                                    },
+                                                                                    "type": "str",
+                                                                                }
+                                                                            ],
+                                                                            "subnets": [...],
+                                                                        },
+                                                                        "tags": {"str": "str"},
+                                                                        "type": "str",
+                                                                    },
+                                                                    "privateEndpointNetworkPolicies": "str",
+                                                                    "privateEndpoints": [
+                                                                        {
+                                                                            "etag": "str",
+                                                                            "extendedLocation": {
+                                                                                "name": "str",
+                                                                                "type": "str",
+                                                                            },
+                                                                            "id": "str",
+                                                                            "location": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "applicationSecurityGroups": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "location": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "provisioningState": "str",
+                                                                                            "resourceGuid": "str",
+                                                                                        },
+                                                                                        "tags": {"str": "str"},
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "customDnsConfigs": [
+                                                                                    {
+                                                                                        "fqdn": "str",
+                                                                                        "ipAddresses": ["str"],
+                                                                                    }
+                                                                                ],
+                                                                                "customNetworkInterfaceName": "str",
+                                                                                "ipConfigurations": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "groupId": "str",
+                                                                                            "memberName": "str",
+                                                                                            "privateIPAddress": "str",
+                                                                                        },
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "ipVersionType": "str",
+                                                                                "manualPrivateLinkServiceConnections": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "groupIds": ["str"],
+                                                                                            "privateLinkServiceConnectionState": {
+                                                                                                "actionsRequired": "str",
+                                                                                                "description": "str",
+                                                                                                "status": "str",
+                                                                                            },
+                                                                                            "privateLinkServiceId": "str",
+                                                                                            "provisioningState": "str",
+                                                                                            "requestMessage": "str",
+                                                                                        },
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "networkInterfaces": [...],
+                                                                                "privateLinkServiceConnections": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "groupIds": ["str"],
+                                                                                            "privateLinkServiceConnectionState": {
+                                                                                                "actionsRequired": "str",
+                                                                                                "description": "str",
+                                                                                                "status": "str",
+                                                                                            },
+                                                                                            "privateLinkServiceId": "str",
+                                                                                            "provisioningState": "str",
+                                                                                            "requestMessage": "str",
+                                                                                        },
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "provisioningState": "str",
+                                                                                "subnet": ...,
+                                                                            },
+                                                                            "tags": {"str": "str"},
+                                                                            "type": "str",
+                                                                        }
+                                                                    ],
+                                                                    "privateLinkServiceNetworkPolicies": "str",
+                                                                    "provisioningState": "str",
+                                                                    "purpose": "str",
+                                                                    "resourceNavigationLinks": [
+                                                                        {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "link": "str",
+                                                                                "linkedResourceType": "str",
+                                                                                "provisioningState": "str",
+                                                                            },
+                                                                            "type": "str",
+                                                                        }
+                                                                    ],
+                                                                    "routeTable": {
+                                                                        "etag": "str",
+                                                                        "id": "str",
+                                                                        "location": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "disableBgpRoutePropagation": bool,
+                                                                            "provisioningState": "str",
+                                                                            "resourceGuid": "str",
+                                                                            "routes": [
+                                                                                {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "nextHopType": "str",
+                                                                                        "addressPrefix": "str",
+                                                                                        "hasBgpOverride": bool,
+                                                                                        "nextHopIpAddress": "str",
+                                                                                        "provisioningState": "str",
+                                                                                    },
+                                                                                    "type": "str",
+                                                                                }
+                                                                            ],
+                                                                            "subnets": [...],
+                                                                        },
+                                                                        "tags": {"str": "str"},
+                                                                        "type": "str",
+                                                                    },
+                                                                    "serviceAssociationLinks": [
+                                                                        {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "allowDelete": bool,
+                                                                                "link": "str",
+                                                                                "linkedResourceType": "str",
+                                                                                "locations": ["str"],
+                                                                                "provisioningState": "str",
+                                                                            },
+                                                                            "type": "str",
+                                                                        }
+                                                                    ],
+                                                                    "serviceEndpointPolicies": [
+                                                                        {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "kind": "str",
+                                                                            "location": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "contextualServiceEndpointPolicies": [
+                                                                                    "str"
+                                                                                ],
+                                                                                "provisioningState": "str",
+                                                                                "resourceGuid": "str",
+                                                                                "serviceAlias": "str",
+                                                                                "serviceEndpointPolicyDefinitions": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "description": "str",
+                                                                                            "provisioningState": "str",
+                                                                                            "service": "str",
+                                                                                            "serviceResources": ["str"],
+                                                                                        },
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "subnets": [...],
+                                                                            },
+                                                                            "tags": {"str": "str"},
+                                                                            "type": "str",
+                                                                        }
+                                                                    ],
+                                                                    "serviceEndpoints": [
+                                                                        {
+                                                                            "locations": ["str"],
+                                                                            "networkIdentifier": {"id": "str"},
+                                                                            "provisioningState": "str",
+                                                                            "service": "str",
+                                                                        }
+                                                                    ],
+                                                                    "serviceGateway": {"id": "str"},
+                                                                    "sharingScope": "str",
+                                                                },
+                                                                "type": "str",
+                                                            },
+                                                        },
+                                                    },
+                                                    "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                    "linkedPublicIPAddress": ...,
+                                                    "migrationPhase": "str",
+                                                    "natGateway": {
+                                                        "etag": "str",
+                                                        "id": "str",
+                                                        "location": "str",
+                                                        "name": "str",
+                                                        "properties": {
+                                                            "idleTimeoutInMinutes": 0,
+                                                            "provisioningState": "str",
+                                                            "publicIpAddresses": [{"id": "str"}],
+                                                            "publicIpAddressesV6": [{"id": "str"}],
+                                                            "publicIpPrefixes": [{"id": "str"}],
+                                                            "publicIpPrefixesV6": [{"id": "str"}],
+                                                            "resourceGuid": "str",
+                                                            "serviceGateway": {"id": "str"},
+                                                            "sourceVirtualNetwork": {"id": "str"},
+                                                            "subnets": [{"id": "str"}],
+                                                        },
+                                                        "sku": {"name": "str"},
+                                                        "tags": {"str": "str"},
+                                                        "type": "str",
+                                                        "zones": ["str"],
+                                                    },
+                                                    "provisioningState": "str",
+                                                    "publicIPAddressVersion": "str",
+                                                    "publicIPAllocationMethod": "str",
+                                                    "publicIPPrefix": {"id": "str"},
+                                                    "resourceGuid": "str",
+                                                    "servicePublicIPAddress": ...,
+                                                },
+                                                "sku": {"name": "str", "tier": "str"},
+                                                "tags": {"str": "str"},
+                                                "type": "str",
+                                                "zones": ["str"],
+                                            },
+                                            "publicIPPrefix": {"id": "str"},
+                                            "subnet": {
+                                                "etag": "str",
+                                                "id": "str",
+                                                "name": "str",
+                                                "properties": {
+                                                    "addressPrefix": "str",
+                                                    "addressPrefixes": ["str"],
+                                                    "applicationGatewayIPConfigurations": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "provisioningState": "str",
+                                                                "subnet": {"id": "str"},
+                                                            },
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "defaultOutboundAccess": bool,
+                                                    "delegations": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "actions": ["str"],
+                                                                "provisioningState": "str",
+                                                                "serviceName": "str",
+                                                            },
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "ipAllocations": [{"id": "str"}],
+                                                    "ipConfigurationProfiles": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "name": "str",
+                                                            "properties": {"provisioningState": "str", "subnet": ...},
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "ipConfigurations": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "privateIPAddress": "str",
+                                                                "privateIPAllocationMethod": "str",
+                                                                "provisioningState": "str",
+                                                                "publicIPAddress": {
+                                                                    "etag": "str",
+                                                                    "extendedLocation": {"name": "str", "type": "str"},
+                                                                    "id": "str",
+                                                                    "location": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "ddosSettings": {
+                                                                            "ddosProtectionPlan": {"id": "str"},
+                                                                            "protectionMode": "str",
+                                                                        },
+                                                                        "deleteOption": "str",
+                                                                        "dnsSettings": {
+                                                                            "domainNameLabel": "str",
+                                                                            "domainNameLabelScope": "str",
+                                                                            "fqdn": "str",
+                                                                            "reverseFqdn": "str",
+                                                                        },
+                                                                        "idleTimeoutInMinutes": 0,
+                                                                        "ipAddress": "str",
+                                                                        "ipConfiguration": ...,
+                                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                        "linkedPublicIPAddress": ...,
+                                                                        "migrationPhase": "str",
+                                                                        "natGateway": {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "location": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "idleTimeoutInMinutes": 0,
+                                                                                "provisioningState": "str",
+                                                                                "publicIpAddresses": [{"id": "str"}],
+                                                                                "publicIpAddressesV6": [{"id": "str"}],
+                                                                                "publicIpPrefixes": [{"id": "str"}],
+                                                                                "publicIpPrefixesV6": [{"id": "str"}],
+                                                                                "resourceGuid": "str",
+                                                                                "serviceGateway": {"id": "str"},
+                                                                                "sourceVirtualNetwork": {"id": "str"},
+                                                                                "subnets": [{"id": "str"}],
+                                                                            },
+                                                                            "sku": {"name": "str"},
+                                                                            "tags": {"str": "str"},
+                                                                            "type": "str",
+                                                                            "zones": ["str"],
+                                                                        },
+                                                                        "provisioningState": "str",
+                                                                        "publicIPAddressVersion": "str",
+                                                                        "publicIPAllocationMethod": "str",
+                                                                        "publicIPPrefix": {"id": "str"},
+                                                                        "resourceGuid": "str",
+                                                                        "servicePublicIPAddress": ...,
+                                                                    },
+                                                                    "sku": {"name": "str", "tier": "str"},
+                                                                    "tags": {"str": "str"},
+                                                                    "type": "str",
+                                                                    "zones": ["str"],
+                                                                },
+                                                                "subnet": ...,
+                                                            },
+                                                        }
+                                                    ],
+                                                    "ipamPoolPrefixAllocations": [
+                                                        {
+                                                            "allocatedAddressPrefixes": ["str"],
+                                                            "numberOfIpAddresses": "str",
+                                                            "pool": {"id": "str"},
+                                                        }
+                                                    ],
+                                                    "natGateway": {"id": "str"},
+                                                    "networkSecurityGroup": {
+                                                        "etag": "str",
+                                                        "id": "str",
+                                                        "location": "str",
+                                                        "name": "str",
+                                                        "properties": {
+                                                            "defaultSecurityRules": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "access": "str",
+                                                                        "direction": "str",
+                                                                        "priority": 0,
+                                                                        "protocol": "str",
+                                                                        "description": "str",
+                                                                        "destinationAddressPrefix": "str",
+                                                                        "destinationAddressPrefixes": ["str"],
+                                                                        "destinationApplicationSecurityGroups": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "location": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "provisioningState": "str",
+                                                                                    "resourceGuid": "str",
+                                                                                },
+                                                                                "tags": {"str": "str"},
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "destinationPortRange": "str",
+                                                                        "destinationPortRanges": ["str"],
+                                                                        "provisioningState": "str",
+                                                                        "sourceAddressPrefix": "str",
+                                                                        "sourceAddressPrefixes": ["str"],
+                                                                        "sourceApplicationSecurityGroups": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "location": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "provisioningState": "str",
+                                                                                    "resourceGuid": "str",
+                                                                                },
+                                                                                "tags": {"str": "str"},
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "sourcePortRange": "str",
+                                                                        "sourcePortRanges": ["str"],
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "flowLogs": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "identity": {
+                                                                        "principalId": "str",
+                                                                        "tenantId": "str",
+                                                                        "type": "str",
+                                                                        "userAssignedIdentities": {
+                                                                            "str": {
+                                                                                "clientId": "str",
+                                                                                "principalId": "str",
+                                                                            }
+                                                                        },
+                                                                    },
+                                                                    "location": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "storageId": "str",
+                                                                        "targetResourceId": "str",
+                                                                        "enabled": bool,
+                                                                        "enabledFilteringCriteria": "str",
+                                                                        "flowAnalyticsConfiguration": {
+                                                                            "networkWatcherFlowAnalyticsConfiguration": {
+                                                                                "enabled": bool,
+                                                                                "trafficAnalyticsInterval": 0,
+                                                                                "workspaceId": "str",
+                                                                                "workspaceRegion": "str",
+                                                                                "workspaceResourceId": "str",
+                                                                            }
+                                                                        },
+                                                                        "format": {"type": "str", "version": 0},
+                                                                        "provisioningState": "str",
+                                                                        "recordTypes": "str",
+                                                                        "retentionPolicy": {"days": 0, "enabled": bool},
+                                                                        "targetResourceGuid": "str",
+                                                                    },
+                                                                    "tags": {"str": "str"},
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "flushConnection": bool,
+                                                            "networkInterfaces": [...],
+                                                            "provisioningState": "str",
+                                                            "resourceGuid": "str",
+                                                            "securityRules": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "access": "str",
+                                                                        "direction": "str",
+                                                                        "priority": 0,
+                                                                        "protocol": "str",
+                                                                        "description": "str",
+                                                                        "destinationAddressPrefix": "str",
+                                                                        "destinationAddressPrefixes": ["str"],
+                                                                        "destinationApplicationSecurityGroups": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "location": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "provisioningState": "str",
+                                                                                    "resourceGuid": "str",
+                                                                                },
+                                                                                "tags": {"str": "str"},
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "destinationPortRange": "str",
+                                                                        "destinationPortRanges": ["str"],
+                                                                        "provisioningState": "str",
+                                                                        "sourceAddressPrefix": "str",
+                                                                        "sourceAddressPrefixes": ["str"],
+                                                                        "sourceApplicationSecurityGroups": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "location": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "provisioningState": "str",
+                                                                                    "resourceGuid": "str",
+                                                                                },
+                                                                                "tags": {"str": "str"},
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "sourcePortRange": "str",
+                                                                        "sourcePortRanges": ["str"],
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "subnets": [...],
+                                                        },
+                                                        "tags": {"str": "str"},
+                                                        "type": "str",
+                                                    },
+                                                    "privateEndpointNetworkPolicies": "str",
+                                                    "privateEndpoints": [
+                                                        {
+                                                            "etag": "str",
+                                                            "extendedLocation": {"name": "str", "type": "str"},
+                                                            "id": "str",
+                                                            "location": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "applicationSecurityGroups": [
+                                                                    {
+                                                                        "etag": "str",
+                                                                        "id": "str",
+                                                                        "location": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "provisioningState": "str",
+                                                                            "resourceGuid": "str",
+                                                                        },
+                                                                        "tags": {"str": "str"},
+                                                                        "type": "str",
+                                                                    }
+                                                                ],
+                                                                "customDnsConfigs": [
+                                                                    {"fqdn": "str", "ipAddresses": ["str"]}
+                                                                ],
+                                                                "customNetworkInterfaceName": "str",
+                                                                "ipConfigurations": [
+                                                                    {
+                                                                        "etag": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "groupId": "str",
+                                                                            "memberName": "str",
+                                                                            "privateIPAddress": "str",
+                                                                        },
+                                                                        "type": "str",
+                                                                    }
+                                                                ],
+                                                                "ipVersionType": "str",
+                                                                "manualPrivateLinkServiceConnections": [
+                                                                    {
+                                                                        "etag": "str",
+                                                                        "id": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "groupIds": ["str"],
+                                                                            "privateLinkServiceConnectionState": {
+                                                                                "actionsRequired": "str",
+                                                                                "description": "str",
+                                                                                "status": "str",
+                                                                            },
+                                                                            "privateLinkServiceId": "str",
+                                                                            "provisioningState": "str",
+                                                                            "requestMessage": "str",
+                                                                        },
+                                                                        "type": "str",
+                                                                    }
+                                                                ],
+                                                                "networkInterfaces": [...],
+                                                                "privateLinkServiceConnections": [
+                                                                    {
+                                                                        "etag": "str",
+                                                                        "id": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "groupIds": ["str"],
+                                                                            "privateLinkServiceConnectionState": {
+                                                                                "actionsRequired": "str",
+                                                                                "description": "str",
+                                                                                "status": "str",
+                                                                            },
+                                                                            "privateLinkServiceId": "str",
+                                                                            "provisioningState": "str",
+                                                                            "requestMessage": "str",
+                                                                        },
+                                                                        "type": "str",
+                                                                    }
+                                                                ],
+                                                                "provisioningState": "str",
+                                                                "subnet": ...,
+                                                            },
+                                                            "tags": {"str": "str"},
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "privateLinkServiceNetworkPolicies": "str",
+                                                    "provisioningState": "str",
+                                                    "purpose": "str",
+                                                    "resourceNavigationLinks": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "link": "str",
+                                                                "linkedResourceType": "str",
+                                                                "provisioningState": "str",
+                                                            },
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "routeTable": {
+                                                        "etag": "str",
+                                                        "id": "str",
+                                                        "location": "str",
+                                                        "name": "str",
+                                                        "properties": {
+                                                            "disableBgpRoutePropagation": bool,
+                                                            "provisioningState": "str",
+                                                            "resourceGuid": "str",
+                                                            "routes": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "nextHopType": "str",
+                                                                        "addressPrefix": "str",
+                                                                        "hasBgpOverride": bool,
+                                                                        "nextHopIpAddress": "str",
+                                                                        "provisioningState": "str",
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "subnets": [...],
+                                                        },
+                                                        "tags": {"str": "str"},
+                                                        "type": "str",
+                                                    },
+                                                    "serviceAssociationLinks": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "allowDelete": bool,
+                                                                "link": "str",
+                                                                "linkedResourceType": "str",
+                                                                "locations": ["str"],
+                                                                "provisioningState": "str",
+                                                            },
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "serviceEndpointPolicies": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "kind": "str",
+                                                            "location": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "contextualServiceEndpointPolicies": ["str"],
+                                                                "provisioningState": "str",
+                                                                "resourceGuid": "str",
+                                                                "serviceAlias": "str",
+                                                                "serviceEndpointPolicyDefinitions": [
+                                                                    {
+                                                                        "etag": "str",
+                                                                        "id": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "description": "str",
+                                                                            "provisioningState": "str",
+                                                                            "service": "str",
+                                                                            "serviceResources": ["str"],
+                                                                        },
+                                                                        "type": "str",
+                                                                    }
+                                                                ],
+                                                                "subnets": [...],
+                                                            },
+                                                            "tags": {"str": "str"},
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "serviceEndpoints": [
+                                                        {
+                                                            "locations": ["str"],
+                                                            "networkIdentifier": {"id": "str"},
+                                                            "provisioningState": "str",
+                                                            "service": "str",
+                                                        }
+                                                    ],
+                                                    "serviceGateway": {"id": "str"},
+                                                    "sharingScope": "str",
+                                                },
+                                                "type": "str",
+                                            },
+                                        },
+                                        "type": "str",
+                                        "zones": ["str"],
+                                    }
+                                ],
+                                "networkInterfaces": [...],
+                                "privateEndpointConnections": [
+                                    {
+                                        "etag": "str",
+                                        "id": "str",
+                                        "name": "str",
+                                        "properties": {
+                                            "linkIdentifier": "str",
+                                            "privateEndpoint": {
+                                                "etag": "str",
+                                                "extendedLocation": {"name": "str", "type": "str"},
+                                                "id": "str",
+                                                "location": "str",
+                                                "name": "str",
+                                                "properties": {
+                                                    "applicationSecurityGroups": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "location": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "provisioningState": "str",
+                                                                "resourceGuid": "str",
+                                                            },
+                                                            "tags": {"str": "str"},
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
+                                                    "customNetworkInterfaceName": "str",
+                                                    "ipConfigurations": [
+                                                        {
+                                                            "etag": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "groupId": "str",
+                                                                "memberName": "str",
+                                                                "privateIPAddress": "str",
+                                                            },
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "ipVersionType": "str",
+                                                    "manualPrivateLinkServiceConnections": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "groupIds": ["str"],
+                                                                "privateLinkServiceConnectionState": {
+                                                                    "actionsRequired": "str",
+                                                                    "description": "str",
+                                                                    "status": "str",
+                                                                },
+                                                                "privateLinkServiceId": "str",
+                                                                "provisioningState": "str",
+                                                                "requestMessage": "str",
+                                                            },
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "networkInterfaces": [...],
+                                                    "privateLinkServiceConnections": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "groupIds": ["str"],
+                                                                "privateLinkServiceConnectionState": {
+                                                                    "actionsRequired": "str",
+                                                                    "description": "str",
+                                                                    "status": "str",
+                                                                },
+                                                                "privateLinkServiceId": "str",
+                                                                "provisioningState": "str",
+                                                                "requestMessage": "str",
+                                                            },
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "provisioningState": "str",
+                                                    "subnet": {
+                                                        "etag": "str",
+                                                        "id": "str",
+                                                        "name": "str",
+                                                        "properties": {
+                                                            "addressPrefix": "str",
+                                                            "addressPrefixes": ["str"],
+                                                            "applicationGatewayIPConfigurations": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "provisioningState": "str",
+                                                                        "subnet": {"id": "str"},
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "defaultOutboundAccess": bool,
+                                                            "delegations": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "actions": ["str"],
+                                                                        "provisioningState": "str",
+                                                                        "serviceName": "str",
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "ipAllocations": [{"id": "str"}],
+                                                            "ipConfigurationProfiles": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "provisioningState": "str",
+                                                                        "subnet": ...,
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "ipConfigurations": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "privateIPAddress": "str",
+                                                                        "privateIPAllocationMethod": "str",
+                                                                        "provisioningState": "str",
+                                                                        "publicIPAddress": {
+                                                                            "etag": "str",
+                                                                            "extendedLocation": {
+                                                                                "name": "str",
+                                                                                "type": "str",
+                                                                            },
+                                                                            "id": "str",
+                                                                            "location": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "ddosSettings": {
+                                                                                    "ddosProtectionPlan": {"id": "str"},
+                                                                                    "protectionMode": "str",
+                                                                                },
+                                                                                "deleteOption": "str",
+                                                                                "dnsSettings": {
+                                                                                    "domainNameLabel": "str",
+                                                                                    "domainNameLabelScope": "str",
+                                                                                    "fqdn": "str",
+                                                                                    "reverseFqdn": "str",
+                                                                                },
+                                                                                "idleTimeoutInMinutes": 0,
+                                                                                "ipAddress": "str",
+                                                                                "ipConfiguration": ...,
+                                                                                "ipTags": [
+                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                ],
+                                                                                "linkedPublicIPAddress": ...,
+                                                                                "migrationPhase": "str",
+                                                                                "natGateway": {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "location": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "idleTimeoutInMinutes": 0,
+                                                                                        "provisioningState": "str",
+                                                                                        "publicIpAddresses": [
+                                                                                            {"id": "str"}
+                                                                                        ],
+                                                                                        "publicIpAddressesV6": [
+                                                                                            {"id": "str"}
+                                                                                        ],
+                                                                                        "publicIpPrefixes": [
+                                                                                            {"id": "str"}
+                                                                                        ],
+                                                                                        "publicIpPrefixesV6": [
+                                                                                            {"id": "str"}
+                                                                                        ],
+                                                                                        "resourceGuid": "str",
+                                                                                        "serviceGateway": {"id": "str"},
+                                                                                        "sourceVirtualNetwork": {
+                                                                                            "id": "str"
+                                                                                        },
+                                                                                        "subnets": [{"id": "str"}],
+                                                                                    },
+                                                                                    "sku": {"name": "str"},
+                                                                                    "tags": {"str": "str"},
+                                                                                    "type": "str",
+                                                                                    "zones": ["str"],
+                                                                                },
+                                                                                "provisioningState": "str",
+                                                                                "publicIPAddressVersion": "str",
+                                                                                "publicIPAllocationMethod": "str",
+                                                                                "publicIPPrefix": {"id": "str"},
+                                                                                "resourceGuid": "str",
+                                                                                "servicePublicIPAddress": ...,
+                                                                            },
+                                                                            "sku": {"name": "str", "tier": "str"},
+                                                                            "tags": {"str": "str"},
+                                                                            "type": "str",
+                                                                            "zones": ["str"],
+                                                                        },
+                                                                        "subnet": ...,
+                                                                    },
+                                                                }
+                                                            ],
+                                                            "ipamPoolPrefixAllocations": [
+                                                                {
+                                                                    "allocatedAddressPrefixes": ["str"],
+                                                                    "numberOfIpAddresses": "str",
+                                                                    "pool": {"id": "str"},
+                                                                }
+                                                            ],
+                                                            "natGateway": {"id": "str"},
+                                                            "networkSecurityGroup": {
+                                                                "etag": "str",
+                                                                "id": "str",
+                                                                "location": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "defaultSecurityRules": [
+                                                                        {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "access": "str",
+                                                                                "direction": "str",
+                                                                                "priority": 0,
+                                                                                "protocol": "str",
+                                                                                "description": "str",
+                                                                                "destinationAddressPrefix": "str",
+                                                                                "destinationAddressPrefixes": ["str"],
+                                                                                "destinationApplicationSecurityGroups": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "location": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "provisioningState": "str",
+                                                                                            "resourceGuid": "str",
+                                                                                        },
+                                                                                        "tags": {"str": "str"},
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "destinationPortRange": "str",
+                                                                                "destinationPortRanges": ["str"],
+                                                                                "provisioningState": "str",
+                                                                                "sourceAddressPrefix": "str",
+                                                                                "sourceAddressPrefixes": ["str"],
+                                                                                "sourceApplicationSecurityGroups": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "location": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "provisioningState": "str",
+                                                                                            "resourceGuid": "str",
+                                                                                        },
+                                                                                        "tags": {"str": "str"},
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "sourcePortRange": "str",
+                                                                                "sourcePortRanges": ["str"],
+                                                                            },
+                                                                            "type": "str",
+                                                                        }
+                                                                    ],
+                                                                    "flowLogs": [
+                                                                        {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "identity": {
+                                                                                "principalId": "str",
+                                                                                "tenantId": "str",
+                                                                                "type": "str",
+                                                                                "userAssignedIdentities": {
+                                                                                    "str": {
+                                                                                        "clientId": "str",
+                                                                                        "principalId": "str",
+                                                                                    }
+                                                                                },
+                                                                            },
+                                                                            "location": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "storageId": "str",
+                                                                                "targetResourceId": "str",
+                                                                                "enabled": bool,
+                                                                                "enabledFilteringCriteria": "str",
+                                                                                "flowAnalyticsConfiguration": {
+                                                                                    "networkWatcherFlowAnalyticsConfiguration": {
+                                                                                        "enabled": bool,
+                                                                                        "trafficAnalyticsInterval": 0,
+                                                                                        "workspaceId": "str",
+                                                                                        "workspaceRegion": "str",
+                                                                                        "workspaceResourceId": "str",
+                                                                                    }
+                                                                                },
+                                                                                "format": {"type": "str", "version": 0},
+                                                                                "provisioningState": "str",
+                                                                                "recordTypes": "str",
+                                                                                "retentionPolicy": {
+                                                                                    "days": 0,
+                                                                                    "enabled": bool,
+                                                                                },
+                                                                                "targetResourceGuid": "str",
+                                                                            },
+                                                                            "tags": {"str": "str"},
+                                                                            "type": "str",
+                                                                        }
+                                                                    ],
+                                                                    "flushConnection": bool,
+                                                                    "networkInterfaces": [...],
+                                                                    "provisioningState": "str",
+                                                                    "resourceGuid": "str",
+                                                                    "securityRules": [
+                                                                        {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "access": "str",
+                                                                                "direction": "str",
+                                                                                "priority": 0,
+                                                                                "protocol": "str",
+                                                                                "description": "str",
+                                                                                "destinationAddressPrefix": "str",
+                                                                                "destinationAddressPrefixes": ["str"],
+                                                                                "destinationApplicationSecurityGroups": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "location": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "provisioningState": "str",
+                                                                                            "resourceGuid": "str",
+                                                                                        },
+                                                                                        "tags": {"str": "str"},
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "destinationPortRange": "str",
+                                                                                "destinationPortRanges": ["str"],
+                                                                                "provisioningState": "str",
+                                                                                "sourceAddressPrefix": "str",
+                                                                                "sourceAddressPrefixes": ["str"],
+                                                                                "sourceApplicationSecurityGroups": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "location": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "provisioningState": "str",
+                                                                                            "resourceGuid": "str",
+                                                                                        },
+                                                                                        "tags": {"str": "str"},
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "sourcePortRange": "str",
+                                                                                "sourcePortRanges": ["str"],
+                                                                            },
+                                                                            "type": "str",
+                                                                        }
+                                                                    ],
+                                                                    "subnets": [...],
+                                                                },
+                                                                "tags": {"str": "str"},
+                                                                "type": "str",
+                                                            },
+                                                            "privateEndpointNetworkPolicies": "str",
+                                                            "privateEndpoints": [...],
+                                                            "privateLinkServiceNetworkPolicies": "str",
+                                                            "provisioningState": "str",
+                                                            "purpose": "str",
+                                                            "resourceNavigationLinks": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "link": "str",
+                                                                        "linkedResourceType": "str",
+                                                                        "provisioningState": "str",
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "routeTable": {
+                                                                "etag": "str",
+                                                                "id": "str",
+                                                                "location": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "disableBgpRoutePropagation": bool,
+                                                                    "provisioningState": "str",
+                                                                    "resourceGuid": "str",
+                                                                    "routes": [
+                                                                        {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "nextHopType": "str",
+                                                                                "addressPrefix": "str",
+                                                                                "hasBgpOverride": bool,
+                                                                                "nextHopIpAddress": "str",
+                                                                                "provisioningState": "str",
+                                                                            },
+                                                                            "type": "str",
+                                                                        }
+                                                                    ],
+                                                                    "subnets": [...],
+                                                                },
+                                                                "tags": {"str": "str"},
+                                                                "type": "str",
+                                                            },
+                                                            "serviceAssociationLinks": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "allowDelete": bool,
+                                                                        "link": "str",
+                                                                        "linkedResourceType": "str",
+                                                                        "locations": ["str"],
+                                                                        "provisioningState": "str",
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "serviceEndpointPolicies": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "kind": "str",
+                                                                    "location": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "contextualServiceEndpointPolicies": ["str"],
+                                                                        "provisioningState": "str",
+                                                                        "resourceGuid": "str",
+                                                                        "serviceAlias": "str",
+                                                                        "serviceEndpointPolicyDefinitions": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "description": "str",
+                                                                                    "provisioningState": "str",
+                                                                                    "service": "str",
+                                                                                    "serviceResources": ["str"],
+                                                                                },
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "subnets": [...],
+                                                                    },
+                                                                    "tags": {"str": "str"},
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "serviceEndpoints": [
+                                                                {
+                                                                    "locations": ["str"],
+                                                                    "networkIdentifier": {"id": "str"},
+                                                                    "provisioningState": "str",
+                                                                    "service": "str",
+                                                                }
+                                                            ],
+                                                            "serviceGateway": {"id": "str"},
+                                                            "sharingScope": "str",
+                                                        },
+                                                        "type": "str",
+                                                    },
+                                                },
+                                                "tags": {"str": "str"},
+                                                "type": "str",
+                                            },
+                                            "privateEndpointLocation": "str",
+                                            "privateLinkServiceConnectionState": {
+                                                "actionsRequired": "str",
+                                                "description": "str",
+                                                "status": "str",
+                                            },
+                                            "provisioningState": "str",
+                                        },
+                                        "type": "str",
+                                    }
+                                ],
+                                "provisioningState": "str",
+                                "visibility": {"subscriptions": ["str"]},
+                            },
+                            "tags": {"str": "str"},
+                            "type": "str",
+                        },
+                        "provisioningState": "str",
+                        "resourceGuid": "str",
+                        "tapConfigurations": [
+                            {
+                                "etag": "str",
+                                "id": "str",
+                                "name": "str",
+                                "properties": {
+                                    "provisioningState": "str",
+                                    "virtualNetworkTap": {
+                                        "etag": "str",
+                                        "id": "str",
+                                        "location": "str",
+                                        "name": "str",
+                                        "properties": {
+                                            "destinationLoadBalancerFrontEndIPConfiguration": {
+                                                "etag": "str",
+                                                "id": "str",
+                                                "name": "str",
+                                                "properties": {
+                                                    "gatewayLoadBalancer": {"id": "str"},
+                                                    "inboundNatPools": [{"id": "str"}],
+                                                    "inboundNatRules": [{"id": "str"}],
+                                                    "loadBalancingRules": [{"id": "str"}],
+                                                    "outboundRules": [{"id": "str"}],
+                                                    "privateIPAddress": "str",
+                                                    "privateIPAddressVersion": "str",
+                                                    "privateIPAllocationMethod": "str",
+                                                    "provisioningState": "str",
+                                                    "publicIPAddress": {
+                                                        "etag": "str",
+                                                        "extendedLocation": {"name": "str", "type": "str"},
+                                                        "id": "str",
+                                                        "location": "str",
+                                                        "name": "str",
+                                                        "properties": {
+                                                            "ddosSettings": {
+                                                                "ddosProtectionPlan": {"id": "str"},
+                                                                "protectionMode": "str",
+                                                            },
+                                                            "deleteOption": "str",
+                                                            "dnsSettings": {
+                                                                "domainNameLabel": "str",
+                                                                "domainNameLabelScope": "str",
+                                                                "fqdn": "str",
+                                                                "reverseFqdn": "str",
+                                                            },
+                                                            "idleTimeoutInMinutes": 0,
+                                                            "ipAddress": "str",
+                                                            "ipConfiguration": {
+                                                                "etag": "str",
+                                                                "id": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "privateIPAddress": "str",
+                                                                    "privateIPAllocationMethod": "str",
+                                                                    "provisioningState": "str",
+                                                                    "publicIPAddress": ...,
+                                                                    "subnet": {
+                                                                        "etag": "str",
+                                                                        "id": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "addressPrefix": "str",
+                                                                            "addressPrefixes": ["str"],
+                                                                            "applicationGatewayIPConfigurations": [
+                                                                                {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "provisioningState": "str",
+                                                                                        "subnet": {"id": "str"},
+                                                                                    },
+                                                                                    "type": "str",
+                                                                                }
+                                                                            ],
+                                                                            "defaultOutboundAccess": bool,
+                                                                            "delegations": [
+                                                                                {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "actions": ["str"],
+                                                                                        "provisioningState": "str",
+                                                                                        "serviceName": "str",
+                                                                                    },
+                                                                                    "type": "str",
+                                                                                }
+                                                                            ],
+                                                                            "ipAllocations": [{"id": "str"}],
+                                                                            "ipConfigurationProfiles": [
+                                                                                {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "provisioningState": "str",
+                                                                                        "subnet": ...,
+                                                                                    },
+                                                                                    "type": "str",
+                                                                                }
+                                                                            ],
+                                                                            "ipConfigurations": [...],
+                                                                            "ipamPoolPrefixAllocations": [
+                                                                                {
+                                                                                    "allocatedAddressPrefixes": ["str"],
+                                                                                    "numberOfIpAddresses": "str",
+                                                                                    "pool": {"id": "str"},
+                                                                                }
+                                                                            ],
+                                                                            "natGateway": {"id": "str"},
+                                                                            "networkSecurityGroup": {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "location": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "defaultSecurityRules": [
+                                                                                        {
+                                                                                            "etag": "str",
+                                                                                            "id": "str",
+                                                                                            "name": "str",
+                                                                                            "properties": {
+                                                                                                "access": "str",
+                                                                                                "direction": "str",
+                                                                                                "priority": 0,
+                                                                                                "protocol": "str",
+                                                                                                "description": "str",
+                                                                                                "destinationAddressPrefix": "str",
+                                                                                                "destinationAddressPrefixes": [
+                                                                                                    "str"
+                                                                                                ],
+                                                                                                "destinationApplicationSecurityGroups": [
+                                                                                                    {
+                                                                                                        "etag": "str",
+                                                                                                        "id": "str",
+                                                                                                        "location": "str",
+                                                                                                        "name": "str",
+                                                                                                        "properties": {
+                                                                                                            "provisioningState": "str",
+                                                                                                            "resourceGuid": "str",
+                                                                                                        },
+                                                                                                        "tags": {
+                                                                                                            "str": "str"
+                                                                                                        },
+                                                                                                        "type": "str",
+                                                                                                    }
+                                                                                                ],
+                                                                                                "destinationPortRange": "str",
+                                                                                                "destinationPortRanges": [
+                                                                                                    "str"
+                                                                                                ],
+                                                                                                "provisioningState": "str",
+                                                                                                "sourceAddressPrefix": "str",
+                                                                                                "sourceAddressPrefixes": [
+                                                                                                    "str"
+                                                                                                ],
+                                                                                                "sourceApplicationSecurityGroups": [
+                                                                                                    {
+                                                                                                        "etag": "str",
+                                                                                                        "id": "str",
+                                                                                                        "location": "str",
+                                                                                                        "name": "str",
+                                                                                                        "properties": {
+                                                                                                            "provisioningState": "str",
+                                                                                                            "resourceGuid": "str",
+                                                                                                        },
+                                                                                                        "tags": {
+                                                                                                            "str": "str"
+                                                                                                        },
+                                                                                                        "type": "str",
+                                                                                                    }
+                                                                                                ],
+                                                                                                "sourcePortRange": "str",
+                                                                                                "sourcePortRanges": [
+                                                                                                    "str"
+                                                                                                ],
+                                                                                            },
+                                                                                            "type": "str",
+                                                                                        }
+                                                                                    ],
+                                                                                    "flowLogs": [
+                                                                                        {
+                                                                                            "etag": "str",
+                                                                                            "id": "str",
+                                                                                            "identity": {
+                                                                                                "principalId": "str",
+                                                                                                "tenantId": "str",
+                                                                                                "type": "str",
+                                                                                                "userAssignedIdentities": {
+                                                                                                    "str": {
+                                                                                                        "clientId": "str",
+                                                                                                        "principalId": "str",
+                                                                                                    }
+                                                                                                },
+                                                                                            },
+                                                                                            "location": "str",
+                                                                                            "name": "str",
+                                                                                            "properties": {
+                                                                                                "storageId": "str",
+                                                                                                "targetResourceId": "str",
+                                                                                                "enabled": bool,
+                                                                                                "enabledFilteringCriteria": "str",
+                                                                                                "flowAnalyticsConfiguration": {
+                                                                                                    "networkWatcherFlowAnalyticsConfiguration": {
+                                                                                                        "enabled": bool,
+                                                                                                        "trafficAnalyticsInterval": 0,
+                                                                                                        "workspaceId": "str",
+                                                                                                        "workspaceRegion": "str",
+                                                                                                        "workspaceResourceId": "str",
+                                                                                                    }
+                                                                                                },
+                                                                                                "format": {
+                                                                                                    "type": "str",
+                                                                                                    "version": 0,
+                                                                                                },
+                                                                                                "provisioningState": "str",
+                                                                                                "recordTypes": "str",
+                                                                                                "retentionPolicy": {
+                                                                                                    "days": 0,
+                                                                                                    "enabled": bool,
+                                                                                                },
+                                                                                                "targetResourceGuid": "str",
+                                                                                            },
+                                                                                            "tags": {"str": "str"},
+                                                                                            "type": "str",
+                                                                                        }
+                                                                                    ],
+                                                                                    "flushConnection": bool,
+                                                                                    "networkInterfaces": [...],
+                                                                                    "provisioningState": "str",
+                                                                                    "resourceGuid": "str",
+                                                                                    "securityRules": [
+                                                                                        {
+                                                                                            "etag": "str",
+                                                                                            "id": "str",
+                                                                                            "name": "str",
+                                                                                            "properties": {
+                                                                                                "access": "str",
+                                                                                                "direction": "str",
+                                                                                                "priority": 0,
+                                                                                                "protocol": "str",
+                                                                                                "description": "str",
+                                                                                                "destinationAddressPrefix": "str",
+                                                                                                "destinationAddressPrefixes": [
+                                                                                                    "str"
+                                                                                                ],
+                                                                                                "destinationApplicationSecurityGroups": [
+                                                                                                    {
+                                                                                                        "etag": "str",
+                                                                                                        "id": "str",
+                                                                                                        "location": "str",
+                                                                                                        "name": "str",
+                                                                                                        "properties": {
+                                                                                                            "provisioningState": "str",
+                                                                                                            "resourceGuid": "str",
+                                                                                                        },
+                                                                                                        "tags": {
+                                                                                                            "str": "str"
+                                                                                                        },
+                                                                                                        "type": "str",
+                                                                                                    }
+                                                                                                ],
+                                                                                                "destinationPortRange": "str",
+                                                                                                "destinationPortRanges": [
+                                                                                                    "str"
+                                                                                                ],
+                                                                                                "provisioningState": "str",
+                                                                                                "sourceAddressPrefix": "str",
+                                                                                                "sourceAddressPrefixes": [
+                                                                                                    "str"
+                                                                                                ],
+                                                                                                "sourceApplicationSecurityGroups": [
+                                                                                                    {
+                                                                                                        "etag": "str",
+                                                                                                        "id": "str",
+                                                                                                        "location": "str",
+                                                                                                        "name": "str",
+                                                                                                        "properties": {
+                                                                                                            "provisioningState": "str",
+                                                                                                            "resourceGuid": "str",
+                                                                                                        },
+                                                                                                        "tags": {
+                                                                                                            "str": "str"
+                                                                                                        },
+                                                                                                        "type": "str",
+                                                                                                    }
+                                                                                                ],
+                                                                                                "sourcePortRange": "str",
+                                                                                                "sourcePortRanges": [
+                                                                                                    "str"
+                                                                                                ],
+                                                                                            },
+                                                                                            "type": "str",
+                                                                                        }
+                                                                                    ],
+                                                                                    "subnets": [...],
+                                                                                },
+                                                                                "tags": {"str": "str"},
+                                                                                "type": "str",
+                                                                            },
+                                                                            "privateEndpointNetworkPolicies": "str",
+                                                                            "privateEndpoints": [
+                                                                                {
+                                                                                    "etag": "str",
+                                                                                    "extendedLocation": {
+                                                                                        "name": "str",
+                                                                                        "type": "str",
+                                                                                    },
+                                                                                    "id": "str",
+                                                                                    "location": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "applicationSecurityGroups": [
+                                                                                            {
+                                                                                                "etag": "str",
+                                                                                                "id": "str",
+                                                                                                "location": "str",
+                                                                                                "name": "str",
+                                                                                                "properties": {
+                                                                                                    "provisioningState": "str",
+                                                                                                    "resourceGuid": "str",
+                                                                                                },
+                                                                                                "tags": {"str": "str"},
+                                                                                                "type": "str",
+                                                                                            }
+                                                                                        ],
+                                                                                        "customDnsConfigs": [
+                                                                                            {
+                                                                                                "fqdn": "str",
+                                                                                                "ipAddresses": ["str"],
+                                                                                            }
+                                                                                        ],
+                                                                                        "customNetworkInterfaceName": "str",
+                                                                                        "ipConfigurations": [
+                                                                                            {
+                                                                                                "etag": "str",
+                                                                                                "name": "str",
+                                                                                                "properties": {
+                                                                                                    "groupId": "str",
+                                                                                                    "memberName": "str",
+                                                                                                    "privateIPAddress": "str",
+                                                                                                },
+                                                                                                "type": "str",
+                                                                                            }
+                                                                                        ],
+                                                                                        "ipVersionType": "str",
+                                                                                        "manualPrivateLinkServiceConnections": [
+                                                                                            {
+                                                                                                "etag": "str",
+                                                                                                "id": "str",
+                                                                                                "name": "str",
+                                                                                                "properties": {
+                                                                                                    "groupIds": ["str"],
+                                                                                                    "privateLinkServiceConnectionState": {
+                                                                                                        "actionsRequired": "str",
+                                                                                                        "description": "str",
+                                                                                                        "status": "str",
+                                                                                                    },
+                                                                                                    "privateLinkServiceId": "str",
+                                                                                                    "provisioningState": "str",
+                                                                                                    "requestMessage": "str",
+                                                                                                },
+                                                                                                "type": "str",
+                                                                                            }
+                                                                                        ],
+                                                                                        "networkInterfaces": [...],
+                                                                                        "privateLinkServiceConnections": [
+                                                                                            {
+                                                                                                "etag": "str",
+                                                                                                "id": "str",
+                                                                                                "name": "str",
+                                                                                                "properties": {
+                                                                                                    "groupIds": ["str"],
+                                                                                                    "privateLinkServiceConnectionState": {
+                                                                                                        "actionsRequired": "str",
+                                                                                                        "description": "str",
+                                                                                                        "status": "str",
+                                                                                                    },
+                                                                                                    "privateLinkServiceId": "str",
+                                                                                                    "provisioningState": "str",
+                                                                                                    "requestMessage": "str",
+                                                                                                },
+                                                                                                "type": "str",
+                                                                                            }
+                                                                                        ],
+                                                                                        "provisioningState": "str",
+                                                                                        "subnet": ...,
+                                                                                    },
+                                                                                    "tags": {"str": "str"},
+                                                                                    "type": "str",
+                                                                                }
+                                                                            ],
+                                                                            "privateLinkServiceNetworkPolicies": "str",
+                                                                            "provisioningState": "str",
+                                                                            "purpose": "str",
+                                                                            "resourceNavigationLinks": [
+                                                                                {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "link": "str",
+                                                                                        "linkedResourceType": "str",
+                                                                                        "provisioningState": "str",
+                                                                                    },
+                                                                                    "type": "str",
+                                                                                }
+                                                                            ],
+                                                                            "routeTable": {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "location": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "disableBgpRoutePropagation": bool,
+                                                                                    "provisioningState": "str",
+                                                                                    "resourceGuid": "str",
+                                                                                    "routes": [
+                                                                                        {
+                                                                                            "etag": "str",
+                                                                                            "id": "str",
+                                                                                            "name": "str",
+                                                                                            "properties": {
+                                                                                                "nextHopType": "str",
+                                                                                                "addressPrefix": "str",
+                                                                                                "hasBgpOverride": bool,
+                                                                                                "nextHopIpAddress": "str",
+                                                                                                "provisioningState": "str",
+                                                                                            },
+                                                                                            "type": "str",
+                                                                                        }
+                                                                                    ],
+                                                                                    "subnets": [...],
+                                                                                },
+                                                                                "tags": {"str": "str"},
+                                                                                "type": "str",
+                                                                            },
+                                                                            "serviceAssociationLinks": [
+                                                                                {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "allowDelete": bool,
+                                                                                        "link": "str",
+                                                                                        "linkedResourceType": "str",
+                                                                                        "locations": ["str"],
+                                                                                        "provisioningState": "str",
+                                                                                    },
+                                                                                    "type": "str",
+                                                                                }
+                                                                            ],
+                                                                            "serviceEndpointPolicies": [
+                                                                                {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "kind": "str",
+                                                                                    "location": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "contextualServiceEndpointPolicies": [
+                                                                                            "str"
+                                                                                        ],
+                                                                                        "provisioningState": "str",
+                                                                                        "resourceGuid": "str",
+                                                                                        "serviceAlias": "str",
+                                                                                        "serviceEndpointPolicyDefinitions": [
+                                                                                            {
+                                                                                                "etag": "str",
+                                                                                                "id": "str",
+                                                                                                "name": "str",
+                                                                                                "properties": {
+                                                                                                    "description": "str",
+                                                                                                    "provisioningState": "str",
+                                                                                                    "service": "str",
+                                                                                                    "serviceResources": [
+                                                                                                        "str"
+                                                                                                    ],
+                                                                                                },
+                                                                                                "type": "str",
+                                                                                            }
+                                                                                        ],
+                                                                                        "subnets": [...],
+                                                                                    },
+                                                                                    "tags": {"str": "str"},
+                                                                                    "type": "str",
+                                                                                }
+                                                                            ],
+                                                                            "serviceEndpoints": [
+                                                                                {
+                                                                                    "locations": ["str"],
+                                                                                    "networkIdentifier": {"id": "str"},
+                                                                                    "provisioningState": "str",
+                                                                                    "service": "str",
+                                                                                }
+                                                                            ],
+                                                                            "serviceGateway": {"id": "str"},
+                                                                            "sharingScope": "str",
+                                                                        },
+                                                                        "type": "str",
+                                                                    },
+                                                                },
+                                                            },
+                                                            "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                            "linkedPublicIPAddress": ...,
+                                                            "migrationPhase": "str",
+                                                            "natGateway": {
+                                                                "etag": "str",
+                                                                "id": "str",
+                                                                "location": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "idleTimeoutInMinutes": 0,
+                                                                    "provisioningState": "str",
+                                                                    "publicIpAddresses": [{"id": "str"}],
+                                                                    "publicIpAddressesV6": [{"id": "str"}],
+                                                                    "publicIpPrefixes": [{"id": "str"}],
+                                                                    "publicIpPrefixesV6": [{"id": "str"}],
+                                                                    "resourceGuid": "str",
+                                                                    "serviceGateway": {"id": "str"},
+                                                                    "sourceVirtualNetwork": {"id": "str"},
+                                                                    "subnets": [{"id": "str"}],
+                                                                },
+                                                                "sku": {"name": "str"},
+                                                                "tags": {"str": "str"},
+                                                                "type": "str",
+                                                                "zones": ["str"],
+                                                            },
+                                                            "provisioningState": "str",
+                                                            "publicIPAddressVersion": "str",
+                                                            "publicIPAllocationMethod": "str",
+                                                            "publicIPPrefix": {"id": "str"},
+                                                            "resourceGuid": "str",
+                                                            "servicePublicIPAddress": ...,
+                                                        },
+                                                        "sku": {"name": "str", "tier": "str"},
+                                                        "tags": {"str": "str"},
+                                                        "type": "str",
+                                                        "zones": ["str"],
+                                                    },
+                                                    "publicIPPrefix": {"id": "str"},
+                                                    "subnet": {
+                                                        "etag": "str",
+                                                        "id": "str",
+                                                        "name": "str",
+                                                        "properties": {
+                                                            "addressPrefix": "str",
+                                                            "addressPrefixes": ["str"],
+                                                            "applicationGatewayIPConfigurations": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "provisioningState": "str",
+                                                                        "subnet": {"id": "str"},
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "defaultOutboundAccess": bool,
+                                                            "delegations": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "actions": ["str"],
+                                                                        "provisioningState": "str",
+                                                                        "serviceName": "str",
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "ipAllocations": [{"id": "str"}],
+                                                            "ipConfigurationProfiles": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "provisioningState": "str",
+                                                                        "subnet": ...,
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "ipConfigurations": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "privateIPAddress": "str",
+                                                                        "privateIPAllocationMethod": "str",
+                                                                        "provisioningState": "str",
+                                                                        "publicIPAddress": {
+                                                                            "etag": "str",
+                                                                            "extendedLocation": {
+                                                                                "name": "str",
+                                                                                "type": "str",
+                                                                            },
+                                                                            "id": "str",
+                                                                            "location": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "ddosSettings": {
+                                                                                    "ddosProtectionPlan": {"id": "str"},
+                                                                                    "protectionMode": "str",
+                                                                                },
+                                                                                "deleteOption": "str",
+                                                                                "dnsSettings": {
+                                                                                    "domainNameLabel": "str",
+                                                                                    "domainNameLabelScope": "str",
+                                                                                    "fqdn": "str",
+                                                                                    "reverseFqdn": "str",
+                                                                                },
+                                                                                "idleTimeoutInMinutes": 0,
+                                                                                "ipAddress": "str",
+                                                                                "ipConfiguration": ...,
+                                                                                "ipTags": [
+                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                ],
+                                                                                "linkedPublicIPAddress": ...,
+                                                                                "migrationPhase": "str",
+                                                                                "natGateway": {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "location": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "idleTimeoutInMinutes": 0,
+                                                                                        "provisioningState": "str",
+                                                                                        "publicIpAddresses": [
+                                                                                            {"id": "str"}
+                                                                                        ],
+                                                                                        "publicIpAddressesV6": [
+                                                                                            {"id": "str"}
+                                                                                        ],
+                                                                                        "publicIpPrefixes": [
+                                                                                            {"id": "str"}
+                                                                                        ],
+                                                                                        "publicIpPrefixesV6": [
+                                                                                            {"id": "str"}
+                                                                                        ],
+                                                                                        "resourceGuid": "str",
+                                                                                        "serviceGateway": {"id": "str"},
+                                                                                        "sourceVirtualNetwork": {
+                                                                                            "id": "str"
+                                                                                        },
+                                                                                        "subnets": [{"id": "str"}],
+                                                                                    },
+                                                                                    "sku": {"name": "str"},
+                                                                                    "tags": {"str": "str"},
+                                                                                    "type": "str",
+                                                                                    "zones": ["str"],
+                                                                                },
+                                                                                "provisioningState": "str",
+                                                                                "publicIPAddressVersion": "str",
+                                                                                "publicIPAllocationMethod": "str",
+                                                                                "publicIPPrefix": {"id": "str"},
+                                                                                "resourceGuid": "str",
+                                                                                "servicePublicIPAddress": ...,
+                                                                            },
+                                                                            "sku": {"name": "str", "tier": "str"},
+                                                                            "tags": {"str": "str"},
+                                                                            "type": "str",
+                                                                            "zones": ["str"],
+                                                                        },
+                                                                        "subnet": ...,
+                                                                    },
+                                                                }
+                                                            ],
+                                                            "ipamPoolPrefixAllocations": [
+                                                                {
+                                                                    "allocatedAddressPrefixes": ["str"],
+                                                                    "numberOfIpAddresses": "str",
+                                                                    "pool": {"id": "str"},
+                                                                }
+                                                            ],
+                                                            "natGateway": {"id": "str"},
+                                                            "networkSecurityGroup": {
+                                                                "etag": "str",
+                                                                "id": "str",
+                                                                "location": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "defaultSecurityRules": [
+                                                                        {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "access": "str",
+                                                                                "direction": "str",
+                                                                                "priority": 0,
+                                                                                "protocol": "str",
+                                                                                "description": "str",
+                                                                                "destinationAddressPrefix": "str",
+                                                                                "destinationAddressPrefixes": ["str"],
+                                                                                "destinationApplicationSecurityGroups": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "location": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "provisioningState": "str",
+                                                                                            "resourceGuid": "str",
+                                                                                        },
+                                                                                        "tags": {"str": "str"},
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "destinationPortRange": "str",
+                                                                                "destinationPortRanges": ["str"],
+                                                                                "provisioningState": "str",
+                                                                                "sourceAddressPrefix": "str",
+                                                                                "sourceAddressPrefixes": ["str"],
+                                                                                "sourceApplicationSecurityGroups": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "location": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "provisioningState": "str",
+                                                                                            "resourceGuid": "str",
+                                                                                        },
+                                                                                        "tags": {"str": "str"},
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "sourcePortRange": "str",
+                                                                                "sourcePortRanges": ["str"],
+                                                                            },
+                                                                            "type": "str",
+                                                                        }
+                                                                    ],
+                                                                    "flowLogs": [
+                                                                        {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "identity": {
+                                                                                "principalId": "str",
+                                                                                "tenantId": "str",
+                                                                                "type": "str",
+                                                                                "userAssignedIdentities": {
+                                                                                    "str": {
+                                                                                        "clientId": "str",
+                                                                                        "principalId": "str",
+                                                                                    }
+                                                                                },
+                                                                            },
+                                                                            "location": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "storageId": "str",
+                                                                                "targetResourceId": "str",
+                                                                                "enabled": bool,
+                                                                                "enabledFilteringCriteria": "str",
+                                                                                "flowAnalyticsConfiguration": {
+                                                                                    "networkWatcherFlowAnalyticsConfiguration": {
+                                                                                        "enabled": bool,
+                                                                                        "trafficAnalyticsInterval": 0,
+                                                                                        "workspaceId": "str",
+                                                                                        "workspaceRegion": "str",
+                                                                                        "workspaceResourceId": "str",
+                                                                                    }
+                                                                                },
+                                                                                "format": {"type": "str", "version": 0},
+                                                                                "provisioningState": "str",
+                                                                                "recordTypes": "str",
+                                                                                "retentionPolicy": {
+                                                                                    "days": 0,
+                                                                                    "enabled": bool,
+                                                                                },
+                                                                                "targetResourceGuid": "str",
+                                                                            },
+                                                                            "tags": {"str": "str"},
+                                                                            "type": "str",
+                                                                        }
+                                                                    ],
+                                                                    "flushConnection": bool,
+                                                                    "networkInterfaces": [...],
+                                                                    "provisioningState": "str",
+                                                                    "resourceGuid": "str",
+                                                                    "securityRules": [
+                                                                        {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "access": "str",
+                                                                                "direction": "str",
+                                                                                "priority": 0,
+                                                                                "protocol": "str",
+                                                                                "description": "str",
+                                                                                "destinationAddressPrefix": "str",
+                                                                                "destinationAddressPrefixes": ["str"],
+                                                                                "destinationApplicationSecurityGroups": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "location": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "provisioningState": "str",
+                                                                                            "resourceGuid": "str",
+                                                                                        },
+                                                                                        "tags": {"str": "str"},
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "destinationPortRange": "str",
+                                                                                "destinationPortRanges": ["str"],
+                                                                                "provisioningState": "str",
+                                                                                "sourceAddressPrefix": "str",
+                                                                                "sourceAddressPrefixes": ["str"],
+                                                                                "sourceApplicationSecurityGroups": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "location": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "provisioningState": "str",
+                                                                                            "resourceGuid": "str",
+                                                                                        },
+                                                                                        "tags": {"str": "str"},
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "sourcePortRange": "str",
+                                                                                "sourcePortRanges": ["str"],
+                                                                            },
+                                                                            "type": "str",
+                                                                        }
+                                                                    ],
+                                                                    "subnets": [...],
+                                                                },
+                                                                "tags": {"str": "str"},
+                                                                "type": "str",
+                                                            },
+                                                            "privateEndpointNetworkPolicies": "str",
+                                                            "privateEndpoints": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "extendedLocation": {"name": "str", "type": "str"},
+                                                                    "id": "str",
+                                                                    "location": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "applicationSecurityGroups": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "location": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "provisioningState": "str",
+                                                                                    "resourceGuid": "str",
+                                                                                },
+                                                                                "tags": {"str": "str"},
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "customDnsConfigs": [
+                                                                            {"fqdn": "str", "ipAddresses": ["str"]}
+                                                                        ],
+                                                                        "customNetworkInterfaceName": "str",
+                                                                        "ipConfigurations": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "groupId": "str",
+                                                                                    "memberName": "str",
+                                                                                    "privateIPAddress": "str",
+                                                                                },
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "ipVersionType": "str",
+                                                                        "manualPrivateLinkServiceConnections": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "groupIds": ["str"],
+                                                                                    "privateLinkServiceConnectionState": {
+                                                                                        "actionsRequired": "str",
+                                                                                        "description": "str",
+                                                                                        "status": "str",
+                                                                                    },
+                                                                                    "privateLinkServiceId": "str",
+                                                                                    "provisioningState": "str",
+                                                                                    "requestMessage": "str",
+                                                                                },
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "networkInterfaces": [...],
+                                                                        "privateLinkServiceConnections": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "groupIds": ["str"],
+                                                                                    "privateLinkServiceConnectionState": {
+                                                                                        "actionsRequired": "str",
+                                                                                        "description": "str",
+                                                                                        "status": "str",
+                                                                                    },
+                                                                                    "privateLinkServiceId": "str",
+                                                                                    "provisioningState": "str",
+                                                                                    "requestMessage": "str",
+                                                                                },
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "provisioningState": "str",
+                                                                        "subnet": ...,
+                                                                    },
+                                                                    "tags": {"str": "str"},
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "privateLinkServiceNetworkPolicies": "str",
+                                                            "provisioningState": "str",
+                                                            "purpose": "str",
+                                                            "resourceNavigationLinks": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "link": "str",
+                                                                        "linkedResourceType": "str",
+                                                                        "provisioningState": "str",
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "routeTable": {
+                                                                "etag": "str",
+                                                                "id": "str",
+                                                                "location": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "disableBgpRoutePropagation": bool,
+                                                                    "provisioningState": "str",
+                                                                    "resourceGuid": "str",
+                                                                    "routes": [
+                                                                        {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "nextHopType": "str",
+                                                                                "addressPrefix": "str",
+                                                                                "hasBgpOverride": bool,
+                                                                                "nextHopIpAddress": "str",
+                                                                                "provisioningState": "str",
+                                                                            },
+                                                                            "type": "str",
+                                                                        }
+                                                                    ],
+                                                                    "subnets": [...],
+                                                                },
+                                                                "tags": {"str": "str"},
+                                                                "type": "str",
+                                                            },
+                                                            "serviceAssociationLinks": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "allowDelete": bool,
+                                                                        "link": "str",
+                                                                        "linkedResourceType": "str",
+                                                                        "locations": ["str"],
+                                                                        "provisioningState": "str",
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "serviceEndpointPolicies": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "kind": "str",
+                                                                    "location": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "contextualServiceEndpointPolicies": ["str"],
+                                                                        "provisioningState": "str",
+                                                                        "resourceGuid": "str",
+                                                                        "serviceAlias": "str",
+                                                                        "serviceEndpointPolicyDefinitions": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "description": "str",
+                                                                                    "provisioningState": "str",
+                                                                                    "service": "str",
+                                                                                    "serviceResources": ["str"],
+                                                                                },
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "subnets": [...],
+                                                                    },
+                                                                    "tags": {"str": "str"},
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "serviceEndpoints": [
+                                                                {
+                                                                    "locations": ["str"],
+                                                                    "networkIdentifier": {"id": "str"},
+                                                                    "provisioningState": "str",
+                                                                    "service": "str",
+                                                                }
+                                                            ],
+                                                            "serviceGateway": {"id": "str"},
+                                                            "sharingScope": "str",
+                                                        },
+                                                        "type": "str",
+                                                    },
+                                                },
+                                                "type": "str",
+                                                "zones": ["str"],
+                                            },
+                                            "destinationNetworkInterfaceIPConfiguration": {
+                                                "etag": "str",
+                                                "id": "str",
+                                                "name": "str",
+                                                "properties": {
+                                                    "applicationGatewayBackendAddressPools": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "backendAddresses": [
+                                                                    {"fqdn": "str", "ipAddress": "str"}
+                                                                ],
+                                                                "backendIPConfigurations": [...],
+                                                                "provisioningState": "str",
+                                                            },
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "applicationSecurityGroups": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "location": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "provisioningState": "str",
+                                                                "resourceGuid": "str",
+                                                            },
+                                                            "tags": {"str": "str"},
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "gatewayLoadBalancer": {"id": "str"},
+                                                    "loadBalancerBackendAddressPools": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "backendIPConfigurations": [...],
+                                                                "drainPeriodInSeconds": 0,
+                                                                "inboundNatRules": [{"id": "str"}],
+                                                                "loadBalancerBackendAddresses": [
+                                                                    {
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "adminState": "str",
+                                                                            "inboundNatRulesPortMapping": [
+                                                                                {
+                                                                                    "backendPort": 0,
+                                                                                    "frontendPort": 0,
+                                                                                    "inboundNatRuleName": "str",
+                                                                                }
+                                                                            ],
+                                                                            "ipAddress": "str",
+                                                                            "loadBalancerFrontendIPConfiguration": {
+                                                                                "id": "str"
+                                                                            },
+                                                                            "networkInterfaceIPConfiguration": {
+                                                                                "id": "str"
+                                                                            },
+                                                                            "subnet": {"id": "str"},
+                                                                            "virtualNetwork": {"id": "str"},
+                                                                        },
+                                                                    }
+                                                                ],
+                                                                "loadBalancingRules": [{"id": "str"}],
+                                                                "location": "str",
+                                                                "outboundRule": {"id": "str"},
+                                                                "outboundRules": [{"id": "str"}],
+                                                                "provisioningState": "str",
+                                                                "syncMode": "str",
+                                                                "tunnelInterfaces": [
+                                                                    {
+                                                                        "identifier": 0,
+                                                                        "port": 0,
+                                                                        "protocol": "str",
+                                                                        "type": "str",
+                                                                    }
+                                                                ],
+                                                                "virtualNetwork": {"id": "str"},
+                                                            },
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "loadBalancerInboundNatRules": [
+                                                        {
+                                                            "etag": "str",
+                                                            "id": "str",
+                                                            "name": "str",
+                                                            "properties": {
+                                                                "backendAddressPool": {"id": "str"},
+                                                                "backendIPConfiguration": ...,
+                                                                "backendPort": 0,
+                                                                "enableFloatingIP": bool,
+                                                                "enableTcpReset": bool,
+                                                                "frontendIPConfiguration": {"id": "str"},
+                                                                "frontendPort": 0,
+                                                                "frontendPortRangeEnd": 0,
+                                                                "frontendPortRangeStart": 0,
+                                                                "idleTimeoutInMinutes": 0,
+                                                                "protocol": "str",
+                                                                "provisioningState": "str",
+                                                            },
+                                                            "type": "str",
+                                                        }
+                                                    ],
+                                                    "primary": bool,
+                                                    "privateIPAddress": "str",
+                                                    "privateIPAddressPrefixLength": 0,
+                                                    "privateIPAddressVersion": "str",
+                                                    "privateIPAllocationMethod": "str",
+                                                    "privateLinkConnectionProperties": {
+                                                        "fqdns": ["str"],
+                                                        "groupId": "str",
+                                                        "requiredMemberName": "str",
+                                                    },
+                                                    "provisioningState": "str",
+                                                    "publicIPAddress": {
+                                                        "etag": "str",
+                                                        "extendedLocation": {"name": "str", "type": "str"},
+                                                        "id": "str",
+                                                        "location": "str",
+                                                        "name": "str",
+                                                        "properties": {
+                                                            "ddosSettings": {
+                                                                "ddosProtectionPlan": {"id": "str"},
+                                                                "protectionMode": "str",
+                                                            },
+                                                            "deleteOption": "str",
+                                                            "dnsSettings": {
+                                                                "domainNameLabel": "str",
+                                                                "domainNameLabelScope": "str",
+                                                                "fqdn": "str",
+                                                                "reverseFqdn": "str",
+                                                            },
+                                                            "idleTimeoutInMinutes": 0,
+                                                            "ipAddress": "str",
+                                                            "ipConfiguration": {
+                                                                "etag": "str",
+                                                                "id": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "privateIPAddress": "str",
+                                                                    "privateIPAllocationMethod": "str",
+                                                                    "provisioningState": "str",
+                                                                    "publicIPAddress": ...,
+                                                                    "subnet": {
+                                                                        "etag": "str",
+                                                                        "id": "str",
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "addressPrefix": "str",
+                                                                            "addressPrefixes": ["str"],
+                                                                            "applicationGatewayIPConfigurations": [
+                                                                                {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "provisioningState": "str",
+                                                                                        "subnet": {"id": "str"},
+                                                                                    },
+                                                                                    "type": "str",
+                                                                                }
+                                                                            ],
+                                                                            "defaultOutboundAccess": bool,
+                                                                            "delegations": [
+                                                                                {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "actions": ["str"],
+                                                                                        "provisioningState": "str",
+                                                                                        "serviceName": "str",
+                                                                                    },
+                                                                                    "type": "str",
+                                                                                }
+                                                                            ],
+                                                                            "ipAllocations": [{"id": "str"}],
+                                                                            "ipConfigurationProfiles": [
+                                                                                {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "provisioningState": "str",
+                                                                                        "subnet": ...,
+                                                                                    },
+                                                                                    "type": "str",
+                                                                                }
+                                                                            ],
+                                                                            "ipConfigurations": [...],
+                                                                            "ipamPoolPrefixAllocations": [
+                                                                                {
+                                                                                    "allocatedAddressPrefixes": ["str"],
+                                                                                    "numberOfIpAddresses": "str",
+                                                                                    "pool": {"id": "str"},
+                                                                                }
+                                                                            ],
+                                                                            "natGateway": {"id": "str"},
+                                                                            "networkSecurityGroup": {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "location": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "defaultSecurityRules": [
+                                                                                        {
+                                                                                            "etag": "str",
+                                                                                            "id": "str",
+                                                                                            "name": "str",
+                                                                                            "properties": {
+                                                                                                "access": "str",
+                                                                                                "direction": "str",
+                                                                                                "priority": 0,
+                                                                                                "protocol": "str",
+                                                                                                "description": "str",
+                                                                                                "destinationAddressPrefix": "str",
+                                                                                                "destinationAddressPrefixes": [
+                                                                                                    "str"
+                                                                                                ],
+                                                                                                "destinationApplicationSecurityGroups": [
+                                                                                                    {
+                                                                                                        "etag": "str",
+                                                                                                        "id": "str",
+                                                                                                        "location": "str",
+                                                                                                        "name": "str",
+                                                                                                        "properties": {
+                                                                                                            "provisioningState": "str",
+                                                                                                            "resourceGuid": "str",
+                                                                                                        },
+                                                                                                        "tags": {
+                                                                                                            "str": "str"
+                                                                                                        },
+                                                                                                        "type": "str",
+                                                                                                    }
+                                                                                                ],
+                                                                                                "destinationPortRange": "str",
+                                                                                                "destinationPortRanges": [
+                                                                                                    "str"
+                                                                                                ],
+                                                                                                "provisioningState": "str",
+                                                                                                "sourceAddressPrefix": "str",
+                                                                                                "sourceAddressPrefixes": [
+                                                                                                    "str"
+                                                                                                ],
+                                                                                                "sourceApplicationSecurityGroups": [
+                                                                                                    {
+                                                                                                        "etag": "str",
+                                                                                                        "id": "str",
+                                                                                                        "location": "str",
+                                                                                                        "name": "str",
+                                                                                                        "properties": {
+                                                                                                            "provisioningState": "str",
+                                                                                                            "resourceGuid": "str",
+                                                                                                        },
+                                                                                                        "tags": {
+                                                                                                            "str": "str"
+                                                                                                        },
+                                                                                                        "type": "str",
+                                                                                                    }
+                                                                                                ],
+                                                                                                "sourcePortRange": "str",
+                                                                                                "sourcePortRanges": [
+                                                                                                    "str"
+                                                                                                ],
+                                                                                            },
+                                                                                            "type": "str",
+                                                                                        }
+                                                                                    ],
+                                                                                    "flowLogs": [
+                                                                                        {
+                                                                                            "etag": "str",
+                                                                                            "id": "str",
+                                                                                            "identity": {
+                                                                                                "principalId": "str",
+                                                                                                "tenantId": "str",
+                                                                                                "type": "str",
+                                                                                                "userAssignedIdentities": {
+                                                                                                    "str": {
+                                                                                                        "clientId": "str",
+                                                                                                        "principalId": "str",
+                                                                                                    }
+                                                                                                },
+                                                                                            },
+                                                                                            "location": "str",
+                                                                                            "name": "str",
+                                                                                            "properties": {
+                                                                                                "storageId": "str",
+                                                                                                "targetResourceId": "str",
+                                                                                                "enabled": bool,
+                                                                                                "enabledFilteringCriteria": "str",
+                                                                                                "flowAnalyticsConfiguration": {
+                                                                                                    "networkWatcherFlowAnalyticsConfiguration": {
+                                                                                                        "enabled": bool,
+                                                                                                        "trafficAnalyticsInterval": 0,
+                                                                                                        "workspaceId": "str",
+                                                                                                        "workspaceRegion": "str",
+                                                                                                        "workspaceResourceId": "str",
+                                                                                                    }
+                                                                                                },
+                                                                                                "format": {
+                                                                                                    "type": "str",
+                                                                                                    "version": 0,
+                                                                                                },
+                                                                                                "provisioningState": "str",
+                                                                                                "recordTypes": "str",
+                                                                                                "retentionPolicy": {
+                                                                                                    "days": 0,
+                                                                                                    "enabled": bool,
+                                                                                                },
+                                                                                                "targetResourceGuid": "str",
+                                                                                            },
+                                                                                            "tags": {"str": "str"},
+                                                                                            "type": "str",
+                                                                                        }
+                                                                                    ],
+                                                                                    "flushConnection": bool,
+                                                                                    "networkInterfaces": [...],
+                                                                                    "provisioningState": "str",
+                                                                                    "resourceGuid": "str",
+                                                                                    "securityRules": [
+                                                                                        {
+                                                                                            "etag": "str",
+                                                                                            "id": "str",
+                                                                                            "name": "str",
+                                                                                            "properties": {
+                                                                                                "access": "str",
+                                                                                                "direction": "str",
+                                                                                                "priority": 0,
+                                                                                                "protocol": "str",
+                                                                                                "description": "str",
+                                                                                                "destinationAddressPrefix": "str",
+                                                                                                "destinationAddressPrefixes": [
+                                                                                                    "str"
+                                                                                                ],
+                                                                                                "destinationApplicationSecurityGroups": [
+                                                                                                    {
+                                                                                                        "etag": "str",
+                                                                                                        "id": "str",
+                                                                                                        "location": "str",
+                                                                                                        "name": "str",
+                                                                                                        "properties": {
+                                                                                                            "provisioningState": "str",
+                                                                                                            "resourceGuid": "str",
+                                                                                                        },
+                                                                                                        "tags": {
+                                                                                                            "str": "str"
+                                                                                                        },
+                                                                                                        "type": "str",
+                                                                                                    }
+                                                                                                ],
+                                                                                                "destinationPortRange": "str",
+                                                                                                "destinationPortRanges": [
+                                                                                                    "str"
+                                                                                                ],
+                                                                                                "provisioningState": "str",
+                                                                                                "sourceAddressPrefix": "str",
+                                                                                                "sourceAddressPrefixes": [
+                                                                                                    "str"
+                                                                                                ],
+                                                                                                "sourceApplicationSecurityGroups": [
+                                                                                                    {
+                                                                                                        "etag": "str",
+                                                                                                        "id": "str",
+                                                                                                        "location": "str",
+                                                                                                        "name": "str",
+                                                                                                        "properties": {
+                                                                                                            "provisioningState": "str",
+                                                                                                            "resourceGuid": "str",
+                                                                                                        },
+                                                                                                        "tags": {
+                                                                                                            "str": "str"
+                                                                                                        },
+                                                                                                        "type": "str",
+                                                                                                    }
+                                                                                                ],
+                                                                                                "sourcePortRange": "str",
+                                                                                                "sourcePortRanges": [
+                                                                                                    "str"
+                                                                                                ],
+                                                                                            },
+                                                                                            "type": "str",
+                                                                                        }
+                                                                                    ],
+                                                                                    "subnets": [...],
+                                                                                },
+                                                                                "tags": {"str": "str"},
+                                                                                "type": "str",
+                                                                            },
+                                                                            "privateEndpointNetworkPolicies": "str",
+                                                                            "privateEndpoints": [
+                                                                                {
+                                                                                    "etag": "str",
+                                                                                    "extendedLocation": {
+                                                                                        "name": "str",
+                                                                                        "type": "str",
+                                                                                    },
+                                                                                    "id": "str",
+                                                                                    "location": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "applicationSecurityGroups": [
+                                                                                            {
+                                                                                                "etag": "str",
+                                                                                                "id": "str",
+                                                                                                "location": "str",
+                                                                                                "name": "str",
+                                                                                                "properties": {
+                                                                                                    "provisioningState": "str",
+                                                                                                    "resourceGuid": "str",
+                                                                                                },
+                                                                                                "tags": {"str": "str"},
+                                                                                                "type": "str",
+                                                                                            }
+                                                                                        ],
+                                                                                        "customDnsConfigs": [
+                                                                                            {
+                                                                                                "fqdn": "str",
+                                                                                                "ipAddresses": ["str"],
+                                                                                            }
+                                                                                        ],
+                                                                                        "customNetworkInterfaceName": "str",
+                                                                                        "ipConfigurations": [
+                                                                                            {
+                                                                                                "etag": "str",
+                                                                                                "name": "str",
+                                                                                                "properties": {
+                                                                                                    "groupId": "str",
+                                                                                                    "memberName": "str",
+                                                                                                    "privateIPAddress": "str",
+                                                                                                },
+                                                                                                "type": "str",
+                                                                                            }
+                                                                                        ],
+                                                                                        "ipVersionType": "str",
+                                                                                        "manualPrivateLinkServiceConnections": [
+                                                                                            {
+                                                                                                "etag": "str",
+                                                                                                "id": "str",
+                                                                                                "name": "str",
+                                                                                                "properties": {
+                                                                                                    "groupIds": ["str"],
+                                                                                                    "privateLinkServiceConnectionState": {
+                                                                                                        "actionsRequired": "str",
+                                                                                                        "description": "str",
+                                                                                                        "status": "str",
+                                                                                                    },
+                                                                                                    "privateLinkServiceId": "str",
+                                                                                                    "provisioningState": "str",
+                                                                                                    "requestMessage": "str",
+                                                                                                },
+                                                                                                "type": "str",
+                                                                                            }
+                                                                                        ],
+                                                                                        "networkInterfaces": [...],
+                                                                                        "privateLinkServiceConnections": [
+                                                                                            {
+                                                                                                "etag": "str",
+                                                                                                "id": "str",
+                                                                                                "name": "str",
+                                                                                                "properties": {
+                                                                                                    "groupIds": ["str"],
+                                                                                                    "privateLinkServiceConnectionState": {
+                                                                                                        "actionsRequired": "str",
+                                                                                                        "description": "str",
+                                                                                                        "status": "str",
+                                                                                                    },
+                                                                                                    "privateLinkServiceId": "str",
+                                                                                                    "provisioningState": "str",
+                                                                                                    "requestMessage": "str",
+                                                                                                },
+                                                                                                "type": "str",
+                                                                                            }
+                                                                                        ],
+                                                                                        "provisioningState": "str",
+                                                                                        "subnet": ...,
+                                                                                    },
+                                                                                    "tags": {"str": "str"},
+                                                                                    "type": "str",
+                                                                                }
+                                                                            ],
+                                                                            "privateLinkServiceNetworkPolicies": "str",
+                                                                            "provisioningState": "str",
+                                                                            "purpose": "str",
+                                                                            "resourceNavigationLinks": [
+                                                                                {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "link": "str",
+                                                                                        "linkedResourceType": "str",
+                                                                                        "provisioningState": "str",
+                                                                                    },
+                                                                                    "type": "str",
+                                                                                }
+                                                                            ],
+                                                                            "routeTable": {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "location": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "disableBgpRoutePropagation": bool,
+                                                                                    "provisioningState": "str",
+                                                                                    "resourceGuid": "str",
+                                                                                    "routes": [
+                                                                                        {
+                                                                                            "etag": "str",
+                                                                                            "id": "str",
+                                                                                            "name": "str",
+                                                                                            "properties": {
+                                                                                                "nextHopType": "str",
+                                                                                                "addressPrefix": "str",
+                                                                                                "hasBgpOverride": bool,
+                                                                                                "nextHopIpAddress": "str",
+                                                                                                "provisioningState": "str",
+                                                                                            },
+                                                                                            "type": "str",
+                                                                                        }
+                                                                                    ],
+                                                                                    "subnets": [...],
+                                                                                },
+                                                                                "tags": {"str": "str"},
+                                                                                "type": "str",
+                                                                            },
+                                                                            "serviceAssociationLinks": [
+                                                                                {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "allowDelete": bool,
+                                                                                        "link": "str",
+                                                                                        "linkedResourceType": "str",
+                                                                                        "locations": ["str"],
+                                                                                        "provisioningState": "str",
+                                                                                    },
+                                                                                    "type": "str",
+                                                                                }
+                                                                            ],
+                                                                            "serviceEndpointPolicies": [
+                                                                                {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "kind": "str",
+                                                                                    "location": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "contextualServiceEndpointPolicies": [
+                                                                                            "str"
+                                                                                        ],
+                                                                                        "provisioningState": "str",
+                                                                                        "resourceGuid": "str",
+                                                                                        "serviceAlias": "str",
+                                                                                        "serviceEndpointPolicyDefinitions": [
+                                                                                            {
+                                                                                                "etag": "str",
+                                                                                                "id": "str",
+                                                                                                "name": "str",
+                                                                                                "properties": {
+                                                                                                    "description": "str",
+                                                                                                    "provisioningState": "str",
+                                                                                                    "service": "str",
+                                                                                                    "serviceResources": [
+                                                                                                        "str"
+                                                                                                    ],
+                                                                                                },
+                                                                                                "type": "str",
+                                                                                            }
+                                                                                        ],
+                                                                                        "subnets": [...],
+                                                                                    },
+                                                                                    "tags": {"str": "str"},
+                                                                                    "type": "str",
+                                                                                }
+                                                                            ],
+                                                                            "serviceEndpoints": [
+                                                                                {
+                                                                                    "locations": ["str"],
+                                                                                    "networkIdentifier": {"id": "str"},
+                                                                                    "provisioningState": "str",
+                                                                                    "service": "str",
+                                                                                }
+                                                                            ],
+                                                                            "serviceGateway": {"id": "str"},
+                                                                            "sharingScope": "str",
+                                                                        },
+                                                                        "type": "str",
+                                                                    },
+                                                                },
+                                                            },
+                                                            "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                            "linkedPublicIPAddress": ...,
+                                                            "migrationPhase": "str",
+                                                            "natGateway": {
+                                                                "etag": "str",
+                                                                "id": "str",
+                                                                "location": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "idleTimeoutInMinutes": 0,
+                                                                    "provisioningState": "str",
+                                                                    "publicIpAddresses": [{"id": "str"}],
+                                                                    "publicIpAddressesV6": [{"id": "str"}],
+                                                                    "publicIpPrefixes": [{"id": "str"}],
+                                                                    "publicIpPrefixesV6": [{"id": "str"}],
+                                                                    "resourceGuid": "str",
+                                                                    "serviceGateway": {"id": "str"},
+                                                                    "sourceVirtualNetwork": {"id": "str"},
+                                                                    "subnets": [{"id": "str"}],
+                                                                },
+                                                                "sku": {"name": "str"},
+                                                                "tags": {"str": "str"},
+                                                                "type": "str",
+                                                                "zones": ["str"],
+                                                            },
+                                                            "provisioningState": "str",
+                                                            "publicIPAddressVersion": "str",
+                                                            "publicIPAllocationMethod": "str",
+                                                            "publicIPPrefix": {"id": "str"},
+                                                            "resourceGuid": "str",
+                                                            "servicePublicIPAddress": ...,
+                                                        },
+                                                        "sku": {"name": "str", "tier": "str"},
+                                                        "tags": {"str": "str"},
+                                                        "type": "str",
+                                                        "zones": ["str"],
+                                                    },
+                                                    "subnet": {
+                                                        "etag": "str",
+                                                        "id": "str",
+                                                        "name": "str",
+                                                        "properties": {
+                                                            "addressPrefix": "str",
+                                                            "addressPrefixes": ["str"],
+                                                            "applicationGatewayIPConfigurations": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "provisioningState": "str",
+                                                                        "subnet": {"id": "str"},
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "defaultOutboundAccess": bool,
+                                                            "delegations": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "actions": ["str"],
+                                                                        "provisioningState": "str",
+                                                                        "serviceName": "str",
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "ipAllocations": [{"id": "str"}],
+                                                            "ipConfigurationProfiles": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "provisioningState": "str",
+                                                                        "subnet": ...,
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "ipConfigurations": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "privateIPAddress": "str",
+                                                                        "privateIPAllocationMethod": "str",
+                                                                        "provisioningState": "str",
+                                                                        "publicIPAddress": {
+                                                                            "etag": "str",
+                                                                            "extendedLocation": {
+                                                                                "name": "str",
+                                                                                "type": "str",
+                                                                            },
+                                                                            "id": "str",
+                                                                            "location": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "ddosSettings": {
+                                                                                    "ddosProtectionPlan": {"id": "str"},
+                                                                                    "protectionMode": "str",
+                                                                                },
+                                                                                "deleteOption": "str",
+                                                                                "dnsSettings": {
+                                                                                    "domainNameLabel": "str",
+                                                                                    "domainNameLabelScope": "str",
+                                                                                    "fqdn": "str",
+                                                                                    "reverseFqdn": "str",
+                                                                                },
+                                                                                "idleTimeoutInMinutes": 0,
+                                                                                "ipAddress": "str",
+                                                                                "ipConfiguration": ...,
+                                                                                "ipTags": [
+                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                ],
+                                                                                "linkedPublicIPAddress": ...,
+                                                                                "migrationPhase": "str",
+                                                                                "natGateway": {
+                                                                                    "etag": "str",
+                                                                                    "id": "str",
+                                                                                    "location": "str",
+                                                                                    "name": "str",
+                                                                                    "properties": {
+                                                                                        "idleTimeoutInMinutes": 0,
+                                                                                        "provisioningState": "str",
+                                                                                        "publicIpAddresses": [
+                                                                                            {"id": "str"}
+                                                                                        ],
+                                                                                        "publicIpAddressesV6": [
+                                                                                            {"id": "str"}
+                                                                                        ],
+                                                                                        "publicIpPrefixes": [
+                                                                                            {"id": "str"}
+                                                                                        ],
+                                                                                        "publicIpPrefixesV6": [
+                                                                                            {"id": "str"}
+                                                                                        ],
+                                                                                        "resourceGuid": "str",
+                                                                                        "serviceGateway": {"id": "str"},
+                                                                                        "sourceVirtualNetwork": {
+                                                                                            "id": "str"
+                                                                                        },
+                                                                                        "subnets": [{"id": "str"}],
+                                                                                    },
+                                                                                    "sku": {"name": "str"},
+                                                                                    "tags": {"str": "str"},
+                                                                                    "type": "str",
+                                                                                    "zones": ["str"],
+                                                                                },
+                                                                                "provisioningState": "str",
+                                                                                "publicIPAddressVersion": "str",
+                                                                                "publicIPAllocationMethod": "str",
+                                                                                "publicIPPrefix": {"id": "str"},
+                                                                                "resourceGuid": "str",
+                                                                                "servicePublicIPAddress": ...,
+                                                                            },
+                                                                            "sku": {"name": "str", "tier": "str"},
+                                                                            "tags": {"str": "str"},
+                                                                            "type": "str",
+                                                                            "zones": ["str"],
+                                                                        },
+                                                                        "subnet": ...,
+                                                                    },
+                                                                }
+                                                            ],
+                                                            "ipamPoolPrefixAllocations": [
+                                                                {
+                                                                    "allocatedAddressPrefixes": ["str"],
+                                                                    "numberOfIpAddresses": "str",
+                                                                    "pool": {"id": "str"},
+                                                                }
+                                                            ],
+                                                            "natGateway": {"id": "str"},
+                                                            "networkSecurityGroup": {
+                                                                "etag": "str",
+                                                                "id": "str",
+                                                                "location": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "defaultSecurityRules": [
+                                                                        {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "access": "str",
+                                                                                "direction": "str",
+                                                                                "priority": 0,
+                                                                                "protocol": "str",
+                                                                                "description": "str",
+                                                                                "destinationAddressPrefix": "str",
+                                                                                "destinationAddressPrefixes": ["str"],
+                                                                                "destinationApplicationSecurityGroups": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "location": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "provisioningState": "str",
+                                                                                            "resourceGuid": "str",
+                                                                                        },
+                                                                                        "tags": {"str": "str"},
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "destinationPortRange": "str",
+                                                                                "destinationPortRanges": ["str"],
+                                                                                "provisioningState": "str",
+                                                                                "sourceAddressPrefix": "str",
+                                                                                "sourceAddressPrefixes": ["str"],
+                                                                                "sourceApplicationSecurityGroups": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "location": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "provisioningState": "str",
+                                                                                            "resourceGuid": "str",
+                                                                                        },
+                                                                                        "tags": {"str": "str"},
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "sourcePortRange": "str",
+                                                                                "sourcePortRanges": ["str"],
+                                                                            },
+                                                                            "type": "str",
+                                                                        }
+                                                                    ],
+                                                                    "flowLogs": [
+                                                                        {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "identity": {
+                                                                                "principalId": "str",
+                                                                                "tenantId": "str",
+                                                                                "type": "str",
+                                                                                "userAssignedIdentities": {
+                                                                                    "str": {
+                                                                                        "clientId": "str",
+                                                                                        "principalId": "str",
+                                                                                    }
+                                                                                },
+                                                                            },
+                                                                            "location": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "storageId": "str",
+                                                                                "targetResourceId": "str",
+                                                                                "enabled": bool,
+                                                                                "enabledFilteringCriteria": "str",
+                                                                                "flowAnalyticsConfiguration": {
+                                                                                    "networkWatcherFlowAnalyticsConfiguration": {
+                                                                                        "enabled": bool,
+                                                                                        "trafficAnalyticsInterval": 0,
+                                                                                        "workspaceId": "str",
+                                                                                        "workspaceRegion": "str",
+                                                                                        "workspaceResourceId": "str",
+                                                                                    }
+                                                                                },
+                                                                                "format": {"type": "str", "version": 0},
+                                                                                "provisioningState": "str",
+                                                                                "recordTypes": "str",
+                                                                                "retentionPolicy": {
+                                                                                    "days": 0,
+                                                                                    "enabled": bool,
+                                                                                },
+                                                                                "targetResourceGuid": "str",
+                                                                            },
+                                                                            "tags": {"str": "str"},
+                                                                            "type": "str",
+                                                                        }
+                                                                    ],
+                                                                    "flushConnection": bool,
+                                                                    "networkInterfaces": [...],
+                                                                    "provisioningState": "str",
+                                                                    "resourceGuid": "str",
+                                                                    "securityRules": [
+                                                                        {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "access": "str",
+                                                                                "direction": "str",
+                                                                                "priority": 0,
+                                                                                "protocol": "str",
+                                                                                "description": "str",
+                                                                                "destinationAddressPrefix": "str",
+                                                                                "destinationAddressPrefixes": ["str"],
+                                                                                "destinationApplicationSecurityGroups": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "location": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "provisioningState": "str",
+                                                                                            "resourceGuid": "str",
+                                                                                        },
+                                                                                        "tags": {"str": "str"},
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "destinationPortRange": "str",
+                                                                                "destinationPortRanges": ["str"],
+                                                                                "provisioningState": "str",
+                                                                                "sourceAddressPrefix": "str",
+                                                                                "sourceAddressPrefixes": ["str"],
+                                                                                "sourceApplicationSecurityGroups": [
+                                                                                    {
+                                                                                        "etag": "str",
+                                                                                        "id": "str",
+                                                                                        "location": "str",
+                                                                                        "name": "str",
+                                                                                        "properties": {
+                                                                                            "provisioningState": "str",
+                                                                                            "resourceGuid": "str",
+                                                                                        },
+                                                                                        "tags": {"str": "str"},
+                                                                                        "type": "str",
+                                                                                    }
+                                                                                ],
+                                                                                "sourcePortRange": "str",
+                                                                                "sourcePortRanges": ["str"],
+                                                                            },
+                                                                            "type": "str",
+                                                                        }
+                                                                    ],
+                                                                    "subnets": [...],
+                                                                },
+                                                                "tags": {"str": "str"},
+                                                                "type": "str",
+                                                            },
+                                                            "privateEndpointNetworkPolicies": "str",
+                                                            "privateEndpoints": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "extendedLocation": {"name": "str", "type": "str"},
+                                                                    "id": "str",
+                                                                    "location": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "applicationSecurityGroups": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "location": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "provisioningState": "str",
+                                                                                    "resourceGuid": "str",
+                                                                                },
+                                                                                "tags": {"str": "str"},
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "customDnsConfigs": [
+                                                                            {"fqdn": "str", "ipAddresses": ["str"]}
+                                                                        ],
+                                                                        "customNetworkInterfaceName": "str",
+                                                                        "ipConfigurations": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "groupId": "str",
+                                                                                    "memberName": "str",
+                                                                                    "privateIPAddress": "str",
+                                                                                },
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "ipVersionType": "str",
+                                                                        "manualPrivateLinkServiceConnections": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "groupIds": ["str"],
+                                                                                    "privateLinkServiceConnectionState": {
+                                                                                        "actionsRequired": "str",
+                                                                                        "description": "str",
+                                                                                        "status": "str",
+                                                                                    },
+                                                                                    "privateLinkServiceId": "str",
+                                                                                    "provisioningState": "str",
+                                                                                    "requestMessage": "str",
+                                                                                },
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "networkInterfaces": [...],
+                                                                        "privateLinkServiceConnections": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "groupIds": ["str"],
+                                                                                    "privateLinkServiceConnectionState": {
+                                                                                        "actionsRequired": "str",
+                                                                                        "description": "str",
+                                                                                        "status": "str",
+                                                                                    },
+                                                                                    "privateLinkServiceId": "str",
+                                                                                    "provisioningState": "str",
+                                                                                    "requestMessage": "str",
+                                                                                },
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "provisioningState": "str",
+                                                                        "subnet": ...,
+                                                                    },
+                                                                    "tags": {"str": "str"},
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "privateLinkServiceNetworkPolicies": "str",
+                                                            "provisioningState": "str",
+                                                            "purpose": "str",
+                                                            "resourceNavigationLinks": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "link": "str",
+                                                                        "linkedResourceType": "str",
+                                                                        "provisioningState": "str",
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "routeTable": {
+                                                                "etag": "str",
+                                                                "id": "str",
+                                                                "location": "str",
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "disableBgpRoutePropagation": bool,
+                                                                    "provisioningState": "str",
+                                                                    "resourceGuid": "str",
+                                                                    "routes": [
+                                                                        {
+                                                                            "etag": "str",
+                                                                            "id": "str",
+                                                                            "name": "str",
+                                                                            "properties": {
+                                                                                "nextHopType": "str",
+                                                                                "addressPrefix": "str",
+                                                                                "hasBgpOverride": bool,
+                                                                                "nextHopIpAddress": "str",
+                                                                                "provisioningState": "str",
+                                                                            },
+                                                                            "type": "str",
+                                                                        }
+                                                                    ],
+                                                                    "subnets": [...],
+                                                                },
+                                                                "tags": {"str": "str"},
+                                                                "type": "str",
+                                                            },
+                                                            "serviceAssociationLinks": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "allowDelete": bool,
+                                                                        "link": "str",
+                                                                        "linkedResourceType": "str",
+                                                                        "locations": ["str"],
+                                                                        "provisioningState": "str",
+                                                                    },
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "serviceEndpointPolicies": [
+                                                                {
+                                                                    "etag": "str",
+                                                                    "id": "str",
+                                                                    "kind": "str",
+                                                                    "location": "str",
+                                                                    "name": "str",
+                                                                    "properties": {
+                                                                        "contextualServiceEndpointPolicies": ["str"],
+                                                                        "provisioningState": "str",
+                                                                        "resourceGuid": "str",
+                                                                        "serviceAlias": "str",
+                                                                        "serviceEndpointPolicyDefinitions": [
+                                                                            {
+                                                                                "etag": "str",
+                                                                                "id": "str",
+                                                                                "name": "str",
+                                                                                "properties": {
+                                                                                    "description": "str",
+                                                                                    "provisioningState": "str",
+                                                                                    "service": "str",
+                                                                                    "serviceResources": ["str"],
+                                                                                },
+                                                                                "type": "str",
+                                                                            }
+                                                                        ],
+                                                                        "subnets": [...],
+                                                                    },
+                                                                    "tags": {"str": "str"},
+                                                                    "type": "str",
+                                                                }
+                                                            ],
+                                                            "serviceEndpoints": [
+                                                                {
+                                                                    "locations": ["str"],
+                                                                    "networkIdentifier": {"id": "str"},
+                                                                    "provisioningState": "str",
+                                                                    "service": "str",
+                                                                }
+                                                            ],
+                                                            "serviceGateway": {"id": "str"},
+                                                            "sharingScope": "str",
+                                                        },
+                                                        "type": "str",
+                                                    },
+                                                    "virtualNetworkTaps": [...],
+                                                },
+                                                "type": "str",
+                                            },
+                                            "destinationPort": 0,
+                                            "networkInterfaceTapConfigurations": [...],
+                                            "provisioningState": "str",
+                                            "resourceGuid": "str",
+                                        },
+                                        "tags": {"str": "str"},
+                                        "type": "str",
+                                    },
+                                },
+                                "type": "str",
+                            }
+                        ],
+                        "virtualMachine": {"id": "str"},
+                        "vnetEncryptionSupported": bool,
+                        "workloadType": "str",
+                    },
+                    "tags": {"str": "str"},
+                    "type": "str",
+                },
+                api_version="2025-05-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_network_interfaces_update_tags(self, resource_group):
+        response = await self.client.network_interfaces.update_tags(
+            resource_group_name=resource_group.name,
+            network_interface_name="str",
+            parameters={"tags": {"str": "str"}},
+            api_version="2025-05-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_network_interfaces_begin_delete(self, resource_group):
+        response = await (
+            await self.client.network_interfaces.begin_delete(
+                resource_group_name=resource_group.name,
+                network_interface_name="str",
+                api_version="2025-05-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_network_interfaces_list(self, resource_group):
+        response = self.client.network_interfaces.list(
+            resource_group_name=resource_group.name,
+            api_version="2025-05-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_network_interfaces_list_all(self, resource_group):
+        response = self.client.network_interfaces.list_all(
+            api_version="2025-05-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_network_interfaces_begin_get_effective_route_table(self, resource_group):
+        response = await (
+            await self.client.network_interfaces.begin_get_effective_route_table(
+                resource_group_name=resource_group.name,
+                network_interface_name="str",
+                api_version="2025-05-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_network_interfaces_begin_list_effective_network_security_groups(self, resource_group):
+        response = await (
+            await self.client.network_interfaces.begin_list_effective_network_security_groups(
+                resource_group_name=resource_group.name,
+                network_interface_name="str",
+                api_version="2025-05-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
@@ -43,6 +7483,18 @@ class TestNetworkManagementNetworkInterfacesOperationsAsync(AzureMgmtRecordedTes
             virtualmachine_index="str",
             network_interface_name="str",
             api_version="2018-10-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_network_interfaces_list_cloud_service_network_interfaces(self, resource_group):
+        response = self.client.network_interfaces.list_cloud_service_network_interfaces(
+            resource_group_name=resource_group.name,
+            cloud_service_name="str",
+            api_version="2025-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

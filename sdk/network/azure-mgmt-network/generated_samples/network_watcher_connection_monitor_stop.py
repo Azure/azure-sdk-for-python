@@ -30,12 +30,11 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.connection_monitors.begin_stop(
+    client.connection_monitors.begin_stop(
         resource_group_name="rg1",
         network_watcher_name="nw1",
         connection_monitor_name="cm1",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: 2025-05-01/NetworkWatcherConnectionMonitorStop.json

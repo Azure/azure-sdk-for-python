@@ -31,7 +31,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.begin_delete_bastion_shareable_link(
+    client.begin_delete_bastion_shareable_link(
         resource_group_name="rg1",
         bastion_host_name="bastionhosttenant",
         bsl_request={
@@ -49,7 +49,6 @@ def main():
             ]
         },
     ).result()
-    print(response)
 
 
 # x-ms-original-file: 2025-05-01/BastionShareableLinkDelete.json

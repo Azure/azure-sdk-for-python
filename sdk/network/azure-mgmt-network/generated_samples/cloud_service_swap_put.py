@@ -33,7 +33,6 @@ def main():
     client.vip_swap.begin_create(
         group_name="rg1",
         resource_name="testCloudService",
-        singleton_resource="swap",
         parameters={"properties": {"slotType": "Production"}},
     ).result()
 

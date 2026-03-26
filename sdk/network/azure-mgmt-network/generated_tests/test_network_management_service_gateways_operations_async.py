@@ -40,6 +40,7 @@ class TestNetworkManagementServiceGatewaysOperationsAsync(AzureMgmtRecordedTestC
                 resource_group_name=resource_group.name,
                 service_gateway_name="str",
                 parameters={
+                    "location": "str",
                     "etag": "str",
                     "id": "str",
                     "name": "str",
@@ -8860,6 +8861,7 @@ class TestNetworkManagementServiceGatewaysOperationsAsync(AzureMgmtRecordedTestC
                         "lastModifiedBy": "str",
                         "lastModifiedByType": "str",
                     },
+                    "tags": {"str": "str"},
                     "type": "str",
                     "zones": ["str"],
                 },

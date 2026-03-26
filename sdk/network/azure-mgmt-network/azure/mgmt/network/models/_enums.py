@@ -709,6 +709,19 @@ class AzureFirewallThreatIntelMode(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """Off."""
 
 
+class BaseProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    """Succeeded."""
+    UPDATING = "Updating"
+    """Updating."""
+    DELETING = "Deleting"
+    """Deleting."""
+    FAILED = "Failed"
+    """Failed."""
+
+
 class BastionConnectProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The protocol used to connect to the target."""
 
@@ -1994,19 +2007,6 @@ class NetworkProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ICMP."""
 
 
-class NetworkProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current provisioning state."""
-
-    SUCCEEDED = "Succeeded"
-    """Succeeded."""
-    UPDATING = "Updating"
-    """Updating."""
-    DELETING = "Deleting"
-    """Deleting."""
-    FAILED = "Failed"
-    """Failed."""
-
-
 class NextHopType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Next hop type."""
 
@@ -2845,13 +2845,6 @@ class SharingScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tenant."""
     DELEGATED_SERVICES = "DelegatedServices"
     """DelegatedServices."""
-
-
-class SingletonResource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of SingletonResource."""
-
-    SWAP = "swap"
-    """SWAP."""
 
 
 class SlotType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -38,6 +38,7 @@ class TestNetworkManagementNetworkSecurityPerimetersOperationsAsync(AzureMgmtRec
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
             parameters={
+                "location": "str",
                 "id": "str",
                 "name": "str",
                 "properties": {"perimeterGuid": "str", "provisioningState": "str"},
@@ -49,6 +50,7 @@ class TestNetworkManagementNetworkSecurityPerimetersOperationsAsync(AzureMgmtRec
                     "lastModifiedBy": "str",
                     "lastModifiedByType": "str",
                 },
+                "tags": {"str": "str"},
                 "type": "str",
             },
             api_version="2025-05-01",

@@ -33,7 +33,6 @@ def main():
     response = client.vip_swap.get(
         group_name="rg1",
         resource_name="testCloudService",
-        singleton_resource="swap",
     )
     print(response)
 

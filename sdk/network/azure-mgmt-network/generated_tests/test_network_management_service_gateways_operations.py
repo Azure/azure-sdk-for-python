@@ -38,6 +38,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_gateway_name="str",
             parameters={
+                "location": "str",
                 "etag": "str",
                 "id": "str",
                 "name": "str",
@@ -8541,6 +8542,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                     "lastModifiedBy": "str",
                     "lastModifiedByType": "str",
                 },
+                "tags": {"str": "str"},
                 "type": "str",
                 "zones": ["str"],
             },
