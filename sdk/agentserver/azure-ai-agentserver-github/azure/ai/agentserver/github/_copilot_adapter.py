@@ -125,8 +125,10 @@ def _build_session_config() -> Dict[str, Any]:
     project_endpoint = os.getenv("AZURE_AI_PROJECT_ENDPOINT")
     model = os.getenv("AZURE_AI_FOUNDRY_MODEL") or os.getenv("COPILOT_MODEL")
 
-    # Auto-derive RESOURCE_URL from PROJECT_ENDPOINT if not set
-    if not foundry_url and project_endpoint:
+    # Auto-derive RESOURCE_URL from PROJECT_ENDPOINT if not set.
+    # Skip when GITHUB_TOKEN is present — the user explicitly wants GitHub auth.
+    github_token = os.getenv("GITHUB_TOKEN")
+    if not foundry_url and project_endpoint and not github_token:
         try:
             foundry_url = _derive_resource_url_from_project_endpoint(project_endpoint)
             logger.info(f"Auto-derived RESOURCE_URL from PROJECT_ENDPOINT: {foundry_url}")
