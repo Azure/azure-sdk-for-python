@@ -51,13 +51,16 @@ class AsyncStream:
 
 def _mock_async_stream_generator(data: bytes):
     """Simple async generator that yields data in a single chunk."""
+
     async def generator(response, **kwargs) -> AsyncIterator[bytes]:
         yield data
+
     return generator
 
 
 class _MockInternalResponse:
     """Minimal internal response object for AsyncHttpResponseImpl."""
+
     async def close(self):
         pass
 

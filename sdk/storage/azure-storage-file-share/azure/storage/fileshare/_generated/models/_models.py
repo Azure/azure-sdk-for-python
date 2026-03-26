@@ -261,6 +261,131 @@ class DirectoryItem(_Model):
         super().__init__(*args, **kwargs)
 
 
+class Error(_Model):
+    """The error response.
+
+    This defines the wire format only. Language SDKs wrap this in idiomatic error types.
+
+    :ivar code: The error code. Known values are: "AccountAlreadyExists", "AccountBeingCreated",
+     "AccountIsDisabled", "AuthenticationFailed", "AuthorizationFailure",
+     "ConditionHeadersNotSupported", "ConditionNotMet", "EmptyMetadataKey",
+     "FileShareProvisionedBandwidthDowngradeNotAllowed",
+     "FileShareProvisionedIopsDowngradeNotAllowed", "InsufficientAccountPermissions",
+     "InternalError", "InvalidAuthenticationInfo", "InvalidHeaderValue", "InvalidHttpVerb",
+     "InvalidInput", "InvalidMd5", "InvalidMetadata", "InvalidQueryParameterValue", "InvalidRange",
+     "InvalidResourceName", "InvalidUri", "InvalidXmlDocument", "InvalidXmlNodeValue",
+     "Md5Mismatch", "MetadataTooLarge", "MissingContentLengthHeader",
+     "MissingRequiredQueryParameter", "MissingRequiredHeader", "MissingRequiredXmlNode",
+     "MultipleConditionHeadersNotSupported", "OperationTimedOut", "OutOfRangeInput",
+     "OutOfRangeQueryParameterValue", "RequestBodyTooLarge", "ResourceTypeMismatch",
+     "RequestUrlFailedToParse", "ResourceAlreadyExists", "ResourceNotFound", "ServerBusy",
+     "UnsupportedHeader", "UnsupportedXmlNode", "UnsupportedQueryParameter", "UnsupportedHttpVerb",
+     "CannotDeleteFileOrDirectory", "ClientCacheFlushDelay", "DeletePending", "DirectoryNotEmpty",
+     "FileLockConflict", "InvalidFileOrDirectoryPathName", "ParentNotFound", "ReadOnlyAttribute",
+     "ShareAlreadyExists", "ShareBeingDeleted", "ShareDisabled", "ShareNotFound",
+     "SharingViolation", "ShareSnapshotInProgress", "ShareSnapshotCountExceeded",
+     "ShareSnapshotOperationNotSupported", "ShareHasSnapshots", "PreviousSnapshotNotFound",
+     "ContainerQuotaDowngradeNotAllowed", "AuthorizationSourceIPMismatch",
+     "AuthorizationProtocolMismatch", "AuthorizationPermissionMismatch",
+     "AuthorizationServiceMismatch", "AuthorizationResourceTypeMismatch", "FeatureVersionMismatch",
+     "ShareSnapshotNotFound", "FileShareProvisionedIopsInvalid",
+     "FileShareProvisionedBandwidthInvalid", "FileShareProvisionedStorageInvalid",
+     "TotalSharesProvisionedCapacityExceedsAccountLimit",
+     "TotalSharesProvisionedIopsExceedsAccountLimit",
+     "TotalSharesProvisionedBandwidthExceedsAccountLimit", and
+     "TotalSharesCountExceedsAccountLimit".
+    :vartype code: str or ~azure.storage.fileshare._generated.models.StorageErrorCode
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar copy_source_status_code: Copy source status code.
+    :vartype copy_source_status_code: int
+    :ivar copy_source_error_code: Copy source error code.
+    :vartype copy_source_error_code: str
+    :ivar copy_source_error_message: Copy source error message.
+    :vartype copy_source_error_message: str
+    """
+
+    code: Optional[Union[str, "_models.StorageErrorCode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Code", "text": False, "unwrapped": False},
+    )
+    """The error code. Known values are: \"AccountAlreadyExists\", \"AccountBeingCreated\",
+     \"AccountIsDisabled\", \"AuthenticationFailed\", \"AuthorizationFailure\",
+     \"ConditionHeadersNotSupported\", \"ConditionNotMet\", \"EmptyMetadataKey\",
+     \"FileShareProvisionedBandwidthDowngradeNotAllowed\",
+     \"FileShareProvisionedIopsDowngradeNotAllowed\", \"InsufficientAccountPermissions\",
+     \"InternalError\", \"InvalidAuthenticationInfo\", \"InvalidHeaderValue\", \"InvalidHttpVerb\",
+     \"InvalidInput\", \"InvalidMd5\", \"InvalidMetadata\", \"InvalidQueryParameterValue\",
+     \"InvalidRange\", \"InvalidResourceName\", \"InvalidUri\", \"InvalidXmlDocument\",
+     \"InvalidXmlNodeValue\", \"Md5Mismatch\", \"MetadataTooLarge\", \"MissingContentLengthHeader\",
+     \"MissingRequiredQueryParameter\", \"MissingRequiredHeader\", \"MissingRequiredXmlNode\",
+     \"MultipleConditionHeadersNotSupported\", \"OperationTimedOut\", \"OutOfRangeInput\",
+     \"OutOfRangeQueryParameterValue\", \"RequestBodyTooLarge\", \"ResourceTypeMismatch\",
+     \"RequestUrlFailedToParse\", \"ResourceAlreadyExists\", \"ResourceNotFound\", \"ServerBusy\",
+     \"UnsupportedHeader\", \"UnsupportedXmlNode\", \"UnsupportedQueryParameter\",
+     \"UnsupportedHttpVerb\", \"CannotDeleteFileOrDirectory\", \"ClientCacheFlushDelay\",
+     \"DeletePending\", \"DirectoryNotEmpty\", \"FileLockConflict\",
+     \"InvalidFileOrDirectoryPathName\", \"ParentNotFound\", \"ReadOnlyAttribute\",
+     \"ShareAlreadyExists\", \"ShareBeingDeleted\", \"ShareDisabled\", \"ShareNotFound\",
+     \"SharingViolation\", \"ShareSnapshotInProgress\", \"ShareSnapshotCountExceeded\",
+     \"ShareSnapshotOperationNotSupported\", \"ShareHasSnapshots\", \"PreviousSnapshotNotFound\",
+     \"ContainerQuotaDowngradeNotAllowed\", \"AuthorizationSourceIPMismatch\",
+     \"AuthorizationProtocolMismatch\", \"AuthorizationPermissionMismatch\",
+     \"AuthorizationServiceMismatch\", \"AuthorizationResourceTypeMismatch\",
+     \"FeatureVersionMismatch\", \"ShareSnapshotNotFound\", \"FileShareProvisionedIopsInvalid\",
+     \"FileShareProvisionedBandwidthInvalid\", \"FileShareProvisionedStorageInvalid\",
+     \"TotalSharesProvisionedCapacityExceedsAccountLimit\",
+     \"TotalSharesProvisionedIopsExceedsAccountLimit\",
+     \"TotalSharesProvisionedBandwidthExceedsAccountLimit\", and
+     \"TotalSharesCountExceedsAccountLimit\"."""
+    message: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Message", "text": False, "unwrapped": False},
+    )
+    """The error message."""
+    copy_source_status_code: Optional[int] = rest_field(
+        name="copySourceStatusCode",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "CopySourceStatusCode", "text": False, "unwrapped": False},
+    )
+    """Copy source status code."""
+    copy_source_error_code: Optional[str] = rest_field(
+        name="copySourceErrorCode",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "CopySourceErrorCode", "text": False, "unwrapped": False},
+    )
+    """Copy source error code."""
+    copy_source_error_message: Optional[str] = rest_field(
+        name="copySourceErrorMessage",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "CopySourceErrorMessage", "text": False, "unwrapped": False},
+    )
+    """Copy source error message."""
+
+    _xml = {"attribute": False, "name": "Error", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Optional[Union[str, "_models.StorageErrorCode"]] = None,
+        message: Optional[str] = None,
+        copy_source_status_code: Optional[int] = None,
+        copy_source_error_code: Optional[str] = None,
+        copy_source_error_message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class FileItem(_Model):
     """A listed file item.
 
@@ -346,8 +471,8 @@ class FileProperty(_Model):
     :vartype change_time: ~datetime.datetime
     :ivar last_modified: The last modified time.
     :vartype last_modified: ~datetime.datetime
-    :ivar etag: The ETag of the file.
-    :vartype etag: str
+    :ivar e_tag: The ETag of the file.
+    :vartype e_tag: str
     """
 
     content_length: int = rest_field(
@@ -362,39 +487,40 @@ class FileProperty(_Model):
     creation_time: Optional[datetime.datetime] = rest_field(
         name="creationTime",
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc3339",
+        format="rfc7231",
         xml={"attribute": False, "name": "CreationTime", "text": False, "unwrapped": False},
     )
     """The creation time."""
     last_access_time: Optional[datetime.datetime] = rest_field(
         name="lastAccessTime",
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc3339",
+        format="rfc7231",
         xml={"attribute": False, "name": "LastAccessTime", "text": False, "unwrapped": False},
     )
     """The last access time."""
     last_write_time: Optional[datetime.datetime] = rest_field(
         name="lastWriteTime",
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc3339",
+        format="rfc7231",
         xml={"attribute": False, "name": "LastWriteTime", "text": False, "unwrapped": False},
     )
     """The last write time."""
     change_time: Optional[datetime.datetime] = rest_field(
         name="changeTime",
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc3339",
+        format="rfc7231",
         xml={"attribute": False, "name": "ChangeTime", "text": False, "unwrapped": False},
     )
     """The change time."""
     last_modified: Optional[datetime.datetime] = rest_field(
         name="lastModified",
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc3339",
+        format="rfc7231",
         xml={"attribute": False, "name": "Last-Modified", "text": False, "unwrapped": False},
     )
     """The last modified time."""
-    etag: Optional[str] = rest_field(
+    e_tag: Optional[str] = rest_field(
+        name="eTag",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Etag", "text": False, "unwrapped": False},
     )
@@ -412,7 +538,7 @@ class FileProperty(_Model):
         last_write_time: Optional[datetime.datetime] = None,
         change_time: Optional[datetime.datetime] = None,
         last_modified: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
+        e_tag: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -533,7 +659,7 @@ class HandleItem(_Model):
     :ivar last_reconnect_time: Time handle was last connected to (UTC).
     :vartype last_reconnect_time: ~datetime.datetime
     :ivar access_right_list: The access rights.
-    :vartype access_right_list: list[str or ~azure.storage.fileshare.models.AccessRight]
+    :vartype access_right_list: list[str or ~azure.storage.fileshare._generated.models.AccessRight]
     """
 
     handle_id: str = rest_field(
@@ -580,7 +706,7 @@ class HandleItem(_Model):
     open_time: datetime.datetime = rest_field(
         name="openTime",
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc3339",
+        format="rfc7231",
         xml={"attribute": False, "name": "OpenTime", "text": False, "unwrapped": False},
     )
     """Time when the session that previously opened the handle has last been reconnected. (UTC).
@@ -588,7 +714,7 @@ class HandleItem(_Model):
     last_reconnect_time: Optional[datetime.datetime] = rest_field(
         name="lastReconnectTime",
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc3339",
+        format="rfc7231",
         xml={"attribute": False, "name": "LastReconnectTime", "text": False, "unwrapped": False},
     )
     """Time handle was last connected to (UTC)."""
@@ -1221,7 +1347,7 @@ class SharePermission(_Model):
      Required.
     :vartype permission: str
     :ivar format: The permission format. Known values are: "Sddl" and "Binary".
-    :vartype format: str or ~azure.storage.fileshare.models.FilePermissionFormat
+    :vartype format: str or ~azure.storage.fileshare._generated.models.FilePermissionFormat
     """
 
     permission: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1255,8 +1381,8 @@ class SharePropertiesInternal(_Model):
 
     :ivar last_modified: The last modified time. Required.
     :vartype last_modified: ~datetime.datetime
-    :ivar etag: The ETag of the share. Required.
-    :vartype etag: str
+    :ivar e_tag: The ETag of the share. Required.
+    :vartype e_tag: str
     :ivar quota: The share quota. Required.
     :vartype quota: int
     :ivar provisioned_iops: The provisioned IOPS.
@@ -1281,18 +1407,18 @@ class SharePropertiesInternal(_Model):
     :vartype access_tier_transition_state: str
     :ivar lease_status: The current lease status of the share. Known values are: "locked" and
      "unlocked".
-    :vartype lease_status: str or ~azure.storage.fileshare.models.LeaseStatusType
+    :vartype lease_status: str or ~azure.storage.fileshare._generated.models.LeaseStatusType
     :ivar lease_state: Lease state of the share. Known values are: "available", "leased",
      "expired", "breaking", and "broken".
-    :vartype lease_state: str or ~azure.storage.fileshare.models.LeaseStateType
+    :vartype lease_state: str or ~azure.storage.fileshare._generated.models.LeaseStateType
     :ivar lease_duration: When a share is leased, specifies whether the lease is of infinite or
      fixed duration. Known values are: "infinite" and "fixed".
-    :vartype lease_duration: str or ~azure.storage.fileshare.models.LeaseDurationType
+    :vartype lease_duration: str or ~azure.storage.fileshare._generated.models.LeaseDurationType
     :ivar enabled_protocols: The enabled protocols.
     :vartype enabled_protocols: str
     :ivar root_squash: The root squash setting. Known values are: "NoRootSquash", "RootSquash", and
      "AllSquash".
-    :vartype root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
+    :vartype root_squash: str or ~azure.storage.fileshare._generated.models.ShareRootSquash
     :ivar enable_snapshot_virtual_directory_access: Whether snapshot virtual directory access is
      enabled.
     :vartype enable_snapshot_virtual_directory_access: bool
@@ -1319,11 +1445,12 @@ class SharePropertiesInternal(_Model):
     last_modified: datetime.datetime = rest_field(
         name="lastModified",
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc3339",
+        format="rfc7231",
         xml={"attribute": False, "name": "Last-Modified", "text": False, "unwrapped": False},
     )
     """The last modified time. Required."""
-    etag: str = rest_field(
+    e_tag: str = rest_field(
+        name="eTag",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Etag", "text": False, "unwrapped": False},
     )
@@ -1360,14 +1487,14 @@ class SharePropertiesInternal(_Model):
     next_allowed_quota_downgrade_time: Optional[datetime.datetime] = rest_field(
         name="nextAllowedQuotaDowngradeTime",
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc3339",
+        format="rfc7231",
         xml={"attribute": False, "name": "NextAllowedQuotaDowngradeTime", "text": False, "unwrapped": False},
     )
     """The next allowed quota downgrade time."""
     deleted_time: Optional[datetime.datetime] = rest_field(
         name="deletedTime",
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc3339",
+        format="rfc7231",
         xml={"attribute": False, "name": "DeletedTime", "text": False, "unwrapped": False},
     )
     """The deleted time."""
@@ -1386,7 +1513,7 @@ class SharePropertiesInternal(_Model):
     access_tier_change_time: Optional[datetime.datetime] = rest_field(
         name="accessTierChangeTime",
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc3339",
+        format="rfc7231",
         xml={"attribute": False, "name": "AccessTierChangeTime", "text": False, "unwrapped": False},
     )
     """The access tier change time."""
@@ -1467,14 +1594,14 @@ class SharePropertiesInternal(_Model):
     next_allowed_provisioned_iops_downgrade_time: Optional[datetime.datetime] = rest_field(
         name="nextAllowedProvisionedIopsDowngradeTime",
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc3339",
+        format="rfc7231",
         xml={"attribute": False, "name": "NextAllowedProvisionedIopsDowngradeTime", "text": False, "unwrapped": False},
     )
     """The next allowed provisioned IOPS downgrade time."""
     next_allowed_provisioned_bandwidth_downgrade_time: Optional[datetime.datetime] = rest_field(
         name="nextAllowedProvisionedBandwidthDowngradeTime",
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc3339",
+        format="rfc7231",
         xml={
             "attribute": False,
             "name": "NextAllowedProvisionedBandwidthDowngradeTime",
@@ -1497,7 +1624,7 @@ class SharePropertiesInternal(_Model):
         self,
         *,
         last_modified: datetime.datetime,
-        etag: str,
+        e_tag: str,
         quota: int,
         provisioned_iops: Optional[int] = None,
         provisioned_ingress_m_bps: Optional[int] = None,
@@ -1805,131 +1932,6 @@ class SmbMultichannel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageError(_Model):
-    """The error response.
-
-    This defines the wire format only. Language SDKs wrap this in idiomatic error types.
-
-    :ivar code: The error code. Known values are: "AccountAlreadyExists", "AccountBeingCreated",
-     "AccountIsDisabled", "AuthenticationFailed", "AuthorizationFailure",
-     "ConditionHeadersNotSupported", "ConditionNotMet", "EmptyMetadataKey",
-     "FileShareProvisionedBandwidthDowngradeNotAllowed",
-     "FileShareProvisionedIopsDowngradeNotAllowed", "InsufficientAccountPermissions",
-     "InternalError", "InvalidAuthenticationInfo", "InvalidHeaderValue", "InvalidHttpVerb",
-     "InvalidInput", "InvalidMd5", "InvalidMetadata", "InvalidQueryParameterValue", "InvalidRange",
-     "InvalidResourceName", "InvalidUri", "InvalidXmlDocument", "InvalidXmlNodeValue",
-     "Md5Mismatch", "MetadataTooLarge", "MissingContentLengthHeader",
-     "MissingRequiredQueryParameter", "MissingRequiredHeader", "MissingRequiredXmlNode",
-     "MultipleConditionHeadersNotSupported", "OperationTimedOut", "OutOfRangeInput",
-     "OutOfRangeQueryParameterValue", "RequestBodyTooLarge", "ResourceTypeMismatch",
-     "RequestUrlFailedToParse", "ResourceAlreadyExists", "ResourceNotFound", "ServerBusy",
-     "UnsupportedHeader", "UnsupportedXmlNode", "UnsupportedQueryParameter", "UnsupportedHttpVerb",
-     "CannotDeleteFileOrDirectory", "ClientCacheFlushDelay", "DeletePending", "DirectoryNotEmpty",
-     "FileLockConflict", "InvalidFileOrDirectoryPathName", "ParentNotFound", "ReadOnlyAttribute",
-     "ShareAlreadyExists", "ShareBeingDeleted", "ShareDisabled", "ShareNotFound",
-     "SharingViolation", "ShareSnapshotInProgress", "ShareSnapshotCountExceeded",
-     "ShareSnapshotOperationNotSupported", "ShareHasSnapshots", "PreviousSnapshotNotFound",
-     "ContainerQuotaDowngradeNotAllowed", "AuthorizationSourceIPMismatch",
-     "AuthorizationProtocolMismatch", "AuthorizationPermissionMismatch",
-     "AuthorizationServiceMismatch", "AuthorizationResourceTypeMismatch", "FeatureVersionMismatch",
-     "ShareSnapshotNotFound", "FileShareProvisionedIopsInvalid",
-     "FileShareProvisionedBandwidthInvalid", "FileShareProvisionedStorageInvalid",
-     "TotalSharesProvisionedCapacityExceedsAccountLimit",
-     "TotalSharesProvisionedIopsExceedsAccountLimit",
-     "TotalSharesProvisionedBandwidthExceedsAccountLimit", and
-     "TotalSharesCountExceedsAccountLimit".
-    :vartype code: str or ~azure.storage.fileshare.models.StorageErrorCode
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar copy_source_status_code: Copy source status code.
-    :vartype copy_source_status_code: int
-    :ivar copy_source_error_code: Copy source error code.
-    :vartype copy_source_error_code: str
-    :ivar copy_source_error_message: Copy source error message.
-    :vartype copy_source_error_message: str
-    """
-
-    code: Optional[Union[str, "_models.StorageErrorCode"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "Code", "text": False, "unwrapped": False},
-    )
-    """The error code. Known values are: \"AccountAlreadyExists\", \"AccountBeingCreated\",
-     \"AccountIsDisabled\", \"AuthenticationFailed\", \"AuthorizationFailure\",
-     \"ConditionHeadersNotSupported\", \"ConditionNotMet\", \"EmptyMetadataKey\",
-     \"FileShareProvisionedBandwidthDowngradeNotAllowed\",
-     \"FileShareProvisionedIopsDowngradeNotAllowed\", \"InsufficientAccountPermissions\",
-     \"InternalError\", \"InvalidAuthenticationInfo\", \"InvalidHeaderValue\", \"InvalidHttpVerb\",
-     \"InvalidInput\", \"InvalidMd5\", \"InvalidMetadata\", \"InvalidQueryParameterValue\",
-     \"InvalidRange\", \"InvalidResourceName\", \"InvalidUri\", \"InvalidXmlDocument\",
-     \"InvalidXmlNodeValue\", \"Md5Mismatch\", \"MetadataTooLarge\", \"MissingContentLengthHeader\",
-     \"MissingRequiredQueryParameter\", \"MissingRequiredHeader\", \"MissingRequiredXmlNode\",
-     \"MultipleConditionHeadersNotSupported\", \"OperationTimedOut\", \"OutOfRangeInput\",
-     \"OutOfRangeQueryParameterValue\", \"RequestBodyTooLarge\", \"ResourceTypeMismatch\",
-     \"RequestUrlFailedToParse\", \"ResourceAlreadyExists\", \"ResourceNotFound\", \"ServerBusy\",
-     \"UnsupportedHeader\", \"UnsupportedXmlNode\", \"UnsupportedQueryParameter\",
-     \"UnsupportedHttpVerb\", \"CannotDeleteFileOrDirectory\", \"ClientCacheFlushDelay\",
-     \"DeletePending\", \"DirectoryNotEmpty\", \"FileLockConflict\",
-     \"InvalidFileOrDirectoryPathName\", \"ParentNotFound\", \"ReadOnlyAttribute\",
-     \"ShareAlreadyExists\", \"ShareBeingDeleted\", \"ShareDisabled\", \"ShareNotFound\",
-     \"SharingViolation\", \"ShareSnapshotInProgress\", \"ShareSnapshotCountExceeded\",
-     \"ShareSnapshotOperationNotSupported\", \"ShareHasSnapshots\", \"PreviousSnapshotNotFound\",
-     \"ContainerQuotaDowngradeNotAllowed\", \"AuthorizationSourceIPMismatch\",
-     \"AuthorizationProtocolMismatch\", \"AuthorizationPermissionMismatch\",
-     \"AuthorizationServiceMismatch\", \"AuthorizationResourceTypeMismatch\",
-     \"FeatureVersionMismatch\", \"ShareSnapshotNotFound\", \"FileShareProvisionedIopsInvalid\",
-     \"FileShareProvisionedBandwidthInvalid\", \"FileShareProvisionedStorageInvalid\",
-     \"TotalSharesProvisionedCapacityExceedsAccountLimit\",
-     \"TotalSharesProvisionedIopsExceedsAccountLimit\",
-     \"TotalSharesProvisionedBandwidthExceedsAccountLimit\", and
-     \"TotalSharesCountExceedsAccountLimit\"."""
-    message: Optional[str] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "Message", "text": False, "unwrapped": False},
-    )
-    """The error message."""
-    copy_source_status_code: Optional[int] = rest_field(
-        name="copySourceStatusCode",
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "CopySourceStatusCode", "text": False, "unwrapped": False},
-    )
-    """Copy source status code."""
-    copy_source_error_code: Optional[str] = rest_field(
-        name="copySourceErrorCode",
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "CopySourceErrorCode", "text": False, "unwrapped": False},
-    )
-    """Copy source error code."""
-    copy_source_error_message: Optional[str] = rest_field(
-        name="copySourceErrorMessage",
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "CopySourceErrorMessage", "text": False, "unwrapped": False},
-    )
-    """Copy source error message."""
-
-    _xml = {"attribute": False, "name": "Error", "text": False, "unwrapped": False}
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: Optional[Union[str, "_models.StorageErrorCode"]] = None,
-        message: Optional[str] = None,
-        copy_source_status_code: Optional[int] = None,
-        copy_source_error_code: Optional[str] = None,
-        copy_source_error_message: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class StorageServiceProperties(_Model):
     """Storage service properties.
 
@@ -2040,9 +2042,9 @@ class UserDelegationKey(_Model):
     :ivar signed_tid: The Azure Active Directory tenant ID in GUID format. Required.
     :vartype signed_tid: str
     :ivar signed_start: The date-time the key is active. Required.
-    :vartype signed_start: ~datetime.datetime
+    :vartype signed_start: str
     :ivar signed_expiry: The date-time the key expires. Required.
-    :vartype signed_expiry: ~datetime.datetime
+    :vartype signed_expiry: str
     :ivar signed_service: Abbreviation of the Azure Storage service that accepts the key. Required.
     :vartype signed_service: str
     :ivar signed_version: The service version that created the key. Required.
@@ -2066,17 +2068,15 @@ class UserDelegationKey(_Model):
         xml={"attribute": False, "name": "SignedTid", "text": False, "unwrapped": False},
     )
     """The Azure Active Directory tenant ID in GUID format. Required."""
-    signed_start: datetime.datetime = rest_field(
+    signed_start: str = rest_field(
         name="signedStart",
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc3339",
         xml={"attribute": False, "name": "SignedStart", "text": False, "unwrapped": False},
     )
     """The date-time the key is active. Required."""
-    signed_expiry: datetime.datetime = rest_field(
+    signed_expiry: str = rest_field(
         name="signedExpiry",
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc3339",
         xml={"attribute": False, "name": "SignedExpiry", "text": False, "unwrapped": False},
     )
     """The date-time the key expires. Required."""
@@ -2112,8 +2112,8 @@ class UserDelegationKey(_Model):
         *,
         signed_oid: str,
         signed_tid: str,
-        signed_start: datetime.datetime,
-        signed_expiry: datetime.datetime,
+        signed_start: str,
+        signed_expiry: str,
         signed_service: str,
         signed_version: str,
         value: str,

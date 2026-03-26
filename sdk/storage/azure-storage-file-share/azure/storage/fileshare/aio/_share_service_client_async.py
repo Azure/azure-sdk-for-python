@@ -16,7 +16,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline import AsyncPipeline
-from .._generated.aio import AzureFileStorageClient as AzureFileStorage
+from .._generated.aio import FileClient as AzureFileStorage
 from .._generated.models import KeyInfo, StorageServiceProperties
 from .._models import CorsRule, service_properties_deserialize, ShareProperties
 from .._serialize import get_api_version

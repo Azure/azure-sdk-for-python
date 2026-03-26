@@ -307,7 +307,9 @@ class ShareNfsSettings(GeneratedShareNfsSettings):
     encryption_in_transit: NfsEncryptionInTransit
     """Sets the encryption in transit settings."""
 
-    def __init__(self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any) -> None:  # pylint: disable=unused-argument
+    def __init__(
+        self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any
+    ) -> None:  # pylint: disable=unused-argument
         self._data = {}
         self.encryption_in_transit = encryption_in_transit
 
@@ -674,7 +676,7 @@ class ShareProperties(DictMixin):
         props = cls()
         props.name = generated.name
         props.last_modified = generated.properties.last_modified
-        props.etag = generated.properties.etag
+        props.etag = generated.properties.e_tag
         props.quota = generated.properties.quota
         props.access_tier = generated.properties.access_tier
         props.next_allowed_quota_downgrade_time = generated.properties.next_allowed_quota_downgrade_time
@@ -1072,7 +1074,7 @@ class DirectoryProperties(DictMixin):
         props.last_access_time = generated.properties.last_access_time
         props.last_write_time = generated.properties.last_write_time
         props.change_time = generated.properties.change_time
-        props.etag = generated.properties.etag
+        props.etag = generated.properties.e_tag
         props.permission_key = generated.permission_key
         return props
 
@@ -1146,7 +1148,9 @@ class DirectoryPropertiesPaged(PageIterator):
             for i in self._response.segment.directory_items
         ]
         self.current_page.extend(
-            [FileProperties._from_generated(i) for i in self._response.segment.file_items]  # pylint: disable=protected-access
+            [
+                FileProperties._from_generated(i) for i in self._response.segment.file_items
+            ]  # pylint: disable=protected-access
         )
         return self._response.next_marker or None, self.current_page
 
@@ -1332,7 +1336,7 @@ class FileProperties(DictMixin):
         props = cls()
         props.name = unquote(generated.name.content) if generated.name.encoded else generated.name.content
         props.file_id = generated.file_id
-        props.etag = generated.properties.etag
+        props.etag = generated.properties.e_tag
         props.file_attributes = generated.attributes
         props.last_modified = generated.properties.last_modified
         props.creation_time = generated.properties.creation_time

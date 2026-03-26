@@ -25,7 +25,7 @@ from ._file_client_helpers import (
     _parse_url,
     _upload_range_from_url_options,
 )
-from ._generated import AzureFileStorageClient as AzureFileStorage
+from ._generated import FileClient as AzureFileStorage
 from ._lease import ShareLeaseClient
 from ._models import FileProperties, Handle, HandlesPaged
 from ._parser import _datetime_to_str, _get_file_permission, _parse_snapshot

@@ -201,14 +201,29 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
         raise error from exc
 
 
+def _extract_text(value):
+    """Extract text from a value that may be an XML Element."""
+    if isinstance(value, Element):
+        return value.text
+    return value
+
+
 def parse_to_internal_user_delegation_key(service_user_delegation_key):
     internal_user_delegation_key = UserDelegationKey()
-    internal_user_delegation_key.signed_oid = service_user_delegation_key.signed_oid
-    internal_user_delegation_key.signed_tid = service_user_delegation_key.signed_tid
-    internal_user_delegation_key.signed_delegated_user_tid = service_user_delegation_key.signed_delegated_user_tid
-    internal_user_delegation_key.signed_start = _to_utc_datetime(service_user_delegation_key.signed_start)
-    internal_user_delegation_key.signed_expiry = _to_utc_datetime(service_user_delegation_key.signed_expiry)
-    internal_user_delegation_key.signed_service = service_user_delegation_key.signed_service
-    internal_user_delegation_key.signed_version = service_user_delegation_key.signed_version
-    internal_user_delegation_key.value = service_user_delegation_key.value
+    internal_user_delegation_key.signed_oid = _extract_text(service_user_delegation_key.signed_oid)
+    internal_user_delegation_key.signed_tid = _extract_text(service_user_delegation_key.signed_tid)
+    internal_user_delegation_key.signed_delegated_user_tid = _extract_text(
+        service_user_delegation_key.signed_delegated_user_tid
+    )
+    signed_start = _extract_text(service_user_delegation_key.signed_start)
+    internal_user_delegation_key.signed_start = (
+        signed_start if isinstance(signed_start, str) else _to_utc_datetime(signed_start)
+    )
+    signed_expiry = _extract_text(service_user_delegation_key.signed_expiry)
+    internal_user_delegation_key.signed_expiry = (
+        signed_expiry if isinstance(signed_expiry, str) else _to_utc_datetime(signed_expiry)
+    )
+    internal_user_delegation_key.signed_service = _extract_text(service_user_delegation_key.signed_service)
+    internal_user_delegation_key.signed_version = _extract_text(service_user_delegation_key.signed_version)
+    internal_user_delegation_key.value = _extract_text(service_user_delegation_key.value)
     return internal_user_delegation_key

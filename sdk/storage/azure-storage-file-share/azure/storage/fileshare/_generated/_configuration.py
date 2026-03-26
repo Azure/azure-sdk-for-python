@@ -16,8 +16,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AzureFileStorageClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for AzureFileStorageClient.
+class FileClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for FileClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -28,8 +28,8 @@ class AzureFileStorageClientConfiguration:  # pylint: disable=too-many-instance-
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword version: Specifies the version of the operation to use for this request. Known values
-     are "2026-04-06" and None. Default value is "2026-04-06". Note that overriding this default
-     value may result in unsupported behavior.
+     are "2026-04-06". Default value is "2026-04-06". Note that overriding this default value may
+     result in unsupported behavior.
     :paramtype version: str
     """
 

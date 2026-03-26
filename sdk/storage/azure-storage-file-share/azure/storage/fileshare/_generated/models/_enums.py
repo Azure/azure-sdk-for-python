@@ -21,7 +21,7 @@ class AccessRight(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Delete."""
 
 
-class CopyStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class CopyStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The copy status."""
 
     PENDING = "pending"

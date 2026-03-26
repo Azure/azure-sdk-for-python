@@ -14,7 +14,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
-from ._generated import AzureFileStorageClient as AzureFileStorage
+from ._generated import FileClient as AzureFileStorage
 from ._generated.models import KeyInfo, StorageServiceProperties
 from ._models import (
     CorsRule,

@@ -32,13 +32,16 @@ class ProgressTracker:
 
 def _mock_stream_generator(data: bytes):
     """Simple generator that yields data in a single chunk."""
+
     def generator(response, **kwargs):
         yield data
+
     return generator
 
 
 class _MockInternalResponse:
     """Minimal internal response object for HttpResponseImpl."""
+
     def close(self):
         pass
 

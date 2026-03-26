@@ -28,7 +28,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._configuration import AzureFileStorageClientConfiguration
+from .._configuration import FileClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _deserialize_xml, _failsafe_deserialize_xml, _get_element
 from .._utils.serialization import Deserializer, Serializer
 
@@ -60,8 +60,7 @@ def build_service_set_properties_request(
 
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     if file_request_intent is not None:
         _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
 
@@ -154,8 +153,7 @@ def build_service_get_user_delegation_key_request(  # pylint: disable=name-too-l
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
@@ -708,7 +706,7 @@ def build_share_set_access_policy_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "?restype=share&comp=acl"
@@ -1217,7 +1215,7 @@ def build_directory_rename_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_file_create_request(  # pylint: disable=too-many-locals
+def build_file_create_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
     *,
     content_length: int,
     timeout: Optional[int] = None,
@@ -1250,11 +1248,11 @@ def build_file_create_request(  # pylint: disable=too-many-locals
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     file_type: Literal["file"] = kwargs.pop("file_type", _headers.pop("x-ms-type", "file"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/"
+    _url = ""
 
     # Construct parameters
     if timeout is not None:
@@ -1342,7 +1340,7 @@ def build_file_download_request(
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/"
+    _url = ""
 
     # Construct parameters
     if timeout is not None:
@@ -1351,7 +1349,7 @@ def build_file_download_request(
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if range is not None:
-        _headers["x-ms-range"] = _SERIALIZER.header("range", range, "str")
+        _headers["Range"] = _SERIALIZER.header("range", range, "str")
     if range_get_content_md5 is not None:
         _headers["x-ms-range-get-content-md5"] = _SERIALIZER.header(
             "range_get_content_md5", range_get_content_md5, "bool"
@@ -1383,7 +1381,7 @@ def build_file_get_properties_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/"
+    _url = ""
 
     # Construct parameters
     if sharesnapshot is not None:
@@ -1416,7 +1414,7 @@ def build_file_delete_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/"
+    _url = ""
 
     # Construct parameters
     if timeout is not None:
@@ -1708,7 +1706,7 @@ def build_file_upload_range_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "?comp=range"
@@ -1721,7 +1719,7 @@ def build_file_upload_range_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["x-ms-range"] = _SERIALIZER.header("range", range, "str")
+    _headers["Range"] = _SERIALIZER.header("range", range, "str")
     _headers["x-ms-write"] = _SERIALIZER.header("file_range_write", file_range_write, "str")
     _headers["Content-Length"] = _SERIALIZER.header("content_length", content_length, "int")
     if content_md5 is not None:
@@ -1778,7 +1776,7 @@ def build_file_upload_range_from_url_request(
 
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    _headers["x-ms-range"] = _SERIALIZER.header("range", range, "str")
+    _headers["Range"] = _SERIALIZER.header("range", range, "str")
     _headers["x-ms-copy-source"] = _SERIALIZER.header("copy_source", copy_source, "str")
     if source_range is not None:
         _headers["x-ms-source-range"] = _SERIALIZER.header("source_range", source_range, "str")
@@ -1848,7 +1846,7 @@ def build_file_get_range_list_request(
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if range is not None:
-        _headers["x-ms-range"] = _SERIALIZER.header("range", range, "str")
+        _headers["Range"] = _SERIALIZER.header("range", range, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
     if allow_trailing_dot is not None:
@@ -1893,7 +1891,7 @@ def build_file_start_copy_request(  # pylint: disable=too-many-locals
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/"
+    _url = ""
 
     # Construct parameters
     if timeout is not None:
@@ -2256,14 +2254,14 @@ class ServiceOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.storage.fileshare.AzureFileStorageClient`'s
+        :class:`~azure.storage.fileshare._generated.FileClient`'s
         :attr:`service` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AzureFileStorageClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: FileClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2285,7 +2283,8 @@ class ServiceOperations:
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2330,7 +2329,7 @@ class ServiceOperations:
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -2360,7 +2359,8 @@ class ServiceOperations:
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: StorageServiceProperties. The StorageServiceProperties is compatible with
          MutableMapping
         :rtype: ~azure.storage.fileshare._generated.models.StorageServiceProperties
@@ -2407,7 +2407,7 @@ class ServiceOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -2457,10 +2457,12 @@ class ServiceOperations:
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :keyword include: Include this parameter to specify one or more datasets to include in the
          response. Default value is None.
-        :paramtype include: list[str or ~azure.storage.fileshare.models.ListSharesIncludeType]
+        :paramtype include: list[str or
+         ~azure.storage.fileshare._generated.models.ListSharesIncludeType]
         :return: ListSharesResponse. The ListSharesResponse is compatible with MutableMapping
         :rtype: ~azure.storage.fileshare._generated.models.ListSharesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2510,7 +2512,7 @@ class ServiceOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -2594,7 +2596,7 @@ class ServiceOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -2625,14 +2627,14 @@ class ShareOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.storage.fileshare.AzureFileStorageClient`'s
+        :class:`~azure.storage.fileshare._generated.FileClient`'s
         :attr:`share` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AzureFileStorageClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: FileClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2667,12 +2669,12 @@ class ShareOperations:
         :paramtype quota: int
         :keyword access_tier: Specifies the access tier of the share. Known values are:
          "TransactionOptimized", "Hot", "Cool", and "Premium". Default value is None.
-        :paramtype access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
+        :paramtype access_tier: str or ~azure.storage.fileshare._generated.models.ShareAccessTier
         :keyword enabled_protocols: Protocols to enable on the share. Default value is None.
         :paramtype enabled_protocols: str
         :keyword root_squash: Root squash to set on the share. Only valid for NFS shares. Known values
          are: "NoRootSquash", "RootSquash", and "AllSquash". Default value is None.
-        :paramtype root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
+        :paramtype root_squash: str or ~azure.storage.fileshare._generated.models.ShareRootSquash
         :keyword enable_snapshot_virtual_directory_access: Optional. Used to enable snapshot virtual
          directory access. Default value is None.
         :paramtype enable_snapshot_virtual_directory_access: bool
@@ -2688,7 +2690,8 @@ class ShareOperations:
          MiB/sec. Default value is None.
         :paramtype paid_bursting_max_bandwidth_mibps: int
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :keyword share_provisioned_iops: Optional. Specifies the provisioned IOPS of the share. Default
          value is None.
         :paramtype share_provisioned_iops: int
@@ -2749,7 +2752,7 @@ class ShareOperations:
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -2799,7 +2802,8 @@ class ShareOperations:
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
          value is None.
         :paramtype lease_id: str
@@ -2844,7 +2848,7 @@ class ShareOperations:
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -2941,9 +2945,11 @@ class ShareOperations:
         :paramtype timeout: int
         :keyword delete_snapshots: Specifies the option include to delete the base share and all of its
          snapshots. Known values are: "include" and "include-leased". Default value is None.
-        :paramtype delete_snapshots: str or ~azure.storage.fileshare.models.DeleteSnapshotsOptionType
+        :paramtype delete_snapshots: str or
+         ~azure.storage.fileshare._generated.models.DeleteSnapshotsOptionType
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
          value is None.
         :paramtype lease_id: str
@@ -2989,7 +2995,7 @@ class ShareOperations:
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -3039,7 +3045,8 @@ class ShareOperations:
          share snapshot. Default value is None.
         :paramtype sharesnapshot: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3084,7 +3091,7 @@ class ShareOperations:
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -3124,7 +3131,8 @@ class ShareOperations:
          share snapshot. Default value is None.
         :paramtype sharesnapshot: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3168,7 +3176,7 @@ class ShareOperations:
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -3212,7 +3220,8 @@ class ShareOperations:
          share snapshot. Default value is None.
         :paramtype sharesnapshot: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3257,7 +3266,7 @@ class ShareOperations:
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -3297,7 +3306,8 @@ class ShareOperations:
          share snapshot. Default value is None.
         :paramtype sharesnapshot: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3341,7 +3351,7 @@ class ShareOperations:
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -3391,7 +3401,8 @@ class ShareOperations:
          share snapshot. Default value is None.
         :paramtype sharesnapshot: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3436,7 +3447,7 @@ class ShareOperations:
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -3472,7 +3483,8 @@ class ShareOperations:
         :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
         :paramtype metadata: dict[str, str]
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3513,7 +3525,7 @@ class ShareOperations:
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -3553,7 +3565,8 @@ class ShareOperations:
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3580,7 +3593,8 @@ class ShareOperations:
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3607,7 +3621,8 @@ class ShareOperations:
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3632,7 +3647,8 @@ class ShareOperations:
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3682,7 +3698,7 @@ class ShareOperations:
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -3722,9 +3738,11 @@ class ShareOperations:
         :keyword file_permission_format: Optional. Specifies the format in which the permission is
          returned. Acceptable values are SDDL or binary. Known values are: "Sddl" and "Binary". Default
          value is None.
-        :paramtype file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
+        :paramtype file_permission_format: str or
+         ~azure.storage.fileshare._generated.models.FilePermissionFormat
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: SharePermission. The SharePermission is compatible with MutableMapping
         :rtype: ~azure.storage.fileshare._generated.models.SharePermission
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3772,7 +3790,7 @@ class ShareOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -3823,13 +3841,13 @@ class ShareOperations:
         :paramtype quota: int
         :keyword access_tier: Specifies the access tier of the share. Known values are:
          "TransactionOptimized", "Hot", "Cool", and "Premium". Default value is None.
-        :paramtype access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
+        :paramtype access_tier: str or ~azure.storage.fileshare._generated.models.ShareAccessTier
         :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
          value is None.
         :paramtype lease_id: str
         :keyword root_squash: Root squash to set on the share. Only valid for NFS shares. Known values
          are: "NoRootSquash", "RootSquash", and "AllSquash". Default value is None.
-        :paramtype root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
+        :paramtype root_squash: str or ~azure.storage.fileshare._generated.models.ShareRootSquash
         :keyword enable_snapshot_virtual_directory_access: Optional. Used to enable snapshot virtual
          directory access. Default value is None.
         :paramtype enable_snapshot_virtual_directory_access: bool
@@ -3845,7 +3863,8 @@ class ShareOperations:
          MiB/sec. Default value is None.
         :paramtype paid_bursting_max_bandwidth_mibps: int
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :keyword share_provisioned_iops: Optional. Specifies the provisioned number of input/output
          operations per second (IOPS) of the share. Default value is None.
         :paramtype share_provisioned_iops: int
@@ -3905,7 +3924,7 @@ class ShareOperations:
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -3965,7 +3984,8 @@ class ShareOperations:
          value is None.
         :paramtype lease_id: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4007,7 +4027,7 @@ class ShareOperations:
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4043,7 +4063,8 @@ class ShareOperations:
          value is None.
         :paramtype lease_id: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: SignedIdentifiers. The SignedIdentifiers is compatible with MutableMapping
         :rtype: ~azure.storage.fileshare._generated.models.SignedIdentifiers
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4090,7 +4111,7 @@ class ShareOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4136,7 +4157,8 @@ class ShareOperations:
          value is None.
         :paramtype lease_id: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4186,7 +4208,7 @@ class ShareOperations:
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4221,7 +4243,8 @@ class ShareOperations:
          value is None.
         :paramtype lease_id: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: ShareStats. The ShareStats is compatible with MutableMapping
         :rtype: ~azure.storage.fileshare._generated.models.ShareStats
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4268,7 +4291,7 @@ class ShareOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4315,7 +4338,8 @@ class ShareOperations:
          value is None.
         :paramtype deleted_share_version: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4357,7 +4381,7 @@ class ShareOperations:
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4395,14 +4419,14 @@ class DirectoryOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.storage.fileshare.AzureFileStorageClient`'s
+        :class:`~azure.storage.fileshare._generated.FileClient`'s
         :attr:`directory` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AzureFileStorageClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: FileClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4458,9 +4482,11 @@ class DirectoryOperations:
         :paramtype file_change_time: str
         :keyword file_permission_format: Optional. Used to set permission format. Known values are:
          "Sddl" and "Binary". Default value is None.
-        :paramtype file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
+        :paramtype file_permission_format: str or
+         ~azure.storage.fileshare._generated.models.FilePermissionFormat
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :keyword owner: Optional, NFS only. The owner of the file or directory. Default value is None.
         :paramtype owner: str
         :keyword group: Optional, NFS only. The owning group of the file or directory. Default value is
@@ -4472,7 +4498,7 @@ class DirectoryOperations:
         :keyword file_property_semantics: SMB only. Default value is New. Known values are: "New" and
          "Restore". Default value is None.
         :paramtype file_property_semantics: str or
-         ~azure.storage.fileshare.models.FilePropertySemantics
+         ~azure.storage.fileshare._generated.models.FilePropertySemantics
         :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
@@ -4528,7 +4554,7 @@ class DirectoryOperations:
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4589,7 +4615,8 @@ class DirectoryOperations:
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
@@ -4634,7 +4661,7 @@ class DirectoryOperations:
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4692,7 +4719,8 @@ class DirectoryOperations:
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
@@ -4736,7 +4764,7 @@ class DirectoryOperations:
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4800,12 +4828,14 @@ class DirectoryOperations:
         :paramtype file_change_time: str
         :keyword file_permission_format: Optional. Used to set permission format. Known values are:
          "Sddl" and "Binary". Default value is None.
-        :paramtype file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
+        :paramtype file_permission_format: str or
+         ~azure.storage.fileshare._generated.models.FilePermissionFormat
         :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :keyword owner: Optional, NFS only. The owner of the file or directory. Default value is None.
         :paramtype owner: str
         :keyword group: Optional, NFS only. The owning group of the file or directory. Default value is
@@ -4864,7 +4894,7 @@ class DirectoryOperations:
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4925,7 +4955,8 @@ class DirectoryOperations:
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4967,7 +4998,7 @@ class DirectoryOperations:
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5018,7 +5049,8 @@ class DirectoryOperations:
         :paramtype maxresults: int
         :keyword include: Include this parameter to specify one or more datasets to include in the
          response. Default value is None.
-        :paramtype include: list[str or ~azure.storage.fileshare.models.ListFilesIncludeType]
+        :paramtype include: list[str or
+         ~azure.storage.fileshare._generated.models.ListFilesIncludeType]
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword include_extended_info: Include extended information. Default value is None.
@@ -5027,7 +5059,8 @@ class DirectoryOperations:
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: ListFilesAndDirectoriesSegmentResponse. The ListFilesAndDirectoriesSegmentResponse is
          compatible with MutableMapping
         :rtype: ~azure.storage.fileshare._generated.models.ListFilesAndDirectoriesSegmentResponse
@@ -5081,7 +5114,7 @@ class DirectoryOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5137,7 +5170,8 @@ class DirectoryOperations:
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: ListHandlesResponse. The ListHandlesResponse is compatible with MutableMapping
         :rtype: ~azure.storage.fileshare._generated.models.ListHandlesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5188,7 +5222,7 @@ class DirectoryOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5245,7 +5279,8 @@ class DirectoryOperations:
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5290,7 +5325,7 @@ class DirectoryOperations:
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5370,7 +5405,8 @@ class DirectoryOperations:
         :paramtype file_permission: str
         :keyword file_permission_format: Optional. Used to set permission format. Known values are:
          "Sddl" and "Binary". Default value is None.
-        :paramtype file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
+        :paramtype file_permission_format: str or
+         ~azure.storage.fileshare._generated.models.FilePermissionFormat
         :keyword file_permission_key: Key of the permission to be set. Default value is None.
         :paramtype file_permission_key: str
         :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
@@ -5382,7 +5418,8 @@ class DirectoryOperations:
          source URI. Default value is None.
         :paramtype allow_source_trailing_dot: bool
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5437,7 +5474,7 @@ class DirectoryOperations:
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5482,14 +5519,14 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.storage.fileshare.AzureFileStorageClient`'s
+        :class:`~azure.storage.fileshare._generated.FileClient`'s
         :attr:`file` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AzureFileStorageClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: FileClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5581,7 +5618,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :paramtype file_change_time: str
         :keyword file_permission_format: Optional. Used to set permission format. Known values are:
          "Sddl" and "Binary". Default value is None.
-        :paramtype file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
+        :paramtype file_permission_format: str or
+         ~azure.storage.fileshare._generated.models.FilePermissionFormat
         :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
          value is None.
         :paramtype lease_id: str
@@ -5589,7 +5627,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :keyword owner: Optional, NFS only. The owner of the file or directory. Default value is None.
         :paramtype owner: str
         :keyword group: Optional, NFS only. The owning group of the file or directory. Default value is
@@ -5600,14 +5639,14 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :paramtype file_mode: str
         :keyword nfs_file_type: Optional, NFS only. Type of the file or directory. Known values are:
          "Regular", "Directory", and "SymLink". Default value is None.
-        :paramtype nfs_file_type: str or ~azure.storage.fileshare.models.NfsFileType
+        :paramtype nfs_file_type: str or ~azure.storage.fileshare._generated.models.NfsFileType
         :keyword content_md5: An MD5 hash of the content. This hash is used to verify the integrity of
          the data during transport. Default value is None.
         :paramtype content_md5: bytes
         :keyword file_property_semantics: SMB only. Default value is New. Known values are: "New" and
          "Restore". Default value is None.
         :paramtype file_property_semantics: str or
-         ~azure.storage.fileshare.models.FilePropertySemantics
+         ~azure.storage.fileshare._generated.models.FilePropertySemantics
         :keyword optional_content_length: Optional. Specifies the content length of the file. Default
          value is None.
         :paramtype optional_content_length: int
@@ -5662,8 +5701,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             content_md5=content_md5,
             file_property_semantics=file_property_semantics,
             optional_content_length=optional_content_length,
-            content_type=content_type,
             file_type=file_type,
+            content_type=content_type,
             version=self._config.version,
             content=_content,
             headers=_headers,
@@ -5684,7 +5723,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5758,7 +5797,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :keyword structured_body_type: Optional. Used for structured get operations. Default value is
          None.
         :paramtype structured_body_type: str
@@ -5812,7 +5852,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5915,7 +5955,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: bool
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5958,7 +5999,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -6045,7 +6086,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6087,7 +6129,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -6181,7 +6223,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :paramtype file_change_time: str
         :keyword file_permission_format: Optional. Used to set permission format. Known values are:
          "Sddl" and "Binary". Default value is None.
-        :paramtype file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
+        :paramtype file_permission_format: str or
+         ~azure.storage.fileshare._generated.models.FilePermissionFormat
         :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
          value is None.
         :paramtype lease_id: str
@@ -6189,7 +6232,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :keyword owner: Optional, NFS only. The owner of the file or directory. Default value is None.
         :paramtype owner: str
         :keyword group: Optional, NFS only. The owning group of the file or directory. Default value is
@@ -6256,7 +6300,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -6319,7 +6363,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          value is None.
         :paramtype lease_id: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
@@ -6365,7 +6410,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -6410,7 +6455,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          Constructor (String) for a list of valid GUID string formats. Default value is None.
         :paramtype proposed_lease_id: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
@@ -6458,7 +6504,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -6495,7 +6541,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
@@ -6542,7 +6589,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -6583,7 +6630,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          Constructor (String) for a list of valid GUID string formats. Default value is None.
         :paramtype proposed_lease_id: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
@@ -6631,7 +6679,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -6669,7 +6717,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          value is None.
         :paramtype lease_id: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
@@ -6716,7 +6765,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -6765,7 +6814,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          specified by the request body into the specified range. - Clear: Clears the specified range and
          releases the space used in storage for that range. Known values are: "update" and "clear".
          Required.
-        :paramtype file_range_write: str or ~azure.storage.fileshare.models.FileRangeWriteType
+        :paramtype file_range_write: str or
+         ~azure.storage.fileshare._generated.models.FileRangeWriteType
         :keyword content_length: The number of bytes being transmitted in the request body. Required.
         :paramtype content_length: int
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
@@ -6778,12 +6828,14 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :paramtype lease_id: str
         :keyword file_last_written_mode: If the file last write time should be preserved or
          overwritten. Known values are: "Now" and "Preserve". Default value is None.
-        :paramtype file_last_written_mode: str or ~azure.storage.fileshare.models.FileLastWrittenMode
+        :paramtype file_last_written_mode: str or
+         ~azure.storage.fileshare._generated.models.FileLastWrittenMode
         :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :keyword structured_body_type: Optional. Used for structured put operations. Default value is
          None.
         :paramtype structured_body_type: str
@@ -6846,7 +6898,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -6905,7 +6957,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :paramtype copy_source: str
         :keyword file_range_write_from_url: Only update is supported. "update" Required.
         :paramtype file_range_write_from_url: str or
-         ~azure.storage.fileshare.models.FileRangeWriteFromUrlType
+         ~azure.storage.fileshare._generated.models.FileRangeWriteFromUrlType
         :keyword content_length: The number of bytes being transmitted in the request body. Required.
         :paramtype content_length: int
         :keyword source_range: Bytes of source data in the specified range. Default value is None.
@@ -6929,7 +6981,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :paramtype copy_source_authorization: str
         :keyword file_last_written_mode: If the file last write time should be preserved or
          overwritten. Known values are: "Now" and "Preserve". Default value is None.
-        :paramtype file_last_written_mode: str or ~azure.storage.fileshare.models.FileLastWrittenMode
+        :paramtype file_last_written_mode: str or
+         ~azure.storage.fileshare._generated.models.FileLastWrittenMode
         :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
@@ -6937,7 +6990,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          source URI. Default value is None.
         :paramtype allow_source_trailing_dot: bool
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6990,7 +7044,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -7048,7 +7102,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :keyword support_rename: This header is allowed only when PrevShareSnapshot query parameter is
          set. Determines whether the changed ranges for a file that has been renamed or moved should be
          listed. Default value is None.
@@ -7104,7 +7159,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -7173,7 +7228,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :paramtype file_permission: str
         :keyword file_permission_format: Optional. Used to set permission format. Known values are:
          "Sddl" and "Binary". Default value is None.
-        :paramtype file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
+        :paramtype file_permission_format: str or
+         ~azure.storage.fileshare._generated.models.FilePermissionFormat
         :keyword file_permission_key: Key of the permission to be set. Default value is None.
         :paramtype file_permission_key: str
         :keyword file_permission_copy_mode: Specifies the option to copy file security descriptor from
@@ -7181,7 +7237,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          x-ms-file-permission or x-ms-file-permission-key. Known values are: "source" and "override".
          Default value is None.
         :paramtype file_permission_copy_mode: str or
-         ~azure.storage.fileshare.models.PermissionCopyModeType
+         ~azure.storage.fileshare._generated.models.PermissionCopyModeType
         :keyword ignore_read_only: A boolean value that specifies whether the ReadOnly attribute on a
          preexisting destination file should be respected or overridden. Default value is None.
         :paramtype ignore_read_only: bool
@@ -7207,7 +7263,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          source URI. Default value is None.
         :paramtype allow_source_trailing_dot: bool
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :keyword owner: Optional, NFS only. The owner of the file or directory. Default value is None.
         :paramtype owner: str
         :keyword group: Optional, NFS only. The owning group of the file or directory. Default value is
@@ -7218,10 +7275,11 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :paramtype file_mode: str
         :keyword file_mode_copy_mode: Specifies mode copy option for the file. Known values are:
          "source" and "override". Default value is None.
-        :paramtype file_mode_copy_mode: str or ~azure.storage.fileshare.models.ModeCopyMode
+        :paramtype file_mode_copy_mode: str or ~azure.storage.fileshare._generated.models.ModeCopyMode
         :keyword file_owner_copy_mode: Specifies owner copy option for the file. Known values are:
          "source" and "override". Default value is None.
-        :paramtype file_owner_copy_mode: str or ~azure.storage.fileshare.models.OwnerCopyMode
+        :paramtype file_owner_copy_mode: str or
+         ~azure.storage.fileshare._generated.models.OwnerCopyMode
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7281,7 +7339,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -7327,7 +7385,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7374,7 +7433,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -7418,7 +7477,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: ListHandlesResponse. The ListHandlesResponse is compatible with MutableMapping
         :rtype: ~azure.storage.fileshare._generated.models.ListHandlesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7468,7 +7528,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -7521,7 +7581,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          file/directory path. Default value is None.
         :paramtype allow_trailing_dot: bool
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7565,7 +7626,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -7646,7 +7707,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :paramtype file_permission: str
         :keyword file_permission_format: Optional. Used to set permission format. Known values are:
          "Sddl" and "Binary". Default value is None.
-        :paramtype file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
+        :paramtype file_permission_format: str or
+         ~azure.storage.fileshare._generated.models.FilePermissionFormat
         :keyword file_permission_key: Key of the permission to be set. Default value is None.
         :paramtype file_permission_key: str
         :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
@@ -7660,7 +7722,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          source URI. Default value is None.
         :paramtype allow_source_trailing_dot: bool
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7716,7 +7779,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -7791,7 +7854,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          None.
         :paramtype group: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7838,7 +7902,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -7888,7 +7952,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          specifies the share snapshot to query. Default value is None.
         :paramtype sharesnapshot: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7929,7 +7994,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -7969,7 +8034,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          value is None.
         :paramtype lease_id: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :paramtype file_request_intent: str or
+         ~azure.storage.fileshare._generated.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8013,7 +8079,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
-                _models.StorageError,
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)

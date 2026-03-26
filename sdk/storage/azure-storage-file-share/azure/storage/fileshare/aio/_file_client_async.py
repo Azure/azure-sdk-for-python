@@ -43,7 +43,7 @@ from .._file_client_helpers import (
     _parse_url,
     _upload_range_from_url_options,
 )
-from .._generated.aio import AzureFileStorageClient as AzureFileStorage
+from .._generated.aio import FileClient as AzureFileStorage
 from .._parser import _datetime_to_str, _get_file_permission, _parse_snapshot
 from .._serialize import (
     get_access_conditions,

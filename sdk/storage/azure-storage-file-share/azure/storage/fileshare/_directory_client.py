@@ -20,7 +20,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._deserialize import deserialize_directory_properties
 from ._directory_client_helpers import _format_url, _from_directory_url, _parse_url
 from ._file_client import ShareFileClient
-from ._generated import AzureFileStorageClient as AzureFileStorage
+from ._generated import FileClient as AzureFileStorage
 from ._models import DirectoryPropertiesPaged, Handle, HandlesPaged
 from ._parser import _datetime_to_str, _get_file_permission, _parse_snapshot
 from ._serialize import get_api_version, get_dest_access_conditions, get_rename_smb_properties

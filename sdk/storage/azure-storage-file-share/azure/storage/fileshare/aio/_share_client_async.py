@@ -17,7 +17,7 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._deserialize import deserialize_permission, deserialize_share_properties
-from .._generated.aio import AzureFileStorageClient as AzureFileStorage
+from .._generated.aio import FileClient as AzureFileStorage
 from .._generated.models import DeleteSnapshotsOptionType, ShareStats, SignedIdentifier, SignedIdentifiers
 from .._models import ShareProtocols
 from .._parser import _parse_snapshot

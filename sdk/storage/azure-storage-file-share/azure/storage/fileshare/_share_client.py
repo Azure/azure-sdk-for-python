@@ -16,7 +16,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._deserialize import deserialize_permission, deserialize_share_properties
 from ._directory_client import ShareDirectoryClient
 from ._file_client import ShareFileClient
-from ._generated import AzureFileStorageClient as AzureFileStorage
+from ._generated import FileClient as AzureFileStorage
 from ._generated.models import DeleteSnapshotsOptionType, ShareStats, SignedIdentifier, SignedIdentifiers
 from ._lease import ShareLeaseClient
 from ._models import ShareProtocols

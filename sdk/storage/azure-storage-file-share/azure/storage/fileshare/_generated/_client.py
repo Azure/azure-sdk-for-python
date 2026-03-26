@@ -14,7 +14,7 @@ from azure.core import PipelineClient
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
-from ._configuration import AzureFileStorageClientConfiguration
+from ._configuration import FileClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import DirectoryOperations, FileOperations, ServiceOperations, ShareOperations
 
@@ -22,31 +22,31 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AzureFileStorageClient:  # pylint: disable=client-accepts-api-version-keyword
+class FileClient:  # pylint: disable=client-accepts-api-version-keyword
     """Azure File Storage provides scalable file shares in the cloud using SMB and NFS protocols.
 
     :ivar service: ServiceOperations operations
-    :vartype service: azure.storage.fileshare.operations.ServiceOperations
+    :vartype service: azure.storage.fileshare._generated.operations.ServiceOperations
     :ivar share: ShareOperations operations
-    :vartype share: azure.storage.fileshare.operations.ShareOperations
+    :vartype share: azure.storage.fileshare._generated.operations.ShareOperations
     :ivar directory: DirectoryOperations operations
-    :vartype directory: azure.storage.fileshare.operations.DirectoryOperations
+    :vartype directory: azure.storage.fileshare._generated.operations.DirectoryOperations
     :ivar file: FileOperations operations
-    :vartype file: azure.storage.fileshare.operations.FileOperations
+    :vartype file: azure.storage.fileshare._generated.operations.FileOperations
     :param url: The URL of the service account, share, directory or file that is the target of the
      desired operation. Required.
     :type url: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword version: Specifies the version of the operation to use for this request. Known values
-     are "2026-04-06" and None. Default value is "2026-04-06". Note that overriding this default
-     value may result in unsupported behavior.
+     are "2026-04-06". Default value is "2026-04-06". Note that overriding this default value may
+     result in unsupported behavior.
     :paramtype version: str
     """
 
     def __init__(self, url: str, credential: "TokenCredential", **kwargs: Any) -> None:
         _endpoint = "{url}"
-        self._config = AzureFileStorageClientConfiguration(url=url, credential=credential, **kwargs)
+        self._config = FileClientConfiguration(url=url, credential=credential, **kwargs)
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:

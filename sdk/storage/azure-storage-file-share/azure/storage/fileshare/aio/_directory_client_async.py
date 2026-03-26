@@ -21,7 +21,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._deserialize import deserialize_directory_properties
 from .._directory_client_helpers import _format_url, _from_directory_url, _parse_url
-from .._generated.aio import AzureFileStorageClient as AzureFileStorage
+from .._generated.aio import FileClient as AzureFileStorage
 from .._parser import _datetime_to_str, _get_file_permission, _parse_snapshot
 from .._serialize import get_api_version, get_dest_access_conditions, get_rename_smb_properties
 from .._shared.base_client import parse_query, StorageAccountHostsMixin

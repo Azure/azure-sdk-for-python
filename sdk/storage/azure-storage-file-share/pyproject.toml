@@ -43,7 +43,7 @@ dynamic = [
 repository = "https://github.com/Azure/azure-sdk-for-python"
 
 [tool.setuptools.dynamic]
-version = {attr = "azure.storage.fileshare._version.VERSION"}
+version = {attr = "azure.storage.fileshare._generated._version.VERSION"}
 readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
@@ -55,6 +55,7 @@ exclude = [
     "doc*",
     "azure",
     "azure.storage",
+    "azure.storage.fileshare",
 ]
 
 [tool.setuptools.package-data]

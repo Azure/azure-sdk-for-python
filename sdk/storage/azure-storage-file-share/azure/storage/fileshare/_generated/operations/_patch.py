@@ -36,6 +36,7 @@ _TRAILING_SLASH_FUNCTIONS = [
     "build_file_start_copy_request",
 ]
 
+
 def _fix_trailing_slash(build_fn):
     """Wrap a build_*_request function to strip the trailing slash from _url = "/"."""
 
