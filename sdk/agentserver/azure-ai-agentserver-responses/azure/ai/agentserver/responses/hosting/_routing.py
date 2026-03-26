@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Response protocol handler for AgentServer.
+"""Response handler for AgentServer.
 
 Provides the Responses API endpoints and registers them with the
 ``AgentServer`` on construction, following the same pattern as
@@ -97,8 +97,10 @@ class ResponseHandler:
             "x-accel-buffering": "no",
         }
 
-        resolved_provider: ResponseProviderProtocol = provider if provider is not None else InMemoryResponseProvider()
-        stream_provider = resolved_provider if isinstance(resolved_provider, ResponseStreamProviderProtocol) else None
+        resolved_provider: ResponseProviderProtocol = provider if provider is not None \
+                                                        else InMemoryResponseProvider()
+        stream_provider = resolved_provider if isinstance(resolved_provider, ResponseStreamProviderProtocol) \
+                                else None
         runtime_state = _RuntimeState()
         orchestrator = _ResponseOrchestrator(
             create_async=self._dispatch_create,

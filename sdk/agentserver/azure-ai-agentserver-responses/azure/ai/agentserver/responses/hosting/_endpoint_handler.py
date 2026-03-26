@@ -17,6 +17,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
 from azure.ai.agentserver.hosting import AgentLogger
+from azure.ai.agentserver.responses.models._generated.sdk.models.models._models import CreateResponse
 
 from .._response_context import ResponseContext
 from .._options import ResponsesServerOptions
@@ -196,54 +197,113 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
     # ResponseContext factory
     # ------------------------------------------------------------------
 
-    def _create_response_context(
+    def _build_execution_context(
         self,
         *,
+        payload: Any,
+        parsed: CreateResponse,
         response_id: str,
-        raw_body: Any,
-        parsed: Any,
+        agent_reference: Any,
+        span: Any,
         request: Request,
-    ) -> ResponseContext:
-        """Build a :class:`ResponseContext` from the incoming HTTP request.
+    ) -> _ExecutionContext:
+        """Build an :class:`_ExecutionContext` from the parsed request.
 
-        Extracts mode flags, input items, conversation threading fields,
-        ``x-client-*`` headers, and query parameters from the raw and
-        parsed request objects.
+        Extracts all protocol fields from *parsed* exactly once and
+        creates the cancellation signal.  The companion
+        :class:`ResponseContext` is derived automatically so that both
+        objects share a single source of truth for mode flags, input
+        items, and conversation-threading fields.
 
-        :param response_id: The assigned response identifier.
-        :param raw_body: The raw JSON payload dict.
-        :param parsed: The validated :class:`CreateResponse` model.
-        :param request: The Starlette HTTP request.
-        :return: A fully-populated :class:`ResponseContext`.
+        :param payload: Raw JSON payload dict.
+        :type payload: Any
+        :param parsed: Validated :class:`CreateResponse` model.
+        :type parsed: CreateResponse
+        :param response_id: Assigned response identifier.
+        :type response_id: str
+        :param agent_reference: Normalised agent reference dictionary.
+        :type agent_reference: Any
+        :param span: Active observability span for this request.
+        :type span: Any
+        :param request: Starlette HTTP request (for headers / query params).
+        :type request: Request
+        :return: A fully-populated :class:`_ExecutionContext` with its
+                    ``context`` field already set.
+        :rtype: _ExecutionContext
         """
         stream = bool(getattr(parsed, "stream", False))
         store = True if getattr(parsed, "store", None) is None else bool(parsed.store)
         background = bool(getattr(parsed, "background", False))
+        model = getattr(parsed, "model", None)
         input_items = [deepcopy(item) for item in (parsed.input or []) if isinstance(item, dict)]
         previous_response_id: str | None = (
             parsed.previous_response_id
             if isinstance(parsed.previous_response_id, str) and parsed.previous_response_id
             else None
         )
-        mode_flags = ResponseModeFlags(stream=stream, store=store, background=background)
+        conversation_id = _resolve_conversation_id(parsed)
+
+        cancellation_signal = asyncio.Event()
+        if self._shutdown_requested.is_set():
+            cancellation_signal.set()
+
+        ctx = _ExecutionContext(
+            response_id=response_id,
+            agent_reference=agent_reference,
+            model=model,
+            store=store,
+            background=background,
+            stream=stream,
+            input_items=input_items,
+            previous_response_id=previous_response_id,
+            conversation_id=conversation_id,
+            cancellation_signal=cancellation_signal,
+            span=span,
+            parsed=parsed,
+        )
+
+        # Derive the public ResponseContext from the execution context.
+        ctx.context = self._create_response_context(ctx, raw_body=payload, request=request)
+        return ctx
+
+    def _create_response_context(
+        self,
+        ctx: _ExecutionContext,
+        *,
+        raw_body: Any,
+        request: Request,
+    ) -> ResponseContext:
+        """Derive a :class:`ResponseContext` from an :class:`_ExecutionContext`.
+
+        All protocol fields (mode flags, input items, conversation
+        threading) are read from *ctx* so that values are extracted from
+        the parsed request exactly once.
+
+        :param ctx: The execution context that owns the protocol fields.
+        :param raw_body: The raw JSON payload dict.
+        :param request: The Starlette HTTP request.
+        :return: A fully-populated :class:`ResponseContext`.
+        """
+        mode_flags = ResponseModeFlags(
+            stream=ctx.stream, store=ctx.store, background=ctx.background
+        )
         client_headers = {
             k: v for k, v in request.headers.items()
             if k.lower().startswith("x-client-")
         }
-        query_parameters = dict(request.query_params)
 
         context = ResponseContext(
-            response_id=response_id,
+            response_id=ctx.response_id,
             mode_flags=mode_flags,
             raw_body=raw_body,
-            request=parsed,
+            request=ctx.parsed,
             provider=self._provider,
-            input_items=input_items,
-            previous_response_id=previous_response_id,
-            conversation_id=_resolve_conversation_id(parsed),
+            input_items=ctx.input_items,
+            previous_response_id=ctx.previous_response_id,
+            conversation_id=ctx.conversation_id,
             history_limit=self._runtime_options.default_fetch_history_count,
             client_headers=client_headers,
-            query_parameters=query_parameters,
+            query_parameters=dict(request.query_params),
         )
         context.is_shutdown_requested = self._shutdown_requested.is_set()
         return context
@@ -305,26 +365,14 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 self._tracing.end_span(otel_span, exc=exc)
             return _error_response(exc, {})
 
-        stream = bool(getattr(parsed, "stream", False))
-        store = True if getattr(parsed, "store", None) is None else bool(parsed.store)
-        background = bool(getattr(parsed, "background", False))
-        model = getattr(parsed, "model", None)
-        input_items = [deepcopy(item) for item in (parsed.input or []) if isinstance(item, dict)]
-        previous_response_id: str | None = (
-            parsed.previous_response_id
-            if isinstance(parsed.previous_response_id, str) and parsed.previous_response_id
-            else None
-        )
-        context = self._create_response_context(
-            response_id=response_id,
-            raw_body=payload,
+        ctx = self._build_execution_context(
+            payload=payload,
             parsed=parsed,
+            response_id=response_id,
+            agent_reference=agent_reference,
+            span=span,
             request=request,
         )
-
-        cancellation_signal = asyncio.Event()
-        if context.is_shutdown_requested:
-            cancellation_signal.set()
 
         # Start OTel request span now that we have the response_id
         if self._tracing is not None:
@@ -336,7 +384,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             )
             self._safe_set_attrs(otel_span, {
                 "gen_ai.response.id": response_id,
-                "gen_ai.request.model": model or "",
+                "gen_ai.request.model": ctx.model or "",
             })
             baggage_token = self._tracing.set_baggage({
                 "response_id": response_id,
@@ -345,29 +393,14 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         span.set_tags(
             build_create_span_tags(
                 response_id=response_id,
-                model=model,
+                model=ctx.model,
                 agent_reference=agent_reference,
                 service_name="azure-ai-agentserver-responses",
             )
         )
 
-        ctx = _ExecutionContext(
-            response_id=response_id,
-            agent_reference=agent_reference,
-            model=model,
-            store=store,
-            background=background,
-            stream=stream,
-            input_items=input_items,
-            previous_response_id=previous_response_id,
-            cancellation_signal=cancellation_signal,
-            context=context,
-            span=span,
-            parsed=parsed,
-        )
-
         try:
-            if stream:
+            if ctx.stream:
                 sse_response = StreamingResponse(
                     self._orchestrator.run_stream(ctx),
                     media_type="text/event-stream",
@@ -377,7 +410,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 streaming_wrapped = True
                 return wrapped
 
-            if not background:
+            if not ctx.background:
                 try:
                     snapshot = await self._orchestrator.run_sync(ctx)
                     # End OTel span for non-streaming success
@@ -439,32 +472,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     pass
             else:
                 # Stream provider fallback: replay persisted SSE events when runtime state is gone.
-                if self._stream_provider is not None:
-                    try:
-                        replay_events = await self._stream_provider.get_stream_events_async(response_id)
-                        if replay_events is not None:
-                            cursor_raw = request.query_params.get("starting_after")
-                            starting_after = -1
-                            if cursor_raw is not None:
-                                try:
-                                    starting_after = int(cursor_raw)
-                                except ValueError:
-                                    return _invalid_request(
-                                        "starting_after must be an integer",
-                                        {},
-                                        param="starting_after",
-                                    )
-                            filtered = [
-                                e for e in replay_events
-                                if e["payload"]["sequence_number"] > starting_after
-                            ]
-                            return StreamingResponse(
-                                _encode_sse(filtered),
-                                media_type="text/event-stream",
-                                headers=self._sse_headers,
-                            )
-                    except Exception:  # pylint: disable=broad-exception-caught
-                        pass
+                replay_response = await self._try_replay_persisted_stream(request, response_id)
+                if replay_response is not None:
+                    return replay_response
 
             return _not_found(response_id, {})
 
@@ -480,34 +490,77 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     param="stream",
                 )
 
-            cursor_raw = request.query_params.get("starting_after")
-            starting_after = -1
-            if cursor_raw is not None:
-                try:
-                    starting_after = int(cursor_raw)
-                except ValueError:
-                    return _invalid_request(
-                        "starting_after must be an integer",
-                        {},
-                        param="starting_after",
-                    )
+            parsed_cursor = self._parse_starting_after(request)
+            if isinstance(parsed_cursor, Response):
+                return parsed_cursor
 
-            # Live subscription: delivers buffered history + ongoing live events,
-            # then exits when the stream completes.
-            _cursor = starting_after
-
-            async def _stream_from_subject():
-                async for event in record.subject.subscribe(cursor=_cursor):  # type: ignore[union-attr]
-                    yield encode_sse_payload(event["type"], event["payload"])
-
-            return StreamingResponse(
-                _stream_from_subject(), media_type="text/event-stream", headers=self._sse_headers
-            )
+            return self._build_live_stream_response(record, parsed_cursor)
 
         if not record.visible_via_get:
             return _not_found(response_id, {})
 
         return JSONResponse(_RuntimeState.to_snapshot(record), status_code=200, headers=self._response_headers)
+
+    @staticmethod
+    def _parse_starting_after(request: Request) -> int | Response:
+        """Parse the ``starting_after`` query parameter.
+
+        Returns the integer cursor value (defaulting to ``-1``) or an
+        error :class:`Response` when the value is not a valid integer.
+        """
+        cursor_raw = request.query_params.get("starting_after")
+        if cursor_raw is None:
+            return -1
+        try:
+            return int(cursor_raw)
+        except ValueError:
+            return _invalid_request(
+                "starting_after must be an integer",
+                {},
+                param="starting_after",
+            )
+
+    def _build_live_stream_response(self, record: Any, starting_after: int) -> StreamingResponse:
+        """Build a live SSE subscription response for an in-flight record."""
+        _cursor = starting_after
+
+        async def _stream_from_subject():
+            async for event in record.subject.subscribe(cursor=_cursor):  # type: ignore[union-attr]
+                yield encode_sse_payload(event["type"], event["payload"])
+
+        return StreamingResponse(
+            _stream_from_subject(), media_type="text/event-stream", headers=self._sse_headers
+        )
+
+    async def _try_replay_persisted_stream(
+        self, request: Request, response_id: str
+    ) -> Response | None:
+        """Try to replay persisted SSE events from the stream provider.
+
+        Returns a ``StreamingResponse`` if replay events are available,
+        an error ``Response`` for invalid query parameters, or ``None``
+        when no replay data exists.
+        """
+        if self._stream_provider is None:
+            return None
+        try:
+            replay_events = await self._stream_provider.get_stream_events_async(response_id)
+            if replay_events is None:
+                return None
+            parsed_cursor = self._parse_starting_after(request)
+            if isinstance(parsed_cursor, Response):
+                return parsed_cursor
+            filtered = [
+                e for e in replay_events
+                if e["payload"]["sequence_number"] > parsed_cursor
+            ]
+            return StreamingResponse(
+                _encode_sse(filtered),
+                media_type="text/event-stream",
+                headers=self._sse_headers,
+            )
+        except Exception:  # pylint: disable=broad-exception-caught
+            return None
 
     async def handle_delete(self, request: Request) -> Response:
         """Route handler for ``DELETE /responses/{response_id}``.

@@ -50,7 +50,7 @@ class ResponseContext:
         self._provider: "ResponseProviderProtocol | None" = provider
         self._input_items: list[Any] = list(input_items) if input_items is not None else []
         self._previous_response_id: str | None = previous_response_id
-        self._conversation_id: str | None = conversation_id
+        self.conversation_id: str | None = conversation_id
         self._history_limit: int = history_limit
         self._input_items_cache: Sequence[OutputItem] | None = None
         self._history_cache: Sequence[OutputItem] | None = None
@@ -80,7 +80,7 @@ class ResponseContext:
             return self._history_cache
 
         item_ids = await self._provider.get_history_item_ids_async(
-            self._previous_response_id, self._conversation_id, self._history_limit
+            self._previous_response_id, self.conversation_id, self._history_limit
         )
         if not item_ids:
             self._history_cache = ()

@@ -14,7 +14,7 @@ from collections.abc import AsyncIterable
 from typing import Any
 
 from azure.ai.agentserver.hosting import AgentServer
-from azure.ai.agentserver.responses._handlers import ResponseContext
+from azure.ai.agentserver.responses import ResponseContext
 from azure.ai.agentserver.responses.models._generated.sdk.models.models._models import CreateResponse
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 from azure.ai.agentserver.responses.hosting import ResponseHandler

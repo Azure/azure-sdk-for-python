@@ -6,7 +6,6 @@ from __future__ import annotations
 
 import threading
 import time
-from dataclasses import dataclass, field
 from typing import Any, Callable, Mapping
 
 
@@ -59,12 +58,14 @@ def poll_until(
     )
 
 
-@dataclass(slots=True)
 class EventGate:
     """Thread-safe event gate for deterministic synchronization in tests."""
 
-    _event: threading.Event = field(default_factory=threading.Event)
-    _payload: Any = None
+    __slots__ = ("_event", "_payload")
+
+    def __init__(self) -> None:
+        self._event = threading.Event()
+        self._payload: Any = None
 
     def signal(self, payload: Any = None) -> None:
         self._payload = payload

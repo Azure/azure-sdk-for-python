@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 from typing import Any
 
 
@@ -37,13 +36,13 @@ def _iter_subschemas(schema: dict[str, Any]) -> list[dict[str, Any]]:
     return nested
 
 
-@dataclass
 class SchemaWalker:
     """Collect schemas reachable from one or more roots."""
 
-    schemas: dict[str, dict[str, Any]]
-    reachable: dict[str, dict[str, Any]] = field(default_factory=dict)
-    _visited: set[str] = field(default_factory=set)
+    def __init__(self, schemas: dict[str, dict[str, Any]]) -> None:
+        self.schemas = schemas
+        self.reachable: dict[str, dict[str, Any]] = {}
+        self._visited: set[str] = set()
 
     def walk(self, name: str) -> None:
         """Walk a schema by name and recursively collect reachable references."""

@@ -21,7 +21,6 @@ from __future__ import annotations
 
 import asyncio
 import json as _json
-from dataclasses import dataclass
 from typing import Any
 
 import pytest
@@ -36,13 +35,13 @@ from azure.ai.agentserver.responses.streaming._event_stream import ResponseEvent
 # ════════════════════════════════════════════════════════════
 
 
-@dataclass
 class _AsgiResponse:
     """Result of a non-streaming ASGI request."""
 
-    status_code: int
-    body: bytes
-    headers: list[tuple[bytes, bytes]]
+    def __init__(self, status_code: int, body: bytes, headers: list[tuple[bytes, bytes]]) -> None:
+        self.status_code = status_code
+        self.body = body
+        self.headers = headers
 
     def json(self) -> Any:
         return _json.loads(self.body)
