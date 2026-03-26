@@ -30,13 +30,15 @@ def _verify_extensions(module: str) -> None:
     try:
         import azure.storage.extensions  # pylint: disable=unused-import
     except ImportError as exc:
-        raise ValueError(f"The use of {module} requires the azure-storage-extensions package to be installed. "
-                         f"Please install this package and try again.") from exc
+        raise ValueError(
+            f"The use of {module} requires the azure-storage-extensions package to be installed. "
+            f"Please install this package and try again."
+        ) from exc
 
 
 def parse_validation_option(
-        validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]]
-) -> Optional[Union[bool, Literal['auto', 'crc64', 'md5']]]:
+    validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]],
+) -> Optional[Union[bool, Literal["auto", "crc64", "md5"]]]:
     if validate_content is None:
         return None
 
@@ -57,7 +59,9 @@ def parse_validation_option(
     return validate_content
 
 
-def is_md5_validation(validate_content: Optional[Union[bool, Literal["md5", "crc64"]]]) -> bool:
+def is_md5_validation(
+    validate_content: Optional[Union[bool, Literal["md5", "crc64"]]],
+) -> bool:
     if validate_content is None:
         return False
     if isinstance(validate_content, bool):
@@ -98,4 +102,4 @@ def calculate_crc64_bytes(data: bytes) -> bytes:
     # Locally import to avoid error if not installed.
     from azure.storage.extensions import crc64
 
-    return cast(bytes, crc64.compute(data, 0).to_bytes(CRC64_LENGTH, 'little'))
+    return cast(bytes, crc64.compute(data, 0).to_bytes(CRC64_LENGTH, "little"))

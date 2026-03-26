@@ -35,16 +35,19 @@ class SMRegion(Enum):
     MESSAGE_FOOTER = 5
 
 
-def generate_message_header(version: int, size: int, flags: StructuredMessageProperties, num_segments: int) -> bytes:
-    return (version.to_bytes(1, 'little') +
-            size.to_bytes(8, 'little') +
-            flags.to_bytes(2, 'little') +
-            num_segments.to_bytes(2, 'little'))
+def generate_message_header(
+    version: int, size: int, flags: StructuredMessageProperties, num_segments: int
+) -> bytes:
+    return (
+        version.to_bytes(1, "little")
+        + size.to_bytes(8, "little")
+        + flags.to_bytes(2, "little")
+        + num_segments.to_bytes(2, "little")
+    )
 
 
 def generate_segment_header(number: int, size: int) -> bytes:
-    return (number.to_bytes(2, 'little') +
-            size.to_bytes(8, 'little'))
+    return number.to_bytes(2, "little") + size.to_bytes(8, "little")
 
 
 def parse_message_header(
@@ -53,24 +56,30 @@ def parse_message_header(
     version = data[0]
     if version != 1:
         raise ValueError(f"The structured message version is not supported: {version}")
-    message_length = int.from_bytes(data[1:9], 'little')
+    message_length = int.from_bytes(data[1:9], "little")
     if message_length != expected_message_length:
-        raise ValueError(f"Structured message length {message_length} "
-                         f"did not match content length {expected_message_length}")
-    flags = StructuredMessageProperties(int.from_bytes(data[9:11], 'little'))
-    num_segments = int.from_bytes(data[11:13], 'little')
+        raise ValueError(
+            f"Structured message length {message_length} "
+            f"did not match content length {expected_message_length}"
+        )
+    flags = StructuredMessageProperties(int.from_bytes(data[9:11], "little"))
+    num_segments = int.from_bytes(data[11:13], "little")
     return version, flags, num_segments
 
 
 def parse_segment_header(data: bytes, expected_segment_number: int) -> tuple[int, int]:
-    segment_number = int.from_bytes(data[0:2], 'little')
+    segment_number = int.from_bytes(data[0:2], "little")
     if segment_number != expected_segment_number:
-        raise ValueError(f"Structured message segment number invalid or out of order {segment_number}")
-    segment_content_length = int.from_bytes(data[2:10], 'little')
+        raise ValueError(
+            f"Structured message segment number invalid or out of order {segment_number}"
+        )
+    segment_content_length = int.from_bytes(data[2:10], "little")
     return segment_number, segment_content_length
 
 
-class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instance-attributes
+class StructuredMessageEncodeStream(
+    IOBase
+):  # pylint: disable=too-many-instance-attributes
     message_version: int
     content_length: int
     message_length: int
@@ -95,11 +104,12 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
     _segment_crc64s: dict[int, int]
 
     def __init__(
-        self, inner_stream: IO[bytes],
+        self,
+        inner_stream: IO[bytes],
         content_length: int,
         flags: StructuredMessageProperties,
         *,
-        segment_size: int = DEFAULT_SEGMENT_SIZE
+        segment_size: int = DEFAULT_SEGMENT_SIZE,
     ) -> None:
         if segment_size < 1:
             raise ValueError("Segment size must be greater than 0.")
@@ -141,11 +151,19 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
 
     @property
     def _segment_footer_length(self) -> int:
-        return StructuredMessageConstants.CRC64_LENGTH if StructuredMessageProperties.CRC64 in self.flags else 0
+        return (
+            StructuredMessageConstants.CRC64_LENGTH
+            if StructuredMessageProperties.CRC64 in self.flags
+            else 0
+        )
 
     @property
     def _message_footer_length(self) -> int:
-        return StructuredMessageConstants.CRC64_LENGTH if StructuredMessageProperties.CRC64 in self.flags else 0
+        return (
+            StructuredMessageConstants.CRC64_LENGTH
+            if StructuredMessageProperties.CRC64 in self.flags
+            else 0
+        )
 
     def _update_current_region_length(self) -> None:
         if self._current_region == SMRegion.MESSAGE_HEADER:
@@ -155,8 +173,9 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
         elif self._current_region == SMRegion.SEGMENT_CONTENT:
             # Last segment size is remaining content
             if self._current_segment_number == self._num_segments:
-                self._current_region_length = self.content_length - \
-                                              ((self._current_segment_number - 1) * self._segment_size)
+                self._current_region_length = self.content_length - (
+                    (self._current_segment_number - 1) * self._segment_size
+                )
             else:
                 self._current_region_length = self._segment_size
         elif self._current_region == SMRegion.SEGMENT_FOOTER:
@@ -179,7 +198,10 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
     def seekable(self) -> bool:
         try:
             # Only seekable if the inner stream is and we could get its initial position
-            return self._inner_stream.seekable() and self._initial_content_position is not None
+            return (
+                self._inner_stream.seekable()
+                and self._initial_content_position is not None
+            )
         except (AttributeError, UnsupportedOperation, OSError):
             return False
 
@@ -187,22 +209,38 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
         if self._current_region == SMRegion.MESSAGE_HEADER:
             return self._current_region_offset
         if self._current_region == SMRegion.SEGMENT_HEADER:
-            return (self._message_header_length + self._content_offset +
-                    (self._current_segment_number - 1) * (self._segment_header_length + self._segment_footer_length) +
-                    self._current_region_offset)
+            return (
+                self._message_header_length
+                + self._content_offset
+                + (self._current_segment_number - 1)
+                * (self._segment_header_length + self._segment_footer_length)
+                + self._current_region_offset
+            )
         if self._current_region == SMRegion.SEGMENT_CONTENT:
-            return (self._message_header_length + self._content_offset +
-                    (self._current_segment_number - 1) * (self._segment_header_length + self._segment_footer_length) +
-                    self._segment_header_length)
+            return (
+                self._message_header_length
+                + self._content_offset
+                + (self._current_segment_number - 1)
+                * (self._segment_header_length + self._segment_footer_length)
+                + self._segment_header_length
+            )
         if self._current_region == SMRegion.SEGMENT_FOOTER:
-            return (self._message_header_length + self._content_offset +
-                    (self._current_segment_number - 1) * (self._segment_header_length + self._segment_footer_length) +
-                    self._segment_header_length +
-                    self._current_region_offset)
+            return (
+                self._message_header_length
+                + self._content_offset
+                + (self._current_segment_number - 1)
+                * (self._segment_header_length + self._segment_footer_length)
+                + self._segment_header_length
+                + self._current_region_offset
+            )
         if self._current_region == SMRegion.MESSAGE_FOOTER:
-            return (self._message_header_length + self._content_offset +
-                    self._current_segment_number * (self._segment_header_length + self._segment_footer_length) +
-                    self._current_region_offset)
+            return (
+                self._message_header_length
+                + self._content_offset
+                + self._current_segment_number
+                * (self._segment_header_length + self._segment_footer_length)
+                + self._current_region_offset
+            )
 
         raise ValueError(f"Invalid SMRegion {self._current_region}")
 
@@ -233,21 +271,33 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
         # MESSAGE_FOOTER
         elif position >= self.message_length - self._message_footer_length:
             self._current_region = SMRegion.MESSAGE_FOOTER
-            self._current_region_offset = position - (self.message_length - self._message_footer_length)
+            self._current_region_offset = position - (
+                self.message_length - self._message_footer_length
+            )
             self._content_offset = self.content_length
             self._current_segment_number = self._num_segments
         else:
             # The size of a "full" segment. Fine to use for calculating new segment number and pos
-            full_segment_size = self._segment_header_length + self._segment_size + self._segment_footer_length
-            new_segment_num = 1 + (position - self._message_header_length) // full_segment_size
+            full_segment_size = (
+                self._segment_header_length
+                + self._segment_size
+                + self._segment_footer_length
+            )
+            new_segment_num = (
+                1 + (position - self._message_header_length) // full_segment_size
+            )
             segment_pos = (position - self._message_header_length) % full_segment_size
-            previous_segments_total_content_size = (new_segment_num - 1) * self._segment_size
+            previous_segments_total_content_size = (
+                new_segment_num - 1
+            ) * self._segment_size
 
             # We need the size of the segment we are seeking to for some of the calculations below
             new_segment_size = self._segment_size
             if new_segment_num == self._num_segments:
                 # The last segment size is the remaining content length
-                new_segment_size = self.content_length - previous_segments_total_content_size
+                new_segment_size = (
+                    self.content_length - previous_segments_total_content_size
+                )
 
             # SEGMENT_HEADER
             if segment_pos < self._segment_header_length:
@@ -258,17 +308,25 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
             elif segment_pos < self._segment_header_length + new_segment_size:
                 self._current_region = SMRegion.SEGMENT_CONTENT
                 self._current_region_offset = segment_pos - self._segment_header_length
-                self._content_offset = previous_segments_total_content_size + self._current_region_offset
+                self._content_offset = (
+                    previous_segments_total_content_size + self._current_region_offset
+                )
             # SEGMENT_FOOTER
             else:
                 self._current_region = SMRegion.SEGMENT_FOOTER
-                self._current_region_offset = segment_pos - self._segment_header_length - new_segment_size
-                self._content_offset = previous_segments_total_content_size + new_segment_size
+                self._current_region_offset = (
+                    segment_pos - self._segment_header_length - new_segment_size
+                )
+                self._content_offset = (
+                    previous_segments_total_content_size + new_segment_size
+                )
 
             self._current_segment_number = new_segment_num
 
         self._update_current_region_length()
-        self._inner_stream.seek((self._initial_content_position or 0) + self._content_offset)
+        self._inner_stream.seek(
+            (self._initial_content_position or 0) + self._content_offset
+        )
         return position
 
     def read(self, size: int = -1) -> bytes:
@@ -276,7 +334,7 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
             raise ValueError("Stream is closed")
 
         if size == 0:
-            return b''
+            return b""
         if size < 0:
             size = sys.maxsize
 
@@ -286,11 +344,14 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
         while count < size and self.tell() < self.message_length:
             remaining = size - count
             if self._current_region in (
-                    SMRegion.MESSAGE_HEADER,
-                    SMRegion.SEGMENT_HEADER,
-                    SMRegion.SEGMENT_FOOTER,
-                    SMRegion.MESSAGE_FOOTER):
-                count += self._read_metadata_region(self._current_region, remaining, output)
+                SMRegion.MESSAGE_HEADER,
+                SMRegion.SEGMENT_HEADER,
+                SMRegion.SEGMENT_FOOTER,
+                SMRegion.MESSAGE_FOOTER,
+            ):
+                count += self._read_metadata_region(
+                    self._current_region, remaining, output
+                )
             elif self._current_region == SMRegion.SEGMENT_CONTENT:
                 count += self._read_content(remaining, output)
             else:
@@ -300,7 +361,9 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
 
     def _calculate_message_length(self) -> int:
         length = self._message_header_length
-        length += (self._segment_header_length + self._segment_footer_length) * self._num_segments
+        length += (
+            self._segment_header_length + self._segment_footer_length
+        ) * self._num_segments
         length += self.content_length
         length += self._message_footer_length
         return length
@@ -311,22 +374,28 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
                 self.message_version,
                 self.message_length,
                 self.flags,
-                self._num_segments)
+                self._num_segments,
+            )
 
         if region == SMRegion.SEGMENT_HEADER:
-            segment_size = min(self._segment_size, self.content_length - self._content_offset)
+            segment_size = min(
+                self._segment_size, self.content_length - self._content_offset
+            )
             return generate_segment_header(self._current_segment_number, segment_size)
 
         if region == SMRegion.SEGMENT_FOOTER:
             if StructuredMessageProperties.CRC64 in self.flags:
                 return self._segment_crc64s[self._current_segment_number].to_bytes(
-                    StructuredMessageConstants.CRC64_LENGTH, 'little')
-            return b''
+                    StructuredMessageConstants.CRC64_LENGTH, "little"
+                )
+            return b""
 
         if region == SMRegion.MESSAGE_FOOTER:
             if StructuredMessageProperties.CRC64 in self.flags:
-                return self._message_crc64.to_bytes(StructuredMessageConstants.CRC64_LENGTH, 'little')
-            return b''
+                return self._message_crc64.to_bytes(
+                    StructuredMessageConstants.CRC64_LENGTH, "little"
+                )
+            return b""
 
         raise ValueError(f"Invalid metadata SMRegion {self._current_region}")
 
@@ -352,16 +421,22 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
 
         self._update_current_region_length()
 
-    def _read_metadata_region(self, region: SMRegion, size: int, output: BytesIO) -> int:
+    def _read_metadata_region(
+        self, region: SMRegion, size: int, output: BytesIO
+    ) -> int:
         metadata = self._get_metadata_region(region)
 
         read_size = min(size, self._current_region_length - self._current_region_offset)
-        content = metadata[self._current_region_offset: self._current_region_offset + read_size]
+        content = metadata[
+            self._current_region_offset : self._current_region_offset + read_size
+        ]
         output.write(content)
 
         self._current_region_offset += read_size
-        if (self._current_region_offset == self._current_region_length and
-                self._current_region != SMRegion.MESSAGE_FOOTER):
+        if (
+            self._current_region_offset == self._current_region_length
+            and self._current_region != SMRegion.MESSAGE_FOOTER
+        ):
             self._advance_region(region)
 
         return read_size
@@ -383,8 +458,9 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
 
         if StructuredMessageProperties.CRC64 in self.flags:
             if checksum_offset == 0:
-                self._segment_crc64s[self._current_segment_number] = \
-                    calculate_crc64(content, self._segment_crc64s[self._current_segment_number])
+                self._segment_crc64s[self._current_segment_number] = calculate_crc64(
+                    content, self._segment_crc64s[self._current_segment_number]
+                )
                 self._message_crc64 = calculate_crc64(content, self._message_crc64)
 
         self._content_offset += read_size
@@ -425,14 +501,22 @@ class StructuredMessageDecoder(IOBase):  # pylint: disable=too-many-instance-att
     _segment_content_offset: int
     _block_size: int
 
-    def __init__(self, inner_iterator: Iterator[bytes], content_length: int, *, block_size: int = 4096) -> None:
+    def __init__(
+        self,
+        inner_iterator: Iterator[bytes],
+        content_length: int,
+        *,
+        block_size: int = 4096,
+    ) -> None:
         self.message_length = content_length
         # The stream should be at least long enough to hold minimum header length
         if self.message_length < StructuredMessageConstants.V1_HEADER_LENGTH:
-            raise ValueError("Content not long enough to contain a valid message header.")
+            raise ValueError(
+                "Content not long enough to contain a valid message header."
+            )
 
         self._inner_iterator = inner_iterator
-        self._buffer = b''
+        self._buffer = b""
         self._message_offset = 0
         self._message_crc64 = 0
 
@@ -453,11 +537,19 @@ class StructuredMessageDecoder(IOBase):  # pylint: disable=too-many-instance-att
 
     @property
     def _segment_footer_length(self) -> int:
-        return StructuredMessageConstants.CRC64_LENGTH if StructuredMessageProperties.CRC64 in self.flags else 0
+        return (
+            StructuredMessageConstants.CRC64_LENGTH
+            if StructuredMessageProperties.CRC64 in self.flags
+            else 0
+        )
 
     @property
     def _message_footer_length(self) -> int:
-        return StructuredMessageConstants.CRC64_LENGTH if StructuredMessageProperties.CRC64 in self.flags else 0
+        return (
+            StructuredMessageConstants.CRC64_LENGTH
+            if StructuredMessageProperties.CRC64 in self.flags
+            else 0
+        )
 
     @property
     def _end_of_segment_content(self) -> bool:
@@ -483,7 +575,7 @@ class StructuredMessageDecoder(IOBase):  # pylint: disable=too-many-instance-att
             raise ValueError("Stream is closed")
 
         if size == 0 or self._message_offset >= self.message_length:
-            return b''
+            return b""
         if size < 0:
             size = sys.maxsize
 
@@ -496,17 +588,23 @@ class StructuredMessageDecoder(IOBase):  # pylint: disable=too-many-instance-att
             if self._end_of_segment_content:
                 self._read_segment_footer()
                 if self.num_segments > 1:
-                    raise ValueError("First message segment was empty but more segments were detected.")
+                    raise ValueError(
+                        "First message segment was empty but more segments were detected."
+                    )
                 self._read_message_footer()
-                return b''
+                return b""
 
         count = 0
         content = BytesIO()
-        while count < size and not (self._end_of_segment_content and self._message_offset == self.message_length):
+        while count < size and not (
+            self._end_of_segment_content and self._message_offset == self.message_length
+        ):
             if self._end_of_segment_content:
                 self._read_segment_header()
 
-            segment_remaining = self._segment_content_length - self._segment_content_offset
+            segment_remaining = (
+                self._segment_content_length - self._segment_content_offset
+            )
             read_size = min(segment_remaining, size - count)
 
             segment_content = self._read_from_inner(read_size)
@@ -514,8 +612,12 @@ class StructuredMessageDecoder(IOBase):  # pylint: disable=too-many-instance-att
 
             # Update the running CRC64 for the segment and message
             if StructuredMessageProperties.CRC64 in self.flags:
-                self._segment_crc64 = calculate_crc64(segment_content, self._segment_crc64)
-                self._message_crc64 = calculate_crc64(segment_content, self._message_crc64)
+                self._segment_crc64 = calculate_crc64(
+                    segment_content, self._segment_crc64
+                )
+                self._message_crc64 = calculate_crc64(
+                    segment_content, self._message_crc64
+                )
 
             self._segment_content_offset += read_size
             self._message_offset += read_size
@@ -529,7 +631,10 @@ class StructuredMessageDecoder(IOBase):  # pylint: disable=too-many-instance-att
 
         # One final check to ensure if we think we've reached the end of the stream
         # that the current segment number matches the total.
-        if self._message_offset == self.message_length and self._segment_number != self.num_segments:
+        if (
+            self._message_offset == self.message_length
+            and self._segment_number != self.num_segments
+        ):
             raise ValueError("Invalid structured message data detected.")
 
         return content.getvalue()
@@ -543,7 +648,9 @@ class StructuredMessageDecoder(IOBase):  # pylint: disable=too-many-instance-att
             self._buffer += chunk
 
         if len(self._buffer) < size:
-            raise ValueError("Invalid structured message data detected. Stream content incomplete.")
+            raise ValueError(
+                "Invalid structured message data detected. Stream content incomplete."
+            )
 
         data = self._buffer[:size]
         self._buffer = self._buffer[size:]
@@ -552,7 +659,8 @@ class StructuredMessageDecoder(IOBase):  # pylint: disable=too-many-instance-att
     def _read_message_header(self) -> None:
         header_data = self._read_from_inner(StructuredMessageConstants.V1_HEADER_LENGTH)
         self.message_version, self.flags, self.num_segments = parse_message_header(
-            header_data, self.message_length)
+            header_data, self.message_length
+        )
         self._message_offset += StructuredMessageConstants.V1_HEADER_LENGTH
 
     def _read_message_footer(self) -> None:
@@ -564,16 +672,19 @@ class StructuredMessageDecoder(IOBase):  # pylint: disable=too-many-instance-att
         if StructuredMessageProperties.CRC64 in self.flags:
             message_crc = self._read_from_inner(StructuredMessageConstants.CRC64_LENGTH)
 
-            if self._message_crc64 != int.from_bytes(message_crc, 'little'):
-                raise ValueError("CRC64 mismatch detected in message trailer. "
-                                 "All data read should be considered invalid.")
+            if self._message_crc64 != int.from_bytes(message_crc, "little"):
+                raise ValueError(
+                    "CRC64 mismatch detected in message trailer. "
+                    "All data read should be considered invalid."
+                )
 
         self._message_offset += self._message_footer_length
 
     def _read_segment_header(self) -> None:
         header_data = self._read_from_inner(self._segment_header_length)
         self._segment_number, self._segment_content_length = parse_segment_header(
-            header_data, self._segment_number + 1)
+            header_data, self._segment_number + 1
+        )
         self._message_offset += self._segment_header_length
 
         self._segment_content_offset = 0
@@ -583,8 +694,10 @@ class StructuredMessageDecoder(IOBase):  # pylint: disable=too-many-instance-att
         if StructuredMessageProperties.CRC64 in self.flags:
             segment_crc = self._read_from_inner(StructuredMessageConstants.CRC64_LENGTH)
 
-            if self._segment_crc64 != int.from_bytes(segment_crc, 'little'):
-                raise ValueError(f"CRC64 mismatch detected in segment {self._segment_number}. "
-                                 f"All data read should be considered invalid.")
+            if self._segment_crc64 != int.from_bytes(segment_crc, "little"):
+                raise ValueError(
+                    f"CRC64 mismatch detected in segment {self._segment_number}. "
+                    f"All data read should be considered invalid."
+                )
 
         self._message_offset += self._segment_footer_length
