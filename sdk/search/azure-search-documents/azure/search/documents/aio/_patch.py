@@ -36,7 +36,7 @@ class SearchClient(_SearchClient):
     :param index_name: The name of the index. Required.
     :type index_name: str
     :keyword api_version: The API version to use for this operation. Default value is
-        "2025-11-01-preview". Note that overriding this default value may result in unsupported
+        "2026-04-01". Note that overriding this default value may result in unsupported
         behavior.
     :paramtype api_version: str
     """

@@ -60,10 +60,6 @@ class TestSearchClientAsync:
 
         facet_bucket = FacetResult()
         facet_bucket.count = 4
-        facet_bucket.avg = 120.5
-        facet_bucket.min = 75.0
-        facet_bucket.max = 240.0
-        facet_bucket.cardinality = 3
 
         search_result.facets = {"baseRate": [facet_bucket]}
         mock_search_post.return_value = search_result
@@ -76,7 +72,3 @@ class TestSearchClientAsync:
         assert len(facets["baseRate"]) == 1
         bucket = facets["baseRate"][0]
         assert bucket["count"] == 4
-        assert bucket["avg"] == 120.5
-        assert bucket["min"] == 75.0
-        assert bucket["max"] == 240.0
-        assert bucket["cardinality"] == 3

@@ -50,8 +50,6 @@ def _convert_index_response(response: _SearchIndexResponse) -> _models.SearchInd
         similarity=response.similarity,
         semantic_search=response.semantic,
         vector_search=response.vector_search,
-        permission_filter_option=response.permission_filter_option,
-        purview_enabled=response.purview_enabled,
         e_tag=response.e_tag,
     )
 
@@ -534,7 +532,6 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         self,
         data_source_connection: _models.SearchIndexerDataSourceConnection,
         *,
-        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> _models.SearchIndexerDataSourceConnection:
@@ -542,9 +539,6 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
 
         :param data_source_connection: The SearchIndexerDataSourceConnection object to create or update. Required.
         :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
-        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
-         value is None.
-        :paramtype skip_indexer_reset_requirement_for_cache: bool
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: SearchIndexerDataSourceConnection
@@ -557,7 +551,6 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             prefer="return=representation",
             etag=data_source_connection.e_tag,
             match_condition=match_condition,
-            skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
             **kwargs,
         )
 
@@ -599,8 +592,6 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         self,
         indexer: _models.SearchIndexer,
         *,
-        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
-        disable_cache_reprocessing_change_detection: Optional[bool] = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> _models.SearchIndexer:
@@ -608,12 +599,6 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
 
         :param indexer: The SearchIndexer object to create or update. Required.
         :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
-        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
-         value is None.
-        :paramtype skip_indexer_reset_requirement_for_cache: bool
-        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
-         detection. Default value is None.
-        :paramtype disable_cache_reprocessing_change_detection: bool
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: SearchIndexer
@@ -626,8 +611,6 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             prefer="return=representation",
             etag=indexer.e_tag,
             match_condition=match_condition,
-            skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
-            disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
             **kwargs,
         )
 
@@ -669,8 +652,6 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         self,
         skillset: _models.SearchIndexerSkillset,
         *,
-        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
-        disable_cache_reprocessing_change_detection: Optional[bool] = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> _models.SearchIndexerSkillset:
@@ -678,12 +659,6 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
 
         :param skillset: The SearchIndexerSkillset object to create or update. Required.
         :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
-        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
-         value is None.
-        :paramtype skip_indexer_reset_requirement_for_cache: bool
-        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
-         detection. Default value is None.
-        :paramtype disable_cache_reprocessing_change_detection: bool
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: SearchIndexerSkillset
@@ -696,8 +671,6 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             prefer="return=representation",
             etag=skillset.e_tag,
             match_condition=match_condition,
-            skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
-            disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
             **kwargs,
         )
 
@@ -800,94 +773,6 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         """
         result = self.get_skillsets(**kwargs)
         return [x.name for x in result]
-
-    @distributed_trace
-    def reset_documents(
-        self,
-        indexer: Union[str, _models.SearchIndexer],
-        keys_or_ids: _models.DocumentKeysOrIds,
-        *,
-        overwrite: bool = False,
-        **kwargs: Any,
-    ) -> None:
-        """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
-
-        :param indexer: The indexer to reset documents for. Can be the indexer name or a SearchIndexer object.
-        :type indexer: str or ~azure.search.documents.indexes.models.SearchIndexer
-        :param keys_or_ids: The document keys or ids to reset.
-        :type keys_or_ids: ~azure.search.documents.indexes.models.DocumentKeysOrIds
-        :keyword overwrite: If false, keys or ids will be appended to existing ones. If true, only the
-         keys or ids in this payload will be queued to be re-ingested. Default value is False.
-        :paramtype overwrite: bool
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        try:
-            name: str = indexer.name  # type: ignore
-        except AttributeError:
-            name = indexer  # type: ignore
-        return self._reset_documents(
-            name=name,
-            keys_or_ids=keys_or_ids,
-            overwrite=overwrite,
-            **kwargs,
-        )
-
-    @distributed_trace
-    def reset_skills(
-        self,
-        skillset: Union[str, _models.SearchIndexerSkillset],
-        skill_names: List[str],
-        **kwargs: Any,
-    ) -> None:
-        """Reset an existing skillset in a search service.
-
-        :param skillset: The skillset to reset skills for. Can be the skillset name or a SearchIndexerSkillset object.
-        :type skillset: str or ~azure.search.documents.indexes.models.SearchIndexerSkillset
-        :param skill_names: The names of the skills to reset.
-        :type skill_names: list[str]
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        try:
-            name: str = skillset.name  # type: ignore
-        except AttributeError:
-            name = skillset  # type: ignore
-        return self._reset_skills(
-            name=name,
-            skill_names=_models.SkillNames(skill_names=skill_names),
-            **kwargs,
-        )
-
-    @distributed_trace
-    def resync(
-        self,
-        indexer: Union[str, _models.SearchIndexer],
-        indexer_resync_options: List[Union[str, _models.IndexerResyncOption]],
-        **kwargs: Any,
-    ) -> None:
-        """Resync selective options from the datasource to be re-ingested by the indexer.
-
-        :param indexer: The indexer to resync. Can be the indexer name or a SearchIndexer object.
-        :type indexer: str or ~azure.search.documents.indexes.models.SearchIndexer
-        :param indexer_resync_options: Re-sync options that have been pre-defined from data source.
-        :type indexer_resync_options: list[str or ~azure.search.documents.indexes.models.IndexerResyncOption]
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        try:
-            name: str = indexer.name  # type: ignore
-        except AttributeError:
-            name = indexer  # type: ignore
-        indexer_resync = _models.IndexerResyncBody(options=indexer_resync_options)
-        return self._resync(
-            name=name,
-            indexer_resync=indexer_resync,
-            **kwargs,
-        )
 
 
 __all__: list[str] = [

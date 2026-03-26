@@ -19,9 +19,6 @@ from ._enums import (
     SplitSkillLanguage,
     TextTranslationSkillLanguage,
 )
-from ...knowledgebases.models import (
-    KnowledgeRetrievalReasoningEffort,
-)
 
 if TYPE_CHECKING:
     from ._models import (
@@ -32,7 +29,7 @@ if TYPE_CHECKING:
         SearchIndexerDataIdentity,
         SearchResourceEncryptionKey,
     )
-    from ._enums import IndexerPermissionOption, SearchIndexerDataSourceType
+    from ._enums import SearchIndexerDataSourceType
 
 
 class SearchField(_SearchField):
@@ -93,7 +90,6 @@ class SearchIndexerDataSourceConnection(_SearchIndexerDataSourceConnection):
         container: "SearchIndexerDataContainer",
         description: Optional[str] = None,
         identity: Optional["SearchIndexerDataIdentity"] = None,
-        indexer_permission_options: Optional[List[Union[str, "IndexerPermissionOption"]]] = None,
         data_change_detection_policy: Optional["DataChangeDetectionPolicy"] = None,
         data_deletion_detection_policy: Optional["DataDeletionDetectionPolicy"] = None,
         e_tag: Optional[str] = None,
@@ -110,7 +106,6 @@ class SearchIndexerDataSourceConnection(_SearchIndexerDataSourceConnection):
         container: "SearchIndexerDataContainer",
         description: Optional[str] = None,
         identity: Optional["SearchIndexerDataIdentity"] = None,
-        indexer_permission_options: Optional[List[Union[str, "IndexerPermissionOption"]]] = None,
         data_change_detection_policy: Optional["DataChangeDetectionPolicy"] = None,
         data_deletion_detection_policy: Optional["DataDeletionDetectionPolicy"] = None,
         e_tag: Optional[str] = None,
@@ -129,18 +124,10 @@ class SearchIndexerDataSourceConnection(_SearchIndexerDataSourceConnection):
 
 
 class KnowledgeBase(_KnowledgeBase):
-    """Represents a knowledge base definition.
-
-    This class adds proper deserialization of the retrieval_reasoning_effort field
-    which uses discriminated polymorphism from the knowledgebases models.
-    """
+    """Represents a knowledge base definition."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        # Properly deserialize retrieval_reasoning_effort if it's a dict
-        effort = self.retrieval_reasoning_effort
-        if effort is not None and isinstance(effort, dict):
-            self.retrieval_reasoning_effort = KnowledgeRetrievalReasoningEffort._deserialize(effort, [])
 
 
 def _collection_helper(typ: Any) -> str:
