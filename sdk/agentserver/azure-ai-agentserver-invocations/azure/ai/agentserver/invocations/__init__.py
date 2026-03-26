@@ -4,15 +4,15 @@
 """Invocations protocol for Azure AI Hosted Agents.
 
 This package provides the invocation protocol endpoints and handler
-wiring for :class:`~azure.ai.agentserver.core.AgentServer`.
+wiring for :class:`~azure.ai.agentserver.core.AgentHost`.
 
 Quick start::
 
-    from azure.ai.agentserver.core import AgentServer
+    from azure.ai.agentserver.core import AgentHost
     from azure.ai.agentserver.invocations import InvocationHandler
     from starlette.responses import JSONResponse
 
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler

@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Integration tests for AgentServer host registration and wiring."""
+"""Integration tests for AgentHost host registration and wiring."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ import pytest
 
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 from azure.ai.agentserver.responses.hosting._observability import InMemoryCreateSpanHook
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
@@ -29,7 +29,7 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
 
 
 def _build_client(*, prefix: str = "", options: ResponsesServerOptions | None = None) -> TestClient:
-    server = AgentServer()
+    server = AgentHost()
     responses = ResponseHandler(server, prefix=prefix, options=options)
     responses.create_handler(_noop_response_handler)
     return TestClient(server.app)
@@ -161,7 +161,7 @@ def test_hosting__stream_mode_surfaces_handler_output_item_and_content_events() 
 
         return _events()
 
-    server = AgentServer()
+    server = AgentHost()
     responses = ResponseHandler(server)
     responses.create_handler(_streaming_handler)
     client = TestClient(server.app)
@@ -212,7 +212,7 @@ def test_hosting__non_stream_mode_returns_completed_response_with_output_items()
 
         return _events()
 
-    server = AgentServer()
+    server = AgentHost()
     responses = ResponseHandler(server)
     responses.create_handler(_non_stream_handler)
     client = TestClient(server.app)
@@ -240,8 +240,8 @@ def test_hosting__non_stream_mode_returns_completed_response_with_output_items()
 
 
 def test_hosting__health_endpoint_is_available() -> None:
-    """Verify AgentServer provides health endpoint automatically."""
-    server = AgentServer()
+    """Verify AgentHost provides health endpoint automatically."""
+    server = AgentHost()
     responses = ResponseHandler(server)
     responses.create_handler(_noop_response_handler)
     client = TestClient(server.app)
@@ -253,7 +253,7 @@ def test_hosting__health_endpoint_is_available() -> None:
 
 def test_hosting__multi_protocol_composition() -> None:
     """Verify ResponseHandler can coexist with other protocol handlers on the same server."""
-    server = AgentServer()
+    server = AgentHost()
     responses = ResponseHandler(server)
     responses.create_handler(_noop_response_handler)
     client = TestClient(server.app)
@@ -303,7 +303,7 @@ def test_hosting__shutdown_signals_inflight_background_execution() -> None:
 
         return _events()
 
-    server = AgentServer()
+    server = AgentHost()
     responses = ResponseHandler(
         server,
         options=ResponsesServerOptions(shutdown_grace_period_seconds=2),

@@ -13,7 +13,7 @@ import json
 from collections.abc import AsyncIterable
 from typing import Any
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.responses import ResponseContext
 from azure.ai.agentserver.responses.models import get_input_expanded
 from azure.ai.agentserver.responses.models._generated.sdk.models.models._models import CreateResponse, ItemType
@@ -33,7 +33,7 @@ def _extract_function_call_output(request_payload: CreateResponse) -> str | None
     return None
 
 
-server = AgentServer(log_level="debug")
+server = AgentHost(log_level="debug")
 responses = ResponseHandler(server)
 
 

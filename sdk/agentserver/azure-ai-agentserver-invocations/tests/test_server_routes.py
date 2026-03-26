@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests for basic server route registration with AgentServer + InvocationHandler."""
+"""Tests for basic server route registration with AgentHost + InvocationHandler."""
 import uuid
 
 import pytest
@@ -9,7 +9,7 @@ from httpx import ASGITransport, AsyncClient
 from starlette.requests import Request
 from starlette.responses import Response
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.invocations import InvocationHandler
 from conftest import SAMPLE_OPENAPI_SPEC
 
@@ -56,7 +56,7 @@ async def test_get_openapi_spec_returns_404_when_not_set(no_spec_client):
 @pytest.mark.asyncio
 async def test_get_openapi_spec_returns_spec_when_registered():
     """GET /invocations/docs/openapi.json returns the spec when registered."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server, openapi_spec=SAMPLE_OPENAPI_SPEC)
 
     @invocations.invoke_handler

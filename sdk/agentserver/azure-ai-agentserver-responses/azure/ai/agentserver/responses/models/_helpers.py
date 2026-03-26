@@ -2,7 +2,7 @@
 # Licensed under the MIT license.
 """Helper functions for CreateResponse and Response model expansion.
 
-Mirrors .NET Azure.AI.AgentServer.Responses.Contracts/src/Custom/ extensions,
+Mirrors .NET Azure.AI.AgentHost.Responses.Contracts/src/Custom/ extensions,
 adapted for the Python code generator's native union types.
 """
 

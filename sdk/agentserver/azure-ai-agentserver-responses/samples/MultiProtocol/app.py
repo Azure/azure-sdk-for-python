@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Multi-protocol sample: Invocations + Responses on a single AgentServer.
+"""Multi-protocol sample: Invocations + Responses on a single AgentHost.
 
 Demonstrates how both protocol handlers can coexist on the same server,
 sharing health probes, tracing, graceful shutdown, and the Hypercorn host.
@@ -36,7 +36,7 @@ Usage::
          -H "Content-Type: application/json" \\
          -d '{"model": "echo", "input": "Hello from responses!", "stream": true, "store": true}'
 
-    # --- Health check (provided automatically by AgentServer) ---
+    # --- Health check (provided automatically by AgentHost) ---
     curl http://localhost:8088/healthy
 """
 
@@ -48,7 +48,7 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.invocations import InvocationHandler
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
@@ -58,7 +58,7 @@ from azure.ai.agentserver.responses.streaming._event_stream import ResponseEvent
 # 1. Create the server — single host for both protocols
 # =====================================================================
 
-server = AgentServer()
+server = AgentHost()
 
 
 # =====================================================================

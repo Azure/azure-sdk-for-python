@@ -10,7 +10,7 @@ from starlette.testclient import TestClient
 
 from tests._helpers import poll_until
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 
 
@@ -24,7 +24,7 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
 
 
 def _build_client() -> TestClient:
-    server = AgentServer()
+    server = AgentHost()
     responses = ResponseHandler(server)
     responses.create_handler(_noop_response_handler)
     return TestClient(server.app)
@@ -233,7 +233,7 @@ def test_create__non_stream_returns_completed_response_with_output_items() -> No
 
         return _events()
 
-    server = AgentServer()
+    server = AgentHost()
     responses = ResponseHandler(server)
     responses.create_handler(_output_producing_handler)
     client = TestClient(server.app)
@@ -283,7 +283,7 @@ def test_create__background_non_stream_get_eventually_returns_output_items() -> 
 
         return _events()
 
-    server = AgentServer()
+    server = AgentHost()
     responses = ResponseHandler(server)
     responses.create_handler(_output_producing_handler)
     client = TestClient(server.app)
@@ -528,7 +528,7 @@ def test_sync_handler_exception_returns_500() -> None:
 
         return _events()
 
-    _server = AgentServer()
+    _server = AgentHost()
     _rh = ResponseHandler(_server)
     _rh.create_handler(_raising_handler)
     client = TestClient(_server.app, raise_server_exceptions=False)
@@ -561,7 +561,7 @@ def test_sync_no_terminal_event_still_completes() -> None:
 
         return _events()
 
-    _server = AgentServer()
+    _server = AgentHost()
     _rh = ResponseHandler(_server)
     _rh.create_handler(_no_terminal_handler)
     client = TestClient(_server.app)
@@ -606,7 +606,7 @@ def test_s007_wrong_first_event_sync() -> None:
 
         return _events()
 
-    _server = AgentServer()
+    _server = AgentHost()
     _rh = ResponseHandler(_server)
     _rh.create_handler(_wrong_first_event_handler)
     client = TestClient(_server.app, raise_server_exceptions=False)
@@ -639,7 +639,7 @@ def test_s007_wrong_first_event_stream() -> None:
 
         return _events()
 
-    _server = AgentServer()
+    _server = AgentHost()
     _rh = ResponseHandler(_server)
     _rh.create_handler(_wrong_first_event_handler)
     client = TestClient(_server.app, raise_server_exceptions=False)
@@ -696,7 +696,7 @@ def test_s008_mismatched_id_stream() -> None:
 
         return _events()
 
-    _server = AgentServer()
+    _server = AgentHost()
     _rh = ResponseHandler(_server)
     _rh.create_handler(_mismatched_id_handler)
     client = TestClient(_server.app, raise_server_exceptions=False)
@@ -749,7 +749,7 @@ def test_s009_terminal_status_on_created_stream() -> None:
 
         return _events()
 
-    _server = AgentServer()
+    _server = AgentHost()
     _rh = ResponseHandler(_server)
     _rh.create_handler(_terminal_on_created_handler)
     client = TestClient(_server.app, raise_server_exceptions=False)
@@ -802,7 +802,7 @@ def test_s007_valid_handler_not_affected() -> None:
 
         return _events()
 
-    _server = AgentServer()
+    _server = AgentHost()
     _rh = ResponseHandler(_server)
     _rh.create_handler(_compliant_handler)
     client = TestClient(_server.app)

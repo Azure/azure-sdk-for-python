@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""OpenTelemetry tracing for AgentServer.
+"""OpenTelemetry tracing for AgentHost.
 
 Tracing is automatically enabled when an Application Insights connection
 string (``APPLICATIONINSIGHTS_CONNECTION_STRING``) or an OTLP exporter

@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests for multi-modality payloads with AgentServer + InvocationHandler."""
+"""Tests for multi-modality payloads with AgentHost + InvocationHandler."""
 import json
 
 import pytest
@@ -9,7 +9,7 @@ from httpx import ASGITransport, AsyncClient
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.invocations import InvocationHandler
 
 
@@ -17,9 +17,9 @@ from azure.ai.agentserver.invocations import InvocationHandler
 # Helper: content-type echo agent
 # ---------------------------------------------------------------------------
 
-def _make_content_type_echo_agent() -> AgentServer:
+def _make_content_type_echo_agent() -> AgentHost:
     """Agent that echoes body and returns the content-type it received."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler
@@ -35,9 +35,9 @@ def _make_content_type_echo_agent() -> AgentServer:
     return server
 
 
-def _make_status_code_agent() -> AgentServer:
+def _make_status_code_agent() -> AgentHost:
     """Agent that returns a custom HTTP status code from query param."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler
@@ -49,9 +49,9 @@ def _make_status_code_agent() -> AgentServer:
     return server
 
 
-def _make_sse_agent() -> AgentServer:
+def _make_sse_agent() -> AgentHost:
     """Agent that returns SSE-formatted streaming response."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler
@@ -206,7 +206,7 @@ async def test_custom_status_202():
 @pytest.mark.asyncio
 async def test_query_string_passed_to_handler():
     """Query string params are accessible in the handler."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler
@@ -265,7 +265,7 @@ async def test_large_binary_payload():
 @pytest.mark.asyncio
 async def test_health_endpoint_returns_200():
     """GET /healthy returns 200 with healthy status."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler

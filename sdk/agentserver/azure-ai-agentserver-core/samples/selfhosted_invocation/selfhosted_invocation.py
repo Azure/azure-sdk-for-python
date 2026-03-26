@@ -1,7 +1,7 @@
 """Self-hosted invocation agent with tracing using only the hosting package (Tier 3).
 
 Demonstrates implementing the invocations protocol directly with
-``AgentServer``, ``register_routes``, and ``TracingHelper`` — without
+``AgentHost``, ``register_routes``, and ``TracingHelper`` — without
 the invocations protocol package.  You handle invocation ID tracking,
 session resolution, tracing spans, and response headers yourself.
 
@@ -24,7 +24,7 @@ Usage::
     curl -X POST http://localhost:8088/invocations -H "Content-Type: application/json" -d '{"name": "Alice"}'
     # -> {"greeting": "Hello, Alice!"}
 
-    # Health check (provided by AgentServer)
+    # Health check (provided by AgentHost)
     curl http://localhost:8088/healthy
     # -> {"status": "healthy"}
 """
@@ -37,11 +37,11 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 from starlette.routing import Route
 
-from azure.ai.agentserver.core import AgentLogger, AgentServer, TracingHelper
+from azure.ai.agentserver.core import AgentLogger, AgentHost, TracingHelper
 
 logger = AgentLogger.get()
 
-server = AgentServer()
+server = AgentHost()
 
 # Access the tracing helper from the server (None if tracing is disabled)
 tracing: Optional[TracingHelper] = server.tracing

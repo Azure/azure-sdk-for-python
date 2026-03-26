@@ -91,7 +91,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :type response_headers: dict[str, str]
         :param sse_headers: SSE-specific headers (e.g. connection, cache-control).
         :type sse_headers: dict[str, str]
-        :param tracing: Optional tracing helper from hosting's AgentServer.
+        :param tracing: Optional tracing helper from hosting's AgentHost.
         :type tracing: TracingHelper | None
         :param provider: Persistence provider for response envelopes and input items.
         :type provider: ResponseProviderProtocol

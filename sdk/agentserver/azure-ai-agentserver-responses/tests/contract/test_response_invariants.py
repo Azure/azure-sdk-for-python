@@ -9,7 +9,7 @@ from typing import Any
 
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 from tests._helpers import poll_until
@@ -69,7 +69,7 @@ def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any
 
 
 def _build_client(handler: Any | None = None) -> TestClient:
-    server = AgentServer()
+    server = AgentHost()
     responses = ResponseHandler(server)
     responses.create_handler(handler or _noop_handler)
     return TestClient(server.app)
@@ -557,7 +557,7 @@ def test_output_item__no_response_id_on_item() -> None:
 
 def test_output_item__agent_reference_on_response_not_item() -> None:
     """agent_reference from the request is present on the Response but not on individual output items."""
-    server = AgentServer()
+    server = AgentHost()
     responses = ResponseHandler(server)
     responses.create_handler(_output_item_handler)
     client = TestClient(server.app)

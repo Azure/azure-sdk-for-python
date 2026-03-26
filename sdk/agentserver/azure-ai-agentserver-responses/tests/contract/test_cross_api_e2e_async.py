@@ -24,7 +24,7 @@ import json as _json
 from typing import Any
 
 import pytest
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
@@ -158,7 +158,7 @@ class _AsyncAsgiClient:
 
 def _build_client(handler: Any) -> _AsyncAsgiClient:
     """Create a fully isolated async ASGI client."""
-    server = AgentServer()
+    server = AgentHost()
     responses = ResponseHandler(server)
     responses.create_handler(handler)
     return _AsyncAsgiClient(server.app)

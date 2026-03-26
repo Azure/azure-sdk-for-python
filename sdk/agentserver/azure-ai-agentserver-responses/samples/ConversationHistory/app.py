@@ -11,7 +11,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import Any
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.responses._response_context import ResponseContext
 from azure.ai.agentserver.responses.models._generated.sdk.models._types import InputParam
 from azure.ai.agentserver.responses.models._generated.sdk.models.models._models import CreateResponse, OutputItem
@@ -37,7 +37,7 @@ def _build_reply(current_input: str, history: Sequence[OutputItem]) -> str:
         f"You said: \"{current_input}\""
     )
 
-server = AgentServer()
+server = AgentHost()
 responses = ResponseHandler(server, options=ResponsesServerOptions(default_fetch_history_count=20))
 
 @responses.create_handler

@@ -1,16 +1,16 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Azure AI AgentServer core framework.
+"""Azure AI AgentHost core framework.
 
-Provides the :class:`AgentServer` host and shared utilities for
+Provides the :class:`AgentHost` host and shared utilities for
 building Azure AI Hosted Agent containers.
 
 Public API::
 
     from azure.ai.agentserver.core import (
         AgentLogger,
-        AgentServer,
+        AgentHost,
         Constants,
         ErrorResponse,
         TracingHelper,
@@ -18,7 +18,7 @@ Public API::
 """
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-from ._base import AgentServer
+from ._base import AgentHost
 from ._constants import Constants
 from ._errors import ErrorResponse
 from ._logger import AgentLogger
@@ -27,7 +27,7 @@ from ._version import VERSION
 
 __all__ = [
     "AgentLogger",
-    "AgentServer",
+    "AgentHost",
     "Constants",
     "ErrorResponse",
     "TracingHelper",

@@ -10,7 +10,7 @@ from typing import Any
 
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
@@ -25,7 +25,7 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
 
 
 def _build_client() -> TestClient:
-    server = AgentServer()
+    server = AgentHost()
     responses = ResponseHandler(server)
     responses.create_handler(_noop_response_handler)
     return TestClient(server.app)
@@ -211,7 +211,7 @@ def test_streaming__forwards_emitted_event_before_late_handler_failure() -> None
 
         return _events()
 
-    server = AgentServer()
+    server = AgentHost()
     responses = ResponseHandler(server)
     responses.create_handler(_fail_after_first_event_handler)
     client = TestClient(server.app)
@@ -322,7 +322,7 @@ def test_streaming__background_stream_may_include_response_queued_event() -> Non
 def test_streaming__pre_creation_handler_failure_produces_terminal_event() -> None:
     """B-4 — Handler raising before any yield in streaming mode → SSE stream terminates with a proper terminal event."""
     handler = _throwing_before_yield_handler
-    server = AgentServer()
+    server = AgentHost()
     responses = ResponseHandler(server)
     responses.create_handler(handler)
     client = TestClient(server.app, raise_server_exceptions=False)
@@ -390,7 +390,7 @@ def test_streaming__response_in_progress_event_is_in_stream() -> None:
 def test_streaming__post_creation_error_yields_response_failed_not_error_event() -> None:
     """B-13 — Handler raising after response.created → terminal is response.failed, NOT a standalone error event."""
     handler = _throwing_after_created_handler
-    server = AgentServer()
+    server = AgentHost()
     responses = ResponseHandler(server)
     responses.create_handler(handler)
     client = TestClient(server.app, raise_server_exceptions=False)
@@ -430,7 +430,7 @@ def test_stream_pre_creation_error_emits_error_event() -> None:
 
     B8: The standalone ``error`` event must be the only event; ``response.created`` must NOT appear.
     """
-    _server = AgentServer()
+    _server = AgentHost()
     _rh = ResponseHandler(_server)
     _rh.create_handler(_throwing_before_yield_handler)
     client = TestClient(_server.app, raise_server_exceptions=False)
@@ -455,7 +455,7 @@ def test_stream_post_creation_error_emits_response_failed() -> None:
 
     B-13: After response.created, handler failures surface as ``response.failed``, not raw ``error``.
     """
-    _server = AgentServer()
+    _server = AgentHost()
     _rh = ResponseHandler(_server)
     _rh.create_handler(_throwing_after_created_handler)
     client = TestClient(_server.app, raise_server_exceptions=False)

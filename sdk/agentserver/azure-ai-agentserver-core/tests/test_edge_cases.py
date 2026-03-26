@@ -9,7 +9,7 @@ from unittest import mock
 import pytest
 import httpx
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.core._config import resolve_log_level
 from azure.ai.agentserver.core._constants import Constants
 
@@ -21,7 +21,7 @@ from azure.ai.agentserver.core._constants import Constants
 
 @pytest.fixture()
 def client() -> httpx.AsyncClient:
-    agent = AgentServer()
+    agent = AgentHost()
     return httpx.AsyncClient(
         transport=httpx.ASGITransport(app=agent.app),
         base_url="http://testserver",
@@ -41,20 +41,20 @@ async def test_post_healthy_returns_405(client: httpx.AsyncClient) -> None:
 
 
 class TestLogLevelConstructor:
-    """Log-level configuration via the AgentServer constructor."""
+    """Log-level configuration via the AgentHost constructor."""
 
     def test_log_level_via_constructor(self) -> None:
-        AgentServer(log_level="DEBUG")  # side-effect: configures logger
+        AgentHost(log_level="DEBUG")  # side-effect: configures logger
         lib_logger = logging.getLogger("azure.ai.agentserver")
         assert lib_logger.level == logging.DEBUG
 
     def test_log_level_warning_via_constructor(self) -> None:
-        AgentServer(log_level="WARNING")  # side-effect: configures logger
+        AgentHost(log_level="WARNING")  # side-effect: configures logger
         lib_logger = logging.getLogger("azure.ai.agentserver")
         assert lib_logger.level == logging.WARNING
 
     def test_log_level_case_insensitive(self) -> None:
-        AgentServer(log_level="error")  # side-effect: configures logger
+        AgentHost(log_level="error")  # side-effect: configures logger
         lib_logger = logging.getLogger("azure.ai.agentserver")
         assert lib_logger.level == logging.ERROR
 
@@ -69,13 +69,13 @@ class TestLogLevelEnvVar:
 
     def test_log_level_via_env_var(self) -> None:
         with mock.patch.dict(os.environ, {Constants.AGENT_LOG_LEVEL: "CRITICAL"}):
-            AgentServer()  # side-effect: configures logger
+            AgentHost()  # side-effect: configures logger
             lib_logger = logging.getLogger("azure.ai.agentserver")
             assert lib_logger.level == logging.CRITICAL
 
     def test_constructor_overrides_env_var(self) -> None:
         with mock.patch.dict(os.environ, {Constants.AGENT_LOG_LEVEL: "CRITICAL"}):
-            AgentServer(log_level="DEBUG")  # side-effect: configures logger
+            AgentHost(log_level="DEBUG")  # side-effect: configures logger
             lib_logger = logging.getLogger("azure.ai.agentserver")
             assert lib_logger.level == logging.DEBUG
 
@@ -90,12 +90,12 @@ class TestInvalidLogLevel:
 
     def test_invalid_log_level_raises(self) -> None:
         with pytest.raises(ValueError, match="Invalid log level"):
-            AgentServer(log_level="TRACE")
+            AgentHost(log_level="TRACE")
 
     def test_invalid_log_level_via_env_raises(self) -> None:
         with mock.patch.dict(os.environ, {Constants.AGENT_LOG_LEVEL: "VERBOSE"}):
             with pytest.raises(ValueError, match="Invalid log level"):
-                AgentServer()
+                AgentHost()
 
 
 # ------------------------------------------------------------------ #

@@ -14,11 +14,11 @@ Usage::
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.invocations import InvocationHandler
 
 
-server = AgentServer()
+server = AgentHost()
 invocations = InvocationHandler(server)
 
 

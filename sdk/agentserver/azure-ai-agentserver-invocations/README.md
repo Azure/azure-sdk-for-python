@@ -1,4 +1,4 @@
-# Azure AI AgentServer Invocations for Python
+# Azure AI AgentHost Invocations for Python
 
 The `azure-ai-agentserver-invocations` package provides the invocation protocol endpoints for Azure AI Hosted Agent containers. It plugs into the [`azure-ai-agentserver-core`](https://pypi.org/project/azure-ai-agentserver-core/) host framework and adds the full invocation lifecycle: `POST /invocations`, `GET /invocations/{id}`, `POST /invocations/{id}/cancel`, and `GET /invocations/docs/openapi.json`.
 
@@ -20,7 +20,7 @@ This automatically installs `azure-ai-agentserver-core` as a dependency.
 
 ### InvocationHandler
 
-`InvocationHandler` is the composable protocol handler that mounts invocation endpoints onto an `AgentServer`. It provides decorator methods for registering handler functions:
+`InvocationHandler` is the composable protocol handler that mounts invocation endpoints onto an `AgentHost`. It provides decorator methods for registering handler functions:
 
 - `@invocations.invoke_handler` — **Required.** Handles `POST /invocations`.
 - `@invocations.get_invocation_handler` — Optional. Handles `GET /invocations/{id}`.
@@ -63,7 +63,7 @@ Inside handler functions, the SDK sets these attributes on `request.state`:
 
 ### Distributed tracing
 
-When tracing is enabled on the `AgentServer`, invocation spans are automatically created with GenAI semantic conventions:
+When tracing is enabled on the `AgentHost`, invocation spans are automatically created with GenAI semantic conventions:
 
 - **Span name**: `invoke_agent {FOUNDRY_AGENT_NAME}:{FOUNDRY_AGENT_VERSION}`
 - **Span attributes**: `gen_ai.system`, `gen_ai.operation.name`, `gen_ai.response.id`, `gen_ai.conversation.id`, `gen_ai.agent.id`, `gen_ai.agent.name`, `gen_ai.agent.version`
@@ -75,12 +75,12 @@ When tracing is enabled on the `AgentServer`, invocation spans are automatically
 ### Simple synchronous agent
 
 ```python
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.invocations import InvocationHandler
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-server = AgentServer()
+server = AgentHost()
 invocations = InvocationHandler(server)
 
 @invocations.invoke_handler
@@ -97,7 +97,7 @@ server.run()
 import asyncio
 import json
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.invocations import InvocationHandler
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
@@ -105,7 +105,7 @@ from starlette.responses import JSONResponse, Response
 _tasks: dict[str, asyncio.Task] = {}
 _results: dict[str, bytes] = {}
 
-server = AgentServer()
+server = AgentHost()
 invocations = InvocationHandler(server)
 
 @invocations.invoke_handler
@@ -138,12 +138,12 @@ async def cancel_invocation(request: Request) -> Response:
 ```python
 import json
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.invocations import InvocationHandler
 from starlette.requests import Request
 from starlette.responses import Response, StreamingResponse
 
-server = AgentServer()
+server = AgentHost()
 invocations = InvocationHandler(server)
 
 @invocations.invoke_handler
@@ -178,7 +178,7 @@ The session ID is available in the handler via `request.state.session_id`.
 Pass an OpenAPI spec dict to enable the discovery endpoint at `GET /invocations/docs/openapi.json`:
 
 ```python
-server = AgentServer()
+server = AgentHost()
 invocations = InvocationHandler(server, openapi_spec={
     "openapi": "3.0.3",
     "info": {"title": "My Agent", "version": "1.0.0"},

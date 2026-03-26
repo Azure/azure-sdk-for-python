@@ -5,12 +5,12 @@
 import pytest
 import httpx
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 
 
 @pytest.fixture()
 def client() -> httpx.AsyncClient:
-    agent = AgentServer()
+    agent = AgentHost()
     return httpx.AsyncClient(
         transport=httpx.ASGITransport(app=agent.app),
         base_url="http://testserver",

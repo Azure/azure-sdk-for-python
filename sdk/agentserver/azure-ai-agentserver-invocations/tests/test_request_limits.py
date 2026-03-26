@@ -7,18 +7,18 @@ from httpx import ASGITransport, AsyncClient
 from starlette.requests import Request
 from starlette.responses import Response
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.invocations import InvocationHandler
 
 
 # ---------------------------------------------------------------------------
-# AgentServer no longer accepts request_timeout
+# AgentHost no longer accepts request_timeout
 # ---------------------------------------------------------------------------
 
 def test_no_request_timeout_parameter():
-    """AgentServer no longer accepts request_timeout."""
+    """AgentHost no longer accepts request_timeout."""
     with pytest.raises(TypeError):
-        AgentServer(request_timeout=10)
+        AgentHost(request_timeout=10)
 
 
 # ---------------------------------------------------------------------------
@@ -30,7 +30,7 @@ async def test_slow_invoke_completes():
     """Without timeout, handler runs to completion."""
     import asyncio
 
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler

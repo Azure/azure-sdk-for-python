@@ -11,7 +11,7 @@ from httpx import ASGITransport, AsyncClient
 from starlette.requests import Request
 from starlette.responses import Response
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.invocations import InvocationHandler
 from azure.ai.agentserver.invocations._constants import InvocationConstants
 
@@ -45,7 +45,7 @@ async def test_post_invocations_has_session_id_header(echo_client):
 @pytest.mark.asyncio
 async def test_post_invocations_with_query_param():
     """POST /invocations with agent_session_id query param uses that value."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler
@@ -68,7 +68,7 @@ async def test_post_invocations_with_query_param():
 @pytest.mark.asyncio
 async def test_post_invocations_uses_env_var():
     """POST /invocations uses FOUNDRY_AGENT_SESSION_ID env var when no query param."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler

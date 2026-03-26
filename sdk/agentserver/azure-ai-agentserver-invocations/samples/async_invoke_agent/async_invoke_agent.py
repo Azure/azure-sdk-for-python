@@ -44,7 +44,7 @@ import json
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.invocations import InvocationHandler
 
 
@@ -52,7 +52,7 @@ from azure.ai.agentserver.invocations import InvocationHandler
 _tasks: dict[str, asyncio.Task] = {}
 _results: dict[str, bytes] = {}
 
-server = AgentServer()
+server = AgentHost()
 invocations = InvocationHandler(server)
 
 

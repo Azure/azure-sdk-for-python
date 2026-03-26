@@ -13,7 +13,7 @@ from typing import Any
 import pytest
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 
 
@@ -47,7 +47,7 @@ class _CreateModeCase:
 
 
 def _build_client() -> TestClient:
-    server = AgentServer()
+    server = AgentHost()
     responses = ResponseHandler(server)
     responses.create_handler(_noop_response_handler)
     return TestClient(server.app)

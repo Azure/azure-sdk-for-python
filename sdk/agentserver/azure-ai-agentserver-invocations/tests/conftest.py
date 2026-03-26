@@ -10,7 +10,7 @@ from httpx import ASGITransport, AsyncClient
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.invocations import InvocationHandler
 
 # ---------------------------------------------------------------------------
@@ -63,9 +63,9 @@ SAMPLE_OPENAPI_SPEC: dict[str, Any] = {
 # ---------------------------------------------------------------------------
 
 
-def _make_echo_agent(**kwargs: Any) -> AgentServer:
-    """Create an AgentServer whose invoke handler echoes the request body."""
-    server = AgentServer(**kwargs)
+def _make_echo_agent(**kwargs: Any) -> AgentHost:
+    """Create an AgentHost whose invoke handler echoes the request body."""
+    server = AgentHost(**kwargs)
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler
@@ -76,9 +76,9 @@ def _make_echo_agent(**kwargs: Any) -> AgentServer:
     return server
 
 
-def _make_streaming_agent(**kwargs: Any) -> AgentServer:
-    """Create an AgentServer whose invoke handler returns 3 JSON chunks."""
-    server = AgentServer(**kwargs)
+def _make_streaming_agent(**kwargs: Any) -> AgentHost:
+    """Create an AgentHost whose invoke handler returns 3 JSON chunks."""
+    server = AgentHost(**kwargs)
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler
@@ -92,9 +92,9 @@ def _make_streaming_agent(**kwargs: Any) -> AgentServer:
     return server
 
 
-def _make_async_storage_agent(**kwargs: Any) -> AgentServer:
-    """Create an AgentServer with get/cancel handlers and in-memory store."""
-    server = AgentServer(**kwargs)
+def _make_async_storage_agent(**kwargs: Any) -> AgentHost:
+    """Create an AgentHost with get/cancel handlers and in-memory store."""
+    server = AgentHost(**kwargs)
     invocations = InvocationHandler(server)
     store: dict[str, Any] = {}
 
@@ -129,9 +129,9 @@ def _make_async_storage_agent(**kwargs: Any) -> AgentServer:
     return server
 
 
-def _make_validated_agent() -> AgentServer:
-    """Create an AgentServer with OpenAPI spec."""
-    server = AgentServer()
+def _make_validated_agent() -> AgentHost:
+    """Create an AgentHost with OpenAPI spec."""
+    server = AgentHost()
     invocations = InvocationHandler(
         server,
         openapi_spec=SAMPLE_OPENAPI_SPEC,
@@ -145,9 +145,9 @@ def _make_validated_agent() -> AgentServer:
     return server
 
 
-def _make_failing_agent(**kwargs: Any) -> AgentServer:
-    """Create an AgentServer whose handler raises ValueError."""
-    server = AgentServer(**kwargs)
+def _make_failing_agent(**kwargs: Any) -> AgentHost:
+    """Create an AgentHost whose handler raises ValueError."""
+    server = AgentHost(**kwargs)
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler

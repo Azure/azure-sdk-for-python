@@ -8,7 +8,7 @@ from unittest import mock
 import pytest
 import httpx
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.core._config import resolve_port
 from azure.ai.agentserver.core._constants import Constants
 
@@ -71,7 +71,7 @@ class TestResolvePort:
 
 @pytest.fixture()
 def client() -> httpx.AsyncClient:
-    agent = AgentServer()
+    agent = AgentHost()
     return httpx.AsyncClient(
         transport=httpx.ASGITransport(app=agent.app),
         base_url="http://testserver",

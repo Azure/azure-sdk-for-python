@@ -1,13 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests for decorator-based handler registration on AgentServer + InvocationHandler."""
+"""Tests for decorator-based handler registration on AgentHost + InvocationHandler."""
 import pytest
 from httpx import ASGITransport, AsyncClient
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from azure.ai.agentserver.core import AgentServer
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.invocations import InvocationHandler
 
 
@@ -17,7 +17,7 @@ from azure.ai.agentserver.invocations import InvocationHandler
 
 def test_invoke_handler_stores_function():
     """@invocations.invoke_handler stores the function on the protocol object."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler
@@ -33,7 +33,7 @@ def test_invoke_handler_stores_function():
 
 def test_invoke_handler_returns_original_function():
     """@invocations.invoke_handler returns the original function."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     async def handle(request: Request) -> Response:
@@ -49,7 +49,7 @@ def test_invoke_handler_returns_original_function():
 
 def test_get_invocation_handler_stores_function():
     """@invocations.get_invocation_handler stores the function."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.get_invocation_handler
@@ -65,7 +65,7 @@ def test_get_invocation_handler_stores_function():
 
 def test_cancel_invocation_handler_stores_function():
     """@invocations.cancel_invocation_handler stores the function."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.cancel_invocation_handler
@@ -81,7 +81,7 @@ def test_cancel_invocation_handler_stores_function():
 
 def test_shutdown_handler_stores_function():
     """@server.shutdown_handler stores the function on the server."""
-    server = AgentServer()
+    server = AgentHost()
 
     @server.shutdown_handler
     async def on_shutdown():
@@ -97,7 +97,7 @@ def test_shutdown_handler_stores_function():
 @pytest.mark.asyncio
 async def test_full_request_flow():
     """Full lifecycle: invoke → get → cancel → get (404)."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
     store: dict[str, bytes] = {}
 
@@ -150,7 +150,7 @@ async def test_full_request_flow():
 @pytest.mark.asyncio
 async def test_missing_invoke_handler_returns_501():
     """POST /invocations without registered handler returns 501."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
     transport = ASGITransport(app=server.app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
@@ -161,7 +161,7 @@ async def test_missing_invoke_handler_returns_501():
 @pytest.mark.asyncio
 async def test_missing_get_handler_returns_404():
     """GET /invocations/{id} without registered handler returns 404."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler
@@ -177,7 +177,7 @@ async def test_missing_get_handler_returns_404():
 @pytest.mark.asyncio
 async def test_missing_cancel_handler_returns_404():
     """POST /invocations/{id}/cancel without registered handler returns 404."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler
@@ -196,7 +196,7 @@ async def test_missing_cancel_handler_returns_404():
 
 def test_optional_handlers_default_none():
     """Get and cancel handlers default to None."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
     assert invocations._get_invocation_fn is None
     assert invocations._cancel_invocation_fn is None
@@ -204,7 +204,7 @@ def test_optional_handlers_default_none():
 
 def test_optional_handler_override():
     """Setting an optional handler replaces None."""
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.get_invocation_handler
@@ -222,7 +222,7 @@ def test_optional_handler_override():
 async def test_shutdown_handler_called_during_lifespan():
     """Shutdown handler is called when the app lifespan ends."""
     called = []
-    server = AgentServer()
+    server = AgentHost()
     invocations = InvocationHandler(server)
 
     @invocations.invoke_handler
@@ -248,5 +248,5 @@ async def test_shutdown_handler_called_during_lifespan():
 
 def test_graceful_shutdown_timeout_passthrough():
     """graceful_shutdown_timeout is passed through to the base class."""
-    server = AgentServer(graceful_shutdown_timeout=15)
+    server = AgentHost(graceful_shutdown_timeout=15)
     assert server._graceful_shutdown_timeout == 15
