@@ -11,6 +11,16 @@ from .runtime import (
     StreamReplayState,
     TerminalResponseStatus,
 )
+from ._helpers import (
+    get_content_expanded,
+    get_conversation_expanded,
+    get_conversation_id,
+    get_input_expanded,
+    get_input_text,
+    get_instruction_items,
+    get_output_item_id,
+    get_tool_choice_expanded,
+)
 
 __all__ = [
     # "RequestValidationError",
@@ -20,4 +30,12 @@ __all__ = [
     "StreamEventRecord",
     "StreamReplayState",
     "TerminalResponseStatus",
+    "get_content_expanded",
+    "get_conversation_expanded",
+    "get_conversation_id",
+    "get_input_expanded",
+    "get_input_text",
+    "get_instruction_items",
+    "get_output_item_id",
+    "get_tool_choice_expanded",
 ]

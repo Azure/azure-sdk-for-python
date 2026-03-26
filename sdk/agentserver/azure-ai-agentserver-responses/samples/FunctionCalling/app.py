@@ -15,45 +15,25 @@ from typing import Any
 
 from azure.ai.agentserver.hosting import AgentServer
 from azure.ai.agentserver.responses import ResponseContext
-from azure.ai.agentserver.responses.models._generated.sdk.models.models._models import CreateResponse
+from azure.ai.agentserver.responses.models import get_input_expanded
+from azure.ai.agentserver.responses.models._generated.sdk.models.models._models import CreateResponse, ItemType
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 
 
-def _request_mapping(request: Any) -> dict[str, Any]:
-    if hasattr(request, "as_dict"):
-        candidate = request.as_dict()
-        if isinstance(candidate, dict):
-            return candidate
-    if isinstance(request, dict):
-        return request
-    return {}
+def _extract_function_call_output(request_payload: CreateResponse) -> str | None:
+    items = get_input_expanded(request_payload)
 
-
-def _extract_function_call_output(request_payload: dict[str, Any]) -> str | None:
-    raw_input = request_payload.get("input")
-    if not isinstance(raw_input, list):
-        return None
-
-    for item in raw_input:
-        if not isinstance(item, dict):
+    for item in items:
+        if isinstance(item, str):
             continue
-        if item.get("type") != "function_call_output":
-            continue
-
-        output_value = item.get("output")
-        if isinstance(output_value, str):
-            return output_value
-
-        if isinstance(output_value, (dict, list)):
-            return json.dumps(output_value)
-
-        return "{}"
+        if item.type == ItemType.FUNCTION_CALL_OUTPUT:
+            return item.content.get("output")
 
     return None
 
 
-server = AgentServer()
+server = AgentServer(log_level="debug")
 responses = ResponseHandler(server)
 
 
@@ -61,8 +41,7 @@ responses = ResponseHandler(server)
 def weather_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event) -> AsyncIterable[dict[str, Any]]:
     """Two-turn function-calling sample handler."""
     async def _events() -> AsyncIterable[dict[str, Any]]:
-        payload = _request_mapping(request)
-        tool_output = _extract_function_call_output(payload)
+        tool_output = _extract_function_call_output(request)
 
         stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
 

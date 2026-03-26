@@ -7,6 +7,8 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 from typing import Any
 
+from azure.ai.agentserver.responses.models._generated.sdk.models._types import InputParam
+
 from .._response_context import ResponseContext
 
 
@@ -30,7 +32,7 @@ class _ExecutionContext:  # pylint: disable=too-many-instance-attributes
         store: bool,
         background: bool,
         stream: bool,
-        input_items: list[Any],
+        input_items: list[InputParam],
         previous_response_id: str | None,
         conversation_id: str | None,
         cancellation_signal: asyncio.Event,

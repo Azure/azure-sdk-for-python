@@ -235,7 +235,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         store = True if getattr(parsed, "store", None) is None else bool(parsed.store)
         background = bool(getattr(parsed, "background", False))
         model = getattr(parsed, "model", None)
-        input_items = [deepcopy(item) for item in (parsed.input or []) if isinstance(item, dict)]
+        input_items = [deepcopy(item) for item in (parsed.input or [])]
         previous_response_id: str | None = (
             parsed.previous_response_id
             if isinstance(parsed.previous_response_id, str) and parsed.previous_response_id
@@ -350,6 +350,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             _prevalidate_identity_payload(payload)
             parsed = parse_and_validate_create_response(payload, options=self._runtime_options)
         except Exception as exc:  # pylint: disable=broad-exception-caught
+            logger.error("Failed to parse/validate create request", exc_info=exc)
             captured_error = exc
             span.end(captured_error)
             if self._tracing is not None:
@@ -359,6 +360,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         try:
             response_id, agent_reference = _resolve_identity_fields(parsed)
         except Exception as exc:  # pylint: disable=broad-exception-caught
+            logger.error("Failed to resolve identity fields", exc_info=exc)
             captured_error = exc
             span.end(captured_error)
             if self._tracing is not None:
@@ -418,6 +420,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         self._tracing.end_span(otel_span)
                     return JSONResponse(snapshot, status_code=200)
                 except _HandlerError as exc:
+                    logger.error("Handler error in sync create (response_id=%s)", ctx.response_id, exc_info=exc.original)
                     if self._tracing is not None:
                         self._tracing.end_span(otel_span, exc=exc.original)
                     return _error_response(exc.original, {})
@@ -427,10 +430,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 self._tracing.end_span(otel_span)
             return JSONResponse(snapshot, status_code=200, headers=self._response_headers)
         except _HandlerError as exc:
+            logger.error("Handler error in create (response_id=%s)", ctx.response_id, exc_info=exc.original)
             if self._tracing is not None:
                 self._tracing.end_span(otel_span, exc=exc)
             return _error_response(exc.original, self._response_headers)
         except Exception as exc:  # pylint: disable=broad-exception-caught
+            logger.error("Unexpected error in create (response_id=%s)", ctx.response_id, exc_info=exc)
             if self._tracing is not None:
                 self._tracing.end_span(otel_span, exc=exc)
             raise
@@ -469,7 +474,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     snapshot = response_obj.as_dict()
                     return JSONResponse(snapshot, status_code=200)
                 except Exception:  # pylint: disable=broad-exception-caught
-                    pass
+                    logger.warning("Provider fallback failed for GET response_id=%s", response_id, exc_info=True)
             else:
                 # Stream provider fallback: replay persisted SSE events when runtime state is gone.
                 replay_response = await self._try_replay_persisted_stream(request, response_id)
@@ -560,6 +565,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 headers=self._sse_headers,
             )
         except Exception:  # pylint: disable=broad-exception-caught
+            logger.warning("Failed to replay persisted stream for response_id=%s", response_id, exc_info=True)
             return None
 
     async def handle_delete(self, request: Request) -> Response:
@@ -592,7 +598,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             try:
                 await self._provider.delete_response_async(response_id)
             except Exception:  # pylint: disable=broad-exception-caught
-                pass  # best effort: provider may not have the record if response was not persisted
+                logger.warning("Best-effort provider delete failed for response_id=%s", response_id, exc_info=True)
 
         return JSONResponse(
             {"id": response_id, "object": "response.deleted", "deleted": True},
