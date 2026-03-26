@@ -273,6 +273,3 @@ def get_content_expanded(message: ItemMessage) -> list[MessageContent]:
     """
     content = _get_field(message, "content")
     return list(content) if content else []
-
-
-
