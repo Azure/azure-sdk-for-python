@@ -1,4 +1,4 @@
 directory: specification/machinelearningservices/data-plane/DatasetDataplane
-commit: 2d03e26f69760a52d120a67ff9e4aac6916bc1c8
+commit: bce80108d7ce39dccc1e9c2df1b1bd99d018bf7f
 repo: Azure/azure-rest-api-specs
 additionalDirectories: []
