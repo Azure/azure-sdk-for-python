@@ -200,14 +200,10 @@ class _AuthSecretsFilter(logging.Filter):
         r"(?i)(['\"]authorization['\"]\ *:\ *['\"])bearer\s+[^'\"]+(['\"])",
     )
 
-    _API_KEY_HEADER_DICT_PATTERN = re.compile(
-        r"(?i)(['\"]api-key['\"]\ *:\ *['\"])[^'\"]+(['\"])",
-    )
-
     def filter(self, record: logging.LogRecord) -> bool:
         rendered = record.getMessage()
-        redacted = self._AUTH_HEADER_DICT_PATTERN.sub(r"\1Bearer <REDACTED>\2", rendered)
-        redacted = self._API_KEY_HEADER_DICT_PATTERN.sub(r"\1<REDACTED>\2", redacted)
+        #redacted = self._AUTH_HEADER_DICT_PATTERN.sub(r"\1Bearer <REDACTED>\2", rendered)
+        redacted = rendered
         if redacted != rendered:
             # Replace the pre-formatted content so handlers emit sanitized output.
             record.msg = redacted
