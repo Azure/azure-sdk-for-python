@@ -12,11 +12,9 @@ from starlette.testclient import TestClient
 
 from azure.ai.agentserver.hosting import AgentServer
 from azure.ai.agentserver.responses.hosting import ResponseHandler
-from azure.ai.agentserver.responses import response_handler
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
 
-@response_handler
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler used to wire the hosting surface in contract tests."""
     async def _events():
@@ -33,7 +31,6 @@ def _build_client() -> TestClient:
     return TestClient(server.app)
 
 
-@response_handler
 def _throwing_before_yield_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that raises before yielding any event.
 
@@ -47,7 +44,6 @@ def _throwing_before_yield_handler(request: Any, context: Any, cancellation_sign
     return _events()
 
 
-@response_handler
 def _throwing_after_created_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that emits response.created then raises.
 
@@ -202,7 +198,6 @@ def test_streaming__identity_fields_are_consistent_across_events() -> None:
 
 
 def test_streaming__forwards_emitted_event_before_late_handler_failure() -> None:
-    @response_handler
     def _fail_after_first_event_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             yield {

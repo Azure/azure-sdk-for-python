@@ -7,7 +7,7 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 from typing import Any
 
-from .._handlers import ResponseContext
+from .._response_context import ResponseContext
 
 
 class _ExecutionContext:  # pylint: disable=too-many-instance-attributes

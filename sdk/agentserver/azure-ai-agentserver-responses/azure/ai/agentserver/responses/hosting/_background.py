@@ -8,7 +8,7 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
 from typing import Any
 
-from .._handlers import ResponseContext
+from .._response_context import ResponseContext
 from ..models import _generated as generated_models
 from ..models.runtime import ResponseExecution, build_failed_response
 from ..streaming._helpers import (

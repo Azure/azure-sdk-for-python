@@ -28,7 +28,6 @@ import pytest
 from azure.ai.agentserver.hosting import AgentServer
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses.hosting import ResponseHandler
-from azure.ai.agentserver.responses import response_handler
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
 
@@ -225,7 +224,6 @@ def _make_gated_stream_handler():
     started = asyncio.Event()
     release = asyncio.Event()
 
-    @response_handler
     def handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             stream = ResponseEventStream(
@@ -253,7 +251,6 @@ def _make_gated_stream_handler_with_output():
     started = asyncio.Event()
     release = asyncio.Event()
 
-    @response_handler
     def handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             stream = ResponseEventStream(

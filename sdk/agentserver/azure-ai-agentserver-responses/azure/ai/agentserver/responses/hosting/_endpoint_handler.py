@@ -18,7 +18,7 @@ from starlette.responses import JSONResponse, Response, StreamingResponse
 
 from azure.ai.agentserver.hosting import AgentLogger
 
-from .._handlers import ResponseContext
+from .._response_context import ResponseContext
 from .._options import ResponsesServerOptions
 from ..models import ResponseModeFlags
 from ..streaming._helpers import _encode_sse
@@ -41,6 +41,7 @@ from ._request_parsing import (
     _apply_item_cursors,
     _extract_item_id,
     _prevalidate_identity_payload,
+    _resolve_conversation_id,
     _resolve_identity_fields,
 )
 from ._runtime_state import _RuntimeState
@@ -163,9 +164,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
            error occurs).
 
         :param response: The ``StreamingResponse`` to wrap.
+        :type response: StreamingResponse
         :param otel_span: The OTel span (or *None* when tracing is disabled).
+        :type otel_span: Any
         :param baggage_token: Token from ``set_baggage`` (or *None*).
+        :type baggage_token: Any
         :return: The same response object, with its body_iterator replaced.
+        :rtype: StreamingResponse
         """
         if self._tracing is None:
             return response
@@ -186,6 +191,62 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         response.body_iterator = _cleanup_iter()
         return response
+
+    # ------------------------------------------------------------------
+    # ResponseContext factory
+    # ------------------------------------------------------------------
+
+    def _create_response_context(
+        self,
+        *,
+        response_id: str,
+        raw_body: Any,
+        parsed: Any,
+        request: Request,
+    ) -> ResponseContext:
+        """Build a :class:`ResponseContext` from the incoming HTTP request.
+
+        Extracts mode flags, input items, conversation threading fields,
+        ``x-client-*`` headers, and query parameters from the raw and
+        parsed request objects.
+
+        :param response_id: The assigned response identifier.
+        :param raw_body: The raw JSON payload dict.
+        :param parsed: The validated :class:`CreateResponse` model.
+        :param request: The Starlette HTTP request.
+        :return: A fully-populated :class:`ResponseContext`.
+        """
+        stream = bool(getattr(parsed, "stream", False))
+        store = True if getattr(parsed, "store", None) is None else bool(parsed.store)
+        background = bool(getattr(parsed, "background", False))
+        input_items = [deepcopy(item) for item in (parsed.input or []) if isinstance(item, dict)]
+        previous_response_id: str | None = (
+            parsed.previous_response_id
+            if isinstance(parsed.previous_response_id, str) and parsed.previous_response_id
+            else None
+        )
+        mode_flags = ResponseModeFlags(stream=stream, store=store, background=background)
+        client_headers = {
+            k: v for k, v in request.headers.items()
+            if k.lower().startswith("x-client-")
+        }
+        query_parameters = dict(request.query_params)
+
+        context = ResponseContext(
+            response_id=response_id,
+            mode_flags=mode_flags,
+            raw_body=raw_body,
+            request=parsed,
+            provider=self._provider,
+            input_items=input_items,
+            previous_response_id=previous_response_id,
+            conversation_id=_resolve_conversation_id(parsed),
+            history_limit=self._runtime_options.default_fetch_history_count,
+            client_headers=client_headers,
+            query_parameters=query_parameters,
+        )
+        context.is_shutdown_requested = self._shutdown_requested.is_set()
+        return context
 
     # ------------------------------------------------------------------
     # Route handlers
@@ -254,13 +315,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             if isinstance(parsed.previous_response_id, str) and parsed.previous_response_id
             else None
         )
-        mode_flags = ResponseModeFlags(stream=stream, store=store, background=background)
-        context = ResponseContext(
+        context = self._create_response_context(
             response_id=response_id,
-            mode_flags=mode_flags,
             raw_body=payload,
+            parsed=parsed,
+            request=request,
         )
-        context.is_shutdown_requested = self._shutdown_requested.is_set()
+
         cancellation_signal = asyncio.Event()
         if context.is_shutdown_requested:
             cancellation_signal.set()

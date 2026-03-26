@@ -10,10 +10,8 @@ from starlette.testclient import TestClient
 
 from azure.ai.agentserver.hosting import AgentServer
 from azure.ai.agentserver.responses.hosting import ResponseHandler
-from azure.ai.agentserver.responses import response_handler
 
 
-@response_handler
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler used to wire the hosting surface in contract tests."""
     async def _events():
@@ -349,10 +347,8 @@ def test_empty_previous_response_id_handled() -> None:
 def test_input_items_in_flight_fallback_to_runtime() -> None:
     """T3: in-progress background response serves input_items from runtime_state."""
     import asyncio
-    from azure.ai.agentserver.responses import response_handler
 
     # Handler that sleeps indefinitely so the response stays in_progress
-    @response_handler
     def _slow_handler(request: Any, context: Any, cancellation_signal: Any):  # type: ignore[no-redef]
         async def _events():
             await asyncio.sleep(60)  # Keep response in-flight

@@ -12,10 +12,8 @@ from tests._helpers import poll_until
 
 from azure.ai.agentserver.hosting import AgentServer
 from azure.ai.agentserver.responses.hosting import ResponseHandler
-from azure.ai.agentserver.responses import response_handler
 
 
-@response_handler
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler used to wire the hosting surface in contract tests."""
     async def _events():
@@ -215,7 +213,6 @@ def test_create__background_mode_returns_immediate_then_reaches_terminal_state()
 def test_create__non_stream_returns_completed_response_with_output_items() -> None:
     from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
-    @response_handler
     def _output_producing_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
@@ -266,7 +263,6 @@ def test_create__non_stream_returns_completed_response_with_output_items() -> No
 def test_create__background_non_stream_get_eventually_returns_output_items() -> None:
     from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
-    @response_handler
     def _output_producing_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
@@ -524,9 +520,6 @@ def test_sync_handler_exception_returns_500() -> None:
 
     B8 / B-13 for sync mode: any handler exception surfaces as HTTP 500.
     """
-    from azure.ai.agentserver.responses import response_handler
-
-    @response_handler
     def _raising_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             raise RuntimeError("Simulated handler failure")
@@ -555,10 +548,8 @@ def test_sync_no_terminal_event_still_completes() -> None:
     synthesises a ``response.failed`` terminal.  Sync callers receive HTTP 200 with
     a "failed" response body (not HTTP 500).
     """
-    from azure.ai.agentserver.responses import response_handler
     from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
-    @response_handler
     def _no_terminal_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             stream = ResponseEventStream(
@@ -602,7 +593,6 @@ def test_s007_wrong_first_event_sync() -> None:
     Uses a raw dict to bypass ResponseEventStream internal ordering validation so
     the orchestrator's _check_first_event_contract is the authority under test.
     """
-    @response_handler
     def _wrong_first_event_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             # Raw dict bypasses ResponseEventStream validation so _check_first_event_contract runs
@@ -637,7 +627,6 @@ def test_s007_wrong_first_event_stream() -> None:
     S-007: Violation → single standalone error event; no response.created in stream.
     Uses a raw dict to bypass ResponseEventStream internal ordering validation.
     """
-    @response_handler
     def _wrong_first_event_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             yield {
@@ -692,7 +681,6 @@ def test_s008_mismatched_id_stream() -> None:
 
     S-008: The id in response.created MUST equal the library-assigned response_id.
     """
-    @response_handler
     def _mismatched_id_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             # Emit response.created with a deliberately wrong id
@@ -749,7 +737,6 @@ def test_s009_terminal_status_on_created_stream() -> None:
 
     S-009: The status in response.created MUST be non-terminal (queued or in_progress).
     """
-    @response_handler
     def _terminal_on_created_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             yield {
@@ -805,7 +792,6 @@ def test_s007_valid_handler_not_affected() -> None:
     """
     from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
-    @response_handler
     def _compliant_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             stream = ResponseEventStream(

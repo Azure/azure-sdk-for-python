@@ -12,11 +12,9 @@ from starlette.testclient import TestClient
 from azure.ai.agentserver.hosting import AgentServer
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
-from azure.ai.agentserver.responses import response_handler
 from tests._helpers import poll_until
 
 
-@response_handler
 def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler — auto-completes."""
     async def _events():
@@ -26,7 +24,6 @@ def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
-@response_handler
 def _throwing_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that raises after emitting created."""
     async def _events():
@@ -37,7 +34,6 @@ def _throwing_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
-@response_handler
 def _incomplete_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that emits an incomplete terminal event."""
     async def _events():
@@ -48,7 +44,6 @@ def _incomplete_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
-@response_handler
 def _delayed_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that sleeps briefly, checking for cancellation."""
     async def _events():
@@ -63,7 +58,6 @@ def _delayed_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
-@response_handler
 def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that emits response.created then blocks until cancelled (Phase 3)."""
     async def _events():
@@ -515,7 +509,6 @@ def test_error_field__null_for_cancelled_status() -> None:
 # ════════════════════════════════════════════════════════
 
 
-@response_handler
 def _output_item_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that emits a single output message item."""
     async def _events():

@@ -12,12 +12,10 @@ from starlette.testclient import TestClient
 
 from azure.ai.agentserver.hosting import AgentServer
 from azure.ai.agentserver.responses.hosting import ResponseHandler
-from azure.ai.agentserver.responses import response_handler
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from tests._helpers import EventGate, poll_until
 
 
-@response_handler
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler used to wire the hosting surface in contract tests."""
     async def _events():
@@ -27,7 +25,6 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
     return _events()
 
 
-@response_handler
 def _delayed_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that keeps background execution in-flight for deterministic delete checks."""
     async def _events():
@@ -49,7 +46,6 @@ def _build_client(handler: Any | None = None) -> TestClient:
     return TestClient(server.app)
 
 
-@response_handler
 def _throwing_bg_handler(request: Any, context: Any, cancellation_signal: Any):
     """Background handler that raises immediately — produces status=failed."""
     async def _events():
@@ -60,7 +56,6 @@ def _throwing_bg_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
-@response_handler
 def _throwing_after_created_bg_handler(request: Any, context: Any, cancellation_signal: Any):
     """Background handler that emits response.created then raises — produces status=failed.
 
@@ -73,7 +68,6 @@ def _throwing_after_created_bg_handler(request: Any, context: Any, cancellation_
     return _events()
 
 
-@response_handler
 def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that emits response.created then blocks until cancelled (Phase 3)."""
     async def _events():
@@ -84,7 +78,6 @@ def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any
     return _events()
 
 
-@response_handler
 def _incomplete_bg_handler(request: Any, context: Any, cancellation_signal: Any):
     """Background handler that emits an incomplete terminal event."""
     async def _events():
@@ -226,7 +219,6 @@ def test_delete__cancel_returns_404_after_deletion() -> None:
 def _make_blocking_sync_response_handler(started_gate: EventGate, release_gate: threading.Event):
     """Factory for a handler that holds a sync request in-flight for concurrent operation tests."""
 
-    @response_handler
     def _handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             started_gate.signal(True)

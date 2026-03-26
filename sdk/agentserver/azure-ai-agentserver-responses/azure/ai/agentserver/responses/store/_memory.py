@@ -274,8 +274,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
 
         :param execution: The execution state to store.
         :type execution: ~azure.ai.agentserver.responses.models.runtime.ResponseExecution
-        :param ttl_seconds: Optional time-to-live in seconds for automatic expiration.
-        :type ttl_seconds: int | None
+        :keyword int or None ttl_seconds: Optional time-to-live in seconds for automatic expiration.
         :rtype: None
         :raises ValueError: If an entry with the same response ID already exists.
         """
@@ -319,8 +318,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :type response_id: str
         :param response: The response snapshot to associate with the execution.
         :type response: ~azure.ai.agentserver.responses.models._generated.Response
-        :param ttl_seconds: Optional time-to-live in seconds to refresh expiration.
-        :type ttl_seconds: int | None
+        :keyword int or None ttl_seconds: Optional time-to-live in seconds to refresh expiration.
         :returns: ``True`` if the entry was found and updated, ``False`` otherwise.
         :rtype: bool
         """
@@ -347,8 +345,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :type response_id: str
         :param next_status: The target status to transition to.
         :type next_status: ~azure.ai.agentserver.responses.models.runtime.ResponseStatus
-        :param ttl_seconds: Optional time-to-live in seconds to refresh expiration.
-        :type ttl_seconds: int | None
+        :keyword int or None ttl_seconds: Optional time-to-live in seconds to refresh expiration.
         :returns: ``True`` if the entry was found and transitioned, ``False`` otherwise.
         :rtype: bool
         """
@@ -367,8 +364,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
 
         :param response_id: The unique identifier of the response to cancel.
         :type response_id: str
-        :param ttl_seconds: Optional time-to-live in seconds to refresh expiration.
-        :type ttl_seconds: int | None
+        :keyword int or None ttl_seconds: Optional time-to-live in seconds to refresh expiration.
         :returns: ``True`` if the entry was found and cancel was applied, ``False`` otherwise.
         :rtype: bool
         :raises ValueError: If the execution is already terminal in a non-cancelled state.
@@ -424,8 +420,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :type response_id: str
         :param event: The stream event record to append.
         :type event: ~azure.ai.agentserver.responses.models.runtime.StreamEventRecord
-        :param ttl_seconds: Optional time-to-live in seconds to refresh expiration.
-        :type ttl_seconds: int | None
+        :keyword int or None ttl_seconds: Optional time-to-live in seconds to refresh expiration.
         :returns: ``True`` if the entry was found and the event was appended, ``False`` otherwise.
         :rtype: bool
         """
@@ -506,8 +501,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
     async def purge_expired(self, *, now: datetime | None = None) -> int:
         """Remove expired entries and return count.
 
-        :param now: Optional override for the current time (useful for testing).
-        :type now: ~datetime.datetime | None
+        :keyword ~datetime.datetime or None now: Optional override for the current time (useful for testing).
         :returns: The number of expired entries that were removed.
         :rtype: int
         """
@@ -545,8 +539,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
     def _purge_expired_unlocked(self, *, now: datetime | None = None) -> int:
         """Remove expired entries without acquiring the lock.
 
-        :param now: Optional override for the current time (useful for testing).
-        :type now: ~datetime.datetime | None
+        :keyword ~datetime.datetime or None now: Optional override for the current time (useful for testing).
         :returns: The number of expired entries that were removed.
         :rtype: int
         """
