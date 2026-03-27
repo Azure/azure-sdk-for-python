@@ -1,5 +1,9 @@
 # Release History
 
+## 14.2.0b1 (2026-03-27)
+
+skip changelog generation
+
 ## 14.2.0 (2026-03-27)
 
 skip changelog generation
