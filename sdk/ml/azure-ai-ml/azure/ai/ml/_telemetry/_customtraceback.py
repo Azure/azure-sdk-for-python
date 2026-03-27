@@ -86,7 +86,10 @@ class _CustomTracebackException(traceback.TracebackException):
         self.exc_type = exc_type
         # Capture now to permit freeing resources: only complication is in the
         # unofficial API _format_final_exc_line
-        self._str = traceback._some_str(exc_value)
+        try:
+            self._str = str(exc_value)
+        except Exception:  # pylint: disable=broad-except
+            self._str = "<unprintable exception>"
         if exc_type and issubclass(exc_type, SyntaxError):
             # Handle SyntaxError's specially
             self.filename = exc_value.filename

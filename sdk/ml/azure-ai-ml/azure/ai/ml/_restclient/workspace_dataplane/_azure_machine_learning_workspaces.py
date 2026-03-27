@@ -24,6 +24,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.rest import HttpRequest, HttpResponse
 
+
 class AzureMachineLearningWorkspaces(object):
     """AzureMachineLearningWorkspaces.
 
@@ -50,7 +51,9 @@ class AzureMachineLearningWorkspaces(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        self._config = AzureMachineLearningWorkspacesConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = AzureMachineLearningWorkspacesConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -58,7 +61,6 @@ class AzureMachineLearningWorkspaces(object):
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.workspaces = WorkspacesOperations(self._client, self._config, self._serialize, self._deserialize)
-
 
     def _send_request(
         self,
