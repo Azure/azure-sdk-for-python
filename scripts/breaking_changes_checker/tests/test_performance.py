@@ -16,7 +16,6 @@ These tests demonstrate and verify the performance improvements made to:
 """
 
 import time
-import pytest
 from breaking_changes_checker.breaking_changes_tracker import BreakingChangesTracker, BreakingChangeType
 from breaking_changes_checker.changelog_tracker import ChangelogTracker
 
