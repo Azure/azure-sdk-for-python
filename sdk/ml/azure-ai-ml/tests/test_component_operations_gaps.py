@@ -2,7 +2,6 @@ import types
 from typing import Callable
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.entities import Component
@@ -10,9 +9,8 @@ from azure.ai.ml.exceptions import ValidationException
 
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestComponentOperationsGaps(AzureRecordedTestCase):
-    def test_refine_component_rejects_variable_inputs(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+class TestComponentOperationsGaps:
+    def test_refine_component_rejects_variable_inputs(self, client: MLClient) -> None:
         # function with variable positional args should be rejected by _refine_component via create_or_update
         def func_with_var_args(*args):
             return None
@@ -21,7 +19,7 @@ class TestComponentOperationsGaps(AzureRecordedTestCase):
             # trigger validation through public API as required by integration test mode
             client.components.create_or_update(func_with_var_args)
 
-    def test_refine_component_requires_type_annotations_for_parameters(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+    def test_refine_component_requires_type_annotations_for_parameters(self, client: MLClient) -> None:
         # function with a parameter lacking annotation and no default should be rejected
         def func_unknown_type(param):
             return None
@@ -29,7 +27,7 @@ class TestComponentOperationsGaps(AzureRecordedTestCase):
         with pytest.raises(ValidationException):
             client.components.create_or_update(func_unknown_type)
 
-    def test_refine_component_rejects_non_dsl_non_mldesigner_function(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+    def test_refine_component_rejects_non_dsl_non_mldesigner_function(self, client: MLClient) -> None:
         # a plain function that is neither a dsl nor mldesigner component should be rejected
         def plain_func() -> None:
             return None
@@ -39,9 +37,8 @@ class TestComponentOperationsGaps(AzureRecordedTestCase):
 
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestComponentOperationsRefine(AzureRecordedTestCase):
-    def test_refine_component_raises_on_variable_args(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+class TestComponentOperationsRefine:
+    def test_refine_component_raises_on_variable_args(self, client: MLClient) -> None:
         # Define a function with variable positional and keyword args which should trigger the VAR_POSITIONAL/VAR_KEYWORD check
         def _func_with_varargs(a: int, *args, **kwargs):
             return None
@@ -51,7 +48,7 @@ class TestComponentOperationsRefine(AzureRecordedTestCase):
             client.components.create_or_update(_func_with_varargs)
         assert "must be a dsl or mldesigner" in str(exc.value)
 
-    def test_refine_component_raises_on_unknown_type_keys(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+    def test_refine_component_raises_on_unknown_type_keys(self, client: MLClient) -> None:
         # Define a DSL-like function by setting attributes to mimic a dsl function but leave one parameter without annotation
         def _func_missing_annotation(a, b: int = 1):
             return None
@@ -77,7 +74,7 @@ class TestComponentOperationsRefine(AzureRecordedTestCase):
             client.components.create_or_update(_func_missing_annotation)
         assert "Unknown type of parameter" in str(exc.value)
 
-    def test_refine_component_rejects_non_dsl_and_non_mldesigner(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+    def test_refine_component_rejects_non_dsl_and_non_mldesigner(self, client: MLClient) -> None:
         # A regular function without dsl or mldesigner markers should be rejected
         def _regular_function(x: int) -> None:
             return None
@@ -88,8 +85,7 @@ class TestComponentOperationsRefine(AzureRecordedTestCase):
 
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestComponentOperationsValidation(AzureRecordedTestCase):
+class TestComponentOperationsValidation:
     def test_component_function_with_variable_args_raises(self, client: MLClient) -> None:
         # Function with *args and **kwargs should be rejected by _refine_component
         def fn_with_varargs(a, *args, **kwargs):
@@ -135,9 +131,8 @@ class TestComponentOperationsValidation(AzureRecordedTestCase):
 
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestComponentOperationsValidationErrors(AzureRecordedTestCase):
-    def test_create_or_update_with_plain_function_raises_validation(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+class TestComponentOperationsValidationErrors:
+    def test_create_or_update_with_plain_function_raises_validation(self, client: MLClient) -> None:
         """Ensure passing a plain function (not DSL/mldesigner) into create_or_update raises ValidationException.
 
         Covers the branch where _refine_component raises because the function is neither a dsl nor mldesigner component.
@@ -155,9 +150,8 @@ class TestComponentOperationsValidationErrors(AzureRecordedTestCase):
 
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestComponentOperationsGeneratedBatch1(AzureRecordedTestCase):
-    def test_create_or_update_with_untyped_function_raises_validation(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+class TestComponentOperationsGeneratedBatch1:
+    def test_create_or_update_with_untyped_function_raises_validation(self, client: MLClient) -> None:
         """
         Covers branch where input to create_or_update is a plain python function that is neither
         a dsl pipeline function nor an mldesigner component function, which should raise
@@ -174,7 +168,7 @@ class TestComponentOperationsGeneratedBatch1(AzureRecordedTestCase):
         # Assert the exact error message fragment expected from _refine_component
         assert "Function must be a dsl or mldesigner component function" in str(excinfo.value)
 
-    def test_validate_pipeline_function_with_varargs_raises(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+    def test_validate_pipeline_function_with_varargs_raises(self, client: MLClient) -> None:
         """
         Covers parameter type checking in _refine_component -> check_parameter_type branch where
         a function with *args/**kwargs should raise ValidationException when passed to validate().
@@ -190,7 +184,7 @@ class TestComponentOperationsGeneratedBatch1(AzureRecordedTestCase):
         class DummyBuilder:
             non_pipeline_parameter_names = []
             def build(self, user_provided_kwargs=None):
-                return Component(name=randstr("component_name"), version="1")
+                return Component(name="test_dummy", version="1")
 
         setattr(pipeline_like_with_varargs, "_pipeline_builder", DummyBuilder())
         # leave _job_settings empty

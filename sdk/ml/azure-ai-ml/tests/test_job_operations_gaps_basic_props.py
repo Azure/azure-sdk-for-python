@@ -17,10 +17,9 @@ from azure.ai.ml.constants._common import LOCAL_COMPUTE_TARGET, COMMON_RUNTIME_E
 
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestJobOperationsBasicProperties(AzureRecordedTestCase):
+class TestJobOperationsBasicProperties:
     @pytest.mark.e2etest
-    def test_lazy_dataplane_and_operations_properties_accessible(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_lazy_dataplane_and_operations_properties_accessible(self, client: MLClient) -> None:
         """Access a variety of JobOperations properties that lazily create clients/operations and ensure
         they return operation objects without constructing internals directly.
         This exercises the property access branches for _component_operations, _compute_operations,
@@ -51,7 +50,7 @@ class TestJobOperationsBasicProperties(AzureRecordedTestCase):
         assert isinstance(model_dp_ops, ModelDataplaneOperations)
 
     @pytest.mark.e2etest
-    def test_api_url_property_and_datastore_operations_access(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_api_url_property_and_datastore_operations_access(self, client: MLClient) -> None:
         """Access _api_url and _datastore_operations to exercise workspace discovery and datastore lookup branches.
         The test asserts that properties are retrievable and of expected basic shapes.
         """
@@ -69,9 +68,8 @@ class TestJobOperationsBasicProperties(AzureRecordedTestCase):
 
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestJobOperationsGaps(AzureRecordedTestCase):
-    def test_get_job_compute_id_resolver_applied(self, client: MLClient, randstr: Callable[[], str]) -> None:
+class TestJobOperationsGaps:
+    def test_get_job_compute_id_resolver_applied(self, client: MLClient) -> None:
         # Create a minimal object with a compute attribute to exercise _get_job_compute_id
         class SimpleJob:
             def __init__(self):
@@ -117,10 +115,10 @@ class TestJobOperationsGaps(AzureRecordedTestCase):
 class TestJobOperationsGaps_Additional(AzureRecordedTestCase):
     @pytest.mark.e2etest
     @pytest.mark.skipif(condition=not is_live(), reason="Requires live workspace to validate behavior")
-    def test_append_tid_to_studio_url_no_services(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_append_tid_to_studio_url_no_services(self, client: MLClient) -> None:
         """Covers branch where job.services is None and _append_tid_to_studio_url is a no-op."""
         # Create a minimal job object using a lightweight Job-like object. We avoid creating real services on the job.
-        job_name = f"e2etest_{randstr('job')}_notid"
+        job_name = f"e2etest_test_dummy_notid"
 
         class MinimalJob:
             def __init__(self, name: str):
@@ -135,12 +133,12 @@ class TestJobOperationsGaps_Additional(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     @pytest.mark.skipif(condition=not is_live(), reason="Requires live workspace to validate behavior")
-    def test_get_job_compute_id_resolver_called(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_get_job_compute_id_resolver_called(self, client: MLClient) -> None:
         """Covers _get_job_compute_id invocation path by calling it with a simple Job-like object and resolver.
         This test ensures resolver is invoked and sets job.compute accordingly when resolver returns a value.
         """
         # Construct a Job-like object and a resolver callable that returns a deterministic value
-        job_name = f"e2etest_{randstr('job')}_compute"
+        job_name = f"e2etest_test_dummy_compute"
 
         class SimpleJob:
             def __init__(self):
@@ -160,7 +158,7 @@ class TestJobOperationsGaps_Additional(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     @pytest.mark.skipif(condition=not is_live(), reason="Requires live workspace to validate behavior")
-    def test_set_headers_with_user_aml_token_validation_error_path(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_set_headers_with_user_aml_token_validation_error_path(self, client: MLClient) -> None:
         """Attempts to trigger the validation path in _set_headers_with_user_aml_token by calling create_or_update
         for a simple job that will cause the header-setting code path to be exercised when the service call is attempted.
         The test asserts that either the operation completes or raises a ValidationException originating from
@@ -168,7 +166,7 @@ class TestJobOperationsGaps_Additional(AzureRecordedTestCase):
         from azure.ai.ml.entities import Command
         from azure.ai.ml.exceptions import ValidationException, MlException
 
-        job_name = f"e2etest_{randstr('job')}_token"
+        job_name = f"e2etest_test_dummy_token"
         # Construct a trivial Command node which can be submitted via client.jobs.create_or_update
         # NOTE: component is a required keyword-only argument for Command; provide a minimal placeholder value.
         cmd = Command(name=job_name, command="echo hello", compute="cpu-cluster", component="component-placeholder")
@@ -187,14 +185,14 @@ class TestJobOperationsGaps_Additional(AzureRecordedTestCase):
         condition=not is_live(),
         reason="Live-only: integration test against workspace needed",
     )
-    def test_create_or_update_local_compute_triggers_local_flag_or_validation(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_create_or_update_local_compute_triggers_local_flag_or_validation(self, client: MLClient) -> None:
         """
         Covers branches in create_or_update where job.compute == LOCAL_COMPUTE_TARGET
         which sets the COMMON_RUNTIME_ENV_VAR in job.environment_variables and then
         proceeds through validation and submission code paths.
         """
         # Create a simple Command job via builder with local compute to hit the branch
-        name = f"e2etest_{randstr('job')}_local"
+        name = f"e2etest_test_dummy_local"
         cmd = Command(name=name, command="echo hello", compute=LOCAL_COMPUTE_TARGET, component="component-placeholder")
 
         # The call is integration against service; depending on environment this may raise
@@ -212,7 +210,7 @@ class TestJobOperationsGaps_Additional(AzureRecordedTestCase):
         condition=not is_live(),
         reason="Live-only: integration test that exercises credential-based tenant-id append behavior",
     )
-    def test_append_tid_to_studio_url_no_services_is_noop(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_append_tid_to_studio_url_no_services_is_noop(self, client: MLClient) -> None:
         """
         Exercises _append_tid_to_studio_url behavior when job.services is None (no-op path).
         This triggers the try/except branch where services missing prevents modification.
@@ -223,7 +221,7 @@ class TestJobOperationsGaps_Additional(AzureRecordedTestCase):
                 self.name = name
                 self.services = None
 
-        j = MinimalJobEntity(f"e2etest_{randstr('job')}_nostudio")
+        j = MinimalJobEntity(f"e2etest_test_dummy_nostudio")
 
         # Call internal method to append tid. Should not raise and should leave job unchanged.
         client.jobs._append_tid_to_studio_url(j)

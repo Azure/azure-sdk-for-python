@@ -11,8 +11,7 @@ from azure.core.exceptions import HttpResponseError
 
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestEnvironmentOperationsGaps(AzureRecordedTestCase):
+class TestEnvironmentOperationsGaps:
     def test_get_with_both_version_and_label_raises(self, client: MLClient) -> None:
         name = "some-env-name"
         # Pass both version and label to trigger validation branch that forbids both
@@ -57,8 +56,7 @@ class TestEnvironmentOperationsGapsAdditional(AzureRecordedTestCase):
 
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestEnvironmentOperationsGapsGenerated(AzureRecordedTestCase):
+class TestEnvironmentOperationsGapsGenerated:
     def test_preprocess_environment_name_returns_same_when_not_arm(self) -> None:
         name = "simple-env-name"
         processed = _preprocess_environment_name(name)

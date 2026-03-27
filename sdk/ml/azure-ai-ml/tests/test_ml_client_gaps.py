@@ -3,15 +3,13 @@ from pathlib import Path
 from typing import Callable
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.exceptions import ValidationException
 
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestMLClientGaps(AzureRecordedTestCase):
+class TestMLClientGaps:
     def test_create_or_update_with_unsupported_entity_raises_type_error(self, client: MLClient) -> None:
         # Pass an unsupported entity type (a plain dict) to client.create_or_update to trigger singledispatch TypeError
         unsupported_entity = {"not": "a valid entity"}
@@ -48,7 +46,7 @@ class TestMLClientGaps(AzureRecordedTestCase):
         # repr should include the subscription id string
         assert str(client.subscription_id) in repr(cli_client)
 
-    def test_create_or_update_with_unsupported_type_raises_type_error(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_create_or_update_with_unsupported_type_raises_type_error(self, client: MLClient) -> None:
         """Trigger the singledispatch default branch for _create_or_update by passing an unsupported type.
 
         Covered marker lines: 1099, 1109, 1118
@@ -58,7 +56,7 @@ class TestMLClientGaps(AzureRecordedTestCase):
             client.create_or_update({"not": "an entity"})
         assert "Please refer to create_or_update docstring for valid input types." in str(excinfo.value)
 
-    def test_begin_create_or_update_with_unsupported_type_raises_type_error(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_begin_create_or_update_with_unsupported_type_raises_type_error(self, client: MLClient) -> None:
         """Trigger the singledispatch default branch for _begin_create_or_update by passing an unsupported type.
 
         Covered marker lines: 1164, 1174, 1194
@@ -68,7 +66,7 @@ class TestMLClientGaps(AzureRecordedTestCase):
             client.begin_create_or_update({"not": "an entity"})
         assert "Please refer to begin_create_or_update docstring for valid input types." in str(excinfo.value)
 
-    def test_ml_client_cli_returns_client_and_repr_includes_subscription(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_ml_client_cli_returns_client_and_repr_includes_subscription(self, client: MLClient) -> None:
         """Verify MLClient._ml_client_cli constructs an MLClient and its repr contains the subscription id.
 
         Covered marker lines: 981, 999, 1232, 1242
@@ -84,8 +82,7 @@ class TestMLClientGaps(AzureRecordedTestCase):
 
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestMLClientFromConfig(AzureRecordedTestCase):
+class TestMLClientFromConfig:
     def test_from_config_missing_keys_raises_validation(self, client: MLClient, tmp_path: Path) -> None:
         # Create a config file missing required keys (no subscription_id/resource_group/workspace_name and no Scope)
         cfg = {"some_key": "some_value"}

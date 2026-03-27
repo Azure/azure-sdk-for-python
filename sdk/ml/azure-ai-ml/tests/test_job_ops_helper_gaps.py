@@ -3,7 +3,6 @@ import re
 from typing import Callable
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.constants._common import GitProperties
@@ -20,14 +19,13 @@ from azure.ai.ml.operations._job_ops_helper import (
 
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestJobOpsHelperGaps(AzureRecordedTestCase):
-    def test_wait_before_polling_negative_raises(self, client: MLClient, randstr: Callable[[], str]) -> None:
+class TestJobOpsHelperGaps:
+    def test_wait_before_polling_negative_raises(self) -> None:
         # Ensure negative seconds raises the JobException as implemented
         with pytest.raises(JobException):
             _wait_before_polling(-1)
 
-    def test_get_sorted_filtered_logs_common_and_legacy(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_get_sorted_filtered_logs_common_and_legacy(self) -> None:
         # Create a set of logs that match the common runtime stream pattern and legacy patterns
         # Common runtime pattern examples (streamable)
         logs = [
@@ -57,7 +55,7 @@ class TestJobOpsHelperGaps(AzureRecordedTestCase):
         # Accept either the sorted legacy logs or an empty result to account for environment-specific pattern matching.
         assert legacy_filtered == sorted(legacy_logs) or legacy_filtered == []
 
-    def test_get_git_properties_and_has_pat_token_env_overrides(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_get_git_properties_and_has_pat_token_env_overrides(self) -> None:
         # Set environment variables to override git detection
         os.environ["AZURE_ML_GIT_URI"] = "https://mypattoken@dev.azure.com/my/repo"
         os.environ["AZURE_ML_GIT_BRANCH"] = "feature/branch"
@@ -86,7 +84,7 @@ class TestJobOpsHelperGaps(AzureRecordedTestCase):
             except KeyError:
                 pass
 
-    def test_has_pat_token_false_on_none_and_non_pat(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_has_pat_token_false_on_none_and_non_pat(self) -> None:
         assert has_pat_token(None) is False
         assert has_pat_token("https://dev.azure.com/withoutpat/repo") is False
 
@@ -95,8 +93,7 @@ class TestJobOpsHelperGaps(AzureRecordedTestCase):
 
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestJobOpsHelperGapsGenerated(AzureRecordedTestCase):
+class TestJobOpsHelperGapsGenerated:
     def test_wait_before_polling_raises_on_negative(self) -> None:
         """Covers validation branch that raises JobException when current_seconds < 0."""
         with pytest.raises(JobException):
@@ -225,9 +222,8 @@ class TestJobOpsHelperGapsGenerated(AzureRecordedTestCase):
 
 # Merged additional generated tests from batch 1, class renamed to avoid duplicate class name
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestJobOpsHelperGapsExtra(AzureRecordedTestCase):
-    def test_get_git_properties_respects_env_overrides_with_whitespace_stripping(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+class TestJobOpsHelperGapsExtra:
+    def test_get_git_properties_respects_env_overrides_with_whitespace_stripping(self) -> None:
         # Preserve existing env and set overrides to validate parsing and cleaning
         env_keys = [
             GitProperties.ENV_REPOSITORY_URI,
@@ -265,7 +261,7 @@ class TestJobOpsHelperGapsExtra(AzureRecordedTestCase):
                 else:
                     os.environ[k] = v
 
-    def test_has_pat_token_various_urls(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+    def test_has_pat_token_various_urls(self) -> None:
         # None should return False
         assert has_pat_token(None) is False
 
