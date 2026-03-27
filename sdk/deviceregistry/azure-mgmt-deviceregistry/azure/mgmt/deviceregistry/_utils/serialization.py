@@ -1779,7 +1779,9 @@ class Deserializer:
                 return None
 
         if data_type == "bool":
-            if attr in [True, False, 1, 0]:
+            if isinstance(attr, bool):
+                return attr
+            if attr in [1, 0]:
                 return bool(attr)
             if isinstance(attr, str):
                 if attr.lower() in ["true", "1"]:
