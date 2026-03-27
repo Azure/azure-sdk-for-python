@@ -163,12 +163,11 @@ mlflow.log_metric("accuracy", mean_acc)
 print(f"AUC: {mean_auc:.4f} +/- {std_auc:.4f}")
 print(f"Accuracy: {mean_acc:.4f}")
 
-# Fit final model and save as artifact
+# Fit final model and save to outputs (Azure ML auto-captures this folder)
 pipeline.fit(X, y)
 os.makedirs("outputs", exist_ok=True)
-model_path = "outputs/model.joblib"
-joblib.dump(pipeline, model_path)
-mlflow.log_artifact(model_path)
+joblib.dump(pipeline, "outputs/model.joblib")
+print("Model saved to outputs/model.joblib")
 """
                     )
 
