@@ -6,7 +6,7 @@ from typing import Any, List, Dict, Set
 
 from github.Repository import Repository
 
-from common import IssueProcess, Common, get_origin_link_and_tag, IssuePackage
+from common import IssueProcess, Common, IssuePackage
 from utils import AUTO_CLOSE_LABEL, get_last_released_date, record_release
 
 # assignee dict which will be assigned to handle issues
