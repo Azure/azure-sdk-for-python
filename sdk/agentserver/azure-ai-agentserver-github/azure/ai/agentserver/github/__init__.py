@@ -17,9 +17,9 @@ Usage::
 """
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-from ._version import VERSION
 from ._copilot_adapter import CopilotAdapter, GitHubCopilotAdapter
 from ._tool_acl import ToolAcl
+from ._version import VERSION
 
 __all__ = [
     "CopilotAdapter",

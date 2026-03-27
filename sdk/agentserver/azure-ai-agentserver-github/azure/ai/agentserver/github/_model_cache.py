@@ -8,7 +8,7 @@ import json
 import logging
 import time
 from pathlib import Path
-from typing import Optional, List, Dict
+from typing import Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -90,7 +90,8 @@ class ModelCache:
 
         # Check if cache is expired
         if current_time - cached_time > max_age_seconds:
-            logger.info(f"Model cache expired for {resource_url} (age: {int((current_time - cached_time) / 3600)} hours)")
+            age_hours = int((current_time - cached_time) / 3600)
+            logger.info(f"Model cache expired for {resource_url} (age: {age_hours}h)")
             return None
 
         selected_model = entry.get("selected_model")

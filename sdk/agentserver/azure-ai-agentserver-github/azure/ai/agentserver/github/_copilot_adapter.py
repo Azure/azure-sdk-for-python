@@ -301,7 +301,7 @@ class CopilotAdapter(FoundryCBAgent):
 
         if session is None:
             logger.info(
-                f"Creating new Copilot session"
+                "Creating new Copilot session"
                 + (f" for conversation {conversation_id!r}" if conversation_id else "")
             )
             # Filter out internal flags (starting with _) before passing to SDK
@@ -321,13 +321,21 @@ class CopilotAdapter(FoundryCBAgent):
                     if event.type == SessionEventType.ASSISTANT_MESSAGE and event.data and event.data.content:
                         text = event.data.content
                     elif event.type == SessionEventType.SESSION_ERROR and event.data:
-                        error_msg = getattr(event.data, "message", None) or getattr(event.data, "content", None) or repr(event.data)
+                        error_msg = (
+                            getattr(event.data, "message", None)
+                            or getattr(event.data, "content", None)
+                            or repr(event.data)
+                        )
                         logger.error(f"Copilot session error: {error_msg}")
                         if not text:
                             text = f"(Agent error: {error_msg})"
                     elif event.type == SessionEventType.MCP_OAUTH_REQUIRED and event.data:
                         consent_url = getattr(event.data, "url", "") or ""
-                        server_label = getattr(event.data, "server_name", "") or getattr(event.data, "name", "") or "unknown"
+                        server_label = (
+                            getattr(event.data, "server_name", "")
+                            or getattr(event.data, "name", "")
+                            or "unknown"
+                        )
                         logger.info(f"MCP OAuth consent required: server={server_label} url={consent_url}")
                         oauth_items.append({
                             "type": "oauth_consent_request",
@@ -425,7 +433,6 @@ class CopilotAdapter(FoundryCBAgent):
         # 3. Stream text from Copilot SDK
         full_text = ""
         oauth_consent_items = []  # Collect MCP OAuth consent requests
-        output_index = 0  # Track output item index for additional items
         try:
             async for event in _iter_copilot_events(session, prompt, attachments=converted_attachments.attachments):
                 if event.type == SessionEventType.ASSISTANT_MESSAGE_DELTA and event.data and event.data.content:
@@ -453,7 +460,11 @@ class CopilotAdapter(FoundryCBAgent):
                 elif event.type == SessionEventType.MCP_OAUTH_REQUIRED and event.data:
                     # MCP server needs OAuth consent — collect for output
                     consent_url = getattr(event.data, "url", "") or ""
-                    server_label = getattr(event.data, "server_name", "") or getattr(event.data, "name", "") or "unknown"
+                    server_label = (
+                        getattr(event.data, "server_name", "")
+                        or getattr(event.data, "name", "")
+                        or "unknown"
+                    )
                     logger.info(f"MCP OAuth consent required: server={server_label} url={consent_url}")
                     oauth_consent_items.append({
                         "type": "oauth_consent_request",
@@ -623,7 +634,6 @@ class GitHubCopilotAdapter(CopilotAdapter):
 
             # Need a token for discovery
             if self._credential is not None:
-                from azure.identity import DefaultAzureCredential
                 token = self._credential.get_token("https://management.azure.com/.default").token
                 deployments = await discover_foundry_deployments(
                     resource_url=resource_url,

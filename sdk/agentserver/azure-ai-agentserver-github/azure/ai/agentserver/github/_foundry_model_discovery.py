@@ -5,7 +5,6 @@ Fetches available model deployments from Azure AI Foundry and allows users to se
 
 import json
 import logging
-import os
 from typing import List, Optional
 
 logger = logging.getLogger(__name__)
@@ -14,7 +13,10 @@ logger = logging.getLogger(__name__)
 class FoundryDeployment:
     """Represents an Azure AI Foundry model deployment."""
 
-    def __init__(self, name: str, model_name: str, model_version: str, model_format: str = "", status: str = "Succeeded", token_rate_limit: int = 0):
+    def __init__(
+        self, name: str, model_name: str, model_version: str,
+        model_format: str = "", status: str = "Succeeded", token_rate_limit: int = 0,
+    ):
         self.name = name
         self.model_name = model_name
         self.model_version = model_version
@@ -23,7 +25,10 @@ class FoundryDeployment:
         self.token_rate_limit = token_rate_limit  # Tokens per minute
 
     def __repr__(self):
-        return f"{self.name} ({self.model_name} {self.model_version} - {self.model_format}, {self.token_rate_limit} TPM)"
+        return (
+            f"{self.name} ({self.model_name} {self.model_version}"
+            f" - {self.model_format}, {self.token_rate_limit} TPM)"
+        )
 
 
 async def discover_foundry_deployments(
@@ -107,7 +112,11 @@ async def _discover_via_management_api(resource_name: str, management_token: str
             resource_graph_url = f"{base_url}/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01"
 
             query_body = {
-                "query": f"Resources | where type == 'microsoft.cognitiveservices/accounts' and name == '{resource_name}' | project id, subscriptionId, resourceGroup, location"
+                "query": (
+                    f"Resources | where type == 'microsoft.cognitiveservices/accounts'"
+                    f" and name == '{resource_name}'"
+                    f" | project id, subscriptionId, resourceGroup, location"
+                )
             }
 
             async with session.post(resource_graph_url, headers=headers, json=query_body) as response:
@@ -131,7 +140,9 @@ async def _discover_via_management_api(resource_name: str, management_token: str
                 location = resource_info.get("location")
 
                 logger.info(f"Found resource via Resource Graph: {resource_id}")
-                logger.info(f"  Subscription: {subscription_id}, Resource Group: {resource_group}, Location: {location}")
+                logger.info(
+                    f"  Subscription: {subscription_id}, RG: {resource_group}, Location: {location}"
+                )
 
                 # Now fetch deployments for this resource
                 deployments_url = f"{base_url}{resource_id}/deployments?api-version={api_version}"
@@ -164,10 +175,8 @@ async def _discover_via_management_api(resource_name: str, management_token: str
 
                         # Check for chat completion capability
                         is_chat = (
-                            capabilities.get("chatCompletion") == "true" or
-                            capabilities.get("chatCompletion") == True or
-                            capabilities.get("chat_completion") == "true" or
-                            capabilities.get("chat_completion") == True
+                            capabilities.get("chatCompletion") in ("true", True)
+                            or capabilities.get("chat_completion") in ("true", True)
                         )
 
                         if not is_chat:
@@ -212,7 +221,9 @@ async def _discover_via_management_api(resource_name: str, management_token: str
                         )
 
                         logger.info(f"Discovered {len(deployments)} chat deployment(s) via Management API")
-                        logger.info(f"Selected model (highest rate limit): {deployments[0].name} - {deployments[0].token_rate_limit} TPM")
+                        logger.info(
+                            f"Selected model: {deployments[0].name} ({deployments[0].token_rate_limit} TPM)"
+                        )
                         return deployments
                     else:
                         logger.warning("No chat-capable deployments found")
@@ -235,8 +246,9 @@ async def _discover_via_openai_api(resource_url: str, access_token: str) -> List
     """
     logger.info(f"Starting OpenAI API discovery for: {resource_url}")
     try:
-        import aiohttp
         from urllib.parse import urlparse
+
+        import aiohttp
 
         # Try multiple endpoint formats and API versions
         parsed = urlparse(resource_url)
@@ -307,10 +319,8 @@ async def _discover_via_openai_api(resource_url: str, access_token: str) -> List
                                 capabilities = item.get("capabilities", {})
 
                                 is_chat = (
-                                    capabilities.get("chatCompletion") == "true" or
-                                    capabilities.get("chatCompletion") == True or
-                                    capabilities.get("chat_completion") == "true" or
-                                    capabilities.get("chat_completion") == True
+                                    capabilities.get("chatCompletion") in ("true", True)
+                                    or capabilities.get("chat_completion") in ("true", True)
                                 )
 
                                 if not is_chat:
@@ -354,16 +364,22 @@ async def _discover_via_openai_api(resource_url: str, access_token: str) -> List
                                 )
 
                                 logger.info(f"Discovered {len(deployments)} chat deployments via OpenAI API")
-                                logger.info(f"Selected model (highest rate limit): {deployments[0].name} - {deployments[0].token_rate_limit} TPM")
+                                logger.info(
+                                    f"Selected model: {deployments[0].name}"
+                                    f" ({deployments[0].token_rate_limit} TPM)"
+                                )
                                 return deployments
                             else:
-                                logger.warning(f"No chat-capable deployments found in response")
+                                logger.warning("No chat-capable deployments found in response")
                         else:
                             # Only log non-404 errors
                             if response.status != 404:
                                 logger.debug(f"Status {response.status}: {response_text[:100]}")
 
-            logger.warning(f"All OpenAI API endpoints failed. Tried {len(url_formats)} URLs with {len(api_versions)} API versions each")
+            logger.warning(
+                f"All OpenAI API endpoints failed. "
+                f"Tried {len(url_formats)} URLs x {len(api_versions)} API versions"
+            )
             return []
 
     except Exception as e:
