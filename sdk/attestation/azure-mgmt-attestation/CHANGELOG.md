@@ -7,7 +7,6 @@
   - Model `AttestationManagementClient` added parameter `cloud_setting` in method `__init__`
   - Client `AttestationManagementClient` added method `send_request`
   - Client `AttestationManagementClient` added operation group `private_link_resources`
-  - Model `AttestationProvider` added property `properties`
   - Model `AttestationServiceCreationSpecificParams` added property `public_network_access`
   - Model `AttestationServiceCreationSpecificParams` added property `tpm_attestation_authentication`
   - Model `AttestationServicePatchParams` added property `properties`
@@ -26,15 +25,13 @@
   - Added model `ServiceSpecification`
   - Added model `StatusResult`
   - Added enum `TpmAttestationAuthenticationType`
-  - Added model `PrivateLinkResourcesOperations`
+  - Added operation group `PrivateLinkResourcesOperations`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Method `Operations.list` changed from `asynchronous` to `synchronous`
-  - Model `AttestationProvider` deleted or renamed its instance variable `trust_model`
-  - Model `AttestationProvider` deleted or renamed its instance variable `status`
-  - Model `AttestationProvider` deleted or renamed its instance variable `attest_uri`
-  - Model `AttestationProvider` deleted or renamed its instance variable `private_endpoint_connections`
+  - Model `AttestationProvider` moved instance variable `trust_model`, `status`, `attest_uri` and `private_endpoint_connections` under property `properties`
   - Model `JSONWebKeySet` deleted or renamed its instance variable `keys`
   - Deleted or renamed model `OperationList`
 
