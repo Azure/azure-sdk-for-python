@@ -17,41 +17,14 @@ from .._utils import utils as _generated_utils
 # etags in double quotes and existing recordings expect unquoted values.
 _generated_utils.quote_etag = lambda etag: etag
 
-from ..models import (  # noqa: E402
-    AppendPositionAccessConditions,
-    BlobHTTPHeaders,
-    BlobModifiedAccessConditions,
-    ContainerCpkScopeInfo,
-    CpkInfo,
-    CpkScopeInfo,
-    LeaseAccessConditions,
-    ModifiedAccessConditions,
-    SequenceNumberAccessConditions,
-    SourceCpkInfo,
-    SourceModifiedAccessConditions,
-)
-
-
-# ---------------------------------------------------------------------------
 # Parameter group extraction helpers
-# ---------------------------------------------------------------------------
-# The old autorest-generated API accepted "parameter group" objects like
-# ``modified_access_conditions=ModifiedAccessConditions(...)``.  The new
-# TypeSpec-generated operations take flat keyword arguments.  These helpers
-# bridge the gap by popping the group objects and flattening their fields.
-# ---------------------------------------------------------------------------
-
-
-def _set_if_not_none(kwargs: dict[str, Any], key: str, value: Any) -> None:
-    """Set *key* in *kwargs* only if *value* is not None and *key* is absent."""
-    if value is not None and kwargs.get(key) is None:
-        kwargs[key] = value
-
 
 def _flatten_group(group: object, fields: list[str], kwargs: dict[str, Any]) -> None:
     """Copy each *field* from *group* into *kwargs* (if non-None and not already set)."""
     for field in fields:
-        _set_if_not_none(kwargs, field, getattr(group, field, None))
+        value = getattr(group, field, None)
+        if value is not None:
+            kwargs.setdefault(field, value)
 
 
 def _convert_to_etag_match_condition(
@@ -80,9 +53,8 @@ def _convert_to_etag_match_condition(
             kwargs["match_condition"] = MatchConditions.IfModified
 
 
-# Maps parameter-group kwarg name → (model class, field names, special handler or None)
+# (kwarg_name, fields_to_flatten, needs_etag_conversion)
 _PARAMETER_GROUPS: list[tuple[str, list[str], bool]] = [
-    # (kwarg_name, fields_to_flatten, needs_etag_conversion)
     (
         "blob_http_headers",
         [
@@ -161,16 +133,8 @@ _PARAMETER_GROUPS: list[tuple[str, list[str], bool]] = [
     ),
 ]
 
-
-def _remap_parameter_names(kwargs: dict[str, Any]) -> None:
-    """Translate old parameter names to new generated API names."""
-    if "blob_content_length" in kwargs and "size" not in kwargs:
-        kwargs["size"] = kwargs.pop("blob_content_length")
-
-
 def extract_parameter_groups(kwargs: dict[str, Any]) -> None:
     """Pop all parameter-group objects from *kwargs* and flatten their fields."""
-    _remap_parameter_names(kwargs)
 
     for kwarg_name, fields, needs_etag in _PARAMETER_GROUPS:
         group = kwargs.pop(kwarg_name, None)
