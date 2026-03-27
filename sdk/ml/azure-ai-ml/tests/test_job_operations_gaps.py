@@ -59,7 +59,7 @@ class TestJobOperationsGaps(AzureRecordedTestCase):
     @pytest.mark.e2etest
     def test_get_batch_job_scoring_output_uri_returns_none_for_unknown_job(self, client: MLClient) -> None:
         # For a random/nonexistent job, there should be no child scoring output and function returns None
-        fake_job_name = f"nonexistent_{"rand"}_job"
+        fake_job_name = "nonexistent_rand_job"
         result = client.jobs._get_batch_job_scoring_output_uri(fake_job_name)
         assert result is None
 
