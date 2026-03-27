@@ -14,6 +14,90 @@ from openai.types.evals.create_eval_completions_run_data_source_param import (
 from ._models import ToolDescription
 
 
+class ResponseRetrievalItemGenerationParams(TypedDict, total=False):
+    """Represents the parameters for response retrieval item generation.
+
+    :ivar type: The type of item generation parameters, always ``response_retrieval``. Required.
+     The ResponseRetrieval item generation parameters.
+    :vartype type: str or ~azure.ai.projects.models.RESPONSE_RETRIEVAL
+    :ivar max_num_turns: The maximum number of turns of chat history to evaluate. Required.
+    :vartype max_num_turns: int
+    :ivar data_mapping: Mapping from source fields to response_id field, required for retrieving
+     chat history. Required.
+    :vartype data_mapping: dict[str, str]
+    :ivar source: The source from which JSONL content is read. Required. Is either a
+     EvalJsonlFileContentSource type or a EvalJsonlFileIdSource type.
+    :vartype source: ~azure.ai.projects.models.EvalJsonlFileContentSource or
+     ~azure.ai.projects.models.EvalJsonlFileIdSource
+    """
+
+    type: Required[Literal["response_retrieval"]]
+    """The type of item generation parameters, always ``response_retrieval``. Required. The
+     ResponseRetrieval item generation parameters."""
+    max_num_turns: Required[int]
+    """The maximum number of turns of chat history to evaluate. Required."""
+    data_mapping: Required[Dict[str, str]]
+    """Mapping from source fields to response_id field, required for retrieving chat history.
+     Required."""
+    source: Required[Union[SourceFileContent, SourceFileID]]
+    """The source from which JSONL content is read. Required. Is either a SourceFileContent
+     type or a SourceFileID type."""
+
+
+class AzureAIResponsesEvalRunDataSource(TypedDict, total=False):
+    """Represents a data source for evaluation runs that are specific to Continuous Evaluation
+    scenarios.
+
+    :ivar type: The type of data source, always ``azure_ai_responses``. Required. Default value is
+     "azure_ai_responses".
+    :vartype type: str
+    :ivar item_generation_params: The parameters for item generation. Required.
+    :vartype item_generation_params:
+     ~azure.ai.projects.models.ResponseRetrievalItemGenerationParams
+    :ivar max_runs_hourly: Maximum number of evaluation runs allowed per hour. Required.
+    :vartype max_runs_hourly: int
+    :ivar event_configuration_id: The event configuration name associated with this evaluation run.
+     Required.
+    :vartype event_configuration_id: str
+    """
+
+    type: Required[Literal["azure_ai_responses"]]
+    """The type of data source, always ``azure_ai_responses``. Required. Default value is
+     \"azure_ai_responses\"."""
+    item_generation_params: Required[ResponseRetrievalItemGenerationParams]
+    """The parameters for item generation. Required."""
+    max_runs_hourly: Required[int]
+    """Maximum number of evaluation runs allowed per hour. Required."""
+    event_configuration_id: Required[str]
+    """The event configuration name associated with this evaluation run. Required."""
+
+
+class AzureAIDataSourceConfig(TypedDict, total=False):
+    """AzureAIDataSourceConfig.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureAIBenchmarkDataSourceConfig
+
+    :ivar schema: The overall object JSON schema for the run data source items. Required.
+    :vartype schema: dict[str, any]
+    :ivar type: The object type, which is always ``azure_ai_source``. Required. Default value is
+     "azure_ai_source".
+    :vartype type: str
+    :ivar scenario: Data schema scenario. Required. Is one of the following types:
+     Literal["red_team"], Literal["responses"], Literal["traces_preview"],
+     Literal["synthetic_data_gen_preview"], Literal["benchmark_preview"]
+    :vartype scenario: str or str or str or str or str
+    """
+
+    type: Required[Literal["azure_ai_source"]]
+    """The object type, which is always ``azure_ai_source``. Required. Default value is
+     \"azure_ai_source\"."""
+    scenario: Required[str]  # TODO: Update typespec to define the below strings as enum
+    """Data schema scenario. Required. Is one of the following types: Literal[\"red_team\"],
+     Literal[\"responses\"], Literal[\"traces_preview\"], Literal[\"synthetic_data_gen_preview\"],
+     Literal[\"benchmark_preview\"]"""
+
+
 class AzureAIAgentTarget(TypedDict, total=False):
     """Represents a target specifying an Azure AI agent.
 

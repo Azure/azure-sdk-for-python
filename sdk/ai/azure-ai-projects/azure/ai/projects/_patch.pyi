@@ -20,14 +20,21 @@ from openai.types.eval_create_params import DataSourceConfig, TestingCriterion
 from openai.types.eval_create_response import EvalCreateResponse
 from openai.types.shared_params.metadata import Metadata
 from ._client import AIProjectClient as AIProjectClientGenerated
-from .models import EvalGraderAzureAIEvaluator, TargetCompletionEvalRunDataSource
+from .models import (
+    EvalGraderAzureAIEvaluator,
+    TargetCompletionEvalRunDataSource,
+    AzureAIDataSourceConfig,
+    AzureAIResponsesEvalRunDataSource,
+)
 
 class _AzureEvalRuns(Runs):
     def create(
         self,
         eval_id: str,
         *,
-        data_source: Union[DataSource, TargetCompletionEvalRunDataSource],  # <=== Azure extention here
+        data_source: Union[
+            DataSource, TargetCompletionEvalRunDataSource, AzureAIResponsesEvalRunDataSource
+        ],  # <=== Azure extention here
         metadata: Optional[Metadata] | Omit = ...,
         name: str | Omit = ...,
         extra_headers: Headers | None = ...,
@@ -40,7 +47,7 @@ class _AzureEvals(Evals):
     def create(
         self,
         *,
-        data_source_config: DataSourceConfig,
+        data_source_config: Union[DataSourceConfig, AzureAIDataSourceConfig],  # <=== Azure extention here
         testing_criteria: Iterable[
             Union[
                 TestingCriterion,

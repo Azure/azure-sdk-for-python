@@ -9,7 +9,14 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from typing import Final, FrozenSet, List, Dict, Mapping, Optional, Any, Tuple
-from ._patch_typeddicts import AzureAIAgentTarget, EvalGraderAzureAIEvaluator, TargetCompletionEvalRunDataSource
+from ._patch_typeddicts import (
+    AzureAIAgentTarget,
+    AzureAIDataSourceConfig,
+    AzureAIResponsesEvalRunDataSource,
+    EvalGraderAzureAIEvaluator,
+    ResponseRetrievalItemGenerationParams,
+    TargetCompletionEvalRunDataSource,
+)
 from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
 from azure.core.polling.base_polling import (
     LROBasePolling,
@@ -349,8 +356,11 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
 __all__: List[str] = [
     "AsyncUpdateMemoriesLROPoller",
     "AzureAIAgentTarget",
+    "AzureAIDataSourceConfig",
+    "AzureAIResponsesEvalRunDataSource",
     "CustomCredential",
     "EvalGraderAzureAIEvaluator",
+    "ResponseRetrievalItemGenerationParams",
     "TargetCompletionEvalRunDataSource",
     "UpdateMemoriesLROPoller",
 ]  # Add all objects you want publicly available to users at this package level
