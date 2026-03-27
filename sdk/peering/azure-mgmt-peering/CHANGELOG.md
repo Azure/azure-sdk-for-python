@@ -36,25 +36,15 @@
 
 ### Breaking Changes
 
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Method `CdnPeeringPrefixesOperations.list` changed its parameter `peering_location` from `positional_or_keyword` to `keyword_only`
-  - Method `LegacyPeeringsOperations.list` changed its parameter `peering_location` from `positional_or_keyword` to `keyword_only`
-  - Method `LegacyPeeringsOperations.list` changed its parameter `kind` from `positional_or_keyword` to `keyword_only`
-  - Method `LegacyPeeringsOperations.list` changed its parameter `asn` from `positional_or_keyword` to `keyword_only`
-  - Method `LegacyPeeringsOperations.list` changed its parameter `direct_peering_type` from `positional_or_keyword` to `keyword_only`
-  - Method `LookingGlassOperations.invoke` changed its parameter `command` from `positional_or_keyword` to `keyword_only`
-  - Method `LookingGlassOperations.invoke` changed its parameter `source_type` from `positional_or_keyword` to `keyword_only`
-  - Method `LookingGlassOperations.invoke` changed its parameter `source_location` from `positional_or_keyword` to `keyword_only`
-  - Method `LookingGlassOperations.invoke` changed its parameter `destination_ip` from `positional_or_keyword` to `keyword_only`
-  - Method `PeeringLocationsOperations.list` changed its parameter `kind` from `positional_or_keyword` to `keyword_only`
-  - Method `PeeringLocationsOperations.list` changed its parameter `direct_peering_type` from `positional_or_keyword` to `keyword_only`
+  - Method `LegacyPeeringsOperations.list` changed its parameter `peering_location`/`kind`/`asn`/`direct_peering_type` from `positional_or_keyword` to `keyword_only`
+  - Method `LookingGlassOperations.invoke` changed its parameter `command`/`source_type`/`source_location`/`destination_ip` from `positional_or_keyword` to `keyword_only`
+  - Method `PeeringLocationsOperations.list` changed its parameter `kind`/`direct_peering_type` from `positional_or_keyword` to `keyword_only`
   - Method `PeeringServiceLocationsOperations.list` changed its parameter `country` from `positional_or_keyword` to `keyword_only`
   - Method `PrefixesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `PrefixesOperations.list_by_peering_service` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `ReceivedRoutesOperations.list_by_peering` changed its parameter `prefix` from `positional_or_keyword` to `keyword_only`
-  - Method `ReceivedRoutesOperations.list_by_peering` changed its parameter `as_path` from `positional_or_keyword` to `keyword_only`
-  - Method `ReceivedRoutesOperations.list_by_peering` changed its parameter `origin_as_validation_state` from `positional_or_keyword` to `keyword_only`
-  - Method `ReceivedRoutesOperations.list_by_peering` changed its parameter `rpki_validation_state` from `positional_or_keyword` to `keyword_only`
-  - Method `ReceivedRoutesOperations.list_by_peering` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ReceivedRoutesOperations.list_by_peering` changed its parameter `prefix`/`as_path`/`origin_as_validation_state`/`rpki_validation_state`/`skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `RpUnbilledPrefixesOperations.list` changed its parameter `consolidate` from `positional_or_keyword` to `keyword_only`
   - Deleted or renamed model `PeeringManagementClientOperationsMixin`
 
