@@ -181,12 +181,16 @@ class CopilotAdapter(FoundryCBAgent):
     :param session_config: Override for the Copilot session config (dict).
         When *None* the config is built automatically from environment variables.
     :param acl: Explicit tool ACL.  When *None*, loaded from ``TOOL_ACL_PATH``.
+    :param credential: Azure credential for BYOK token refresh.  When *None*,
+        ``DefaultAzureCredential`` is used automatically if BYOK mode is detected.
+        Pass your own credential instance to override (e.g., ``ManagedIdentityCredential``).
     """
 
     def __init__(
         self,
         session_config: Optional[dict] = None,
         acl: Optional[ToolAcl] = None,
+        credential: Optional[Any] = None,
     ):
         super().__init__()
 
@@ -228,7 +232,9 @@ class CopilotAdapter(FoundryCBAgent):
         self._sessions: Dict[str, Any] = {}
 
         # Credential for BYOK token refresh
-        if os.getenv("AZURE_AI_FOUNDRY_RESOURCE_URL") and not os.getenv("AZURE_AI_FOUNDRY_API_KEY"):
+        if credential is not None:
+            self._credential = credential
+        elif os.getenv("AZURE_AI_FOUNDRY_RESOURCE_URL") and not os.getenv("AZURE_AI_FOUNDRY_API_KEY"):
             from azure.identity import DefaultAzureCredential
             self._credential = DefaultAzureCredential()
         else:
@@ -580,8 +586,9 @@ class GitHubCopilotAdapter(CopilotAdapter):
     def from_project(cls, project_path: str = ".", **kwargs) -> "GitHubCopilotAdapter":
         """Create an adapter from a project directory.
 
-        Discovers skills, loads ``.env``, and configures the adapter
-        automatically.
+        Discovers skills and configures the adapter automatically.
+        The caller is responsible for loading ``.env`` before calling
+        this method (e.g., via ``dotenv.load_dotenv()``).
 
         :param project_path: Path to the agent project root.
         :param kwargs: Additional keyword arguments passed to the constructor.
