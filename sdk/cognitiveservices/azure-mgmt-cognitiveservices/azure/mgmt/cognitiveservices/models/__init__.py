@@ -50,6 +50,9 @@ from ._models_py3 import (  # type: ignore
     CommitmentQuota,
     CommitmentTier,
     CommitmentTierListResult,
+    Compute,
+    ComputeListResult,
+    ComputeProperties,
     ConnectionAccessKey,
     ConnectionAccountKey,
     ConnectionApiKey,
@@ -128,6 +131,7 @@ from ._models_py3 import (  # type: ignore
     PrivateLinkResourceListResult,
     PrivateLinkResourceProperties,
     PrivateLinkServiceConnectionState,
+    Pool,
     Project,
     ProjectListResult,
     ProjectProperties,
@@ -169,6 +173,7 @@ from ._models_py3 import (  # type: ignore
     ResourceSkuListResult,
     ResourceSkuRestrictionInfo,
     ResourceSkuRestrictions,
+    RootError,
     SASAuthTypeConnectionProperties,
     ServicePrincipalAuthTypeConnectionProperties,
     Sku,
@@ -195,6 +200,7 @@ from ._cognitive_services_management_client_enums import (  # type: ignore
     CapabilityHostKind,
     CapabilityHostProvisioningState,
     CommitmentPlanProvisioningState,
+    ComputeProvisioningState,
     ConnectionAuthType,
     ConnectionCategory,
     ConnectionGroup,
@@ -233,6 +239,7 @@ from ._cognitive_services_management_client_enums import (  # type: ignore
     TierUpgradePolicy,
     UnitType,
     UpgradeAvailabilityStatus,
+    VmPriority,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -275,6 +282,9 @@ __all__ = [
     "CommitmentQuota",
     "CommitmentTier",
     "CommitmentTierListResult",
+    "Compute",
+    "ComputeListResult",
+    "ComputeProperties",
     "ConnectionAccessKey",
     "ConnectionAccountKey",
     "ConnectionApiKey",
@@ -353,6 +363,7 @@ __all__ = [
     "PrivateLinkResourceListResult",
     "PrivateLinkResourceProperties",
     "PrivateLinkServiceConnectionState",
+    "Pool",
     "Project",
     "ProjectListResult",
     "ProjectProperties",
@@ -394,6 +405,7 @@ __all__ = [
     "ResourceSkuListResult",
     "ResourceSkuRestrictionInfo",
     "ResourceSkuRestrictions",
+    "RootError",
     "SASAuthTypeConnectionProperties",
     "ServicePrincipalAuthTypeConnectionProperties",
     "Sku",
@@ -417,6 +429,7 @@ __all__ = [
     "CapabilityHostKind",
     "CapabilityHostProvisioningState",
     "CommitmentPlanProvisioningState",
+    "ComputeProvisioningState",
     "ConnectionAuthType",
     "ConnectionCategory",
     "ConnectionGroup",
@@ -455,6 +468,7 @@ __all__ = [
     "TierUpgradePolicy",
     "UnitType",
     "UpgradeAvailabilityStatus",
+    "VmPriority",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()
