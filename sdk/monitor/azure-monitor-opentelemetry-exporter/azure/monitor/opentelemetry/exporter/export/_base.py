@@ -163,7 +163,7 @@ class BaseExporter:
         ]
 
         # Exclude HttpLoggingPolicy for the sdkstats exporter so its HTTP
-        # traffic does not appear in the user's console output.
+        # traffic does not appear in the user's logs.
         if not self._is_stats_exporter():
             policies.append(config.http_logging_policy or HttpLoggingPolicy(**kwargs))
 
