@@ -15,7 +15,7 @@ from azure.mgmt.attestation import AttestationManagementClient
     pip install azure-identity
     pip install azure-mgmt-attestation
 # USAGE
-    python attestation_provider_put_private_endpoint_connection.py
+    python create_attestation_provider.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,17 +30,18 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.private_endpoint_connections.create(
-        resource_group_name="res7687",
-        provider_name="sto9699",
-        private_endpoint_connection_name="{privateEndpointConnectionName}",
-        properties={
-            "properties": {"privateLinkServiceConnectionState": {"description": "Auto-Approved", "status": "Approved"}}
+    response = client.attestation_providers.create(
+        resource_group_name="MyResourceGroup",
+        provider_name="myattestationprovider",
+        creation_params={
+            "location": "East US",
+            "properties": {"publicNetworkAccess": "Enabled", "tpmAttestationAuthentication": "Enabled"},
+            "tags": {"Property1": "Value1", "Property2": "Value2", "Property3": "Value3"},
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2021-06-01/AttestationProviderPutPrivateEndpointConnection.json
+# x-ms-original-file: 2021-06-01/Create_AttestationProvider.json
 if __name__ == "__main__":
     main()

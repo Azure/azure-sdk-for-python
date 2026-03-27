@@ -1,5 +1,43 @@
 # Release History
 
+## 2.0.0b2 (2026-03-27)
+
+### Features Added
+
+  - Model `AttestationManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `AttestationManagementClient` added method `send_request`
+  - Client `AttestationManagementClient` added operation group `private_link_resources`
+  - Model `AttestationProvider` added property `properties`
+  - Model `AttestationServiceCreationSpecificParams` added property `public_network_access`
+  - Model `AttestationServiceCreationSpecificParams` added property `tpm_attestation_authentication`
+  - Model `AttestationServicePatchParams` added property `properties`
+  - Model `OperationsDefinition` added property `properties`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Added model `AttestationServicePatchSpecificParams`
+  - Added model `CloudError`
+  - Added model `LogSpecification`
+  - Added model `OperationProperties`
+  - Added model `PrivateLinkResource`
+  - Added model `PrivateLinkResourceListResult`
+  - Added model `PrivateLinkResourceProperties`
+  - Added enum `PublicNetworkAccessType`
+  - Added model `ServiceSpecification`
+  - Added model `StatusResult`
+  - Added enum `TpmAttestationAuthenticationType`
+  - Added model `PrivateLinkResourcesOperations`
+
+### Breaking Changes
+
+  - Method `Operations.list` changed from `asynchronous` to `synchronous`
+  - Model `AttestationProvider` deleted or renamed its instance variable `trust_model`
+  - Model `AttestationProvider` deleted or renamed its instance variable `status`
+  - Model `AttestationProvider` deleted or renamed its instance variable `attest_uri`
+  - Model `AttestationProvider` deleted or renamed its instance variable `private_endpoint_connections`
+  - Model `JSONWebKeySet` deleted or renamed its instance variable `keys`
+  - Deleted or renamed model `OperationList`
+
 ## 2.0.0b1 (2022-10-28)
 
 ### Features Added
