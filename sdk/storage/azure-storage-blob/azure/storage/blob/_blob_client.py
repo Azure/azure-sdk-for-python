@@ -65,6 +65,7 @@ from ._models import BlobBlock, BlobProperties, BlobQueryError, BlobType, PageRa
 from ._quick_query_helper import BlobQueryReader
 from ._shared.base_client import parse_connection_str, StorageAccountHostsMixin, TransportWrapper
 from ._shared.response_handlers import process_storage_error, return_response_headers
+from ._shared.validation import ChecksumAlgorithm, parse_validation_option
 from ._serialize import (
     get_access_conditions,
     get_api_version,
@@ -505,15 +506,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :keyword ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set blob properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash for each chunk of the blob. The storage
-            service checks the hash of the content that has arrived with the hash
-            that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https, as https (the default), will
-            already validate. Note that this MD5 hash is not stored with the
-            blob. Also note that if enabled, the memory-efficient upload algorithm
-            will not be used because computing the MD5 hash requires buffering
-            entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any checksum calculated is NOT stored with the blob.
+            Choose "auto" (let the SDK choose the best algorithm), "crc64", or "md5". The use of bool is deprecated.
+            NOTE: The use of "auto" or "crc64" requires the `azure-storage-extensions` package to be installed.
+        :paramtype validate_content: Union[bool, Literal['auto', 'crc64', 'md5']]
         :keyword lease:
             Required if the blob has an active lease. If specified, upload_blob only succeeds if the
             blob's lease is active and matches this ID. Value can be a BlobLeaseClient object
@@ -616,6 +613,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             raise ValueError("Encryption required but no key was provided.")
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        validate_content = parse_validation_option(kwargs.pop('validate_content', None))
+        if validate_content == ChecksumAlgorithm.CRC64 and self.key_encryption_key:
+            raise ValueError("Using encryption and content validation together is not currently supported.")
         options = _upload_blob_options(
             data=data,
             blob_type=blob_type,
@@ -627,6 +627,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 'key': self.key_encryption_key,
                 'resolver': self.key_resolver_function
             },
+            validate_content=validate_content,
             config=self._config,
             sdk_moniker=self._sdk_moniker,
             client=self._client,
@@ -683,15 +684,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
             This keyword argument was introduced in API version '2019-12-12'.
 
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash for each chunk of the blob. The storage
-            service checks the hash of the content that has arrived with the hash
-            that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https, as https (the default), will
-            already validate. Note that this MD5 hash is not stored with the
-            blob. Also note that if enabled, the memory-efficient upload algorithm
-            will not be used because computing the MD5 hash requires buffering
-            entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any checksum calculated is NOT stored with the blob.
+            Choose "auto" (let the SDK choose the best algorithm), "crc64", or "md5". The use of bool is deprecated.
+            NOTE: The use of "auto" or "crc64" requires the `azure-storage-extensions` package to be installed.
+        :paramtype validate_content: Union[bool, Literal['auto', 'crc64', 'md5']]
         :keyword lease:
             Required if the blob has an active lease. If specified, download_blob only
             succeeds if the blob's lease is active and matches this ID. Value can be a
@@ -765,6 +762,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             raise ValueError("Offset value must not be None if length is set.")
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        validate_content = parse_validation_option(kwargs.pop('validate_content', None))
+        if validate_content == ChecksumAlgorithm.CRC64 and self.key_encryption_key:
+            raise ValueError("Using encryption and content validation together is not currently supported.")
         options = _download_blob_options(
             blob_name=self.blob_name,
             container_name=self.container_name,
@@ -778,6 +778,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 'key': self.key_encryption_key,
                 'resolver': self.key_resolver_function
             },
+            validate_content=validate_content,
             config=self._config,
             sdk_moniker=self._sdk_moniker,
             client=self._client,
@@ -2009,15 +2010,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :param int length:
             Size of the block. Optional if the length of data can be determined. For Iterable and IO, if the
             length is not provided and cannot be determined, all data will be read into memory.
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash for each chunk of the blob. The storage
-            service checks the hash of the content that has arrived with the hash
-            that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https, as https (the default), will
-            already validate. Note that this MD5 hash is not stored with the
-            blob. Also note that if enabled, the memory-efficient upload algorithm
-            will not be used because computing the MD5 hash requires buffering
-            entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any checksum calculated is NOT stored with the blob.
+            Choose "auto" (let the SDK choose the best algorithm), "crc64", or "md5". The use of bool is deprecated.
+            NOTE: The use of "auto" or "crc64" requires the `azure-storage-extensions` package to be installed.
+        :paramtype validate_content: Union[bool, Literal['auto', 'crc64', 'md5']]
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -2850,13 +2847,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash of the page content. The storage
-            service checks the hash of the content that has arrived
-            with the hash that was sent. This is primarily valuable for detecting
-            bitflips on the wire if using http instead of https, as https (the default),
-            will already validate. Note that this MD5 hash is not stored with the
-            blob.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any checksum calculated is NOT stored with the blob.
+            Choose "auto" (let the SDK choose the best algorithm), "crc64", or "md5". The use of bool is deprecated.
+            NOTE: The use of "auto" or "crc64" requires the `azure-storage-extensions` package to be installed.
+        :paramtype validate_content: Union[bool, Literal['auto', 'crc64', 'md5']]
         :keyword int if_sequence_number_lte:
             If the blob's sequence number is less than or equal to
             the specified value, the request proceeds; otherwise it fails.
@@ -3157,13 +3152,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :param int length:
             Size of the block. Optional if the length of data can be determined. For Iterable and IO, if the
             length is not provided and cannot be determined, all data will be read into memory.
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash of the block content. The storage
-            service checks the hash of the content that has arrived
-            with the hash that was sent. This is primarily valuable for detecting
-            bitflips on the wire if using http instead of https, as https (the default),
-            will already validate. Note that this MD5 hash is not stored with the
-            blob.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any checksum calculated is NOT stored with the blob.
+            Choose "auto" (let the SDK choose the best algorithm), "crc64", or "md5". The use of bool is deprecated.
+            NOTE: The use of "auto" or "crc64" requires the `azure-storage-extensions` package to be installed.
+        :paramtype validate_content: Union[bool, Literal['auto', 'crc64', 'md5']]
         :keyword int maxsize_condition:
             Optional conditional header. The max length in bytes permitted for
             the append blob. If the Append Block operation would cause the blob
