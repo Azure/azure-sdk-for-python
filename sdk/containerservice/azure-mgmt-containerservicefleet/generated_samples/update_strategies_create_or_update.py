@@ -46,9 +46,11 @@ def main():
                                 {
                                     "afterGates": [{"displayName": "gate after group-a", "type": "Approval"}],
                                     "beforeGates": [{"displayName": "gate before group-a", "type": "Approval"}],
+                                    "maxConcurrency": "5",
                                     "name": "group-a",
                                 }
                             ],
+                            "maxConcurrency": "20%",
                             "name": "stage1",
                         }
                     ]
@@ -59,6 +61,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-08-01-preview/UpdateStrategies_CreateOrUpdate.json
+# x-ms-original-file: 2026-02-01-preview/UpdateStrategies_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

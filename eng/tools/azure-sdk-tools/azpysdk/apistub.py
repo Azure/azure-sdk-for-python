@@ -13,7 +13,7 @@ from ci_tools.logging import logger
 from ci_tools.parsing import ParsedSetup
 
 REPO_ROOT = discover_repo_root()
-MAX_PYTHON_VERSION = (3, 11)
+PYTHON_VERSION_LIMIT = (3, 11)  # apistub doesn't support Python 3.11+
 
 
 def get_package_wheel_path(pkg_root: str) -> str:
@@ -76,9 +76,9 @@ class apistub(Check):
         """Run the apistub check command."""
         logger.info("Running apistub check...")
 
-        if sys.version_info > MAX_PYTHON_VERSION:
+        if sys.version_info >= PYTHON_VERSION_LIMIT:
             logger.error(
-                f"Python version {sys.version_info.major}.{sys.version_info.minor} is not supported. Maximum supported version is {MAX_PYTHON_VERSION[0]}.{MAX_PYTHON_VERSION[1]}."
+                f"Python version {sys.version_info.major}.{sys.version_info.minor} is not supported. Version must be less than {PYTHON_VERSION_LIMIT[0]}.{PYTHON_VERSION_LIMIT[1]}."
             )
             return 1
 
