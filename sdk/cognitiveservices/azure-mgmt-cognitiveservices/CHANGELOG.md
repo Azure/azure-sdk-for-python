@@ -151,10 +151,10 @@
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Client `CognitiveServicesManagementClient` deleted or renamed instance variable `url`
-  - Method `CognitiveServicesManagementClient.calculate_model_capacity` moved instance variable `model`/`sku_name`/`workloads` under property `parameters`
-  - Method `CognitiveServicesManagementClient.check_domain_availability` moved instance variable `subdomain_name`/`type`/`kind` under property `parameters`
-  - Method `CognitiveServicesManagementClient.check_sku_availability` moved instance variable `skus`/`kind`/`type` under property `parameters`
-  - Method `AccountsOperations.regenerate_key` moved instance variable `key_name` under property `parameters`
+  - Method `CognitiveServicesManagementClient.calculate_model_capacity` grouped `model`/`sku_name`/`workloads` into new signature `parameters`
+  - Method `CognitiveServicesManagementClient.check_domain_availability` grouped `subdomain_name`/`type`/`kind` into new signature `parameters`
+  - Method `CognitiveServicesManagementClient.check_sku_availability` grouped `skus`/`kind`/`type` into new signature `parameters`
+  - Method `AccountsOperations.regenerate_key` grouped `key_name` into new signature parameters`
   - Model `CustomKeys` renamed its instance variable `keys` to `keys_property`
   - Model `ResourceSkuRestrictions` renamed its instance variable `values` to `values_property`
   - Method `AccountConnectionsOperations.list` changed its parameter `target`/`category`/`include_all` from `positional_or_keyword` to `keyword_only`
