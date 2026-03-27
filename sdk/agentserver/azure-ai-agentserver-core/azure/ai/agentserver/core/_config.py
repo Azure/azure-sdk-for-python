@@ -94,21 +94,20 @@ def resolve_port(port: Optional[int]) -> int:
     return Constants.DEFAULT_PORT
 
 
+_DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT = 30
+
+
 def resolve_graceful_shutdown_timeout(timeout: Optional[int]) -> int:
-    """Resolve the graceful shutdown timeout from argument, env var, or default.
+    """Resolve the graceful shutdown timeout from argument or default.
 
     :param timeout: Explicitly requested timeout or None.
     :type timeout: Optional[int]
-    :return: The resolved timeout in seconds.
+    :return: The resolved timeout in seconds (default 30).
     :rtype: int
-    :raises ValueError: If the env var is not a valid integer.
     """
     if timeout is not None:
         return max(0, _require_int("graceful_shutdown_timeout", timeout))
-    env_timeout = _parse_int_env(Constants.AGENT_GRACEFUL_SHUTDOWN_TIMEOUT)
-    if env_timeout is not None:
-        return max(0, env_timeout)
-    return Constants.DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT
+    return _DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT
 
 
 _VALID_LOG_LEVELS = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
@@ -139,7 +138,7 @@ def resolve_appinsights_connection_string(
 
 
 def resolve_log_level(level: Optional[str]) -> str:
-    """Resolve the library log level from argument, env var, or default (``INFO``).
+    """Resolve the library log level from argument or default (``INFO``).
 
     :param level: Explicitly requested level (e.g. ``"DEBUG"``) or None.
     :type level: Optional[str]
@@ -150,7 +149,7 @@ def resolve_log_level(level: Optional[str]) -> str:
     if level is not None:
         normalized = level.upper()
     else:
-        normalized = os.environ.get(Constants.AGENT_LOG_LEVEL, "INFO").upper()
+        normalized = "INFO"
     if normalized not in _VALID_LOG_LEVELS:
         raise ValueError(
             f"Invalid log level: {normalized!r} "
