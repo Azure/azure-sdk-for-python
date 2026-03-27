@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.service_gateways.begin_update_address_locations(
+    client.service_gateways.begin_update_address_locations(
         resource_group_name="rg1",
         service_gateway_name="sg",
         parameters={
@@ -50,7 +50,6 @@ def main():
             ],
         },
     ).result()
-    print(response)
 
 
 # x-ms-original-file: 2025-05-01/ServiceGatewayPartialUpdateAddressLocationsRequest.json

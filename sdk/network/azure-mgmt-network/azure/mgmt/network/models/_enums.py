@@ -709,19 +709,6 @@ class AzureFirewallThreatIntelMode(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """Off."""
 
 
-class BaseProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current provisioning state."""
-
-    SUCCEEDED = "Succeeded"
-    """Succeeded."""
-    UPDATING = "Updating"
-    """Updating."""
-    DELETING = "Deleting"
-    """Deleting."""
-    FAILED = "Failed"
-    """Failed."""
-
-
 class BastionConnectProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The protocol used to connect to the target."""
 
@@ -2007,6 +1994,23 @@ class NetworkProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ICMP."""
 
 
+class NetworkResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning states of a resource."""
+
+    FAILED = "Failed"
+    """Failed."""
+    SUCCEEDED = "Succeeded"
+    """Succeeded."""
+    CANCELED = "Canceled"
+    """Canceled."""
+    CREATING = "Creating"
+    """Creating."""
+    UPDATING = "Updating"
+    """Updating."""
+    DELETING = "Deleting"
+    """Deleting."""
+
+
 class NextHopType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Next hop type."""
 
@@ -2391,20 +2395,16 @@ class ProtocolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning states of a resource."""
+    """The current provisioning state."""
 
-    FAILED = "Failed"
-    """Failed."""
     SUCCEEDED = "Succeeded"
     """Succeeded."""
-    CANCELED = "Canceled"
-    """Canceled."""
-    CREATING = "Creating"
-    """Creating."""
     UPDATING = "Updating"
     """Updating."""
     DELETING = "Deleting"
     """Deleting."""
+    FAILED = "Failed"
+    """Failed."""
 
 
 class PublicIpAddressDnsSettingsDomainNameLabelScope(  # pylint: disable=name-too-long
