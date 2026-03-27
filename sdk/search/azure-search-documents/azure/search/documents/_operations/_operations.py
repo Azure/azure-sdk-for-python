@@ -61,7 +61,8 @@ def build_search_get_document_count_request(index_name: str, **kwargs: Any) -> H
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if accept is not None:
+        _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -185,7 +186,8 @@ def build_search_search_get_request(  # pylint: disable=too-many-locals,too-many
         _params["semanticFields"] = _SERIALIZER.query("semantic_fields", semantic_fields, "[str]", div=",")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if accept is not None:
+        _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if query_source_authorization is not None:
         _headers["x-ms-query-source-authorization"] = _SERIALIZER.header(
             "query_source_authorization", query_source_authorization, "str"
@@ -222,7 +224,8 @@ def build_search_search_post_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if accept is not None:
+        _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if query_source_authorization is not None:
         _headers["x-ms-query-source-authorization"] = _SERIALIZER.header(
             "query_source_authorization", query_source_authorization, "str"
@@ -265,7 +268,8 @@ def build_search_get_document_request(
         _params["$select"] = _SERIALIZER.query("selected_fields", selected_fields, "[str]", div=",")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if accept is not None:
+        _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if query_source_authorization is not None:
         _headers["x-ms-query-source-authorization"] = _SERIALIZER.header(
             "query_source_authorization", query_source_authorization, "str"
@@ -330,7 +334,8 @@ def build_search_suggest_get_request(
         _params["$top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if accept is not None:
+        _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -355,7 +360,8 @@ def build_search_suggest_post_request(index_name: str, **kwargs: Any) -> HttpReq
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if accept is not None:
+        _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
@@ -382,7 +388,8 @@ def build_search_index_request(index_name: str, **kwargs: Any) -> HttpRequest:
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if accept is not None:
+        _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
@@ -394,7 +401,7 @@ def build_search_autocomplete_get_request(
     *,
     search_text: str,
     suggester_name: str,
-    autocomplete_mode: Optional[Union[str, _models1.AutocompleteMode]] = None,
+    autocomplete_mode: Optional[Union[str, _models1._enums.AutocompleteMode]] = None,
     filter: Optional[str] = None,
     use_fuzzy_matching: Optional[bool] = None,
     highlight_post_tag: Optional[str] = None,
@@ -440,7 +447,8 @@ def build_search_autocomplete_get_request(
         _params["$top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if accept is not None:
+        _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -465,7 +473,8 @@ def build_search_autocomplete_post_request(index_name: str, **kwargs: Any) -> Ht
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if accept is not None:
+        _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
@@ -508,6 +517,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -532,7 +542,7 @@ class _SearchClientOperationsMixin(
         response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(int, response.text())
 
@@ -792,6 +802,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -813,7 +824,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models1.SearchDocumentsResult, response.json())
 
@@ -1152,6 +1163,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1173,7 +1185,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models1.SearchDocumentsResult, response.json())
 
@@ -1238,6 +1250,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1259,7 +1272,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models1.LookupDocument, response.json())
 
@@ -1370,6 +1383,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1391,7 +1405,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models1._models.SuggestDocumentsResult, response.json()  # pylint: disable=protected-access
@@ -1552,6 +1566,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1573,7 +1588,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models1._models.SuggestDocumentsResult, response.json()  # pylint: disable=protected-access
@@ -1644,6 +1659,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1665,7 +1681,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models1._models.IndexDocumentsResult, response.json()  # pylint: disable=protected-access
@@ -1682,7 +1698,7 @@ class _SearchClientOperationsMixin(
         *,
         search_text: str,
         suggester_name: str,
-        autocomplete_mode: Optional[Union[str, _models1.AutocompleteMode]] = None,
+        autocomplete_mode: Optional[Union[str, _models1._enums.AutocompleteMode]] = None,
         filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,
@@ -1768,6 +1784,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1789,7 +1806,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models1._models.AutocompleteResult, response.json()  # pylint: disable=protected-access
@@ -1807,7 +1824,7 @@ class _SearchClientOperationsMixin(
         search_text: str,
         suggester_name: str,
         content_type: str = "application/json",
-        autocomplete_mode: Optional[Union[str, _models1.AutocompleteMode]] = None,
+        autocomplete_mode: Optional[Union[str, _models1._enums.AutocompleteMode]] = None,
         filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,
@@ -1833,7 +1850,7 @@ class _SearchClientOperationsMixin(
         *,
         search_text: str = _Unset,
         suggester_name: str = _Unset,
-        autocomplete_mode: Optional[Union[str, _models1.AutocompleteMode]] = None,
+        autocomplete_mode: Optional[Union[str, _models1._enums.AutocompleteMode]] = None,
         filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,
@@ -1940,6 +1957,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1961,7 +1979,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models1._models.AutocompleteResult, response.json()  # pylint: disable=protected-access

@@ -23,15 +23,15 @@ class SearchIndexClientConfiguration:  # pylint: disable=too-many-instance-attri
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: Service host. Required.
+    :param endpoint: The endpoint URL of the search service. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a key
      credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Known values are
-     "2025-11-01-preview" and None. Default value is "2025-11-01-preview". Note that overriding this
-     default value may result in unsupported behavior.
+     "2025-11-01-preview". Default value is "2025-11-01-preview". Note that overriding this default
+     value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -78,15 +78,15 @@ class SearchIndexerClientConfiguration:  # pylint: disable=too-many-instance-att
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: Service host. Required.
+    :param endpoint: The endpoint URL of the search service. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a key
      credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Known values are
-     "2025-11-01-preview" and None. Default value is "2025-11-01-preview". Note that overriding this
-     default value may result in unsupported behavior.
+     "2025-11-01-preview". Default value is "2025-11-01-preview". Note that overriding this default
+     value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

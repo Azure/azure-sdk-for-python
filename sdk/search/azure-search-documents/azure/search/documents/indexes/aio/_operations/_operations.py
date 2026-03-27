@@ -205,6 +205,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -226,7 +227,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.SynonymMap, response.json())
 
@@ -336,6 +337,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -357,7 +359,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.SynonymMap, response.json())
 
@@ -404,6 +406,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -425,7 +428,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models2._models.ListSynonymMapsResult, response.json()  # pylint: disable=protected-access
@@ -530,6 +533,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -551,7 +555,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.SynonymMap, response.json())
 
@@ -675,6 +679,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -696,7 +701,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.SearchIndex, response.json())
 
@@ -808,6 +813,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -829,7 +835,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.SearchIndex, response.json())
 
@@ -899,7 +905,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models2.SearchIndex], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models2.SearchIndex],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return None, AsyncList(list_of_elem)
@@ -992,9 +1001,11 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             return _request
 
         async def extract_data(pipeline_response):
-            # pylint: disable=protected-access
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models2._models.SearchIndexResponse], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models2._models.SearchIndexResponse],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return None, AsyncList(list_of_elem)
@@ -1114,6 +1125,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1135,7 +1147,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.SearchIndex, response.json())
 
@@ -1179,6 +1191,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1200,7 +1213,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.GetIndexStatisticsResult, response.json())
 
@@ -1271,6 +1284,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1292,7 +1306,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.AnalyzeResult, response.json())
 
@@ -1405,6 +1419,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1426,7 +1441,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.SearchAlias, response.json())
 
@@ -1537,6 +1552,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1558,7 +1574,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.SearchAlias, response.json())
 
@@ -1628,7 +1644,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models2.SearchAlias], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models2.SearchAlias],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return None, AsyncList(list_of_elem)
@@ -1748,6 +1767,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1769,7 +1789,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.SearchAlias, response.json())
 
@@ -1882,6 +1902,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1903,7 +1924,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.KnowledgeBase, response.json())
 
@@ -2013,6 +2034,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2034,7 +2056,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.KnowledgeBase, response.json())
 
@@ -2104,7 +2126,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models2.KnowledgeBase], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models2.KnowledgeBase],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return None, AsyncList(list_of_elem)
@@ -2224,6 +2249,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2245,7 +2271,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.KnowledgeBase, response.json())
 
@@ -2359,6 +2385,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2380,7 +2407,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.KnowledgeSource, response.json())
 
@@ -2490,6 +2517,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2511,7 +2539,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.KnowledgeSource, response.json())
 
@@ -2581,7 +2609,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models2.KnowledgeSource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models2.KnowledgeSource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return None, AsyncList(list_of_elem)
@@ -2702,6 +2733,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2723,7 +2755,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.KnowledgeSource, response.json())
 
@@ -2768,6 +2800,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2789,7 +2822,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_knowledgebases_models4.KnowledgeSourceStatus, response.json())
 
@@ -2829,6 +2862,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2850,7 +2884,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.SearchServiceStatistics, response.json())
 
@@ -2920,7 +2954,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models2.IndexStatisticsSummary], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models2.IndexStatisticsSummary],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return None, AsyncList(list_of_elem)
@@ -3065,6 +3102,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3086,7 +3124,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.SearchIndexerDataSourceConnection, response.json())
 
@@ -3197,6 +3235,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3218,7 +3257,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.SearchIndexerDataSourceConnection, response.json())
 
@@ -3265,6 +3304,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3286,7 +3326,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models2._models.ListDataSourcesResult, response.json()  # pylint: disable=protected-access
@@ -3401,6 +3441,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3422,7 +3463,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.SearchIndexerDataSourceConnection, response.json())
 
@@ -3855,6 +3896,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3876,7 +3918,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.SearchIndexer, response.json())
 
@@ -3986,6 +4028,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4007,7 +4050,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.SearchIndexer, response.json())
 
@@ -4054,6 +4097,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4075,7 +4119,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models2._models.ListIndexersResult, response.json()  # pylint: disable=protected-access
@@ -4180,6 +4224,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4201,7 +4246,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.SearchIndexer, response.json())
 
@@ -4244,6 +4289,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4265,7 +4311,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.SearchIndexerStatus, response.json())
 
@@ -4395,6 +4441,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4416,7 +4463,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.SearchIndexerSkillset, response.json())
 
@@ -4526,6 +4573,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4547,7 +4595,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.SearchIndexerSkillset, response.json())
 
@@ -4594,6 +4642,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4615,7 +4664,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models2._models.ListSkillsetsResult, response.json()  # pylint: disable=protected-access
@@ -4724,6 +4773,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4745,7 +4795,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.SearchIndexerSkillset, response.json())
 

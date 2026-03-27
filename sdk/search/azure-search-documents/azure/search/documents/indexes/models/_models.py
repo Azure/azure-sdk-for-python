@@ -3870,9 +3870,12 @@ class EntityRecognitionSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Ski
      be consumed as an input by another skill. Required.
     :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     :ivar categories: A list of entity categories that should be extracted.
-    :vartype categories: list[str]
+    :vartype categories: list[str or ~azure.search.documents.indexes.models.EntityCategory]
     :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
-    :vartype default_language_code: str
+     Known values are: "ar", "cs", "zh-Hans", "zh-Hant", "da", "nl", "en", "fi", "fr", "de", "el",
+     "hu", "it", "ja", "ko", "no", "pl", "pt-PT", "pt-BR", "ru", "es", "sv", and "tr".
+    :vartype default_language_code: str or
+     ~azure.search.documents.indexes.models.EntityRecognitionSkillLanguage
     :ivar minimum_precision: A value between 0 and 1 that be used to only include entities whose
      confidence score is greater than the value specified. If not set (default), or if explicitly
      set to null, all entities will be included.
@@ -3886,12 +3889,17 @@ class EntityRecognitionSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Ski
     :vartype odata_type: str
     """
 
-    categories: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    categories: Optional[list[Union[str, "_models.EntityCategory"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of entity categories that should be extracted."""
-    default_language_code: Optional[str] = rest_field(
+    default_language_code: Optional[Union[str, "_models.EntityRecognitionSkillLanguage"]] = rest_field(
         name="defaultLanguageCode", visibility=["read", "create", "update", "delete", "query"]
     )
-    """A value indicating which language code to use. Default is ``en``."""
+    """A value indicating which language code to use. Default is ``en``. Known values are: \"ar\",
+     \"cs\", \"zh-Hans\", \"zh-Hant\", \"da\", \"nl\", \"en\", \"fi\", \"fr\", \"de\", \"el\",
+     \"hu\", \"it\", \"ja\", \"ko\", \"no\", \"pl\", \"pt-PT\", \"pt-BR\", \"ru\", \"es\", \"sv\",
+     and \"tr\"."""
     minimum_precision: Optional[float] = rest_field(
         name="minimumPrecision", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3917,8 +3925,8 @@ class EntityRecognitionSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Ski
         name: Optional[str] = None,
         description: Optional[str] = None,
         context: Optional[str] = None,
-        categories: Optional[list[str]] = None,
-        default_language_code: Optional[str] = None,
+        categories: Optional[list[Union[str, "_models.EntityCategory"]]] = None,
+        default_language_code: Optional[Union[str, "_models.EntityRecognitionSkillLanguage"]] = None,
         minimum_precision: Optional[float] = None,
         model_version: Optional[str] = None,
     ) -> None: ...
@@ -10331,7 +10339,10 @@ class SentimentSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text
      be consumed as an input by another skill. Required.
     :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
-    :vartype default_language_code: str
+     Known values are: "da", "nl", "en", "fi", "fr", "de", "el", "it", "no", "pl", "pt-PT", "ru",
+     "es", "sv", and "tr".
+    :vartype default_language_code: str or
+     ~azure.search.documents.indexes.models.SentimentSkillLanguage
     :ivar include_opinion_mining: If set to true, the skill output will include information from
      Text Analytics for opinion mining, namely targets (nouns or verbs) and their associated
      assessment (adjective) in the text. Default is false.
@@ -10345,10 +10356,12 @@ class SentimentSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text
     :vartype odata_type: str
     """
 
-    default_language_code: Optional[str] = rest_field(
+    default_language_code: Optional[Union[str, "_models.SentimentSkillLanguage"]] = rest_field(
         name="defaultLanguageCode", visibility=["read", "create", "update", "delete", "query"]
     )
-    """A value indicating which language code to use. Default is ``en``."""
+    """A value indicating which language code to use. Default is ``en``. Known values are: \"da\",
+     \"nl\", \"en\", \"fi\", \"fr\", \"de\", \"el\", \"it\", \"no\", \"pl\", \"pt-PT\", \"ru\",
+     \"es\", \"sv\", and \"tr\"."""
     include_opinion_mining: Optional[bool] = rest_field(
         name="includeOpinionMining", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10374,7 +10387,7 @@ class SentimentSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text
         name: Optional[str] = None,
         description: Optional[str] = None,
         context: Optional[str] = None,
-        default_language_code: Optional[str] = None,
+        default_language_code: Optional[Union[str, "_models.SentimentSkillLanguage"]] = None,
         include_opinion_mining: Optional[bool] = None,
         model_version: Optional[str] = None,
     ) -> None: ...

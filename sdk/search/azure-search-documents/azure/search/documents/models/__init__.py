@@ -53,8 +53,8 @@ from ._models import (  # type: ignore
 )
 
 from ._enums import (  # type: ignore
-    AutocompleteMode,
     HybridCountAndFacetMode,
+    AutocompleteMode,
     IndexActionType,
     QueryAnswerType,
     QueryCaptionType,
@@ -80,6 +80,7 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AutocompleteItem",
+    "AutocompleteMode",
     "DebugInfo",
     "DocumentDebugInfo",
     "ErrorAdditionalInfo",
@@ -115,7 +116,6 @@ __all__ = [
     "VectorizableTextQuery",
     "VectorizedQuery",
     "VectorsDebugInfo",
-    "AutocompleteMode",
     "HybridCountAndFacetMode",
     "IndexActionType",
     "QueryAnswerType",

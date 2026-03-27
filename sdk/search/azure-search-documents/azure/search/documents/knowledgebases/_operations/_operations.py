@@ -63,7 +63,8 @@ def build_knowledge_base_retrieval_retrieve_request(  # pylint: disable=name-too
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if accept is not None:
+        _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if query_source_authorization is not None:
         _headers["x-ms-query-source-authorization"] = _SERIALIZER.header(
             "query_source_authorization", query_source_authorization, "str"
@@ -228,6 +229,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -249,7 +251,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models1.KnowledgeBaseRetrievalResponse, response.json())
 
