@@ -42,9 +42,8 @@ import pytest
 
 from azure.ai.ml import MLClient, command
 from azure.ai.ml.constants import AssetTypes
-from azure.ai.ml.entities import AmlCompute, Environment, Model
+from azure.ai.ml.entities import AmlCompute, Environment, IdentityConfiguration, Model
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
-from azure.core.polling import LROPoller
 
 
 class TestScenarioSweepTuning:
@@ -64,6 +63,7 @@ class TestScenarioSweepTuning:
             min_instances=0,
             max_instances=2,
             idle_time_before_scale_down=120,
+            identity=IdentityConfiguration(type="system_assigned"),
         )
         poller = ml_client.compute.begin_create_or_update(cluster)
         poller.result()
