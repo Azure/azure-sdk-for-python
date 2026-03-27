@@ -37,7 +37,7 @@ adapter.run()
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `AZURE_AI_PROJECT_ENDPOINT` | Yes | Foundry project endpoint (e.g., `https://<resource>.services.ai.azure.com/api/projects/<project>`) |
+| `FOUNDRY_PROJECT_ENDPOINT` | Yes | Foundry project endpoint (e.g., `https://<resource>.services.ai.azure.com/api/projects/<project>`). Falls back to `AZURE_AI_PROJECT_ENDPOINT` if not set. |
 | `GITHUB_TOKEN` | For dev | Fine-grained PAT with Copilot Requests Read-only scope |
 | `AZURE_AI_FOUNDRY_RESOURCE_URL` | For BYOK | Foundry resource URL for Managed Identity auth (e.g., `https://<resource>.cognitiveservices.azure.com`) |
 | `AZURE_AI_FOUNDRY_API_KEY` | Optional | Static API key (skips Managed Identity) |

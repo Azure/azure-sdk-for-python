@@ -85,8 +85,17 @@ class _HealthCheckFilter(_logging.Filter):
 # URL derivation
 # ---------------------------------------------------------------------------
 
+def _get_project_endpoint() -> Optional[str]:
+    """Read the Foundry project endpoint from environment variables.
+
+    Checks the new platform convention (``FOUNDRY_PROJECT_ENDPOINT``) first,
+    then falls back to the legacy name (``AZURE_AI_PROJECT_ENDPOINT``).
+    """
+    return os.getenv("FOUNDRY_PROJECT_ENDPOINT") or os.getenv("AZURE_AI_PROJECT_ENDPOINT") or None
+
+
 def _derive_resource_url_from_project_endpoint(project_endpoint: str) -> str:
-    """Derive AZURE_AI_FOUNDRY_RESOURCE_URL from AZURE_AI_PROJECT_ENDPOINT.
+    """Derive AZURE_AI_FOUNDRY_RESOURCE_URL from the project endpoint.
 
     Converts ``https://<resource>.services.ai.azure.com/api/projects/<project>``
     to ``https://<resource>.cognitiveservices.azure.com``.
@@ -122,7 +131,7 @@ def _build_session_config() -> Dict[str, Any]:
     or a static API key.
     """
     foundry_url = os.getenv("AZURE_AI_FOUNDRY_RESOURCE_URL")
-    project_endpoint = os.getenv("AZURE_AI_PROJECT_ENDPOINT")
+    project_endpoint = _get_project_endpoint()
     model = os.getenv("AZURE_AI_FOUNDRY_MODEL") or os.getenv("COPILOT_MODEL")
 
     # Auto-derive RESOURCE_URL from PROJECT_ENDPOINT if not set.
@@ -672,8 +681,15 @@ class GitHubCopilotAdapter(CopilotAdapter):
         ``FoundryCBAgent`` base class.  If unavailable (e.g. older agentserver-core
         version), history loading is silently skipped.
         """
+        # The base class reads AZURE_AI_PROJECT_ENDPOINT. If the platform
+        # switches to FOUNDRY_PROJECT_ENDPOINT, the base class may not have it.
+        # Fall back to our own helper.
         if not getattr(self, "_project_endpoint", None):
-            return None
+            fallback = _get_project_endpoint()
+            if fallback:
+                self._project_endpoint = fallback
+            else:
+                return None
         if not hasattr(self, "_create_openai_client"):
             logger.debug("Base class does not provide _create_openai_client — skipping history")
             return None
