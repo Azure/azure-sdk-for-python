@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from io import SEEK_SET, UnsupportedOperation
-from typing import Any, cast, Dict, IO, Optional, TypeVar, TYPE_CHECKING
+from typing import Any, cast, Dict, IO, Literal, Optional, TypeVar, Union, TYPE_CHECKING
 
 from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, HttpResponseError
 
@@ -71,7 +71,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
     encryption_options: Dict[str, Any],
     blob_settings: "StorageConfiguration",
     headers: Dict[str, Any],
-    validate_content: bool,
+    validate_content: Optional[Union[bool, Literal['crc64', 'md5']]],
     max_concurrency: Optional[int],
     length: Optional[int] = None,
     **kwargs: Any
@@ -125,7 +125,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
 
         use_original_upload_path = (
             blob_settings.use_byte_buffer
-            or validate_content is not None
+            or validate_content not in (None, False)
             or encryption_options.get('required')
             or blob_settings.max_block_size < blob_settings.min_large_block_upload_threshold
             or hasattr(stream, 'seekable') and not stream.seekable()
@@ -213,7 +213,7 @@ def upload_page_blob(
     headers: Dict[str, Any],
     stream: IO,
     length: Optional[int] = None,
-    validate_content: Optional[bool] = None,
+    validate_content: Optional[Union[bool, Literal['crc64', 'md5']]] = None,
     max_concurrency: Optional[int] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
@@ -291,7 +291,7 @@ def upload_append_blob(  # pylint: disable=unused-argument
     headers: Dict[str, Any],
     stream: IO,
     length: Optional[int] = None,
-    validate_content: Optional[bool] = None,
+    validate_content: Optional[Union[bool, Literal['crc64', 'md5']]] = None,
     max_concurrency: Optional[int] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
