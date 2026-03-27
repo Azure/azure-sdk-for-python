@@ -73,7 +73,5 @@ def _strip_snapshot_from_url(url: str) -> str:
     if "?" not in url:
         return url
     base, qs = url.split("?", 1)
-    filtered = "&".join(
-        part for part in qs.split("&") if not part.startswith(("sharesnapshot=", "snapshot="))
-    )
+    filtered = "&".join(part for part in qs.split("&") if not part.startswith(("sharesnapshot=", "snapshot=")))
     return f"{base}?{filtered}" if filtered else base
