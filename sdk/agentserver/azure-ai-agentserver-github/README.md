@@ -97,8 +97,8 @@ rules:
     action: allow
 ```
 
-> **Note:** Tool ACL is an interim feature in this package. The intent is to
-> push this capability upstream to the Copilot SDK itself.
+> **Note:** Tool ACL is an interim feature and may be removed from this package
+> in a future release when equivalent functionality is available in the Copilot SDK.
 
 ## Examples
 
