@@ -150,7 +150,6 @@
 
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
-  - Client `CognitiveServicesManagementClient` deleted or renamed instance variable `url`
   - Method `CognitiveServicesManagementClient.calculate_model_capacity` grouped `model`/`sku_name`/`workloads` into new signature `parameters`
   - Method `CognitiveServicesManagementClient.check_domain_availability` grouped `subdomain_name`/`type`/`kind` into new signature `parameters`
   - Method `CognitiveServicesManagementClient.check_sku_availability` grouped `skus`/`kind`/`type` into new signature `parameters`
