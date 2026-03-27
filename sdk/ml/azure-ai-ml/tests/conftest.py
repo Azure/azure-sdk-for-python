@@ -233,6 +233,7 @@ def mock_machinelearning_registry_client(mocker: MockFixture) -> MLClient:
     )
 
 
+# set the version manually
 @pytest.fixture
 def mock_aml_services_2022_10_01(mocker: MockFixture) -> Mock:
     mock = mocker.patch("azure.ai.ml._restclient.arm_ml_service")
