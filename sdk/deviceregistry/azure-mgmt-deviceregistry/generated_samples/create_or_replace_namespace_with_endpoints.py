@@ -34,18 +34,17 @@ def main():
         resource_group_name="myResourceGroup",
         namespace_name="adr-namespace-gbk0925-n01",
         resource={
-            "identity": {"type": "SystemAssigned"},
             "location": "North Europe",
             "properties": {
                 "messaging": {
                     "endpoints": {
-                        "anotherEventGridEndpoint": {
-                            "address": "https://myeventgridtopic2.westeurope-1.eventgrid.azure.net/api/events",
-                            "endpointType": "Microsoft.Devices/IoTHubs",
+                        "anotherIothubEndpoint": {
+                            "address": "https://iothub-for-dps-2.azure-devices.net",
+                            "endpointType": "Microsoft.Devices/IotHubs",
                         },
-                        "eventGridEndpoint": {
-                            "address": "https://myeventgridtopic.westeurope-1.eventgrid.azure.net/api/events",
-                            "endpointType": "Microsoft.Devices/IoTHubs",
+                        "iothubEndpoint": {
+                            "address": "https://iothub-for-dps.azure-devices.net",
+                            "endpointType": "Microsoft.Devices/IotHubs",
                         },
                     }
                 }
@@ -55,6 +54,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-10-01/CreateOrReplace_Namespace_With_Endpoints.json
+# x-ms-original-file: 2026-03-01-preview/CreateOrReplace_Namespace_With_Endpoints.json
 if __name__ == "__main__":
     main()
