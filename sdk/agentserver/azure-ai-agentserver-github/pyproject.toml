@@ -2,7 +2,7 @@
 name = "azure-ai-agentserver-github"
 dynamic = ["version", "readme"]
 description = "GitHub Copilot SDK adapter for Azure AI Agent Server"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 authors = [
   { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
@@ -12,7 +12,6 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -50,7 +49,7 @@ pytyped = ["py.typed"]
 
 [tool.ruff]
 line-length = 120
-target-version = "py310"
+target-version = "py311"
 lint.select = ["E", "F", "B", "I"]
 lint.ignore = []
 fix = false
