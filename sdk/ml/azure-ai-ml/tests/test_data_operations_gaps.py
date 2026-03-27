@@ -96,10 +96,10 @@ class TestDataOperationsGaps(AzureRecordedTestCase):
         with pytest.raises(MlException):
             client.data.create_or_update(data_asset)
 
-    def test_create_missing_path_raises_validation(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_create_missing_path_raises_validation(self, client: MLClient, tmp_path: Path, randstr: Callable[[], str]) -> None:
         # Creating a Data asset with no path should raise a ValidationError during YAML loading
         name = randstr("name")
-        config_path = Path("data_missing_path.yaml")
+        config_path = tmp_path / "data_missing_path.yaml"
         config_path.write_text(
             f"""
             name: {name}

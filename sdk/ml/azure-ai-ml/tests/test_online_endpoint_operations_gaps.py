@@ -4,8 +4,7 @@ from typing import Callable
 import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
 
-from azure.ai.ml import load_online_endpoint
-from azure.ai.ml._ml_client import MLClient
+from azure.ai.ml import load_online_endpoint, MLClient
 from azure.ai.ml.entities import OnlineEndpoint, EndpointAuthKeys, EndpointAuthToken
 from azure.ai.ml.entities._endpoint.online_endpoint import EndpointAadToken
 from azure.ai.ml.constants._endpoint import EndpointKeyType

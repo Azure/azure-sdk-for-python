@@ -48,7 +48,7 @@ class TestOnlineDeploymentGaps(AzureRecordedTestCase):
                 # This should raise before any remote call because vscode_debug requires local=True
                 client.online_deployments.begin_create_or_update(blue_deployment, vscode_debug=True).result()
         finally:
-            client.online_endpoints.begin_delete(name=online_endpoint_name)
+            client.online_endpoints.begin_delete(name=online_endpoint_name).result()
 
     def test_local_enable_gpu_raises_when_nvidia_missing(self, client: MLClient, rand_online_name: Callable[[], str], rand_online_deployment_name: Callable[[], str]) -> None:
         """Covers branch where local is True and local_enable_gpu True but nvidia-smi is unavailable -> LocalDeploymentGPUNotAvailable"""
@@ -83,7 +83,7 @@ class TestOnlineDeploymentGaps(AzureRecordedTestCase):
             with pytest.raises(LocalDeploymentGPUNotAvailable):
                 client.online_deployments.begin_create_or_update(blue_deployment, local=True, local_enable_gpu=True).result()
         finally:
-            client.online_endpoints.begin_delete(name=online_endpoint_name)
+            client.online_endpoints.begin_delete(name=online_endpoint_name).result()
 
     def test_get_logs_invalid_container_type_raises_validation(self, client: MLClient, rand_online_name: Callable[[], str], rand_online_deployment_name: Callable[[], str]) -> None:
         """Covers branches in _validate_deployment_log_container_type that raise ValidationException for invalid types"""
@@ -106,7 +106,7 @@ class TestOnlineDeploymentGaps(AzureRecordedTestCase):
             with pytest.raises(ValidationException):
                 client.online_deployments.get_logs(name=online_deployment_name, endpoint_name=online_endpoint_name, lines=10, container_type="invalid_container")
         finally:
-            client.online_endpoints.begin_delete(name=online_endpoint_name)
+            client.online_endpoints.begin_delete(name=online_endpoint_name).result()
 
 
 @pytest.mark.e2etest

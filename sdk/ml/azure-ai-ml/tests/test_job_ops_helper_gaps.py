@@ -1,18 +1,22 @@
 import os
+import re
 from typing import Callable
 
 import pytest
 from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient
+from azure.ai.ml.constants._common import GitProperties
+from azure.ai.ml.constants._job.job import JobLogPattern, JobType
 from azure.ai.ml.exceptions import JobException
 from azure.ai.ml.operations._job_ops_helper import (
+    _get_last_log_primary_instance,
     _get_sorted_filtered_logs,
+    _incremental_print,
     _wait_before_polling,
     get_git_properties,
     has_pat_token,
 )
-from azure.ai.ml.constants._job.job import JobLogPattern, JobType
 
 
 @pytest.mark.e2etest
@@ -88,9 +92,6 @@ class TestJobOpsHelperGaps(AzureRecordedTestCase):
 
 
 # Additional generated tests merged below. Existing tests above are preserved verbatim.
-import re
-from azure.ai.ml.constants._common import GitProperties
-from azure.ai.ml.operations._job_ops_helper import _incremental_print, _get_last_log_primary_instance
 
 
 @pytest.mark.e2etest

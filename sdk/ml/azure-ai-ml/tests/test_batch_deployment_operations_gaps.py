@@ -69,7 +69,7 @@ class TestBatchDeploymentGaps(AzureRecordedTestCase):
         except Exception as err:
             # The important part is that an exception originates from the create_or_update flow
             # (e.g., HttpResponseError) rather than a local programming error.
-            assert isinstance(err, (HttpResponseError, Exception))
+            assert isinstance(err, HttpResponseError)
         finally:
             # Cleanup endpoint
-            client.batch_endpoints.begin_delete(name=endpoint.name)
+            client.batch_endpoints.begin_delete(name=endpoint.name).result()
