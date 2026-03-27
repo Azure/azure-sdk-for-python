@@ -38,6 +38,8 @@ clients, focusing on edge cases like:
 | `test_scenario_blue_green_deployment.py` | `arm_ml_service` (endpoints) | Blue-green deployment with traffic shifting, metadata updates | ~20-30min |
 | `test_scenario_private_network.py` (read-only) | `arm_ml_service` | Workspace managed-network settings deserialization, outbound rules list | ~10s |
 | `test_scenario_private_network.py` (CRUD) | `arm_ml_service` | FQDN & ServiceTag outbound-rule CRUD, update, round-trip serialization | ~2-5min* |
+| `test_scenario_batch_endpoint.py` (deploy+invoke) | `arm_ml_service` (endpoints) | Batch endpoint deploy, invoke with data asset, list jobs, config round-trip (does not poll to completion or verify output) | ~15-30min |
+| `test_scenario_batch_endpoint.py` (config variations) | `arm_ml_service` (endpoints) | Alternate deployment config (SUMMARY_ONLY, error_threshold=-1), round-trip | ~10-15min |
 
 \* CRUD tests require workspace with managed-network isolation enabled (`AllowInternetOutbound` or `AllowOnlyApprovedOutbound`). Skipped on `Disabled` workspaces.
 
@@ -233,7 +235,7 @@ new scenarios:
 | Area | What to test | Complexity |
 |------|-------------|------------|
 | AutoML classification/regression | Job config, blocked algos, featurization, best model retrieval | Level 3 |
-| Batch endpoints | Deploy model, invoke with data asset, poll batch job, get output | Level 4 |
+| Batch endpoints (poll + output) | Poll batch job to completion, download/verify scoring output | Level 4 |
 | Registry cross-workspace | Register assets in registry, use in workspace job | Level 5 |
 | Distributed training | Multi-node PyTorch/TF command job | Level 3 |
 | Managed online endpoint + MLflow | No-code MLflow model deployment | Level 4 |
