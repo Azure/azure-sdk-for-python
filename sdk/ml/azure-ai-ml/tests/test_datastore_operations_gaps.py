@@ -32,21 +32,20 @@ class TestDatastoreMount(AzureRecordedTestCase):
         # If azureml.dataprep is not installed in the environment, an MlException is raised.
         # If azureml.dataprep is installed but the subprocess fails in this test environment,
         # an AssertionError may be raised by the dataprep subprocess wrapper. Accept either.
-        with pytest.raises(Exception) as ex:
+        with pytest.raises((MlException, AssertionError)):
             client.datastores.mount(random_name, mode="ro_mount", mount_point="/tmp/mount")
-        assert isinstance(ex.value, (MlException, AssertionError))
 
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestDatastoreMounts(AzureRecordedTestCase):
-    def test_mount_invalid_mode_raises_assertion(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+    def test_mount_invalid_mode_raises_assertion_with_hardcoded_path(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         # mode validation occurs before any imports or side effects
         with pytest.raises(AssertionError) as ex:
             client.datastores.mount("some_datastore_path", mode="invalid_mode")
         assert "mode should be either `ro_mount` or `rw_mount`" in str(ex.value)
 
-    def test_mount_persistent_without_ci_raises_assertion(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+    def test_mount_persistent_without_ci_raises_assertion_no_mount_point(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         # persistent mounts require CI_NAME environment variable to be set; without it, an assertion is raised
         with pytest.raises(AssertionError) as ex:
             client.datastores.mount("some_datastore_path", persistent=True)
@@ -58,9 +57,8 @@ class TestDatastoreMounts(AzureRecordedTestCase):
         # If azureml.dataprep is installed but its subprocess wrapper raises an AssertionError due to mount_point None,
         # accept AssertionError as well to cover both environments. Also accept TypeError raised when mount_point is None
         # by underlying os.stat calls in some environments.
-        with pytest.raises(Exception) as ex:
+        with pytest.raises((MlException, AssertionError, TypeError)):
             client.datastores.mount("some_datastore_path", mode="ro_mount")
-        assert isinstance(ex.value, (MlException, AssertionError, TypeError))
 
 
 @pytest.mark.e2etest
@@ -87,11 +85,9 @@ class TestDatastoreMountLive(AzureRecordedTestCase):
         datastore_path = randstr("ds_")
 
         try:
-            with pytest.raises(Exception) as ex:
+            with pytest.raises((MlException, ResourceNotFoundError)):
                 # Call the public API which will trigger the persistent mount branch.
                 client.datastores.mount(datastore_path, persistent=True)
-            # Accept MlException from the SDK or ResourceNotFoundError from the service layer
-            assert isinstance(ex.value, (MlException, ResourceNotFoundError))
         finally:
             # Restore environment
             if prev_ci is None:
@@ -123,7 +119,7 @@ class TestDatastoreMountLive(AzureRecordedTestCase):
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestDatastoreMountGaps(AzureRecordedTestCase):
-    def test_mount_invalid_mode_raises_assertion(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+    def test_mount_invalid_mode_raises_assertion_with_slash_in_path(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         # exercise assertion that validates mode value (covers branch at line ~288)
         with pytest.raises(AssertionError):
             client.datastores.mount("some_datastore/path", mode="invalid_mode")
@@ -140,7 +136,7 @@ class TestDatastoreMountGaps(AzureRecordedTestCase):
         pass
 
     @pytest.mark.skipif(False, reason="no-op")
-    def test_mount_missing_dataprep_raises_mlexception(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+    def test_mount_missing_dataprep_raises_mlexception_with_import_check(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         # Skip this test if azureml.dataprep is available in the test environment because we want to hit ImportError branch
         try:
             import importlib

@@ -157,7 +157,7 @@ class TestComponentOperationsValidationErrors(AzureRecordedTestCase):
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestComponentOperationsGeneratedBatch1(AzureRecordedTestCase):
-    def test_create_or_update_with_plain_function_raises_validation(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+    def test_create_or_update_with_untyped_function_raises_validation(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         """
         Covers branch where input to create_or_update is a plain python function that is neither
         a dsl pipeline function nor an mldesigner component function, which should raise

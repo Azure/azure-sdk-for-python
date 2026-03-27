@@ -124,7 +124,7 @@ class TestFeatureStoreOperationsGapsAdditional(AzureRecordedTestCase):
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestFeatureStoreOperationsGapsExtraGenerated(AzureRecordedTestCase):
-    def test_begin_create_raises_on_invalid_offline_store_type(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+    def test_begin_create_raises_on_invalid_offline_store_type_not_adls(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         """Ensure begin_create validation rejects non-azure_data_lake_gen2 offline store types.
 
         Covers validation branch that checks offline_store.type against OFFLINE_MATERIALIZATION_STORE_TYPE.
@@ -140,7 +140,7 @@ class TestFeatureStoreOperationsGapsExtraGenerated(AzureRecordedTestCase):
             # begin_create triggers the pre-flight validation and should raise
             client.feature_stores.begin_create(fs)
 
-    def test_begin_create_raises_on_invalid_online_store_type(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+    def test_begin_create_raises_on_invalid_online_store_type_not_redis(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         """Ensure begin_create validation rejects non-redis online store types.
 
         Covers validation branch that checks online_store.type against ONLINE_MATERIALIZATION_STORE_TYPE.

@@ -141,7 +141,7 @@ class TestOnlineEndpointGaps(AzureRecordedTestCase):
         finally:
             client.online_endpoints.begin_delete(name=endpoint_name).result()
 
-    def test_invoke_with_nonexistent_deployment_raises(
+    def test_invoke_with_nonexistent_deployment_raises_random_name(
         self,
         randstr: Callable[[], str],
         client: MLClient,

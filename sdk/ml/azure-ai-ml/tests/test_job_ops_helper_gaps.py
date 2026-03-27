@@ -101,7 +101,7 @@ class TestJobOpsHelperGapsGenerated(AzureRecordedTestCase):
         with pytest.raises(JobException):
             _wait_before_polling(-1)
 
-    def test_get_sorted_filtered_logs_common_and_legacy(self) -> None:
+    def test_get_sorted_filtered_logs_common_and_legacy_with_date_patterns(self) -> None:
         """Covers common runtime filtering and legacy fallback based on job type membership."""
         # Common runtime pattern matches filenames like "azureml-logs/some/run_0.txt" depending on pattern
         # Use patterns that match COMMON_RUNTIME_STREAM_LOG_PATTERN and legacy patterns to exercise both branches.
@@ -226,7 +226,7 @@ class TestJobOpsHelperGapsGenerated(AzureRecordedTestCase):
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestJobOpsHelperGapsExtra(AzureRecordedTestCase):
-    def test_get_git_properties_respects_env_overrides(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+    def test_get_git_properties_respects_env_overrides_with_whitespace_stripping(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         # Preserve existing env and set overrides to validate parsing and cleaning
         env_keys = [
             GitProperties.ENV_REPOSITORY_URI,

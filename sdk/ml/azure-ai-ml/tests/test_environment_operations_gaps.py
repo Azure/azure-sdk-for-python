@@ -7,6 +7,7 @@ from azure.ai.ml import MLClient
 from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.ai.ml.operations._environment_operations import _preprocess_environment_name
+from azure.core.exceptions import HttpResponseError
 
 
 @pytest.mark.e2etest
@@ -83,7 +84,7 @@ class TestEnvironmentOperationsGapsShare(AzureRecordedTestCase):
         original_version_operations = env_ops._version_operations
 
         # Calling share with a likely-nonexistent registry should raise from get_registry_client
-        with pytest.raises(Exception):
+        with pytest.raises(HttpResponseError):
             env_ops.share(name=name, version=version, share_with_name=name, share_with_version=version, registry_name=registry_name)
 
         # Ensure that even after the exception, the operation scope and service client are restored

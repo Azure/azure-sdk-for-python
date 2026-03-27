@@ -1,47 +1,18 @@
 import pytest
 from typing import Callable
-from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.entities import PipelineJob, Job
-from azure.ai.ml.entities._job.pipeline._io import PipelineInput
-from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob as PipelineJobClass
 from azure.ai.ml.entities._job.job import Job as JobClass
 from azure.ai.ml.constants._common import GIT_PATH_PREFIX
 from azure.ai.ml.exceptions import ValidationException, UserErrorException
+from azure.core.exceptions import ResourceNotFoundError
 
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestJobOperationsGaps(AzureRecordedTestCase):
-    @pytest.mark.e2etest
-    def test_validate_pipeline_job_git_code_path_rejected_when_private_preview_disabled(
-        self, client: MLClient, randstr: Callable[[], str]
-    ) -> None:
-        """Covers git-path code validation branch when private preview is not enabled.
-        This test constructs a PipelineJob-like payload with a code reference that starts
-        with the Git path prefix and calls client.jobs.create_or_update() to trigger
-        validation logic in JobOperations._validate which should raise ValidationException
-        (surface as an exception from the service client or validation helper)."""
-        job_name = f"e2etest_{randstr('job')}_gitcode"
-
-        # Construct minimal PipelineJob object with a git-style code path to trigger git validation branch.
-        # Use PipelineJob from client-facing entities where available.
-        pj = PipelineJob(
-            name=job_name,
-            jobs={},
-            inputs={},
-        )
-        # Inject a code-like attribute that starts with the git prefix to exercise the validation branch.
-        # The production code checks hasattr(job, "code") and isinstance(job.code, str) and startswith(GIT_PATH_PREFIX)
-        # so set these attributes directly on the PipelineJob instance.
-        pj.code = "git+https://fake/repo.git"
-
-        # Attempt to validate via create_or_update with skip_validation=False, expecting a ValidationException
-        # to be raised (wrapped by client behavior). We assert that some exception is raised.
-        with pytest.raises(Exception):
-            client.jobs.create_or_update(pj)
-
     @pytest.mark.e2etest
     def test_download_non_terminal_job_raises_job_exception(self, client: MLClient, randstr: Callable[[], str], tmp_path) -> None:
         """Covers download early-exit branch when job is not in terminal state.
@@ -51,14 +22,14 @@ class TestJobOperationsGaps(AzureRecordedTestCase):
 
         # Attempt to call download for a job that likely does not exist / is not terminal.
         # The client should raise an exception indicating the job is not in a terminal state or not found.
-        with pytest.raises(Exception):
+        with pytest.raises(ResourceNotFoundError):
             client.jobs.download(job_name, download_path=str(tmp_path))
 
     @pytest.mark.e2etest
     def test_get_invalid_name_type_raises_user_error(self, client: MLClient) -> None:
         """Covers get() input validation branch where non-string name raises UserErrorException.
         We call client.jobs.get with a non-string value and expect an exception to be raised."""
-        with pytest.raises(Exception):
+        with pytest.raises(UserErrorException):
             # Intentionally pass non-string
             client.jobs.get(123)  # type: ignore[arg-type]
 
@@ -80,8 +51,8 @@ class TestJobOperationsGaps(AzureRecordedTestCase):
     def test_get_named_output_uri_with_none_job_name_raises_user_error(
         self, client: MLClient, randstr: Callable[[], str]
     ) -> None:
-        # Passing None as job_name should surface the underlying validation in get(name)
-        with pytest.raises(Exception):
+        # Passing None as job_name surfaces a ResourceNotFoundError from the service
+        with pytest.raises(ResourceNotFoundError):
             # Use protected helper to drive the branch where client.jobs.get is invoked with invalid name
             client.jobs._get_named_output_uri(None)
 

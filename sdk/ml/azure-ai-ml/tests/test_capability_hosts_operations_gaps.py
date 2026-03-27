@@ -12,6 +12,11 @@ from azure.core.polling import LROPoller
 from azure.core.exceptions import HttpResponseError
 
 
+class _NoopRestObj:
+    def serialize(self):
+        return {}
+
+
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestCapabilityHostsOperationsGaps(AzureRecordedTestCase):
@@ -41,10 +46,6 @@ class TestCapabilityHostsOperationsGaps(AzureRecordedTestCase):
         # marshalling helper expected by the workspace create path. Provide a no-op
         # implementation on the instance to avoid AttributeError during test execution.
         if not hasattr(wps, "_hub_values_to_rest_object"):
-            class _NoopRestObj:
-                def serialize(self):
-                    return {}
-
             wps._hub_values_to_rest_object = lambda: _NoopRestObj()
 
         # Create the workspace resource
@@ -103,10 +104,6 @@ class TestCapabilityHostsOperationsGaps(AzureRecordedTestCase):
 
         # Provide a no-op hub marshalling helper if missing to avoid AttributeError in some test environments
         if not hasattr(wps, "_hub_values_to_rest_object"):
-            class _NoopRestObj:
-                def serialize(self):
-                    return {}
-
             wps._hub_values_to_rest_object = lambda: _NoopRestObj()
 
         # Create the workspace
@@ -211,25 +208,3 @@ class TestCapabilityHostsOperationsGaps(AzureRecordedTestCase):
         # cleanup created capability host and workspace
         client.capability_hosts.begin_delete(name=created.name).result()
         client.workspaces.begin_delete(workspace.name, delete_dependent_resources=True).result()
-
-
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestCapabilityHostsOperations(AzureRecordedTestCase):
-    @pytest.mark.e2etest
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason=(
-            "Cannot exercise workspace-name validation in integration tests using the provided MLClient fixture: "
-            "the fixture constructs an MLClient with a workspace_name already set. Constructing an MLClient with an "
-            "empty workspace_name would require custom client construction which is disallowed in integration tests."
-        ),
-    )
-    def test_validate_workspace_name_raises_when_missing(self, client: MLClient, randstr: Callable[[], str]) -> None:
-        """
-        Intended to cover the branch where _validate_workspace_name raises a ValidationException when the MLClient
-        workspace_name is not set. This test is skipped during recorded/playback runs because the provided
-        MLClient fixture always supplies a workspace_name and tests are forbidden from constructing MLClient
-        instances manually in integration tests.
-        """
-        pytest.skip("Cannot run workspace-name missing validation with provided MLClient fixture")

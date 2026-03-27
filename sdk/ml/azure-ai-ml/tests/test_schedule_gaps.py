@@ -8,6 +8,7 @@ from azure.ai.ml import MLClient
 from azure.ai.ml.constants._common import LROConfigurations
 from azure.ai.ml.entities import CronTrigger
 from azure.ai.ml.entities._load_functions import load_schedule
+from azure.core.exceptions import ResourceNotFoundError
 
 
 @pytest.mark.e2etest
@@ -53,9 +54,8 @@ class TestScheduleGaps(AzureRecordedTestCase):
         client.schedules.begin_disable(schedule.name).result(timeout=LROConfigurations.POLLING_TIMEOUT)
         client.schedules.begin_delete(schedule.name).result(timeout=LROConfigurations.POLLING_TIMEOUT)
         # after delete, getting should raise
-        with pytest.raises(Exception) as e:
+        with pytest.raises(ResourceNotFoundError):
             client.schedules.get(schedule.name)
-        assert "not found" in str(e).lower()
 
     def test_cron_trigger_roundtrip_properties(self, client: MLClient, randstr: Callable[[], str]):
         # ensure CronTrigger properties roundtrip via schedule create and get

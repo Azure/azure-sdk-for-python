@@ -112,7 +112,7 @@ class TestOnlineDeploymentGaps(AzureRecordedTestCase):
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestOnlineDeploymentOperationsGaps(AzureRecordedTestCase):
-    def test_get_logs_invalid_container_type_raises_validation(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_get_logs_invalid_container_type_raises_validation_without_endpoint(self, client: MLClient, randstr: Callable[[], str]) -> None:
         """Calling get_logs with an invalid container_type should raise a ValidationException before any service call."""
         endpoint_name = randstr("endpoint-name")
         deployment_name = randstr("deployment-name")

@@ -58,13 +58,13 @@ class TestDeploymentTemplateOperationsGaps(AzureRecordedTestCase):
         with pytest.raises((ResourceNotFoundError, AttributeError)):
             client.deployment_templates.delete(name=name, version=version)
 
-    def test_get_nonexistent_raises_resource_not_found(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_get_nonexistent_without_version_raises_resource_not_found(self, client: MLClient, randstr: Callable[[], str]) -> None:
         name = randstr("dt_name")
         # Attempting to get a deployment template that does not exist should raise ResourceNotFoundError
         with pytest.raises(ResourceNotFoundError):
             client.deployment_templates.get(name=name)
 
-    def test_delete_nonexistent_raises_resource_not_found(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_delete_nonexistent_without_version_raises_resource_not_found(self, client: MLClient, randstr: Callable[[], str]) -> None:
         name = randstr("dt_name")
         # Deleting a non-existent deployment template should raise ResourceNotFoundError
         # The underlying service client in this test env may instead raise AttributeError if the delete method name differs.
