@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.billingbenefits import BillingBenefitsRP
 
 """
@@ -26,6 +28,7 @@ from azure.mgmt.billingbenefits import BillingBenefitsRP
 def main():
     client = BillingBenefitsRP(
         credential=DefaultAzureCredential(),
+        subscription_id="SUBSCRIPTION_ID",
     )
 
     response = client.savings_plan_order.get(
@@ -34,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/billingbenefits/resource-manager/Microsoft.BillingBenefits/stable/2022-11-01/examples/SavingsPlanOrderGet.json
+# x-ms-original-file: specification/billingbenefits/resource-manager/Microsoft.BillingBenefits/preview/2024-11-01-preview/examples/SavingsPlanOrderGet.json
 if __name__ == "__main__":
     main()

@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,14 +7,202 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
+JSON = MutableMapping[str, Any]
+
+
+class Resource(_serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.billingbenefits.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.billingbenefits.models.SystemData
+    """
+
+
+class AppliedDiscount(ProxyResource):
+    """Applied discount.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.billingbenefits.models.SystemData
+    :ivar entity_type: This defines whether the entity being created is primary or affiliate.
+     Supported values: primary, affiliate. Validation: Required, must match one of the 2 values.
+     Known values are: "Primary" and "Affiliate".
+    :vartype entity_type: str or ~azure.mgmt.billingbenefits.models.DiscountEntityType
+    :ivar product_code: This is the catalog UPN for the product.
+    :vartype product_code: str
+    :ivar start_at: Start date of the discount. Value is the date the discount started or will
+     start in the future.
+    :vartype start_at: ~datetime.datetime
+    :ivar system_id: This is the globally unique identifier of the Discount which will not change
+     for the lifetime of the Discount.
+    :vartype system_id: str
+    :ivar provisioning_state: The state of the resource. Supported values are Pending, Failed,
+     Succeeded, Canceled. Known values are: "Unknown", "Pending", "Succeeded", "Canceled", and
+     "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.billingbenefits.models.DiscountProvisioningState
+    :ivar billing_account_resource_id: Billing account resource id where the discount metadata is
+     present.
+    :vartype billing_account_resource_id: str
+    :ivar billing_profile_resource_id: Billing profile resource id where the discount is scoped to.
+    :vartype billing_profile_resource_id: str
+    :ivar customer_resource_id: Customer resource id where the discount is scoped to.
+    :vartype customer_resource_id: str
+    :ivar display_name: This defines a user friendly display name for the discount.
+    :vartype display_name: str
+    :ivar status: Represents the current status of the discount. Known values are: "Active",
+     "Pending", "Failed", "Canceled", and "Expired".
+    :vartype status: str or ~azure.mgmt.billingbenefits.models.DiscountStatus
+    :ivar benefit_resource_id: Fully-qualified identifier of the benefit under applicable benefit
+     list.
+    :vartype benefit_resource_id: str
+    :ivar applied_scope_type: List of applied scopes supported for discounts. Known values are:
+     "BillingAccount", "BillingProfile", and "Customer".
+    :vartype applied_scope_type: str or ~azure.mgmt.billingbenefits.models.DiscountAppliedScopeType
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "billing_account_resource_id": {"readonly": True},
+        "billing_profile_resource_id": {"readonly": True},
+        "customer_resource_id": {"readonly": True},
+        "status": {"readonly": True},
+        "benefit_resource_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "entity_type": {"key": "properties.entityType", "type": "str"},
+        "product_code": {"key": "properties.productCode", "type": "str"},
+        "start_at": {"key": "properties.startAt", "type": "iso-8601"},
+        "system_id": {"key": "properties.systemId", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "billing_account_resource_id": {"key": "properties.billingAccountResourceId", "type": "str"},
+        "billing_profile_resource_id": {"key": "properties.billingProfileResourceId", "type": "str"},
+        "customer_resource_id": {"key": "properties.customerResourceId", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "benefit_resource_id": {"key": "properties.benefitResourceId", "type": "str"},
+        "applied_scope_type": {"key": "properties.appliedScopeType", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        product_code: Optional[str] = None,
+        start_at: Optional[datetime.datetime] = None,
+        system_id: Optional[str] = None,
+        display_name: Optional[str] = None,
+        applied_scope_type: Optional[Union[str, "_models.DiscountAppliedScopeType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword product_code: This is the catalog UPN for the product.
+        :paramtype product_code: str
+        :keyword start_at: Start date of the discount. Value is the date the discount started or will
+         start in the future.
+        :paramtype start_at: ~datetime.datetime
+        :keyword system_id: This is the globally unique identifier of the Discount which will not
+         change for the lifetime of the Discount.
+        :paramtype system_id: str
+        :keyword display_name: This defines a user friendly display name for the discount.
+        :paramtype display_name: str
+        :keyword applied_scope_type: List of applied scopes supported for discounts. Known values are:
+         "BillingAccount", "BillingProfile", and "Customer".
+        :paramtype applied_scope_type: str or
+         ~azure.mgmt.billingbenefits.models.DiscountAppliedScopeType
+        """
+        super().__init__(**kwargs)
+        self.entity_type: Optional[str] = None
+        self.product_code = product_code
+        self.start_at = start_at
+        self.system_id = system_id
+        self.provisioning_state: Optional[Union[str, "_models.DiscountProvisioningState"]] = None
+        self.billing_account_resource_id: Optional[str] = None
+        self.billing_profile_resource_id: Optional[str] = None
+        self.customer_resource_id: Optional[str] = None
+        self.display_name = display_name
+        self.status: Optional[Union[str, "_models.DiscountStatus"]] = None
+        self.benefit_resource_id: Optional[str] = None
+        self.applied_scope_type = applied_scope_type
 
 
 class AppliedScopeProperties(_serialization.Model):
@@ -49,8 +237,8 @@ class AppliedScopeProperties(_serialization.Model):
         subscription_id: Optional[str] = None,
         resource_group_id: Optional[str] = None,
         display_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tenant_id: Tenant ID where the benefit is applied.
         :paramtype tenant_id: str
@@ -98,8 +286,8 @@ class BillingInformation(_serialization.Model):
         billing_currency_total_paid_amount: Optional["_models.Price"] = None,
         billing_currency_prorated_amount: Optional["_models.Price"] = None,
         billing_currency_remaining_commitment_amount: Optional["_models.Price"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword billing_currency_total_paid_amount:
         :paramtype billing_currency_total_paid_amount: ~azure.mgmt.billingbenefits.models.Price
@@ -142,9 +330,9 @@ class BillingPlanInformation(_serialization.Model):
         pricing_currency_total: Optional["_models.Price"] = None,
         start_date: Optional[datetime.date] = None,
         next_payment_due_date: Optional[datetime.date] = None,
-        transactions: Optional[List["_models.PaymentDetail"]] = None,
-        **kwargs
-    ):
+        transactions: Optional[list["_models.PaymentDetail"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword pricing_currency_total: Amount of money to be paid for the Order. Tax is not included.
         :paramtype pricing_currency_total: ~azure.mgmt.billingbenefits.models.Price
@@ -163,6 +351,34 @@ class BillingPlanInformation(_serialization.Model):
         self.transactions = transactions
 
 
+class CatalogClaimsItem(_serialization.Model):
+    """Catalog claim for a discount.
+
+    :ivar catalog_claims_item_type:
+    :vartype catalog_claims_item_type: str
+    :ivar value:
+    :vartype value: str
+    """
+
+    _attribute_map = {
+        "catalog_claims_item_type": {"key": "catalogClaimsItemType", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+    }
+
+    def __init__(
+        self, *, catalog_claims_item_type: Optional[str] = None, value: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword catalog_claims_item_type:
+        :paramtype catalog_claims_item_type: str
+        :keyword value:
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
+        self.catalog_claims_item_type = catalog_claims_item_type
+        self.value = value
+
+
 class Price(_serialization.Model):
     """Price.
 
@@ -178,7 +394,7 @@ class Price(_serialization.Model):
         "amount": {"key": "amount", "type": "float"},
     }
 
-    def __init__(self, *, currency_code: Optional[str] = None, amount: Optional[float] = None, **kwargs):
+    def __init__(self, *, currency_code: Optional[str] = None, amount: Optional[float] = None, **kwargs: Any) -> None:
         """
         :keyword currency_code: The ISO 4217 3-letter currency code for the currency used by this
          purchase record.
@@ -199,7 +415,7 @@ class Commitment(Price):
     :vartype currency_code: str
     :ivar amount:
     :vartype amount: float
-    :ivar grain: Commitment grain. "Hourly"
+    :ivar grain: Commitment grain. Known values are: "Hourly", "FullTerm", and "Unknown".
     :vartype grain: str or ~azure.mgmt.billingbenefits.models.CommitmentGrain
     """
 
@@ -215,19 +431,1587 @@ class Commitment(Price):
         currency_code: Optional[str] = None,
         amount: Optional[float] = None,
         grain: Optional[Union[str, "_models.CommitmentGrain"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword currency_code: The ISO 4217 3-letter currency code for the currency used by this
          purchase record.
         :paramtype currency_code: str
         :keyword amount:
         :paramtype amount: float
-        :keyword grain: Commitment grain. "Hourly"
+        :keyword grain: Commitment grain. Known values are: "Hourly", "FullTerm", and "Unknown".
         :paramtype grain: str or ~azure.mgmt.billingbenefits.models.CommitmentGrain
         """
         super().__init__(currency_code=currency_code, amount=amount, **kwargs)
         self.grain = grain
+
+
+class ConditionsItem(_serialization.Model):
+    """Condition for a discount.
+
+    :ivar condition_name:
+    :vartype condition_name: str
+    :ivar value: These items are open-ended strings.
+    :vartype value: list[str]
+    :ivar type:
+    :vartype type: str
+    """
+
+    _attribute_map = {
+        "condition_name": {"key": "conditionName", "type": "str"},
+        "value": {"key": "value", "type": "[str]"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        condition_name: Optional[str] = None,
+        value: Optional[list[str]] = None,
+        type: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword condition_name:
+        :paramtype condition_name: str
+        :keyword value: These items are open-ended strings.
+        :paramtype value: list[str]
+        :keyword type:
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
+        self.condition_name = condition_name
+        self.value = value
+        self.type = type
+
+
+class CustomPriceProperties(_serialization.Model):
+    """Custom price properties for a given discount.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar rule_type: The type of the priceable node pricing rule. Validation: Required. Supported
+     values are fixedPriceLock, fixedListPrice, and priceCeiling. Required. Known values are:
+     "FixedPriceLock", "FixedListPrice", and "PriceCeiling".
+    :vartype rule_type: str or ~azure.mgmt.billingbenefits.models.DiscountRuleType
+    :ivar catalog_id: The catalog instance where the priceable node lives. Validation: Required. No
+     defined format, will vary per team. Required.
+    :vartype catalog_id: str
+    :ivar catalog_claims: The set of BigCat claims. Validation: Required. Must contain
+     AgreementType, NationalCloud, and PricingAudience claims. Additionally requires AccessPass
+     claim when creating custom price with action == consume on the pricing instructions. Required.
+    :vartype catalog_claims: list[~azure.mgmt.billingbenefits.models.CatalogClaimsItem]
+    :ivar term_units: The term units for the priceable node. Validation: Optional, Maximum length
+     128 characters. Must be present if and only if the availability derived by market, product,
+     sku, and claims has terms.
+    :vartype term_units: str
+    :ivar billing_period: The billing period of the priceable node. Validation: Optional, Maximum
+     length 128 characters. Only allowed if the availability derived by market, product, sku, and
+     claims has terms and at least one of those terms has a billing period. When specified,
+     termUnits must be specified.
+    :vartype billing_period: str
+    :ivar meter_type: Must be present if the market, product, sku, and claims, and optional term
+     information resolves to multiple availabilities that only differ by meter type. Validation:
+     Maximum length 128 characters.
+    :vartype meter_type: str
+    :ivar market_set_prices: The set of market set prices of the priceable node. Validation:
+     Required. Must contain at least one element. Required.
+    :vartype market_set_prices: list[~azure.mgmt.billingbenefits.models.MarketSetPricesItems]
+    """
+
+    _validation = {
+        "rule_type": {"required": True},
+        "catalog_id": {"required": True},
+        "catalog_claims": {"required": True},
+        "market_set_prices": {"required": True},
+    }
+
+    _attribute_map = {
+        "rule_type": {"key": "ruleType", "type": "str"},
+        "catalog_id": {"key": "catalogId", "type": "str"},
+        "catalog_claims": {"key": "catalogClaims", "type": "[CatalogClaimsItem]"},
+        "term_units": {"key": "termUnits", "type": "str"},
+        "billing_period": {"key": "billingPeriod", "type": "str"},
+        "meter_type": {"key": "meterType", "type": "str"},
+        "market_set_prices": {"key": "marketSetPrices", "type": "[MarketSetPricesItems]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        rule_type: Union[str, "_models.DiscountRuleType"],
+        catalog_id: str,
+        catalog_claims: list["_models.CatalogClaimsItem"],
+        market_set_prices: list["_models.MarketSetPricesItems"],
+        term_units: Optional[str] = None,
+        billing_period: Optional[str] = None,
+        meter_type: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword rule_type: The type of the priceable node pricing rule. Validation: Required.
+         Supported values are fixedPriceLock, fixedListPrice, and priceCeiling. Required. Known values
+         are: "FixedPriceLock", "FixedListPrice", and "PriceCeiling".
+        :paramtype rule_type: str or ~azure.mgmt.billingbenefits.models.DiscountRuleType
+        :keyword catalog_id: The catalog instance where the priceable node lives. Validation: Required.
+         No defined format, will vary per team. Required.
+        :paramtype catalog_id: str
+        :keyword catalog_claims: The set of BigCat claims. Validation: Required. Must contain
+         AgreementType, NationalCloud, and PricingAudience claims. Additionally requires AccessPass
+         claim when creating custom price with action == consume on the pricing instructions. Required.
+        :paramtype catalog_claims: list[~azure.mgmt.billingbenefits.models.CatalogClaimsItem]
+        :keyword term_units: The term units for the priceable node. Validation: Optional, Maximum
+         length 128 characters. Must be present if and only if the availability derived by market,
+         product, sku, and claims has terms.
+        :paramtype term_units: str
+        :keyword billing_period: The billing period of the priceable node. Validation: Optional,
+         Maximum length 128 characters. Only allowed if the availability derived by market, product,
+         sku, and claims has terms and at least one of those terms has a billing period. When specified,
+         termUnits must be specified.
+        :paramtype billing_period: str
+        :keyword meter_type: Must be present if the market, product, sku, and claims, and optional term
+         information resolves to multiple availabilities that only differ by meter type. Validation:
+         Maximum length 128 characters.
+        :paramtype meter_type: str
+        :keyword market_set_prices: The set of market set prices of the priceable node. Validation:
+         Required. Must contain at least one element. Required.
+        :paramtype market_set_prices: list[~azure.mgmt.billingbenefits.models.MarketSetPricesItems]
+        """
+        super().__init__(**kwargs)
+        self.rule_type = rule_type
+        self.catalog_id = catalog_id
+        self.catalog_claims = catalog_claims
+        self.term_units = term_units
+        self.billing_period = billing_period
+        self.meter_type = meter_type
+        self.market_set_prices = market_set_prices
+
+
+class TrackedResource(Resource):
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.billingbenefits.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+    }
+
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.location = location
+
+
+class ResourceModelWithAllowedPropertySet(TrackedResource):
+    """The resource model definition containing the full set of allowed properties for a resource.
+    Except properties bag, there cannot be a top level property outside of this set.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.billingbenefits.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar managed_by: The fully qualified resource ID of the resource that manages this resource.
+     Indicates if this resource is managed by another Azure resource. If this is present, complete
+     mode deployment will not delete the resource if it is removed from the template since it is
+     managed by another resource.
+    :vartype managed_by: str
+    :ivar kind: Metadata used by portal/tooling/etc to render different UX experiences for
+     resources of the same type. E.g. ApiApps are a kind of Microsoft.Web/sites type.  If supported,
+     the resource provider must validate and persist this value.
+    :vartype kind: str
+    :ivar etag: The etag field is *not* required. If it is provided in the response body, it must
+     also be provided as a header per the normal etag convention.  Entity tags are used for
+     comparing two or more entities from the same requested resource. HTTP/1.1 uses entity tags in
+     the etag (section 14.19), If-Match (section 14.24), If-None-Match (section 14.26), and If-Range
+     (section 14.27) header fields.
+    :vartype etag: str
+    :ivar identity: Managed service identity (system assigned and/or user assigned identities).
+    :vartype identity: ~azure.mgmt.billingbenefits.models.ManagedServiceIdentity
+    :ivar sku: The resource model definition representing SKU.
+    :vartype sku: ~azure.mgmt.billingbenefits.models.Sku
+    :ivar plan: Plan for the resource.
+    :vartype plan: ~azure.mgmt.billingbenefits.models.Plan
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "kind": {"pattern": r"^[-\w\._,\(\)]+$"},
+        "etag": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "managed_by": {"key": "managedBy", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "plan": {"key": "plan", "type": "Plan"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        managed_by: Optional[str] = None,
+        kind: Optional[str] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        sku: Optional["_models.Sku"] = None,
+        plan: Optional["_models.Plan"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword managed_by: The fully qualified resource ID of the resource that manages this
+         resource. Indicates if this resource is managed by another Azure resource. If this is present,
+         complete mode deployment will not delete the resource if it is removed from the template since
+         it is managed by another resource.
+        :paramtype managed_by: str
+        :keyword kind: Metadata used by portal/tooling/etc to render different UX experiences for
+         resources of the same type. E.g. ApiApps are a kind of Microsoft.Web/sites type.  If supported,
+         the resource provider must validate and persist this value.
+        :paramtype kind: str
+        :keyword identity: Managed service identity (system assigned and/or user assigned identities).
+        :paramtype identity: ~azure.mgmt.billingbenefits.models.ManagedServiceIdentity
+        :keyword sku: The resource model definition representing SKU.
+        :paramtype sku: ~azure.mgmt.billingbenefits.models.Sku
+        :keyword plan: Plan for the resource.
+        :paramtype plan: ~azure.mgmt.billingbenefits.models.Plan
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.managed_by = managed_by
+        self.kind = kind
+        self.etag: Optional[str] = None
+        self.identity = identity
+        self.sku = sku
+        self.plan = plan
+
+
+class Discount(ResourceModelWithAllowedPropertySet):
+    """Resource definition for Discounts.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.billingbenefits.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar managed_by: The fully qualified resource ID of the resource that manages this resource.
+     Indicates if this resource is managed by another Azure resource. If this is present, complete
+     mode deployment will not delete the resource if it is removed from the template since it is
+     managed by another resource.
+    :vartype managed_by: str
+    :ivar kind: Metadata used by portal/tooling/etc to render different UX experiences for
+     resources of the same type. E.g. ApiApps are a kind of Microsoft.Web/sites type.  If supported,
+     the resource provider must validate and persist this value.
+    :vartype kind: str
+    :ivar etag: The etag field is *not* required. If it is provided in the response body, it must
+     also be provided as a header per the normal etag convention.  Entity tags are used for
+     comparing two or more entities from the same requested resource. HTTP/1.1 uses entity tags in
+     the etag (section 14.19), If-Match (section 14.24), If-None-Match (section 14.26), and If-Range
+     (section 14.27) header fields.
+    :vartype etag: str
+    :ivar identity: Managed service identity (system assigned and/or user assigned identities).
+    :vartype identity: ~azure.mgmt.billingbenefits.models.ManagedServiceIdentity
+    :ivar sku: The resource model definition representing SKU.
+    :vartype sku: ~azure.mgmt.billingbenefits.models.Sku
+    :ivar plan: Plan for the resource.
+    :vartype plan: ~azure.mgmt.billingbenefits.models.Plan
+    :ivar entity_type: This defines whether the entity being created is primary or affiliate.
+     Supported values: primary, affiliate. Validation: Required, must match one of the 2 values.
+     Known values are: "Primary" and "Affiliate".
+    :vartype entity_type: str or ~azure.mgmt.billingbenefits.models.DiscountEntityType
+    :ivar product_code: This is the catalog UPN for the product.
+    :vartype product_code: str
+    :ivar start_at: Start date of the discount. Value is the date the discount started or will
+     start in the future.
+    :vartype start_at: ~datetime.datetime
+    :ivar system_id: This is the globally unique identifier of the Discount which will not change
+     for the lifetime of the Discount.
+    :vartype system_id: str
+    :ivar provisioning_state: The state of the resource. Supported values are Pending, Failed,
+     Succeeded, Canceled. Known values are: "Unknown", "Pending", "Succeeded", "Canceled", and
+     "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.billingbenefits.models.DiscountProvisioningState
+    :ivar billing_account_resource_id: Billing account resource id where the discount metadata is
+     present.
+    :vartype billing_account_resource_id: str
+    :ivar billing_profile_resource_id: Billing profile resource id where the discount is scoped to.
+    :vartype billing_profile_resource_id: str
+    :ivar customer_resource_id: Customer resource id where the discount is scoped to.
+    :vartype customer_resource_id: str
+    :ivar display_name: This defines a user friendly display name for the discount.
+    :vartype display_name: str
+    :ivar status: Represents the current status of the discount. Known values are: "Active",
+     "Pending", "Failed", "Canceled", and "Expired".
+    :vartype status: str or ~azure.mgmt.billingbenefits.models.DiscountStatus
+    :ivar benefit_resource_id: Fully-qualified identifier of the benefit under applicable benefit
+     list.
+    :vartype benefit_resource_id: str
+    :ivar applied_scope_type: List of applied scopes supported for discounts. Known values are:
+     "BillingAccount", "BillingProfile", and "Customer".
+    :vartype applied_scope_type: str or ~azure.mgmt.billingbenefits.models.DiscountAppliedScopeType
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "kind": {"pattern": r"^[-\w\._,\(\)]+$"},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "billing_account_resource_id": {"readonly": True},
+        "billing_profile_resource_id": {"readonly": True},
+        "customer_resource_id": {"readonly": True},
+        "status": {"readonly": True},
+        "benefit_resource_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "managed_by": {"key": "managedBy", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "plan": {"key": "plan", "type": "Plan"},
+        "entity_type": {"key": "properties.entityType", "type": "str"},
+        "product_code": {"key": "properties.productCode", "type": "str"},
+        "start_at": {"key": "properties.startAt", "type": "iso-8601"},
+        "system_id": {"key": "properties.systemId", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "billing_account_resource_id": {"key": "properties.billingAccountResourceId", "type": "str"},
+        "billing_profile_resource_id": {"key": "properties.billingProfileResourceId", "type": "str"},
+        "customer_resource_id": {"key": "properties.customerResourceId", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "benefit_resource_id": {"key": "properties.benefitResourceId", "type": "str"},
+        "applied_scope_type": {"key": "properties.appliedScopeType", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        managed_by: Optional[str] = None,
+        kind: Optional[str] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        sku: Optional["_models.Sku"] = None,
+        plan: Optional["_models.Plan"] = None,
+        product_code: Optional[str] = None,
+        start_at: Optional[datetime.datetime] = None,
+        system_id: Optional[str] = None,
+        display_name: Optional[str] = None,
+        applied_scope_type: Optional[Union[str, "_models.DiscountAppliedScopeType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword managed_by: The fully qualified resource ID of the resource that manages this
+         resource. Indicates if this resource is managed by another Azure resource. If this is present,
+         complete mode deployment will not delete the resource if it is removed from the template since
+         it is managed by another resource.
+        :paramtype managed_by: str
+        :keyword kind: Metadata used by portal/tooling/etc to render different UX experiences for
+         resources of the same type. E.g. ApiApps are a kind of Microsoft.Web/sites type.  If supported,
+         the resource provider must validate and persist this value.
+        :paramtype kind: str
+        :keyword identity: Managed service identity (system assigned and/or user assigned identities).
+        :paramtype identity: ~azure.mgmt.billingbenefits.models.ManagedServiceIdentity
+        :keyword sku: The resource model definition representing SKU.
+        :paramtype sku: ~azure.mgmt.billingbenefits.models.Sku
+        :keyword plan: Plan for the resource.
+        :paramtype plan: ~azure.mgmt.billingbenefits.models.Plan
+        :keyword product_code: This is the catalog UPN for the product.
+        :paramtype product_code: str
+        :keyword start_at: Start date of the discount. Value is the date the discount started or will
+         start in the future.
+        :paramtype start_at: ~datetime.datetime
+        :keyword system_id: This is the globally unique identifier of the Discount which will not
+         change for the lifetime of the Discount.
+        :paramtype system_id: str
+        :keyword display_name: This defines a user friendly display name for the discount.
+        :paramtype display_name: str
+        :keyword applied_scope_type: List of applied scopes supported for discounts. Known values are:
+         "BillingAccount", "BillingProfile", and "Customer".
+        :paramtype applied_scope_type: str or
+         ~azure.mgmt.billingbenefits.models.DiscountAppliedScopeType
+        """
+        super().__init__(
+            tags=tags,
+            location=location,
+            managed_by=managed_by,
+            kind=kind,
+            identity=identity,
+            sku=sku,
+            plan=plan,
+            **kwargs
+        )
+        self.entity_type: Optional[str] = None
+        self.product_code = product_code
+        self.start_at = start_at
+        self.system_id = system_id
+        self.provisioning_state: Optional[Union[str, "_models.DiscountProvisioningState"]] = None
+        self.billing_account_resource_id: Optional[str] = None
+        self.billing_profile_resource_id: Optional[str] = None
+        self.customer_resource_id: Optional[str] = None
+        self.display_name = display_name
+        self.status: Optional[Union[str, "_models.DiscountStatus"]] = None
+        self.benefit_resource_id: Optional[str] = None
+        self.applied_scope_type = applied_scope_type
+
+
+class DiscountList(_serialization.Model):
+    """Discount list.
+
+    :ivar value: List of discounts.
+    :vartype value: list[~azure.mgmt.billingbenefits.models.Discount]
+    :ivar next_link: Url to get the next page.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Discount]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[list["_models.Discount"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of discounts.
+        :paramtype value: list[~azure.mgmt.billingbenefits.models.Discount]
+        :keyword next_link: Url to get the next page.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class DiscountPatchRequest(_serialization.Model):
+    """Discounts patch request.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar display_name: Display name.
+    :vartype display_name: str
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+    }
+
+    def __init__(
+        self, *, tags: Optional[dict[str, str]] = None, display_name: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword display_name: Display name.
+        :paramtype display_name: str
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.display_name = display_name
+
+
+class DiscountProperties(_serialization.Model):
+    """Properties belonging to discounts.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    EntityTypeAffiliateDiscount, EntityTypePrimaryDiscount
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar entity_type: This defines whether the entity being created is primary or affiliate.
+     Supported values: primary, affiliate. Validation: Required, must match one of the 2 values.
+     Required. Known values are: "Primary" and "Affiliate".
+    :vartype entity_type: str or ~azure.mgmt.billingbenefits.models.DiscountEntityType
+    :ivar product_code: This is the catalog UPN for the product. Required.
+    :vartype product_code: str
+    :ivar start_at: Start date of the discount. Value is the date the discount started or will
+     start in the future. Required.
+    :vartype start_at: ~datetime.datetime
+    :ivar system_id: This is the globally unique identifier of the Discount which will not change
+     for the lifetime of the Discount.
+    :vartype system_id: str
+    :ivar provisioning_state: The state of the resource. Supported values are Pending, Failed,
+     Succeeded, Canceled. Known values are: "Unknown", "Pending", "Succeeded", "Canceled", and
+     "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.billingbenefits.models.DiscountProvisioningState
+    :ivar billing_account_resource_id: Billing account resource id where the discount metadata is
+     present.
+    :vartype billing_account_resource_id: str
+    :ivar billing_profile_resource_id: Billing profile resource id where the discount is scoped to.
+    :vartype billing_profile_resource_id: str
+    :ivar customer_resource_id: Customer resource id where the discount is scoped to.
+    :vartype customer_resource_id: str
+    :ivar display_name: This defines a user friendly display name for the discount.
+    :vartype display_name: str
+    :ivar status: Represents the current status of the discount. Known values are: "Active",
+     "Pending", "Failed", "Canceled", and "Expired".
+    :vartype status: str or ~azure.mgmt.billingbenefits.models.DiscountStatus
+    :ivar benefit_resource_id: Fully-qualified identifier of the benefit under applicable benefit
+     list.
+    :vartype benefit_resource_id: str
+    :ivar applied_scope_type: List of applied scopes supported for discounts. Known values are:
+     "BillingAccount", "BillingProfile", and "Customer".
+    :vartype applied_scope_type: str or ~azure.mgmt.billingbenefits.models.DiscountAppliedScopeType
+    """
+
+    _validation = {
+        "entity_type": {"required": True},
+        "product_code": {"required": True},
+        "start_at": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "billing_account_resource_id": {"readonly": True},
+        "billing_profile_resource_id": {"readonly": True},
+        "customer_resource_id": {"readonly": True},
+        "status": {"readonly": True},
+        "benefit_resource_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "entity_type": {"key": "entityType", "type": "str"},
+        "product_code": {"key": "productCode", "type": "str"},
+        "start_at": {"key": "startAt", "type": "iso-8601"},
+        "system_id": {"key": "systemId", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "billing_account_resource_id": {"key": "billingAccountResourceId", "type": "str"},
+        "billing_profile_resource_id": {"key": "billingProfileResourceId", "type": "str"},
+        "customer_resource_id": {"key": "customerResourceId", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "benefit_resource_id": {"key": "benefitResourceId", "type": "str"},
+        "applied_scope_type": {"key": "appliedScopeType", "type": "str"},
+    }
+
+    _subtype_map = {"entity_type": {"Affiliate": "EntityTypeAffiliateDiscount", "Primary": "EntityTypePrimaryDiscount"}}
+
+    def __init__(
+        self,
+        *,
+        product_code: str,
+        start_at: datetime.datetime,
+        system_id: Optional[str] = None,
+        display_name: Optional[str] = None,
+        applied_scope_type: Optional[Union[str, "_models.DiscountAppliedScopeType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword product_code: This is the catalog UPN for the product. Required.
+        :paramtype product_code: str
+        :keyword start_at: Start date of the discount. Value is the date the discount started or will
+         start in the future. Required.
+        :paramtype start_at: ~datetime.datetime
+        :keyword system_id: This is the globally unique identifier of the Discount which will not
+         change for the lifetime of the Discount.
+        :paramtype system_id: str
+        :keyword display_name: This defines a user friendly display name for the discount.
+        :paramtype display_name: str
+        :keyword applied_scope_type: List of applied scopes supported for discounts. Known values are:
+         "BillingAccount", "BillingProfile", and "Customer".
+        :paramtype applied_scope_type: str or
+         ~azure.mgmt.billingbenefits.models.DiscountAppliedScopeType
+        """
+        super().__init__(**kwargs)
+        self.entity_type: Optional[str] = None
+        self.product_code = product_code
+        self.start_at = start_at
+        self.system_id = system_id
+        self.provisioning_state: Optional[Union[str, "_models.DiscountProvisioningState"]] = None
+        self.billing_account_resource_id: Optional[str] = None
+        self.billing_profile_resource_id: Optional[str] = None
+        self.customer_resource_id: Optional[str] = None
+        self.display_name = display_name
+        self.status: Optional[Union[str, "_models.DiscountStatus"]] = None
+        self.benefit_resource_id: Optional[str] = None
+        self.applied_scope_type = applied_scope_type
+
+
+class DiscountTypeProperties(_serialization.Model):
+    """This defines the conditions for a given discount type.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    DiscountTypeCustomPrice, DiscountTypeProduct, DiscountTypeProductFamily, DiscountTypeProductSku
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar discount_type: Defines the type of discount. Supported values are ProductFamily, Product,
+     Sku, CustomPrice, and CustomPriceMultiCurrency. Required. Known values are: "ProductFamily",
+     "Product", "Sku", "CustomPrice", and "CustomPriceMultiCurrency".
+    :vartype discount_type: str or ~azure.mgmt.billingbenefits.models.DiscountType
+    :ivar apply_discount_on: The customer action on which the discount is applied. Supported values
+     are Purchase, Consume, and Renew. Validation: Required, one of supported values. Required.
+     Known values are: "Purchase", "Consume", and "Renew".
+    :vartype apply_discount_on: str or ~azure.mgmt.billingbenefits.models.ApplyDiscountOn
+    :ivar discount_percentage: Discount percentage provided for the customer. Validation: Required
+     unless this is a price rule.
+    :vartype discount_percentage: float
+    :ivar discount_combination_rule: The discount combination rule when there are multiple
+     applicable custom prices. Validation: Required. Supported values are Stackable and BestOf.
+     Known values are: "BestOf" and "Stackable".
+    :vartype discount_combination_rule: str or
+     ~azure.mgmt.billingbenefits.models.DiscountCombinationRule
+    :ivar price_guarantee_properties: Set only in price guarantee scenario.
+    :vartype price_guarantee_properties:
+     ~azure.mgmt.billingbenefits.models.PriceGuaranteeProperties
+    :ivar conditions: Array of conditions for the discount. Validation: Optional. Maximum length is
+     1000.
+    :vartype conditions: list[~azure.mgmt.billingbenefits.models.ConditionsItem]
+    """
+
+    _validation = {
+        "discount_type": {"required": True},
+        "apply_discount_on": {"required": True},
+        "discount_percentage": {"maximum": 100, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "discount_type": {"key": "discountType", "type": "str"},
+        "apply_discount_on": {"key": "applyDiscountOn", "type": "str"},
+        "discount_percentage": {"key": "discountPercentage", "type": "float"},
+        "discount_combination_rule": {"key": "discountCombinationRule", "type": "str"},
+        "price_guarantee_properties": {"key": "priceGuaranteeProperties", "type": "PriceGuaranteeProperties"},
+        "conditions": {"key": "conditions", "type": "[ConditionsItem]"},
+    }
+
+    _subtype_map = {
+        "discount_type": {
+            "CustomPrice": "DiscountTypeCustomPrice",
+            "Product": "DiscountTypeProduct",
+            "ProductFamily": "DiscountTypeProductFamily",
+            "Sku": "DiscountTypeProductSku",
+        }
+    }
+
+    def __init__(
+        self,
+        *,
+        apply_discount_on: Union[str, "_models.ApplyDiscountOn"],
+        discount_percentage: Optional[float] = None,
+        discount_combination_rule: Optional[Union[str, "_models.DiscountCombinationRule"]] = None,
+        price_guarantee_properties: Optional["_models.PriceGuaranteeProperties"] = None,
+        conditions: Optional[list["_models.ConditionsItem"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword apply_discount_on: The customer action on which the discount is applied. Supported
+         values are Purchase, Consume, and Renew. Validation: Required, one of supported values.
+         Required. Known values are: "Purchase", "Consume", and "Renew".
+        :paramtype apply_discount_on: str or ~azure.mgmt.billingbenefits.models.ApplyDiscountOn
+        :keyword discount_percentage: Discount percentage provided for the customer. Validation:
+         Required unless this is a price rule.
+        :paramtype discount_percentage: float
+        :keyword discount_combination_rule: The discount combination rule when there are multiple
+         applicable custom prices. Validation: Required. Supported values are Stackable and BestOf.
+         Known values are: "BestOf" and "Stackable".
+        :paramtype discount_combination_rule: str or
+         ~azure.mgmt.billingbenefits.models.DiscountCombinationRule
+        :keyword price_guarantee_properties: Set only in price guarantee scenario.
+        :paramtype price_guarantee_properties:
+         ~azure.mgmt.billingbenefits.models.PriceGuaranteeProperties
+        :keyword conditions: Array of conditions for the discount. Validation: Optional. Maximum length
+         is 1000.
+        :paramtype conditions: list[~azure.mgmt.billingbenefits.models.ConditionsItem]
+        """
+        super().__init__(**kwargs)
+        self.discount_type: Optional[str] = None
+        self.apply_discount_on = apply_discount_on
+        self.discount_percentage = discount_percentage
+        self.discount_combination_rule = discount_combination_rule
+        self.price_guarantee_properties = price_guarantee_properties
+        self.conditions = conditions
+
+
+class DiscountTypeCustomPrice(DiscountTypeProperties):
+    """Discount type properties including product family name, product id, sku, and custom price
+    properties. Allows a single entry in marketSetPrices.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    DiscountTypeCustomPriceMultiCurrency
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar discount_type: Defines the type of discount. Supported values are ProductFamily, Product,
+     Sku, CustomPrice, and CustomPriceMultiCurrency. Required. Known values are: "ProductFamily",
+     "Product", "Sku", "CustomPrice", and "CustomPriceMultiCurrency".
+    :vartype discount_type: str or ~azure.mgmt.billingbenefits.models.DiscountType
+    :ivar apply_discount_on: The customer action on which the discount is applied. Supported values
+     are Purchase, Consume, and Renew. Validation: Required, one of supported values. Required.
+     Known values are: "Purchase", "Consume", and "Renew".
+    :vartype apply_discount_on: str or ~azure.mgmt.billingbenefits.models.ApplyDiscountOn
+    :ivar discount_percentage: Discount percentage provided for the customer. Validation: Required
+     unless this is a price rule.
+    :vartype discount_percentage: float
+    :ivar discount_combination_rule: The discount combination rule when there are multiple
+     applicable custom prices. Validation: Required. Supported values are Stackable and BestOf.
+     Known values are: "BestOf" and "Stackable".
+    :vartype discount_combination_rule: str or
+     ~azure.mgmt.billingbenefits.models.DiscountCombinationRule
+    :ivar price_guarantee_properties: Set only in price guarantee scenario.
+    :vartype price_guarantee_properties:
+     ~azure.mgmt.billingbenefits.models.PriceGuaranteeProperties
+    :ivar conditions: Array of conditions for the discount. Validation: Optional. Maximum length is
+     1000.
+    :vartype conditions: list[~azure.mgmt.billingbenefits.models.ConditionsItem]
+    :ivar product_family_name: Product family for which the discount is given. Validation:
+     Optional.
+    :vartype product_family_name: str
+    :ivar product_id: Product ID for which the discount is given. Validation: Optional. No specific
+     format, example: DZH318Z09V6F.
+    :vartype product_id: str
+    :ivar sku_id: ResourceSku for the given discount. Validation: Optional.
+    :vartype sku_id: str
+    :ivar custom_price_properties: Custom price properties for a given discount.
+    :vartype custom_price_properties: ~azure.mgmt.billingbenefits.models.CustomPriceProperties
+    """
+
+    _validation = {
+        "discount_type": {"required": True},
+        "apply_discount_on": {"required": True},
+        "discount_percentage": {"maximum": 100, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "discount_type": {"key": "discountType", "type": "str"},
+        "apply_discount_on": {"key": "applyDiscountOn", "type": "str"},
+        "discount_percentage": {"key": "discountPercentage", "type": "float"},
+        "discount_combination_rule": {"key": "discountCombinationRule", "type": "str"},
+        "price_guarantee_properties": {"key": "priceGuaranteeProperties", "type": "PriceGuaranteeProperties"},
+        "conditions": {"key": "conditions", "type": "[ConditionsItem]"},
+        "product_family_name": {"key": "productFamilyName", "type": "str"},
+        "product_id": {"key": "productId", "type": "str"},
+        "sku_id": {"key": "skuId", "type": "str"},
+        "custom_price_properties": {"key": "customPriceProperties", "type": "CustomPriceProperties"},
+    }
+
+    _subtype_map = {"discount_type": {"CustomPriceMultiCurrency": "DiscountTypeCustomPriceMultiCurrency"}}
+
+    def __init__(
+        self,
+        *,
+        apply_discount_on: Union[str, "_models.ApplyDiscountOn"],
+        discount_percentage: Optional[float] = None,
+        discount_combination_rule: Optional[Union[str, "_models.DiscountCombinationRule"]] = None,
+        price_guarantee_properties: Optional["_models.PriceGuaranteeProperties"] = None,
+        conditions: Optional[list["_models.ConditionsItem"]] = None,
+        product_family_name: Optional[str] = None,
+        product_id: Optional[str] = None,
+        sku_id: Optional[str] = None,
+        custom_price_properties: Optional["_models.CustomPriceProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword apply_discount_on: The customer action on which the discount is applied. Supported
+         values are Purchase, Consume, and Renew. Validation: Required, one of supported values.
+         Required. Known values are: "Purchase", "Consume", and "Renew".
+        :paramtype apply_discount_on: str or ~azure.mgmt.billingbenefits.models.ApplyDiscountOn
+        :keyword discount_percentage: Discount percentage provided for the customer. Validation:
+         Required unless this is a price rule.
+        :paramtype discount_percentage: float
+        :keyword discount_combination_rule: The discount combination rule when there are multiple
+         applicable custom prices. Validation: Required. Supported values are Stackable and BestOf.
+         Known values are: "BestOf" and "Stackable".
+        :paramtype discount_combination_rule: str or
+         ~azure.mgmt.billingbenefits.models.DiscountCombinationRule
+        :keyword price_guarantee_properties: Set only in price guarantee scenario.
+        :paramtype price_guarantee_properties:
+         ~azure.mgmt.billingbenefits.models.PriceGuaranteeProperties
+        :keyword conditions: Array of conditions for the discount. Validation: Optional. Maximum length
+         is 1000.
+        :paramtype conditions: list[~azure.mgmt.billingbenefits.models.ConditionsItem]
+        :keyword product_family_name: Product family for which the discount is given. Validation:
+         Optional.
+        :paramtype product_family_name: str
+        :keyword product_id: Product ID for which the discount is given. Validation: Optional. No
+         specific format, example: DZH318Z09V6F.
+        :paramtype product_id: str
+        :keyword sku_id: ResourceSku for the given discount. Validation: Optional.
+        :paramtype sku_id: str
+        :keyword custom_price_properties: Custom price properties for a given discount.
+        :paramtype custom_price_properties: ~azure.mgmt.billingbenefits.models.CustomPriceProperties
+        """
+        super().__init__(
+            apply_discount_on=apply_discount_on,
+            discount_percentage=discount_percentage,
+            discount_combination_rule=discount_combination_rule,
+            price_guarantee_properties=price_guarantee_properties,
+            conditions=conditions,
+            **kwargs
+        )
+        self.discount_type: str = "CustomPrice"
+        self.product_family_name = product_family_name
+        self.product_id = product_id
+        self.sku_id = sku_id
+        self.custom_price_properties = custom_price_properties
+
+
+class DiscountTypeCustomPriceMultiCurrency(DiscountTypeCustomPrice):
+    """Discount type properties including product family name, product id, sku, and custom price
+    properties. Allows multiple entries in marketSetPrices.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar discount_type: Defines the type of discount. Supported values are ProductFamily, Product,
+     Sku, CustomPrice, and CustomPriceMultiCurrency. Required. Known values are: "ProductFamily",
+     "Product", "Sku", "CustomPrice", and "CustomPriceMultiCurrency".
+    :vartype discount_type: str or ~azure.mgmt.billingbenefits.models.DiscountType
+    :ivar apply_discount_on: The customer action on which the discount is applied. Supported values
+     are Purchase, Consume, and Renew. Validation: Required, one of supported values. Required.
+     Known values are: "Purchase", "Consume", and "Renew".
+    :vartype apply_discount_on: str or ~azure.mgmt.billingbenefits.models.ApplyDiscountOn
+    :ivar discount_percentage: Discount percentage provided for the customer. Validation: Required
+     unless this is a price rule.
+    :vartype discount_percentage: float
+    :ivar discount_combination_rule: The discount combination rule when there are multiple
+     applicable custom prices. Validation: Required. Supported values are Stackable and BestOf.
+     Known values are: "BestOf" and "Stackable".
+    :vartype discount_combination_rule: str or
+     ~azure.mgmt.billingbenefits.models.DiscountCombinationRule
+    :ivar price_guarantee_properties: Set only in price guarantee scenario.
+    :vartype price_guarantee_properties:
+     ~azure.mgmt.billingbenefits.models.PriceGuaranteeProperties
+    :ivar conditions: Array of conditions for the discount. Validation: Optional. Maximum length is
+     1000.
+    :vartype conditions: list[~azure.mgmt.billingbenefits.models.ConditionsItem]
+    :ivar product_family_name: Product family for which the discount is given. Validation:
+     Optional.
+    :vartype product_family_name: str
+    :ivar product_id: Product ID for which the discount is given. Validation: Optional. No specific
+     format, example: DZH318Z09V6F.
+    :vartype product_id: str
+    :ivar sku_id: ResourceSku for the given discount. Validation: Optional.
+    :vartype sku_id: str
+    :ivar custom_price_properties: Custom price properties for a given discount.
+    :vartype custom_price_properties: ~azure.mgmt.billingbenefits.models.CustomPriceProperties
+    """
+
+    _validation = {
+        "discount_type": {"required": True},
+        "apply_discount_on": {"required": True},
+        "discount_percentage": {"maximum": 100, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "discount_type": {"key": "discountType", "type": "str"},
+        "apply_discount_on": {"key": "applyDiscountOn", "type": "str"},
+        "discount_percentage": {"key": "discountPercentage", "type": "float"},
+        "discount_combination_rule": {"key": "discountCombinationRule", "type": "str"},
+        "price_guarantee_properties": {"key": "priceGuaranteeProperties", "type": "PriceGuaranteeProperties"},
+        "conditions": {"key": "conditions", "type": "[ConditionsItem]"},
+        "product_family_name": {"key": "productFamilyName", "type": "str"},
+        "product_id": {"key": "productId", "type": "str"},
+        "sku_id": {"key": "skuId", "type": "str"},
+        "custom_price_properties": {"key": "customPriceProperties", "type": "CustomPriceProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        apply_discount_on: Union[str, "_models.ApplyDiscountOn"],
+        discount_percentage: Optional[float] = None,
+        discount_combination_rule: Optional[Union[str, "_models.DiscountCombinationRule"]] = None,
+        price_guarantee_properties: Optional["_models.PriceGuaranteeProperties"] = None,
+        conditions: Optional[list["_models.ConditionsItem"]] = None,
+        product_family_name: Optional[str] = None,
+        product_id: Optional[str] = None,
+        sku_id: Optional[str] = None,
+        custom_price_properties: Optional["_models.CustomPriceProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword apply_discount_on: The customer action on which the discount is applied. Supported
+         values are Purchase, Consume, and Renew. Validation: Required, one of supported values.
+         Required. Known values are: "Purchase", "Consume", and "Renew".
+        :paramtype apply_discount_on: str or ~azure.mgmt.billingbenefits.models.ApplyDiscountOn
+        :keyword discount_percentage: Discount percentage provided for the customer. Validation:
+         Required unless this is a price rule.
+        :paramtype discount_percentage: float
+        :keyword discount_combination_rule: The discount combination rule when there are multiple
+         applicable custom prices. Validation: Required. Supported values are Stackable and BestOf.
+         Known values are: "BestOf" and "Stackable".
+        :paramtype discount_combination_rule: str or
+         ~azure.mgmt.billingbenefits.models.DiscountCombinationRule
+        :keyword price_guarantee_properties: Set only in price guarantee scenario.
+        :paramtype price_guarantee_properties:
+         ~azure.mgmt.billingbenefits.models.PriceGuaranteeProperties
+        :keyword conditions: Array of conditions for the discount. Validation: Optional. Maximum length
+         is 1000.
+        :paramtype conditions: list[~azure.mgmt.billingbenefits.models.ConditionsItem]
+        :keyword product_family_name: Product family for which the discount is given. Validation:
+         Optional.
+        :paramtype product_family_name: str
+        :keyword product_id: Product ID for which the discount is given. Validation: Optional. No
+         specific format, example: DZH318Z09V6F.
+        :paramtype product_id: str
+        :keyword sku_id: ResourceSku for the given discount. Validation: Optional.
+        :paramtype sku_id: str
+        :keyword custom_price_properties: Custom price properties for a given discount.
+        :paramtype custom_price_properties: ~azure.mgmt.billingbenefits.models.CustomPriceProperties
+        """
+        super().__init__(
+            apply_discount_on=apply_discount_on,
+            discount_percentage=discount_percentage,
+            discount_combination_rule=discount_combination_rule,
+            price_guarantee_properties=price_guarantee_properties,
+            conditions=conditions,
+            product_family_name=product_family_name,
+            product_id=product_id,
+            sku_id=sku_id,
+            custom_price_properties=custom_price_properties,
+            **kwargs
+        )
+        self.discount_type: str = "CustomPriceMultiCurrency"
+
+
+class DiscountTypeProduct(DiscountTypeProperties):
+    """Discount type properties including product family name and product id.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar discount_type: Defines the type of discount. Supported values are ProductFamily, Product,
+     Sku, CustomPrice, and CustomPriceMultiCurrency. Required. Known values are: "ProductFamily",
+     "Product", "Sku", "CustomPrice", and "CustomPriceMultiCurrency".
+    :vartype discount_type: str or ~azure.mgmt.billingbenefits.models.DiscountType
+    :ivar apply_discount_on: The customer action on which the discount is applied. Supported values
+     are Purchase, Consume, and Renew. Validation: Required, one of supported values. Required.
+     Known values are: "Purchase", "Consume", and "Renew".
+    :vartype apply_discount_on: str or ~azure.mgmt.billingbenefits.models.ApplyDiscountOn
+    :ivar discount_percentage: Discount percentage provided for the customer. Validation: Required
+     unless this is a price rule.
+    :vartype discount_percentage: float
+    :ivar discount_combination_rule: The discount combination rule when there are multiple
+     applicable custom prices. Validation: Required. Supported values are Stackable and BestOf.
+     Known values are: "BestOf" and "Stackable".
+    :vartype discount_combination_rule: str or
+     ~azure.mgmt.billingbenefits.models.DiscountCombinationRule
+    :ivar price_guarantee_properties: Set only in price guarantee scenario.
+    :vartype price_guarantee_properties:
+     ~azure.mgmt.billingbenefits.models.PriceGuaranteeProperties
+    :ivar conditions: Array of conditions for the discount. Validation: Optional. Maximum length is
+     1000.
+    :vartype conditions: list[~azure.mgmt.billingbenefits.models.ConditionsItem]
+    :ivar product_family_name: Product family for which the discount is given. Validation:
+     Optional.
+    :vartype product_family_name: str
+    :ivar product_id: Product ID for which the discount is given. Validation: Optional. No specific
+     format, example: DZH318Z09V6F.
+    :vartype product_id: str
+    """
+
+    _validation = {
+        "discount_type": {"required": True},
+        "apply_discount_on": {"required": True},
+        "discount_percentage": {"maximum": 100, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "discount_type": {"key": "discountType", "type": "str"},
+        "apply_discount_on": {"key": "applyDiscountOn", "type": "str"},
+        "discount_percentage": {"key": "discountPercentage", "type": "float"},
+        "discount_combination_rule": {"key": "discountCombinationRule", "type": "str"},
+        "price_guarantee_properties": {"key": "priceGuaranteeProperties", "type": "PriceGuaranteeProperties"},
+        "conditions": {"key": "conditions", "type": "[ConditionsItem]"},
+        "product_family_name": {"key": "productFamilyName", "type": "str"},
+        "product_id": {"key": "productId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        apply_discount_on: Union[str, "_models.ApplyDiscountOn"],
+        discount_percentage: Optional[float] = None,
+        discount_combination_rule: Optional[Union[str, "_models.DiscountCombinationRule"]] = None,
+        price_guarantee_properties: Optional["_models.PriceGuaranteeProperties"] = None,
+        conditions: Optional[list["_models.ConditionsItem"]] = None,
+        product_family_name: Optional[str] = None,
+        product_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword apply_discount_on: The customer action on which the discount is applied. Supported
+         values are Purchase, Consume, and Renew. Validation: Required, one of supported values.
+         Required. Known values are: "Purchase", "Consume", and "Renew".
+        :paramtype apply_discount_on: str or ~azure.mgmt.billingbenefits.models.ApplyDiscountOn
+        :keyword discount_percentage: Discount percentage provided for the customer. Validation:
+         Required unless this is a price rule.
+        :paramtype discount_percentage: float
+        :keyword discount_combination_rule: The discount combination rule when there are multiple
+         applicable custom prices. Validation: Required. Supported values are Stackable and BestOf.
+         Known values are: "BestOf" and "Stackable".
+        :paramtype discount_combination_rule: str or
+         ~azure.mgmt.billingbenefits.models.DiscountCombinationRule
+        :keyword price_guarantee_properties: Set only in price guarantee scenario.
+        :paramtype price_guarantee_properties:
+         ~azure.mgmt.billingbenefits.models.PriceGuaranteeProperties
+        :keyword conditions: Array of conditions for the discount. Validation: Optional. Maximum length
+         is 1000.
+        :paramtype conditions: list[~azure.mgmt.billingbenefits.models.ConditionsItem]
+        :keyword product_family_name: Product family for which the discount is given. Validation:
+         Optional.
+        :paramtype product_family_name: str
+        :keyword product_id: Product ID for which the discount is given. Validation: Optional. No
+         specific format, example: DZH318Z09V6F.
+        :paramtype product_id: str
+        """
+        super().__init__(
+            apply_discount_on=apply_discount_on,
+            discount_percentage=discount_percentage,
+            discount_combination_rule=discount_combination_rule,
+            price_guarantee_properties=price_guarantee_properties,
+            conditions=conditions,
+            **kwargs
+        )
+        self.discount_type: str = "Product"
+        self.product_family_name = product_family_name
+        self.product_id = product_id
+
+
+class DiscountTypeProductFamily(DiscountTypeProperties):
+    """Discount type properties including product family name.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar discount_type: Defines the type of discount. Supported values are ProductFamily, Product,
+     Sku, CustomPrice, and CustomPriceMultiCurrency. Required. Known values are: "ProductFamily",
+     "Product", "Sku", "CustomPrice", and "CustomPriceMultiCurrency".
+    :vartype discount_type: str or ~azure.mgmt.billingbenefits.models.DiscountType
+    :ivar apply_discount_on: The customer action on which the discount is applied. Supported values
+     are Purchase, Consume, and Renew. Validation: Required, one of supported values. Required.
+     Known values are: "Purchase", "Consume", and "Renew".
+    :vartype apply_discount_on: str or ~azure.mgmt.billingbenefits.models.ApplyDiscountOn
+    :ivar discount_percentage: Discount percentage provided for the customer. Validation: Required
+     unless this is a price rule.
+    :vartype discount_percentage: float
+    :ivar discount_combination_rule: The discount combination rule when there are multiple
+     applicable custom prices. Validation: Required. Supported values are Stackable and BestOf.
+     Known values are: "BestOf" and "Stackable".
+    :vartype discount_combination_rule: str or
+     ~azure.mgmt.billingbenefits.models.DiscountCombinationRule
+    :ivar price_guarantee_properties: Set only in price guarantee scenario.
+    :vartype price_guarantee_properties:
+     ~azure.mgmt.billingbenefits.models.PriceGuaranteeProperties
+    :ivar conditions: Array of conditions for the discount. Validation: Optional. Maximum length is
+     1000.
+    :vartype conditions: list[~azure.mgmt.billingbenefits.models.ConditionsItem]
+    :ivar product_family_name: Product family for which the discount is given. Validation:
+     Optional.
+    :vartype product_family_name: str
+    """
+
+    _validation = {
+        "discount_type": {"required": True},
+        "apply_discount_on": {"required": True},
+        "discount_percentage": {"maximum": 100, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "discount_type": {"key": "discountType", "type": "str"},
+        "apply_discount_on": {"key": "applyDiscountOn", "type": "str"},
+        "discount_percentage": {"key": "discountPercentage", "type": "float"},
+        "discount_combination_rule": {"key": "discountCombinationRule", "type": "str"},
+        "price_guarantee_properties": {"key": "priceGuaranteeProperties", "type": "PriceGuaranteeProperties"},
+        "conditions": {"key": "conditions", "type": "[ConditionsItem]"},
+        "product_family_name": {"key": "productFamilyName", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        apply_discount_on: Union[str, "_models.ApplyDiscountOn"],
+        discount_percentage: Optional[float] = None,
+        discount_combination_rule: Optional[Union[str, "_models.DiscountCombinationRule"]] = None,
+        price_guarantee_properties: Optional["_models.PriceGuaranteeProperties"] = None,
+        conditions: Optional[list["_models.ConditionsItem"]] = None,
+        product_family_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword apply_discount_on: The customer action on which the discount is applied. Supported
+         values are Purchase, Consume, and Renew. Validation: Required, one of supported values.
+         Required. Known values are: "Purchase", "Consume", and "Renew".
+        :paramtype apply_discount_on: str or ~azure.mgmt.billingbenefits.models.ApplyDiscountOn
+        :keyword discount_percentage: Discount percentage provided for the customer. Validation:
+         Required unless this is a price rule.
+        :paramtype discount_percentage: float
+        :keyword discount_combination_rule: The discount combination rule when there are multiple
+         applicable custom prices. Validation: Required. Supported values are Stackable and BestOf.
+         Known values are: "BestOf" and "Stackable".
+        :paramtype discount_combination_rule: str or
+         ~azure.mgmt.billingbenefits.models.DiscountCombinationRule
+        :keyword price_guarantee_properties: Set only in price guarantee scenario.
+        :paramtype price_guarantee_properties:
+         ~azure.mgmt.billingbenefits.models.PriceGuaranteeProperties
+        :keyword conditions: Array of conditions for the discount. Validation: Optional. Maximum length
+         is 1000.
+        :paramtype conditions: list[~azure.mgmt.billingbenefits.models.ConditionsItem]
+        :keyword product_family_name: Product family for which the discount is given. Validation:
+         Optional.
+        :paramtype product_family_name: str
+        """
+        super().__init__(
+            apply_discount_on=apply_discount_on,
+            discount_percentage=discount_percentage,
+            discount_combination_rule=discount_combination_rule,
+            price_guarantee_properties=price_guarantee_properties,
+            conditions=conditions,
+            **kwargs
+        )
+        self.discount_type: str = "ProductFamily"
+        self.product_family_name = product_family_name
+
+
+class DiscountTypeProductSku(DiscountTypeProperties):
+    """Discount type properties including product family name, product id, and sku id.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar discount_type: Defines the type of discount. Supported values are ProductFamily, Product,
+     Sku, CustomPrice, and CustomPriceMultiCurrency. Required. Known values are: "ProductFamily",
+     "Product", "Sku", "CustomPrice", and "CustomPriceMultiCurrency".
+    :vartype discount_type: str or ~azure.mgmt.billingbenefits.models.DiscountType
+    :ivar apply_discount_on: The customer action on which the discount is applied. Supported values
+     are Purchase, Consume, and Renew. Validation: Required, one of supported values. Required.
+     Known values are: "Purchase", "Consume", and "Renew".
+    :vartype apply_discount_on: str or ~azure.mgmt.billingbenefits.models.ApplyDiscountOn
+    :ivar discount_percentage: Discount percentage provided for the customer. Validation: Required
+     unless this is a price rule.
+    :vartype discount_percentage: float
+    :ivar discount_combination_rule: The discount combination rule when there are multiple
+     applicable custom prices. Validation: Required. Supported values are Stackable and BestOf.
+     Known values are: "BestOf" and "Stackable".
+    :vartype discount_combination_rule: str or
+     ~azure.mgmt.billingbenefits.models.DiscountCombinationRule
+    :ivar price_guarantee_properties: Set only in price guarantee scenario.
+    :vartype price_guarantee_properties:
+     ~azure.mgmt.billingbenefits.models.PriceGuaranteeProperties
+    :ivar conditions: Array of conditions for the discount. Validation: Optional. Maximum length is
+     1000.
+    :vartype conditions: list[~azure.mgmt.billingbenefits.models.ConditionsItem]
+    :ivar product_family_name: Product family for which the discount is given. Validation:
+     Optional.
+    :vartype product_family_name: str
+    :ivar product_id: Product ID for which the discount is given. Validation: Optional. No specific
+     format, example: DZH318Z09V6F.
+    :vartype product_id: str
+    :ivar sku_id: ResourceSku for the given discount. Validation: Optional.
+    :vartype sku_id: str
+    """
+
+    _validation = {
+        "discount_type": {"required": True},
+        "apply_discount_on": {"required": True},
+        "discount_percentage": {"maximum": 100, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "discount_type": {"key": "discountType", "type": "str"},
+        "apply_discount_on": {"key": "applyDiscountOn", "type": "str"},
+        "discount_percentage": {"key": "discountPercentage", "type": "float"},
+        "discount_combination_rule": {"key": "discountCombinationRule", "type": "str"},
+        "price_guarantee_properties": {"key": "priceGuaranteeProperties", "type": "PriceGuaranteeProperties"},
+        "conditions": {"key": "conditions", "type": "[ConditionsItem]"},
+        "product_family_name": {"key": "productFamilyName", "type": "str"},
+        "product_id": {"key": "productId", "type": "str"},
+        "sku_id": {"key": "skuId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        apply_discount_on: Union[str, "_models.ApplyDiscountOn"],
+        discount_percentage: Optional[float] = None,
+        discount_combination_rule: Optional[Union[str, "_models.DiscountCombinationRule"]] = None,
+        price_guarantee_properties: Optional["_models.PriceGuaranteeProperties"] = None,
+        conditions: Optional[list["_models.ConditionsItem"]] = None,
+        product_family_name: Optional[str] = None,
+        product_id: Optional[str] = None,
+        sku_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword apply_discount_on: The customer action on which the discount is applied. Supported
+         values are Purchase, Consume, and Renew. Validation: Required, one of supported values.
+         Required. Known values are: "Purchase", "Consume", and "Renew".
+        :paramtype apply_discount_on: str or ~azure.mgmt.billingbenefits.models.ApplyDiscountOn
+        :keyword discount_percentage: Discount percentage provided for the customer. Validation:
+         Required unless this is a price rule.
+        :paramtype discount_percentage: float
+        :keyword discount_combination_rule: The discount combination rule when there are multiple
+         applicable custom prices. Validation: Required. Supported values are Stackable and BestOf.
+         Known values are: "BestOf" and "Stackable".
+        :paramtype discount_combination_rule: str or
+         ~azure.mgmt.billingbenefits.models.DiscountCombinationRule
+        :keyword price_guarantee_properties: Set only in price guarantee scenario.
+        :paramtype price_guarantee_properties:
+         ~azure.mgmt.billingbenefits.models.PriceGuaranteeProperties
+        :keyword conditions: Array of conditions for the discount. Validation: Optional. Maximum length
+         is 1000.
+        :paramtype conditions: list[~azure.mgmt.billingbenefits.models.ConditionsItem]
+        :keyword product_family_name: Product family for which the discount is given. Validation:
+         Optional.
+        :paramtype product_family_name: str
+        :keyword product_id: Product ID for which the discount is given. Validation: Optional. No
+         specific format, example: DZH318Z09V6F.
+        :paramtype product_id: str
+        :keyword sku_id: ResourceSku for the given discount. Validation: Optional.
+        :paramtype sku_id: str
+        """
+        super().__init__(
+            apply_discount_on=apply_discount_on,
+            discount_percentage=discount_percentage,
+            discount_combination_rule=discount_combination_rule,
+            price_guarantee_properties=price_guarantee_properties,
+            conditions=conditions,
+            **kwargs
+        )
+        self.discount_type: str = "Sku"
+        self.product_family_name = product_family_name
+        self.product_id = product_id
+        self.sku_id = sku_id
+
+
+class EntityTypeAffiliateDiscount(DiscountProperties):
+    """Entity type for affiliate discounts.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar entity_type: This defines whether the entity being created is primary or affiliate.
+     Supported values: primary, affiliate. Validation: Required, must match one of the 2 values.
+     Required. Known values are: "Primary" and "Affiliate".
+    :vartype entity_type: str or ~azure.mgmt.billingbenefits.models.DiscountEntityType
+    :ivar product_code: This is the catalog UPN for the product. Required.
+    :vartype product_code: str
+    :ivar start_at: Start date of the discount. Value is the date the discount started or will
+     start in the future. Required.
+    :vartype start_at: ~datetime.datetime
+    :ivar system_id: This is the globally unique identifier of the Discount which will not change
+     for the lifetime of the Discount.
+    :vartype system_id: str
+    :ivar provisioning_state: The state of the resource. Supported values are Pending, Failed,
+     Succeeded, Canceled. Known values are: "Unknown", "Pending", "Succeeded", "Canceled", and
+     "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.billingbenefits.models.DiscountProvisioningState
+    :ivar billing_account_resource_id: Billing account resource id where the discount metadata is
+     present.
+    :vartype billing_account_resource_id: str
+    :ivar billing_profile_resource_id: Billing profile resource id where the discount is scoped to.
+    :vartype billing_profile_resource_id: str
+    :ivar customer_resource_id: Customer resource id where the discount is scoped to.
+    :vartype customer_resource_id: str
+    :ivar display_name: This defines a user friendly display name for the discount.
+    :vartype display_name: str
+    :ivar status: Represents the current status of the discount. Known values are: "Active",
+     "Pending", "Failed", "Canceled", and "Expired".
+    :vartype status: str or ~azure.mgmt.billingbenefits.models.DiscountStatus
+    :ivar benefit_resource_id: Fully-qualified identifier of the benefit under applicable benefit
+     list.
+    :vartype benefit_resource_id: str
+    :ivar applied_scope_type: List of applied scopes supported for discounts. Known values are:
+     "BillingAccount", "BillingProfile", and "Customer".
+    :vartype applied_scope_type: str or ~azure.mgmt.billingbenefits.models.DiscountAppliedScopeType
+    :ivar primary_resource_id: This will be present in the response if the primary has a resource
+     ID.
+    :vartype primary_resource_id: str
+    :ivar end_at: End date of the discount. No duration will be supported. Allowed value is any
+     date greater than or equal to startDate.
+    :vartype end_at: ~datetime.datetime
+    """
+
+    _validation = {
+        "entity_type": {"required": True},
+        "product_code": {"required": True},
+        "start_at": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "billing_account_resource_id": {"readonly": True},
+        "billing_profile_resource_id": {"readonly": True},
+        "customer_resource_id": {"readonly": True},
+        "status": {"readonly": True},
+        "benefit_resource_id": {"readonly": True},
+        "primary_resource_id": {"readonly": True},
+        "end_at": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "entity_type": {"key": "entityType", "type": "str"},
+        "product_code": {"key": "productCode", "type": "str"},
+        "start_at": {"key": "startAt", "type": "iso-8601"},
+        "system_id": {"key": "systemId", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "billing_account_resource_id": {"key": "billingAccountResourceId", "type": "str"},
+        "billing_profile_resource_id": {"key": "billingProfileResourceId", "type": "str"},
+        "customer_resource_id": {"key": "customerResourceId", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "benefit_resource_id": {"key": "benefitResourceId", "type": "str"},
+        "applied_scope_type": {"key": "appliedScopeType", "type": "str"},
+        "primary_resource_id": {"key": "primaryResourceId", "type": "str"},
+        "end_at": {"key": "endAt", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        product_code: str,
+        start_at: datetime.datetime,
+        system_id: Optional[str] = None,
+        display_name: Optional[str] = None,
+        applied_scope_type: Optional[Union[str, "_models.DiscountAppliedScopeType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword product_code: This is the catalog UPN for the product. Required.
+        :paramtype product_code: str
+        :keyword start_at: Start date of the discount. Value is the date the discount started or will
+         start in the future. Required.
+        :paramtype start_at: ~datetime.datetime
+        :keyword system_id: This is the globally unique identifier of the Discount which will not
+         change for the lifetime of the Discount.
+        :paramtype system_id: str
+        :keyword display_name: This defines a user friendly display name for the discount.
+        :paramtype display_name: str
+        :keyword applied_scope_type: List of applied scopes supported for discounts. Known values are:
+         "BillingAccount", "BillingProfile", and "Customer".
+        :paramtype applied_scope_type: str or
+         ~azure.mgmt.billingbenefits.models.DiscountAppliedScopeType
+        """
+        super().__init__(
+            product_code=product_code,
+            start_at=start_at,
+            system_id=system_id,
+            display_name=display_name,
+            applied_scope_type=applied_scope_type,
+            **kwargs
+        )
+        self.entity_type: str = "Affiliate"
+        self.primary_resource_id: Optional[str] = None
+        self.end_at: Optional[datetime.datetime] = None
+
+
+class EntityTypePrimaryDiscount(DiscountProperties):
+    """Entity type for primary discounts.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar entity_type: This defines whether the entity being created is primary or affiliate.
+     Supported values: primary, affiliate. Validation: Required, must match one of the 2 values.
+     Required. Known values are: "Primary" and "Affiliate".
+    :vartype entity_type: str or ~azure.mgmt.billingbenefits.models.DiscountEntityType
+    :ivar product_code: This is the catalog UPN for the product. Required.
+    :vartype product_code: str
+    :ivar start_at: Start date of the discount. Value is the date the discount started or will
+     start in the future. Required.
+    :vartype start_at: ~datetime.datetime
+    :ivar system_id: This is the globally unique identifier of the Discount which will not change
+     for the lifetime of the Discount.
+    :vartype system_id: str
+    :ivar provisioning_state: The state of the resource. Supported values are Pending, Failed,
+     Succeeded, Canceled. Known values are: "Unknown", "Pending", "Succeeded", "Canceled", and
+     "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.billingbenefits.models.DiscountProvisioningState
+    :ivar billing_account_resource_id: Billing account resource id where the discount metadata is
+     present.
+    :vartype billing_account_resource_id: str
+    :ivar billing_profile_resource_id: Billing profile resource id where the discount is scoped to.
+    :vartype billing_profile_resource_id: str
+    :ivar customer_resource_id: Customer resource id where the discount is scoped to.
+    :vartype customer_resource_id: str
+    :ivar display_name: This defines a user friendly display name for the discount.
+    :vartype display_name: str
+    :ivar status: Represents the current status of the discount. Known values are: "Active",
+     "Pending", "Failed", "Canceled", and "Expired".
+    :vartype status: str or ~azure.mgmt.billingbenefits.models.DiscountStatus
+    :ivar benefit_resource_id: Fully-qualified identifier of the benefit under applicable benefit
+     list.
+    :vartype benefit_resource_id: str
+    :ivar applied_scope_type: List of applied scopes supported for discounts. Known values are:
+     "BillingAccount", "BillingProfile", and "Customer".
+    :vartype applied_scope_type: str or ~azure.mgmt.billingbenefits.models.DiscountAppliedScopeType
+    :ivar discount_type_properties: This defines the conditions for a given discount type.
+    :vartype discount_type_properties: ~azure.mgmt.billingbenefits.models.DiscountTypeProperties
+    :ivar end_at: End date of the discount. No duration will be supported. Allowed value is any
+     date greater than or equal to startDate. Required.
+    :vartype end_at: ~datetime.datetime
+    """
+
+    _validation = {
+        "entity_type": {"required": True},
+        "product_code": {"required": True},
+        "start_at": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "billing_account_resource_id": {"readonly": True},
+        "billing_profile_resource_id": {"readonly": True},
+        "customer_resource_id": {"readonly": True},
+        "status": {"readonly": True},
+        "benefit_resource_id": {"readonly": True},
+        "end_at": {"required": True},
+    }
+
+    _attribute_map = {
+        "entity_type": {"key": "entityType", "type": "str"},
+        "product_code": {"key": "productCode", "type": "str"},
+        "start_at": {"key": "startAt", "type": "iso-8601"},
+        "system_id": {"key": "systemId", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "billing_account_resource_id": {"key": "billingAccountResourceId", "type": "str"},
+        "billing_profile_resource_id": {"key": "billingProfileResourceId", "type": "str"},
+        "customer_resource_id": {"key": "customerResourceId", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "benefit_resource_id": {"key": "benefitResourceId", "type": "str"},
+        "applied_scope_type": {"key": "appliedScopeType", "type": "str"},
+        "discount_type_properties": {"key": "discountTypeProperties", "type": "DiscountTypeProperties"},
+        "end_at": {"key": "endAt", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        product_code: str,
+        start_at: datetime.datetime,
+        end_at: datetime.datetime,
+        system_id: Optional[str] = None,
+        display_name: Optional[str] = None,
+        applied_scope_type: Optional[Union[str, "_models.DiscountAppliedScopeType"]] = None,
+        discount_type_properties: Optional["_models.DiscountTypeProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword product_code: This is the catalog UPN for the product. Required.
+        :paramtype product_code: str
+        :keyword start_at: Start date of the discount. Value is the date the discount started or will
+         start in the future. Required.
+        :paramtype start_at: ~datetime.datetime
+        :keyword system_id: This is the globally unique identifier of the Discount which will not
+         change for the lifetime of the Discount.
+        :paramtype system_id: str
+        :keyword display_name: This defines a user friendly display name for the discount.
+        :paramtype display_name: str
+        :keyword applied_scope_type: List of applied scopes supported for discounts. Known values are:
+         "BillingAccount", "BillingProfile", and "Customer".
+        :paramtype applied_scope_type: str or
+         ~azure.mgmt.billingbenefits.models.DiscountAppliedScopeType
+        :keyword discount_type_properties: This defines the conditions for a given discount type.
+        :paramtype discount_type_properties: ~azure.mgmt.billingbenefits.models.DiscountTypeProperties
+        :keyword end_at: End date of the discount. No duration will be supported. Allowed value is any
+         date greater than or equal to startDate. Required.
+        :paramtype end_at: ~datetime.datetime
+        """
+        super().__init__(
+            product_code=product_code,
+            start_at=start_at,
+            system_id=system_id,
+            display_name=display_name,
+            applied_scope_type=applied_scope_type,
+            **kwargs
+        )
+        self.entity_type: str = "Primary"
+        self.discount_type_properties = discount_type_properties
+        self.end_at = end_at
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -251,11 +2035,11 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorDetail(_serialization.Model):
@@ -291,18 +2075,19 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.billingbenefits.models.ErrorDetail
@@ -312,7 +2097,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.billingbenefits.models.ErrorDetail
@@ -335,7 +2120,7 @@ class ExtendedStatusInfo(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, status_code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, status_code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword status_code: Status code providing additional information.
         :paramtype status_code: str
@@ -345,6 +2130,116 @@ class ExtendedStatusInfo(_serialization.Model):
         super().__init__(**kwargs)
         self.status_code = status_code
         self.message = message
+
+
+class ManagedServiceIdentity(_serialization.Model):
+    """Managed service identity (system assigned and/or user assigned identities).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: Type of managed service identity (where both SystemAssigned and UserAssigned types
+     are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+     "SystemAssigned,UserAssigned".
+    :vartype type: str or ~azure.mgmt.billingbenefits.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: The set of user assigned identities associated with the
+     resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+     The dictionary values can be empty objects ({}) in requests.
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.billingbenefits.models.UserAssignedIdentity]
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: Type of managed service identity (where both SystemAssigned and UserAssigned
+         types are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+         "SystemAssigned,UserAssigned".
+        :paramtype type: str or ~azure.mgmt.billingbenefits.models.ManagedServiceIdentityType
+        :keyword user_assigned_identities: The set of user assigned identities associated with the
+         resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+         The dictionary values can be empty objects ({}) in requests.
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.billingbenefits.models.UserAssignedIdentity]
+        """
+        super().__init__(**kwargs)
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
+
+
+class MarketSetPricesItems(_serialization.Model):
+    """Items in the MarketSetPrices array.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar markets: Required.
+    :vartype markets: list[str]
+    :ivar value: The locked price for the priceable node. Validation: Required. Must be greater
+     than or equal to 0. If the case of billing plans. This represents the price for each cycle
+     charge. Required.
+    :vartype value: float
+    :ivar currency: The currency of the locked price value. Validation: Required. Must be a valid
+     ISO 4217 3-letter currency code. Required.
+    :vartype currency: str
+    """
+
+    _validation = {
+        "markets": {"required": True},
+        "value": {"required": True},
+        "currency": {"required": True},
+    }
+
+    _attribute_map = {
+        "markets": {"key": "markets", "type": "[str]"},
+        "value": {"key": "value", "type": "float"},
+        "currency": {"key": "currency", "type": "str"},
+    }
+
+    def __init__(self, *, markets: list[str], value: float, currency: str, **kwargs: Any) -> None:
+        """
+        :keyword markets: Required.
+        :paramtype markets: list[str]
+        :keyword value: The locked price for the priceable node. Validation: Required. Must be greater
+         than or equal to 0. If the case of billing plans. This represents the price for each cycle
+         charge. Required.
+        :paramtype value: float
+        :keyword currency: The currency of the locked price value. Validation: Required. Must be a
+         valid ISO 4217 3-letter currency code. Required.
+        :paramtype currency: str
+        """
+        super().__init__(**kwargs)
+        self.markets = markets
+        self.value = value
+        self.currency = currency
 
 
 class Operation(_serialization.Model):
@@ -384,17 +2279,17 @@ class Operation(_serialization.Model):
         "action_type": {"key": "actionType", "type": "str"},
     }
 
-    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
         """
         :keyword display: Localized display information for this particular operation.
         :paramtype display: ~azure.mgmt.billingbenefits.models.OperationDisplay
         """
         super().__init__(**kwargs)
-        self.name = None
-        self.is_data_action = None
+        self.name: Optional[str] = None
+        self.is_data_action: Optional[bool] = None
         self.display = display
-        self.origin = None
-        self.action_type = None
+        self.origin: Optional[Union[str, "_models.Origin"]] = None
+        self.action_type: Optional[Union[str, "_models.ActionType"]] = None
 
 
 class OperationDisplay(_serialization.Model):
@@ -430,17 +2325,18 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provider = None
-        self.resource = None
-        self.operation = None
-        self.description = None
+        self.provider: Optional[str] = None
+        self.resource: Optional[str] = None
+        self.operation: Optional[str] = None
+        self.description: Optional[str] = None
 
 
 class OperationListResult(_serialization.Model):
-    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
+    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link
+    to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -460,11 +2356,11 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.Operation"]] = None
+        self.next_link: Optional[str] = None
 
 
 class OperationResultError(_serialization.Model):
@@ -484,7 +2380,7 @@ class OperationResultError(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Required if status == failed or status == cancelled. If status == failed,
          provide an invariant error code used for error troubleshooting, aggregation, and analysis.
@@ -545,8 +2441,8 @@ class PaymentDetail(_serialization.Model):
         billing_currency_total: Optional["_models.Price"] = None,
         status: Optional[Union[str, "_models.PaymentStatus"]] = None,
         billing_account: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword due_date: Date when the payment needs to be done.
         :paramtype due_date: ~datetime.date
@@ -569,8 +2465,111 @@ class PaymentDetail(_serialization.Model):
         self.pricing_currency_total = pricing_currency_total
         self.billing_currency_total = billing_currency_total
         self.status = status
-        self.extended_status_info = None
+        self.extended_status_info: Optional["_models.ExtendedStatusInfo"] = None
         self.billing_account = billing_account
+
+
+class Plan(_serialization.Model):
+    """Plan for the resource.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: A user defined name of the 3rd Party Artifact that is being procured. Required.
+    :vartype name: str
+    :ivar publisher: The publisher of the 3rd Party Artifact that is being bought. E.g. NewRelic.
+     Required.
+    :vartype publisher: str
+    :ivar product: The 3rd Party artifact that is being procured. E.g. NewRelic. Product maps to
+     the OfferID specified for the artifact at the time of Data Market onboarding. Required.
+    :vartype product: str
+    :ivar promotion_code: A publisher provided promotion code as provisioned in Data Market for the
+     said product/artifact.
+    :vartype promotion_code: str
+    :ivar version: The version of the desired product/artifact.
+    :vartype version: str
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "publisher": {"required": True},
+        "product": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+        "product": {"key": "product", "type": "str"},
+        "promotion_code": {"key": "promotionCode", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        publisher: str,
+        product: str,
+        promotion_code: Optional[str] = None,
+        version: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: A user defined name of the 3rd Party Artifact that is being procured. Required.
+        :paramtype name: str
+        :keyword publisher: The publisher of the 3rd Party Artifact that is being bought. E.g.
+         NewRelic. Required.
+        :paramtype publisher: str
+        :keyword product: The 3rd Party artifact that is being procured. E.g. NewRelic. Product maps to
+         the OfferID specified for the artifact at the time of Data Market onboarding. Required.
+        :paramtype product: str
+        :keyword promotion_code: A publisher provided promotion code as provisioned in Data Market for
+         the said product/artifact.
+        :paramtype promotion_code: str
+        :keyword version: The version of the desired product/artifact.
+        :paramtype version: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.publisher = publisher
+        self.product = product
+        self.promotion_code = promotion_code
+        self.version = version
+
+
+class PriceGuaranteeProperties(_serialization.Model):
+    """Set only in price guarantee scenario.
+
+    :ivar pricing_policy: Supported values: Protected, Locked. Known values are: "Protected" and
+     "Locked".
+    :vartype pricing_policy: str or ~azure.mgmt.billingbenefits.models.PricingPolicy
+    :ivar price_guarantee_date: The date on which prices are to be used for guarantee calculation.
+     Validation: expected to be 00 hours, Format: 2024-09-30T00:00:00Z. Must be in UTC.
+    :vartype price_guarantee_date: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "pricing_policy": {"key": "pricingPolicy", "type": "str"},
+        "price_guarantee_date": {"key": "priceGuaranteeDate", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        pricing_policy: Optional[Union[str, "_models.PricingPolicy"]] = None,
+        price_guarantee_date: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword pricing_policy: Supported values: Protected, Locked. Known values are: "Protected" and
+         "Locked".
+        :paramtype pricing_policy: str or ~azure.mgmt.billingbenefits.models.PricingPolicy
+        :keyword price_guarantee_date: The date on which prices are to be used for guarantee
+         calculation. Validation: expected to be 00 hours, Format: 2024-09-30T00:00:00Z. Must be in UTC.
+        :paramtype price_guarantee_date: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.pricing_policy = pricing_policy
+        self.price_guarantee_date = price_guarantee_date
 
 
 class PricingCurrencyTotal(Price):
@@ -598,8 +2597,8 @@ class PricingCurrencyTotal(Price):
         currency_code: Optional[str] = None,
         amount: Optional[float] = None,
         duration: Optional[Union[str, "_models.PricingCurrencyDuration"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword currency_code: The ISO 4217 3-letter currency code for the currency used by this
          purchase record.
@@ -620,7 +2619,7 @@ class PurchaseRequest(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar sku: The SKU to be applied for this resource.
-    :vartype sku: ~azure.mgmt.billingbenefits.models.Sku
+    :vartype sku: ~azure.mgmt.billingbenefits.models.ResourceSku
     :ivar display_name: Friendly name of the savings plan.
     :vartype display_name: str
     :ivar billing_scope_id: Subscription that will be charged for purchasing the benefit.
@@ -651,7 +2650,7 @@ class PurchaseRequest(_serialization.Model):
     }
 
     _attribute_map = {
-        "sku": {"key": "sku", "type": "Sku"},
+        "sku": {"key": "sku", "type": "ResourceSku"},
         "display_name": {"key": "properties.displayName", "type": "str"},
         "billing_scope_id": {"key": "properties.billingScopeId", "type": "str"},
         "term": {"key": "properties.term", "type": "str"},
@@ -666,7 +2665,7 @@ class PurchaseRequest(_serialization.Model):
     def __init__(
         self,
         *,
-        sku: Optional["_models.Sku"] = None,
+        sku: Optional["_models.ResourceSku"] = None,
         display_name: Optional[str] = None,
         billing_scope_id: Optional[str] = None,
         term: Optional[Union[str, "_models.Term"]] = None,
@@ -675,11 +2674,11 @@ class PurchaseRequest(_serialization.Model):
         commitment: Optional["_models.Commitment"] = None,
         renew: bool = False,
         applied_scope_properties: Optional["_models.AppliedScopeProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku: The SKU to be applied for this resource.
-        :paramtype sku: ~azure.mgmt.billingbenefits.models.Sku
+        :paramtype sku: ~azure.mgmt.billingbenefits.models.ResourceSku
         :keyword display_name: Friendly name of the savings plan.
         :paramtype display_name: str
         :keyword billing_scope_id: Subscription that will be charged for purchasing the benefit.
@@ -710,7 +2709,7 @@ class PurchaseRequest(_serialization.Model):
         self.billing_plan = billing_plan
         self.applied_scope_type = applied_scope_type
         self.commitment = commitment
-        self.effective_date_time = None
+        self.effective_date_time: Optional[datetime.datetime] = None
         self.renew = renew
         self.applied_scope_properties = applied_scope_properties
 
@@ -726,7 +2725,7 @@ class RenewProperties(_serialization.Model):
         "purchase_properties": {"key": "purchaseProperties", "type": "PurchaseRequest"},
     }
 
-    def __init__(self, *, purchase_properties: Optional["_models.PurchaseRequest"] = None, **kwargs):
+    def __init__(self, *, purchase_properties: Optional["_models.PurchaseRequest"] = None, **kwargs: Any) -> None:
         """
         :keyword purchase_properties:
         :paramtype purchase_properties: ~azure.mgmt.billingbenefits.models.PurchaseRequest
@@ -735,56 +2734,15 @@ class RenewProperties(_serialization.Model):
         self.purchase_properties = purchase_properties
 
 
-class Resource(_serialization.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.billingbenefits.models.SystemData
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs):
-        """ """
-        super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
-
-
-class ReservationOrderAliasRequest(Resource):  # pylint: disable=too-many-instance-attributes
+class ReservationOrderAliasRequest(Resource):
     """Reservation order alias.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -795,7 +2753,7 @@ class ReservationOrderAliasRequest(Resource):  # pylint: disable=too-many-instan
      information.
     :vartype system_data: ~azure.mgmt.billingbenefits.models.SystemData
     :ivar sku: Reservation order SKU. Required.
-    :vartype sku: ~azure.mgmt.billingbenefits.models.Sku
+    :vartype sku: ~azure.mgmt.billingbenefits.models.ResourceSku
     :ivar location: The Azure Region where the reservation benefits are applied to.
     :vartype location: str
     :ivar display_name: Display name.
@@ -849,7 +2807,7 @@ class ReservationOrderAliasRequest(Resource):  # pylint: disable=too-many-instan
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "sku": {"key": "sku", "type": "Sku"},
+        "sku": {"key": "sku", "type": "ResourceSku"},
         "location": {"key": "location", "type": "str"},
         "display_name": {"key": "properties.displayName", "type": "str"},
         "billing_scope_id": {"key": "properties.billingScopeId", "type": "str"},
@@ -870,7 +2828,7 @@ class ReservationOrderAliasRequest(Resource):  # pylint: disable=too-many-instan
     def __init__(
         self,
         *,
-        sku: "_models.Sku",
+        sku: "_models.ResourceSku",
         location: Optional[str] = None,
         display_name: Optional[str] = None,
         billing_scope_id: Optional[str] = None,
@@ -885,11 +2843,11 @@ class ReservationOrderAliasRequest(Resource):  # pylint: disable=too-many-instan
         reserved_resource_properties: Optional[
             "_models.ReservationOrderAliasRequestPropertiesReservedResourceProperties"
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku: Reservation order SKU. Required.
-        :paramtype sku: ~azure.mgmt.billingbenefits.models.Sku
+        :paramtype sku: ~azure.mgmt.billingbenefits.models.ResourceSku
         :keyword location: The Azure Region where the reservation benefits are applied to.
         :paramtype location: str
         :keyword display_name: Display name.
@@ -945,7 +2903,9 @@ class ReservationOrderAliasRequest(Resource):  # pylint: disable=too-many-instan
         self.reserved_resource_properties = reserved_resource_properties
 
 
-class ReservationOrderAliasRequestPropertiesReservedResourceProperties(_serialization.Model):
+class ReservationOrderAliasRequestPropertiesReservedResourceProperties(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """Properties specific to each reserved resource type. Not required if not applicable.
 
     :ivar instance_flexibility: Turning this on will apply the reservation discount to other VMs in
@@ -957,7 +2917,9 @@ class ReservationOrderAliasRequestPropertiesReservedResourceProperties(_serializ
         "instance_flexibility": {"key": "instanceFlexibility", "type": "str"},
     }
 
-    def __init__(self, *, instance_flexibility: Optional[Union[str, "_models.InstanceFlexibility"]] = None, **kwargs):
+    def __init__(
+        self, *, instance_flexibility: Optional[Union[str, "_models.InstanceFlexibility"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword instance_flexibility: Turning this on will apply the reservation discount to other VMs
          in the same VM size group. Known values are: "On" and "Off".
@@ -967,15 +2929,15 @@ class ReservationOrderAliasRequestPropertiesReservedResourceProperties(_serializ
         self.instance_flexibility = instance_flexibility
 
 
-class ReservationOrderAliasResponse(Resource):  # pylint: disable=too-many-instance-attributes
+class ReservationOrderAliasResponse(Resource):
     """Reservation order alias.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -986,7 +2948,7 @@ class ReservationOrderAliasResponse(Resource):  # pylint: disable=too-many-insta
      information.
     :vartype system_data: ~azure.mgmt.billingbenefits.models.SystemData
     :ivar sku: Reservation order SKU. Required.
-    :vartype sku: ~azure.mgmt.billingbenefits.models.Sku
+    :vartype sku: ~azure.mgmt.billingbenefits.models.ResourceSku
     :ivar location: The Azure Region where the reserved resource lives.
     :vartype location: str
     :ivar display_name: Display name.
@@ -1045,7 +3007,7 @@ class ReservationOrderAliasResponse(Resource):  # pylint: disable=too-many-insta
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "sku": {"key": "sku", "type": "Sku"},
+        "sku": {"key": "sku", "type": "ResourceSku"},
         "location": {"key": "location", "type": "str"},
         "display_name": {"key": "properties.displayName", "type": "str"},
         "reservation_order_id": {"key": "properties.reservationOrderId", "type": "str"},
@@ -1068,7 +3030,7 @@ class ReservationOrderAliasResponse(Resource):  # pylint: disable=too-many-insta
     def __init__(
         self,
         *,
-        sku: "_models.Sku",
+        sku: "_models.ResourceSku",
         location: Optional[str] = None,
         display_name: Optional[str] = None,
         billing_scope_id: Optional[str] = None,
@@ -1083,11 +3045,11 @@ class ReservationOrderAliasResponse(Resource):  # pylint: disable=too-many-insta
         reserved_resource_properties: Optional[
             "_models.ReservationOrderAliasResponsePropertiesReservedResourceProperties"
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku: Reservation order SKU. Required.
-        :paramtype sku: ~azure.mgmt.billingbenefits.models.Sku
+        :paramtype sku: ~azure.mgmt.billingbenefits.models.ResourceSku
         :keyword location: The Azure Region where the reserved resource lives.
         :paramtype location: str
         :keyword display_name: Display name.
@@ -1130,8 +3092,8 @@ class ReservationOrderAliasResponse(Resource):  # pylint: disable=too-many-insta
         self.sku = sku
         self.location = location
         self.display_name = display_name
-        self.reservation_order_id = None
-        self.provisioning_state = None
+        self.reservation_order_id: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.billing_scope_id = billing_scope_id
         self.term = term
         self.billing_plan = billing_plan
@@ -1144,7 +3106,9 @@ class ReservationOrderAliasResponse(Resource):  # pylint: disable=too-many-insta
         self.reserved_resource_properties = reserved_resource_properties
 
 
-class ReservationOrderAliasResponsePropertiesReservedResourceProperties(_serialization.Model):
+class ReservationOrderAliasResponsePropertiesReservedResourceProperties(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """Properties specific to each reserved resource type. Not required if not applicable.
 
     :ivar instance_flexibility: Turning this on will apply the reservation discount to other VMs in
@@ -1156,7 +3120,9 @@ class ReservationOrderAliasResponsePropertiesReservedResourceProperties(_seriali
         "instance_flexibility": {"key": "instanceFlexibility", "type": "str"},
     }
 
-    def __init__(self, *, instance_flexibility: Optional[Union[str, "_models.InstanceFlexibility"]] = None, **kwargs):
+    def __init__(
+        self, *, instance_flexibility: Optional[Union[str, "_models.InstanceFlexibility"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword instance_flexibility: Turning this on will apply the reservation discount to other VMs
          in the same VM size group. Known values are: "On" and "Off".
@@ -1164,6 +3130,26 @@ class ReservationOrderAliasResponsePropertiesReservedResourceProperties(_seriali
         """
         super().__init__(**kwargs)
         self.instance_flexibility = instance_flexibility
+
+
+class ResourceSku(_serialization.Model):
+    """The SKU to be applied for this resource.
+
+    :ivar name: Name of the SKU to be applied.
+    :vartype name: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: Name of the SKU to be applied.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
 
 
 class RoleAssignmentEntity(_serialization.Model):
@@ -1197,8 +3183,8 @@ class RoleAssignmentEntity(_serialization.Model):
         principal_id: Optional[str] = None,
         role_definition_id: Optional[str] = None,
         scope: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Role assignment entity id.
         :paramtype id: str
@@ -1219,15 +3205,15 @@ class RoleAssignmentEntity(_serialization.Model):
         self.scope = scope
 
 
-class SavingsPlanModel(Resource):  # pylint: disable=too-many-instance-attributes
+class SavingsPlanModel(Resource):
     """Savings plan.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1238,7 +3224,7 @@ class SavingsPlanModel(Resource):  # pylint: disable=too-many-instance-attribute
      information.
     :vartype system_data: ~azure.mgmt.billingbenefits.models.SystemData
     :ivar sku: Savings plan SKU. Required.
-    :vartype sku: ~azure.mgmt.billingbenefits.models.Sku
+    :vartype sku: ~azure.mgmt.billingbenefits.models.ResourceSku
     :ivar display_name: Display name.
     :vartype display_name: str
     :ivar provisioning_state: Provisioning state. Known values are: "Creating", "PendingBilling",
@@ -1322,7 +3308,7 @@ class SavingsPlanModel(Resource):  # pylint: disable=too-many-instance-attribute
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "sku": {"key": "sku", "type": "Sku"},
+        "sku": {"key": "sku", "type": "ResourceSku"},
         "display_name": {"key": "properties.displayName", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "display_provisioning_state": {"key": "properties.displayProvisioningState", "type": "str"},
@@ -1351,7 +3337,7 @@ class SavingsPlanModel(Resource):  # pylint: disable=too-many-instance-attribute
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        sku: "_models.Sku",
+        sku: "_models.ResourceSku",
         display_name: Optional[str] = None,
         billing_scope_id: Optional[str] = None,
         term: Optional[Union[str, "_models.Term"]] = None,
@@ -1364,11 +3350,11 @@ class SavingsPlanModel(Resource):  # pylint: disable=too-many-instance-attribute
         renew_source: Optional[str] = None,
         renew_destination: Optional[str] = None,
         renew_properties: Optional["_models.RenewProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku: Savings plan SKU. Required.
-        :paramtype sku: ~azure.mgmt.billingbenefits.models.Sku
+        :paramtype sku: ~azure.mgmt.billingbenefits.models.ResourceSku
         :keyword display_name: Display name.
         :paramtype display_name: str
         :keyword billing_scope_id: Subscription that will be charged for purchasing the benefit.
@@ -1404,25 +3390,25 @@ class SavingsPlanModel(Resource):  # pylint: disable=too-many-instance-attribute
         super().__init__(**kwargs)
         self.sku = sku
         self.display_name = display_name
-        self.provisioning_state = None
-        self.display_provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.display_provisioning_state: Optional[str] = None
         self.billing_scope_id = billing_scope_id
-        self.billing_profile_id = None
-        self.customer_id = None
-        self.billing_account_id = None
+        self.billing_profile_id: Optional[str] = None
+        self.customer_id: Optional[str] = None
+        self.billing_account_id: Optional[str] = None
         self.term = term
         self.billing_plan = billing_plan
         self.applied_scope_type = applied_scope_type
-        self.user_friendly_applied_scope_type = None
+        self.user_friendly_applied_scope_type: Optional[str] = None
         self.applied_scope_properties = applied_scope_properties
         self.commitment = commitment
-        self.effective_date_time = None
-        self.expiry_date_time = None
-        self.purchase_date_time = None
+        self.effective_date_time: Optional[datetime.datetime] = None
+        self.expiry_date_time: Optional[datetime.datetime] = None
+        self.purchase_date_time: Optional[datetime.datetime] = None
         self.benefit_start_time = benefit_start_time
-        self.extended_status_info = None
+        self.extended_status_info: Optional["_models.ExtendedStatusInfo"] = None
         self.renew = renew
-        self.utilization = None
+        self.utilization: Optional["_models.Utilization"] = None
         self.renew_source = renew_source
         self.renew_destination = renew_destination
         self.renew_properties = renew_properties
@@ -1443,8 +3429,12 @@ class SavingsPlanModelList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.SavingsPlanModel"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[list["_models.SavingsPlanModel"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.billingbenefits.models.SavingsPlanModel]
@@ -1481,23 +3471,23 @@ class SavingsPlanModelListResult(_serialization.Model):
         "additional_properties": {"key": "additionalProperties", "type": "[SavingsPlanSummary]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
-        self.additional_properties = None
+        self.value: Optional[list["_models.SavingsPlanModel"]] = None
+        self.next_link: Optional[str] = None
+        self.additional_properties: Optional[list["_models.SavingsPlanSummary"]] = None
 
 
-class SavingsPlanOrderAliasModel(Resource):  # pylint: disable=too-many-instance-attributes
+class SavingsPlanOrderAliasModel(Resource):
     """Savings plan order alias.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1508,7 +3498,7 @@ class SavingsPlanOrderAliasModel(Resource):  # pylint: disable=too-many-instance
      information.
     :vartype system_data: ~azure.mgmt.billingbenefits.models.SystemData
     :ivar sku: Savings plan SKU. Required.
-    :vartype sku: ~azure.mgmt.billingbenefits.models.Sku
+    :vartype sku: ~azure.mgmt.billingbenefits.models.ResourceSku
     :ivar kind: Resource provider kind.
     :vartype kind: str
     :ivar display_name: Display name.
@@ -1534,6 +3524,9 @@ class SavingsPlanOrderAliasModel(Resource):  # pylint: disable=too-many-instance
     :vartype applied_scope_properties: ~azure.mgmt.billingbenefits.models.AppliedScopeProperties
     :ivar commitment: Commitment towards the benefit.
     :vartype commitment: ~azure.mgmt.billingbenefits.models.Commitment
+    :ivar renew: Setting this to true will automatically purchase a new benefit on the expiration
+     date time.
+    :vartype renew: bool
     """
 
     _validation = {
@@ -1551,7 +3544,7 @@ class SavingsPlanOrderAliasModel(Resource):  # pylint: disable=too-many-instance
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "sku": {"key": "sku", "type": "Sku"},
+        "sku": {"key": "sku", "type": "ResourceSku"},
         "kind": {"key": "kind", "type": "str"},
         "display_name": {"key": "properties.displayName", "type": "str"},
         "savings_plan_order_id": {"key": "properties.savingsPlanOrderId", "type": "str"},
@@ -1562,12 +3555,13 @@ class SavingsPlanOrderAliasModel(Resource):  # pylint: disable=too-many-instance
         "applied_scope_type": {"key": "properties.appliedScopeType", "type": "str"},
         "applied_scope_properties": {"key": "properties.appliedScopeProperties", "type": "AppliedScopeProperties"},
         "commitment": {"key": "properties.commitment", "type": "Commitment"},
+        "renew": {"key": "properties.renew", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
-        sku: "_models.Sku",
+        sku: "_models.ResourceSku",
         kind: Optional[str] = None,
         display_name: Optional[str] = None,
         billing_scope_id: Optional[str] = None,
@@ -1576,11 +3570,12 @@ class SavingsPlanOrderAliasModel(Resource):  # pylint: disable=too-many-instance
         applied_scope_type: Optional[Union[str, "_models.AppliedScopeType"]] = None,
         applied_scope_properties: Optional["_models.AppliedScopeProperties"] = None,
         commitment: Optional["_models.Commitment"] = None,
-        **kwargs
-    ):
+        renew: bool = False,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku: Savings plan SKU. Required.
-        :paramtype sku: ~azure.mgmt.billingbenefits.models.Sku
+        :paramtype sku: ~azure.mgmt.billingbenefits.models.ResourceSku
         :keyword kind: Resource provider kind.
         :paramtype kind: str
         :keyword display_name: Display name.
@@ -1601,30 +3596,34 @@ class SavingsPlanOrderAliasModel(Resource):  # pylint: disable=too-many-instance
         :paramtype applied_scope_properties: ~azure.mgmt.billingbenefits.models.AppliedScopeProperties
         :keyword commitment: Commitment towards the benefit.
         :paramtype commitment: ~azure.mgmt.billingbenefits.models.Commitment
+        :keyword renew: Setting this to true will automatically purchase a new benefit on the
+         expiration date time.
+        :paramtype renew: bool
         """
         super().__init__(**kwargs)
         self.sku = sku
         self.kind = kind
         self.display_name = display_name
-        self.savings_plan_order_id = None
-        self.provisioning_state = None
+        self.savings_plan_order_id: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.billing_scope_id = billing_scope_id
         self.term = term
         self.billing_plan = billing_plan
         self.applied_scope_type = applied_scope_type
         self.applied_scope_properties = applied_scope_properties
         self.commitment = commitment
+        self.renew = renew
 
 
-class SavingsPlanOrderModel(Resource):  # pylint: disable=too-many-instance-attributes
+class SavingsPlanOrderModel(Resource):
     """Savings plan order.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1635,7 +3634,7 @@ class SavingsPlanOrderModel(Resource):  # pylint: disable=too-many-instance-attr
      information.
     :vartype system_data: ~azure.mgmt.billingbenefits.models.SystemData
     :ivar sku: Savings plan SKU. Required.
-    :vartype sku: ~azure.mgmt.billingbenefits.models.Sku
+    :vartype sku: ~azure.mgmt.billingbenefits.models.ResourceSku
     :ivar display_name: Display name.
     :vartype display_name: str
     :ivar provisioning_state: Provisioning state. Known values are: "Creating", "PendingBilling",
@@ -1689,7 +3688,7 @@ class SavingsPlanOrderModel(Resource):  # pylint: disable=too-many-instance-attr
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "sku": {"key": "sku", "type": "Sku"},
+        "sku": {"key": "sku", "type": "ResourceSku"},
         "display_name": {"key": "properties.displayName", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "billing_scope_id": {"key": "properties.billingScopeId", "type": "str"},
@@ -1708,19 +3707,19 @@ class SavingsPlanOrderModel(Resource):  # pylint: disable=too-many-instance-attr
     def __init__(
         self,
         *,
-        sku: "_models.Sku",
+        sku: "_models.ResourceSku",
         display_name: Optional[str] = None,
         billing_scope_id: Optional[str] = None,
         term: Optional[Union[str, "_models.Term"]] = None,
         billing_plan: Optional[Union[str, "_models.BillingPlan"]] = None,
         benefit_start_time: Optional[datetime.datetime] = None,
         plan_information: Optional["_models.BillingPlanInformation"] = None,
-        savings_plans: Optional[List[str]] = None,
-        **kwargs
-    ):
+        savings_plans: Optional[list[str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku: Savings plan SKU. Required.
-        :paramtype sku: ~azure.mgmt.billingbenefits.models.Sku
+        :paramtype sku: ~azure.mgmt.billingbenefits.models.ResourceSku
         :keyword display_name: Display name.
         :paramtype display_name: str
         :keyword billing_scope_id: Subscription that will be charged for purchasing the benefit.
@@ -1742,18 +3741,18 @@ class SavingsPlanOrderModel(Resource):  # pylint: disable=too-many-instance-attr
         super().__init__(**kwargs)
         self.sku = sku
         self.display_name = display_name
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.billing_scope_id = billing_scope_id
-        self.billing_profile_id = None
-        self.customer_id = None
-        self.billing_account_id = None
+        self.billing_profile_id: Optional[str] = None
+        self.customer_id: Optional[str] = None
+        self.billing_account_id: Optional[str] = None
         self.term = term
         self.billing_plan = billing_plan
-        self.expiry_date_time = None
+        self.expiry_date_time: Optional[datetime.datetime] = None
         self.benefit_start_time = benefit_start_time
         self.plan_information = plan_information
         self.savings_plans = savings_plans
-        self.extended_status_info = None
+        self.extended_status_info: Optional["_models.ExtendedStatusInfo"] = None
 
 
 class SavingsPlanOrderModelList(_serialization.Model):
@@ -1773,10 +3772,10 @@ class SavingsPlanOrderModelList(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.SavingsPlanOrderModel"]] = None,
+        value: Optional[list["_models.SavingsPlanOrderModel"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.billingbenefits.models.SavingsPlanOrderModel]
@@ -1799,7 +3798,7 @@ class SavingsPlanPurchaseValidateRequest(_serialization.Model):
         "benefits": {"key": "benefits", "type": "[SavingsPlanOrderAliasModel]"},
     }
 
-    def __init__(self, *, benefits: Optional[List["_models.SavingsPlanOrderAliasModel"]] = None, **kwargs):
+    def __init__(self, *, benefits: Optional[list["_models.SavingsPlanOrderAliasModel"]] = None, **kwargs: Any) -> None:
         """
         :keyword benefits:
         :paramtype benefits: list[~azure.mgmt.billingbenefits.models.SavingsPlanOrderAliasModel]
@@ -1828,13 +3827,13 @@ class SavingsPlanSummary(_serialization.Model):
         "value": {"key": "value", "type": "SavingsPlanSummaryCount"},
     }
 
-    def __init__(self, *, value: Optional["_models.SavingsPlanSummaryCount"] = None, **kwargs):
+    def __init__(self, *, value: Optional["_models.SavingsPlanSummaryCount"] = None, **kwargs: Any) -> None:
         """
         :keyword value: The roll up count summary of savings plans in each state.
         :paramtype value: ~azure.mgmt.billingbenefits.models.SavingsPlanSummaryCount
         """
         super().__init__(**kwargs)
-        self.name = None
+        self.name: Optional[str] = None
         self.value = value
 
 
@@ -1887,18 +3886,18 @@ class SavingsPlanSummaryCount(_serialization.Model):
         "warning_count": {"key": "warningCount", "type": "float"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.succeeded_count = None
-        self.failed_count = None
-        self.expiring_count = None
-        self.expired_count = None
-        self.pending_count = None
-        self.cancelled_count = None
-        self.processing_count = None
-        self.no_benefit_count = None
-        self.warning_count = None
+        self.succeeded_count: Optional[float] = None
+        self.failed_count: Optional[float] = None
+        self.expiring_count: Optional[float] = None
+        self.expired_count: Optional[float] = None
+        self.pending_count: Optional[float] = None
+        self.cancelled_count: Optional[float] = None
+        self.processing_count: Optional[float] = None
+        self.no_benefit_count: Optional[float] = None
+        self.warning_count: Optional[float] = None
 
 
 class SavingsPlanUpdateRequest(_serialization.Model):
@@ -1912,7 +3911,9 @@ class SavingsPlanUpdateRequest(_serialization.Model):
         "properties": {"key": "properties", "type": "SavingsPlanUpdateRequestProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.SavingsPlanUpdateRequestProperties"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.SavingsPlanUpdateRequestProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Savings plan patch request.
         :paramtype properties: ~azure.mgmt.billingbenefits.models.SavingsPlanUpdateRequestProperties
@@ -1955,8 +3956,8 @@ class SavingsPlanUpdateRequestProperties(_serialization.Model):
         applied_scope_properties: Optional["_models.AppliedScopeProperties"] = None,
         renew: bool = False,
         renew_properties: Optional["_models.RenewProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: Display name.
         :paramtype display_name: str
@@ -1991,7 +3992,9 @@ class SavingsPlanUpdateValidateRequest(_serialization.Model):
         "benefits": {"key": "benefits", "type": "[SavingsPlanUpdateRequestProperties]"},
     }
 
-    def __init__(self, *, benefits: Optional[List["_models.SavingsPlanUpdateRequestProperties"]] = None, **kwargs):
+    def __init__(
+        self, *, benefits: Optional[list["_models.SavingsPlanUpdateRequestProperties"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword benefits:
         :paramtype benefits:
@@ -2018,10 +4021,10 @@ class SavingsPlanValidateResponse(_serialization.Model):
     def __init__(
         self,
         *,
-        benefits: Optional[List["_models.SavingsPlanValidResponseProperty"]] = None,
+        benefits: Optional[list["_models.SavingsPlanValidResponseProperty"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword benefits:
         :paramtype benefits: list[~azure.mgmt.billingbenefits.models.SavingsPlanValidResponseProperty]
@@ -2051,8 +4054,13 @@ class SavingsPlanValidResponseProperty(_serialization.Model):
     }
 
     def __init__(
-        self, *, valid: Optional[bool] = None, reason_code: Optional[str] = None, reason: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        valid: Optional[bool] = None,
+        reason_code: Optional[str] = None,
+        reason: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword valid: Indicates if the provided input was valid.
         :paramtype valid: bool
@@ -2068,23 +4076,72 @@ class SavingsPlanValidResponseProperty(_serialization.Model):
 
 
 class Sku(_serialization.Model):
-    """The SKU to be applied for this resource.
+    """The resource model definition representing SKU.
 
-    :ivar name: Name of the SKU to be applied.
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: The name of the SKU. E.g. P3. It is typically a letter+number code. Required.
     :vartype name: str
+    :ivar tier: This field is required to be implemented by the Resource Provider if the service
+     has more than one tier, but is not required on a PUT. Known values are: "Free", "Basic",
+     "Standard", and "Premium".
+    :vartype tier: str or ~azure.mgmt.billingbenefits.models.SkuTier
+    :ivar size: The SKU size. When the name field is the combination of tier and some other value,
+     this would be the standalone code.
+    :vartype size: str
+    :ivar family: If the service has different generations of hardware, for the same SKU, then that
+     can be captured here.
+    :vartype family: str
+    :ivar capacity: If the SKU supports scale out/in then the capacity integer should be included.
+     If scale out/in is not possible for the resource this may be omitted.
+    :vartype capacity: int
     """
+
+    _validation = {
+        "name": {"required": True},
+    }
 
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "size": {"key": "size", "type": "str"},
+        "family": {"key": "family", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        name: str,
+        tier: Optional[Union[str, "_models.SkuTier"]] = None,
+        size: Optional[str] = None,
+        family: Optional[str] = None,
+        capacity: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword name: Name of the SKU to be applied.
+        :keyword name: The name of the SKU. E.g. P3. It is typically a letter+number code. Required.
         :paramtype name: str
+        :keyword tier: This field is required to be implemented by the Resource Provider if the service
+         has more than one tier, but is not required on a PUT. Known values are: "Free", "Basic",
+         "Standard", and "Premium".
+        :paramtype tier: str or ~azure.mgmt.billingbenefits.models.SkuTier
+        :keyword size: The SKU size. When the name field is the combination of tier and some other
+         value, this would be the standalone code.
+        :paramtype size: str
+        :keyword family: If the service has different generations of hardware, for the same SKU, then
+         that can be captured here.
+        :paramtype family: str
+        :keyword capacity: If the SKU supports scale out/in then the capacity integer should be
+         included. If scale out/in is not possible for the resource this may be omitted.
+        :paramtype capacity: int
         """
         super().__init__(**kwargs)
         self.name = name
+        self.tier = tier
+        self.size = size
+        self.family = family
+        self.capacity = capacity
 
 
 class SystemData(_serialization.Model):
@@ -2124,8 +4181,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -2151,6 +4208,34 @@ class SystemData(_serialization.Model):
         self.last_modified_at = last_modified_at
 
 
+class UserAssignedIdentity(_serialization.Model):
+    """User assigned identity properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
+
+
 class Utilization(_serialization.Model):
     """Savings plan utilization.
 
@@ -2171,13 +4256,13 @@ class Utilization(_serialization.Model):
         "aggregates": {"key": "aggregates", "type": "[UtilizationAggregates]"},
     }
 
-    def __init__(self, *, aggregates: Optional[List["_models.UtilizationAggregates"]] = None, **kwargs):
+    def __init__(self, *, aggregates: Optional[list["_models.UtilizationAggregates"]] = None, **kwargs: Any) -> None:
         """
         :keyword aggregates: The array of aggregates of a savings plan's utilization.
         :paramtype aggregates: list[~azure.mgmt.billingbenefits.models.UtilizationAggregates]
         """
         super().__init__(**kwargs)
-        self.trend = None
+        self.trend: Optional[str] = None
         self.aggregates = aggregates
 
 
@@ -2210,10 +4295,10 @@ class UtilizationAggregates(_serialization.Model):
         "value_unit": {"key": "valueUnit", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.grain = None
-        self.grain_unit = None
-        self.value = None
-        self.value_unit = None
+        self.grain: Optional[float] = None
+        self.grain_unit: Optional[str] = None
+        self.value: Optional[float] = None
+        self.value_unit: Optional[str] = None

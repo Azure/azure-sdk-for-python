@@ -24,6 +24,16 @@ class AppliedScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MANAGEMENT_GROUP = "ManagementGroup"
 
 
+class ApplyDiscountOn(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The customer action on which the discount is applied. Supported values are Purchase, Consume,
+    and Renew. Validation: Required, one of supported values.
+    """
+
+    PURCHASE = "Purchase"
+    CONSUME = "Consume"
+    RENEW = "Renew"
+
+
 class BillingPlan(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents the billing plan in ISO 8601 format. Required only for monthly billing plans."""
 
@@ -34,6 +44,8 @@ class CommitmentGrain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Commitment grain."""
 
     HOURLY = "Hourly"
+    FULL_TERM = "FullTerm"
+    UNKNOWN = "Unknown"
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -45,11 +57,98 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
+class DiscountAppliedScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """List of applied scopes supported for discounts."""
+
+    BILLING_ACCOUNT = "BillingAccount"
+    BILLING_PROFILE = "BillingProfile"
+    CUSTOMER = "Customer"
+
+
+class DiscountCombinationRule(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The discount combination rule when there are multiple applicable custom prices. Validation:
+    Required. Supported values are Stackable and BestOf.
+    """
+
+    BEST_OF = "BestOf"
+    STACKABLE = "Stackable"
+
+
+class DiscountEntityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This defines whether the entity being created is primary or affiliate. Supported values:
+    primary, affiliate. Validation: Required, must match one of the 2 values.
+    """
+
+    PRIMARY = "Primary"
+    AFFILIATE = "Affiliate"
+
+
+class DiscountProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning states of Discount."""
+
+    UNKNOWN = "Unknown"
+    PENDING = "Pending"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+
+
+class DiscountProvisioningSubState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning sub state of Discount."""
+
+    UNKNOWN = "Unknown"
+    NONE = "None"
+    EXPIRED = "Expired"
+
+
+class DiscountRuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the priceable node pricing rule. Validation: Required. Supported values are
+    fixedPriceLock, fixedListPrice, and priceCeiling.
+    """
+
+    FIXED_PRICE_LOCK = "FixedPriceLock"
+    FIXED_LIST_PRICE = "FixedListPrice"
+    PRICE_CEILING = "PriceCeiling"
+
+
+class DiscountStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represents the current status of the discount."""
+
+    ACTIVE = "Active"
+    PENDING = "Pending"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    EXPIRED = "Expired"
+
+
+class DiscountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the type of discount. Supported values are ProductFamily, Product, Sku, CustomPrice,
+    and CustomPriceMultiCurrency.
+    """
+
+    PRODUCT_FAMILY = "ProductFamily"
+    PRODUCT = "Product"
+    SKU = "Sku"
+    CUSTOM_PRICE = "CustomPrice"
+    CUSTOM_PRICE_MULTI_CURRENCY = "CustomPriceMultiCurrency"
+
+
 class InstanceFlexibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Turning this on will apply the reservation discount to other VMs in the same VM size group."""
 
     ON = "On"
     OFF = "Off"
+
+
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
+    allowed).
+    """
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -77,6 +176,13 @@ class PricingCurrencyDuration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     P1_M = "P1M"
     P1_Y = "P1Y"
     P3_Y = "P3Y"
+
+
+class PricingPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported values: Protected, Locked."""
+
+    PROTECTED = "Protected"
+    LOCKED = "Locked"
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -121,6 +227,17 @@ class ReservedResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE_FILES = "AzureFiles"
     SQL_EDGE = "SqlEdge"
     VIRTUAL_MACHINE_SOFTWARE = "VirtualMachineSoftware"
+
+
+class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This field is required to be implemented by the Resource Provider if the service has more than
+    one tier, but is not required on a PUT.
+    """
+
+    FREE = "Free"
+    BASIC = "Basic"
+    STANDARD = "Standard"
+    PREMIUM = "Premium"
 
 
 class Term(str, Enum, metaclass=CaseInsensitiveEnumMeta):
