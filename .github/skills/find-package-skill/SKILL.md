@@ -20,6 +20,6 @@ you already know the package well.
 
 ## Package Skills
 
-| Package                   | Path                                                                   |
-| ------------------------- | ---------------------------------------------------------------------- |
-| `azure-search-documents` | `sdk/search/search-documents/.github/skills/search-documents/SKILL.md` |
+| Package                   | Path                                                                        |
+| ------------------------- | --------------------------------------------------------------------------- |
+| `azure-search-documents` | `sdk/search/azure-search-documents/.github/skills/search-documents/SKILL.md` |
