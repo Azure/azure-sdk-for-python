@@ -720,7 +720,7 @@ class AdminPropertiesFormat(_Model):
     :vartype direction: str or ~azure.mgmt.network.models.SecurityConfigurationRuleDirection
     :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
      "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.NetworkResourceProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
     """
@@ -762,7 +762,7 @@ class AdminPropertiesFormat(_Model):
     )
     """Indicates if the traffic matched against the rule in inbound or outbound. Required. Known
      values are: \"Inbound\" and \"Outbound\"."""
-    provisioning_state: Optional[Union[str, "_models.NetworkResourceProvisioningState"]] = rest_field(
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the resource. Known values are: \"Failed\", \"Succeeded\",
@@ -1011,7 +1011,7 @@ class AdminRuleCollectionPropertiesFormat(_Model):
     :vartype applies_to_groups: list[~azure.mgmt.network.models.NetworkManagerSecurityGroupItem]
     :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
      "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.NetworkResourceProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
     """
@@ -1022,7 +1022,7 @@ class AdminRuleCollectionPropertiesFormat(_Model):
         name="appliesToGroups", visibility=["read", "create", "update", "delete", "query"]
     )
     """Groups for configuration. Required."""
-    provisioning_state: Optional[Union[str, "_models.NetworkResourceProvisioningState"]] = rest_field(
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the resource. Known values are: \"Failed\", \"Succeeded\",
@@ -1369,7 +1369,7 @@ class ApplicationGatewayAuthenticationCertificatePropertiesFormat(_Model):  # py
     :ivar data: Certificate public data.
     :vartype data: str
     :ivar provisioning_state: The provisioning state of the authentication certificate resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -1379,7 +1379,7 @@ class ApplicationGatewayAuthenticationCertificatePropertiesFormat(_Model):  # py
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the authentication certificate resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -1694,7 +1694,7 @@ class ApplicationGatewayBackendAddressPoolPropertiesFormat(_Model):  # pylint: d
     :ivar backend_addresses: Backend addresses.
     :vartype backend_addresses: list[~azure.mgmt.network.models.ApplicationGatewayBackendAddress]
     :ivar provisioning_state: The provisioning state of the backend address pool resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -1709,8 +1709,8 @@ class ApplicationGatewayBackendAddressPoolPropertiesFormat(_Model):  # pylint: d
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the backend address pool resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the backend address pool resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -2064,7 +2064,7 @@ class ApplicationGatewayBackendHttpSettingsPropertiesFormat(_Model):  # pylint: 
      SNI. Default value is null.
     :vartype sni_name: str
     :ivar provisioning_state: The provisioning state of the backend HTTP settings resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -2137,8 +2137,8 @@ class ApplicationGatewayBackendHttpSettingsPropertiesFormat(_Model):  # pylint: 
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the backend HTTP settings resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the backend HTTP settings resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -2277,7 +2277,7 @@ class ApplicationGatewayBackendSettingsPropertiesFormat(_Model):  # pylint: disa
      servers over TCP or TLS protocols. Default value is false.
     :vartype enable_l4_client_ip_preservation: bool
     :ivar provisioning_state: The provisioning state of the backend HTTP settings resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -2312,8 +2312,8 @@ class ApplicationGatewayBackendSettingsPropertiesFormat(_Model):  # pylint: disa
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the backend HTTP settings resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the backend HTTP settings resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -2547,7 +2547,8 @@ class ApplicationGatewayEntraJWTValidationConfigPropertiesFormat(_Model):  # pyl
      claim). A maximum of 5 audiences are permitted.
     :vartype audiences: list[str]
     :ivar provisioning_state: The provisioning state of the entra jwt validation configuration
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -2566,7 +2567,7 @@ class ApplicationGatewayEntraJWTValidationConfigPropertiesFormat(_Model):  # pyl
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the entra jwt validation configuration resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -2903,7 +2904,7 @@ class ApplicationGatewayFirewallRuleSetPropertiesFormat(_Model):  # pylint: disa
     """Properties of the web application firewall rule set.
 
     :ivar provisioning_state: The provisioning state of the web application firewall rule set.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar rule_set_type: The type of the web application firewall rule set. Required.
     :vartype rule_set_type: str
@@ -2918,8 +2919,8 @@ class ApplicationGatewayFirewallRuleSetPropertiesFormat(_Model):  # pylint: disa
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the web application firewall rule set. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the web application firewall rule set. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     rule_set_type: str = rest_field(name="ruleSetType", visibility=["read", "create", "update", "delete", "query"])
     """The type of the web application firewall rule set. Required."""
     rule_set_version: str = rest_field(
@@ -3074,7 +3075,7 @@ class ApplicationGatewayFrontendIPConfigurationPropertiesFormat(_Model):  # pyli
      configuration.
     :vartype private_link_configuration: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the frontend IP configuration resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -3099,8 +3100,8 @@ class ApplicationGatewayFrontendIPConfigurationPropertiesFormat(_Model):  # pyli
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the frontend IP configuration resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the frontend IP configuration resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -3196,7 +3197,7 @@ class ApplicationGatewayFrontendPortPropertiesFormat(_Model):  # pylint: disable
     :ivar port: Frontend port.
     :vartype port: int
     :ivar provisioning_state: The provisioning state of the frontend port resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -3205,8 +3206,8 @@ class ApplicationGatewayFrontendPortPropertiesFormat(_Model):  # pylint: disable
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the frontend port resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the frontend port resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -3411,7 +3412,7 @@ class ApplicationGatewayHttpListenerPropertiesFormat(_Model):  # pylint: disable
      multi-hosting.
     :vartype require_server_name_indication: bool
     :ivar provisioning_state: The provisioning state of the HTTP listener resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar custom_error_configurations: Custom error configurations of the HTTP listener.
     :vartype custom_error_configurations:
@@ -3452,8 +3453,8 @@ class ApplicationGatewayHttpListenerPropertiesFormat(_Model):  # pylint: disable
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the HTTP listener resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the HTTP listener resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     custom_error_configurations: Optional[list["_models.ApplicationGatewayCustomError"]] = rest_field(
         name="customErrorConfigurations", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3569,7 +3570,8 @@ class ApplicationGatewayIPConfigurationPropertiesFormat(_Model):  # pylint: disa
      its private address.
     :vartype subnet: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the application gateway IP configuration
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -3580,7 +3582,7 @@ class ApplicationGatewayIPConfigurationPropertiesFormat(_Model):  # pylint: disa
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the application gateway IP configuration resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -3688,7 +3690,7 @@ class ApplicationGatewayListenerPropertiesFormat(_Model):  # pylint: disable=nam
     :ivar ssl_profile: SSL profile resource of the application gateway.
     :vartype ssl_profile: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the listener resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar host_names: List of Server Name Indications(SNI) for TLS Multi-site Listener that allows
      special wildcard characters as well.
@@ -3718,8 +3720,8 @@ class ApplicationGatewayListenerPropertiesFormat(_Model):  # pylint: disable=nam
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the listener resource. Known values are: \"Succeeded\", \"Updating\",
-     \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the listener resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     host_names: Optional[list[str]] = rest_field(
         name="hostNames", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3827,7 +3829,7 @@ class ApplicationGatewayLoadDistributionPolicyPropertiesFormat(_Model):  # pylin
     :vartype load_distribution_algorithm: str or
      ~azure.mgmt.network.models.ApplicationGatewayLoadDistributionAlgorithm
     :ivar provisioning_state: The provisioning state of the Load Distribution Policy resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -3843,8 +3845,8 @@ class ApplicationGatewayLoadDistributionPolicyPropertiesFormat(_Model):  # pylin
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the Load Distribution Policy resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the Load Distribution Policy resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -4151,7 +4153,7 @@ class ApplicationGatewayPathRulePropertiesFormat(_Model):  # pylint: disable=nam
     :ivar load_distribution_policy: Load Distribution Policy resource of URL path map path rule.
     :vartype load_distribution_policy: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the path rule resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar firewall_policy: Reference to the FirewallPolicy resource.
     :vartype firewall_policy: ~azure.mgmt.network.models.SubResource
@@ -4182,8 +4184,8 @@ class ApplicationGatewayPathRulePropertiesFormat(_Model):  # pylint: disable=nam
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the path rule resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the path rule resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     firewall_policy: Optional["_models.SubResource"] = rest_field(
         name="firewallPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4213,7 +4215,7 @@ class ApplicationGatewayPathRulePropertiesFormat(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class SubResourceModel(_Model):
+class SubResourceModel(SubResource):
     """Reference to another subresource.
 
     :ivar id: Resource ID.
@@ -4224,8 +4226,6 @@ class SubResourceModel(_Model):
     :vartype type: str
     """
 
-    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource ID."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name of the resource."""
     type: Optional[str] = rest_field(visibility=["read"])
@@ -4328,7 +4328,8 @@ class ApplicationGatewayPrivateEndpointConnectionProperties(_Model):  # pylint: 
     :vartype private_link_service_connection_state:
      ~azure.mgmt.network.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: The provisioning state of the application gateway private endpoint
-     connection resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     connection resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating",
+     "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar link_identifier: The consumer link id.
     :vartype link_identifier: str
@@ -4345,7 +4346,8 @@ class ApplicationGatewayPrivateEndpointConnectionProperties(_Model):  # pylint: 
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the application gateway private endpoint connection resource. Known
-     values are: \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     values are: \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and
+     \"Deleting\"."""
     link_identifier: Optional[str] = rest_field(name="linkIdentifier", visibility=["read"])
     """The consumer link id."""
 
@@ -4442,7 +4444,8 @@ class ApplicationGatewayPrivateLinkConfigurationProperties(_Model):  # pylint: d
     :vartype ip_configurations:
      list[~azure.mgmt.network.models.ApplicationGatewayPrivateLinkIpConfiguration]
     :ivar provisioning_state: The provisioning state of the application gateway private link
-     configuration. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     configuration. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -4454,7 +4457,7 @@ class ApplicationGatewayPrivateLinkConfigurationProperties(_Model):  # pylint: d
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the application gateway private link configuration. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -4560,7 +4563,8 @@ class ApplicationGatewayPrivateLinkIpConfigurationProperties(_Model):  # pylint:
     :ivar primary: Whether the ip configuration is primary or not.
     :vartype primary: bool
     :ivar provisioning_state: The provisioning state of the application gateway private link IP
-     configuration. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     configuration. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -4580,7 +4584,7 @@ class ApplicationGatewayPrivateLinkIpConfigurationProperties(_Model):  # pylint:
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the application gateway private link IP configuration. Known values
-     are: \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     are: \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -4859,7 +4863,7 @@ class ApplicationGatewayProbePropertiesFormat(_Model):
      Health Probe over TCP or TLS protocol. Default value is false.
     :vartype enable_probe_proxy_protocol_header: bool
     :ivar provisioning_state: The provisioning state of the probe resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar port: Custom port which will be used for probing the backend servers. The valid value
      ranges from 1 to 65535. In case not set, port from http settings will be used. This property is
@@ -4913,8 +4917,8 @@ class ApplicationGatewayProbePropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the probe resource. Known values are: \"Succeeded\", \"Updating\",
-     \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the probe resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     port: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Custom port which will be used for probing the backend servers. The valid value ranges from 1
      to 65535. In case not set, port from http settings will be used. This property is valid for
@@ -5059,7 +5063,7 @@ class ApplicationGatewayPropertiesFormat(_Model):
     :ivar resource_guid: The resource GUID property of the application gateway resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the application gateway resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar custom_error_configurations: Custom error configurations of the application gateway
      resource.
@@ -5241,8 +5245,8 @@ class ApplicationGatewayPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the application gateway resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the application gateway resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     custom_error_configurations: Optional[list["_models.ApplicationGatewayCustomError"]] = rest_field(
         name="customErrorConfigurations", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5583,7 +5587,7 @@ class ApplicationGatewayRequestRoutingRulePropertiesFormat(_Model):  # pylint: d
      application gateway.
     :vartype entra_jwt_validation_config: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the request routing rule resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -5628,8 +5632,8 @@ class ApplicationGatewayRequestRoutingRulePropertiesFormat(_Model):  # pylint: d
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the request routing rule resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the request routing rule resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -5875,7 +5879,7 @@ class ApplicationGatewayRewriteRuleSetPropertiesFormat(_Model):  # pylint: disab
     :ivar rewrite_rules: Rewrite rules in the rewrite rule set.
     :vartype rewrite_rules: list[~azure.mgmt.network.models.ApplicationGatewayRewriteRule]
     :ivar provisioning_state: The provisioning state of the rewrite rule set resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -5886,8 +5890,8 @@ class ApplicationGatewayRewriteRuleSetPropertiesFormat(_Model):  # pylint: disab
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the rewrite rule set resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the rewrite rule set resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -5994,7 +5998,7 @@ class ApplicationGatewayRoutingRulePropertiesFormat(_Model):  # pylint: disable=
     :ivar listener: Listener resource of the application gateway.
     :vartype listener: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the request routing rule resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -6017,8 +6021,8 @@ class ApplicationGatewayRoutingRulePropertiesFormat(_Model):  # pylint: disable=
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the request routing rule resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the request routing rule resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -6178,7 +6182,7 @@ class ApplicationGatewaySslCertificatePropertiesFormat(_Model):  # pylint: disab
      'Certificate' object stored in KeyVault.
     :vartype key_vault_secret_id: str
     :ivar provisioning_state: The provisioning state of the SSL certificate resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -6197,8 +6201,8 @@ class ApplicationGatewaySslCertificatePropertiesFormat(_Model):  # pylint: disab
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the SSL certificate resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the SSL certificate resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -6467,7 +6471,7 @@ class ApplicationGatewaySslProfilePropertiesFormat(_Model):  # pylint: disable=n
     :vartype client_auth_configuration:
      ~azure.mgmt.network.models.ApplicationGatewayClientAuthConfiguration
     :ivar provisioning_state: The provisioning state of the HTTP listener resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -6486,8 +6490,8 @@ class ApplicationGatewaySslProfilePropertiesFormat(_Model):  # pylint: disable=n
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the HTTP listener resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the HTTP listener resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -6587,7 +6591,7 @@ class ApplicationGatewayTrustedClientCertificatePropertiesFormat(_Model):  # pyl
     :ivar client_cert_issuer_dn: Distinguished name of client certificate issuer.
     :vartype client_cert_issuer_dn: str
     :ivar provisioning_state: The provisioning state of the trusted client certificate resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -6601,7 +6605,7 @@ class ApplicationGatewayTrustedClientCertificatePropertiesFormat(_Model):  # pyl
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the trusted client certificate resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -6697,7 +6701,7 @@ class ApplicationGatewayTrustedRootCertificatePropertiesFormat(_Model):  # pylin
      'Certificate' object stored in KeyVault.
     :vartype key_vault_secret_id: str
     :ivar provisioning_state: The provisioning state of the trusted root certificate resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -6711,8 +6715,8 @@ class ApplicationGatewayTrustedRootCertificatePropertiesFormat(_Model):  # pylin
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the trusted root certificate resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the trusted root certificate resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -6872,7 +6876,7 @@ class ApplicationGatewayUrlPathMapPropertiesFormat(_Model):  # pylint: disable=n
     :ivar path_rules: Path rule of URL path map resource.
     :vartype path_rules: list[~azure.mgmt.network.models.ApplicationGatewayPathRule]
     :ivar provisioning_state: The provisioning state of the URL path map resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -6903,8 +6907,8 @@ class ApplicationGatewayUrlPathMapPropertiesFormat(_Model):  # pylint: disable=n
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the URL path map resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the URL path map resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -7376,7 +7380,7 @@ class ApplicationSecurityGroupPropertiesFormat(_Model):
      across subscriptions or resource groups.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the application security group resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -7388,7 +7392,7 @@ class ApplicationSecurityGroupPropertiesFormat(_Model):
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the application security group resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
 
 class AuthorizationPropertiesFormat(_Model):
@@ -7403,7 +7407,7 @@ class AuthorizationPropertiesFormat(_Model):
      authorization.
     :vartype connection_resource_uri: str
     :ivar provisioning_state: The provisioning state of the authorization resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -7420,8 +7424,8 @@ class AuthorizationPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the authorization resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the authorization resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -8086,7 +8090,7 @@ class AzureFirewallApplicationRuleCollectionPropertiesFormat(_Model):  # pylint:
     :ivar rules: Collection of rules used by a application rule collection.
     :vartype rules: list[~azure.mgmt.network.models.AzureFirewallApplicationRule]
     :ivar provisioning_state: The provisioning state of the application rule collection resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -8104,7 +8108,7 @@ class AzureFirewallApplicationRuleCollectionPropertiesFormat(_Model):  # pylint:
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the application rule collection resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -8274,7 +8278,7 @@ class AzureFirewallFqdnTagPropertiesFormat(_Model):
     """Azure Firewall FQDN Tag Properties.
 
     :ivar provisioning_state: The provisioning state of the Azure firewall FQDN tag resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar fqdn_tag_name: The name of this FQDN Tag.
     :vartype fqdn_tag_name: str
@@ -8283,8 +8287,8 @@ class AzureFirewallFqdnTagPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the Azure firewall FQDN tag resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the Azure firewall FQDN tag resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     fqdn_tag_name: Optional[str] = rest_field(name="fqdnTagName", visibility=["read"])
     """The name of this FQDN Tag."""
 
@@ -8370,7 +8374,8 @@ class AzureFirewallIPConfigurationPropertiesFormat(_Model):  # pylint: disable=n
      subnet is not null.
     :vartype public_ip_address: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the Azure firewall IP configuration
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -8387,7 +8392,7 @@ class AzureFirewallIPConfigurationPropertiesFormat(_Model):  # pylint: disable=n
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the Azure firewall IP configuration resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -8617,7 +8622,7 @@ class AzureFirewallNatRuleCollectionProperties(_Model):
     :ivar rules: Collection of rules used by a NAT rule collection.
     :vartype rules: list[~azure.mgmt.network.models.AzureFirewallNatRule]
     :ivar provisioning_state: The provisioning state of the NAT rule collection resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -8634,8 +8639,8 @@ class AzureFirewallNatRuleCollectionProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the NAT rule collection resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the NAT rule collection resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -8814,7 +8819,7 @@ class AzureFirewallNetworkRuleCollectionPropertiesFormat(_Model):  # pylint: dis
     :ivar rules: Collection of rules used by a network rule collection.
     :vartype rules: list[~azure.mgmt.network.models.AzureFirewallNetworkRule]
     :ivar provisioning_state: The provisioning state of the network rule collection resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -8831,8 +8836,8 @@ class AzureFirewallNetworkRuleCollectionPropertiesFormat(_Model):  # pylint: dis
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the network rule collection resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the network rule collection resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -8988,7 +8993,7 @@ class AzureFirewallPropertiesFormat(_Model):
      traffic.
     :vartype management_ip_configuration: ~azure.mgmt.network.models.AzureFirewallIPConfiguration
     :ivar provisioning_state: The provisioning state of the Azure firewall resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar threat_intel_mode: The operation mode for Threat Intelligence. Known values are: "Alert",
      "Deny", and "Off".
@@ -9035,8 +9040,8 @@ class AzureFirewallPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the Azure firewall resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the Azure firewall resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     threat_intel_mode: Optional[Union[str, "_models.AzureFirewallThreatIntelMode"]] = rest_field(
         name="threatIntelMode", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9649,7 +9654,7 @@ class BackendAddressPoolPropertiesFormat(_Model):
      address pool.
     :vartype inbound_nat_rules: list[~azure.mgmt.network.models.SubResource]
     :ivar provisioning_state: The provisioning state of the backend address pool resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar drain_period_in_seconds: Amount of seconds Load Balancer waits for before sending RESET
      to client and backend address.
@@ -9688,8 +9693,8 @@ class BackendAddressPoolPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the backend address pool resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the backend address pool resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     drain_period_in_seconds: Optional[int] = rest_field(
         name="drainPeriodInSeconds", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9946,7 +9951,7 @@ class BastionHostIPConfigurationPropertiesFormat(_Model):  # pylint: disable=nam
     :ivar public_ip_address: Reference of the PublicIP resource. Null for private only bastion.
     :vartype public_ip_address: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the bastion host IP configuration resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_ip_allocation_method: Private IP allocation method. Known values are: "Static"
      and "Dynamic".
@@ -9963,7 +9968,7 @@ class BastionHostIPConfigurationPropertiesFormat(_Model):  # pylint: disable=nam
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the bastion host IP configuration resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     private_ip_allocation_method: Optional[Union[str, "_models.IPAllocationMethod"]] = rest_field(
         name="privateIPAllocationMethod", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10002,7 +10007,7 @@ class BastionHostPropertiesFormat(_Model):
     :ivar network_acls:
     :vartype network_acls: ~azure.mgmt.network.models.BastionHostPropertiesFormatNetworkAcls
     :ivar provisioning_state: The provisioning state of the bastion host resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar scale_units: The scale units for the Bastion Host resource.
     :vartype scale_units: int
@@ -10042,8 +10047,8 @@ class BastionHostPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the bastion host resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the bastion host resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     scale_units: Optional[int] = rest_field(
         name="scaleUnits", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10408,8 +10413,8 @@ class BgpConnectionProperties(_Model):
     :ivar hub_virtual_network_connection: The reference to the HubVirtualNetworkConnection
      resource.
     :vartype hub_virtual_network_connection: ~azure.mgmt.network.models.SubResource
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar connection_state: The current state of the VirtualHub to Peer. Known values are:
      "Unknown", "Connecting", "Connected", and "NotConnected".
@@ -10427,8 +10432,8 @@ class BgpConnectionProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the resource. Known values are: \"Succeeded\", \"Updating\",
-     \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     connection_state: Optional[Union[str, "_models.HubBgpConnectionStatus"]] = rest_field(
         name="connectionState", visibility=["read"]
     )
@@ -11874,7 +11879,7 @@ class ConnectionMonitorResultProperties(ConnectionMonitorParameters):
     :ivar notes: Optional notes to be associated with the connection monitor.
     :vartype notes: str
     :ivar provisioning_state: The provisioning state of the connection monitor. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar start_time: The date and time when the connection monitor was started.
     :vartype start_time: ~datetime.datetime
@@ -11888,8 +11893,8 @@ class ConnectionMonitorResultProperties(ConnectionMonitorParameters):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the connection monitor. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the connection monitor. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     start_time: Optional[datetime.datetime] = rest_field(name="startTime", visibility=["read"], format="rfc3339")
     """The date and time when the connection monitor was started."""
     monitoring_status: Optional[str] = rest_field(name="monitoringStatus", visibility=["read"])
@@ -12393,7 +12398,7 @@ class ConnectivityConfigurationProperties(_Model):
     :ivar applies_to_groups: Groups for configuration. Required.
     :vartype applies_to_groups: list[~azure.mgmt.network.models.ConnectivityGroupItem]
     :ivar provisioning_state: The provisioning state of the connectivity configuration resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar delete_existing_peering: Flag if need to remove current existing peerings. Known values
      are: "False" and "True".
@@ -12427,7 +12432,7 @@ class ConnectivityConfigurationProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the connectivity configuration resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     delete_existing_peering: Optional[Union[str, "_models.DeleteExistingPeering"]] = rest_field(
         name="deleteExistingPeering", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -12981,7 +12986,8 @@ class ContainerNetworkInterfaceConfigurationPropertiesFormat(_Model):  # pylint:
      container network interface configuration.
     :vartype container_network_interfaces: list[~azure.mgmt.network.models.SubResource]
     :ivar provisioning_state: The provisioning state of the container network interface
-     configuration resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     configuration resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating",
+     "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -12998,7 +13004,7 @@ class ContainerNetworkInterfaceConfigurationPropertiesFormat(_Model):  # pylint:
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the container network interface configuration resource. Known values
-     are: \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     are: \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -13087,7 +13093,8 @@ class ContainerNetworkInterfaceIpConfigurationPropertiesFormat(_Model):  # pylin
     """Properties of the container network interface IP configuration.
 
     :ivar provisioning_state: The provisioning state of the container network interface IP
-     configuration resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     configuration resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating",
+     "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -13095,7 +13102,8 @@ class ContainerNetworkInterfaceIpConfigurationPropertiesFormat(_Model):  # pylin
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the container network interface IP configuration resource. Known
-     values are: \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     values are: \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and
+     \"Deleting\"."""
 
 
 class ContainerNetworkInterfacePropertiesFormat(_Model):  # pylint: disable=name-too-long
@@ -13112,7 +13120,7 @@ class ContainerNetworkInterfacePropertiesFormat(_Model):  # pylint: disable=name
     :vartype ip_configurations:
      list[~azure.mgmt.network.models.ContainerNetworkInterfaceIpConfiguration]
     :ivar provisioning_state: The provisioning state of the container network interface resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -13131,7 +13139,7 @@ class ContainerNetworkInterfacePropertiesFormat(_Model):  # pylint: disable=name
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the container network interface resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -13386,7 +13394,7 @@ class CustomIpPrefixPropertiesFormat(_Model):
     :ivar failed_reason: The reason why resource is in failed state.
     :vartype failed_reason: str
     :ivar provisioning_state: The provisioning state of the custom IP prefix resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -13441,8 +13449,8 @@ class CustomIpPrefixPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the custom IP prefix resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the custom IP prefix resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -13546,7 +13554,7 @@ class DdosCustomPolicyPropertiesFormat(_Model):
      subscriptions or resource groups.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the DDoS custom policy resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar detection_rules: The list of DDoS detection rules associated with the custom policy.
     :vartype detection_rules: list[~azure.mgmt.network.models.DdosDetectionRule]
@@ -13562,8 +13570,8 @@ class DdosCustomPolicyPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the DDoS custom policy resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the DDoS custom policy resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     detection_rules: Optional[list["_models.DdosDetectionRule"]] = rest_field(
         name="detectionRules", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -13661,7 +13669,7 @@ class DdosDetectionRulePropertiesFormat(_Model):
     """DDoS detection rule properties.
 
     :ivar provisioning_state: The provisioning state of the DDoS detection rule. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar detection_mode: The detection mode for the DDoS detection rule. "TrafficThreshold"
     :vartype detection_mode: str or ~azure.mgmt.network.models.DdosDetectionMode
@@ -13672,8 +13680,8 @@ class DdosDetectionRulePropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the DDoS detection rule. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the DDoS detection rule. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     detection_mode: Optional[Union[str, "_models.DdosDetectionMode"]] = rest_field(
         name="detectionMode", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -13821,7 +13829,7 @@ class DdosProtectionPlanPropertiesFormat(_Model):
      across subscriptions or resource groups.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the DDoS protection plan resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar public_ip_addresses: The list of public IPs associated with the DDoS protection plan
      resource. This list is read-only.
@@ -13838,8 +13846,8 @@ class DdosProtectionPlanPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the DDoS protection plan resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the DDoS protection plan resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     public_ip_addresses: Optional[list["_models.SubResource"]] = rest_field(
         name="publicIPAddresses", visibility=["read"]
     )
@@ -13921,7 +13929,7 @@ class DefaultAdminPropertiesFormat(_Model):
     :vartype direction: str or ~azure.mgmt.network.models.SecurityConfigurationRuleDirection
     :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
      "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.NetworkResourceProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
     """
@@ -13951,7 +13959,7 @@ class DefaultAdminPropertiesFormat(_Model):
     direction: Optional[Union[str, "_models.SecurityConfigurationRuleDirection"]] = rest_field(visibility=["read"])
     """Indicates if the traffic matched against the rule in inbound or outbound. Known values are:
      \"Inbound\" and \"Outbound\"."""
-    provisioning_state: Optional[Union[str, "_models.NetworkResourceProvisioningState"]] = rest_field(
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the resource. Known values are: \"Failed\", \"Succeeded\",
@@ -14165,8 +14173,8 @@ class DelegationProperties(_Model):
 
     :ivar service_name: The service name to which the NVA is delegated.
     :vartype service_name: str
-    :ivar provisioning_state: Provisioning states of a resource. Known values are: "Succeeded",
-     "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: Provisioning states of a resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -14177,8 +14185,8 @@ class DelegationProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """Provisioning states of a resource. Known values are: \"Succeeded\", \"Updating\", \"Deleting\",
-     and \"Failed\"."""
+    """Provisioning states of a resource. Known values are: \"Failed\", \"Succeeded\", \"Canceled\",
+     \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -14521,7 +14529,7 @@ class DscpConfigurationPropertiesFormat(_Model):
     :ivar resource_guid: The resource GUID property of the DSCP Configuration resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the DSCP Configuration resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -14563,8 +14571,8 @@ class DscpConfigurationPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the DSCP Configuration resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the DSCP Configuration resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -14847,7 +14855,7 @@ class EffectiveNetworkSecurityGroupListResult(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The EffectiveNetworkSecurityGroup items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read"])
     """The link to the next page of items."""
 
     @overload
@@ -14855,7 +14863,6 @@ class EffectiveNetworkSecurityGroupListResult(_Model):
         self,
         *,
         value: list["_models.EffectiveNetworkSecurityGroup"],
-        next_link: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -15091,7 +15098,7 @@ class EffectiveRouteListResult(_Model):
 
     value: list["_models.EffectiveRoute"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The EffectiveRoute items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read"])
     """The link to the next page of items."""
 
     @overload
@@ -15099,7 +15106,6 @@ class EffectiveRouteListResult(_Model):
         self,
         *,
         value: list["_models.EffectiveRoute"],
-        next_link: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -16084,7 +16090,8 @@ class ExpressRouteCircuitConnectionPropertiesFormat(_Model):  # pylint: disable=
      "Connected", "Connecting", and "Disconnected".
     :vartype circuit_connection_status: str or ~azure.mgmt.network.models.CircuitConnectionStatus
     :ivar provisioning_state: The provisioning state of the express route circuit connection
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -16118,7 +16125,7 @@ class ExpressRouteCircuitConnectionPropertiesFormat(_Model):  # pylint: disable=
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the express route circuit connection resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -16358,7 +16365,7 @@ class ExpressRouteCircuitPeeringPropertiesFormat(_Model):  # pylint: disable=nam
     :ivar stats: The peering stats of express route circuit.
     :vartype stats: ~azure.mgmt.network.models.ExpressRouteCircuitStats
     :ivar provisioning_state: The provisioning state of the express route circuit peering resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar gateway_manager_etag: The GatewayManager Etag.
     :vartype gateway_manager_etag: str
@@ -16423,7 +16430,7 @@ class ExpressRouteCircuitPeeringPropertiesFormat(_Model):  # pylint: disable=nam
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the express route circuit peering resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     gateway_manager_etag: Optional[str] = rest_field(
         name="gatewayManagerEtag", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -16517,7 +16524,7 @@ class ExpressRouteCircuitPropertiesFormat(_Model):
     :ivar stag: The identifier of the circuit traffic. Outer tag for QinQ encapsulation.
     :vartype stag: int
     :ivar provisioning_state: The provisioning state of the express route circuit resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar gateway_manager_etag: The GatewayManager Etag.
     :vartype gateway_manager_etag: str
@@ -16579,8 +16586,8 @@ class ExpressRouteCircuitPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the express route circuit resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the express route circuit resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     gateway_manager_etag: Optional[str] = rest_field(
         name="gatewayManagerEtag", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -17116,7 +17123,7 @@ class ExpressRouteConnectionProperties(_Model):
     """Properties of the ExpressRouteConnection subresource.
 
     :ivar provisioning_state: The provisioning state of the express route connection resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar express_route_circuit_peering: The ExpressRoute circuit peering. Required.
     :vartype express_route_circuit_peering: ~azure.mgmt.network.models.ExpressRouteCircuitPeeringId
@@ -17139,8 +17146,8 @@ class ExpressRouteConnectionProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the express route connection resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the express route connection resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     express_route_circuit_peering: "_models.ExpressRouteCircuitPeeringId" = rest_field(
         name="expressRouteCircuitPeering", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -17381,7 +17388,8 @@ class ExpressRouteCrossConnectionPeeringProperties(_Model):  # pylint: disable=n
     :ivar microsoft_peering_config: The Microsoft peering configuration.
     :vartype microsoft_peering_config: ~azure.mgmt.network.models.ExpressRouteCircuitPeeringConfig
     :ivar provisioning_state: The provisioning state of the express route cross connection peering
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar gateway_manager_etag: The GatewayManager Etag.
     :vartype gateway_manager_etag: str
@@ -17428,7 +17436,7 @@ class ExpressRouteCrossConnectionPeeringProperties(_Model):  # pylint: disable=n
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the express route cross connection peering resource. Known values
-     are: \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     are: \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     gateway_manager_etag: Optional[str] = rest_field(
         name="gatewayManagerEtag", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -17490,7 +17498,8 @@ class ExpressRouteCrossConnectionProperties(_Model):
     :ivar service_provider_notes: Additional read only notes set by the connectivity provider.
     :vartype service_provider_notes: str
     :ivar provisioning_state: The provisioning state of the express route cross connection
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar peerings: The list of peerings.
     :vartype peerings: list[~azure.mgmt.network.models.ExpressRouteCrossConnectionPeering]
@@ -17523,7 +17532,7 @@ class ExpressRouteCrossConnectionProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the express route cross connection resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     peerings: Optional[list["_models.ExpressRouteCrossConnectionPeering"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -17612,7 +17621,7 @@ class ExpressRouteCrossConnectionsRoutesTableSummaryListResult(_Model):  # pylin
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The ExpressRouteCrossConnectionRoutesTableSummary items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read"])
     """The link to the next page of items."""
 
     @overload
@@ -17620,7 +17629,6 @@ class ExpressRouteCrossConnectionsRoutesTableSummaryListResult(_Model):  # pylin
         self,
         *,
         value: list["_models.ExpressRouteCrossConnectionRoutesTableSummary"],
-        next_link: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -18085,7 +18093,7 @@ class ExpressRouteGatewayProperties(_Model):
     :ivar express_route_connections: List of ExpressRoute connections to the ExpressRoute gateway.
     :vartype express_route_connections: list[~azure.mgmt.network.models.ExpressRouteConnection]
     :ivar provisioning_state: The provisioning state of the express route gateway resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar virtual_hub: The Virtual Hub where the ExpressRoute gateway is or will be deployed.
      Required.
@@ -18106,8 +18114,8 @@ class ExpressRouteGatewayProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the express route gateway resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the express route gateway resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     virtual_hub: "_models.VirtualHubId" = rest_field(
         name="virtualHub", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -18347,7 +18355,7 @@ class ExpressRouteLinkPropertiesFormat(_Model):
      "Disabled".
     :vartype admin_state: str or ~azure.mgmt.network.models.ExpressRouteLinkAdminState
     :ivar provisioning_state: The provisioning state of the express route link resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar mac_sec_config: MacSec configuration.
     :vartype mac_sec_config: ~azure.mgmt.network.models.ExpressRouteLinkMacSecConfig
@@ -18374,8 +18382,8 @@ class ExpressRouteLinkPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the express route link resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the express route link resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     mac_sec_config: Optional["_models.ExpressRouteLinkMacSecConfig"] = rest_field(
         name="macSecConfig", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -18562,7 +18570,7 @@ class ExpressRoutePortAuthorizationPropertiesFormat(_Model):  # pylint: disable=
      authorization.
     :vartype circuit_resource_uri: str
     :ivar provisioning_state: The provisioning state of the authorization resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -18577,8 +18585,8 @@ class ExpressRoutePortAuthorizationPropertiesFormat(_Model):  # pylint: disable=
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the authorization resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the authorization resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
 
 class ExpressRoutePortPropertiesFormat(_Model):
@@ -18607,7 +18615,7 @@ class ExpressRoutePortPropertiesFormat(_Model):
      ExpressRoutePort resource.
     :vartype circuits: list[~azure.mgmt.network.models.SubResource]
     :ivar provisioning_state: The provisioning state of the express route port resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: The resource GUID property of the express route port resource.
     :vartype resource_guid: str
@@ -18645,8 +18653,8 @@ class ExpressRoutePortPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the express route port resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the express route port resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     resource_guid: Optional[str] = rest_field(name="resourceGuid", visibility=["read"])
     """The resource GUID property of the express route port resource."""
     billing_type: Optional[Union[str, "_models.ExpressRoutePortsBillingType"]] = rest_field(
@@ -18766,7 +18774,7 @@ class ExpressRoutePortsLocationPropertiesFormat(_Model):  # pylint: disable=name
     :vartype available_bandwidths:
      list[~azure.mgmt.network.models.ExpressRoutePortsLocationBandwidths]
     :ivar provisioning_state: The provisioning state of the express route port location resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -18782,7 +18790,7 @@ class ExpressRoutePortsLocationPropertiesFormat(_Model):  # pylint: disable=name
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the express route port location resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -18878,7 +18886,7 @@ class ExpressRouteProviderPort(TrackedResourceWithOptionalLocation):
 
 
 class ExpressRouteProviderPortListResult(_Model):
-    """The response of a ExpressRouteProviderPort list operation.
+    """Response for ListExpressRouteProviderPort API service call.
 
     :ivar value: The ExpressRouteProviderPort items on this page. Required.
     :vartype value: list[~azure.mgmt.network.models.ExpressRouteProviderPort]
@@ -18890,7 +18898,7 @@ class ExpressRouteProviderPortListResult(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The ExpressRouteProviderPort items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read"])
     """The link to the next page of items."""
 
     @overload
@@ -18898,7 +18906,6 @@ class ExpressRouteProviderPortListResult(_Model):
         self,
         *,
         value: list["_models.ExpressRouteProviderPort"],
-        next_link: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -19089,7 +19096,8 @@ class ExpressRouteServiceProviderPropertiesFormat(_Model):  # pylint: disable=na
     :vartype bandwidths_offered:
      list[~azure.mgmt.network.models.ExpressRouteServiceProviderBandwidthsOffered]
     :ivar provisioning_state: The provisioning state of the express route service provider
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -19105,7 +19113,7 @@ class ExpressRouteServiceProviderPropertiesFormat(_Model):  # pylint: disable=na
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the express route service provider resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -20202,7 +20210,7 @@ class FirewallPolicyPropertiesFormat(_Model):
     :ivar rule_collection_groups: List of references to FirewallPolicyRuleCollectionGroups.
     :vartype rule_collection_groups: list[~azure.mgmt.network.models.SubResource]
     :ivar provisioning_state: The provisioning state of the firewall policy resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar base_policy: The parent firewall policy from which rules are inherited.
     :vartype base_policy: ~azure.mgmt.network.models.SubResource
@@ -20244,8 +20252,8 @@ class FirewallPolicyPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the firewall policy resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the firewall policy resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     base_policy: Optional["_models.SubResource"] = rest_field(
         name="basePolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -20528,7 +20536,8 @@ class FirewallPolicyRuleCollectionGroupProperties(_Model):  # pylint: disable=na
     :ivar rule_collections: Group of Firewall Policy rule collections.
     :vartype rule_collections: list[~azure.mgmt.network.models.FirewallPolicyRuleCollection]
     :ivar provisioning_state: The provisioning state of the firewall policy rule collection group
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -20545,7 +20554,7 @@ class FirewallPolicyRuleCollectionGroupProperties(_Model):  # pylint: disable=na
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the firewall policy rule collection group resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -21033,8 +21042,8 @@ class FlowLogPropertiesFormat(_Model):
     :ivar flow_analytics_configuration: Parameters that define the configuration of traffic
      analytics.
     :vartype flow_analytics_configuration: ~azure.mgmt.network.models.TrafficAnalyticsProperties
-    :ivar provisioning_state: The provisioning state of the flow log. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the flow log. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -21077,8 +21086,8 @@ class FlowLogPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the flow log. Known values are: \"Succeeded\", \"Updating\",
-     \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the flow log. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -21247,7 +21256,7 @@ class FrontendIPConfigurationPropertiesFormat(_Model):
     :ivar gateway_load_balancer: The reference to gateway load balancer frontend IP.
     :vartype gateway_load_balancer: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the frontend IP configuration resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -21291,8 +21300,8 @@ class FrontendIPConfigurationPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the frontend IP configuration resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the frontend IP configuration resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -22321,7 +22330,7 @@ class HubIPConfigurationPropertiesFormat(_Model):
     :ivar public_ip_address: The reference to the public IP resource.
     :vartype public_ip_address: ~azure.mgmt.network.models.PublicIPAddress
     :ivar provisioning_state: The provisioning state of the IP configuration resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -22342,8 +22351,8 @@ class HubIPConfigurationPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the IP configuration resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the IP configuration resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -22528,7 +22537,7 @@ class HubRouteTableProperties(_Model):
     :ivar propagating_connections: List of all connections that advertise to this route table.
     :vartype propagating_connections: list[str]
     :ivar provisioning_state: The provisioning state of the RouteTable resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -22543,8 +22552,8 @@ class HubRouteTableProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the RouteTable resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the RouteTable resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -22653,7 +22662,8 @@ class HubVirtualNetworkConnectionProperties(_Model):
      route tables on this connection.
     :vartype routing_configuration: ~azure.mgmt.network.models.RoutingConfiguration
     :ivar provisioning_state: The provisioning state of the hub virtual network connection
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -22682,7 +22692,7 @@ class HubVirtualNetworkConnectionProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the hub virtual network connection resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -22870,7 +22880,7 @@ class InboundNatPoolPropertiesFormat(_Model):
      connection termination. This element is only used when the protocol is set to TCP.
     :vartype enable_tcp_reset: bool
     :ivar provisioning_state: The provisioning state of the inbound NAT pool resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -22915,8 +22925,8 @@ class InboundNatPoolPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the inbound NAT pool resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the inbound NAT pool resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -23086,7 +23096,7 @@ class InboundNatRulePropertiesFormat(_Model):
     :ivar backend_address_pool: A reference to backendAddressPool resource.
     :vartype backend_address_pool: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the inbound NAT rule resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -23150,8 +23160,8 @@ class InboundNatRulePropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the inbound NAT rule resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the inbound NAT rule resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -23251,8 +23261,8 @@ class InboundSecurityRuleProperties(_Model):
     :vartype rule_type: str or ~azure.mgmt.network.models.InboundSecurityRuleType
     :ivar rules: List of allowed rules.
     :vartype rules: list[~azure.mgmt.network.models.InboundSecurityRules]
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -23269,8 +23279,8 @@ class InboundSecurityRuleProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the resource. Known values are: \"Succeeded\", \"Updating\",
-     \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -23781,7 +23791,7 @@ class IpamPoolProperties(_Model):
     :vartype address_prefixes: list[str]
     :ivar provisioning_state: Provisioning states of a resource. Known values are: "Failed",
      "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.NetworkResourceProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -23801,7 +23811,7 @@ class IpamPoolProperties(_Model):
         name="addressPrefixes", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of IP address prefixes of the resource. Required."""
-    provisioning_state: Optional[Union[str, "_models.NetworkResourceProvisioningState"]] = rest_field(
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
     """Provisioning states of a resource. Known values are: \"Failed\", \"Succeeded\", \"Canceled\",
@@ -24088,7 +24098,7 @@ class IPConfigurationProfilePropertiesFormat(_Model):
      configuration.
     :vartype subnet: ~azure.mgmt.network.models.Subnet
     :ivar provisioning_state: The provisioning state of the IP configuration profile resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -24097,8 +24107,8 @@ class IPConfigurationProfilePropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the IP configuration profile resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the IP configuration profile resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -24131,7 +24141,7 @@ class IPConfigurationPropertiesFormat(_Model):
     :ivar public_ip_address: The reference to the public IP resource.
     :vartype public_ip_address: ~azure.mgmt.network.models.PublicIPAddress
     :ivar provisioning_state: The provisioning state of the IP configuration resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -24152,8 +24162,8 @@ class IPConfigurationPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the IP configuration resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the IP configuration resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -24247,7 +24257,7 @@ class IpGroupPropertiesFormat(_Model):
     """The IpGroups property information.
 
     :ivar provisioning_state: The provisioning state of the IpGroups resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar ip_addresses: IpAddresses/IpAddressPrefixes in the IpGroups resource.
     :vartype ip_addresses: list[str]
@@ -24262,8 +24272,8 @@ class IpGroupPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the IpGroups resource. Known values are: \"Succeeded\", \"Updating\",
-     \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the IpGroups resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     ip_addresses: Optional[list[str]] = rest_field(
         name="ipAddresses", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -24981,7 +24991,7 @@ class LoadBalancerPropertiesFormat(_Model):
     :ivar resource_guid: The resource GUID property of the load balancer resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the load balancer resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar scope: Indicates the scope of the load balancer: external (Public) or internal (Private).
      Known values are: "Public" and "Private".
@@ -25029,8 +25039,8 @@ class LoadBalancerPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the load balancer resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the load balancer resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     scope: Optional[Union[str, "_models.LoadBalancerScope"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -25338,7 +25348,7 @@ class LoadBalancingRulePropertiesFormat(_Model):
      can be tracked and associated to the same backend VM over its lifetime when using UDP protocol.
     :vartype enable_connection_tracking: bool
     :ivar provisioning_state: The provisioning state of the load balancing rule resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -25405,8 +25415,8 @@ class LoadBalancingRulePropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the load balancing rule resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the load balancing rule resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -25526,7 +25536,7 @@ class LocalNetworkGatewayPropertiesFormat(_Model):
     :ivar resource_guid: The resource GUID property of the local network gateway resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the local network gateway resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -25549,8 +25559,8 @@ class LocalNetworkGatewayPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the local network gateway resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the local network gateway resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -26328,7 +26338,7 @@ class NatGatewayPropertiesFormat(_Model):
     :ivar resource_guid: The resource GUID property of the NAT gateway resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the NAT gateway resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -26367,8 +26377,8 @@ class NatGatewayPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the NAT gateway resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the NAT gateway resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -26779,7 +26789,7 @@ class NetworkGroupProperties(_Model):
      "Subnet".
     :vartype member_type: str or ~azure.mgmt.network.models.GroupMemberType
     :ivar provisioning_state: The provisioning state of the scope assignment resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -26794,8 +26804,8 @@ class NetworkGroupProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the scope assignment resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the scope assignment resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     resource_guid: Optional[str] = rest_field(name="resourceGuid", visibility=["read"])
     """Unique identifier for this resource."""
 
@@ -27230,7 +27240,7 @@ class NetworkInterfaceIPConfigurationPropertiesFormat(_Model):  # pylint: disabl
      included.
     :vartype application_security_groups: list[~azure.mgmt.network.models.ApplicationSecurityGroup]
     :ivar provisioning_state: The provisioning state of the network interface IP configuration.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_link_connection_properties: PrivateLinkConnection properties for the network
      interface.
@@ -27294,8 +27304,8 @@ class NetworkInterfaceIPConfigurationPropertiesFormat(_Model):  # pylint: disabl
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the network interface IP configuration. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the network interface IP configuration. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     private_link_connection_properties: Optional[
         "_models.NetworkInterfaceIPConfigurationPrivateLinkConnectionProperties"
     ] = rest_field(name="privateLinkConnectionProperties", visibility=["read"])
@@ -27375,7 +27385,7 @@ class NetworkInterfacePropertiesFormat(_Model):
     :ivar resource_guid: The resource GUID property of the network interface resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the network interface resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar workload_type: WorkloadType of the NetworkInterface for BareMetal resources.
     :vartype workload_type: str
@@ -27446,8 +27456,8 @@ class NetworkInterfacePropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the network interface resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the network interface resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     workload_type: Optional[str] = rest_field(
         name="workloadType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -27574,7 +27584,8 @@ class NetworkInterfaceTapConfigurationPropertiesFormat(_Model):  # pylint: disab
     :ivar virtual_network_tap: The reference to the Virtual Network Tap resource.
     :vartype virtual_network_tap: ~azure.mgmt.network.models.VirtualNetworkTap
     :ivar provisioning_state: The provisioning state of the network interface tap configuration
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -27586,7 +27597,7 @@ class NetworkInterfaceTapConfigurationPropertiesFormat(_Model):  # pylint: disab
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the network interface tap configuration resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -28072,7 +28083,7 @@ class NetworkManagerProperties(_Model):
     :vartype network_manager_scope_accesses: list[str or
      ~azure.mgmt.network.models.ConfigurationType]
     :ivar provisioning_state: The provisioning state of the network manager resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -28091,8 +28102,8 @@ class NetworkManagerProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the network manager resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the network manager resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     resource_guid: Optional[str] = rest_field(name="resourceGuid", visibility=["read"])
     """Unique identifier for this resource."""
 
@@ -28225,8 +28236,8 @@ class NetworkManagerRoutingConfigurationPropertiesFormat(_Model):  # pylint: dis
 
     :ivar description: A description of the routing configuration.
     :vartype description: str
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -28241,8 +28252,8 @@ class NetworkManagerRoutingConfigurationPropertiesFormat(_Model):  # pylint: dis
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the resource. Known values are: \"Succeeded\", \"Updating\",
-     \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     resource_guid: Optional[str] = rest_field(name="resourceGuid", visibility=["read"])
     """Unique identifier for this resource."""
     route_table_usage_mode: Optional[Union[str, "_models.RouteTableUsageMode"]] = rest_field(
@@ -28416,7 +28427,7 @@ class NetworkProfilePropertiesFormat(_Model):
     :ivar resource_guid: The resource GUID property of the network profile resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the network profile resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -28435,8 +28446,8 @@ class NetworkProfilePropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the network profile resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the network profile resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -28637,7 +28648,7 @@ class NetworkSecurityGroupPropertiesFormat(_Model):
     :ivar resource_guid: The resource GUID property of the network security group resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the network security group resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -28667,8 +28678,8 @@ class NetworkSecurityGroupPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the network security group resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the network security group resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -29166,7 +29177,8 @@ class NetworkVirtualApplianceConnectionProperties(_Model):  # pylint: disable=na
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar provisioning_state: The provisioning state of the NetworkVirtualApplianceConnection
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar asn: Network Virtual Appliance ASN.
     :vartype asn: int
@@ -29187,7 +29199,7 @@ class NetworkVirtualApplianceConnectionProperties(_Model):  # pylint: disable=na
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the NetworkVirtualApplianceConnection resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     asn: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Network Virtual Appliance ASN."""
     tunnel_identifier: Optional[int] = rest_field(
@@ -29336,8 +29348,8 @@ class NetworkVirtualAppliancePropertiesFormat(_Model):
     :vartype virtual_appliance_connections: list[~azure.mgmt.network.models.SubResource]
     :ivar inbound_security_rules: List of references to InboundSecurityRules.
     :vartype inbound_security_rules: list[~azure.mgmt.network.models.SubResource]
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar deployment_type: The deployment type. PartnerManaged for the SaaS NVA.
     :vartype deployment_type: str
@@ -29415,8 +29427,8 @@ class NetworkVirtualAppliancePropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the resource. Known values are: \"Succeeded\", \"Updating\",
-     \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     deployment_type: Optional[str] = rest_field(name="deploymentType", visibility=["read"])
     """The deployment type. PartnerManaged for the SaaS NVA."""
     delegation: Optional["_models.DelegationProperties"] = rest_field(
@@ -29689,15 +29701,15 @@ class NetworkWatcherPropertiesFormat(_Model):
     """The network watcher properties.
 
     :ivar provisioning_state: The provisioning state of the network watcher resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the network watcher resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the network watcher resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
 
 class NextHopParameters(_Model):
@@ -31186,7 +31198,7 @@ class OutboundRulePropertiesFormat(_Model):
      balanced across IPs in the backend IPs. Required.
     :vartype backend_address_pool: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the outbound rule resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar protocol: The protocol for the outbound rule in load balancer. Required. Known values
      are: "Tcp", "Udp", and "All".
@@ -31214,8 +31226,8 @@ class OutboundRulePropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the outbound rule resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the outbound rule resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     protocol: Union[str, "_models.LoadBalancerOutboundRuleProtocol"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -31407,7 +31419,7 @@ class P2SConnectionConfigurationProperties(_Model):
     :vartype previous_configuration_policy_group_associations:
      list[~azure.mgmt.network.models.VpnServerConfigurationPolicyGroup]
     :ivar provisioning_state: The provisioning state of the P2SConnectionConfiguration resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -31438,7 +31450,7 @@ class P2SConnectionConfigurationProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the P2SConnectionConfiguration resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -31558,7 +31570,7 @@ class P2SVpnConnectionRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResourceWithSettableId(_Model):
+class TrackedResourceWithSettableIdOptionalLocation(_Model):  # pylint: disable=name-too-long
     """Common resource representation.
 
     :ivar id: Resource ID.
@@ -31567,7 +31579,7 @@ class TrackedResourceWithSettableId(_Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Resource location. Required.
+    :ivar location: Resource location.
     :vartype location: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
@@ -31579,8 +31591,8 @@ class TrackedResourceWithSettableId(_Model):
     """Resource name."""
     type: Optional[str] = rest_field(visibility=["read"])
     """Resource type."""
-    location: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource location. Required."""
+    location: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource location."""
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
 
@@ -31588,8 +31600,8 @@ class TrackedResourceWithSettableId(_Model):
     def __init__(
         self,
         *,
-        location: str,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        location: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
@@ -31604,7 +31616,7 @@ class TrackedResourceWithSettableId(_Model):
         super().__init__(*args, **kwargs)
 
 
-class P2SVpnGateway(TrackedResourceWithSettableId):
+class P2SVpnGateway(TrackedResourceWithSettableIdOptionalLocation):
     """P2SVpnGateway Resource.
 
     :ivar id: Resource ID.
@@ -31613,7 +31625,7 @@ class P2SVpnGateway(TrackedResourceWithSettableId):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Resource location. Required.
+    :ivar location: Resource location.
     :vartype location: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
@@ -31645,8 +31657,8 @@ class P2SVpnGateway(TrackedResourceWithSettableId):
     def __init__(
         self,
         *,
-        location: str,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        location: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.P2SVpnGatewayProperties"] = None,
     ) -> None: ...
@@ -31689,7 +31701,7 @@ class P2SVpnGatewayProperties(_Model):
     :vartype p2_s_connection_configurations:
      list[~azure.mgmt.network.models.P2SConnectionConfiguration]
     :ivar provisioning_state: The provisioning state of the P2S VPN gateway resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar vpn_gateway_scale_unit: The scale unit for this p2s vpn gateway.
     :vartype vpn_gateway_scale_unit: int
@@ -31716,8 +31728,8 @@ class P2SVpnGatewayProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the P2S VPN gateway resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the P2S VPN gateway resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     vpn_gateway_scale_unit: Optional[int] = rest_field(
         name="vpnGatewayScaleUnit", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -32240,15 +32252,15 @@ class PacketCaptureResultProperties(PacketCaptureParameters):
      'SessionTimeLimitInSeconds' values.
     :vartype capture_settings: ~azure.mgmt.network.models.PacketCaptureSettings
     :ivar provisioning_state: The provisioning state of the packet capture session. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the packet capture session. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the packet capture session. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -32561,7 +32573,8 @@ class PeerExpressRouteCircuitConnectionPropertiesFormat(_Model):  # pylint: disa
      circuit connection.
     :vartype auth_resource_guid: str
     :ivar provisioning_state: The provisioning state of the peer express route circuit connection
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -32594,7 +32607,7 @@ class PeerExpressRouteCircuitConnectionPropertiesFormat(_Model):  # pylint: disa
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the peer express route circuit connection resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -33194,7 +33207,7 @@ class PrivateDnsZoneGroupPropertiesFormat(_Model):
     """Properties of the private dns zone group.
 
     :ivar provisioning_state: The provisioning state of the private dns zone group resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_dns_zone_configs: A collection of private dns zone configurations of the private
      dns zone group.
@@ -33204,8 +33217,8 @@ class PrivateDnsZoneGroupPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the private dns zone group resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the private dns zone group resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     private_dns_zone_configs: Optional[list["_models.PrivateDnsZoneConfig"]] = rest_field(
         name="privateDnsZoneConfigs", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -33428,7 +33441,7 @@ class PrivateEndpointConnectionProperties(_Model):
     :vartype private_link_service_connection_state:
      ~azure.mgmt.network.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar link_identifier: The consumer link id.
     :vartype link_identifier: str
@@ -33447,7 +33460,7 @@ class PrivateEndpointConnectionProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the private endpoint connection resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     link_identifier: Optional[str] = rest_field(name="linkIdentifier", visibility=["read"])
     """The consumer link id."""
     private_endpoint_location: Optional[str] = rest_field(name="privateEndpointLocation", visibility=["read"])
@@ -33589,7 +33602,7 @@ class PrivateEndpointProperties(_Model):
      private endpoint.
     :vartype network_interfaces: list[~azure.mgmt.network.models.NetworkInterface]
     :ivar provisioning_state: The provisioning state of the private endpoint resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar ip_version_type: Specifies the IP version type for the private IPs of the private
      endpoint. If not defined, this defaults to IPv4. Known values are: "IPv4", "IPv6", and
@@ -33626,8 +33639,8 @@ class PrivateEndpointProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the private endpoint resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the private endpoint resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     ip_version_type: Optional[Union[str, "_models.PrivateEndpointIPVersionType"]] = rest_field(
         name="ipVersionType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -33850,7 +33863,8 @@ class PrivateLinkServiceConnectionProperties(_Model):
     """Properties of the PrivateLinkServiceConnection.
 
     :ivar provisioning_state: The provisioning state of the private link service connection
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_link_service_id: The resource id of private link service.
     :vartype private_link_service_id: str
@@ -33870,7 +33884,7 @@ class PrivateLinkServiceConnectionProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the private link service connection resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     private_link_service_id: Optional[str] = rest_field(
         name="privateLinkServiceId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -34041,7 +34055,8 @@ class PrivateLinkServiceIpConfigurationProperties(_Model):  # pylint: disable=na
     :ivar primary: Whether the ip configuration is primary or not.
     :vartype primary: bool
     :ivar provisioning_state: The provisioning state of the private link service IP configuration
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_ip_address_version: Whether the specific IP configuration is IPv4 or IPv6.
      Default is IPv4. Known values are: "IPv4" and "IPv6".
@@ -34064,7 +34079,7 @@ class PrivateLinkServiceIpConfigurationProperties(_Model):  # pylint: disable=na
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the private link service IP configuration resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     private_ip_address_version: Optional[Union[str, "_models.IPVersion"]] = rest_field(
         name="privateIPAddressVersion", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -34111,7 +34126,7 @@ class PrivateLinkServiceProperties(_Model):
      private link service.
     :vartype network_interfaces: list[~azure.mgmt.network.models.NetworkInterface]
     :ivar provisioning_state: The provisioning state of the private link service resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_endpoint_connections: An array of list about connections to the private endpoint.
     :vartype private_endpoint_connections:
@@ -34152,8 +34167,8 @@ class PrivateLinkServiceProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the private link service resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the private link service resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = rest_field(
         name="privateEndpointConnections", visibility=["read"]
     )
@@ -34414,7 +34429,7 @@ class ProbePropertiesFormat(_Model):
      a protocol is set to http. Otherwise, it is not allowed. There is no default value.
     :vartype request_path: str
     :ivar provisioning_state: The provisioning state of the probe resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -34465,8 +34480,8 @@ class ProbePropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the probe resource. Known values are: \"Succeeded\", \"Updating\",
-     \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the probe resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -34770,7 +34785,7 @@ class PublicIPAddressPropertiesFormat(_Model):
     :ivar resource_guid: The resource GUID property of the public IP address resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the public IP address resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar service_public_ip_address: The service public IP address of the public IP address
      resource.
@@ -34824,8 +34839,8 @@ class PublicIPAddressPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the public IP address resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the public IP address resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     service_public_ip_address: Optional["_models.PublicIPAddress"] = rest_field(
         name="servicePublicIPAddress", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -35089,7 +35104,7 @@ class PublicIPPrefixPropertiesFormat(_Model):
     :ivar resource_guid: The resource GUID property of the public IP prefix resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the public IP prefix resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar nat_gateway: NatGateway of Public IP Prefix.
     :vartype nat_gateway: ~azure.mgmt.network.models.NatGateway
@@ -35126,8 +35141,8 @@ class PublicIPPrefixPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the public IP prefix resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the public IP prefix resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     nat_gateway: Optional["_models.NatGateway"] = rest_field(
         name="natGateway", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -35620,7 +35635,7 @@ class ReachabilityAnalysisIntentProperties(_Model):
 
     :ivar provisioning_state: Provisioning states of a resource. Known values are: "Failed",
      "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.NetworkResourceProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar description:
     :vartype description: str
     :ivar source_resource_id: Source resource id to verify the reachability path of. Required.
@@ -35632,7 +35647,7 @@ class ReachabilityAnalysisIntentProperties(_Model):
     :vartype ip_traffic: ~azure.mgmt.network.models.IPTraffic
     """
 
-    provisioning_state: Optional[Union[str, "_models.NetworkResourceProvisioningState"]] = rest_field(
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
     """Provisioning states of a resource. Known values are: \"Failed\", \"Succeeded\", \"Canceled\",
@@ -35727,7 +35742,7 @@ class ReachabilityAnalysisRunProperties(_Model):
     :vartype error_message: str
     :ivar provisioning_state: Provisioning states of a resource. Known values are: "Failed",
      "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.NetworkResourceProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -35737,7 +35752,7 @@ class ReachabilityAnalysisRunProperties(_Model):
     """Intent information."""
     analysis_result: Optional[str] = rest_field(name="analysisResult", visibility=["read"])
     error_message: Optional[str] = rest_field(name="errorMessage", visibility=["read"])
-    provisioning_state: Optional[Union[str, "_models.NetworkResourceProvisioningState"]] = rest_field(
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
     """Provisioning states of a resource. Known values are: \"Failed\", \"Succeeded\", \"Canceled\",
@@ -35790,8 +35805,8 @@ class RecordSet(_Model):
     :vartype record_set_name: str
     :ivar fqdn: Fqdn that resolves to private endpoint ip address.
     :vartype fqdn: str
-    :ivar provisioning_state: The provisioning state of the recordset. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the recordset. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar ttl: Recordset time to live.
     :vartype ttl: int
@@ -35812,8 +35827,8 @@ class RecordSet(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the recordset. Known values are: \"Succeeded\", \"Updating\",
-     \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the recordset. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     ttl: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Recordset time to live."""
     ip_addresses: Optional[list[str]] = rest_field(
@@ -36063,7 +36078,7 @@ class ResourceNavigationLinkFormat(_Model):
     :ivar link: Link to the external resource.
     :vartype link: str
     :ivar provisioning_state: The provisioning state of the resource navigation link resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -36076,8 +36091,8 @@ class ResourceNavigationLinkFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the resource navigation link resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the resource navigation link resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -36111,7 +36126,7 @@ class ResourceNavigationLinksListResult(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The ResourceNavigationLink items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read"])
     """The link to the next page of items."""
 
     @overload
@@ -36119,7 +36134,6 @@ class ResourceNavigationLinksListResult(_Model):
         self,
         *,
         value: list["_models.ResourceNavigationLink"],
-        next_link: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -36234,7 +36248,7 @@ class Route(SubResourceModel):
             super().__setattr__(key, value)
 
 
-class RouteFilter(TrackedResourceWithSettableId):
+class RouteFilter(TrackedResourceWithSettableIdOptionalLocation):
     """Route Filter Resource.
 
     :ivar id: Resource ID.
@@ -36243,7 +36257,7 @@ class RouteFilter(TrackedResourceWithSettableId):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Resource location. Required.
+    :ivar location: Resource location.
     :vartype location: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
@@ -36266,8 +36280,8 @@ class RouteFilter(TrackedResourceWithSettableId):
     def __init__(
         self,
         *,
-        location: str,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        location: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.RouteFilterPropertiesFormat"] = None,
     ) -> None: ...
@@ -36311,7 +36325,7 @@ class RouteFilterPropertiesFormat(_Model):
     :ivar ipv6_peerings: A collection of references to express route circuit ipv6 peerings.
     :vartype ipv6_peerings: list[~azure.mgmt.network.models.ExpressRouteCircuitPeering]
     :ivar provisioning_state: The provisioning state of the route filter resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -36328,8 +36342,8 @@ class RouteFilterPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the route filter resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the route filter resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -36429,7 +36443,7 @@ class RouteFilterRulePropertiesFormat(_Model):
      ['12076:5010','12076:5020']. Required.
     :vartype communities: list[str]
     :ivar provisioning_state: The provisioning state of the route filter rule resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -36445,8 +36459,8 @@ class RouteFilterRulePropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the route filter rule resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the route filter rule resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -36545,7 +36559,7 @@ class RouteMapProperties(_Model):
     :ivar rules: List of RouteMap rules to be applied.
     :vartype rules: list[~azure.mgmt.network.models.RouteMapRule]
     :ivar provisioning_state: The provisioning state of the RouteMap resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -36564,8 +36578,8 @@ class RouteMapProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the RouteMap resource. Known values are: \"Succeeded\", \"Updating\",
-     \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the RouteMap resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -36649,7 +36663,7 @@ class RoutePropertiesFormat(_Model):
      only allowed in routes where the next hop type is VirtualAppliance.
     :vartype next_hop_ip_address: str
     :ivar provisioning_state: The provisioning state of the route resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar has_bgp_override: A value indicating whether this route overrides overlapping BGP routes
      regardless of LPM.
@@ -36673,8 +36687,8 @@ class RoutePropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the route resource. Known values are: \"Succeeded\", \"Updating\",
-     \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the route resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     has_bgp_override: Optional[bool] = rest_field(name="hasBgpOverride", visibility=["read"])
     """A value indicating whether this route overrides overlapping BGP routes regardless of LPM."""
 
@@ -36815,7 +36829,7 @@ class RouteTablePropertiesFormat(_Model):
      table. True means disable.
     :vartype disable_bgp_route_propagation: bool
     :ivar provisioning_state: The provisioning state of the route table resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: The resource GUID property of the route table.
     :vartype resource_guid: str
@@ -36832,8 +36846,8 @@ class RouteTablePropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the route table resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the route table resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     resource_guid: Optional[str] = rest_field(name="resourceGuid", visibility=["read"])
     """The resource GUID property of the route table."""
 
@@ -37033,7 +37047,7 @@ class RoutingIntentProperties(_Model):
     :ivar routing_policies: List of routing policies.
     :vartype routing_policies: list[~azure.mgmt.network.models.RoutingPolicy]
     :ivar provisioning_state: The provisioning state of the RoutingIntent resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -37044,8 +37058,8 @@ class RoutingIntentProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the RoutingIntent resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the RoutingIntent resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -37241,8 +37255,8 @@ class RoutingRuleCollectionPropertiesFormat(_Model):
 
     :ivar description: A description of the routing rule collection.
     :vartype description: str
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -37259,8 +37273,8 @@ class RoutingRuleCollectionPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the resource. Known values are: \"Succeeded\", \"Updating\",
-     \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     resource_guid: Optional[str] = rest_field(name="resourceGuid", visibility=["read"])
     """Unique identifier for this resource."""
     applies_to: list["_models.NetworkManagerRoutingGroupItem"] = rest_field(
@@ -37338,8 +37352,8 @@ class RoutingRulePropertiesFormat(_Model):
 
     :ivar description: A description for this rule.
     :vartype description: str
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -37354,8 +37368,8 @@ class RoutingRulePropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the resource. Known values are: \"Succeeded\", \"Updating\",
-     \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     resource_guid: Optional[str] = rest_field(name="resourceGuid", visibility=["read"])
     """Unique identifier for this resource."""
     destination: "_models.RoutingRuleRouteDestination" = rest_field(
@@ -37619,7 +37633,7 @@ class SecurityAdminConfigurationPropertiesFormat(_Model):  # pylint: disable=nam
      ~azure.mgmt.network.models.AddressSpaceAggregationOption
     :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
      "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.NetworkResourceProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
     """
@@ -37639,7 +37653,7 @@ class SecurityAdminConfigurationPropertiesFormat(_Model):  # pylint: disable=nam
     )
     """Determine update behavior for changes to network groups referenced within the rules in this
      configuration. Known values are: \"None\" and \"Manual\"."""
-    provisioning_state: Optional[Union[str, "_models.NetworkResourceProvisioningState"]] = rest_field(
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the resource. Known values are: \"Failed\", \"Succeeded\",
@@ -37837,7 +37851,7 @@ class SecurityPartnerProviderPropertiesFormat(_Model):
     """Properties of the Security Partner Provider.
 
     :ivar provisioning_state: The provisioning state of the Security Partner Provider resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar security_provider_name: The security provider name. Known values are: "ZScaler", "IBoss",
      and "Checkpoint".
@@ -37853,8 +37867,8 @@ class SecurityPartnerProviderPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the Security Partner Provider resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the Security Partner Provider resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     security_provider_name: Optional[Union[str, "_models.SecurityProviderName"]] = rest_field(
         name="securityProviderName", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -38136,7 +38150,7 @@ class SecurityRulePropertiesFormat(_Model):
      on incoming or outgoing traffic. Required. Known values are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.network.models.SecurityRuleDirection
     :ivar provisioning_state: The provisioning state of the security rule resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -38209,8 +38223,8 @@ class SecurityRulePropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the security rule resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the security rule resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -38311,8 +38325,8 @@ class SecurityUserConfigurationPropertiesFormat(_Model):  # pylint: disable=name
 
     :ivar description: A description of the security user configuration.
     :vartype description: str
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -38323,8 +38337,8 @@ class SecurityUserConfigurationPropertiesFormat(_Model):  # pylint: disable=name
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the resource. Known values are: \"Succeeded\", \"Updating\",
-     \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     resource_guid: Optional[str] = rest_field(name="resourceGuid", visibility=["read"])
     """Unique identifier for this resource."""
 
@@ -38518,8 +38532,8 @@ class SecurityUserRuleCollectionPropertiesFormat(_Model):  # pylint: disable=nam
     :vartype description: str
     :ivar applies_to_groups: Groups for configuration. Required.
     :vartype applies_to_groups: list[~azure.mgmt.network.models.SecurityUserGroupItem]
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -38534,8 +38548,8 @@ class SecurityUserRuleCollectionPropertiesFormat(_Model):  # pylint: disable=nam
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the resource. Known values are: \"Succeeded\", \"Updating\",
-     \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     resource_guid: Optional[str] = rest_field(name="resourceGuid", visibility=["read"])
     """Unique identifier for this resource."""
 
@@ -38578,7 +38592,8 @@ class SecurityUserRulePropertiesFormat(_Model):
      Required. Known values are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.network.models.SecurityConfigurationRuleDirection
     :ivar provisioning_state: The provisioning state of the security configuration user rule
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -38616,7 +38631,7 @@ class SecurityUserRulePropertiesFormat(_Model):
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the security configuration user rule resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     resource_guid: Optional[str] = rest_field(name="resourceGuid", visibility=["read"])
     """Unique identifier for this resource."""
 
@@ -38720,7 +38735,7 @@ class ServiceAssociationLinkPropertiesFormat(_Model):
     :ivar link: Link to the external resource.
     :vartype link: str
     :ivar provisioning_state: The provisioning state of the service association link resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar allow_delete: If true, the resource can be deleted.
     :vartype allow_delete: bool
@@ -38737,8 +38752,8 @@ class ServiceAssociationLinkPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the service association link resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the service association link resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     allow_delete: Optional[bool] = rest_field(
         name="allowDelete", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -38780,7 +38795,7 @@ class ServiceAssociationLinksListResult(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The ServiceAssociationLink items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read"])
     """The link to the next page of items."""
 
     @overload
@@ -38788,7 +38803,6 @@ class ServiceAssociationLinksListResult(_Model):
         self,
         *,
         value: list["_models.ServiceAssociationLink"],
-        next_link: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -38811,7 +38825,7 @@ class ServiceDelegationPropertiesFormat(_Model):
     :ivar actions: The actions permitted to the service upon delegation.
     :vartype actions: list[str]
     :ivar provisioning_state: The provisioning state of the service delegation resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -38824,8 +38838,8 @@ class ServiceDelegationPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the service delegation resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the service delegation resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -38996,7 +39010,8 @@ class ServiceEndpointPolicyDefinitionPropertiesFormat(_Model):  # pylint: disabl
     :ivar service_resources: A list of service resources.
     :vartype service_resources: list[str]
     :ivar provisioning_state: The provisioning state of the service endpoint policy definition
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -39012,7 +39027,7 @@ class ServiceEndpointPolicyDefinitionPropertiesFormat(_Model):  # pylint: disabl
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the service endpoint policy definition resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -39046,7 +39061,7 @@ class ServiceEndpointPolicyPropertiesFormat(_Model):
     :ivar resource_guid: The resource GUID property of the service endpoint policy resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the service endpoint policy resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar service_alias: The alias indicating if the policy belongs to a service.
     :vartype service_alias: str
@@ -39065,8 +39080,8 @@ class ServiceEndpointPolicyPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the service endpoint policy resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the service endpoint policy resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     service_alias: Optional[str] = rest_field(
         name="serviceAlias", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -39106,7 +39121,7 @@ class ServiceEndpointPropertiesFormat(_Model):
     :ivar locations: A list of locations.
     :vartype locations: list[str]
     :ivar provisioning_state: The provisioning state of the service endpoint resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -39121,8 +39136,8 @@ class ServiceEndpointPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the service endpoint resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the service endpoint resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -39377,7 +39392,7 @@ class ServiceGatewayPropertiesFormat(_Model):
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the service gateway resource. Known values
      are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.NetworkResourceProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
     virtual_network: Optional["_models.VirtualNetwork"] = rest_field(
@@ -39394,7 +39409,7 @@ class ServiceGatewayPropertiesFormat(_Model):
     """Route Target address V6 of Service gateway."""
     resource_guid: Optional[str] = rest_field(name="resourceGuid", visibility=["read"])
     """The resource GUID property of the service gateway resource."""
-    provisioning_state: Optional[Union[str, "_models.NetworkResourceProvisioningState"]] = rest_field(
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the service gateway resource. Known values are: \"Failed\",
@@ -39821,7 +39836,7 @@ class SharedKeyProperties(_Model):
     :ivar shared_key_length: The length of the shared key for the vpn link connection.
     :vartype shared_key_length: int
     :ivar provisioning_state: The provisioning state of the SharedKey resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -39834,8 +39849,8 @@ class SharedKeyProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the SharedKey resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the SharedKey resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -40242,7 +40257,7 @@ class StaticCidrProperties(_Model):
     :vartype total_number_of_ip_addresses: str
     :ivar provisioning_state: Provisioning states of a resource. Known values are: "Failed",
      "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.NetworkResourceProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -40257,7 +40272,7 @@ class StaticCidrProperties(_Model):
     """List of IP address prefixes of the resource."""
     total_number_of_ip_addresses: Optional[str] = rest_field(name="totalNumberOfIPAddresses", visibility=["read"])
     """Total number of IP addresses allocated for the static CIDR resource."""
-    provisioning_state: Optional[Union[str, "_models.NetworkResourceProvisioningState"]] = rest_field(
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
     """Provisioning states of a resource. Known values are: \"Failed\", \"Succeeded\", \"Canceled\",
@@ -40353,7 +40368,7 @@ class StaticMemberProperties(_Model):
     :ivar region: Resource region.
     :vartype region: str
     :ivar provisioning_state: The provisioning state of the scope assignment resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -40366,8 +40381,8 @@ class StaticMemberProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the scope assignment resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the scope assignment resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -40626,7 +40641,7 @@ class SubnetPropertiesFormat(_Model):
      delegations and other user-defined properties.
     :vartype purpose: str
     :ivar provisioning_state: The provisioning state of the subnet resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_endpoint_network_policies: Enable or Disable apply network policies on private
      end point in the subnet. Known values are: "Enabled", "Disabled",
@@ -40718,8 +40733,8 @@ class SubnetPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the subnet resource. Known values are: \"Succeeded\", \"Updating\",
-     \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the subnet resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     private_endpoint_network_policies: Optional[Union[str, "_models.VirtualNetworkPrivateEndpointNetworkPolicies"]] = (
         rest_field(name="privateEndpointNetworkPolicies", visibility=["read", "create", "update", "delete", "query"])
     )
@@ -42001,11 +42016,11 @@ class VerifierWorkspaceProperties(_Model):
     :vartype description: str
     :ivar provisioning_state: Provisioning states of a resource. Known values are: "Failed",
      "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.NetworkResourceProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    provisioning_state: Optional[Union[str, "_models.NetworkResourceProvisioningState"]] = rest_field(
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
     """Provisioning states of a resource. Known values are: \"Failed\", \"Succeeded\", \"Canceled\",
@@ -42362,8 +42377,8 @@ class VirtualApplianceSiteProperties(_Model):
     :vartype address_prefix: str
     :ivar o365_policy: Office 365 Policy.
     :vartype o365_policy: ~azure.mgmt.network.models.Office365PolicyProperties
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -42378,8 +42393,8 @@ class VirtualApplianceSiteProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the resource. Known values are: \"Succeeded\", \"Updating\",
-     \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -42442,7 +42457,7 @@ class VirtualApplianceSkuProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualHub(TrackedResourceWithSettableId):
+class VirtualHub(TrackedResourceWithSettableIdOptionalLocation):
     """VirtualHub Resource.
 
     :ivar id: Resource ID.
@@ -42451,7 +42466,7 @@ class VirtualHub(TrackedResourceWithSettableId):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Resource location. Required.
+    :ivar location: Resource location.
     :vartype location: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
@@ -42503,8 +42518,8 @@ class VirtualHub(TrackedResourceWithSettableId):
     def __init__(
         self,
         *,
-        location: str,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        location: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.VirtualHubProperties"] = None,
     ) -> None: ...
@@ -42676,7 +42691,7 @@ class VirtualHubProperties(_Model):
     :ivar route_table: The routeTable associated with this virtual hub.
     :vartype route_table: ~azure.mgmt.network.models.VirtualHubRouteTable
     :ivar provisioning_state: The provisioning state of the virtual hub resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar security_provider_name: The Security Provider name.
     :vartype security_provider_name: str
@@ -42746,8 +42761,8 @@ class VirtualHubProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the virtual hub resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the virtual hub resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     security_provider_name: Optional[str] = rest_field(
         name="securityProviderName", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -42967,7 +42982,7 @@ class VirtualHubRouteTableV2Properties(_Model):
     :ivar attached_connections: List of all connections attached to this route table v2.
     :vartype attached_connections: list[str]
     :ivar provisioning_state: The provisioning state of the virtual hub route table v2 resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -42983,7 +42998,7 @@ class VirtualHubRouteTableV2Properties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the virtual hub route table v2 resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -43295,7 +43310,8 @@ class VirtualNetworkApplianceIpConfigurationProperties(_Model):  # pylint: disab
     :ivar primary: Whether the ip configuration is primary or not.
     :vartype primary: bool
     :ivar provisioning_state: The provisioning state of the private link service IP configuration
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_ip_address_version: Whether the specific IP configuration is IPv4 or IPv6.
      Default is IPv4. Known values are: "IPv4" and "IPv6".
@@ -43316,7 +43332,7 @@ class VirtualNetworkApplianceIpConfigurationProperties(_Model):  # pylint: disab
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the private link service IP configuration resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     private_ip_address_version: Optional[Union[str, "_models.IPVersion"]] = rest_field(
         name="privateIPAddressVersion", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -43353,7 +43369,7 @@ class VirtualNetworkAppliancePropertiesFormat(_Model):
     :vartype ip_configurations:
      list[~azure.mgmt.network.models.VirtualNetworkApplianceIpConfiguration]
     :ivar provisioning_state: The provisioning state of the virtual network appliance resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: The resource GUID property of the virtual network appliance resource.
     :vartype resource_guid: str
@@ -43372,8 +43388,8 @@ class VirtualNetworkAppliancePropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the virtual network appliance resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the virtual network appliance resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     resource_guid: Optional[str] = rest_field(name="resourceGuid", visibility=["read"])
     """The resource GUID property of the virtual network appliance resource."""
     subnet: Optional["_models.Subnet"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -43923,7 +43939,8 @@ class VirtualNetworkGatewayConnectionListEntityPropertiesFormat(_Model):  # pyli
      resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the virtual network gateway connection
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar express_route_gateway_bypass: Bypass ExpressRoute Gateway for data forwarding.
     :vartype express_route_gateway_bypass: bool
@@ -44011,7 +44028,7 @@ class VirtualNetworkGatewayConnectionListEntityPropertiesFormat(_Model):  # pyli
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the virtual network gateway connection resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     express_route_gateway_bypass: Optional[bool] = rest_field(
         name="expressRouteGatewayBypass", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -44121,7 +44138,8 @@ class VirtualNetworkGatewayConnectionPropertiesFormat(_Model):  # pylint: disabl
      resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the virtual network gateway connection
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar express_route_gateway_bypass: Bypass ExpressRoute Gateway for data forwarding.
     :vartype express_route_gateway_bypass: bool
@@ -44233,7 +44251,7 @@ class VirtualNetworkGatewayConnectionPropertiesFormat(_Model):  # pylint: disabl
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the virtual network gateway connection resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     express_route_gateway_bypass: Optional[bool] = rest_field(
         name="expressRouteGatewayBypass", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -44414,7 +44432,8 @@ class VirtualNetworkGatewayIPConfigurationPropertiesFormat(_Model):  # pylint: d
     :ivar private_ip_address: Private IP Address for this gateway.
     :vartype private_ip_address: str
     :ivar provisioning_state: The provisioning state of the virtual network gateway IP
-     configuration resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     configuration resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating",
+     "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -44434,7 +44453,7 @@ class VirtualNetworkGatewayIPConfigurationPropertiesFormat(_Model):  # pylint: d
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the virtual network gateway IP configuration resource. Known values
-     are: \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     are: \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -44617,7 +44636,7 @@ class VirtualNetworkGatewayNatRuleProperties(_Model):
     """Parameters for VirtualNetworkGatewayNatRule.
 
     :ivar provisioning_state: The provisioning state of the NAT Rule resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar type: The type of NAT rule for VPN NAT. Known values are: "Static" and "Dynamic".
     :vartype type: str or ~azure.mgmt.network.models.VpnNatRuleType
@@ -44635,8 +44654,8 @@ class VirtualNetworkGatewayNatRuleProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the NAT Rule resource. Known values are: \"Succeeded\", \"Updating\",
-     \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the NAT Rule resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     type: Optional[Union[str, "_models.VpnNatRuleType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -44809,7 +44828,8 @@ class VirtualNetworkGatewayPolicyGroupProperties(_Model):  # pylint: disable=nam
      vngClientConnectionConfigurations.
     :vartype vng_client_connection_configurations: list[~azure.mgmt.network.models.SubResource]
     :ivar provisioning_state: The provisioning state of the VirtualNetworkGatewayPolicyGroup
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -44829,7 +44849,7 @@ class VirtualNetworkGatewayPolicyGroupProperties(_Model):  # pylint: disable=nam
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the VirtualNetworkGatewayPolicyGroup resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -44908,7 +44928,7 @@ class VirtualNetworkGatewayPropertiesFormat(_Model):
     :ivar resource_guid: The resource GUID property of the virtual network gateway resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the virtual network gateway resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar enable_dns_forwarding: Whether dns forwarding is enabled or not.
     :vartype enable_dns_forwarding: bool
@@ -45017,8 +45037,8 @@ class VirtualNetworkGatewayPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the virtual network gateway resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the virtual network gateway resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     enable_dns_forwarding: Optional[bool] = rest_field(
         name="enableDnsForwarding", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -45282,7 +45302,7 @@ class VirtualNetworkPeeringPropertiesFormat(_Model):
      are: "FullyInSync", "RemoteNotInSync", "LocalNotInSync", and "LocalAndRemoteNotInSync".
     :vartype peering_sync_level: str or ~azure.mgmt.network.models.VirtualNetworkPeeringLevel
     :ivar provisioning_state: The provisioning state of the virtual network peering resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar do_not_verify_remote_gateways: If we need to verify the provisioning state of the remote
      gateway.
@@ -45366,8 +45386,8 @@ class VirtualNetworkPeeringPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the virtual network peering resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the virtual network peering resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     do_not_verify_remote_gateways: Optional[bool] = rest_field(
         name="doNotVerifyRemoteGateways", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -45443,7 +45463,7 @@ class VirtualNetworkPropertiesFormat(_Model):
     :ivar resource_guid: The resourceGuid property of the Virtual Network resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the virtual network resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar enable_ddos_protection: Indicates if DDoS protection is enabled for all the protected
      resources in the virtual network. It requires a DDoS protection plan associated with the
@@ -45497,8 +45517,8 @@ class VirtualNetworkPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the virtual network resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the virtual network resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     enable_ddos_protection: Optional[bool] = rest_field(
         name="enableDdosProtection", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -45649,7 +45669,7 @@ class VirtualNetworkTapPropertiesFormat(_Model):
     :ivar resource_guid: The resource GUID property of the virtual network tap resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the virtual network tap resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar destination_network_interface_ip_configuration: The reference to the private IP Address
      of the collector nic that will receive the tap.
@@ -45673,8 +45693,8 @@ class VirtualNetworkTapPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the virtual network tap resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the virtual network tap resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     destination_network_interface_ip_configuration: Optional["_models.NetworkInterfaceIPConfiguration"] = rest_field(
         name="destinationNetworkInterfaceIPConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -45925,8 +45945,8 @@ class VirtualRouterPeeringProperties(_Model):
     :vartype peer_asn: int
     :ivar peer_ip: Peer IP.
     :vartype peer_ip: str
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -45937,8 +45957,8 @@ class VirtualRouterPeeringProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the resource. Known values are: \"Succeeded\", \"Updating\",
-     \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -45972,8 +45992,8 @@ class VirtualRouterPropertiesFormat(_Model):
     :vartype hosted_gateway: ~azure.mgmt.network.models.SubResource
     :ivar peerings: List of references to VirtualRouterPeerings.
     :vartype peerings: list[~azure.mgmt.network.models.SubResource]
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -45998,8 +46018,8 @@ class VirtualRouterPropertiesFormat(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the resource. Known values are: \"Succeeded\", \"Updating\",
-     \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -46022,7 +46042,7 @@ class VirtualRouterPropertiesFormat(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualWAN(TrackedResourceWithSettableId):
+class VirtualWAN(TrackedResourceWithSettableIdOptionalLocation):
     """VirtualWAN Resource.
 
     :ivar id: Resource ID.
@@ -46031,7 +46051,7 @@ class VirtualWAN(TrackedResourceWithSettableId):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Resource location. Required.
+    :ivar location: Resource location.
     :vartype location: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
@@ -46063,8 +46083,8 @@ class VirtualWAN(TrackedResourceWithSettableId):
     def __init__(
         self,
         *,
-        location: str,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        location: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.VirtualWanProperties"] = None,
     ) -> None: ...
@@ -46116,7 +46136,7 @@ class VirtualWanProperties(_Model):
     :vartype office365_local_breakout_category: str or
      ~azure.mgmt.network.models.OfficeTrafficCategory
     :ivar provisioning_state: The provisioning state of the virtual WAN resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar type: The type of the VirtualWAN.
     :vartype type: str
@@ -46146,8 +46166,8 @@ class VirtualWanProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the virtual WAN resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the virtual WAN resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of the VirtualWAN."""
 
@@ -46428,7 +46448,8 @@ class VngClientConnectionConfigurationProperties(_Model):  # pylint: disable=nam
      virtualNetworkGatewayPolicyGroups. Required.
     :vartype virtual_network_gateway_policy_groups: list[~azure.mgmt.network.models.SubResource]
     :ivar provisioning_state: The provisioning state of the VngClientConnectionConfiguration
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -46445,7 +46466,7 @@ class VngClientConnectionConfigurationProperties(_Model):  # pylint: disable=nam
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the VngClientConnectionConfiguration resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -46958,7 +46979,8 @@ class VpnClientRevokedCertificatePropertiesFormat(_Model):  # pylint: disable=na
     :ivar thumbprint: The revoked VPN client certificate thumbprint.
     :vartype thumbprint: str
     :ivar provisioning_state: The provisioning state of the VPN client revoked certificate
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -46968,7 +46990,7 @@ class VpnClientRevokedCertificatePropertiesFormat(_Model):  # pylint: disable=na
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the VPN client revoked certificate resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -47058,7 +47080,7 @@ class VpnClientRootCertificatePropertiesFormat(_Model):
     :ivar public_cert_data: The certificate public data. Required.
     :vartype public_cert_data: str
     :ivar provisioning_state: The provisioning state of the VPN client root certificate resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -47070,7 +47092,7 @@ class VpnClientRootCertificatePropertiesFormat(_Model):
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the VPN client root certificate resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -47287,7 +47309,7 @@ class VpnConnectionProperties(_Model):
     :ivar use_local_azure_ip_address: Use local azure ip to initiate connection.
     :vartype use_local_azure_ip_address: bool
     :ivar provisioning_state: The provisioning state of the VPN connection resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar vpn_link_connections: List of all vpn site link connections to the gateway.
     :vartype vpn_link_connections: list[~azure.mgmt.network.models.VpnSiteLinkConnection]
@@ -47358,8 +47380,8 @@ class VpnConnectionProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the VPN connection resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the VPN connection resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     vpn_link_connections: Optional[list["_models.VpnSiteLinkConnection"]] = rest_field(
         name="vpnLinkConnections", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -47444,7 +47466,7 @@ class VpnDeviceScriptParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VpnGateway(TrackedResourceWithSettableId):
+class VpnGateway(TrackedResourceWithSettableIdOptionalLocation):
     """VpnGateway Resource.
 
     :ivar id: Resource ID.
@@ -47453,7 +47475,7 @@ class VpnGateway(TrackedResourceWithSettableId):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Resource location. Required.
+    :ivar location: Resource location.
     :vartype location: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
@@ -47486,8 +47508,8 @@ class VpnGateway(TrackedResourceWithSettableId):
     def __init__(
         self,
         *,
-        location: str,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        location: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.VpnGatewayProperties"] = None,
     ) -> None: ...
@@ -47638,7 +47660,7 @@ class VpnGatewayNatRuleProperties(_Model):
     """Parameters for VpnGatewayNatRule.
 
     :ivar provisioning_state: The provisioning state of the NAT Rule resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar type: The type of NAT rule for VPN NAT. Known values are: "Static" and "Dynamic".
     :vartype type: str or ~azure.mgmt.network.models.VpnNatRuleType
@@ -47660,8 +47682,8 @@ class VpnGatewayNatRuleProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the NAT Rule resource. Known values are: \"Succeeded\", \"Updating\",
-     \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the NAT Rule resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     type: Optional[Union[str, "_models.VpnNatRuleType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -47781,7 +47803,7 @@ class VpnGatewayProperties(_Model):
     :ivar bgp_settings: Local network gateway's BGP speaker settings.
     :vartype bgp_settings: ~azure.mgmt.network.models.BgpSettings
     :ivar provisioning_state: The provisioning state of the VPN gateway resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar vpn_gateway_scale_unit: The scale unit for this vpn gateway.
     :vartype vpn_gateway_scale_unit: int
@@ -47812,8 +47834,8 @@ class VpnGatewayProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the VPN gateway resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the VPN gateway resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     vpn_gateway_scale_unit: Optional[int] = rest_field(
         name="vpnGatewayScaleUnit", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -48333,7 +48355,8 @@ class VpnServerConfigurationPolicyGroupProperties(_Model):  # pylint: disable=na
     :ivar p2_s_connection_configurations: List of references to P2SConnectionConfigurations.
     :vartype p2_s_connection_configurations: list[~azure.mgmt.network.models.SubResource]
     :ivar provisioning_state: The provisioning state of the VpnServerConfigurationPolicyGroup
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -48355,7 +48378,7 @@ class VpnServerConfigurationPolicyGroupProperties(_Model):  # pylint: disable=na
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the VpnServerConfigurationPolicyGroup resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -48619,7 +48642,7 @@ class VpnServerConfigVpnClientRootCertificate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VpnSite(TrackedResourceWithSettableId):
+class VpnSite(TrackedResourceWithSettableIdOptionalLocation):
     """VpnSite Resource.
 
     :ivar id: Resource ID.
@@ -48628,7 +48651,7 @@ class VpnSite(TrackedResourceWithSettableId):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Resource location. Required.
+    :ivar location: Resource location.
     :vartype location: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
@@ -48662,8 +48685,8 @@ class VpnSite(TrackedResourceWithSettableId):
     def __init__(
         self,
         *,
-        location: str,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        location: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.VpnSiteProperties"] = None,
     ) -> None: ...
@@ -48883,7 +48906,7 @@ class VpnSiteLinkConnectionProperties(_Model):
     :ivar use_local_azure_ip_address: Use local azure ip to initiate connection.
     :vartype use_local_azure_ip_address: bool
     :ivar provisioning_state: The provisioning state of the VPN site link connection resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar ingress_nat_rules: List of ingress NatRules.
     :vartype ingress_nat_rules: list[~azure.mgmt.network.models.SubResource]
@@ -48955,8 +48978,8 @@ class VpnSiteLinkConnectionProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the VPN site link connection resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the VPN site link connection resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     ingress_nat_rules: Optional[list["_models.SubResource"]] = rest_field(
         name="ingressNatRules", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -49014,7 +49037,7 @@ class VpnSiteLinkProperties(_Model):
     :ivar bgp_properties: The set of bgp properties.
     :vartype bgp_properties: ~azure.mgmt.network.models.VpnLinkBgpSettings
     :ivar provisioning_state: The provisioning state of the VPN site link resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -49033,8 +49056,8 @@ class VpnSiteLinkProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the VPN site link resource. Known values are: \"Succeeded\",
-     \"Updating\", \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the VPN site link resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
     @overload
     def __init__(
@@ -49073,7 +49096,7 @@ class VpnSiteProperties(_Model):
     :ivar bgp_properties: The set of bgp properties.
     :vartype bgp_properties: ~azure.mgmt.network.models.BgpSettings
     :ivar provisioning_state: The provisioning state of the VPN site resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar is_security_site: IsSecuritySite flag.
     :vartype is_security_site: bool
@@ -49106,8 +49129,8 @@ class VpnSiteProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the VPN site resource. Known values are: \"Succeeded\", \"Updating\",
-     \"Deleting\", and \"Failed\"."""
+    """The provisioning state of the VPN site resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     is_security_site: Optional[bool] = rest_field(
         name="isSecuritySite", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -49334,7 +49357,8 @@ class WebApplicationFirewallPolicyPropertiesFormat(_Model):  # pylint: disable=n
     :ivar application_gateways: A collection of references to application gateways.
     :vartype application_gateways: list[~azure.mgmt.network.models.ApplicationGateway]
     :ivar provisioning_state: The provisioning state of the web application firewall policy
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_state: Resource status of the policy. Known values are: "Creating", "Enabling",
      "Enabled", "Disabling", "Disabled", and "Deleting".
@@ -49368,7 +49392,7 @@ class WebApplicationFirewallPolicyPropertiesFormat(_Model):  # pylint: disable=n
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the web application firewall policy resource. Known values are:
-     \"Succeeded\", \"Updating\", \"Deleting\", and \"Failed\"."""
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     resource_state: Optional[Union[str, "_models.WebApplicationFirewallPolicyResourceState"]] = rest_field(
         name="resourceState", visibility=["read"]
     )

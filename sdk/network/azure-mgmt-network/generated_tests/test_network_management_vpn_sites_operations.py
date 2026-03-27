@@ -37,9 +37,9 @@ class TestNetworkManagementVpnSitesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             vpn_site_name="str",
             vpn_site_parameters={
-                "location": "str",
                 "etag": "str",
                 "id": "str",
+                "location": "str",
                 "name": "str",
                 "properties": {
                     "addressSpace": {

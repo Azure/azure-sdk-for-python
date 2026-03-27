@@ -37,9 +37,9 @@ class TestNetworkManagementVpnGatewaysOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             gateway_name="str",
             vpn_gateway_parameters={
-                "location": "str",
                 "etag": "str",
                 "id": "str",
+                "location": "str",
                 "name": "str",
                 "properties": {
                     "bgpSettings": {

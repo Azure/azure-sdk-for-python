@@ -39,9 +39,9 @@ class TestNetworkManagementP2SVpnGatewaysOperationsAsync(AzureMgmtRecordedTestCa
                 resource_group_name=resource_group.name,
                 gateway_name="str",
                 p2_s_vpn_gateway_parameters={
-                    "location": "str",
                     "etag": "str",
                     "id": "str",
+                    "location": "str",
                     "name": "str",
                     "properties": {
                         "customDnsServers": ["str"],

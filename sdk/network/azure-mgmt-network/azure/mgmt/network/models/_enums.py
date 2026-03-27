@@ -1994,23 +1994,6 @@ class NetworkProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ICMP."""
 
 
-class NetworkResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning states of a resource."""
-
-    FAILED = "Failed"
-    """Failed."""
-    SUCCEEDED = "Succeeded"
-    """Succeeded."""
-    CANCELED = "Canceled"
-    """Canceled."""
-    CREATING = "Creating"
-    """Creating."""
-    UPDATING = "Updating"
-    """Updating."""
-    DELETING = "Deleting"
-    """Deleting."""
-
-
 class NextHopType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Next hop type."""
 
@@ -2395,16 +2378,20 @@ class ProtocolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current provisioning state."""
+    """Provisioning states of a resource."""
 
+    FAILED = "Failed"
+    """Failed."""
     SUCCEEDED = "Succeeded"
     """Succeeded."""
+    CANCELED = "Canceled"
+    """Canceled."""
+    CREATING = "Creating"
+    """Creating."""
     UPDATING = "Updating"
     """Updating."""
     DELETING = "Deleting"
     """Deleting."""
-    FAILED = "Failed"
-    """Failed."""
 
 
 class PublicIpAddressDnsSettingsDomainNameLabelScope(  # pylint: disable=name-too-long

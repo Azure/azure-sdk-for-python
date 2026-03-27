@@ -39,9 +39,9 @@ class TestNetworkManagementRouteFiltersOperationsAsync(AzureMgmtRecordedTestCase
                 resource_group_name=resource_group.name,
                 route_filter_name="str",
                 route_filter_parameters={
-                    "location": "str",
                     "etag": "str",
                     "id": "str",
+                    "location": "str",
                     "name": "str",
                     "properties": {
                         "ipv6Peerings": [

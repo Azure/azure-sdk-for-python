@@ -37,10 +37,10 @@ class TestNetworkManagementVirtualHubsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             virtual_hub_parameters={
-                "location": "str",
                 "etag": "str",
                 "id": "str",
                 "kind": "str",
+                "location": "str",
                 "name": "str",
                 "properties": {
                     "addressPrefix": "str",

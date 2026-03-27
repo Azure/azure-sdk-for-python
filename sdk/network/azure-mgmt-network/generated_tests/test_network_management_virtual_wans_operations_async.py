@@ -39,9 +39,9 @@ class TestNetworkManagementVirtualWansOperationsAsync(AzureMgmtRecordedTestCase)
                 resource_group_name=resource_group.name,
                 virtual_wan_name="str",
                 wan_parameters={
-                    "location": "str",
                     "etag": "str",
                     "id": "str",
+                    "location": "str",
                     "name": "str",
                     "properties": {
                         "allowBranchToBranchTraffic": bool,

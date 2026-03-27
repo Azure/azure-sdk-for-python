@@ -62,9 +62,9 @@ class TestNetworkManagementVpnServerConfigurationsOperations(AzureMgmtRecordedTe
                     "name": "str",
                     "p2SVpnGateways": [
                         {
-                            "location": "str",
                             "etag": "str",
                             "id": "str",
+                            "location": "str",
                             "name": "str",
                             "properties": {
                                 "customDnsServers": ["str"],
