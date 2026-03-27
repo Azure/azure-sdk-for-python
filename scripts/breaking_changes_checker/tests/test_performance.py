@@ -207,7 +207,9 @@ class TestCheckerRunPerformance:
         """Benchmark a full checker run with a large unchanged API surface.
         
         When stable and current are identical, jsondiff produces an empty diff,
-        so the checker should complete almost instantly regardless of API surface size.
+        so diff-based checks do minimal work. However, run_checks() still executes
+        checks like parameter ordering across the full API surface. This test
+        ensures the overall run remains fast and bounded even for a large, unchanged API.
         """
         stable, current = _generate_large_stable_current(
             num_modules=10,
