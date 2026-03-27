@@ -469,6 +469,17 @@ class ImageDetail(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Details recognized as landmarks."""
 
 
+class IndexAnalyticsMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The mode for index analytics collection."""
+
+    DISABLED = "disabled"
+    """Analytics collection is disabled."""
+    BASIC = "basic"
+    """Only basic analytics are collected, such as query counts and latency."""
+    DETAILED = "detailed"
+    """Full analytics including query patterns and performance breakdowns are collected."""
+
+
 class IndexedSharePointContainerName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies which SharePoint libraries to access."""
 
@@ -1676,6 +1687,9 @@ class SearchFieldDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BYTE = "Edm.Byte"
     """Indicates that a field contains a 8-bit unsigned integer. This is only valid when used with
     Collection(Edm.Byte)."""
+    DECIMAL = "Edm.Decimal"
+    """Indicates that a field contains a fixed-precision decimal number. This is only valid when used
+    with Collection(Edm.Decimal)."""
 
 
 class SearchIndexerDataSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1697,6 +1711,8 @@ class SearchIndexerDataSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates a Microsoft Fabric OneLake datasource."""
     SHARE_POINT = "sharepoint"
     """Indicates a SharePoint datasource."""
+    COSMOS_DB_MONGO_DB = "cosmosdb-mongodb"
+    """Indicates an Azure Cosmos DB for MongoDB datasource."""
 
 
 class SearchIndexPermissionFilterOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2421,6 +2437,9 @@ class VectorSearchAlgorithmMetric(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HAMMING = "hamming"
     """Only applicable to bit-packed binary data types. Determines dissimilarity by counting differing
     positions in binary vectors. The fewer differences, the closer the similarity."""
+    MANHATTAN = "manhattan"
+    """Computes the sum of absolute differences between vector components. Also known as L1 distance.
+    The smaller the value, the closer the similarity."""
 
 
 class VectorSearchCompressionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):

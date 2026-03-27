@@ -408,6 +408,70 @@ class QueryCaptionResult(_Model):
     """Same text passage as in the Text property with highlighted phrases most relevant to the query."""
 
 
+class QueryInsights(_Model):
+    """Performance and diagnostic insights for a query execution.
+
+    :ivar total_time_ms: Total query execution time in milliseconds. Required.
+    :vartype total_time_ms: float
+    :ivar text_match_time_ms: Time spent in the text matching phase in milliseconds.
+    :vartype text_match_time_ms: float
+    :ivar vector_search_time_ms: Time spent in vector search in milliseconds, if applicable.
+    :vartype vector_search_time_ms: float
+    :ivar semantic_ranking_time_ms: Time spent in semantic ranking in milliseconds, if applicable.
+    :vartype semantic_ranking_time_ms: float
+    :ivar shards_queried: The number of index shards that participated in serving this query.
+     Required.
+    :vartype shards_queried: int
+    :ivar relevance_score_mode: The relevance score mode that was used for this query. Known values
+     are: "classic", "enhanced", and "learned".
+    :vartype relevance_score_mode: str or ~azure.search.documents.models.RelevanceScoreMode
+    :ivar breakdown: Detailed performance breakdown per query phase.
+    :vartype breakdown: ~azure.search.documents.models.QueryInsightsBreakdown
+    """
+
+    total_time_ms: float = rest_field(name="totalTimeMs", visibility=["read"])
+    """Total query execution time in milliseconds. Required."""
+    text_match_time_ms: Optional[float] = rest_field(name="textMatchTimeMs", visibility=["read"])
+    """Time spent in the text matching phase in milliseconds."""
+    vector_search_time_ms: Optional[float] = rest_field(name="vectorSearchTimeMs", visibility=["read"])
+    """Time spent in vector search in milliseconds, if applicable."""
+    semantic_ranking_time_ms: Optional[float] = rest_field(name="semanticRankingTimeMs", visibility=["read"])
+    """Time spent in semantic ranking in milliseconds, if applicable."""
+    shards_queried: int = rest_field(name="shardsQueried", visibility=["read"])
+    """The number of index shards that participated in serving this query. Required."""
+    relevance_score_mode: Optional[Union[str, "_models.RelevanceScoreMode"]] = rest_field(
+        name="relevanceScoreMode", visibility=["read"]
+    )
+    """The relevance score mode that was used for this query. Known values are: \"classic\",
+     \"enhanced\", and \"learned\"."""
+    breakdown: Optional["_models.QueryInsightsBreakdown"] = rest_field(visibility=["read"])
+    """Detailed performance breakdown per query phase."""
+
+
+class QueryInsightsBreakdown(_Model):
+    """Detailed performance breakdown for each phase of query execution.
+
+    :ivar query_parsing_ms: Time spent parsing and analyzing the query in milliseconds. Required.
+    :vartype query_parsing_ms: float
+    :ivar index_lookup_ms: Time spent in the inverted index lookup phase in milliseconds. Required.
+    :vartype index_lookup_ms: float
+    :ivar scoring_ms: Time spent scoring and ranking documents in milliseconds. Required.
+    :vartype scoring_ms: float
+    :ivar field_retrieval_ms: Time spent loading and projecting stored fields in milliseconds.
+     Required.
+    :vartype field_retrieval_ms: float
+    """
+
+    query_parsing_ms: float = rest_field(name="queryParsingMs", visibility=["read"])
+    """Time spent parsing and analyzing the query in milliseconds. Required."""
+    index_lookup_ms: float = rest_field(name="indexLookupMs", visibility=["read"])
+    """Time spent in the inverted index lookup phase in milliseconds. Required."""
+    scoring_ms: float = rest_field(name="scoringMs", visibility=["read"])
+    """Time spent scoring and ranking documents in milliseconds. Required."""
+    field_retrieval_ms: float = rest_field(name="fieldRetrievalMs", visibility=["read"])
+    """Time spent loading and projecting stored fields in milliseconds. Required."""
+
+
 class QueryResultDocumentInnerHit(_Model):
     """Detailed scoring information for an individual element of a complex collection.
 
@@ -561,6 +625,9 @@ class SearchDocumentsResult(_Model):
      documents. "originalQueryOnly"
     :vartype semantic_query_rewrites_result_type: str or
      ~azure.search.documents.models.SemanticQueryRewritesResultType
+    :ivar query_insights: Performance and diagnostic insights for this query execution. Only
+     populated when queryInsightsMode is enabled.
+    :vartype query_insights: ~azure.search.documents.models.QueryInsights
     """
 
     count: Optional[int] = rest_field(name="@odata.count", visibility=["read"])
@@ -605,6 +672,9 @@ class SearchDocumentsResult(_Model):
         name="@search.semanticQueryRewritesResultType", visibility=["read"]
     )
     """Type of query rewrite that was used to retrieve documents. \"originalQueryOnly\""""
+    query_insights: Optional["_models.QueryInsights"] = rest_field(name="@search.queryInsights", visibility=["read"])
+    """Performance and diagnostic insights for this query execution. Only populated when
+     queryInsightsMode is enabled."""
 
 
 class SearchRequest(_Model):
@@ -710,7 +780,7 @@ class SearchRequest(_Model):
     :vartype semantic_configuration_name: str
     :ivar semantic_error_handling: Allows the user to choose whether a semantic call should fail
      completely (default / current behavior), or to return partial results. Known values are:
-     "partial" and "fail".
+     "partial", "fail", and "bestEffort".
     :vartype semantic_error_handling: str or ~azure.search.documents.models.SemanticErrorMode
     :ivar semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount of
      time it takes for semantic enrichment to finish processing before the request fails.
@@ -739,6 +809,12 @@ class SearchRequest(_Model):
     :vartype vector_filter_mode: str or ~azure.search.documents.models.VectorFilterMode
     :ivar hybrid_search: The query parameters to configure hybrid search behaviors.
     :vartype hybrid_search: ~azure.search.documents.models.HybridSearch
+    :ivar relevance_score_mode: Specifies the relevance scoring mode to use when ranking results.
+     Known values are: "classic", "enhanced", and "learned".
+    :vartype relevance_score_mode: str or ~azure.search.documents.models.RelevanceScoreMode
+    :ivar query_insights_enabled: A value indicating whether to include query performance insights
+     in the response.
+    :vartype query_insights_enabled: bool
     """
 
     include_total_count: Optional[bool] = rest_field(
@@ -874,7 +950,8 @@ class SearchRequest(_Model):
         name="semanticErrorHandling", visibility=["read", "create", "update", "delete", "query"]
     )
     """Allows the user to choose whether a semantic call should fail completely (default / current
-     behavior), or to return partial results. Known values are: \"partial\" and \"fail\"."""
+     behavior), or to return partial results. Known values are: \"partial\", \"fail\", and
+     \"bestEffort\"."""
     semantic_max_wait_in_milliseconds: Optional[int] = rest_field(
         name="semanticMaxWaitInMilliseconds", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -919,6 +996,15 @@ class SearchRequest(_Model):
         name="hybridSearch", visibility=["read", "create", "update", "delete", "query"]
     )
     """The query parameters to configure hybrid search behaviors."""
+    relevance_score_mode: Optional[Union[str, "_models.RelevanceScoreMode"]] = rest_field(
+        name="relevanceScoreMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the relevance scoring mode to use when ranking results. Known values are:
+     \"classic\", \"enhanced\", and \"learned\"."""
+    query_insights_enabled: Optional[bool] = rest_field(
+        name="queryInsightsEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A value indicating whether to include query performance insights in the response."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -957,6 +1043,8 @@ class SearchRequest(_Model):
         vector_queries: Optional[list["_models.VectorQuery"]] = None,
         vector_filter_mode: Optional[Union[str, "_models.VectorFilterMode"]] = None,
         hybrid_search: Optional["_models.HybridSearch"] = None,
+        relevance_score_mode: Optional[Union[str, "_models.RelevanceScoreMode"]] = None,
+        query_insights_enabled: Optional[bool] = None,
     ) -> None: ...
 
     @overload

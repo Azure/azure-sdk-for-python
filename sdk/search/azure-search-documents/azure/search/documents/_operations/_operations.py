@@ -46,7 +46,7 @@ def build_search_get_document_count_request(index_name: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=none")
 
     # Construct URL
@@ -107,7 +107,7 @@ def build_search_search_get_request(  # pylint: disable=too-many-locals,too-many
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=none")
 
     # Construct URL
@@ -209,7 +209,7 @@ def build_search_search_post_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=none")
 
     # Construct URL
@@ -250,7 +250,7 @@ def build_search_get_document_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=none")
 
     # Construct URL
@@ -299,7 +299,7 @@ def build_search_suggest_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=none")
 
     # Construct URL
@@ -345,7 +345,7 @@ def build_search_suggest_post_request(index_name: str, **kwargs: Any) -> HttpReq
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=none")
 
     # Construct URL
@@ -373,7 +373,7 @@ def build_search_index_request(index_name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=none")
 
     # Construct URL
@@ -414,7 +414,7 @@ def build_search_autocomplete_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=none")
 
     # Construct URL
@@ -458,7 +458,7 @@ def build_search_autocomplete_post_request(index_name: str, **kwargs: Any) -> Ht
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=none")
 
     # Construct URL
@@ -682,8 +682,8 @@ class _SearchClientOperationsMixin(
          should be used for semantic ranking, captions, highlights, and answers. Default value is None.
         :paramtype semantic_configuration: str
         :keyword semantic_error_handling: Allows the user to choose whether a semantic call should fail
-         completely, or to return partial results (default). Known values are: "partial" and "fail".
-         Default value is None.
+         completely, or to return partial results (default). Known values are: "partial", "fail", and
+         "bestEffort". Default value is None.
         :paramtype semantic_error_handling: str or ~azure.search.documents.models.SemanticErrorMode
         :keyword semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount
          of time it takes for semantic enrichment to finish processing before the request fails. Default
@@ -873,6 +873,8 @@ class _SearchClientOperationsMixin(
         vector_queries: Optional[list[_models1.VectorQuery]] = None,
         vector_filter_mode: Optional[Union[str, _models1.VectorFilterMode]] = None,
         hybrid_search: Optional[_models1.HybridSearch] = None,
+        relevance_score_mode: Optional[Union[str, _models1.RelevanceScoreMode]] = None,
+        query_insights_enabled: Optional[bool] = None,
         **kwargs: Any
     ) -> _models1.SearchDocumentsResult: ...
     @overload
@@ -936,6 +938,8 @@ class _SearchClientOperationsMixin(
         vector_queries: Optional[list[_models1.VectorQuery]] = None,
         vector_filter_mode: Optional[Union[str, _models1.VectorFilterMode]] = None,
         hybrid_search: Optional[_models1.HybridSearch] = None,
+        relevance_score_mode: Optional[Union[str, _models1.RelevanceScoreMode]] = None,
+        query_insights_enabled: Optional[bool] = None,
         **kwargs: Any
     ) -> _models1.SearchDocumentsResult:
         """Searches for documents in the index.
@@ -1053,7 +1057,7 @@ class _SearchClientOperationsMixin(
         :paramtype semantic_configuration_name: str
         :keyword semantic_error_handling: Allows the user to choose whether a semantic call should fail
          completely (default / current behavior), or to return partial results. Known values are:
-         "partial" and "fail". Default value is None.
+         "partial", "fail", and "bestEffort". Default value is None.
         :paramtype semantic_error_handling: str or ~azure.search.documents.models.SemanticErrorMode
         :keyword semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount
          of time it takes for semantic enrichment to finish processing before the request fails. Default
@@ -1086,6 +1090,12 @@ class _SearchClientOperationsMixin(
         :keyword hybrid_search: The query parameters to configure hybrid search behaviors. Default
          value is None.
         :paramtype hybrid_search: ~azure.search.documents.models.HybridSearch
+        :keyword relevance_score_mode: Specifies the relevance scoring mode to use when ranking
+         results. Known values are: "classic", "enhanced", and "learned". Default value is None.
+        :paramtype relevance_score_mode: str or ~azure.search.documents.models.RelevanceScoreMode
+        :keyword query_insights_enabled: A value indicating whether to include query performance
+         insights in the response. Default value is None.
+        :paramtype query_insights_enabled: bool
         :return: SearchDocumentsResult. The SearchDocumentsResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.models.SearchDocumentsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1118,9 +1128,11 @@ class _SearchClientOperationsMixin(
                 "hybridSearch": hybrid_search,
                 "minimumCoverage": minimum_coverage,
                 "orderby": order_by,
+                "queryInsightsEnabled": query_insights_enabled,
                 "queryLanguage": query_language,
                 "queryRewrites": query_rewrites,
                 "queryType": query_type,
+                "relevanceScoreMode": relevance_score_mode,
                 "scoringParameters": scoring_parameters,
                 "scoringProfile": scoring_profile,
                 "scoringStatistics": scoring_statistics,
@@ -1421,7 +1433,6 @@ class _SearchClientOperationsMixin(
         self,
         *,
         search_text: str,
-        suggester_name: str,
         content_type: str = "application/json",
         filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
@@ -1431,6 +1442,7 @@ class _SearchClientOperationsMixin(
         order_by: Optional[list[str]] = None,
         search_fields: Optional[list[str]] = None,
         select: Optional[list[str]] = None,
+        suggester_name: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs: Any
     ) -> _models1._models.SuggestDocumentsResult: ...
@@ -1449,7 +1461,6 @@ class _SearchClientOperationsMixin(
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         search_text: str = _Unset,
-        suggester_name: str = _Unset,
         filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,
@@ -1458,6 +1469,7 @@ class _SearchClientOperationsMixin(
         order_by: Optional[list[str]] = None,
         search_fields: Optional[list[str]] = None,
         select: Optional[list[str]] = None,
+        suggester_name: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs: Any
     ) -> _models1._models.SuggestDocumentsResult:
@@ -1468,9 +1480,6 @@ class _SearchClientOperationsMixin(
         :keyword search_text: The search text to use to suggest documents. Must be at least 1
          character, and no more than 100 characters. Required.
         :paramtype search_text: str
-        :keyword suggester_name: The name of the suggester as specified in the suggesters collection
-         that's part of the index definition. Required.
-        :paramtype suggester_name: str
         :keyword filter: An OData expression that filters the documents considered for suggestions.
          Default value is None.
         :paramtype filter: str
@@ -1506,6 +1515,9 @@ class _SearchClientOperationsMixin(
         :keyword select: The comma-separated list of fields to retrieve. If unspecified, only the key
          field will be included in the results. Default value is None.
         :paramtype select: list[str]
+        :keyword suggester_name: The name of the suggester as specified in the suggesters collection
+         that's part of the index definition. Default value is None.
+        :paramtype suggester_name: str
         :keyword top: The number of suggestions to retrieve. This must be a value between 1 and 100.
          The default is 5. Default value is None.
         :paramtype top: int
@@ -1530,8 +1542,6 @@ class _SearchClientOperationsMixin(
         if body is _Unset:
             if search_text is _Unset:
                 raise TypeError("missing required argument: search_text")
-            if suggester_name is _Unset:
-                raise TypeError("missing required argument: suggester_name")
             body = {
                 "filter": filter,
                 "fuzzy": use_fuzzy_matching,

@@ -28,6 +28,8 @@ from ._models import (  # type: ignore
     LookupDocument,
     QueryAnswerResult,
     QueryCaptionResult,
+    QueryInsights,
+    QueryInsightsBreakdown,
     QueryResultDocumentInnerHit,
     QueryResultDocumentRerankerInput,
     QueryResultDocumentSemanticField,
@@ -53,8 +55,8 @@ from ._models import (  # type: ignore
 )
 
 from ._enums import (  # type: ignore
-    HybridCountAndFacetMode,
     AutocompleteMode,
+    HybridCountAndFacetMode,
     IndexActionType,
     QueryAnswerType,
     QueryCaptionType,
@@ -63,6 +65,7 @@ from ._enums import (  # type: ignore
     QueryRewritesType,
     QuerySpellerType,
     QueryType,
+    RelevanceScoreMode,
     ScoringStatistics,
     SearchMode,
     SemanticErrorMode,
@@ -94,6 +97,8 @@ __all__ = [
     "LookupDocument",
     "QueryAnswerResult",
     "QueryCaptionResult",
+    "QueryInsights",
+    "QueryInsightsBreakdown",
     "QueryResultDocumentInnerHit",
     "QueryResultDocumentRerankerInput",
     "QueryResultDocumentSemanticField",
@@ -125,6 +130,7 @@ __all__ = [
     "QueryRewritesType",
     "QuerySpellerType",
     "QueryType",
+    "RelevanceScoreMode",
     "ScoringStatistics",
     "SearchMode",
     "SemanticErrorMode",

@@ -33,7 +33,7 @@ class SearchIndexClient(_SearchIndexClientOperationsMixin):
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Known values are
-     "2025-11-01-preview". Default value is "2025-11-01-preview". Note that overriding this default
+     "2026-05-01-preview". Default value is "2026-05-01-preview". Note that overriding this default
      value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -116,7 +116,7 @@ class SearchIndexerClient(_SearchIndexerClientOperationsMixin):
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Known values are
-     "2025-11-01-preview". Default value is "2025-11-01-preview". Note that overriding this default
+     "2026-05-01-preview". Default value is "2026-05-01-preview". Note that overriding this default
      value may result in unsupported behavior.
     :paramtype api_version: str
     """

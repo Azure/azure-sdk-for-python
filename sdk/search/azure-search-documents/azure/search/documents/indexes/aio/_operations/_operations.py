@@ -7,6 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
+import datetime
 from io import IOBase
 import json
 from typing import Any, Callable, IO, Literal, Optional, TypeVar, Union, overload
@@ -35,6 +36,7 @@ from ... import models as _models2
 from .... import models as _models3
 from ...._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ...._utils.utils import ClientMixinABC
+from ...._validation import api_version_validation
 from ....knowledgebases import models as _knowledgebases_models4
 from ..._operations._operations import (
     build_search_index_analyze_text_request,
@@ -62,6 +64,7 @@ from ..._operations._operations import (
     build_search_index_get_service_statistics_request,
     build_search_index_get_synonym_map_request,
     build_search_index_get_synonym_maps_request,
+    build_search_index_get_usage_metrics_request,
     build_search_index_list_aliases_request,
     build_search_index_list_index_stats_summary_request,
     build_search_index_list_indexes_request,
@@ -2982,6 +2985,90 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": ["api_version", "accept", "start_date", "end_date", "client_request_id"]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    async def get_usage_metrics(
+        self,
+        *,
+        start_date: Optional[datetime.datetime] = None,
+        end_date: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> _models2.SearchServiceUsageMetrics:
+        """Gets usage metrics for the search service including query counts and latency.
+
+        :keyword start_date: The start date for the metrics collection period in ISO 8601 format.
+         Default value is None.
+        :paramtype start_date: ~datetime.datetime
+        :keyword end_date: The end date for the metrics collection period in ISO 8601 format. Default
+         value is None.
+        :paramtype end_date: ~datetime.datetime
+        :return: SearchServiceUsageMetrics. The SearchServiceUsageMetrics is compatible with
+         MutableMapping
+        :rtype: ~azure.search.documents.indexes.models.SearchServiceUsageMetrics
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models2.SearchServiceUsageMetrics] = kwargs.pop("cls", None)
+
+        _request = build_search_index_get_usage_metrics_request(
+            start_date=start_date,
+            end_date=end_date,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models3.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models2.SearchServiceUsageMetrics, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
 
 class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-methods
