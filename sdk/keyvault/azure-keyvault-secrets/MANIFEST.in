@@ -1,8 +1,7 @@
 include *.md
 include LICENSE
-include azure/keyvault/secrets/_generated/py.typed
+include azure/keyvault/secrets/py.typed
 recursive-include tests *.py
 recursive-include samples *.py *.md
 include azure/__init__.py
 include azure/keyvault/__init__.py
-include azure/keyvault/secrets/__init__.py
