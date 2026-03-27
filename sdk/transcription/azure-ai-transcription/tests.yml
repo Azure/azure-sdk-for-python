@@ -6,7 +6,7 @@ extends:
   template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
   parameters:
     BuildTargetingString: azure-ai-transcription
-    ServiceDirectory: cognitiveservices
+    ServiceDirectory: transcription
     CloudConfig:
       Public:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)

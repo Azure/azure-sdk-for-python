@@ -9,7 +9,7 @@ trigger:
     - restapi*
   paths:
     include:
-    - sdk/cognitiveservices/
+    - sdk/transcription/
 
 pr:
   branches:
@@ -21,15 +21,13 @@ pr:
     - restapi*
   paths:
     include:
-    - sdk/cognitiveservices/
+    - sdk/transcription/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
-    ServiceDirectory: cognitiveservices
+    ServiceDirectory: transcription
     TestTimeoutInMinutes: 150
     Artifacts:
-    - name: azure-cognitiveservices-personalizer
-      safeName: azurecognitiveservicespersonalizer
-    - name: azure-mgmt-cognitiveservices
-      safeName: azuremgmtcognitiveservices
+    - name: azure-ai-transcription
+      safeName: azureaitranscription
