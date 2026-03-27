@@ -24,7 +24,7 @@ class TestCognitiveServicesManagementDeploymentsOperations(AzureMgmtRecordedTest
         response = self.client.deployments.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-09-01",
+            api_version="2022-12-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestCognitiveServicesManagementDeploymentsOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             account_name="str",
             deployment_name="str",
-            api_version="2025-09-01",
+            api_version="2022-12-01",
         )
 
         # please add some check logic here by yourself
@@ -70,9 +70,6 @@ class TestCognitiveServicesManagementDeploymentsOperations(AzureMgmtRecordedTest
                         ],
                     },
                     "capabilities": {"str": "str"},
-                    "capacitySettings": {"designatedCapacity": 0, "priority": 0},
-                    "currentCapacity": 0,
-                    "dynamicThrottlingEnabled": bool,
                     "model": {
                         "callRateLimit": {
                             "count": 0.0,
@@ -90,29 +87,12 @@ class TestCognitiveServicesManagementDeploymentsOperations(AzureMgmtRecordedTest
                         },
                         "format": "str",
                         "name": "str",
-                        "publisher": "str",
-                        "source": "str",
-                        "sourceAccount": "str",
                         "version": "str",
                     },
-                    "parentDeploymentName": "str",
                     "provisioningState": "str",
                     "raiPolicyName": "str",
-                    "rateLimits": [
-                        {
-                            "count": 0.0,
-                            "dynamicThrottlingEnabled": bool,
-                            "key": "str",
-                            "matchPatterns": [{"method": "str", "path": "str"}],
-                            "minCount": 0.0,
-                            "renewalPeriod": 0.0,
-                        }
-                    ],
                     "scaleSettings": {"activeCapacity": 0, "capacity": 0, "scaleType": "str"},
-                    "spilloverDeploymentName": "str",
-                    "versionUpgradeOption": "str",
                 },
-                "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -121,27 +101,9 @@ class TestCognitiveServicesManagementDeploymentsOperations(AzureMgmtRecordedTest
                     "lastModifiedBy": "str",
                     "lastModifiedByType": "str",
                 },
-                "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-09-01",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_deployments_begin_update(self, resource_group):
-        response = self.client.deployments.begin_update(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            deployment_name="str",
-            deployment={
-                "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
-                "tags": {"str": "str"},
-            },
-            api_version="2025-09-01",
+            api_version="2022-12-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -154,21 +116,8 @@ class TestCognitiveServicesManagementDeploymentsOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             account_name="str",
             deployment_name="str",
-            api_version="2025-09-01",
+            api_version="2022-12-01",
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_deployments_list_skus(self, resource_group):
-        response = self.client.deployments.list_skus(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            deployment_name="str",
-            api_version="2025-09-01",
-        )
-        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

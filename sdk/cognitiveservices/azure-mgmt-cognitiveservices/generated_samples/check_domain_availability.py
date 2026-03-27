@@ -16,7 +16,7 @@ from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
     pip install azure-identity
     pip install azure-mgmt-cognitiveservices
 # USAGE
-    python delete_rai_policy.py
+    python check_domain_availability.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,16 +28,16 @@ from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
 def main():
     client = CognitiveServicesManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-0000-0000-0000-000000000000",
+        subscription_id="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
     )
 
-    client.rai_policies.begin_delete(
-        resource_group_name="resourceGroupName",
-        account_name="accountName",
-        rai_policy_name="raiPolicyName",
-    ).result()
+    response = client.check_domain_availability(
+        subdomain_name="str",
+        type="str",
+    )
+    print(response)
 
 
-# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2025-09-01/examples/DeleteRaiPolicy.json
+# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2022-12-01/examples/CheckDomainAvailability.json
 if __name__ == "__main__":
     main()

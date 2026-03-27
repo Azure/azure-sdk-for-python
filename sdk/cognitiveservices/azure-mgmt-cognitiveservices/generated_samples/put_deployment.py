@@ -28,7 +28,7 @@ from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
 def main():
     client = CognitiveServicesManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-1111-2222-3333-444444444444",
+        subscription_id="subscriptionId",
     )
 
     response = client.deployments.begin_create_or_update(
@@ -36,13 +36,15 @@ def main():
         account_name="accountName",
         deployment_name="deploymentName",
         deployment={
-            "properties": {"model": {"format": "OpenAI", "name": "ada", "version": "1"}},
-            "sku": {"capacity": 1, "name": "Standard"},
+            "properties": {
+                "model": {"format": "OpenAI", "name": "ada", "version": "1"},
+                "scaleSettings": {"capacity": 1, "scaleType": "Manual"},
+            }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2025-09-01/examples/PutDeployment.json
+# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2022-12-01/examples/PutDeployment.json
 if __name__ == "__main__":
     main()

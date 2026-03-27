@@ -16,7 +16,7 @@ from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
     pip install azure-identity
     pip install azure-mgmt-cognitiveservices
 # USAGE
-    python get_rai_topic.py
+    python check_sku_availability.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,17 +28,18 @@ from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
 def main():
     client = CognitiveServicesManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-0000-0000-0000-000000000000",
+        subscription_id="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
     )
 
-    response = client.rai_topics.get(
-        resource_group_name="resourceGroupName",
-        account_name="accountName",
-        rai_topic_name="raiTopicName",
+    response = client.check_sku_availability(
+        location="westus",
+        skus=["str"],
+        kind="str",
+        type="str",
     )
     print(response)
 
 
-# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2025-09-01/examples/GetRaiTopic.json
+# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2022-12-01/examples/CheckSkuAvailability.json
 if __name__ == "__main__":
     main()

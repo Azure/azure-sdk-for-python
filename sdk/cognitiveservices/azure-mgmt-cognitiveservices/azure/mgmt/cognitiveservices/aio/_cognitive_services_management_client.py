@@ -21,33 +21,15 @@ from .. import models as _models
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import CognitiveServicesManagementClientConfiguration
 from .operations import (
-    AccountCapabilityHostsOperations,
-    AccountConnectionsOperations,
     AccountsOperations,
     CommitmentPlansOperations,
     CommitmentTiersOperations,
-    DefenderForAISettingsOperations,
     DeletedAccountsOperations,
     DeploymentsOperations,
-    EncryptionScopesOperations,
-    LocationBasedModelCapacitiesOperations,
-    ModelCapacitiesOperations,
-    ModelsOperations,
-    NetworkSecurityPerimeterConfigurationsOperations,
     Operations,
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
-    ProjectCapabilityHostsOperations,
-    ProjectConnectionsOperations,
-    ProjectsOperations,
-    QuotaTiersOperations,
-    RaiBlocklistItemsOperations,
-    RaiBlocklistsOperations,
-    RaiContentFiltersOperations,
-    RaiPoliciesOperations,
-    RaiTopicsOperations,
     ResourceSkusOperations,
-    UsagesOperations,
     _CognitiveServicesManagementClientOperationsMixin,
 )
 
@@ -68,21 +50,11 @@ class CognitiveServicesManagementClient(
      azure.mgmt.cognitiveservices.aio.operations.DeletedAccountsOperations
     :ivar resource_skus: ResourceSkusOperations operations
     :vartype resource_skus: azure.mgmt.cognitiveservices.aio.operations.ResourceSkusOperations
-    :ivar usages: UsagesOperations operations
-    :vartype usages: azure.mgmt.cognitiveservices.aio.operations.UsagesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.cognitiveservices.aio.operations.Operations
     :ivar commitment_tiers: CommitmentTiersOperations operations
     :vartype commitment_tiers:
      azure.mgmt.cognitiveservices.aio.operations.CommitmentTiersOperations
-    :ivar models: ModelsOperations operations
-    :vartype models: azure.mgmt.cognitiveservices.aio.operations.ModelsOperations
-    :ivar location_based_model_capacities: LocationBasedModelCapacitiesOperations operations
-    :vartype location_based_model_capacities:
-     azure.mgmt.cognitiveservices.aio.operations.LocationBasedModelCapacitiesOperations
-    :ivar model_capacities: ModelCapacitiesOperations operations
-    :vartype model_capacities:
-     azure.mgmt.cognitiveservices.aio.operations.ModelCapacitiesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections:
      azure.mgmt.cognitiveservices.aio.operations.PrivateEndpointConnectionsOperations
@@ -94,44 +66,6 @@ class CognitiveServicesManagementClient(
     :ivar commitment_plans: CommitmentPlansOperations operations
     :vartype commitment_plans:
      azure.mgmt.cognitiveservices.aio.operations.CommitmentPlansOperations
-    :ivar encryption_scopes: EncryptionScopesOperations operations
-    :vartype encryption_scopes:
-     azure.mgmt.cognitiveservices.aio.operations.EncryptionScopesOperations
-    :ivar rai_policies: RaiPoliciesOperations operations
-    :vartype rai_policies: azure.mgmt.cognitiveservices.aio.operations.RaiPoliciesOperations
-    :ivar rai_blocklists: RaiBlocklistsOperations operations
-    :vartype rai_blocklists: azure.mgmt.cognitiveservices.aio.operations.RaiBlocklistsOperations
-    :ivar rai_blocklist_items: RaiBlocklistItemsOperations operations
-    :vartype rai_blocklist_items:
-     azure.mgmt.cognitiveservices.aio.operations.RaiBlocklistItemsOperations
-    :ivar rai_topics: RaiTopicsOperations operations
-    :vartype rai_topics: azure.mgmt.cognitiveservices.aio.operations.RaiTopicsOperations
-    :ivar rai_content_filters: RaiContentFiltersOperations operations
-    :vartype rai_content_filters:
-     azure.mgmt.cognitiveservices.aio.operations.RaiContentFiltersOperations
-    :ivar network_security_perimeter_configurations:
-     NetworkSecurityPerimeterConfigurationsOperations operations
-    :vartype network_security_perimeter_configurations:
-     azure.mgmt.cognitiveservices.aio.operations.NetworkSecurityPerimeterConfigurationsOperations
-    :ivar defender_for_ai_settings: DefenderForAISettingsOperations operations
-    :vartype defender_for_ai_settings:
-     azure.mgmt.cognitiveservices.aio.operations.DefenderForAISettingsOperations
-    :ivar projects: ProjectsOperations operations
-    :vartype projects: azure.mgmt.cognitiveservices.aio.operations.ProjectsOperations
-    :ivar account_connections: AccountConnectionsOperations operations
-    :vartype account_connections:
-     azure.mgmt.cognitiveservices.aio.operations.AccountConnectionsOperations
-    :ivar project_connections: ProjectConnectionsOperations operations
-    :vartype project_connections:
-     azure.mgmt.cognitiveservices.aio.operations.ProjectConnectionsOperations
-    :ivar account_capability_hosts: AccountCapabilityHostsOperations operations
-    :vartype account_capability_hosts:
-     azure.mgmt.cognitiveservices.aio.operations.AccountCapabilityHostsOperations
-    :ivar project_capability_hosts: ProjectCapabilityHostsOperations operations
-    :vartype project_capability_hosts:
-     azure.mgmt.cognitiveservices.aio.operations.ProjectCapabilityHostsOperations
-    :ivar quota_tiers: QuotaTiersOperations operations
-    :vartype quota_tiers: azure.mgmt.cognitiveservices.aio.operations.QuotaTiersOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.
@@ -141,7 +75,7 @@ class CognitiveServicesManagementClient(
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: Api Version. Default value is "2025-09-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2022-12-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -201,16 +135,8 @@ class CognitiveServicesManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.resource_skus = ResourceSkusOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.commitment_tiers = CommitmentTiersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.models = ModelsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.location_based_model_capacities = LocationBasedModelCapacitiesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.model_capacities = ModelCapacitiesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
@@ -223,38 +149,6 @@ class CognitiveServicesManagementClient(
         self.commitment_plans = CommitmentPlansOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.encryption_scopes = EncryptionScopesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.rai_policies = RaiPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.rai_blocklists = RaiBlocklistsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.rai_blocklist_items = RaiBlocklistItemsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.rai_topics = RaiTopicsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.rai_content_filters = RaiContentFiltersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.network_security_perimeter_configurations = NetworkSecurityPerimeterConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.defender_for_ai_settings = DefenderForAISettingsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.projects = ProjectsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.account_connections = AccountConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.project_connections = ProjectConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.account_capability_hosts = AccountCapabilityHostsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.project_capability_hosts = ProjectCapabilityHostsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.quota_tiers = QuotaTiersOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

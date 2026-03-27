@@ -27,7 +27,6 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._utils.utils import ClientMixinABC
 from ...operations._cognitive_services_management_client_operations import (
-    build_calculate_model_capacity_request,
     build_check_domain_availability_request,
     build_check_sku_availability_request,
 )
@@ -52,7 +51,7 @@ class _CognitiveServicesManagementClientOperationsMixin(
         :type location: str
         :param skus: The SKU of the resource. Required.
         :type skus: list[str]
-        :param kind: The kind (type) of cognitive service account. Required.
+        :param kind: The Kind of the resource. Required.
         :type kind: str
         :param type: The Type of the resource. Required.
         :type type: str
@@ -98,7 +97,10 @@ class _CognitiveServicesManagementClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SkuAvailabilityListResult", pipeline_response.http_response)
@@ -161,77 +163,13 @@ class _CognitiveServicesManagementClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("DomainAvailability", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def calculate_model_capacity(
-        self,
-        model: Optional[_models.DeploymentModel] = None,
-        sku_name: Optional[str] = None,
-        workloads: Optional[List[_models.ModelCapacityCalculatorWorkload]] = None,
-        **kwargs: Any
-    ) -> _models.CalculateModelCapacityResult:
-        """Model capacity calculator.
-
-        :param model: Properties of Cognitive Services account deployment model. Default value is None.
-        :type model: ~azure.mgmt.cognitiveservices.models.DeploymentModel
-        :param sku_name: The name of SKU. Default value is None.
-        :type sku_name: str
-        :param workloads: List of Model Capacity Calculator Workload. Default value is None.
-        :type workloads: list[~azure.mgmt.cognitiveservices.models.ModelCapacityCalculatorWorkload]
-        :return: CalculateModelCapacityResult or the result of cls(response)
-        :rtype: ~azure.mgmt.cognitiveservices.models.CalculateModelCapacityResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
-        cls: ClsType[_models.CalculateModelCapacityResult] = kwargs.pop("cls", None)
-
-        _parameters = _models.CalculateModelCapacityParameter(model=model, sku_name=sku_name, workloads=workloads)
-        _json = self._serialize.body(_parameters, "CalculateModelCapacityParameter")
-
-        _request = build_calculate_model_capacity_request(
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("CalculateModelCapacityResult", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

@@ -28,7 +28,7 @@ from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
 def main():
     client = CognitiveServicesManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-1111-2222-3333-444444444444",
+        subscription_id="subscriptionId",
     )
 
     client.commitment_plans.begin_delete(
@@ -38,6 +38,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2025-09-01/examples/DeleteCommitmentPlan.json
+# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2022-12-01/examples/DeleteCommitmentPlan.json
 if __name__ == "__main__":
     main()

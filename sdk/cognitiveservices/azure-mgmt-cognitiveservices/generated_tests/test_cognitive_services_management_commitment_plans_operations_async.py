@@ -25,7 +25,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperationsAsync(AzureMgmtRec
         response = self.client.commitment_plans.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-09-01",
+            api_version="2022-12-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperationsAsync(AzureMgmtRec
             resource_group_name=resource_group.name,
             account_name="str",
             commitment_plan_name="str",
-            api_version="2025-09-01",
+            api_version="2022-12-01",
         )
 
         # please add some check logic here by yourself
@@ -83,7 +83,6 @@ class TestCognitiveServicesManagementCommitmentPlansOperationsAsync(AzureMgmtRec
                         "tier": "str",
                     },
                     "planType": "str",
-                    "provisioningIssues": ["str"],
                     "provisioningState": "str",
                 },
                 "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
@@ -98,7 +97,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperationsAsync(AzureMgmtRec
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-09-01",
+            api_version="2022-12-01",
         )
 
         # please add some check logic here by yourself
@@ -112,7 +111,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperationsAsync(AzureMgmtRec
                 resource_group_name=resource_group.name,
                 account_name="str",
                 commitment_plan_name="str",
-                api_version="2025-09-01",
+                api_version="2022-12-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -158,7 +157,6 @@ class TestCognitiveServicesManagementCommitmentPlansOperationsAsync(AzureMgmtRec
                             "tier": "str",
                         },
                         "planType": "str",
-                        "provisioningIssues": ["str"],
                         "provisioningState": "str",
                     },
                     "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
@@ -173,7 +171,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperationsAsync(AzureMgmtRec
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-09-01",
+                api_version="2022-12-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -191,7 +189,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperationsAsync(AzureMgmtRec
                     "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
                     "tags": {"str": "str"},
                 },
-                api_version="2025-09-01",
+                api_version="2022-12-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -205,7 +203,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperationsAsync(AzureMgmtRec
             await self.client.commitment_plans.begin_delete_plan(
                 resource_group_name=resource_group.name,
                 commitment_plan_name="str",
-                api_version="2025-09-01",
+                api_version="2022-12-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -218,7 +216,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperationsAsync(AzureMgmtRec
         response = await self.client.commitment_plans.get_plan(
             resource_group_name=resource_group.name,
             commitment_plan_name="str",
-            api_version="2025-09-01",
+            api_version="2022-12-01",
         )
 
         # please add some check logic here by yourself
@@ -229,7 +227,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperationsAsync(AzureMgmtRec
     async def test_commitment_plans_list_plans_by_resource_group(self, resource_group):
         response = self.client.commitment_plans.list_plans_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-09-01",
+            api_version="2022-12-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -239,7 +237,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperationsAsync(AzureMgmtRec
     @recorded_by_proxy_async
     async def test_commitment_plans_list_plans_by_subscription(self, resource_group):
         response = self.client.commitment_plans.list_plans_by_subscription(
-            api_version="2025-09-01",
+            api_version="2022-12-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -251,7 +249,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperationsAsync(AzureMgmtRec
         response = self.client.commitment_plans.list_associations(
             resource_group_name=resource_group.name,
             commitment_plan_name="str",
-            api_version="2025-09-01",
+            api_version="2022-12-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -264,7 +262,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperationsAsync(AzureMgmtRec
             resource_group_name=resource_group.name,
             commitment_plan_name="str",
             commitment_plan_association_name="str",
-            api_version="2025-09-01",
+            api_version="2022-12-01",
         )
 
         # please add some check logic here by yourself
@@ -291,10 +289,9 @@ class TestCognitiveServicesManagementCommitmentPlansOperationsAsync(AzureMgmtRec
                         "lastModifiedBy": "str",
                         "lastModifiedByType": "str",
                     },
-                    "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-09-01",
+                api_version="2022-12-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -309,7 +306,7 @@ class TestCognitiveServicesManagementCommitmentPlansOperationsAsync(AzureMgmtRec
                 resource_group_name=resource_group.name,
                 commitment_plan_name="str",
                 commitment_plan_association_name="str",
-                api_version="2025-09-01",
+                api_version="2022-12-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

@@ -27,7 +27,7 @@ class TestCognitiveServicesManagementAsync(AzureMgmtRecordedTestCase):
             skus=["str"],
             kind="str",
             type="str",
-            api_version="2025-09-01",
+            api_version="2022-12-01",
         )
 
         # please add some check logic here by yourself
@@ -39,17 +39,7 @@ class TestCognitiveServicesManagementAsync(AzureMgmtRecordedTestCase):
         response = await self.client.check_domain_availability(
             subdomain_name="str",
             type="str",
-            api_version="2025-09-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_calculate_model_capacity(self, resource_group):
-        response = await self.client.calculate_model_capacity(
-            api_version="2025-09-01",
+            api_version="2022-12-01",
         )
 
         # please add some check logic here by yourself
