@@ -23,7 +23,7 @@ def api_version_validation(**kwargs):
         :rtype: int
         """
         try:
-            return api_versions_list.index(value)
+            return int(api_versions_list.index(value))
         except ValueError:
             return default
 

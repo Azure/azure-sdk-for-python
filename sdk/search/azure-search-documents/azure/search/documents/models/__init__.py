@@ -55,7 +55,6 @@ from ._models import (  # type: ignore
 )
 
 from ._enums import (  # type: ignore
-    AutocompleteMode,
     HybridCountAndFacetMode,
     IndexActionType,
     QueryAnswerType,
@@ -83,7 +82,6 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AutocompleteItem",
-    "AutocompleteMode",
     "DebugInfo",
     "DocumentDebugInfo",
     "ErrorAdditionalInfo",

@@ -821,7 +821,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         search_text: str,
         suggester_name: str,
         *,
-        mode: Optional[Union[str, _models.AutocompleteMode]] = None,
+        mode: Optional[Union[str, _models._enums.AutocompleteMode]] = None,
         filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,
