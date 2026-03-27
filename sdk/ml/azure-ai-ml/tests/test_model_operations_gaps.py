@@ -32,11 +32,10 @@ class TestModelOperationsGaps(AzureRecordedTestCase):
         assert created.name == name
         assert created.version == "1"
 
-        # Now attempt to create a model with the evaluator property set; should raise because previous version is regular
+        # Now attempt to create a model with evaluator properties set; should raise because previous version is regular
         evaluator_model = Model(name=name, version="2", path=str(model_path))
-        # properties key used by ModelOperations to mark evaluator is "__is_evaluator"
-        # use boolean value matching how the service represents evaluator flag
-        evaluator_model.properties = {"__is_evaluator": True}
+        # _is_evaluator() checks for both "is-evaluator" == "true" and "is-promptflow" == "true"
+        evaluator_model.properties = {"is-evaluator": "true", "is-promptflow": "true"}
 
         with pytest.raises(ValidationException):
             client.models.create_or_update(evaluator_model)
@@ -48,7 +47,8 @@ class TestModelOperationsGaps(AzureRecordedTestCase):
         model_path.write_text("hello world")
 
         evaluator_only = Model(name=name, version="1", path=str(model_path))
-        evaluator_only.properties = {"__is_evaluator": True}
+        # _is_evaluator() checks for both "is-evaluator" == "true" and "is-promptflow" == "true"
+        evaluator_only.properties = {"is-evaluator": "true", "is-promptflow": "true"}
 
         with pytest.raises(ValidationException):
             client.models.create_or_update(evaluator_only)

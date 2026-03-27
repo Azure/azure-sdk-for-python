@@ -19,15 +19,13 @@ class TestScheduleGaps(AzureRecordedTestCase):
         test_path = "./tests/test_configs/schedule/hello_cron_schedule_with_file_reference.yml"
         schedule = load_schedule(test_path, params_override=params_override)
 
-        # ensure cron end_time is in the future to avoid service validation errors
+        # update start_time and end_time to valid ranges (service rejects Z-suffix and past dates)
         if getattr(schedule, "trigger", None) is not None:
             try:
-                # use a service-compatible ISO8601 format with trailing Z (no offset) and no microseconds
-                schedule.trigger.end_time = (
-                    (datetime.now(timezone.utc) + timedelta(days=365)).replace(microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ")
-                )
+                now = datetime.now(timezone.utc)
+                schedule.trigger.start_time = (now - timedelta(days=1)).replace(microsecond=0).strftime("%Y-%m-%dT%H:%M:%S")
+                schedule.trigger.end_time = (now + timedelta(days=365)).replace(microsecond=0).strftime("%Y-%m-%dT%H:%M:%S")
             except Exception:
-                # if the trigger does not support setting end_time as a datetime/string, ignore
                 pass
 
         # create
@@ -65,13 +63,12 @@ class TestScheduleGaps(AzureRecordedTestCase):
         test_path = "./tests/test_configs/schedule/hello_cron_schedule_with_file_reference.yml"
         schedule = load_schedule(test_path, params_override=params_override)
 
-        # ensure cron end_time is in the future to avoid service validation errors
+        # update start_time and end_time to valid ranges (service rejects Z-suffix and past dates)
         if getattr(schedule, "trigger", None) is not None:
             try:
-                # use a service-compatible ISO8601 format with trailing Z (no offset) and no microseconds
-                schedule.trigger.end_time = (
-                    (datetime.now(timezone.utc) + timedelta(days=365)).replace(microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ")
-                )
+                now = datetime.now(timezone.utc)
+                schedule.trigger.start_time = (now - timedelta(days=1)).replace(microsecond=0).strftime("%Y-%m-%dT%H:%M:%S")
+                schedule.trigger.end_time = (now + timedelta(days=365)).replace(microsecond=0).strftime("%Y-%m-%dT%H:%M:%S")
             except Exception:
                 pass
 
