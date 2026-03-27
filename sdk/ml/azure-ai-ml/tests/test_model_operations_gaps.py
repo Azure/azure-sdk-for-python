@@ -1,4 +1,3 @@
-import uuid
 from pathlib import Path
 from typing import Callable
 
@@ -8,12 +7,6 @@ from devtools_testutils import AzureRecordedTestCase
 from azure.ai.ml import MLClient
 from azure.ai.ml.entities._assets import Model
 from azure.ai.ml.exceptions import ValidationException
-
-
-@pytest.fixture
-def uuid_name() -> str:
-    name = str(uuid.uuid1())
-    yield name
 
 
 @pytest.mark.e2etest

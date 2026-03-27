@@ -1,4 +1,3 @@
-import uuid
 from typing import Callable
 from pathlib import Path
 
@@ -16,13 +15,13 @@ from azure.ai.ml.exceptions import ValidationException
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestBatchDeploymentGaps(AzureRecordedTestCase):
-    def test_begin_create_or_update_invalid_scoring_script_raises(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_begin_create_or_update_invalid_scoring_script_raises(self, client: MLClient, randstr: Callable[[], str], rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]) -> None:
         # This test triggers the validate_scoring_script branch by providing a deployment
         # whose code configuration points to a local script path that does not exist.
         # The call should raise an exception from validation before attempting REST calls.
         deployment_yaml = "./tests/test_configs/deployments/batch/batch_deployment_quick.yaml"
-        name = "batch-dpm-" + uuid.uuid4().hex[:15]
-        endpoint_name = "batch-ept-" + uuid.uuid4().hex[:15]
+        name = rand_batch_deployment_name("deploy_name")
+        endpoint_name = rand_batch_name("endpoint_name")
 
         deployment = load_batch_deployment(deployment_yaml)
         deployment.name = name
@@ -36,7 +35,7 @@ class TestBatchDeploymentGaps(AzureRecordedTestCase):
             # If it doesn't raise immediately, wait on poller to surface errors
             poller.result()
 
-    def test_validate_component_handles_missing_registered_component_and_creates(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_validate_component_handles_missing_registered_component_and_creates(self, client: MLClient, randstr: Callable[[], str], rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]) -> None:
         # This test exercises _validate_component branch where deployment.component is a PipelineComponent
         # and the registered component is not found; the operations should attempt to create one.
         # We build a deployment from YAML and set its component to an inline PipelineComponent.
@@ -45,11 +44,11 @@ class TestBatchDeploymentGaps(AzureRecordedTestCase):
 
         endpoint = load_batch_endpoint(endpoint_yaml)
         # Ensure endpoint name meets validation: starts with a letter and contains only alphanumerics and '-'
-        endpoint.name = "ept-" + uuid.uuid4().hex[:15]
+        endpoint.name = rand_batch_name("endpoint_name2")
 
         deployment = load_batch_deployment(deployment_yaml)
         # Ensure deployment name meets validation rules as well
-        deployment.name = "dpm-" + uuid.uuid4().hex[:15]
+        deployment.name = rand_batch_deployment_name("deploy_name2")
         deployment.endpoint_name = endpoint.name
 
         # Replace deployment.component with an anonymous PipelineComponent-like object

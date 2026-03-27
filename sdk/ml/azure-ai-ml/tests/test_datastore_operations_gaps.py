@@ -2,7 +2,7 @@ from typing import Callable
 
 import os
 import pytest
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.exceptions import MlException
@@ -26,6 +26,7 @@ class TestDatastoreMount(AzureRecordedTestCase):
             client.datastores.mount(random_name, persistent=True, mount_point="/tmp/mount")
         assert "persistent mount is only supported on Compute Instance" in str(ex.value)
 
+    @pytest.mark.skipif(condition=not is_live(), reason="Requires real credential (not FakeTokenCredential)")
     def test_mount_without_dataprep_raises_mlexception(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         random_name = randstr("datastore")
         # With valid mode and non-persistent, the code will attempt to import azureml.dataprep.

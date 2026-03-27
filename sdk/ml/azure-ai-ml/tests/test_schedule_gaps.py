@@ -2,7 +2,6 @@ from typing import Callable
 
 import pytest
 from devtools_testutils import AzureRecordedTestCase
-from datetime import datetime, timezone, timedelta
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.constants._common import LROConfigurations
@@ -20,12 +19,11 @@ class TestScheduleGaps(AzureRecordedTestCase):
         test_path = "./tests/test_configs/schedule/hello_cron_schedule_with_file_reference.yml"
         schedule = load_schedule(test_path, params_override=params_override)
 
-        # update start_time and end_time to valid ranges (service rejects Z-suffix and past dates)
+        # use hardcoded far-future dates to ensure deterministic playback
         if getattr(schedule, "trigger", None) is not None:
             try:
-                now = datetime.now(timezone.utc)
-                schedule.trigger.start_time = (now - timedelta(days=1)).replace(microsecond=0).strftime("%Y-%m-%dT%H:%M:%S")
-                schedule.trigger.end_time = (now + timedelta(days=365)).replace(microsecond=0).strftime("%Y-%m-%dT%H:%M:%S")
+                schedule.trigger.start_time = "2026-01-01T00:00:00"
+                schedule.trigger.end_time = "2099-01-01T00:00:00"
             except Exception:
                 pass
 
@@ -63,12 +61,11 @@ class TestScheduleGaps(AzureRecordedTestCase):
         test_path = "./tests/test_configs/schedule/hello_cron_schedule_with_file_reference.yml"
         schedule = load_schedule(test_path, params_override=params_override)
 
-        # update start_time and end_time to valid ranges (service rejects Z-suffix and past dates)
+        # use hardcoded far-future dates to ensure deterministic playback
         if getattr(schedule, "trigger", None) is not None:
             try:
-                now = datetime.now(timezone.utc)
-                schedule.trigger.start_time = (now - timedelta(days=1)).replace(microsecond=0).strftime("%Y-%m-%dT%H:%M:%S")
-                schedule.trigger.end_time = (now + timedelta(days=365)).replace(microsecond=0).strftime("%Y-%m-%dT%H:%M:%S")
+                schedule.trigger.start_time = "2026-01-01T00:00:00"
+                schedule.trigger.end_time = "2099-01-01T00:00:00"
             except Exception:
                 pass
 

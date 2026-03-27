@@ -1,9 +1,8 @@
 import json
 from typing import Callable
-import uuid
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import load_online_endpoint
 from azure.ai.ml._ml_client import MLClient
@@ -25,9 +24,9 @@ class _ConcreteOnlineEndpoint(OnlineEndpoint):
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestOnlineEndpointOperationsGaps(AzureRecordedTestCase):
-    def test_begin_regenerate_keys_raises_for_non_key_auth(self, client: MLClient, randstr: Callable[[], str], tmp_path) -> None:
+    def test_begin_regenerate_keys_raises_for_non_key_auth(self, client: MLClient, rand_online_name: Callable[[str], str], tmp_path) -> None:
         # Create an endpoint configured to use AAD token auth so that begin_regenerate_keys raises ValidationException
-        endpoint_name = "e" + uuid.uuid4().hex[:8]
+        endpoint_name = rand_online_name("endpoint_name_regen")
         try:
             # create a minimal endpoint object configured for AAD token auth
             endpoint = _ConcreteOnlineEndpoint(name=endpoint_name)
@@ -43,9 +42,9 @@ class TestOnlineEndpointOperationsGaps(AzureRecordedTestCase):
             # Clean up
             client.online_endpoints.begin_delete(name=endpoint_name).result()
 
-    def test_begin_regenerate_keys_invalid_key_type_raises(self, client: MLClient, randstr: Callable[[], str], tmp_path) -> None:
+    def test_begin_regenerate_keys_invalid_key_type_raises(self, client: MLClient, rand_online_name: Callable[[str], str], tmp_path) -> None:
         # Create an endpoint that uses keys so we can exercise invalid key_type validation in _regenerate_online_keys
-        endpoint_name = "e" + uuid.uuid4().hex[:8]
+        endpoint_name = rand_online_name("endpoint_name_invalid_key")
         try:
             endpoint = _ConcreteOnlineEndpoint(name=endpoint_name)
             endpoint.auth_mode = "key"
@@ -58,9 +57,9 @@ class TestOnlineEndpointOperationsGaps(AzureRecordedTestCase):
         finally:
             client.online_endpoints.begin_delete(name=endpoint_name).result()
 
-    def test_invoke_with_nonexistent_deployment_raises(self, client: MLClient, randstr: Callable[[], str], tmp_path) -> None:
+    def test_invoke_with_nonexistent_deployment_raises(self, client: MLClient, rand_online_name: Callable[[str], str], tmp_path) -> None:
         # Create a simple endpoint with no deployments, then attempt to invoke with a deployment_name that doesn't exist
-        endpoint_name = "e" + uuid.uuid4().hex[:8]
+        endpoint_name = rand_online_name("endpoint_name_invoke")
         request_file = tmp_path / "req.json"
         request_file.write_text(json.dumps({"input": [1, 2, 3]}))
         try:
@@ -78,9 +77,10 @@ class TestOnlineEndpointOperationsGaps(AzureRecordedTestCase):
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test", "mock_asset_name", "mock_component_hash")
 class TestOnlineEndpointGaps(AzureRecordedTestCase):
+    @pytest.mark.skipif(condition=not is_live(), reason="Key regeneration produces non-deterministic values")
     def test_begin_regenerate_keys_behaves_based_on_auth_mode(
         self,
-        randstr: Callable[[], str],
+        rand_online_name: Callable[[str], str],
         client: MLClient,
     ) -> None:
         """
@@ -88,7 +88,7 @@ class TestOnlineEndpointGaps(AzureRecordedTestCase):
         or raises ValidationException for non-key-auth endpoints.
         """
         # Use a name that satisfies endpoint naming validation (start with a letter, alphanumeric and '-')
-        endpoint_name = "e" + uuid.uuid4().hex[:8]
+        endpoint_name = rand_online_name("endpoint_name_auth")
         # Create a minimal endpoint; set auth_mode to 'key' to exercise regeneration path
         endpoint = _ConcreteOnlineEndpoint(name=endpoint_name)
         endpoint.auth_mode = "key"
@@ -117,7 +117,7 @@ class TestOnlineEndpointGaps(AzureRecordedTestCase):
 
     def test_regenerate_keys_with_invalid_key_type_raises(
         self,
-        randstr: Callable[[], str],
+        rand_online_name: Callable[[str], str],
         client: MLClient,
     ) -> None:
         """
@@ -125,7 +125,7 @@ class TestOnlineEndpointGaps(AzureRecordedTestCase):
         If endpoint is not key-authenticated, the test will skip since the invalid-key-type path is only reachable
         for key-auth endpoints.
         """
-        endpoint_name = "e" + uuid.uuid4().hex[:8]
+        endpoint_name = rand_online_name("endpoint_name_invalid_key2")
         endpoint = _ConcreteOnlineEndpoint(name=endpoint_name)
         endpoint.auth_mode = "key"
         try:
@@ -143,14 +143,14 @@ class TestOnlineEndpointGaps(AzureRecordedTestCase):
 
     def test_invoke_with_nonexistent_deployment_raises_random_name(
         self,
-        randstr: Callable[[], str],
+        rand_online_name: Callable[[str], str],
         client: MLClient,
         tmp_path,
     ) -> None:
         """
         Covers validation in invoke that raises when a specified deployment_name does not exist for the endpoint.
         """
-        endpoint_name = "e" + uuid.uuid4().hex[:8]
+        endpoint_name = rand_online_name("endpoint_name_invoke2")
         endpoint = _ConcreteOnlineEndpoint(name=endpoint_name)
         endpoint.auth_mode = "key"
         request_file = tmp_path / "req.json"
@@ -159,7 +159,7 @@ class TestOnlineEndpointGaps(AzureRecordedTestCase):
             client.online_endpoints.begin_create_or_update(endpoint=endpoint).result()
 
             # Pick a random deployment name that is unlikely to exist
-            bad_deployment = f"nonexistent-{randstr('endpoint')}"
+            bad_deployment = "nonexistent-deployment"
 
             # Attempt to invoke with a deployment_name that does not exist should raise ValidationException
             with pytest.raises(ValidationException):

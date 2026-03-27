@@ -1,6 +1,6 @@
 import pytest
 from typing import Callable
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.entities import PipelineJob, Job
@@ -64,6 +64,7 @@ class TestJobOperationsGaps(AzureRecordedTestCase):
         assert result is None
 
     @pytest.mark.e2etest
+    @pytest.mark.skipif(condition=not is_live(), reason="JWT token decoding requires real credentials")
     def test_set_headers_with_user_aml_token_raises_when_aud_mismatch(
         self, client: MLClient, randstr: Callable[[], str]
     ) -> None:
@@ -99,10 +100,11 @@ class TestJobOperationsGaps(AzureRecordedTestCase):
 @pytest.mark.usefixtures("recorded_test")
 class TestJobOperationsGaps2(AzureRecordedTestCase):
     @pytest.mark.e2etest
+    @pytest.mark.skipif(condition=not is_live(), reason="JWT token decoding requires real credentials")
     def test_create_or_update_pipeline_job_triggers_aml_token_validation(self, client: MLClient, randstr: Callable[[], str]) -> None:
         # Construct a minimal PipelineJob to force the code path that sets headers with user aml token
         pj_name = f"e2etest_{randstr('pj')}_headers"
-        pj = PipelineJob(name=pj_name)
+        pj = PipelineJob(name=pj_name, experiment_name="test_experiment")
         # Pipeline jobs exercise the branch where _set_headers_with_user_aml_token is invoked.
         # In many environments the token audience will not match aml resource id, causing a ValidationException.
         try:
@@ -114,10 +116,11 @@ class TestJobOperationsGaps2(AzureRecordedTestCase):
             assert isinstance(result, Job)
 
     @pytest.mark.e2etest
+    @pytest.mark.skipif(condition=not is_live(), reason="JWT token decoding requires real credentials")
     def test_validate_pipeline_job_headers_on_create_or_update_raises(self, client: MLClient, randstr: Callable[[], str]) -> None:
         # Another variation to ensure create_or_update attempts to set user aml token headers for pipeline jobs
         pj_name = f"e2etest_{randstr('pj')}_headers2"
-        pj = PipelineJob(name=pj_name)
+        pj = PipelineJob(name=pj_name, experiment_name="test_experiment")
         try:
             result = client.jobs.create_or_update(pj, skip_validation=False)
         except ValidationException:
