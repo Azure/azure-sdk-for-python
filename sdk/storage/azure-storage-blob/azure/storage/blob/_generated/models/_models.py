@@ -161,10 +161,10 @@ class BlobFlatListSegment(_Model):
     """The blob flat list segment.
 
     :ivar blob_items: The blob items. Required.
-    :vartype blob_items: ~azure.storage.blob._generated.models.BlobItem
+    :vartype blob_items: ~azure.storage.blob._generated.models.BlobItemInternal
     """
 
-    blob_items: list["_models.BlobItem"] = rest_field(
+    blob_items: list["_models.BlobItemInternal"] = rest_field(
         name="blobItems",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "itemsName": "Blob", "name": "Blob", "text": False, "unwrapped": True},
@@ -177,7 +177,7 @@ class BlobFlatListSegment(_Model):
     def __init__(
         self,
         *,
-        blob_items: list["_models.BlobItem"],
+        blob_items: list["_models.BlobItemInternal"],
     ) -> None: ...
 
     @overload
@@ -195,12 +195,12 @@ class BlobHierarchyListSegment(_Model):
     """Represents an array of blobs.
 
     :ivar blob_items: The blob items. Required.
-    :vartype blob_items: ~azure.storage.blob._generated.models.BlobItem
+    :vartype blob_items: ~azure.storage.blob._generated.models.BlobItemInternal
     :ivar blob_prefixes: The blob prefixes.
     :vartype blob_prefixes: ~azure.storage.blob._generated.models.BlobPrefix
     """
 
-    blob_items: list["_models.BlobItem"] = rest_field(
+    blob_items: list["_models.BlobItemInternal"] = rest_field(
         name="blobItems",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "itemsName": "Blob", "name": "Blob", "text": False, "unwrapped": True},
@@ -219,7 +219,7 @@ class BlobHierarchyListSegment(_Model):
     def __init__(
         self,
         *,
-        blob_items: list["_models.BlobItem"],
+        blob_items: list["_models.BlobItemInternal"],
         blob_prefixes: Optional[list["_models.BlobPrefix"]] = None,
     ) -> None: ...
 
@@ -234,7 +234,7 @@ class BlobHierarchyListSegment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BlobItem(_Model):
+class BlobItemInternal(_Model):
     """An Azure Storage Blob.
 
     :ivar name: The name of the blob. Required.
