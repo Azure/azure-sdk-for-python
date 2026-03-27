@@ -2,7 +2,319 @@
 
 ## 14.2.0b1 (2026-03-27)
 
-skip changelog generation
+### Features Added
+
+  - Client `CognitiveServicesManagementClient` added method `calculate_model_capacity`
+  - Client `CognitiveServicesManagementClient` added method `send_request`
+  - Client `CognitiveServicesManagementClient` added operation group `encryption_scopes`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_policies`
+  - Client `CognitiveServicesManagementClient` added operation group `subscription_rai_policy`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_blocklist_items`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_blocklists`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_topics`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_tool_labels`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_content_filters`
+  - Client `CognitiveServicesManagementClient` added operation group `network_security_perimeter_configurations`
+  - Client `CognitiveServicesManagementClient` added operation group `defender_for_ai_settings`
+  - Client `CognitiveServicesManagementClient` added operation group `projects`
+  - Client `CognitiveServicesManagementClient` added operation group `project_connections`
+  - Client `CognitiveServicesManagementClient` added operation group `project_capability_hosts`
+  - Client `CognitiveServicesManagementClient` added operation group `quota_tiers`
+  - Client `CognitiveServicesManagementClient` added operation group `agent_applications`
+  - Client `CognitiveServicesManagementClient` added operation group `compute_operations`
+  - Client `CognitiveServicesManagementClient` added operation group `test_rai_external_safety_provider`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_external_safety_provider`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_external_safety_providers`
+  - Client `CognitiveServicesManagementClient` added operation group `account_connections`
+  - Client `CognitiveServicesManagementClient` added operation group `account_capability_hosts`
+  - Client `CognitiveServicesManagementClient` added operation group `outbound_rule`
+  - Client `CognitiveServicesManagementClient` added operation group `managed_network_settings`
+  - Client `CognitiveServicesManagementClient` added operation group `outbound_rules`
+  - Client `CognitiveServicesManagementClient` added operation group `managed_network_provisions`
+  - Client `CognitiveServicesManagementClient` added operation group `agent_deployments`
+  - Client `CognitiveServicesManagementClient` added operation group `usages`
+  - Client `CognitiveServicesManagementClient` added operation group `models`
+  - Client `CognitiveServicesManagementClient` added operation group `location_based_model_capacities`
+  - Client `CognitiveServicesManagementClient` added operation group `model_capacities`
+  - Model `AccountModel` added property `is_default_version`
+  - Model `AccountModel` added property `skus`
+  - Model `AccountModel` added property `replacement_config`
+  - Model `AccountModel` added property `model_catalog_asset_id`
+  - Model `AccountModel` added property `publisher`
+  - Model `AccountModel` added property `source`
+  - Model `AccountModel` added property `source_account`
+  - Model `AccountProperties` added property `aml_workspace`
+  - Model `AccountProperties` added property `stored_completions_disabled`
+  - Model `AccountProperties` added property `abuse_penalty`
+  - Model `AccountProperties` added property `rai_monitor_config`
+  - Model `AccountProperties` added property `network_injections`
+  - Model `AccountProperties` added property `foundry_auto_upgrade`
+  - Model `AccountProperties` added property `allow_project_management`
+  - Model `AccountProperties` added property `default_project`
+  - Model `AccountProperties` added property `associated_projects`
+  - Model `CommitmentPlanAccountAssociation` added property `tags`
+  - Model `CommitmentPlanProperties` added property `provisioning_issues`
+  - Model `Deployment` added property `sku`
+  - Model `Deployment` added property `tags`
+  - Model `DeploymentModel` added property `publisher`
+  - Model `DeploymentModel` added property `source`
+  - Model `DeploymentModel` added property `source_account`
+  - Model `DeploymentProperties` added property `rate_limits`
+  - Model `DeploymentProperties` added property `version_upgrade_option`
+  - Model `DeploymentProperties` added property `dynamic_throttling_enabled`
+  - Model `DeploymentProperties` added property `current_capacity`
+  - Model `DeploymentProperties` added property `capacity_settings`
+  - Model `DeploymentProperties` added property `parent_deployment_name`
+  - Model `DeploymentProperties` added property `spillover_deployment_name`
+  - Model `DeploymentProperties` added property `service_tier`
+  - Model `DeploymentProperties` added property `deployment_state`
+  - Model `DeploymentProperties` added property `routing`
+  - Enum `DeploymentProvisioningState` added member `CANCELED`
+  - Enum `DeploymentProvisioningState` added member `DISABLED`
+  - Enum `HostingModel` added member `PROVISIONED_WEB`
+  - Model `ModelDeprecationInfo` added property `deprecation_status`
+  - Enum `ModelLifecycleStatus` added member `DEPRECATED`
+  - Enum `ModelLifecycleStatus` added member `DEPRECATING`
+  - Enum `ModelLifecycleStatus` added member `LEGACY`
+  - Enum `ModelLifecycleStatus` added member `STABLE`
+  - Model `NetworkRuleSet` added property `bypass`
+  - Model `PrivateLinkResource` added property `system_data`
+  - Enum `ProvisioningState` added member `CANCELED`
+  - Model `ProxyResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `ResourceSkuRestrictions` added property `values_property`
+  - Model `Usage` added property `scope_type`
+  - Model `Usage` added property `scope_id`
+  - Model `UsageListResult` added property `next_link`
+  - Added model `AADAuthTypeConnectionProperties`
+  - Added model `AbusePenalty`
+  - Added enum `AbusePenaltyAction`
+  - Added model `AccessKeyAuthTypeConnectionProperties`
+  - Added model `AccountKeyAuthTypeConnectionProperties`
+  - Added model `AgentApplication`
+  - Added model `AgentDeployment`
+  - Added model `AgentDeploymentProperties`
+  - Added enum `AgentDeploymentProvisioningState`
+  - Added enum `AgentDeploymentState`
+  - Added enum `AgentDeploymentType`
+  - Added enum `AgentProtocol`
+  - Added model `AgentProtocolVersion`
+  - Added model `AgentReference`
+  - Added model `AgentReferenceProperties`
+  - Added model `AgentReferenceResourceArmPaginatedResult`
+  - Added model `AgenticApplicationProperties`
+  - Added enum `AgenticApplicationProvisioningState`
+  - Added model `ApiKeyAuthConnectionProperties`
+  - Added model `ApplicationAuthorizationPolicy`
+  - Added model `ApplicationTrafficRoutingPolicy`
+  - Added model `AssignedIdentity`
+  - Added model `BillingMeterInfo`
+  - Added enum `BuiltInAuthorizationScheme`
+  - Added enum `ByPassSelection`
+  - Added model `CalculateModelCapacityParameter`
+  - Added model `CalculateModelCapacityResult`
+  - Added model `CalculateModelCapacityResultEstimatedCapacity`
+  - Added model `CapabilityHost`
+  - Added enum `CapabilityHostKind`
+  - Added model `CapabilityHostProperties`
+  - Added enum `CapabilityHostProvisioningState`
+  - Added model `CapacityConfig`
+  - Added model `ChannelsBuiltInAuthorizationPolicy`
+  - Added model `ComputeOperationStatus`
+  - Added model `ComputeOperationStatusProperties`
+  - Added enum `ComputeOperationStatusType`
+  - Added model `ConnectionAccessKey`
+  - Added model `ConnectionAccountKey`
+  - Added model `ConnectionApiKey`
+  - Added enum `ConnectionAuthType`
+  - Added enum `ConnectionCategory`
+  - Added enum `ConnectionGroup`
+  - Added model `ConnectionManagedIdentity`
+  - Added model `ConnectionOAuth2`
+  - Added model `ConnectionPersonalAccessToken`
+  - Added model `ConnectionPropertiesV2`
+  - Added model `ConnectionPropertiesV2BasicResource`
+  - Added model `ConnectionServicePrincipal`
+  - Added model `ConnectionSharedAccessSignature`
+  - Added model `ConnectionUpdateContent`
+  - Added model `ConnectionUsernamePassword`
+  - Added enum `ContentLevel`
+  - Added model `CustomBlocklistConfig`
+  - Added model `CustomKeys`
+  - Added model `CustomKeysConnectionProperties`
+  - Added model `CustomTopicConfig`
+  - Added model `DefenderForAISetting`
+  - Added model `DefenderForAISettingProperties`
+  - Added enum `DefenderForAISettingState`
+  - Added model `DeploymentCapacitySettings`
+  - Added enum `DeploymentModelVersionUpgradeOption`
+  - Added model `DeploymentRouting`
+  - Added enum `DeploymentState`
+  - Added enum `DeprecationStatus`
+  - Added model `EncryptionScope`
+  - Added model `EncryptionScopeProperties`
+  - Added enum `EncryptionScopeProvisioningState`
+  - Added enum `EncryptionScopeState`
+  - Added enum `FirewallSku`
+  - Added model `FoundryAutoUpgrade`
+  - Added enum `FoundryAutoUpgradeMode`
+  - Added model `FqdnOutboundRule`
+  - Added model `HostedAgentDeployment`
+  - Added enum `IdentityKind`
+  - Added enum `IdentityManagementType`
+  - Added enum `IdentityProvisioningState`
+  - Added enum `IsolationMode`
+  - Added model `ManagedAgentDeployment`
+  - Added model `ManagedIdentityAuthTypeConnectionProperties`
+  - Added enum `ManagedNetworkKind`
+  - Added model `ManagedNetworkProvisionOptions`
+  - Added model `ManagedNetworkProvisionStatus`
+  - Added enum `ManagedNetworkProvisioningState`
+  - Added model `ManagedNetworkSettings`
+  - Added model `ManagedNetworkSettingsBasicResource`
+  - Added model `ManagedNetworkSettingsEx`
+  - Added model `ManagedNetworkSettingsProperties`
+  - Added model `ManagedNetworkSettingsPropertiesBasicResource`
+  - Added enum `ManagedNetworkStatus`
+  - Added enum `ManagedPERequirement`
+  - Added enum `ManagedPEStatus`
+  - Added model `Model`
+  - Added model `ModelCapacityCalculatorWorkload`
+  - Added model `ModelCapacityCalculatorWorkloadRequestParam`
+  - Added model `ModelCapacityListResultValueItem`
+  - Added model `ModelSku`
+  - Added model `ModelSkuCapacityProperties`
+  - Added model `NetworkInjection`
+  - Added model `NetworkSecurityPerimeter`
+  - Added model `NetworkSecurityPerimeterAccessRule`
+  - Added model `NetworkSecurityPerimeterAccessRuleProperties`
+  - Added model `NetworkSecurityPerimeterAccessRulePropertiesSubscriptionsItem`
+  - Added model `NetworkSecurityPerimeterConfiguration`
+  - Added model `NetworkSecurityPerimeterConfigurationAssociationInfo`
+  - Added model `NetworkSecurityPerimeterConfigurationProperties`
+  - Added model `NetworkSecurityPerimeterProfileInfo`
+  - Added model `NoneAuthTypeConnectionProperties`
+  - Added enum `NspAccessRuleDirection`
+  - Added model `OAuth2AuthTypeConnectionProperties`
+  - Added model `OrganizationSharedBuiltInAuthorizationPolicy`
+  - Added model `OutboundRule`
+  - Added model `OutboundRuleBasicResource`
+  - Added model `OutboundRuleListResult`
+  - Added model `PATAuthTypeConnectionProperties`
+  - Added model `PrivateEndpointOutboundRule`
+  - Added model `PrivateEndpointOutboundRuleDestination`
+  - Added model `Project`
+  - Added model `ProjectCapabilityHost`
+  - Added model `ProjectCapabilityHostProperties`
+  - Added model `ProjectProperties`
+  - Added model `ProvisioningIssue`
+  - Added model `ProvisioningIssueProperties`
+  - Added enum `QuotaScopeType`
+  - Added model `QuotaTier`
+  - Added model `QuotaTierProperties`
+  - Added model `QuotaTierUpgradeEligibilityInfo`
+  - Added enum `RaiActionType`
+  - Added model `RaiBlocklist`
+  - Added model `RaiBlocklistConfig`
+  - Added model `RaiBlocklistItem`
+  - Added model `RaiBlocklistItemBulkRequest`
+  - Added model `RaiBlocklistItemProperties`
+  - Added model `RaiBlocklistProperties`
+  - Added model `RaiContentFilter`
+  - Added model `RaiContentFilterProperties`
+  - Added model `RaiExternalSafetyProvider`
+  - Added model `RaiExternalSafetyProviderProperties`
+  - Added model `RaiExternalSafetyProviderSchema`
+  - Added model `RaiExternalSafetyProviderSchemaProperties`
+  - Added model `RaiMonitorConfig`
+  - Added model `RaiPolicy`
+  - Added model `RaiPolicyContentFilter`
+  - Added enum `RaiPolicyContentSource`
+  - Added enum `RaiPolicyMode`
+  - Added model `RaiPolicyProperties`
+  - Added enum `RaiPolicyType`
+  - Added model `RaiSafetyProviderConfig`
+  - Added model `RaiToolLabel`
+  - Added model `RaiToolLabelProperties`
+  - Added model `RaiToolLabelPropertiesAccountScope`
+  - Added model `RaiToolLabelPropertiesProjectScopesItem`
+  - Added model `RaiTopic`
+  - Added model `RaiTopicConfig`
+  - Added model `RaiTopicProperties`
+  - Added model `ReplacementConfig`
+  - Added model `ResourceBase`
+  - Added model `RoleBasedBuiltInAuthorizationPolicy`
+  - Added enum `RoutingMode`
+  - Added enum `RuleAction`
+  - Added enum `RuleCategory`
+  - Added enum `RuleStatus`
+  - Added enum `RuleType`
+  - Added model `SASAuthTypeConnectionProperties`
+  - Added model `SafetyProviderConfig`
+  - Added enum `ScenarioType`
+  - Added model `ServicePrincipalAuthTypeConnectionProperties`
+  - Added model `ServiceTagOutboundRule`
+  - Added model `ServiceTagOutboundRuleDestination`
+  - Added enum `ServiceTier`
+  - Added model `SkuResource`
+  - Added enum `TierUpgradePolicy`
+  - Added enum `TrafficRoutingProtocol`
+  - Added model `TrafficRoutingRule`
+  - Added enum `UpgradeAvailabilityStatus`
+  - Added model `UserOwnedAmlWorkspace`
+  - Added model `UsernamePasswordAuthTypeConnectionProperties`
+  - Added model `VersionedAgentReference`
+  - Model `DeploymentsOperations` added method `begin_update`
+  - Model `DeploymentsOperations` added method `list_skus`
+  - Model `DeploymentsOperations` added method `pause`
+  - Model `DeploymentsOperations` added method `resume`
+  - Added model `AccountCapabilityHostsOperations`
+  - Added model `AccountConnectionsOperations`
+  - Added model `AgentApplicationsOperations`
+  - Added model `AgentDeploymentsOperations`
+  - Added model `ComputeOperationsOperations`
+  - Added model `DefenderForAISettingsOperations`
+  - Added model `EncryptionScopesOperations`
+  - Added model `LocationBasedModelCapacitiesOperations`
+  - Added model `ManagedNetworkProvisionsOperations`
+  - Added model `ManagedNetworkSettingsOperations`
+  - Added model `ModelCapacitiesOperations`
+  - Added model `ModelsOperations`
+  - Added model `NetworkSecurityPerimeterConfigurationsOperations`
+  - Added model `OutboundRuleOperations`
+  - Added model `OutboundRulesOperations`
+  - Added model `ProjectCapabilityHostsOperations`
+  - Added model `ProjectConnectionsOperations`
+  - Added model `ProjectsOperations`
+  - Added model `QuotaTiersOperations`
+  - Added model `RaiBlocklistItemsOperations`
+  - Added model `RaiBlocklistsOperations`
+  - Added model `RaiContentFiltersOperations`
+  - Added model `RaiExternalSafetyProviderOperations`
+  - Added model `RaiExternalSafetyProvidersOperations`
+  - Added model `RaiPoliciesOperations`
+  - Added model `RaiToolLabelsOperations`
+  - Added model `RaiTopicsOperations`
+  - Added model `SubscriptionRaiPolicyOperations`
+  - Added model `TestRaiExternalSafetyProviderOperations`
+  - Added model `UsagesOperations`
+
+### Breaking Changes
+
+  - Client `CognitiveServicesManagementClient` deleted or renamed instance variable `url`
+  - Method `CognitiveServicesManagementClient.check_domain_availability` inserted a `positional_or_keyword` parameter `parameters`
+  - Method `CognitiveServicesManagementClient.check_domain_availability` deleted or renamed its parameter `subdomain_name` of kind `positional_or_keyword`
+  - Method `CognitiveServicesManagementClient.check_domain_availability` deleted or renamed its parameter `type` of kind `positional_or_keyword`
+  - Method `CognitiveServicesManagementClient.check_domain_availability` deleted or renamed its parameter `kind` of kind `positional_or_keyword`
+  - Method `CognitiveServicesManagementClient.check_sku_availability` inserted a `positional_or_keyword` parameter `parameters`
+  - Method `CognitiveServicesManagementClient.check_sku_availability` deleted or renamed its parameter `skus` of kind `positional_or_keyword`
+  - Method `CognitiveServicesManagementClient.check_sku_availability` deleted or renamed its parameter `kind` of kind `positional_or_keyword`
+  - Method `CognitiveServicesManagementClient.check_sku_availability` deleted or renamed its parameter `type` of kind `positional_or_keyword`
+  - Model `ResourceSkuRestrictions` deleted or renamed its instance variable `values`
+  - Deleted or renamed model `AzureEntityResource`
+  - Method `AccountsOperations.regenerate_key` inserted a `positional_or_keyword` parameter `parameters`
+  - Method `AccountsOperations.regenerate_key` deleted or renamed its parameter `key_name` of kind `positional_or_keyword`
+  - Method `AccountsOperations.regenerate_key` re-ordered its parameters from `['self', 'resource_group_name', 'account_name', 'key_name', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'parameters', 'kwargs']`
 
 ## 14.2.0 (2026-03-27)
 
