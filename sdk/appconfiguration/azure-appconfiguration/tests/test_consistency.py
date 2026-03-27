@@ -7,7 +7,7 @@ import functools
 import json
 import pytest
 from testcase import AppConfigTestCase
-from consts import APPCONFIGURATION_CONNECTION_STRING
+from consts import APPCONFIGURATION_ENDPOINT_STRING
 from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy, set_custom_default_matcher
 from azure.appconfiguration import (
     FeatureFlagConfigurationSetting,
@@ -17,17 +17,17 @@ from azure.appconfiguration import (
 AppConfigPreparer = functools.partial(
     EnvironmentVariableLoader,
     "appconfiguration",
-    appconfiguration_connection_string=APPCONFIGURATION_CONNECTION_STRING,
+    appconfiguration_endpoint_string=APPCONFIGURATION_ENDPOINT_STRING,
 )
 
 
 class TestAppConfigurationConsistency(AppConfigTestCase):
     @AppConfigPreparer()
     @recorded_by_proxy
-    def test_update_json_by_value(self, appconfiguration_connection_string):
+    def test_update_json_by_value(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        client = self.create_client(appconfiguration_connection_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         key = self.get_resource_name("key")
         feature_flag = FeatureFlagConfigurationSetting(
             key, enabled=True, filters=[{"name": FILTER_PERCENTAGE, "parameters": {"Value": 10, "User": "user1"}}]
@@ -62,10 +62,10 @@ class TestAppConfigurationConsistency(AppConfigTestCase):
 
     @AppConfigPreparer()
     @recorded_by_proxy
-    def test_feature_flag_invalid_json(self, appconfiguration_connection_string):
+    def test_feature_flag_invalid_json(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        client = self.create_client(appconfiguration_connection_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         key = self.get_resource_name("key")
         feature_flag = FeatureFlagConfigurationSetting(key, enabled=True)
         set_flag = client.set_configuration_setting(feature_flag)
@@ -78,10 +78,10 @@ class TestAppConfigurationConsistency(AppConfigTestCase):
 
     @AppConfigPreparer()
     @recorded_by_proxy
-    def test_feature_flag_invalid_json_string(self, appconfiguration_connection_string):
+    def test_feature_flag_invalid_json_string(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        client = self.create_client(appconfiguration_connection_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         key = self.get_resource_name("key")
         feature_flag = FeatureFlagConfigurationSetting(key, enabled=True)
         set_flag = client.set_configuration_setting(feature_flag)
@@ -94,10 +94,10 @@ class TestAppConfigurationConsistency(AppConfigTestCase):
 
     @AppConfigPreparer()
     @recorded_by_proxy
-    def test_feature_flag_invalid_json_access_properties(self, appconfiguration_connection_string):
+    def test_feature_flag_invalid_json_access_properties(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        client = self.create_client(appconfiguration_connection_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         key = self.get_resource_name("key")
         feature_flag = FeatureFlagConfigurationSetting(key, enabled=True)
         set_flag = client.set_configuration_setting(feature_flag)
