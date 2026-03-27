@@ -204,418 +204,23 @@
   - Added model `TrackedResource`
   - Added model `UserAssignedIdentity`
   - Added model `UserTokenParameterProperties`
-  - Model `ApiDiagnosticOperations` added parameter `etag` in method `create_or_update`
-  - Model `ApiDiagnosticOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ApiDiagnosticOperations` added parameter `etag` in method `delete`
-  - Model `ApiDiagnosticOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiDiagnosticOperations` added parameter `etag` in method `update`
-  - Model `ApiDiagnosticOperations` added parameter `match_condition` in method `update`
-  - Model `ApiGatewayConfigConnectionOperations` added parameter `etag` in method `begin_delete`
-  - Model `ApiGatewayConfigConnectionOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `ApiIssueAttachmentOperations` added parameter `etag` in method `create_or_update`
-  - Model `ApiIssueAttachmentOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ApiIssueAttachmentOperations` added parameter `etag` in method `delete`
-  - Model `ApiIssueAttachmentOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiIssueCommentOperations` added parameter `etag` in method `create_or_update`
-  - Model `ApiIssueCommentOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ApiIssueCommentOperations` added parameter `etag` in method `delete`
-  - Model `ApiIssueCommentOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiIssueOperations` added parameter `etag` in method `create_or_update`
-  - Model `ApiIssueOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ApiIssueOperations` added parameter `etag` in method `delete`
-  - Model `ApiIssueOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiIssueOperations` added parameter `etag` in method `update`
-  - Model `ApiIssueOperations` added parameter `match_condition` in method `update`
-  - Model `ApiManagementServiceOperations` added method `begin_refresh_hostnames`
-  - Model `ApiOperationOperations` added parameter `etag` in method `create_or_update`
-  - Model `ApiOperationOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ApiOperationOperations` added parameter `etag` in method `delete`
-  - Model `ApiOperationOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiOperationOperations` added parameter `etag` in method `update`
-  - Model `ApiOperationOperations` added parameter `match_condition` in method `update`
-  - Model `ApiOperationPolicyOperations` added parameter `etag` in method `create_or_update`
-  - Model `ApiOperationPolicyOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ApiOperationPolicyOperations` added parameter `etag` in method `delete`
-  - Model `ApiOperationPolicyOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `ApiOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `ApiOperations` added parameter `etag` in method `begin_delete`
-  - Model `ApiOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `ApiOperations` added parameter `etag` in method `update`
-  - Model `ApiOperations` added parameter `match_condition` in method `update`
-  - Model `ApiPolicyOperations` added parameter `etag` in method `create_or_update`
-  - Model `ApiPolicyOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ApiPolicyOperations` added parameter `etag` in method `delete`
-  - Model `ApiPolicyOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiReleaseOperations` added parameter `etag` in method `create_or_update`
-  - Model `ApiReleaseOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ApiReleaseOperations` added parameter `etag` in method `delete`
-  - Model `ApiReleaseOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiReleaseOperations` added parameter `etag` in method `update`
-  - Model `ApiReleaseOperations` added parameter `match_condition` in method `update`
-  - Model `ApiSchemaOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `ApiSchemaOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `ApiSchemaOperations` added parameter `etag` in method `delete`
-  - Model `ApiSchemaOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiTagDescriptionOperations` added parameter `etag` in method `create_or_update`
-  - Model `ApiTagDescriptionOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ApiTagDescriptionOperations` added parameter `etag` in method `delete`
-  - Model `ApiTagDescriptionOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiVersionSetOperations` added parameter `etag` in method `create_or_update`
-  - Model `ApiVersionSetOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ApiVersionSetOperations` added parameter `etag` in method `delete`
-  - Model `ApiVersionSetOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiVersionSetOperations` added parameter `etag` in method `update`
-  - Model `ApiVersionSetOperations` added parameter `match_condition` in method `update`
-  - Model `ApiWikiOperations` added parameter `etag` in method `create_or_update`
-  - Model `ApiWikiOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ApiWikiOperations` added parameter `etag` in method `delete`
-  - Model `ApiWikiOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiWikiOperations` added parameter `etag` in method `update`
-  - Model `ApiWikiOperations` added parameter `match_condition` in method `update`
-  - Model `AuthorizationAccessPolicyOperations` added parameter `etag` in method `create_or_update`
-  - Model `AuthorizationAccessPolicyOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `AuthorizationAccessPolicyOperations` added parameter `etag` in method `delete`
-  - Model `AuthorizationAccessPolicyOperations` added parameter `match_condition` in method `delete`
-  - Model `AuthorizationOperations` added parameter `etag` in method `create_or_update`
-  - Model `AuthorizationOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `AuthorizationOperations` added parameter `etag` in method `delete`
-  - Model `AuthorizationOperations` added parameter `match_condition` in method `delete`
-  - Model `AuthorizationProviderOperations` added parameter `etag` in method `create_or_update`
-  - Model `AuthorizationProviderOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `AuthorizationProviderOperations` added parameter `etag` in method `delete`
-  - Model `AuthorizationProviderOperations` added parameter `match_condition` in method `delete`
-  - Model `AuthorizationProviderOperations` added method `refresh_secret`
-  - Model `AuthorizationServerOperations` added parameter `etag` in method `create_or_update`
-  - Model `AuthorizationServerOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `AuthorizationServerOperations` added parameter `etag` in method `delete`
-  - Model `AuthorizationServerOperations` added parameter `match_condition` in method `delete`
-  - Model `AuthorizationServerOperations` added parameter `etag` in method `update`
-  - Model `AuthorizationServerOperations` added parameter `match_condition` in method `update`
-  - Model `BackendOperations` added parameter `etag` in method `create_or_update`
-  - Model `BackendOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `BackendOperations` added parameter `etag` in method `delete`
-  - Model `BackendOperations` added parameter `match_condition` in method `delete`
-  - Model `BackendOperations` added parameter `etag` in method `update`
-  - Model `BackendOperations` added parameter `match_condition` in method `update`
-  - Model `CacheOperations` added parameter `etag` in method `create_or_update`
-  - Model `CacheOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `CacheOperations` added parameter `etag` in method `delete`
-  - Model `CacheOperations` added parameter `match_condition` in method `delete`
-  - Model `CacheOperations` added parameter `etag` in method `update`
-  - Model `CacheOperations` added parameter `match_condition` in method `update`
-  - Model `CertificateOperations` added parameter `etag` in method `create_or_update`
-  - Model `CertificateOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `CertificateOperations` added parameter `etag` in method `delete`
-  - Model `CertificateOperations` added parameter `match_condition` in method `delete`
-  - Model `ContentItemOperations` added parameter `etag` in method `create_or_update`
-  - Model `ContentItemOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ContentItemOperations` added parameter `etag` in method `delete`
-  - Model `ContentItemOperations` added parameter `match_condition` in method `delete`
-  - Model `ContentTypeOperations` added parameter `etag` in method `create_or_update`
-  - Model `ContentTypeOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ContentTypeOperations` added parameter `etag` in method `delete`
-  - Model `ContentTypeOperations` added parameter `match_condition` in method `delete`
-  - Model `DelegationSettingsOperations` added parameter `etag` in method `create_or_update`
-  - Model `DelegationSettingsOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `DelegationSettingsOperations` added parameter `etag` in method `update`
-  - Model `DelegationSettingsOperations` added parameter `match_condition` in method `update`
-  - Model `DiagnosticOperations` added parameter `etag` in method `create_or_update`
-  - Model `DiagnosticOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `DiagnosticOperations` added parameter `etag` in method `delete`
-  - Model `DiagnosticOperations` added parameter `match_condition` in method `delete`
-  - Model `DiagnosticOperations` added parameter `etag` in method `update`
-  - Model `DiagnosticOperations` added parameter `match_condition` in method `update`
-  - Model `DocumentationOperations` added parameter `etag` in method `create_or_update`
-  - Model `DocumentationOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `DocumentationOperations` added parameter `etag` in method `delete`
-  - Model `DocumentationOperations` added parameter `match_condition` in method `delete`
-  - Model `DocumentationOperations` added parameter `etag` in method `update`
-  - Model `DocumentationOperations` added parameter `match_condition` in method `update`
-  - Model `EmailTemplateOperations` added parameter `etag` in method `create_or_update`
-  - Model `EmailTemplateOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `EmailTemplateOperations` added parameter `etag` in method `delete`
-  - Model `EmailTemplateOperations` added parameter `match_condition` in method `delete`
-  - Model `EmailTemplateOperations` added parameter `etag` in method `update`
-  - Model `EmailTemplateOperations` added parameter `match_condition` in method `update`
-  - Model `GatewayCertificateAuthorityOperations` added parameter `etag` in method `create_or_update`
-  - Model `GatewayCertificateAuthorityOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `GatewayCertificateAuthorityOperations` added parameter `etag` in method `delete`
-  - Model `GatewayCertificateAuthorityOperations` added parameter `match_condition` in method `delete`
-  - Model `GatewayHostnameConfigurationOperations` added parameter `etag` in method `create_or_update`
-  - Model `GatewayHostnameConfigurationOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `GatewayHostnameConfigurationOperations` added parameter `etag` in method `delete`
-  - Model `GatewayHostnameConfigurationOperations` added parameter `match_condition` in method `delete`
-  - Model `GatewayOperations` added parameter `etag` in method `create_or_update`
-  - Model `GatewayOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `GatewayOperations` added parameter `etag` in method `delete`
-  - Model `GatewayOperations` added parameter `match_condition` in method `delete`
-  - Model `GatewayOperations` added parameter `etag` in method `update`
-  - Model `GatewayOperations` added parameter `match_condition` in method `update`
-  - Model `GlobalSchemaOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `GlobalSchemaOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `GlobalSchemaOperations` added parameter `etag` in method `delete`
-  - Model `GlobalSchemaOperations` added parameter `match_condition` in method `delete`
-  - Model `GraphQLApiResolverOperations` added parameter `etag` in method `create_or_update`
-  - Model `GraphQLApiResolverOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `GraphQLApiResolverOperations` added parameter `etag` in method `delete`
-  - Model `GraphQLApiResolverOperations` added parameter `match_condition` in method `delete`
-  - Model `GraphQLApiResolverOperations` added parameter `etag` in method `update`
-  - Model `GraphQLApiResolverOperations` added parameter `match_condition` in method `update`
-  - Model `GraphQLApiResolverPolicyOperations` added parameter `etag` in method `create_or_update`
-  - Model `GraphQLApiResolverPolicyOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `GraphQLApiResolverPolicyOperations` added parameter `etag` in method `delete`
-  - Model `GraphQLApiResolverPolicyOperations` added parameter `match_condition` in method `delete`
-  - Model `GroupOperations` added parameter `etag` in method `create_or_update`
-  - Model `GroupOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `GroupOperations` added parameter `etag` in method `delete`
-  - Model `GroupOperations` added parameter `match_condition` in method `delete`
-  - Model `GroupOperations` added parameter `etag` in method `update`
-  - Model `GroupOperations` added parameter `match_condition` in method `update`
-  - Model `IdentityProviderOperations` added parameter `etag` in method `create_or_update`
-  - Model `IdentityProviderOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `IdentityProviderOperations` added parameter `etag` in method `delete`
-  - Model `IdentityProviderOperations` added parameter `match_condition` in method `delete`
-  - Model `IdentityProviderOperations` added parameter `etag` in method `update`
-  - Model `IdentityProviderOperations` added parameter `match_condition` in method `update`
-  - Model `LoggerOperations` added parameter `etag` in method `create_or_update`
-  - Model `LoggerOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `LoggerOperations` added parameter `etag` in method `delete`
-  - Model `LoggerOperations` added parameter `match_condition` in method `delete`
-  - Model `LoggerOperations` added parameter `etag` in method `update`
-  - Model `LoggerOperations` added parameter `match_condition` in method `update`
-  - Model `NamedValueOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `NamedValueOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `NamedValueOperations` added parameter `etag` in method `begin_update`
-  - Model `NamedValueOperations` added parameter `match_condition` in method `begin_update`
-  - Model `NamedValueOperations` added parameter `etag` in method `delete`
-  - Model `NamedValueOperations` added parameter `match_condition` in method `delete`
-  - Model `NotificationOperations` added parameter `etag` in method `create_or_update`
-  - Model `NotificationOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `OpenIdConnectProviderOperations` added parameter `etag` in method `create_or_update`
-  - Model `OpenIdConnectProviderOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `OpenIdConnectProviderOperations` added parameter `etag` in method `delete`
-  - Model `OpenIdConnectProviderOperations` added parameter `match_condition` in method `delete`
-  - Model `OpenIdConnectProviderOperations` added parameter `etag` in method `update`
-  - Model `OpenIdConnectProviderOperations` added parameter `match_condition` in method `update`
-  - Model `PolicyFragmentOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `PolicyFragmentOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `PolicyFragmentOperations` added parameter `etag` in method `delete`
-  - Model `PolicyFragmentOperations` added parameter `match_condition` in method `delete`
-  - Model `PolicyOperations` added parameter `etag` in method `create_or_update`
-  - Model `PolicyOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `PolicyOperations` added parameter `etag` in method `delete`
-  - Model `PolicyOperations` added parameter `match_condition` in method `delete`
-  - Model `PolicyRestrictionOperations` added parameter `etag` in method `create_or_update`
-  - Model `PolicyRestrictionOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `PolicyRestrictionOperations` added parameter `etag` in method `delete`
-  - Model `PolicyRestrictionOperations` added parameter `match_condition` in method `delete`
-  - Model `PolicyRestrictionOperations` added parameter `etag` in method `update`
-  - Model `PolicyRestrictionOperations` added parameter `match_condition` in method `update`
-  - Model `PortalConfigOperations` added parameter `etag` in method `create_or_update`
-  - Model `PortalConfigOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `PortalConfigOperations` added parameter `etag` in method `update`
-  - Model `PortalConfigOperations` added parameter `match_condition` in method `update`
-  - Model `PortalRevisionOperations` added parameter `etag` in method `begin_update`
-  - Model `PortalRevisionOperations` added parameter `match_condition` in method `begin_update`
-  - Model `ProductOperations` added parameter `etag` in method `create_or_update`
-  - Model `ProductOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ProductOperations` added parameter `etag` in method `delete`
-  - Model `ProductOperations` added parameter `match_condition` in method `delete`
-  - Model `ProductOperations` added parameter `etag` in method `update`
-  - Model `ProductOperations` added parameter `match_condition` in method `update`
-  - Model `ProductPolicyOperations` added parameter `etag` in method `create_or_update`
-  - Model `ProductPolicyOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ProductPolicyOperations` added parameter `etag` in method `delete`
-  - Model `ProductPolicyOperations` added parameter `match_condition` in method `delete`
-  - Model `ProductWikiOperations` added parameter `etag` in method `create_or_update`
-  - Model `ProductWikiOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ProductWikiOperations` added parameter `etag` in method `delete`
-  - Model `ProductWikiOperations` added parameter `match_condition` in method `delete`
-  - Model `ProductWikiOperations` added parameter `etag` in method `update`
-  - Model `ProductWikiOperations` added parameter `match_condition` in method `update`
-  - Model `SignInSettingsOperations` added parameter `etag` in method `create_or_update`
-  - Model `SignInSettingsOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `SignInSettingsOperations` added parameter `etag` in method `update`
-  - Model `SignInSettingsOperations` added parameter `match_condition` in method `update`
-  - Model `SignUpSettingsOperations` added parameter `etag` in method `create_or_update`
-  - Model `SignUpSettingsOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `SignUpSettingsOperations` added parameter `etag` in method `update`
-  - Model `SignUpSettingsOperations` added parameter `match_condition` in method `update`
-  - Model `SubscriptionOperations` added parameter `etag` in method `create_or_update`
-  - Model `SubscriptionOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `SubscriptionOperations` added parameter `etag` in method `delete`
-  - Model `SubscriptionOperations` added parameter `match_condition` in method `delete`
-  - Model `SubscriptionOperations` added parameter `etag` in method `update`
-  - Model `SubscriptionOperations` added parameter `match_condition` in method `update`
-  - Model `TagOperations` added parameter `etag` in method `create_or_update`
-  - Model `TagOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `TagOperations` added parameter `etag` in method `delete`
-  - Model `TagOperations` added parameter `match_condition` in method `delete`
-  - Model `TagOperations` added parameter `etag` in method `update`
-  - Model `TagOperations` added parameter `match_condition` in method `update`
-  - Model `TenantAccessOperations` added parameter `etag` in method `create`
-  - Model `TenantAccessOperations` added parameter `match_condition` in method `create`
-  - Model `TenantAccessOperations` added parameter `etag` in method `update`
-  - Model `TenantAccessOperations` added parameter `match_condition` in method `update`
-  - Model `UserOperations` added parameter `etag` in method `begin_delete`
-  - Model `UserOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `UserOperations` added parameter `etag` in method `create_or_update`
-  - Model `UserOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `UserOperations` added parameter `etag` in method `update`
-  - Model `UserOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceApiDiagnosticOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceApiDiagnosticOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceApiDiagnosticOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceApiDiagnosticOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceApiDiagnosticOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceApiDiagnosticOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceApiOperationOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceApiOperationOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceApiOperationOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceApiOperationOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceApiOperationOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceApiOperationOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceApiOperationPolicyOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceApiOperationPolicyOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceApiOperationPolicyOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceApiOperationPolicyOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceApiOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `WorkspaceApiOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `WorkspaceApiOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceApiOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceApiOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceApiOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceApiPolicyOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceApiPolicyOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceApiPolicyOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceApiPolicyOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceApiReleaseOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceApiReleaseOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceApiReleaseOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceApiReleaseOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceApiReleaseOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceApiReleaseOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceApiSchemaOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `WorkspaceApiSchemaOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `WorkspaceApiSchemaOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceApiSchemaOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceApiVersionSetOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceApiVersionSetOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceApiVersionSetOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceApiVersionSetOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceApiVersionSetOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceApiVersionSetOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceBackendOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceBackendOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceBackendOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceBackendOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceBackendOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceBackendOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceCertificateOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceCertificateOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceCertificateOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceCertificateOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceDiagnosticOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceDiagnosticOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceDiagnosticOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceDiagnosticOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceDiagnosticOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceDiagnosticOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceGlobalSchemaOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `WorkspaceGlobalSchemaOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `WorkspaceGlobalSchemaOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceGlobalSchemaOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceGroupOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceGroupOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceGroupOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceGroupOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceGroupOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceGroupOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceLoggerOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceLoggerOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceLoggerOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceLoggerOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceLoggerOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceLoggerOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceNamedValueOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `WorkspaceNamedValueOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `WorkspaceNamedValueOperations` added parameter `etag` in method `begin_update`
-  - Model `WorkspaceNamedValueOperations` added parameter `match_condition` in method `begin_update`
-  - Model `WorkspaceNamedValueOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceNamedValueOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceNotificationOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceNotificationOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspacePolicyFragmentOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `WorkspacePolicyFragmentOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `WorkspacePolicyFragmentOperations` added parameter `etag` in method `delete`
-  - Model `WorkspacePolicyFragmentOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspacePolicyOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspacePolicyOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspacePolicyOperations` added parameter `etag` in method `delete`
-  - Model `WorkspacePolicyOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceProductOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceProductOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceProductOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceProductOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceProductOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceProductOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceProductPolicyOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceProductPolicyOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceProductPolicyOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceProductPolicyOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceSubscriptionOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceSubscriptionOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceSubscriptionOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceSubscriptionOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceSubscriptionOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceSubscriptionOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceTagOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceTagOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceTagOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceTagOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceTagOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceTagOperations` added parameter `match_condition` in method `update`
-  - Added model `ApiGatewayHostnameBindingOperations`
-  - Added model `ApiToolOperations`
-  - Added model `ClientApplicationOperations`
-  - Added model `ClientApplicationProductLinkOperations`
+  - Operation group `ApiManagementServiceOperations` added method `begin_refresh_hostnames`
+  - Operation group `AuthorizationProviderOperations` added method `refresh_secret`
+  - Added operation group `ApiGatewayHostnameBindingOperations`
+  - Added operation group `ApiToolOperations`
+  - Added operation group `ClientApplicationOperations`
+  - Added operation group `ClientApplicationProductLinkOperations`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Model `AccessInformationCreateParameters` deleted or renamed its instance variable `principal_id`
   - Model `AccessInformationCreateParameters` deleted or renamed its instance variable `primary_key`
   - Model `AccessInformationCreateParameters` deleted or renamed its instance variable `secondary_key`
   - Model `AccessInformationCreateParameters` deleted or renamed its instance variable `enabled`
   - Model `AccessInformationUpdateParameters` deleted or renamed its instance variable `enabled`
-  - Model `ApiContract` deleted or renamed its instance variable `description`
-  - Model `ApiContract` deleted or renamed its instance variable `authentication_settings`
-  - Model `ApiContract` deleted or renamed its instance variable `subscription_key_parameter_names`
-  - Model `ApiContract` deleted or renamed its instance variable `api_type`
-  - Model `ApiContract` deleted or renamed its instance variable `api_revision`
-  - Model `ApiContract` deleted or renamed its instance variable `api_version`
-  - Model `ApiContract` deleted or renamed its instance variable `is_current`
-  - Model `ApiContract` deleted or renamed its instance variable `is_online`
-  - Model `ApiContract` deleted or renamed its instance variable `api_revision_description`
-  - Model `ApiContract` deleted or renamed its instance variable `api_version_description`
-  - Model `ApiContract` deleted or renamed its instance variable `api_version_set_id`
-  - Model `ApiContract` deleted or renamed its instance variable `subscription_required`
-  - Model `ApiContract` deleted or renamed its instance variable `terms_of_service_url`
-  - Model `ApiContract` deleted or renamed its instance variable `contact`
-  - Model `ApiContract` deleted or renamed its instance variable `license`
-  - Model `ApiContract` deleted or renamed its instance variable `source_api_id`
-  - Model `ApiContract` deleted or renamed its instance variable `display_name`
-  - Model `ApiContract` deleted or renamed its instance variable `service_url`
-  - Model `ApiContract` deleted or renamed its instance variable `path`
-  - Model `ApiContract` deleted or renamed its instance variable `protocols`
-  - Model `ApiContract` deleted or renamed its instance variable `api_version_set`
-  - Model `ApiContract` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApiContract` moved instance variable `description`, `authentication_settings`, `subscription_key_parameter_names`, `api_type`, `api_revision`, `api_version`, `is_current`, `is_online`, `api_revision_description`, `api_version_description`, `api_version_set_id`, `subscription_required`, `terms_of_service_url`, `contact`, `license`, `source_api_id`, `display_name`, `service_url`, `path`, `protocols`, `api_version_set`, `provisioning_state` under property `properties`
   - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `description`
   - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `authentication_settings`
   - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `subscription_key_parameter_names`
@@ -643,93 +248,13 @@
   - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `wsdl_selector`
   - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `soap_api_type`
   - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `translate_required_query_parameters_conduct`
-  - Model `ApiManagementGatewayConfigConnectionResource` deleted or renamed its instance variable `provisioning_state`
-  - Model `ApiManagementGatewayConfigConnectionResource` deleted or renamed its instance variable `source_id`
-  - Model `ApiManagementGatewayConfigConnectionResource` deleted or renamed its instance variable `default_hostname`
-  - Model `ApiManagementGatewayConfigConnectionResource` deleted or renamed its instance variable `hostnames`
-  - Model `ApiManagementGatewayResource` deleted or renamed its instance variable `provisioning_state`
-  - Model `ApiManagementGatewayResource` deleted or renamed its instance variable `target_provisioning_state`
-  - Model `ApiManagementGatewayResource` deleted or renamed its instance variable `created_at_utc`
-  - Model `ApiManagementGatewayResource` deleted or renamed its instance variable `frontend`
-  - Model `ApiManagementGatewayResource` deleted or renamed its instance variable `backend`
-  - Model `ApiManagementGatewayResource` deleted or renamed its instance variable `configuration_api`
-  - Model `ApiManagementGatewayResource` deleted or renamed its instance variable `virtual_network_type`
-  - Model `ApiManagementGatewayUpdateParameters` deleted or renamed its instance variable `provisioning_state`
-  - Model `ApiManagementGatewayUpdateParameters` deleted or renamed its instance variable `target_provisioning_state`
-  - Model `ApiManagementGatewayUpdateParameters` deleted or renamed its instance variable `created_at_utc`
-  - Model `ApiManagementGatewayUpdateParameters` deleted or renamed its instance variable `frontend`
-  - Model `ApiManagementGatewayUpdateParameters` deleted or renamed its instance variable `backend`
-  - Model `ApiManagementGatewayUpdateParameters` deleted or renamed its instance variable `configuration_api`
-  - Model `ApiManagementGatewayUpdateParameters` deleted or renamed its instance variable `virtual_network_type`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `notification_sender_email`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `provisioning_state`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `target_provisioning_state`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `created_at_utc`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `gateway_url`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `gateway_regional_url`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `portal_url`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `management_api_url`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `scm_url`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `developer_portal_url`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `hostname_configurations`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `public_ip_addresses`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `private_ip_addresses`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `public_ip_address_id`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `public_network_access`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `configuration_api`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `virtual_network_configuration`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `additional_locations`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `custom_properties`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `certificates`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `enable_client_certificate`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `nat_gateway_state`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `outbound_public_ip_addresses`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `disable_gateway`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `virtual_network_type`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `api_version_constraint`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `restore`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `private_endpoint_connections`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `platform_version`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `legacy_portal_status`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `developer_portal_status`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `publisher_email`
-  - Model `ApiManagementServiceResource` deleted or renamed its instance variable `publisher_name`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `notification_sender_email`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `provisioning_state`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `target_provisioning_state`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `created_at_utc`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `gateway_url`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `gateway_regional_url`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `portal_url`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `management_api_url`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `scm_url`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `developer_portal_url`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `hostname_configurations`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `public_ip_addresses`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `private_ip_addresses`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `public_ip_address_id`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `public_network_access`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `configuration_api`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `virtual_network_configuration`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `additional_locations`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `custom_properties`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `certificates`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `enable_client_certificate`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `nat_gateway_state`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `outbound_public_ip_addresses`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `disable_gateway`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `virtual_network_type`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `api_version_constraint`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `restore`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `private_endpoint_connections`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `platform_version`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `legacy_portal_status`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `developer_portal_status`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `publisher_email`
-  - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `publisher_name`
+  - Model `ApiManagementGatewayConfigConnectionResource` moved instance variable `provisioning_state`, `source_id`, `default_hostname`, `hostnames` under property `properties`
+  - Model `ApiManagementGatewayResource` moved instance variable `provisioning_state`, `target_provisioning_state`, `created_at_utc`, `frontend`, `backend`, `configuration_api`, `virtual_network_type` under property `properties`
+  - Model `ApiManagementGatewayUpdateParameters` moved instance variable `provisioning_state`, `target_provisioning_state`, `created_at_utc`, `frontend`, `backend`, `configuration_api`, `virtual_network_type` under property `properties`
+  - Model `ApiManagementServiceResource` moved instance variable `notification_sender_email`, `provisioning_state`, `target_provisioning_state`, `created_at_utc`, `gateway_url`, `gateway_regional_url`, `portal_url`, `management_api_url`, `scm_url`, `developer_portal_url`, `hostname_configurations`, `public_ip_addresses`, `private_ip_addresses`, `public_ip_address_id`, `public_network_access`, `configuration_api`, `virtual_network_configuration`, `additional_locations`, `custom_properties`, `certificates`, `enable_client_certificate`, `nat_gateway_state`, `outbound_public_ip_addresses`, `disable_gateway`, `virtual_network_type`, `api_version_constraint`, `restore`, `private_endpoint_connections`, `platform_version`, `legacy_portal_status`, `developer_portal_status`, `publisher_email`, `publisher_name` under property `properties`
+  - Model `ApiManagementServiceUpdateParameters` moved instance variable `notification_sender_email`, `provisioning_state`, `target_provisioning_state`, `created_at_utc`, `gateway_url`, `gateway_regional_url`, `portal_url`, `management_api_url`, `scm_url`, `developer_portal_url`, `hostname_configurations`, `public_ip_addresses`, `private_ip_addresses`, `public_ip_address_id`, `public_network_access`, `configuration_api`, `virtual_network_configuration`, `additional_locations`, `custom_properties`, `certificates`, `enable_client_certificate`, `nat_gateway_state`, `outbound_public_ip_addresses`, `disable_gateway`, `virtual_network_type`, `api_version_constraint`, `restore`, `private_endpoint_connections`, `platform_version`, `legacy_portal_status`, `developer_portal_status`, `publisher_email`, `publisher_name` under property `properties`
   - Model `ApiManagementSkuRestrictions` deleted or renamed its instance variable `values`
-  - Model `ApiManagementWorkspaceLinksResource` deleted or renamed its instance variable `workspace_id`
-  - Model `ApiManagementWorkspaceLinksResource` deleted or renamed its instance variable `gateways`
+  - Model `ApiManagementWorkspaceLinksResource` moved instance variable `workspace_id`, `gateways` under property `properties`
   - Model `ApiUpdateContract` deleted or renamed its instance variable `description`
   - Model `ApiUpdateContract` deleted or renamed its instance variable `authentication_settings`
   - Model `ApiUpdateContract` deleted or renamed its instance variable `subscription_key_parameter_names`
@@ -749,52 +274,14 @@
   - Model `ApiUpdateContract` deleted or renamed its instance variable `service_url`
   - Model `ApiUpdateContract` deleted or renamed its instance variable `path`
   - Model `ApiUpdateContract` deleted or renamed its instance variable `protocols`
-  - Model `ApiVersionSetContract` deleted or renamed its instance variable `description`
-  - Model `ApiVersionSetContract` deleted or renamed its instance variable `version_query_name`
-  - Model `ApiVersionSetContract` deleted or renamed its instance variable `version_header_name`
-  - Model `ApiVersionSetContract` deleted or renamed its instance variable `display_name`
-  - Model `ApiVersionSetContract` deleted or renamed its instance variable `versioning_scheme`
+  - Model `ApiVersionSetContract` moved instance variable `description`, `version_query_name`, `version_header_name`, `display_name`, `versioning_scheme` under property `properties`
   - Model `ApiVersionSetUpdateParameters` deleted or renamed its instance variable `description`
   - Model `ApiVersionSetUpdateParameters` deleted or renamed its instance variable `version_query_name`
   - Model `ApiVersionSetUpdateParameters` deleted or renamed its instance variable `version_header_name`
   - Model `ApiVersionSetUpdateParameters` deleted or renamed its instance variable `display_name`
   - Model `ApiVersionSetUpdateParameters` deleted or renamed its instance variable `versioning_scheme`
-  - Model `AuthorizationServerContract` deleted or renamed its instance variable `description`
-  - Model `AuthorizationServerContract` deleted or renamed its instance variable `authorization_methods`
-  - Model `AuthorizationServerContract` deleted or renamed its instance variable `client_authentication_method`
-  - Model `AuthorizationServerContract` deleted or renamed its instance variable `token_body_parameters`
-  - Model `AuthorizationServerContract` deleted or renamed its instance variable `token_endpoint`
-  - Model `AuthorizationServerContract` deleted or renamed its instance variable `support_state`
-  - Model `AuthorizationServerContract` deleted or renamed its instance variable `default_scope`
-  - Model `AuthorizationServerContract` deleted or renamed its instance variable `bearer_token_sending_methods`
-  - Model `AuthorizationServerContract` deleted or renamed its instance variable `resource_owner_username`
-  - Model `AuthorizationServerContract` deleted or renamed its instance variable `resource_owner_password`
-  - Model `AuthorizationServerContract` deleted or renamed its instance variable `display_name`
-  - Model `AuthorizationServerContract` deleted or renamed its instance variable `use_in_test_console`
-  - Model `AuthorizationServerContract` deleted or renamed its instance variable `use_in_api_documentation`
-  - Model `AuthorizationServerContract` deleted or renamed its instance variable `client_registration_endpoint`
-  - Model `AuthorizationServerContract` deleted or renamed its instance variable `authorization_endpoint`
-  - Model `AuthorizationServerContract` deleted or renamed its instance variable `grant_types`
-  - Model `AuthorizationServerContract` deleted or renamed its instance variable `client_id`
-  - Model `AuthorizationServerContract` deleted or renamed its instance variable `client_secret`
-  - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `description`
-  - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `authorization_methods`
-  - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `client_authentication_method`
-  - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `token_body_parameters`
-  - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `token_endpoint`
-  - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `support_state`
-  - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `default_scope`
-  - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `bearer_token_sending_methods`
-  - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `resource_owner_username`
-  - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `resource_owner_password`
-  - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `display_name`
-  - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `use_in_test_console`
-  - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `use_in_api_documentation`
-  - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `client_registration_endpoint`
-  - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `authorization_endpoint`
-  - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `grant_types`
-  - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `client_id`
-  - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `client_secret`
+  - Model `AuthorizationServerContract` moved instance variable `description`, `authorization_methods`, `client_authentication_method`, `token_body_parameters`, `token_endpoint`, `support_state`, `default_scope`, `bearer_token_sending_methods`, `resource_owner_username`, `resource_owner_password`, `display_name`, `use_in_test_console`, `use_in_api_documentation`, `client_registration_endpoint`, `authorization_endpoint`, `grant_types`, `client_id`, `client_secret` under property `properties`
+  - Model `AuthorizationServerUpdateContract` moved instance variable `description`, `authorization_methods`, `client_authentication_method`, `token_body_parameters`, `token_endpoint`, `support_state`, `default_scope`, `bearer_token_sending_methods`, `resource_owner_username`, `resource_owner_password`, `display_name`, `use_in_test_console`, `use_in_api_documentation`, `client_registration_endpoint`, `authorization_endpoint`, `grant_types`, `client_id`, `client_secret` under property `properties`
   - Model `BackendContract` deleted or renamed its instance variable `title`
   - Model `BackendContract` deleted or renamed its instance variable `description`
   - Model `BackendContract` deleted or renamed its instance variable `resource_id`
@@ -806,7 +293,7 @@
   - Model `BackendContract` deleted or renamed its instance variable `type_properties_type`
   - Model `BackendContract` deleted or renamed its instance variable `url`
   - Model `BackendContract` deleted or renamed its instance variable `protocol`
-  - Model `BackendReconnectContract` deleted or renamed its instance variable `after`
+  - Model `BackendReconnectContract` moved instance variable `after` under property `properties`
   - Model `BackendUpdateParameters` deleted or renamed its instance variable `title`
   - Model `BackendUpdateParameters` deleted or renamed its instance variable `description`
   - Model `BackendUpdateParameters` deleted or renamed its instance variable `resource_id`
@@ -827,16 +314,7 @@
   - Model `CertificateCreateOrUpdateParameters` deleted or renamed its instance variable `key_vault`
   - Model `DeployConfigurationParameters` deleted or renamed its instance variable `branch`
   - Model `DeployConfigurationParameters` deleted or renamed its instance variable `force`
-  - Model `DiagnosticUpdateContract` deleted or renamed its instance variable `always_log`
-  - Model `DiagnosticUpdateContract` deleted or renamed its instance variable `logger_id`
-  - Model `DiagnosticUpdateContract` deleted or renamed its instance variable `sampling`
-  - Model `DiagnosticUpdateContract` deleted or renamed its instance variable `frontend`
-  - Model `DiagnosticUpdateContract` deleted or renamed its instance variable `backend`
-  - Model `DiagnosticUpdateContract` deleted or renamed its instance variable `log_client_ip`
-  - Model `DiagnosticUpdateContract` deleted or renamed its instance variable `http_correlation_protocol`
-  - Model `DiagnosticUpdateContract` deleted or renamed its instance variable `verbosity`
-  - Model `DiagnosticUpdateContract` deleted or renamed its instance variable `operation_name_format`
-  - Model `DiagnosticUpdateContract` deleted or renamed its instance variable `metrics`
+  - Model `DiagnosticUpdateContract` moved instance variable `always_log`, `logger_id`, `sampling`, `frontend`, `backend`, `log_client_ip`, `http_correlation_protocol`, `verbosity`, `operation_name_format`, `metrics` under property `properties`
   - Model `DocumentationUpdateContract` deleted or renamed its instance variable `title`
   - Model `DocumentationUpdateContract` deleted or renamed its instance variable `content`
   - Model `EmailTemplateUpdateParameters` deleted or renamed its instance variable `subject`
@@ -844,11 +322,7 @@
   - Model `EmailTemplateUpdateParameters` deleted or renamed its instance variable `description`
   - Model `EmailTemplateUpdateParameters` deleted or renamed its instance variable `body`
   - Model `EmailTemplateUpdateParameters` deleted or renamed its instance variable `parameters`
-  - Model `GroupContract` deleted or renamed its instance variable `display_name`
-  - Model `GroupContract` deleted or renamed its instance variable `description`
-  - Model `GroupContract` deleted or renamed its instance variable `built_in`
-  - Model `GroupContract` deleted or renamed its instance variable `type_properties_type`
-  - Model `GroupContract` deleted or renamed its instance variable `external_id`
+  - Model `GroupContract` moved instance variable `display_name`, `description`, `built_in`, `type_properties_type`, `external_id` under property `properties`
   - Model `GroupCreateParameters` deleted or renamed its instance variable `display_name`
   - Model `GroupCreateParameters` deleted or renamed its instance variable `description`
   - Model `GroupCreateParameters` deleted or renamed its instance variable `type`
@@ -857,28 +331,8 @@
   - Model `GroupUpdateParameters` deleted or renamed its instance variable `description`
   - Model `GroupUpdateParameters` deleted or renamed its instance variable `type`
   - Model `GroupUpdateParameters` deleted or renamed its instance variable `external_id`
-  - Model `IdentityProviderContract` deleted or renamed its instance variable `type_properties_type`
-  - Model `IdentityProviderContract` deleted or renamed its instance variable `signin_tenant`
-  - Model `IdentityProviderContract` deleted or renamed its instance variable `allowed_tenants`
-  - Model `IdentityProviderContract` deleted or renamed its instance variable `authority`
-  - Model `IdentityProviderContract` deleted or renamed its instance variable `signup_policy_name`
-  - Model `IdentityProviderContract` deleted or renamed its instance variable `signin_policy_name`
-  - Model `IdentityProviderContract` deleted or renamed its instance variable `profile_editing_policy_name`
-  - Model `IdentityProviderContract` deleted or renamed its instance variable `password_reset_policy_name`
-  - Model `IdentityProviderContract` deleted or renamed its instance variable `client_library`
-  - Model `IdentityProviderContract` deleted or renamed its instance variable `client_id`
-  - Model `IdentityProviderContract` deleted or renamed its instance variable `client_secret`
-  - Model `IdentityProviderCreateContract` deleted or renamed its instance variable `type_properties_type`
-  - Model `IdentityProviderCreateContract` deleted or renamed its instance variable `signin_tenant`
-  - Model `IdentityProviderCreateContract` deleted or renamed its instance variable `allowed_tenants`
-  - Model `IdentityProviderCreateContract` deleted or renamed its instance variable `authority`
-  - Model `IdentityProviderCreateContract` deleted or renamed its instance variable `signup_policy_name`
-  - Model `IdentityProviderCreateContract` deleted or renamed its instance variable `signin_policy_name`
-  - Model `IdentityProviderCreateContract` deleted or renamed its instance variable `profile_editing_policy_name`
-  - Model `IdentityProviderCreateContract` deleted or renamed its instance variable `password_reset_policy_name`
-  - Model `IdentityProviderCreateContract` deleted or renamed its instance variable `client_library`
-  - Model `IdentityProviderCreateContract` deleted or renamed its instance variable `client_id`
-  - Model `IdentityProviderCreateContract` deleted or renamed its instance variable `client_secret`
+  - Model `IdentityProviderContract` moved instance variable `type_properties_type`, `signin_tenant`, `allowed_tenants`, `authority`, `signup_policy_name`, `signin_policy_name`, `profile_editing_policy_name`, `password_reset_policy_name`, `client_library`, `client_id`, `client_secret` under property `properties`
+  - Model `IdentityProviderCreateContract` moved instance variable `type_properties_type`, `signin_tenant`, `allowed_tenants`, `authority`, `signup_policy_name`, `signin_policy_name`, `profile_editing_policy_name`, `password_reset_policy_name`, `client_library`, `client_id`, `client_secret` under property `properties`
   - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `type`
   - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `signin_tenant`
   - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `allowed_tenants`
@@ -890,12 +344,7 @@
   - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `client_library`
   - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `client_id`
   - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `client_secret`
-  - Model `IssueContract` deleted or renamed its instance variable `created_date`
-  - Model `IssueContract` deleted or renamed its instance variable `state`
-  - Model `IssueContract` deleted or renamed its instance variable `api_id`
-  - Model `IssueContract` deleted or renamed its instance variable `title`
-  - Model `IssueContract` deleted or renamed its instance variable `description`
-  - Model `IssueContract` deleted or renamed its instance variable `user_id`
+  - Model `IssueContract` moved instance variable `created_date`, `state`, `api_id`, `title`, `description`, `user_id` under property `properties`
   - Model `IssueUpdateContract` deleted or renamed its instance variable `created_date`
   - Model `IssueUpdateContract` deleted or renamed its instance variable `state`
   - Model `IssueUpdateContract` deleted or renamed its instance variable `api_id`
@@ -906,17 +355,8 @@
   - Model `LoggerUpdateContract` deleted or renamed its instance variable `description`
   - Model `LoggerUpdateContract` deleted or renamed its instance variable `credentials`
   - Model `LoggerUpdateContract` deleted or renamed its instance variable `is_buffered`
-  - Model `NamedValueContract` deleted or renamed its instance variable `tags`
-  - Model `NamedValueContract` deleted or renamed its instance variable `secret`
-  - Model `NamedValueContract` deleted or renamed its instance variable `display_name`
-  - Model `NamedValueContract` deleted or renamed its instance variable `value`
-  - Model `NamedValueContract` deleted or renamed its instance variable `key_vault`
-  - Model `NamedValueContract` deleted or renamed its instance variable `provisioning_state`
-  - Model `NamedValueCreateContract` deleted or renamed its instance variable `tags`
-  - Model `NamedValueCreateContract` deleted or renamed its instance variable `secret`
-  - Model `NamedValueCreateContract` deleted or renamed its instance variable `display_name`
-  - Model `NamedValueCreateContract` deleted or renamed its instance variable `value`
-  - Model `NamedValueCreateContract` deleted or renamed its instance variable `key_vault`
+  - Model `NamedValueContract` moved instance variable `tags`, `secret`, `display_name`, `value`, `key_vault`, `provisioning_state` under property `properties`
+  - Model `NamedValueCreateContract` moved instance variable `tags`, `secret`, `display_name`, `value`, `key_vault` under property `properties`
   - Model `NamedValueUpdateParameters` deleted or renamed its instance variable `tags`
   - Model `NamedValueUpdateParameters` deleted or renamed its instance variable `secret`
   - Model `NamedValueUpdateParameters` deleted or renamed its instance variable `display_name`
@@ -929,14 +369,7 @@
   - Model `OpenidConnectProviderUpdateContract` deleted or renamed its instance variable `client_secret`
   - Model `OpenidConnectProviderUpdateContract` deleted or renamed its instance variable `use_in_test_console`
   - Model `OpenidConnectProviderUpdateContract` deleted or renamed its instance variable `use_in_api_documentation`
-  - Model `OperationContract` deleted or renamed its instance variable `template_parameters`
-  - Model `OperationContract` deleted or renamed its instance variable `description`
-  - Model `OperationContract` deleted or renamed its instance variable `request`
-  - Model `OperationContract` deleted or renamed its instance variable `responses`
-  - Model `OperationContract` deleted or renamed its instance variable `policies`
-  - Model `OperationContract` deleted or renamed its instance variable `display_name`
-  - Model `OperationContract` deleted or renamed its instance variable `method`
-  - Model `OperationContract` deleted or renamed its instance variable `url_template`
+  - Model `OperationContract` moved instance variable `template_parameters`, `description`, `request`, `responses`, `policies`, `display_name`, `method`, `url_template` under property `properties`
   - Model `OperationStatusResult` deleted or renamed its instance variable `resource_id`
   - Model `OperationUpdateContract` deleted or renamed its instance variable `template_parameters`
   - Model `OperationUpdateContract` deleted or renamed its instance variable `description`
@@ -949,20 +382,9 @@
   - Model `ParameterContract` deleted or renamed its instance variable `values`
   - Model `PolicyRestrictionUpdateContract` deleted or renamed its instance variable `scope`
   - Model `PolicyRestrictionUpdateContract` deleted or renamed its instance variable `require_base`
-  - Model `PortalConfigContract` deleted or renamed its instance variable `enable_basic_auth`
-  - Model `PortalConfigContract` deleted or renamed its instance variable `signin`
-  - Model `PortalConfigContract` deleted or renamed its instance variable `signup`
-  - Model `PortalConfigContract` deleted or renamed its instance variable `delegation`
-  - Model `PortalConfigContract` deleted or renamed its instance variable `cors`
-  - Model `PortalConfigContract` deleted or renamed its instance variable `csp`
-  - Model `PortalSigninSettings` deleted or renamed its instance variable `enabled`
-  - Model `ProductContract` deleted or renamed its instance variable `description`
-  - Model `ProductContract` deleted or renamed its instance variable `terms`
-  - Model `ProductContract` deleted or renamed its instance variable `subscription_required`
-  - Model `ProductContract` deleted or renamed its instance variable `approval_required`
-  - Model `ProductContract` deleted or renamed its instance variable `subscriptions_limit`
-  - Model `ProductContract` deleted or renamed its instance variable `state`
-  - Model `ProductContract` deleted or renamed its instance variable `display_name`
+  - Model `PortalConfigContract` moved instance variable `enable_basic_auth`, `signin`, `signup`, `delegation`, `cors`, `csp` under property `properties`
+  - Model `PortalSigninSettings` moved instance variable `enabled` under property `properties`
+  - Model `ProductContract` moved instance variable `description`, `terms`, `subscription_required`, `approval_required`, `subscriptions_limit`, `state`, `display_name` under property `properties`
   - Model `ProductUpdateParameters` deleted or renamed its instance variable `description`
   - Model `ProductUpdateParameters` deleted or renamed its instance variable `terms`
   - Model `ProductUpdateParameters` deleted or renamed its instance variable `subscription_required`
@@ -972,14 +394,9 @@
   - Model `ProductUpdateParameters` deleted or renamed its instance variable `display_name`
   - Model `QuotaCounterValueUpdateContract` deleted or renamed its instance variable `calls_count`
   - Model `QuotaCounterValueUpdateContract` deleted or renamed its instance variable `kb_transferred`
-  - Model `RecipientUserContract` deleted or renamed its instance variable `user_id`
-  - Model `RemotePrivateEndpointConnectionWrapper` deleted or renamed its instance variable `private_endpoint`
-  - Model `RemotePrivateEndpointConnectionWrapper` deleted or renamed its instance variable `private_link_service_connection_state`
-  - Model `RemotePrivateEndpointConnectionWrapper` deleted or renamed its instance variable `provisioning_state`
-  - Model `RemotePrivateEndpointConnectionWrapper` deleted or renamed its instance variable `group_ids`
-  - Model `ResolverContract` deleted or renamed its instance variable `display_name`
-  - Model `ResolverContract` deleted or renamed its instance variable `path`
-  - Model `ResolverContract` deleted or renamed its instance variable `description`
+  - Model `RecipientUserContract` moved instance variable `user_id` under property `properties`
+  - Model `RemotePrivateEndpointConnectionWrapper` moved instance variable `private_endpoint`, `private_link_service_connection_state`, `provisioning_state`, `group_ids` under property `properties`
+  - Model `ResolverContract` moved instance variable `display_name`, `path`, `description` under property `properties`
   - Model `ResolverUpdateContract` deleted or renamed its instance variable `display_name`
   - Model `ResolverUpdateContract` deleted or renamed its instance variable `path`
   - Model `ResolverUpdateContract` deleted or renamed its instance variable `description`
@@ -1002,22 +419,11 @@
   - Model `SubscriptionUpdateParameters` deleted or renamed its instance variable `state_comment`
   - Model `SubscriptionUpdateParameters` deleted or renamed its instance variable `allow_tracing`
   - Model `TagCreateUpdateParameters` deleted or renamed its instance variable `display_name`
-  - Model `TagDescriptionContract` deleted or renamed its instance variable `description`
-  - Model `TagDescriptionContract` deleted or renamed its instance variable `external_docs_url`
-  - Model `TagDescriptionContract` deleted or renamed its instance variable `external_docs_description`
-  - Model `TagDescriptionContract` deleted or renamed its instance variable `tag_id`
-  - Model `TagDescriptionContract` deleted or renamed its instance variable `display_name`
+  - Model `TagDescriptionContract` moved instance variable `description`, `external_docs_url`, `external_docs_description`, `tag_id`, `display_name` under property `properties`
   - Model `TagDescriptionCreateParameters` deleted or renamed its instance variable `description`
   - Model `TagDescriptionCreateParameters` deleted or renamed its instance variable `external_docs_url`
   - Model `TagDescriptionCreateParameters` deleted or renamed its instance variable `external_docs_description`
-  - Model `UserContract` deleted or renamed its instance variable `state`
-  - Model `UserContract` deleted or renamed its instance variable `note`
-  - Model `UserContract` deleted or renamed its instance variable `identities`
-  - Model `UserContract` deleted or renamed its instance variable `first_name`
-  - Model `UserContract` deleted or renamed its instance variable `last_name`
-  - Model `UserContract` deleted or renamed its instance variable `email`
-  - Model `UserContract` deleted or renamed its instance variable `registration_date`
-  - Model `UserContract` deleted or renamed its instance variable `groups`
+  - Model `UserContract` moved instance variable `state`, `note`, `identities`, `first_name`, `last_name`, `email`, `registration_date`, `groups` under property `properties`
   - Model `UserCreateParameters` deleted or renamed its instance variable `state`
   - Model `UserCreateParameters` deleted or renamed its instance variable `note`
   - Model `UserCreateParameters` deleted or renamed its instance variable `identities`
@@ -1037,336 +443,267 @@
   - Model `UserUpdateParameters` deleted or renamed its instance variable `first_name`
   - Model `UserUpdateParameters` deleted or renamed its instance variable `last_name`
   - Model `WikiUpdateContract` deleted or renamed its instance variable `documents`
-  - Deleted or renamed model `AccessInformationCollection`
-  - Deleted or renamed model `AllPoliciesCollection`
-  - Deleted or renamed model `ApiCollection`
-  - Deleted or renamed model `ApiManagementSkusResult`
-  - Deleted or renamed model `ApiReleaseCollection`
-  - Deleted or renamed model `ApiRevisionCollection`
   - Deleted or renamed model `ApiRevisionInfoContract`
-  - Deleted or renamed model `ApiVersionSetCollection`
   - Deleted or renamed model `AsyncResolverStatus`
-  - Deleted or renamed model `AuthorizationAccessPolicyCollection`
-  - Deleted or renamed model `AuthorizationCollection`
-  - Deleted or renamed model `AuthorizationProviderCollection`
-  - Deleted or renamed model `AuthorizationServerCollection`
-  - Deleted or renamed model `BackendCollection`
-  - Deleted or renamed model `CacheCollection`
-  - Deleted or renamed model `CertificateCollection`
-  - Deleted or renamed model `ContentItemCollection`
-  - Deleted or renamed model `ContentTypeCollection`
-  - Deleted or renamed model `DeletedServicesCollection`
-  - Deleted or renamed model `DiagnosticCollection`
-  - Deleted or renamed model `DocumentationCollection`
-  - Deleted or renamed model `EmailTemplateCollection`
-  - Deleted or renamed model `GatewayCertificateAuthorityCollection`
-  - Deleted or renamed model `GatewayCollection`
-  - Deleted or renamed model `GatewayHostnameConfigurationCollection`
-  - Deleted or renamed model `GatewayResourceSkuResults`
-  - Deleted or renamed model `GlobalSchemaCollection`
-  - Deleted or renamed model `GroupCollection`
-  - Deleted or renamed model `IdentityProviderList`
-  - Deleted or renamed model `IssueAttachmentCollection`
-  - Deleted or renamed model `IssueCollection`
-  - Deleted or renamed model `IssueCommentCollection`
-  - Deleted or renamed model `LoggerCollection`
-  - Deleted or renamed model `NamedValueCollection`
-  - Deleted or renamed model `NotificationCollection`
-  - Deleted or renamed model `OpenIdConnectProviderCollection`
-  - Deleted or renamed model `OperationCollection`
-  - Deleted or renamed model `PolicyFragmentCollection`
-  - Deleted or renamed model `PolicyRestrictionCollection`
-  - Deleted or renamed model `PolicyWithComplianceCollection`
   - Deleted or renamed model `PolicyWithComplianceContract`
-  - Deleted or renamed model `PortalConfigCollection`
-  - Deleted or renamed model `PortalRevisionCollection`
-  - Deleted or renamed model `ProductApiLinkCollection`
-  - Deleted or renamed model `ProductCollection`
-  - Deleted or renamed model `ProductGroupLinkCollection`
   - Deleted or renamed model `QuotaCounterValueContract`
-  - Deleted or renamed model `ReportCollection`
-  - Deleted or renamed model `RequestReportCollection`
-  - Deleted or renamed model `ResolverCollection`
   - Deleted or renamed model `ResolverResultContract`
   - Deleted or renamed model `ResolverResultLogItemContract`
-  - Deleted or renamed model `ResourceSkuResults`
-  - Deleted or renamed model `SchemaCollection`
-  - Deleted or renamed model `SubscriptionCollection`
-  - Deleted or renamed model `TagApiLinkCollection`
-  - Deleted or renamed model `TagCollection`
-  - Deleted or renamed model `TagDescriptionCollection`
-  - Deleted or renamed model `TagOperationLinkCollection`
-  - Deleted or renamed model `TagProductLinkCollection`
-  - Deleted or renamed model `TagResourceCollection`
-  - Deleted or renamed model `TenantSettingsCollection`
-  - Deleted or renamed model `UserCollection`
-  - Deleted or renamed model `UserIdentityCollection`
-  - Deleted or renamed model `WikiCollection`
-  - Deleted or renamed model `WorkspaceCollection`
-  - Method `ApiDiagnosticOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiDiagnosticOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiDiagnosticOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiExportOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
-  - Method `ApiExportOperations.get` changed its parameter `export` from `positional_or_keyword` to `keyword_only`
-  - Method `ApiGatewayConfigConnectionOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiIssueAttachmentOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiIssueAttachmentOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiIssueCommentOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiIssueCommentOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiIssueOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiIssueOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Deleted or renamed model `ApiManagementClientOperationsMixin`
+  - Parameter `format` of method `ApiOperationPolicyOperations.get` is now optional
+  - Parameter `format` of method `ApiPolicyOperations.get` is now optional
+  - Parameter `format` of method `GraphQLApiResolverPolicyOperations.get` is now optional
+  - Parameter `format` of method `PolicyOperations.get` is now optional
+  - Parameter `format` of method `ProductPolicyOperations.get` is now optional
+  - Parameter `format` of method `WorkspaceApiOperationPolicyOperations.get` is now optional
+  - Parameter `format` of method `WorkspaceApiPolicyOperations.get` is now optional
+  - Parameter `format` of method `WorkspacePolicyOperations.get` is now optional
+  - Parameter `format` of method `WorkspaceProductPolicyOperations.get` is now optional
+  - Method `ApiDiagnosticOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiDiagnosticOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiDiagnosticOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiGatewayConfigConnectionOperations.begin_delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiIssueAttachmentOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiIssueAttachmentOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiIssueCommentOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiIssueCommentOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiIssueOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiIssueOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiIssueOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiOperationOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiOperationOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiOperationOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiOperationPolicyOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiOperationPolicyOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiOperations.begin_delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiPolicyOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiPolicyOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiReleaseOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiReleaseOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiReleaseOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiSchemaOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiSchemaOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiTagDescriptionOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiTagDescriptionOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiVersionSetOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiVersionSetOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiVersionSetOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiWikiOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiWikiOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiWikiOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `AuthorizationAccessPolicyOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `AuthorizationAccessPolicyOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `AuthorizationOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `AuthorizationOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `AuthorizationProviderOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `AuthorizationProviderOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `AuthorizationServerOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `AuthorizationServerOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `AuthorizationServerOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `BackendOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `BackendOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `BackendOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `CacheOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `CacheOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `CacheOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `CertificateOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `CertificateOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ContentItemOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ContentItemOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ContentTypeOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ContentTypeOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `DelegationSettingsOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `DelegationSettingsOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `DiagnosticOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `DiagnosticOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `DiagnosticOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `DocumentationOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `DocumentationOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `DocumentationOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `EmailTemplateOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `EmailTemplateOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `EmailTemplateOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GatewayCertificateAuthorityOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GatewayCertificateAuthorityOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GatewayHostnameConfigurationOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GatewayHostnameConfigurationOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GatewayOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GatewayOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GatewayOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GlobalSchemaOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GlobalSchemaOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GraphQLApiResolverOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GraphQLApiResolverOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GraphQLApiResolverOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GraphQLApiResolverPolicyOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GraphQLApiResolverPolicyOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GroupOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GroupOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `GroupOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `IdentityProviderOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `IdentityProviderOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `IdentityProviderOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `LoggerOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `LoggerOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `LoggerOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `NamedValueOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `NamedValueOperations.begin_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `NamedValueOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `NotificationOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `OpenIdConnectProviderOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `OpenIdConnectProviderOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `OpenIdConnectProviderOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `PolicyFragmentOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `PolicyFragmentOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `PolicyOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `PolicyOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `PolicyRestrictionOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `PolicyRestrictionOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `PolicyRestrictionOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `PortalConfigOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `PortalConfigOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `PortalRevisionOperations.begin_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ProductOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ProductOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ProductOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ProductPolicyOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ProductPolicyOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ProductWikiOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ProductWikiOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ProductWikiOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `SignInSettingsOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `SignInSettingsOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `SignUpSettingsOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `SignUpSettingsOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `SubscriptionOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `SubscriptionOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `SubscriptionOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `TagOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `TagOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `TagOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `TenantAccessOperations.create` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `TenantAccessOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `UserOperations.begin_delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `UserOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `UserOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiDiagnosticOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiDiagnosticOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiDiagnosticOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiOperationOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiOperationOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiOperationOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiOperationPolicyOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiOperationPolicyOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiPolicyOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiPolicyOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiReleaseOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiReleaseOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiReleaseOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiSchemaOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiSchemaOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiVersionSetOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiVersionSetOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceApiVersionSetOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceBackendOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceBackendOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceBackendOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceCertificateOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceCertificateOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceDiagnosticOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceDiagnosticOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceDiagnosticOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceGlobalSchemaOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceGlobalSchemaOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceGroupOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceGroupOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceGroupOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceLoggerOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceLoggerOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceLoggerOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceNamedValueOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceNamedValueOperations.begin_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceNamedValueOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceNotificationOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspacePolicyFragmentOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspacePolicyFragmentOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspacePolicyOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspacePolicyOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceProductOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceProductOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceProductOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceProductPolicyOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceProductPolicyOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceSubscriptionOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceSubscriptionOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceSubscriptionOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceTagOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceTagOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `WorkspaceTagOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ApiExportOperations.get` changed its parameter `format`/`export` from `positional_or_keyword` to `keyword_only`
   - Method `ApiIssueOperations.get` changed its parameter `expand_comments_attachments` from `positional_or_keyword` to `keyword_only`
   - Method `ApiIssueOperations.list_by_service` changed its parameter `expand_comments_attachments` from `positional_or_keyword` to `keyword_only`
-  - Method `ApiIssueOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiOperationOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiOperationOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
   - Method `ApiOperationOperations.list_by_api` changed its parameter `tags` from `positional_or_keyword` to `keyword_only`
-  - Method `ApiOperationOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiOperationPolicyOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiOperationPolicyOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiOperationPolicyOperations.get` parameter `format` changed default value from `str` to `none`
   - Method `ApiOperationPolicyOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
-  - Method `ApiOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiOperations.begin_delete` changed its parameter `delete_revisions` from `positional_or_keyword` to `keyword_only`
-  - Method `ApiOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiOperations.list_by_service` changed its parameter `tags` from `positional_or_keyword` to `keyword_only`
-  - Method `ApiOperations.list_by_service` changed its parameter `expand_api_version_set` from `positional_or_keyword` to `keyword_only`
+  - Method `ApiOperations.list_by_service` changed its parameter `tags`/`expand_api_version_set` from `positional_or_keyword` to `keyword_only`
   - Method `ApiOperations.list_by_tags` changed its parameter `include_not_tagged_apis` from `positional_or_keyword` to `keyword_only`
-  - Method `ApiOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiPolicyOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiPolicyOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiPolicyOperations.get` parameter `format` changed default value from `str` to `none`
   - Method `ApiPolicyOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
-  - Method `ApiReleaseOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiReleaseOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiReleaseOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiSchemaOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiSchemaOperations.delete` changed its parameter `force` from `positional_or_keyword` to `keyword_only`
-  - Method `ApiSchemaOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiTagDescriptionOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiTagDescriptionOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiVersionSetOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiVersionSetOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiVersionSetOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiWikiOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiWikiOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ApiWikiOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `AuthorizationAccessPolicyOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `AuthorizationAccessPolicyOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `AuthorizationOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `AuthorizationOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `AuthorizationProviderOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `AuthorizationProviderOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `AuthorizationServerOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `AuthorizationServerOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `AuthorizationServerOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `BackendOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `BackendOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `BackendOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `CacheOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `CacheOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `CacheOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `CertificateOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `CertificateOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
   - Method `CertificateOperations.list_by_service` changed its parameter `is_key_vault_refresh_failed` from `positional_or_keyword` to `keyword_only`
-  - Method `ContentItemOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ContentItemOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ContentTypeOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ContentTypeOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `DelegationSettingsOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `DelegationSettingsOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `DiagnosticOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `DiagnosticOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `DiagnosticOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `DocumentationOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `DocumentationOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `DocumentationOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `EmailTemplateOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `EmailTemplateOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `EmailTemplateOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `GatewayCertificateAuthorityOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `GatewayCertificateAuthorityOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `GatewayHostnameConfigurationOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `GatewayHostnameConfigurationOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `GatewayOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `GatewayOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `GatewayOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `GlobalSchemaOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `GlobalSchemaOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `GraphQLApiResolverOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `GraphQLApiResolverOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `GraphQLApiResolverOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `GraphQLApiResolverPolicyOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `GraphQLApiResolverPolicyOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `GraphQLApiResolverPolicyOperations.get` parameter `format` changed default value from `str` to `none`
   - Method `GraphQLApiResolverPolicyOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
-  - Method `GroupOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `GroupOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `GroupOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `IdentityProviderOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `IdentityProviderOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `IdentityProviderOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `LoggerOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `LoggerOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `LoggerOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `NamedValueOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `NamedValueOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `NamedValueOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
   - Method `NamedValueOperations.list_by_service` changed its parameter `is_key_vault_refresh_failed` from `positional_or_keyword` to `keyword_only`
-  - Method `NotificationOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `OpenIdConnectProviderOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `OpenIdConnectProviderOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `OpenIdConnectProviderOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
   - Method `OperationOperations.list_by_tags` changed its parameter `include_not_tagged_operations` from `positional_or_keyword` to `keyword_only`
   - Method `PolicyDescriptionOperations.list_by_service` changed its parameter `scope` from `positional_or_keyword` to `keyword_only`
-  - Method `PolicyFragmentOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `PolicyFragmentOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
   - Method `PolicyFragmentOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
   - Method `PolicyFragmentOperations.list_by_service` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
-  - Method `PolicyOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `PolicyOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `PolicyOperations.get` parameter `format` changed default value from `str` to `none`
   - Method `PolicyOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
-  - Method `PolicyRestrictionOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `PolicyRestrictionOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `PolicyRestrictionOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `PortalConfigOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `PortalConfigOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `PortalRevisionOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ProductOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ProductOperations.delete` changed its parameter `delete_subscriptions` from `positional_or_keyword` to `keyword_only`
-  - Method `ProductOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ProductOperations.list_by_service` changed its parameter `expand_groups` from `positional_or_keyword` to `keyword_only`
-  - Method `ProductOperations.list_by_service` changed its parameter `tags` from `positional_or_keyword` to `keyword_only`
+  - Method `ProductOperations.list_by_service` changed its parameter `expand_groups`/`tags` from `positional_or_keyword` to `keyword_only`
   - Method `ProductOperations.list_by_tags` changed its parameter `include_not_tagged_products` from `positional_or_keyword` to `keyword_only`
-  - Method `ProductOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ProductPolicyOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ProductPolicyOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ProductPolicyOperations.get` parameter `format` changed default value from `str` to `none`
   - Method `ProductPolicyOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
-  - Method `ProductWikiOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ProductWikiOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ProductWikiOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
   - Method `ReportsOperations.list_by_api` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
   - Method `ReportsOperations.list_by_operation` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
   - Method `ReportsOperations.list_by_product` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
   - Method `ReportsOperations.list_by_subscription` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
-  - Method `ReportsOperations.list_by_time` changed its parameter `interval` from `positional_or_keyword` to `keyword_only`
-  - Method `ReportsOperations.list_by_time` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `ReportsOperations.list_by_time` changed its parameter `interval`/`orderby` from `positional_or_keyword` to `keyword_only`
   - Method `ReportsOperations.list_by_user` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
-  - Method `SignInSettingsOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `SignInSettingsOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `SignUpSettingsOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `SignUpSettingsOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `SubscriptionOperations.create_or_update` changed its parameter `notify` from `positional_or_keyword` to `keyword_only`
-  - Method `SubscriptionOperations.create_or_update` changed its parameter `app_type` from `positional_or_keyword` to `keyword_only`
-  - Method `SubscriptionOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `SubscriptionOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `SubscriptionOperations.update` changed its parameter `notify` from `positional_or_keyword` to `keyword_only`
-  - Method `SubscriptionOperations.update` changed its parameter `app_type` from `positional_or_keyword` to `keyword_only`
-  - Method `SubscriptionOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `TagOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `TagOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
   - Method `TagOperations.list_by_service` changed its parameter `scope` from `positional_or_keyword` to `keyword_only`
-  - Method `TagOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `TenantAccessOperations.create` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `TenantAccessOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
   - Method `UserConfirmationPasswordOperations.send` changed its parameter `app_type` from `positional_or_keyword` to `keyword_only`
-  - Method `UserOperations.begin_delete` changed its parameter `delete_subscriptions` from `positional_or_keyword` to `keyword_only`
-  - Method `UserOperations.begin_delete` changed its parameter `notify` from `positional_or_keyword` to `keyword_only`
-  - Method `UserOperations.begin_delete` changed its parameter `app_type` from `positional_or_keyword` to `keyword_only`
-  - Method `UserOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `UserOperations.create_or_update` changed its parameter `notify` from `positional_or_keyword` to `keyword_only`
-  - Method `UserOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
   - Method `UserOperations.list_by_service` changed its parameter `expand_groups` from `positional_or_keyword` to `keyword_only`
-  - Method `UserOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceApiDiagnosticOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceApiDiagnosticOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceApiDiagnosticOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceApiExportOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
-  - Method `WorkspaceApiExportOperations.get` changed its parameter `export` from `positional_or_keyword` to `keyword_only`
-  - Method `WorkspaceApiOperationOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceApiOperationOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `WorkspaceApiExportOperations.get` changed its parameter `format`/`export` from `positional_or_keyword` to `keyword_only`
   - Method `WorkspaceApiOperationOperations.list_by_api` changed its parameter `tags` from `positional_or_keyword` to `keyword_only`
-  - Method `WorkspaceApiOperationOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceApiOperationPolicyOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceApiOperationPolicyOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceApiOperationPolicyOperations.get` parameter `format` changed default value from `str` to `none`
   - Method `WorkspaceApiOperationPolicyOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
-  - Method `WorkspaceApiOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceApiOperations.delete` changed its parameter `delete_revisions` from `positional_or_keyword` to `keyword_only`
-  - Method `WorkspaceApiOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceApiOperations.list_by_service` changed its parameter `tags` from `positional_or_keyword` to `keyword_only`
-  - Method `WorkspaceApiOperations.list_by_service` changed its parameter `expand_api_version_set` from `positional_or_keyword` to `keyword_only`
-  - Method `WorkspaceApiOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceApiPolicyOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceApiPolicyOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceApiPolicyOperations.get` parameter `format` changed default value from `str` to `none`
+  - Method `WorkspaceApiOperations.list_by_service` changed its parameter `tags`/`expand_api_version_set` from `positional_or_keyword` to `keyword_only`
   - Method `WorkspaceApiPolicyOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
-  - Method `WorkspaceApiReleaseOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceApiReleaseOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceApiReleaseOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceApiSchemaOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceApiSchemaOperations.delete` changed its parameter `force` from `positional_or_keyword` to `keyword_only`
-  - Method `WorkspaceApiSchemaOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceApiVersionSetOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceApiVersionSetOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceApiVersionSetOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceBackendOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceBackendOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceBackendOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceCertificateOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceCertificateOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
   - Method `WorkspaceCertificateOperations.list_by_workspace` changed its parameter `is_key_vault_refresh_failed` from `positional_or_keyword` to `keyword_only`
-  - Method `WorkspaceDiagnosticOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceDiagnosticOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceDiagnosticOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceGlobalSchemaOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceGlobalSchemaOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceGroupOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceGroupOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceGroupOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceLoggerOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceLoggerOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceLoggerOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceNamedValueOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceNamedValueOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceNamedValueOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
   - Method `WorkspaceNamedValueOperations.list_by_service` changed its parameter `is_key_vault_refresh_failed` from `positional_or_keyword` to `keyword_only`
-  - Method `WorkspaceNotificationOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspacePolicyFragmentOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspacePolicyFragmentOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
   - Method `WorkspacePolicyFragmentOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
   - Method `WorkspacePolicyFragmentOperations.list_by_service` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
-  - Method `WorkspacePolicyOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspacePolicyOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspacePolicyOperations.get` parameter `format` changed default value from `str` to `none`
   - Method `WorkspacePolicyOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
-  - Method `WorkspaceProductOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceProductOperations.delete` changed its parameter `delete_subscriptions` from `positional_or_keyword` to `keyword_only`
-  - Method `WorkspaceProductOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceProductOperations.list_by_service` changed its parameter `expand_groups` from `positional_or_keyword` to `keyword_only`
-  - Method `WorkspaceProductOperations.list_by_service` changed its parameter `tags` from `positional_or_keyword` to `keyword_only`
-  - Method `WorkspaceProductOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceProductPolicyOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceProductPolicyOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceProductPolicyOperations.get` parameter `format` changed default value from `str` to `none`
+  - Method `WorkspaceProductOperations.list_by_service` changed its parameter `expand_groups`/`tags` from `positional_or_keyword` to `keyword_only`
   - Method `WorkspaceProductPolicyOperations.get` changed its parameter `format` from `positional_or_keyword` to `keyword_only`
-  - Method `WorkspaceSubscriptionOperations.create_or_update` changed its parameter `notify` from `positional_or_keyword` to `keyword_only`
-  - Method `WorkspaceSubscriptionOperations.create_or_update` changed its parameter `app_type` from `positional_or_keyword` to `keyword_only`
-  - Method `WorkspaceSubscriptionOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceSubscriptionOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceSubscriptionOperations.update` changed its parameter `notify` from `positional_or_keyword` to `keyword_only`
-  - Method `WorkspaceSubscriptionOperations.update` changed its parameter `app_type` from `positional_or_keyword` to `keyword_only`
-  - Method `WorkspaceSubscriptionOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceTagOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `WorkspaceTagOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
   - Method `WorkspaceTagOperations.list_by_service` changed its parameter `scope` from `positional_or_keyword` to `keyword_only`
-  - Method `WorkspaceTagOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Deleted or renamed model `ApiManagementClientOperationsMixin`
+  - Method `ApiOperations.begin_delete` changed its parameter `delete_revisions` from `positional_or_keyword` to `keyword_only`
+  - Method `ApiSchemaOperations.delete` changed its parameter `force` from `positional_or_keyword` to `keyword_only`
+  - Method `ProductOperations.delete` changed its parameter `delete_subscriptions` from `positional_or_keyword` to `keyword_only`
+  - Method `SubscriptionOperations.create_or_update` changed its parameter `notify`/`app_type` from `positional_or_keyword` to `keyword_only`
+  - Method `SubscriptionOperations.update` changed its parameter `notify`/`app_type` from `positional_or_keyword` to `keyword_only`
+  - Method `UserOperations.begin_delete` changed its parameter `delete_subscriptions`/`notify`/`app_type` from `positional_or_keyword` to `keyword_only`
+  - Method `UserOperations.create_or_update` changed its parameter `notify` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspaceApiOperations.delete` changed its parameter `delete_revisions` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspaceApiSchemaOperations.delete` changed its parameter `force` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspaceProductOperations.delete` changed its parameter `delete_subscriptions` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspaceSubscriptionOperations.create_or_update` changed its parameter `notify`/`app_type` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspaceSubscriptionOperations.update` changed its parameter `notify`/`app_type` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `AccessInformationCollection`/`AllPoliciesCollection`/`ApiCollection`/`ApiManagementSkusResult`/`ApiReleaseCollection`/`ApiRevisionCollection`/`ApiVersionSetCollection`/`AuthorizationAccessPolicyCollection`/`AuthorizationCollection`/`AuthorizationProviderCollection`/`AuthorizationServerCollection`/`BackendCollection`/`CacheCollection`/`CertificateCollection`/`ContentItemCollection`/`ContentTypeCollection`/`DeletedServicesCollection`/`DiagnosticCollection`/`DocumentationCollection`/`EmailTemplateCollection`/`GatewayCertificateAuthorityCollection`/`GatewayCollection`/`GatewayHostnameConfigurationCollection`/`GatewayResourceSkuResults`/`GlobalSchemaCollection`/`GroupCollection`/`IdentityProviderList`/`IssueAttachmentCollection`/`IssueCollection`/`IssueCommentCollection`/`LoggerCollection`/`NamedValueCollection`/`NotificationCollection`/`OpenIdConnectProviderCollection`/`OperationCollection`/`PolicyFragmentCollection`/`PolicyRestrictionCollection`/`PolicyWithComplianceCollection`/`PortalConfigCollection`/`PortalRevisionCollection`/`ProductApiLinkCollection`/`ProductCollection`/`ProductGroupLinkCollection`/`ReportCollection`/`RequestReportCollection`/`ResolverCollection`/`ResourceSkuResults`/`SchemaCollection`/`SubscriptionCollection`/`TagApiLinkCollection`/`TagCollection`/`TagDescriptionCollection`/`TagOperationLinkCollection`/`TagProductLinkCollection`/`TagResourceCollection`/`TenantSettingsCollection`/`UserCollection`/`UserIdentityCollection`/`WikiCollection`/`WorkspaceCollection` which actually were not used by SDK users
 
 ## 5.0.0 (2025-04-21)
 
