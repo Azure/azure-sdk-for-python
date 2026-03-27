@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2024-02-01-preview",
+  "apiVersions": {
+    "Microsoft.Management": "2024-02-01-preview"
+  },
+  "commit": "37ddf2a815c7d15c52a7e8ddd5c1a1aa9689555c",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/management/resource-manager/Microsoft.Management/ServiceGroups",
+  "emitterVersion": "0.61.2"
+}
