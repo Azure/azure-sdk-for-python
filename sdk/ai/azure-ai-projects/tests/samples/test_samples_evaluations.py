@@ -179,7 +179,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_continuous_evaluation_rule.alt.py",
                 "sample_eval_catalog_code_based_evaluators.alt.py",
                 "sample_eval_upload_friendly_evaluator.alt.py",
-                "sample_evaluations_graders.alt.py",
+                "sample_evaluations_builtin_with_csv.alt.py",
             ],
         ),
     )

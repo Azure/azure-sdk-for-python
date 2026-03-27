@@ -12,7 +12,7 @@ from openai.types.evals.create_eval_completions_run_data_source_param import (
     SourceFileContent,
     SourceFileID,
 )
-from ._models import ToolDescription
+from ._models import AzureAIAgentTarget
 
 
 class ResponseRetrievalItemGenerationParams(TypedDict, total=False):
@@ -97,31 +97,6 @@ class AzureAIDataSourceConfig(TypedDict, total=False):
     """Data schema scenario. Required. Is one of the following types: Literal[\"red_team\"],
      Literal[\"responses\"], Literal[\"traces_preview\"], Literal[\"synthetic_data_gen_preview\"],
      Literal[\"benchmark_preview\"]"""
-
-
-class AzureAIAgentTarget(TypedDict, total=False):
-    """Represents a target specifying an Azure AI agent.
-
-    :ivar type: The type of target, always ``azure_ai_agent``. Required. Default value is
-     "azure_ai_agent".
-    :vartype type: str
-    :ivar name: The unique identifier of the Azure AI agent. Required.
-    :vartype name: str
-    :ivar version: The version of the Azure AI agent.
-    :vartype version: str
-    :ivar tool_descriptions: The parameters used to control the sampling behavior of the agent
-     during text generation.
-    :vartype tool_descriptions: list[~azure.ai.projects.models.ToolDescription]
-    """
-
-    type: Required[Literal["azure_ai_agent"]]
-    """The type of target, always ``azure_ai_agent``. Required. Default value is \"azure_ai_agent\"."""
-    name: Required[str]
-    """The unique identifier of the Azure AI agent. Required."""
-    version: str
-    """The version of the Azure AI agent."""
-    tool_descriptions: List[ToolDescription]
-    """The parameters used to control the sampling behavior of the agent during text generation."""
 
 
 class TargetCompletionEvalRunDataSource(TypedDict, total=False):

@@ -10,7 +10,6 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from typing import Final, FrozenSet, List, Dict, Mapping, Optional, Any, Tuple
 from ._patch_evaluation_typeddicts import (
-    AzureAIAgentTarget,
     AzureAIBenchmarkPreviewEvalRunDataSource,
     AzureAIDataSourceConfig,
     AzureAIModelTarget,
@@ -362,7 +361,6 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
 
 __all__: List[str] = [
     "AsyncUpdateMemoriesLROPoller",
-    "AzureAIAgentTarget",
     "AzureAIBenchmarkPreviewEvalRunDataSource",
     "AzureAIDataSourceConfig",
     "AzureAIModelTarget",
