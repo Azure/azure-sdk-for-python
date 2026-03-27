@@ -34,7 +34,7 @@ class ResponseRetrievalItemGenerationParams(TypedDict, total=False):
     type: Required[Literal["response_retrieval"]]
     """The type of item generation parameters, always ``response_retrieval``. Required. The
      ResponseRetrieval item generation parameters."""
-    max_num_turns: Required[int]
+    max_num_turns: int # Required[int] # TODO: In TypeSpec this is required, but samle code does not set it
     """The maximum number of turns of chat history to evaluate. Required."""
     data_mapping: Required[Dict[str, str]]
     """Mapping from source fields to response_id field, required for retrieving chat history.
@@ -66,9 +66,9 @@ class AzureAIResponsesEvalRunDataSource(TypedDict, total=False):
      \"azure_ai_responses\"."""
     item_generation_params: Required[ResponseRetrievalItemGenerationParams]
     """The parameters for item generation. Required."""
-    max_runs_hourly: Required[int]
+    max_runs_hourly: int  # Required[int]  # TODO: In TypeSpec this is required, but samle code does not set it
     """Maximum number of evaluation runs allowed per hour. Required."""
-    event_configuration_id: Required[str]
+    event_configuration_id: str  # Required[str] # TODO: In TypeSpec this is required, but samle code does not set it
     """The event configuration name associated with this evaluation run. Required."""
 
 

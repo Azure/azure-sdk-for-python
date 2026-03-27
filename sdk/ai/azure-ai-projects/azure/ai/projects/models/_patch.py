@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from typing import Final, FrozenSet, List, Dict, Mapping, Optional, Any, Tuple
-from ._patch_typeddicts import (
+from ._patch_evaluation_typeddicts import (
     AzureAIAgentTarget,
     AzureAIDataSourceConfig,
     AzureAIResponsesEvalRunDataSource,
