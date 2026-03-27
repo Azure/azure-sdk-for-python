@@ -177,8 +177,8 @@ invocation returns `server_error`.
 
 ## Next steps
 
-- [INSTRUCTIONS.md](INSTRUCTIONS.md) — Detailed setup guide, contributing, and troubleshooting
-- [CHANGELOG.md](CHANGELOG.md) — Release history
+- See `INSTRUCTIONS.md` in the package source for a detailed setup guide, contributing, and troubleshooting
+- See `CHANGELOG.md` in the package source for release history
 - [Azure AI Foundry documentation](https://learn.microsoft.com/azure/ai-studio/)
 
 ## Contributing
