@@ -40,9 +40,15 @@ extends:
         Selection: sparse
         GenerateVMJobs: true
     Artifacts:
+    - name: azure-ai-agentserver-hosting
+      safeName: azureaiagentserverhosting
+    - name: azure-ai-agentserver-invocations
+      safeName: azureaiagentserverinvocations
     - name: azure-ai-agentserver-core
       safeName: azureaiagentservercore
     - name: azure-ai-agentserver-agentframework
       safeName: azureaiagentserveragentframework
     - name: azure-ai-agentserver-langgraph
       safeName: azureaiagentserverlanggraph
+    - name: azure-ai-agentserver-responses
+      safeName: azureaiagentserverresponses

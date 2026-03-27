@@ -1,0 +1,19 @@
+{
+    "ignoreWords": [
+      "mcpl",
+      "mcpr",
+      "mcpa",
+      "ctco",
+      "lsho",
+      "funcs",
+      "addl",
+      "badid"
+    ],
+    "ignorePaths": [
+      "*.csv",
+      "*.json",
+      "*.rst",
+      "samples/**",
+      "Makefile"
+    ]
+  }
