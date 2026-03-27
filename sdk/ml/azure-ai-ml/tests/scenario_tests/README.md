@@ -244,6 +244,11 @@ new scenarios:
 | Feature store | Create feature set, run materialization | Level 3 |
 | Responsible AI dashboard | RAI insights on a registered model | Level 5 |
 | Serverless compute job | Submit command job without named compute | Level 3 |
+| Backward compatibility | A customer submits a pipeline authored with an older SDK version against a newer service. ||
+| Network isolation | Private workspace and endpoint creation | |
+| Pipeline jobs | Linear pipelines with mixed data types ||
+| Pipeline jobs | Parameterized pipelines with complex params and a mix of default and non-default parameters ||
+| Parallel jobs | Processing parallel jobs using mount mode ||
 
 ## Design Principles
 
