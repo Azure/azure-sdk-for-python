@@ -107,7 +107,7 @@ with (
                 },
                 {"role": "user", "content": "Output: {{item.response}}}}\nGround Truth: {{item.ground_truth}}"},
             ],
-            "image_tag": "2025-05-08", # What is this doing here? OpenAI only defines this for the PythonGrader (type="python")
+            "image_tag": "2025-05-08",  # What is this doing here? OpenAI only defines this for the PythonGrader (type="python")
             "pass_threshold": 0.5,
         },
     ]

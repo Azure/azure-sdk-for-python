@@ -13,11 +13,28 @@ from httpx import Timeout
 from openai import NotGiven, Omit, OpenAI as OpenAIClient
 from openai._types import Body, Query, Headers
 from openai.resources.evals.evals import Evals
+from openai.resources.evals.runs.runs import Runs
+from openai.types.evals.run_create_params import DataSource
+from openai.types.evals.run_create_response import RunCreateResponse
 from openai.types.eval_create_params import DataSourceConfig, TestingCriterion
 from openai.types.eval_create_response import EvalCreateResponse
 from openai.types.shared_params.metadata import Metadata
 from ._client import AIProjectClient as AIProjectClientGenerated
-from .models import EvalGraderAzureAIEvaluator
+from .models import EvalGraderAzureAIEvaluator, TargetCompletionEvalRunDataSource
+
+class _AzureEvalRuns(Runs):
+    def create(
+        self,
+        eval_id: str,
+        *,
+        data_source: Union[DataSource, TargetCompletionEvalRunDataSource],  # <=== Azure extention here
+        metadata: Optional[Metadata] | Omit = ...,
+        name: str | Omit = ...,
+        extra_headers: Headers | None = ...,
+        extra_query: Query | None = ...,
+        extra_body: Body | None = ...,
+        timeout: float | Timeout | None | NotGiven = ...,
+    ) -> RunCreateResponse: ...
 
 class _AzureEvals(Evals):
     def create(
@@ -27,7 +44,7 @@ class _AzureEvals(Evals):
         testing_criteria: Iterable[
             Union[
                 TestingCriterion,
-                EvalGraderAzureAIEvaluator,
+                EvalGraderAzureAIEvaluator,  # <=== Azure extention here
             ]
         ],
         metadata: Optional[Metadata] | Omit | None = ...,
@@ -37,6 +54,8 @@ class _AzureEvals(Evals):
         extra_body: Body | None = None,
         timeout: float | Timeout | NotGiven | None = ...,
     ) -> EvalCreateResponse: ...
+    @property
+    def runs(self) -> _AzureEvalRuns: ...
 
 class OpenAI(OpenAIClient):
     @property

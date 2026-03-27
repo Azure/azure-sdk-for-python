@@ -4,8 +4,68 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Dict, Any
+from typing import Dict, Any, List, Union
 from typing_extensions import Literal, Required, TypedDict
+from openai.types.evals.create_eval_completions_run_data_source_param import (
+    InputMessagesItemReference,
+    SourceFileContent,
+    SourceFileID,
+)
+from ._models import ToolDescription
+
+
+class AzureAIAgentTarget(TypedDict, total=False):
+    """Represents a target specifying an Azure AI agent.
+
+    :ivar type: The type of target, always ``azure_ai_agent``. Required. Default value is
+     "azure_ai_agent".
+    :vartype type: str
+    :ivar name: The unique identifier of the Azure AI agent. Required.
+    :vartype name: str
+    :ivar version: The version of the Azure AI agent.
+    :vartype version: str
+    :ivar tool_descriptions: The parameters used to control the sampling behavior of the agent
+     during text generation.
+    :vartype tool_descriptions: list[~azure.ai.projects.models.ToolDescription]
+    """
+
+    type: Required[Literal["azure_ai_agent"]]
+    """The type of target, always ``azure_ai_agent``. Required. Default value is \"azure_ai_agent\"."""
+    name: Required[str]
+    """The unique identifier of the Azure AI agent. Required."""
+    version: str
+    """The version of the Azure AI agent."""
+    tool_descriptions: List[ToolDescription]
+    """The parameters used to control the sampling behavior of the agent during text generation."""
+
+
+class TargetCompletionEvalRunDataSource(TypedDict, total=False):
+    """Represents a data source for target-based completion evaluation configuration.
+
+    :ivar type: The type of data source, always ``azure_ai_target_completions``. Required. Default
+     value is "azure_ai_target_completions".
+    :vartype type: str
+    :ivar input_messages: Input messages configuration.
+    :vartype input_messages:
+     ~azure.ai.projects.models.CreateEvalCompletionsRunDataSourceInputMessagesItemReference
+    :ivar source: The source configuration for inline or file data. Required. Is either a
+     SourceFileContent type or a SourceFileID type.
+    :vartype source: ~azure.ai.projects.models.SourceFileContent or
+     ~azure.ai.projects.models.SourceFileID
+    :ivar target: The target configuration for the evaluation. Required.
+    :vartype target: ~azure.ai.projects.models.Target
+    """
+
+    type: Required[Literal["azure_ai_target_completions"]]
+    """The type of data source, always ``azure_ai_target_completions``. Required. Default value is
+     \"azure_ai_target_completions\"."""
+    source: Required[Union[SourceFileContent, SourceFileID]]
+    """The source configuration for inline or file data. Required. Is either a
+     SourceFileContent type or a SourceFileID type."""
+    target: Required[AzureAIAgentTarget]
+    """The target configuration for the evaluation. Required."""
+    input_messages: Required[InputMessagesItemReference]
+    """Input messages configuration."""
 
 
 class EvalGraderAzureAIEvaluator(TypedDict, total=False):
