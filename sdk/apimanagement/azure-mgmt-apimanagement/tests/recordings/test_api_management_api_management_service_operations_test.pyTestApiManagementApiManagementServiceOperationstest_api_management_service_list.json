@@ -1,0 +1,125 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ApiManagement/service?api-version=2025-03-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-apimanagement/6.0.0b1 Python/3.13.12 (Windows-11-10.0.26200-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "2660",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 27 Mar 2026 14:14:19 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "ff3b4413-9580-4441-8fa1-8287e71d3291",
+        "x-ms-original-request-ids": "ff3b4413-9580-4441-8fa1-8287e71d3291",
+        "x-ms-ratelimit-remaining-subscription-global-reads": "16499",
+        "x-ms-ratelimit-remaining-subscription-reads": "1099",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20260327T141419Z:ff3b4413-9580-4441-8fa1-8287e71d3291",
+        "X-MSEdge-Ref": "Ref A: 671637D7881341B5A352A201EA6A4112 Ref B: SG2AA1040518042 Ref C: 2026-03-27T14:14:17Z"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "etag": "Sanitized",
+            "properties": {
+              "publisherEmail": "v-tianxi@microsoft.com",
+              "publisherName": "Microsoft",
+              "notificationSenderEmail": "apimgmt-noreply@mail.windowsazure.com",
+              "provisioningState": "Succeeded",
+              "targetProvisioningState": "",
+              "createdAtUtc": "2025-09-25T11:49:11.8512631Z",
+              "gatewayUrl": "https://sdkmgmt-apim.azure-api.net",
+              "gatewayRegionalUrl": null,
+              "portalUrl": null,
+              "developerPortalUrl": "https://sdkmgmt-apim.developer.azure-api.net",
+              "dataApiUrl": "https://sdkmgmt-apim.data.azure-api.net",
+              "managementApiUrl": "https://smapi.api-blu-prod-scaleunit-003.p.azurewebsites.net/",
+              "scmUrl": null,
+              "hostnameConfigurations": [
+                {
+                  "type": "Proxy",
+                  "hostName": "sdkmgmt-apim.azure-api.net",
+                  "encodedCertificate": null,
+                  "keyVaultId": null,
+                  "certificatePassword": null,
+                  "negotiateClientCertificate": false,
+                  "certificate": null,
+                  "defaultSslBinding": true,
+                  "identityClientId": null,
+                  "certificateSource": "BuiltIn",
+                  "certificateStatus": null
+                }
+              ],
+              "publicIPAddresses": null,
+              "privateIPAddresses": null,
+              "additionalLocations": null,
+              "virtualNetworkConfiguration": null,
+              "customProperties": {
+                "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls10": "False",
+                "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls11": "False",
+                "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Tls10": "False",
+                "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Tls11": "False",
+                "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Ssl30": "False",
+                "Microsoft.WindowsAzure.ApiManagement.Gateway.Protocols.Server.Http2": "False",
+                "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Ssl30": "False",
+                "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Ciphers.TripleDes168": "False"
+              },
+              "virtualNetworkType": "None",
+              "certificates": null,
+              "enableClientCertificate": false,
+              "natGatewayState": "Enabled",
+              "outboundPublicIPAddresses": null,
+              "apiVersionConstraint": {
+                "minApiVersion": null
+              },
+              "publicIpAddressId": null,
+              "publicNetworkAccess": "Enabled",
+              "privateEndpointConnections": null,
+              "platformVersion": "undetermined",
+              "configurationApi": null,
+              "legacyPortalStatus": "Disabled",
+              "developerPortalStatus": "Enabled",
+              "releaseChannel": "Default"
+            },
+            "sku": {
+              "name": "Sanitized",
+              "capacity": 1
+            },
+            "identity": {
+              "type": "SystemAssigned",
+              "principalId": "00000000-0000-0000-0000-000000000000",
+              "tenantId": "00000000-0000-0000-0000-000000000000"
+            },
+            "zones": null,
+            "systemData": {
+              "createdBy": null,
+              "createdByType": null,
+              "createdAt": null,
+              "lastModifiedBy": "Sanitized",
+              "lastModifiedByType": "User",
+              "lastModifiedAt": "2025-10-10T02:07:33.9569148Z"
+            },
+            "location": "East US",
+            "tags": {
+              "azd-env-name": "mcp-sdkreleasedata-dev"
+            },
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.ApiManagement/service"
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}
