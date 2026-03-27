@@ -4,7 +4,7 @@
 
 ### Features Added
 
-  - Model `PlanetaryComputerMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `PlanetaryComputerMgmtClient` added parameter `cloud_setting` in method `__init__`
 
 ## 1.0.0b1 (2025-05-20)
 
