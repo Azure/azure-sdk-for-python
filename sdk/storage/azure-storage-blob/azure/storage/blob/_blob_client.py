@@ -198,7 +198,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             hostname=self._hosts[self._location_mode],
         )
         self._client = AzureBlobStorage(
-            client_url, base_url=client_url,
+            client_url,
             version=get_api_version(kwargs), pipeline=self._pipeline)
         self._configure_encryption(kwargs)
 
