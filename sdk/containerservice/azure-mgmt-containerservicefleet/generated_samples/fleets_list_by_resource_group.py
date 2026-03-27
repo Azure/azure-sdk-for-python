@@ -31,12 +31,12 @@ def main():
     )
 
     response = client.fleets.list_by_resource_group(
-        resource_group_name="rg1",
+        resource_group_name="rgfleets",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2025-08-01-preview/Fleets_ListByResourceGroup.json
+# x-ms-original-file: 2026-02-01-preview/Fleets_ListByResourceGroup.json
 if __name__ == "__main__":
     main()
