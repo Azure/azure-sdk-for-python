@@ -1015,15 +1015,11 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         :keyword ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set blob properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash for each chunk of the blob. The storage
-            service checks the hash of the content that has arrived with the hash
-            that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https, as https (the default), will
-            already validate. Note that this MD5 hash is not stored with the
-            blob. Also note that if enabled, the memory-efficient upload algorithm
-            will not be used, because computing the MD5 hash requires buffering
-            entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any checksum calculated is NOT stored with the blob.
+            Choose "auto" (let the SDK choose the best algorithm), "crc64", or "md5". The use of bool is deprecated.
+            NOTE: The use of "auto" or "crc64" requires the `azure-storage-extensions` package to be installed.
+        :paramtype validate_content: Union[bool, Literal['auto', 'crc64', 'md5']]
         :keyword lease:
             Required if the container has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -1261,15 +1257,11 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
 
             This keyword argument was introduced in API version '2019-12-12'.
 
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash for each chunk of the blob. The storage
-            service checks the hash of the content that has arrived with the hash
-            that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https, as https (the default), will
-            already validate. Note that this MD5 hash is not stored with the
-            blob. Also note that if enabled, the memory-efficient upload algorithm
-            will not be used because computing the MD5 hash requires buffering
-            entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any checksum calculated is NOT stored with the blob.
+            Choose "auto" (let the SDK choose the best algorithm), "crc64", or "md5". The use of bool is deprecated.
+            NOTE: The use of "auto" or "crc64" requires the `azure-storage-extensions` package to be installed.
+        :paramtype validate_content: Union[bool, Literal['auto', 'crc64', 'md5']]
         :keyword lease:
             Required if the blob has an active lease. If specified, download_blob only
             succeeds if the blob's lease is active and matches this ID. Value can be a
