@@ -2,7 +2,133 @@
 
 ## 1.0.0b2 (2026-03-27)
 
-skip changelog generation
+### Features Added
+
+  - Enum `BillingPlan` added member `P1M`
+  - Model `Discount` added property `properties`
+  - Model `SavingsPlanOrderAliasModel` added property `properties`
+  - Enum `Term` added member `P1M`
+  - Enum `Term` added member `P1Y`
+  - Enum `Term` added member `P3Y`
+  - Enum `Term` added member `P5Y`
+  - Added model `ApplicableMacc`
+  - Added model `AutomaticShortfallSuppressReason`
+  - Added model `Award`
+  - Added enum `BenefitType`
+  - Added model `BenefitValidateModel`
+  - Added model `BenefitValidateRequest`
+  - Added model `BenefitValidateResponse`
+  - Added model `BenefitValidateResponseProperty`
+  - Added model `ChargeShortfallRequest`
+  - Added model `ConditionalCredit`
+  - Added model `ConditionalCreditContributor`
+  - Added enum `ConditionalCreditEntityType`
+  - Added model `ConditionalCreditMilestone`
+  - Added model `ConditionalCreditMilestoneBase`
+  - Added model `ConditionalCreditPatchRequest`
+  - Added model `ConditionalCreditPatchRequestProperties`
+  - Added model `ConditionalCreditProperties`
+  - Added enum `ConditionalCreditStatus`
+  - Added enum `ConditionalCreditsProvisioningState`
+  - Added model `ConditionalCreditsValidateModel`
+  - Added model `Contributor`
+  - Added model `ContributorConditionalCreditMilestone`
+  - Added model `ContributorConditionalCreditProperties`
+  - Added model `Credit`
+  - Added model `CreditBreakdownItem`
+  - Added model `CreditDimension`
+  - Added enum `CreditExpirationPolicy`
+  - Added model `CreditPatchProperties`
+  - Added model `CreditPatchRequest`
+  - Added model `CreditPolicies`
+  - Added model `CreditProperties`
+  - Added model `CreditReason`
+  - Added enum `CreditRedemptionPolicy`
+  - Added model `CreditSource`
+  - Added model `CreditSourcePatchRequest`
+  - Added model `CreditSourceProperties`
+  - Added enum `CreditStatus`
+  - Added model `CreditsValidateModel`
+  - Added enum `EnablementMode`
+  - Added model `FreeServices`
+  - Added model `FreeServicesPatchRequest`
+  - Added model `FreeServicesPatchRequestProperties`
+  - Added model `FreeServicesProperties`
+  - Added enum `FreeServicesStatus`
+  - Added model `Macc`
+  - Added enum `MaccEntityType`
+  - Added model `MaccMilestone`
+  - Added enum `MaccMilestoneStatus`
+  - Added model `MaccModelProperties`
+  - Added model `MaccPatchRequest`
+  - Added model `MaccPatchRequestProperties`
+  - Added enum `MaccStatus`
+  - Added model `MaccValidateModel`
+  - Added enum `MilestoneStatus`
+  - Added model `PrimaryConditionalCreditProperties`
+  - Added model `SavingsPlanOrderAliasProperties`
+  - Added model `SavingsPlanValidateModel`
+  - Added model `SellerResourceListRequest`
+  - Added model `SellerResourceListRequestProperties`
+  - Added model `ServiceManagedIdentity`
+  - Added enum `ServiceManagedIdentityType`
+  - Added model `Shortfall`
+  - Added model `ApplicableMaccsOperations`
+  - Added model `BenefitOperations`
+  - Added model `ConditionalCreditContributorsOperations`
+  - Added model `ConditionalCreditsOperations`
+  - Added model `ContributorsOperations`
+  - Added model `CreditsOperations`
+  - Added model `FreeServicesOperations`
+  - Added model `MaccsOperations`
+  - Added model `SellerResourceOperations`
+  - Added model `SourcesOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed model `BillingBenefitsRP`
+  - Deleted or renamed enum value `BillingPlan.P1_M`
+  - Model `Discount` deleted or renamed its instance variable `entity_type`
+  - Model `Discount` deleted or renamed its instance variable `product_code`
+  - Model `Discount` deleted or renamed its instance variable `start_at`
+  - Model `Discount` deleted or renamed its instance variable `system_id`
+  - Model `Discount` deleted or renamed its instance variable `provisioning_state`
+  - Model `Discount` deleted or renamed its instance variable `billing_account_resource_id`
+  - Model `Discount` deleted or renamed its instance variable `billing_profile_resource_id`
+  - Model `Discount` deleted or renamed its instance variable `customer_resource_id`
+  - Model `Discount` deleted or renamed its instance variable `display_name`
+  - Model `Discount` deleted or renamed its instance variable `status`
+  - Model `Discount` deleted or renamed its instance variable `benefit_resource_id`
+  - Model `Discount` deleted or renamed its instance variable `applied_scope_type`
+  - Model `SavingsPlanOrderAliasModel` deleted or renamed its instance variable `display_name`
+  - Model `SavingsPlanOrderAliasModel` deleted or renamed its instance variable `savings_plan_order_id`
+  - Model `SavingsPlanOrderAliasModel` deleted or renamed its instance variable `provisioning_state`
+  - Model `SavingsPlanOrderAliasModel` deleted or renamed its instance variable `billing_scope_id`
+  - Model `SavingsPlanOrderAliasModel` deleted or renamed its instance variable `term`
+  - Model `SavingsPlanOrderAliasModel` deleted or renamed its instance variable `billing_plan`
+  - Model `SavingsPlanOrderAliasModel` deleted or renamed its instance variable `applied_scope_type`
+  - Model `SavingsPlanOrderAliasModel` deleted or renamed its instance variable `applied_scope_properties`
+  - Model `SavingsPlanOrderAliasModel` deleted or renamed its instance variable `commitment`
+  - Model `SavingsPlanOrderAliasModel` deleted or renamed its instance variable `renew`
+  - Deleted or renamed enum value `Term.P1_Y`
+  - Deleted or renamed enum value `Term.P3_Y`
+  - Deleted or renamed enum value `Term.P5_Y`
+  - Deleted or renamed model `AppliedDiscount`
+  - Deleted or renamed model `BillingInformation`
+  - Deleted or renamed model `DiscountList`
+  - Deleted or renamed model `DiscountProvisioningSubState`
+  - Deleted or renamed model `OperationResultError`
+  - Deleted or renamed model `PricingCurrencyDuration`
+  - Deleted or renamed model `PricingCurrencyTotal`
+  - Deleted or renamed model `ResourceModelWithAllowedPropertySet`
+  - Deleted or renamed model `SavingsPlanModelList`
+  - Deleted or renamed model `SavingsPlanOrderModelList`
+  - Deleted or renamed model `SavingsPlanPurchaseValidateRequest`
+  - Method `SavingsPlanOperations.list_all` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `SavingsPlanOperations.list_all` changed its parameter `refresh_summary` from `positional_or_keyword` to `keyword_only`
+  - Method `SavingsPlanOperations.list_all` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `SavingsPlanOperations.list_all` changed its parameter `selected_state` from `positional_or_keyword` to `keyword_only`
+  - Method `SavingsPlanOperations.list_all` changed its parameter `take` from `positional_or_keyword` to `keyword_only`
 
 ## 1.0.0b1 (2022-12-14)
 
