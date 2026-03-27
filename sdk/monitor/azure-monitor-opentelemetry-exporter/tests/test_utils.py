@@ -316,7 +316,47 @@ class TestUtils(unittest.TestCase):
         tags = _utils._populate_part_a_fields(resource)
         self.assertIsNotNone(tags)
         self.assertEqual(tags.get("ai.cloud.role"), "testServiceName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    def test_populate_part_a_fields_uses_service_instance_id_when_pod_name_empty(self):
+        resource = Resource(
+            {
+                "service.name": "testServiceName",
+                "service.instance.id": "testServiceInstanceId",
+                "k8s.deployment.name": "testDeploymentName",
+                "k8s.replicaset.name": "testReplicaSetName",
+                "k8s.statefulset.name": "testStatefulSetName",
+                "k8s.job.name": "testJobName",
+                "k8s.cronjob.name": "testCronJobName",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testServiceName")
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testServiceInstanceId")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    def test_populate_part_a_fields_falls_back_to_hostname_when_pod_and_instance_id_empty(self):
+        resource = Resource(
+            {
+                "service.name": "testServiceName",
+                "service.instance.id": "",
+                "k8s.deployment.name": "testDeploymentName",
+                "k8s.replicaset.name": "testReplicaSetName",
+                "k8s.statefulset.name": "testStatefulSetName",
+                "k8s.job.name": "testJobName",
+                "k8s.cronjob.name": "testCronJobName",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testServiceName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), platform.node())
         self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
     # Default service.name fields should be ignored when kubernetes values are present
