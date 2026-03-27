@@ -15,7 +15,7 @@ from azure.mgmt.containerservicefleet import ContainerServiceFleetMgmtClient
     pip install azure-identity
     pip install azure-mgmt-containerservicefleet
 # USAGE
-    python fleet_members_get_maximum_set_gen.py
+    python fleet_managed_namespaces_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,15 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.fleet_members.get(
+    response = client.fleet_managed_namespaces.begin_update(
         resource_group_name="rgfleets",
         fleet_name="fleet1",
-        fleet_member_name="fleet1",
-    )
+        managed_namespace_name="namespace1",
+        properties={"tags": {"str": "str"}},
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-08-01-preview/FleetMembers_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-02-01-preview/FleetManagedNamespaces_Update.json
 if __name__ == "__main__":
     main()

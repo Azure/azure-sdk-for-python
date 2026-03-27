@@ -9,16 +9,15 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_field
+from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ContainerGroupInstanceCountSummary(_model_base.Model):
+class ContainerGroupInstanceCountSummary(_Model):
     """Displays the counts of container groups in each state, as known by the StandbyPool resource
     provider.
 
@@ -33,7 +32,7 @@ class ContainerGroupInstanceCountSummary(_model_base.Model):
 
     zone: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The zone that the provided counts are in. It will not have a value if zones are not enabled."""
-    instance_counts_by_state: List["_models.PoolContainerGroupStateCount"] = rest_field(
+    instance_counts_by_state: list["_models.PoolContainerGroupStateCount"] = rest_field(
         name="instanceCountsByState", visibility=["read", "create", "update", "delete", "query"]
     )
     """The count of pooled container groups in each state for the given zone. Required."""
@@ -42,7 +41,7 @@ class ContainerGroupInstanceCountSummary(_model_base.Model):
     def __init__(
         self,
         *,
-        instance_counts_by_state: List["_models.PoolContainerGroupStateCount"],
+        instance_counts_by_state: list["_models.PoolContainerGroupStateCount"],
         zone: Optional[int] = None,
     ) -> None: ...
 
@@ -57,7 +56,7 @@ class ContainerGroupInstanceCountSummary(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerGroupProfile(_model_base.Model):
+class ContainerGroupProfile(_Model):
     """Details of the ContainerGroupProfile.
 
     :ivar id: Specifies container group profile id of standby container groups. Required.
@@ -90,7 +89,7 @@ class ContainerGroupProfile(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerGroupProperties(_model_base.Model):
+class ContainerGroupProperties(_Model):
     """Details of the ContainerGroupProperties.
 
     :ivar container_group_profile: Specifies container group profile of standby container groups.
@@ -104,7 +103,7 @@ class ContainerGroupProperties(_model_base.Model):
         name="containerGroupProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies container group profile of standby container groups. Required."""
-    subnet_ids: Optional[List["_models.Subnet"]] = rest_field(
+    subnet_ids: Optional[list["_models.Subnet"]] = rest_field(
         name="subnetIds", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies subnet Ids for container group."""
@@ -114,7 +113,7 @@ class ContainerGroupProperties(_model_base.Model):
         self,
         *,
         container_group_profile: "_models.ContainerGroupProfile",
-        subnet_ids: Optional[List["_models.Subnet"]] = None,
+        subnet_ids: Optional[list["_models.Subnet"]] = None,
     ) -> None: ...
 
     @overload
@@ -128,7 +127,35 @@ class ContainerGroupProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorAdditionalInfo(_model_base.Model):
+class DynamicSizing(_Model):
+    """Specifies the dynamic sizing configuration.
+
+    :ivar enabled: Indicates whether dynamic sizing is enabled for the standby pool.
+    :vartype enabled: bool
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates whether dynamic sizing is enabled for the standby pool."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
 
     :ivar type: The additional info type.
@@ -143,7 +170,7 @@ class ErrorAdditionalInfo(_model_base.Model):
     """The additional info."""
 
 
-class ErrorDetail(_model_base.Model):
+class ErrorDetail(_Model):
     """The error detail.
 
     :ivar code: The error code.
@@ -164,17 +191,16 @@ class ErrorDetail(_model_base.Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
 
 
-class ErrorResponse(_model_base.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations.
+class ErrorResponse(_Model):
+    """Error response.
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.standbypool.models.ErrorDetail
@@ -201,8 +227,8 @@ class ErrorResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_model_base.Model):
-    """Details of a REST API operation, returned from the Resource Provider Operations API.
+class Operation(_Model):
+    """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -258,8 +284,8 @@ class Operation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_model_base.Model):
-    """Localized display information for and operation.
+class OperationDisplay(_Model):
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -289,7 +315,7 @@ class OperationDisplay(_model_base.Model):
      views."""
 
 
-class PoolContainerGroupStateCount(_model_base.Model):
+class PoolContainerGroupStateCount(_Model):
     """Displays the counts of pooled container groups in each state, as known by the StandbyPool
     resource provider.
 
@@ -327,7 +353,7 @@ class PoolContainerGroupStateCount(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PoolStatus(_model_base.Model):
+class PoolStatus(_Model):
     """Displays StandbyPool status.
 
     :ivar code: Displays the healthy state of the StandbyPool. Required. Known values are:
@@ -344,7 +370,7 @@ class PoolStatus(_model_base.Model):
     """Displays the StandbyPool health state details."""
 
 
-class PoolVirtualMachineStateCount(_model_base.Model):
+class PoolVirtualMachineStateCount(_Model):
     """Displays the counts of pooled virtual machines in each state, as known by the StandbyPool
     resource provider.
 
@@ -384,8 +410,8 @@ class PoolVirtualMachineStateCount(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Resource(_model_base.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
+class Resource(_Model):
+    """Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -413,8 +439,7 @@ class Resource(_model_base.Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
-    tags and a location.
+    """Proxy Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -430,7 +455,7 @@ class ProxyResource(Resource):
     """
 
 
-class StandbyContainerGroupPoolElasticityProfile(_model_base.Model):  # pylint: disable=name-too-long
+class StandbyContainerGroupPoolElasticityProfile(_Model):  # pylint: disable=name-too-long
     """Specifies the elasticity profile of the standby container group pools.
 
     :ivar max_ready_capacity: Specifies maximum number of standby container groups in the standby
@@ -438,6 +463,8 @@ class StandbyContainerGroupPoolElasticityProfile(_model_base.Model):  # pylint: 
     :vartype max_ready_capacity: int
     :ivar refill_policy: Specifies refill policy of the pool. "always"
     :vartype refill_policy: str or ~azure.mgmt.standbypool.models.RefillPolicy
+    :ivar dynamic_sizing: Specifies the dynamic sizing configuration.
+    :vartype dynamic_sizing: ~azure.mgmt.standbypool.models.DynamicSizing
     """
 
     max_ready_capacity: int = rest_field(
@@ -448,6 +475,10 @@ class StandbyContainerGroupPoolElasticityProfile(_model_base.Model):  # pylint: 
         name="refillPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies refill policy of the pool. \"always\""""
+    dynamic_sizing: Optional["_models.DynamicSizing"] = rest_field(
+        name="dynamicSizing", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the dynamic sizing configuration."""
 
     @overload
     def __init__(
@@ -455,6 +486,7 @@ class StandbyContainerGroupPoolElasticityProfile(_model_base.Model):  # pylint: 
         *,
         max_ready_capacity: int,
         refill_policy: Optional[Union[str, "_models.RefillPolicy"]] = None,
+        dynamic_sizing: Optional["_models.DynamicSizing"] = None,
     ) -> None: ...
 
     @overload
@@ -468,7 +500,7 @@ class StandbyContainerGroupPoolElasticityProfile(_model_base.Model):  # pylint: 
         super().__init__(*args, **kwargs)
 
 
-class StandbyContainerGroupPoolForecastValues(_model_base.Model):
+class StandbyContainerGroupPoolForecastValues(_Model):
     """Displays the forecast information of the standby pool.
 
     :ivar instances_requested_count: Displays the predicted count of instances to be requested from
@@ -476,11 +508,11 @@ class StandbyContainerGroupPoolForecastValues(_model_base.Model):
     :vartype instances_requested_count: list[int]
     """
 
-    instances_requested_count: List[int] = rest_field(name="instancesRequestedCount", visibility=["read"])
+    instances_requested_count: list[int] = rest_field(name="instancesRequestedCount", visibility=["read"])
     """Displays the predicted count of instances to be requested from the standby pool. Required."""
 
 
-class StandbyContainerGroupPoolPrediction(_model_base.Model):
+class StandbyContainerGroupPoolPrediction(_Model):
     """Displays prediction information of the standby pool.
 
     :ivar forecast_values: Displays the forecast information of the standby pool. Required.
@@ -505,8 +537,7 @@ class StandbyContainerGroupPoolPrediction(_model_base.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
+    """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -525,7 +556,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -535,7 +566,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -581,7 +612,7 @@ class StandbyContainerGroupPoolResource(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.StandbyContainerGroupPoolResourceProperties"] = None,
     ) -> None: ...
 
@@ -596,7 +627,7 @@ class StandbyContainerGroupPoolResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class StandbyContainerGroupPoolResourceProperties(_model_base.Model):  # pylint: disable=name-too-long
+class StandbyContainerGroupPoolResourceProperties(_Model):  # pylint: disable=name-too-long
     """Details of the StandbyContainerGroupPool.
 
     :ivar elasticity_profile: Specifies elasticity profile of standby container group pools.
@@ -621,7 +652,7 @@ class StandbyContainerGroupPoolResourceProperties(_model_base.Model):  # pylint:
         name="containerGroupProperties", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies container group properties of standby container group pools. Required."""
-    zones: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Specifies zones of standby container group pools."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
@@ -635,7 +666,7 @@ class StandbyContainerGroupPoolResourceProperties(_model_base.Model):  # pylint:
         *,
         elasticity_profile: "_models.StandbyContainerGroupPoolElasticityProfile",
         container_group_properties: "_models.ContainerGroupProperties",
-        zones: Optional[List[str]] = None,
+        zones: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -649,7 +680,7 @@ class StandbyContainerGroupPoolResourceProperties(_model_base.Model):  # pylint:
         super().__init__(*args, **kwargs)
 
 
-class StandbyContainerGroupPoolResourceUpdate(_model_base.Model):
+class StandbyContainerGroupPoolResourceUpdate(_Model):
     """The type used for update operations of the StandbyContainerGroupPoolResource.
 
     :ivar tags: Resource tags.
@@ -659,7 +690,7 @@ class StandbyContainerGroupPoolResourceUpdate(_model_base.Model):
      ~azure.mgmt.standbypool.models.StandbyContainerGroupPoolResourceUpdateProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.StandbyContainerGroupPoolResourceUpdateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -670,7 +701,7 @@ class StandbyContainerGroupPoolResourceUpdate(_model_base.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.StandbyContainerGroupPoolResourceUpdateProperties"] = None,
     ) -> None: ...
 
@@ -685,7 +716,7 @@ class StandbyContainerGroupPoolResourceUpdate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class StandbyContainerGroupPoolResourceUpdateProperties(_model_base.Model):  # pylint: disable=name-too-long
+class StandbyContainerGroupPoolResourceUpdateProperties(_Model):  # pylint: disable=name-too-long
     """The updatable properties of the StandbyContainerGroupPoolResource.
 
     :ivar elasticity_profile: Specifies elasticity profile of standby container group pools.
@@ -706,7 +737,7 @@ class StandbyContainerGroupPoolResourceUpdateProperties(_model_base.Model):  # p
         name="containerGroupProperties", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies container group properties of standby container group pools."""
-    zones: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Specifies zones of standby container group pools."""
 
     @overload
@@ -715,7 +746,7 @@ class StandbyContainerGroupPoolResourceUpdateProperties(_model_base.Model):  # p
         *,
         elasticity_profile: Optional["_models.StandbyContainerGroupPoolElasticityProfile"] = None,
         container_group_properties: Optional["_models.ContainerGroupProperties"] = None,
-        zones: Optional[List[str]] = None,
+        zones: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -772,7 +803,7 @@ class StandbyContainerGroupPoolRuntimeViewResource(ProxyResource):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class StandbyContainerGroupPoolRuntimeViewResourceProperties(_model_base.Model):  # pylint: disable=name-too-long
+class StandbyContainerGroupPoolRuntimeViewResourceProperties(_Model):  # pylint: disable=name-too-long
     """Contains information about a standby pool as last known by the StandbyPool resource provider.
 
     :ivar instance_count_summary: A list containing the counts of container groups in each possible
@@ -788,7 +819,7 @@ class StandbyContainerGroupPoolRuntimeViewResourceProperties(_model_base.Model):
     :vartype prediction: ~azure.mgmt.standbypool.models.StandbyContainerGroupPoolPrediction
     """
 
-    instance_count_summary: List["_models.ContainerGroupInstanceCountSummary"] = rest_field(
+    instance_count_summary: list["_models.ContainerGroupInstanceCountSummary"] = rest_field(
         name="instanceCountSummary", visibility=["read"]
     )
     """A list containing the counts of container groups in each possible state, as known by the
@@ -804,7 +835,7 @@ class StandbyContainerGroupPoolRuntimeViewResourceProperties(_model_base.Model):
     """Displays prediction information of the standby pool."""
 
 
-class StandbyVirtualMachinePoolElasticityProfile(_model_base.Model):  # pylint: disable=name-too-long
+class StandbyVirtualMachinePoolElasticityProfile(_Model):  # pylint: disable=name-too-long
     """Details of the elasticity profile.
 
     :ivar max_ready_capacity: Specifies the maximum number of virtual machines in the standby
@@ -813,6 +844,12 @@ class StandbyVirtualMachinePoolElasticityProfile(_model_base.Model):  # pylint: 
     :ivar min_ready_capacity: Specifies the desired minimum number of virtual machines in the
      standby virtual machine pool. MinReadyCapacity cannot exceed MaxReadyCapacity.
     :vartype min_ready_capacity: int
+    :ivar post_provisioning_delay: Specifies the duration to wait after virtual machine
+     provisioning before the virtual machine becomes available for use. The duration should be
+     specified in ISO 8601 format (e.g., PT2S for 2 seconds).
+    :vartype post_provisioning_delay: str
+    :ivar dynamic_sizing: Specifies the dynamic sizing configuration.
+    :vartype dynamic_sizing: ~azure.mgmt.standbypool.models.DynamicSizing
     """
 
     max_ready_capacity: int = rest_field(
@@ -824,6 +861,16 @@ class StandbyVirtualMachinePoolElasticityProfile(_model_base.Model):  # pylint: 
     )
     """Specifies the desired minimum number of virtual machines in the standby virtual machine pool.
      MinReadyCapacity cannot exceed MaxReadyCapacity."""
+    post_provisioning_delay: Optional[str] = rest_field(
+        name="postProvisioningDelay", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the duration to wait after virtual machine provisioning before the virtual machine
+     becomes available for use. The duration should be specified in ISO 8601 format (e.g., PT2S for
+     2 seconds)."""
+    dynamic_sizing: Optional["_models.DynamicSizing"] = rest_field(
+        name="dynamicSizing", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the dynamic sizing configuration."""
 
     @overload
     def __init__(
@@ -831,6 +878,8 @@ class StandbyVirtualMachinePoolElasticityProfile(_model_base.Model):  # pylint: 
         *,
         max_ready_capacity: int,
         min_ready_capacity: Optional[int] = None,
+        post_provisioning_delay: Optional[str] = None,
+        dynamic_sizing: Optional["_models.DynamicSizing"] = None,
     ) -> None: ...
 
     @overload
@@ -844,7 +893,7 @@ class StandbyVirtualMachinePoolElasticityProfile(_model_base.Model):  # pylint: 
         super().__init__(*args, **kwargs)
 
 
-class StandbyVirtualMachinePoolForecastValues(_model_base.Model):
+class StandbyVirtualMachinePoolForecastValues(_Model):
     """Displays the forecast information of the standby pool.
 
     :ivar instances_requested_count: Displays the predicted count of instances to be requested from
@@ -852,11 +901,11 @@ class StandbyVirtualMachinePoolForecastValues(_model_base.Model):
     :vartype instances_requested_count: list[int]
     """
 
-    instances_requested_count: List[int] = rest_field(name="instancesRequestedCount", visibility=["read"])
+    instances_requested_count: list[int] = rest_field(name="instancesRequestedCount", visibility=["read"])
     """Displays the predicted count of instances to be requested from the standby pool. Required."""
 
 
-class StandbyVirtualMachinePoolPrediction(_model_base.Model):
+class StandbyVirtualMachinePoolPrediction(_Model):
     """Displays prediction information of the standby pool.
 
     :ivar forecast_values: Displays the forecast information of the standby pool. Required.
@@ -912,7 +961,7 @@ class StandbyVirtualMachinePoolResource(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.StandbyVirtualMachinePoolResourceProperties"] = None,
     ) -> None: ...
 
@@ -927,7 +976,7 @@ class StandbyVirtualMachinePoolResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class StandbyVirtualMachinePoolResourceProperties(_model_base.Model):  # pylint: disable=name-too-long
+class StandbyVirtualMachinePoolResourceProperties(_Model):  # pylint: disable=name-too-long
     """Details of the StandbyVirtualMachinePool.
 
     :ivar elasticity_profile: Specifies the elasticity profile of the standby virtual machine
@@ -985,7 +1034,7 @@ class StandbyVirtualMachinePoolResourceProperties(_model_base.Model):  # pylint:
         super().__init__(*args, **kwargs)
 
 
-class StandbyVirtualMachinePoolResourceUpdate(_model_base.Model):
+class StandbyVirtualMachinePoolResourceUpdate(_Model):
     """The type used for update operations of the StandbyVirtualMachinePoolResource.
 
     :ivar tags: Resource tags.
@@ -995,7 +1044,7 @@ class StandbyVirtualMachinePoolResourceUpdate(_model_base.Model):
      ~azure.mgmt.standbypool.models.StandbyVirtualMachinePoolResourceUpdateProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.StandbyVirtualMachinePoolResourceUpdateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -1006,7 +1055,7 @@ class StandbyVirtualMachinePoolResourceUpdate(_model_base.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.StandbyVirtualMachinePoolResourceUpdateProperties"] = None,
     ) -> None: ...
 
@@ -1021,7 +1070,7 @@ class StandbyVirtualMachinePoolResourceUpdate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class StandbyVirtualMachinePoolResourceUpdateProperties(_model_base.Model):  # pylint: disable=name-too-long
+class StandbyVirtualMachinePoolResourceUpdateProperties(_Model):  # pylint: disable=name-too-long
     """The updatable properties of the StandbyVirtualMachinePoolResource.
 
     :ivar elasticity_profile: Specifies the elasticity profile of the standby virtual machine
@@ -1114,7 +1163,7 @@ class StandbyVirtualMachinePoolRuntimeViewResource(ProxyResource):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class StandbyVirtualMachinePoolRuntimeViewResourceProperties(_model_base.Model):  # pylint: disable=name-too-long
+class StandbyVirtualMachinePoolRuntimeViewResourceProperties(_Model):  # pylint: disable=name-too-long
     """Contains information about a standby pool as last known by the StandbyPool resource provider.
 
     :ivar instance_count_summary: A list containing the counts of virtual machines in each possible
@@ -1133,7 +1182,7 @@ class StandbyVirtualMachinePoolRuntimeViewResourceProperties(_model_base.Model):
     :vartype prediction: ~azure.mgmt.standbypool.models.StandbyVirtualMachinePoolPrediction
     """
 
-    instance_count_summary: List["_models.VirtualMachineInstanceCountSummary"] = rest_field(
+    instance_count_summary: list["_models.VirtualMachineInstanceCountSummary"] = rest_field(
         name="instanceCountSummary", visibility=["read"]
     )
     """A list containing the counts of virtual machines in each possible power state for each zone if
@@ -1193,7 +1242,7 @@ class StandbyVirtualMachineResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class StandbyVirtualMachineResourceProperties(_model_base.Model):
+class StandbyVirtualMachineResourceProperties(_Model):
     """Details of the StandbyVirtualMachine.
 
     :ivar virtual_machine_resource_id: Resource id of the virtual machine. Required.
@@ -1231,7 +1280,7 @@ class StandbyVirtualMachineResourceProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Subnet(_model_base.Model):
+class Subnet(_Model):
     """Subnet of container group.
 
     :ivar id: Specifies ARM resource id of the subnet. Required.
@@ -1259,7 +1308,7 @@ class Subnet(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_model_base.Model):
+class SystemData(_Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -1326,7 +1375,7 @@ class SystemData(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInstanceCountSummary(_model_base.Model):
+class VirtualMachineInstanceCountSummary(_Model):
     """Contains the counts of VMs in each power state in a given zone, fault domain, as known by the
     StandbyPool resource provider. Note: any resources in the Running state may still be installing
     extensions / not fully provisioned.
@@ -1343,7 +1392,7 @@ class VirtualMachineInstanceCountSummary(_model_base.Model):
     zone: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The zone that the provided counts are in. It will not have a value if zones are not enabled on
      the attached VMSS."""
-    instance_counts_by_state: List["_models.PoolVirtualMachineStateCount"] = rest_field(
+    instance_counts_by_state: list["_models.PoolVirtualMachineStateCount"] = rest_field(
         name="instanceCountsByState", visibility=["read", "create", "update", "delete", "query"]
     )
     """The count of pooled virtual machines in each state for the given zone. Required."""
@@ -1352,7 +1401,7 @@ class VirtualMachineInstanceCountSummary(_model_base.Model):
     def __init__(
         self,
         *,
-        instance_counts_by_state: List["_models.PoolVirtualMachineStateCount"],
+        instance_counts_by_state: list["_models.PoolVirtualMachineStateCount"],
         zone: Optional[int] = None,
     ) -> None: ...
 
