@@ -3830,8 +3830,8 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert props is not None
         assert props.archive_status == "rehydrate-pending-to-smart"
 
-    @pytest.mark.live_test_only
     @BlobPreparer()
+    @recorded_by_proxy
     def test_blob_fns_directory(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         variables = kwargs.pop("variables", {})
@@ -3871,8 +3871,10 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         finally:
             service.delete_container(container_name)
 
-    @pytest.mark.live_test_only
+        return variables
+
     @BlobPreparer()
+    @recorded_by_proxy
     def test_blob_fns_directory_fail(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         variables = kwargs.pop("variables", {})
