@@ -10,6 +10,7 @@ import pytest
 from azure.core.exceptions import ResourceExistsError
 from azure.storage.blob import BlobBlock, BlobType
 from azure.storage.blob.aio import (
+    BlobClient,
     BlobServiceClient,
     ContainerClient
 )
@@ -19,6 +20,7 @@ from devtools_testutils.storage.aio import (
     GenericTestProxyParametrize1,
     GenericTestProxyParametrize2
 )
+from encryption_test_helper import KeyWrapper
 from settings.testcase import BlobPreparer
 
 from test_content_validation import (
@@ -55,28 +57,26 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
     def _get_blob_reference(self):
         return self.get_resource_name('blob')
 
-    # TODO: This test coming later
-    # @BlobPreparer()
-    # async def test_encryption_blocked_crc64(self, **kwargs):
-    #     storage_account_name = kwargs.pop("storage_account_name")
-    #     storage_account_key = kwargs.pop("storage_account_key")
+    @BlobPreparer()
+    async def test_encryption_blocked_crc64(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
 
-    #     kek = KeyWrapper('key1')
-    #     blob = BlobClient(
-    #         self.account_url(storage_account_name, "blob"),
-    #         "testing",
-    #         "testing",
-    #         credential=storage_account_key,
-    #         require_encryption=True,
-    #         encryption_version='2.0',
-    #         key_encryption_key=kek)
+        kek = KeyWrapper('key1')
+        blob = BlobClient(
+            self.account_url(storage_account_name, "blob"),
+            "testing",
+            "testing",
+            credential=self.get_credential(BlobServiceClient, is_async=True),
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
 
-    #     with pytest.raises(ValueError):
-    #         await blob.upload_blob(b'123', validate_content='crc64')
+        with pytest.raises(ValueError):
+            await blob.upload_blob(b'123', validate_content='crc64')
 
     @BlobPreparer()
     @pytest.mark.parametrize('a', [BlobType.BLOCKBLOB, BlobType.PAGEBLOB, BlobType.APPENDBLOB])  # a: blob_type
-    @pytest.mark.parametrize('b', [True, 'md5', 'crc64'])  # b: validate_content
+    @pytest.mark.parametrize('b', [True, "auto", 'md5', 'crc64'])  # b: validate_content
     @GenericTestProxyParametrize2()
     @recorded_by_proxy_async
     async def test_upload_blob(self, a, b, **kwargs):
@@ -84,7 +84,7 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
 
         await self._setup(storage_account_name)
         blob = self.container.get_blob_client(self._get_blob_reference())
-        assert_method = assert_content_crc64 if b == 'crc64' else assert_content_md5
+        assert_method = assert_content_crc64 if b in ('auto', 'crc64') else assert_content_md5
 
         # Test supported data types
         byte_data = b'abc' * 512
@@ -172,7 +172,7 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         await self._teardown()
 
     @BlobPreparer()
-    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @pytest.mark.parametrize('a', [True, 'auto', 'md5', 'crc64'])  # a: validate_content
     @GenericTestProxyParametrize1()
     @recorded_by_proxy_async
     async def test_stage_block(self, a, **kwargs):
@@ -189,7 +189,7 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
             for i in range(0, len(data1), 500):
                 yield data1[i: i + 500]
 
-        assert_method = assert_content_crc64 if a == 'crc64' else assert_content_md5
+        assert_method = assert_content_crc64 if a in ('auto', 'crc64') else assert_content_md5
 
         # Act
         await blob.stage_block('1', data1, validate_content=a, raw_request_hook=assert_method)
@@ -246,7 +246,7 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         assert await result.read() == data1 + data2 + data3
 
     @BlobPreparer()
-    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @pytest.mark.parametrize('a', [True, 'auto', 'md5', 'crc64'])  # a: validate_content
     @GenericTestProxyParametrize1()
     @recorded_by_proxy_async
     async def test_append_block(self, a, **kwargs):
@@ -263,7 +263,7 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
             for i in range(0, len(data1), 500):
                 yield data1[i: i + 500]
 
-        assert_method = assert_content_crc64 if a == 'crc64' else assert_content_md5
+        assert_method = assert_content_crc64 if a in ('auto', 'crc64') else assert_content_md5
 
         # Act
         await blob.create_append_blob()
@@ -320,7 +320,7 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         await self._teardown()
 
     @BlobPreparer()
-    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @pytest.mark.parametrize('a', [True, 'auto', 'md5', 'crc64'])  # a: validate_content
     @GenericTestProxyParametrize1()
     @recorded_by_proxy_async
     async def test_upload_page(self, a, **kwargs):
@@ -331,7 +331,7 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         data1 = b'abc' * 512
         data2 = "你好世界abcd" * 32
         data2_encoded = data2.encode('utf-8')
-        assert_method = assert_content_crc64 if a == 'crc64' else assert_content_md5
+        assert_method = assert_content_crc64 if a in ('auto', 'crc64') else assert_content_md5
 
         # Act
         await blob.create_page_blob(5 * 1024)
@@ -344,7 +344,7 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         await self._teardown()
 
     @BlobPreparer()
-    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @pytest.mark.parametrize('a', [True, 'auto', 'md5', 'crc64'])  # a: validate_content
     @GenericTestProxyParametrize1()
     @recorded_by_proxy_async
     async def test_download_blob(self, a, **kwargs):
@@ -354,7 +354,7 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         blob = self.container.get_blob_client(self._get_blob_reference())
         data = b'abc' * 512
         await blob.upload_blob(data, overwrite=True)
-        assert_method = assert_structured_message_get if a == 'crc64' else assert_content_md5_get
+        assert_method = assert_structured_message_get if a in ('auto', 'crc64') else assert_content_md5_get
 
         # Act
         downloader = await blob.download_blob(validate_content=a, raw_response_hook=assert_method)

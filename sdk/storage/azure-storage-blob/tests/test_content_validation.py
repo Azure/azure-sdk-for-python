@@ -9,6 +9,7 @@ from io import BytesIO
 import pytest
 from azure.storage.blob import (
     BlobBlock,
+    BlobClient,
     BlobServiceClient,
     BlobType,
     ContainerClient
@@ -20,6 +21,7 @@ from devtools_testutils.storage import (
     StorageRecordedTestCase
 )
 
+from encryption_test_helper import KeyWrapper
 from settings.testcase import BlobPreparer
 
 
@@ -90,28 +92,29 @@ class TestStorageContentValidation(StorageRecordedTestCase):
     def _get_blob_reference(self):
         return self.get_resource_name('blob')
 
-    # TODO: This test coming later
-    # @BlobPreparer()
-    # def test_encryption_blocked_crc64(self, **kwargs):
-    #     storage_account_name = kwargs.pop("storage_account_name")
-    #     storage_account_key = kwargs.pop("storage_account_key")
+    @BlobPreparer()
+    def test_encryption_blocked_crc64(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
 
-    #     kek = KeyWrapper('key1')
-    #     blob = BlobClient(
-    #         self.account_url(storage_account_name, "blob"),
-    #         "testing",
-    #         "testing",
-    #         credential=storage_account_key,
-    #         require_encryption=True,
-    #         encryption_version='2.0',
-    #         key_encryption_key=kek)
+        kek = KeyWrapper('key1')
+        blob = BlobClient(
+            self.account_url(storage_account_name, "blob"),
+            "testing",
+            "testing",
+            credential=self.get_credential(BlobServiceClient),
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
 
-    #     with pytest.raises(ValueError):
-    #         blob.upload_blob(b'123', validate_content='crc64')
+        with pytest.raises(ValueError):
+            blob.upload_blob(b'123', validate_content='crc64')
+
+        # Needed for teardown
+        self.container = None
 
     @BlobPreparer()
     @pytest.mark.parametrize('a', [BlobType.BLOCKBLOB, BlobType.PAGEBLOB, BlobType.APPENDBLOB])  # a: blob_type
-    @pytest.mark.parametrize('b', [True, 'md5', 'crc64'])  # b: validate_content
+    @pytest.mark.parametrize('b', [True, 'auto','md5', 'crc64'])  # b: validate_content
     @GenericTestProxyParametrize2()
     @recorded_by_proxy
     def test_upload_blob(self, a, b, **kwargs):
@@ -119,7 +122,7 @@ class TestStorageContentValidation(StorageRecordedTestCase):
 
         self._setup(storage_account_name)
         blob = self.container.get_blob_client(self._get_blob_reference())
-        assert_method = assert_content_crc64 if b == 'crc64' else assert_content_md5
+        assert_method = assert_content_crc64 if b in ('auto', 'crc64') else assert_content_md5
 
         # Test supported data types
         byte_data = b'abc' * 512
@@ -200,7 +203,7 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         assert content.read() == data
 
     @BlobPreparer()
-    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @pytest.mark.parametrize('a', [True, 'auto', 'md5', 'crc64'])  # a: validate_content
     @GenericTestProxyParametrize1()
     @recorded_by_proxy
     def test_stage_block(self, a, **kwargs):
@@ -217,7 +220,7 @@ class TestStorageContentValidation(StorageRecordedTestCase):
             for i in range(0, len(data1), 500):
                 yield data1[i: i + 500]
 
-        assert_method = assert_content_crc64 if a == 'crc64' else assert_content_md5
+        assert_method = assert_content_crc64 if a in ('auto', 'crc64') else assert_content_md5
 
         blob.stage_block('1', data1, validate_content=a, raw_request_hook=assert_method)
         blob.stage_block('2', data2, encoding='utf-8-sig', validate_content=a, raw_request_hook=assert_method)
@@ -270,7 +273,7 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         assert result.read() == data1 + data2 + data3
 
     @BlobPreparer()
-    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @pytest.mark.parametrize('a', [True, 'auto', 'md5', 'crc64'])  # a: validate_content
     @GenericTestProxyParametrize1()
     @recorded_by_proxy
     def test_append_block(self, a, **kwargs):
@@ -287,7 +290,7 @@ class TestStorageContentValidation(StorageRecordedTestCase):
             for i in range(0, len(data1), 500):
                 yield data1[i: i + 500]
 
-        assert_method = assert_content_crc64 if a == 'crc64' else assert_content_md5
+        assert_method = assert_content_crc64 if a in ('auto', 'crc64') else assert_content_md5
 
         blob.create_append_blob()
         blob.append_block(data1, validate_content=a, raw_request_hook=assert_method)
@@ -339,7 +342,7 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         assert result.read() == data1 + data2 + data3
 
     @BlobPreparer()
-    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @pytest.mark.parametrize('a', [True, 'auto', 'md5', 'crc64'])  # a: validate_content
     @GenericTestProxyParametrize1()
     @recorded_by_proxy
     def test_upload_page(self, a, **kwargs):
@@ -350,7 +353,7 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         data1 = b'abc' * 512
         data2 = "你好世界abcd" * 32
         data2_encoded = data2.encode('utf-8')
-        assert_method = assert_content_crc64 if a == 'crc64' else assert_content_md5
+        assert_method = assert_content_crc64 if a in ('auto', 'crc64') else assert_content_md5
 
         # Act
         blob.create_page_blob(5 * 1024)
@@ -362,7 +365,7 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         assert content.read() == data1 + data2_encoded
 
     @BlobPreparer()
-    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @pytest.mark.parametrize('a', [True, 'auto', 'md5', 'crc64'])  # a: validate_content
     @GenericTestProxyParametrize1()
     @recorded_by_proxy
     def test_download_blob(self, a, **kwargs):
@@ -372,7 +375,7 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         blob = self.container.get_blob_client(self._get_blob_reference())
         data = b'abc' * 512
         blob.upload_blob(data, overwrite=True)
-        assert_method = assert_structured_message_get if a == 'crc64' else assert_content_md5_get
+        assert_method = assert_structured_message_get if a in ('auto', 'crc64') else assert_content_md5_get
 
         # Act
         downloader = blob.download_blob(validate_content=a, raw_response_hook=assert_method)
