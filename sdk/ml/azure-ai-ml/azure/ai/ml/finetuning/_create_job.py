@@ -49,6 +49,7 @@ def create_finetuning_job(
         path=training_data,
     )
 
+    validation_data_input = None
     if validation_data:
         validation_data_input = Input(
             type=AssetTypes.URI_FILE,
@@ -67,7 +68,7 @@ def create_finetuning_job(
         task=task,
         model=model_input,
         training_data=training_data_input,
-        validation_data=validation_data_input if validation_data else None,
+        validation_data=validation_data_input,
         hyperparameters=hyperparameters,
         compute=compute,
         resources=job_resources,
