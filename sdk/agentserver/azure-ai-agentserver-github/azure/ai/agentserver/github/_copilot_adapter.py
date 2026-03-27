@@ -701,12 +701,15 @@ class GitHubCopilotAdapter(CopilotAdapter):
 
     This is the recommended class for most developers.  It automatically
     discovers skill directories (``skills/*/SKILL.md`` or
-    ``.github/skills/*/SKILL.md``) and bootstraps conversation history
+    ``.github/skills/*/SKILL.md``) and tools (``tools/*/TOOL.md`` +
+    ``tool.py`` in ``.github/tools/``) and bootstraps conversation history
     on cold starts so multi-turn context is preserved across container
     restarts.
 
     :param skill_directories: Explicit skill directory paths.  When *None*,
         auto-discovered from the project root.
+    :param tools: Explicit list of :class:`copilot.Tool` objects.  When *None*,
+        auto-discovered from ``.github/tools/``.
     :param project_root: Root directory of the agent project.  Defaults to
         the current working directory.
     """
@@ -714,11 +717,14 @@ class GitHubCopilotAdapter(CopilotAdapter):
     def __init__(
         self,
         skill_directories: Optional[list[str]] = None,
+        tools: Optional[list] = None,
         project_root: Optional[str] = None,
         **kwargs,
     ):
         super().__init__(**kwargs)
         root = pathlib.Path(project_root or os.getcwd())
+
+        # Skill discovery
         if skill_directories:
             self._session_config["skill_directories"] = skill_directories
         else:
@@ -726,6 +732,16 @@ class GitHubCopilotAdapter(CopilotAdapter):
             if discovered:
                 self._session_config["skill_directories"] = discovered
                 logger.info("Discovered skill directories: %s", discovered)
+
+        # Tool discovery
+        if tools:
+            self._session_config.setdefault("tools", []).extend(tools)
+            logger.info("Registered %d explicit tools", len(tools))
+        else:
+            discovered_tools, _ = self._discover_tools(root)
+            if discovered_tools:
+                self._session_config.setdefault("tools", []).extend(discovered_tools)
+                logger.info("Discovered %d tools from .github/tools/", len(discovered_tools))
 
     @staticmethod
     def _discover_skill_directories(project_root: pathlib.Path) -> list[str]:
@@ -738,6 +754,13 @@ class GitHubCopilotAdapter(CopilotAdapter):
         if any(project_root.glob("*/SKILL.md")):
             return [str(project_root.resolve())]
         return []
+
+    @staticmethod
+    def _discover_tools(project_root: pathlib.Path):
+        """Find tools in ``.github/tools/`` (TOOL.md + tool.py)."""
+        from ._tool_discovery import discover_tools
+
+        return discover_tools(project_root)
 
     @classmethod
     def from_project(cls, project_path: str = ".", **kwargs) -> "GitHubCopilotAdapter":
