@@ -33,6 +33,7 @@ _LOGGER = logging.getLogger(__name__)
 
 class _ClassNodeFound(Exception):
     """Raised to short-circuit AST traversal when the target class is found."""
+
     pass
 
 
@@ -97,9 +98,7 @@ def test_find_modules(pkg_root_path: str) -> Dict:
 
         # Add current path as module name if _init.py is present
         if "__init__.py" in files:
-            module_name = os.path.relpath(root, pkg_root_path).replace(
-                os.path.sep, "."
-            )
+            module_name = os.path.relpath(root, pkg_root_path).replace(os.path.sep, ".")
             modules[module_name] = []
             for f in files:
                 if f.endswith(".py"):
@@ -179,22 +178,17 @@ def get_property_names(node: ast.AST, attribute_names: Dict) -> None:
                 if hasattr(assign, "target"):
                     if hasattr(assign.target, "attr") and not assign.target.attr.startswith("_"):
                         attr = assign.target
-                        attribute_names.update({attr.attr: {
-                                "attr_type": get_property_type(assign)
-                            }})
+                        attribute_names.update({attr.attr: {"attr_type": get_property_type(assign)}})
                 if hasattr(assign, "targets"):
                     for target in assign.targets:
                         if hasattr(target, "attr") and not target.attr.startswith("_"):
-                            attribute_names.update({target.attr: {
-                                "attr_type": get_property_type(assign)
-                            }})
+                            attribute_names.update({target.attr: {"attr_type": get_property_type(assign)}})
 
 
 def check_base_classes(cls_node: ast.ClassDef) -> bool:
     should_look = False
     init_node = [
-        node for node in cls_node.body
-        if isinstance(node, ast.FunctionDef) and node.name.startswith("__init__")
+        node for node in cls_node.body if isinstance(node, ast.FunctionDef) and node.name.startswith("__init__")
     ]
     if init_node:
         if hasattr(init_node, "body"):
@@ -231,7 +225,7 @@ def get_properties(cls: Type) -> Dict:
                 path = inspect.getsourcefile(base_class)
                 module = _get_parsed_module(path)
             except (TypeError, SyntaxError):
-                _LOGGER.info(f"Unable to create ast of {base_class}")
+                _LOGGER.debug(f"Unable to create ast of {base_class}")
                 continue  # was a built-in, e.g. "object", Exception, or a Model from msrest fails here
 
             cls_node = _find_class_node(module, base_class.__name__)
@@ -239,7 +233,7 @@ def get_properties(cls: Type) -> Dict:
                 get_property_names(cls_node, attribute_names)
             else:
                 # Abstract base classes fail here, e.g. "collections.abc.MuttableMapping"
-                _LOGGER.info(f"Unable to get class node for {base_class.__name__}. Skipping...")
+                _LOGGER.debug(f"Unable to get class node for {base_class.__name__}. Skipping...")
     else:
         get_property_names(cls_node, attribute_names)
     return attribute_names
@@ -247,10 +241,7 @@ def get_properties(cls: Type) -> Dict:
 
 def create_function_report(f: Callable, is_async: bool = False) -> Dict:
     function = inspect.signature(f)
-    func_obj = {
-        "parameters": {},
-        "is_async": is_async
-    }
+    func_obj = {"parameters": {}, "is_async": is_async}
 
     for par in function.parameters.values():
         default_value = get_parameter_default(par)
@@ -308,19 +299,27 @@ def create_parameters(args: ast.arg) -> Dict:
     if hasattr(args, "posonlyargs"):
         for arg in args.posonlyargs:
             # Initialize the function parameters
-            params.update({arg.arg: {
-                "type": get_parameter_type(arg.annotation),
-                "default": None,
-                "param_type": "positional_only"
-            }})
+            params.update(
+                {
+                    arg.arg: {
+                        "type": get_parameter_type(arg.annotation),
+                        "default": None,
+                        "param_type": "positional_only",
+                    }
+                }
+            )
     if hasattr(args, "args"):
         for arg in args.args:
             # Initialize the function parameters
-            params.update({arg.arg: {
-                "type": get_parameter_type(arg.annotation),
-                "default": None,
-                "param_type": "positional_or_keyword"
-            }})
+            params.update(
+                {
+                    arg.arg: {
+                        "type": get_parameter_type(arg.annotation),
+                        "default": None,
+                        "param_type": "positional_or_keyword",
+                    }
+                }
+            )
     # Range through the corresponding default values
     all_args = args.posonlyargs + args.args
     positional_defaults = [None] * (len(all_args) - len(args.defaults)) + args.defaults
@@ -328,25 +327,26 @@ def create_parameters(args: ast.arg) -> Dict:
         params[arg.arg]["default"] = get_parameter_default_ast(default)
     if hasattr(args, "vararg"):
         if args.vararg:
-            params.update({args.vararg.arg: {
-                "type": get_parameter_type(args.vararg.annotation),
-                "default": None,
-                "param_type": "var_positional"
-            }})
+            params.update(
+                {
+                    args.vararg.arg: {
+                        "type": get_parameter_type(args.vararg.annotation),
+                        "default": None,
+                        "param_type": "var_positional",
+                    }
+                }
+            )
     if hasattr(args, "kwonlyargs"):
         for arg in args.kwonlyargs:
             # Initialize the function parameters
-            params.update({
-                arg.arg: {
-                    "type": get_parameter_type(arg.annotation),
-                    "default": None,
-                    "param_type": "keyword_only"
-                }
-            })
+            params.update(
+                {arg.arg: {"type": get_parameter_type(arg.annotation), "default": None, "param_type": "keyword_only"}}
+            )
         # Range through the corresponding default values
         for i in range(len(args.kwonlyargs) - len(args.kw_defaults), len(args.kwonlyargs)):
             params[args.kwonlyargs[i].arg]["default"] = get_parameter_default_ast(args.kw_defaults[i])
     return params
+
 
 def get_overloads(cls: Type, cls_methods: Dict):
     path = inspect.getsourcefile(cls)
@@ -361,7 +361,7 @@ def get_overloads(cls: Type, cls_methods: Dict):
                 path = inspect.getsourcefile(base_class)
                 module = _get_parsed_module(path)
             except (TypeError, SyntaxError):
-                _LOGGER.info(f"Unable to create ast of {base_class}")
+                _LOGGER.debug(f"Unable to create ast of {base_class}")
                 continue  # was a built-in, e.g. "object", Exception, or a Model from msrest fails here
 
             cls_node = _find_class_node(module, base_class.__name__)
@@ -369,14 +369,16 @@ def get_overloads(cls: Type, cls_methods: Dict):
                 get_overload_data(cls_node, cls_methods)
             else:
                 # Abstract base classes fail here, e.g. "collections.abc.MuttableMapping"
-                _LOGGER.info(f"Unable to get class node for {base_class.__name__}. Skipping...")
+                _LOGGER.debug(f"Unable to get class node for {base_class.__name__}. Skipping...")
     else:
         get_overload_data(cls_node, cls_methods)
 
 
 def get_overload_data(node: ast.ClassDef, cls_methods: Dict) -> None:
     func_nodes = [node for node in node.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))]
-    public_func_nodes = [func for func in func_nodes if not func.name.startswith("_") or func.name.startswith("__init__")]
+    public_func_nodes = [
+        func for func in func_nodes if not func.name.startswith("_") or func.name.startswith("__init__")
+    ]
     # Check for method overloads on a class
     for func in public_func_nodes:
         if func.name not in cls_methods:
@@ -393,7 +395,7 @@ def get_overload_data(node: ast.ClassDef, cls_methods: Dict) -> None:
                 overload_report = {
                     "parameters": create_parameters(func.args),
                     "is_async": is_async,
-                    "return_type": None
+                    "return_type": None,
                 }
                 cls_methods[func.name]["overloads"].append(overload_report)
 
@@ -422,7 +424,7 @@ def create_class_report(cls: Type) -> Dict:
         except AttributeError:
             _LOGGER.info(f"Skipping method check for {method} on {cls}.")
             continue
-    
+
         if inspect.isfunction(m) or inspect.ismethod(m):
             if inspect.iscoroutinefunction(m):
                 async_func = True
@@ -464,7 +466,9 @@ def build_library_report(target_module: str) -> Dict:
     return public_api
 
 
-def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "stable.json", target_report: str = "current.json") -> None:
+def test_compare_reports(
+    pkg_dir: str, changelog: bool, source_report: str = "stable.json", target_report: str = "current.json"
+) -> None:
     package_name = os.path.basename(pkg_dir)
 
     # Preserve the original argument values so we can decide later whether cleanup is safe.
@@ -489,18 +493,18 @@ def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "st
         stable,
         current,
         package_name,
-        checkers = CHECKERS,
-        ignore = IGNORE_BREAKING_CHANGES,
-        post_processing_checkers = POST_PROCESSING_CHECKERS
+        checkers=CHECKERS,
+        ignore=IGNORE_BREAKING_CHANGES,
+        post_processing_checkers=POST_PROCESSING_CHECKERS,
     )
     if changelog:
         checker = ChangelogTracker(
             stable,
             current,
             package_name,
-            checkers = CHECKERS,
-            ignore = IGNORE_BREAKING_CHANGES,
-            post_processing_checkers = POST_PROCESSING_CHECKERS,
+            checkers=CHECKERS,
+            ignore=IGNORE_BREAKING_CHANGES,
+            post_processing_checkers=POST_PROCESSING_CHECKERS,
         )
     checker.run_checks()
 
@@ -531,7 +535,7 @@ def remove_json_files(pkg_dir: str) -> None:
 
 
 def report_azure_mgmt_versioned_module(code_report):
-    
+
     def parse_module_name(module):
         split_module = module.split(".")
         # Azure mgmt packages are typically in the form of: azure.mgmt.<service>
@@ -555,17 +559,17 @@ def report_azure_mgmt_versioned_module(code_report):
 
 
 def main(
-        package_name: str,
-        target_module: str,
-        version: str,
-        in_venv: Union[bool, str],
-        pkg_dir: str,
-        changelog: bool,
-        code_report: bool,
-        latest_pypi_version: bool,
-        source_report: Optional[Path],
-        target_report: Optional[Path]
-    ):
+    package_name: str,
+    target_module: str,
+    version: str,
+    in_venv: Union[bool, str],
+    pkg_dir: str,
+    changelog: bool,
+    code_report: bool,
+    latest_pypi_version: bool,
+    source_report: Optional[Path],
+    target_report: Optional[Path],
+):
     # If code_report is set, only generate a code report for the package and return
     if code_report:
         public_api = build_library_report(target_module)
@@ -583,6 +587,7 @@ def main(
     if not version:
 
         from pypi_tools.pypi import PyPIClient
+
         client = PyPIClient()
 
         try:
@@ -601,28 +606,10 @@ def main(
         packages = [f"{package_name}=={version}", "jsondiff==1.2.0"]
         with create_venv_with_package(packages) as venv:
             subprocess.check_call(
-                [
-                    venv.env_exe,
-                    "-m",
-                    "pip",
-                    "install",
-                    "-r",
-                    os.path.join(pkg_dir, "dev_requirements.txt")
-                ]
+                [venv.env_exe, "-m", "pip", "install", "-r", os.path.join(pkg_dir, "dev_requirements.txt")]
             )
             _LOGGER.info(f"Installed version {version} of {package_name} in a venv")
-            args = [
-                venv.env_exe,
-                __file__,
-                "-t",
-                package_name,
-                "-m",
-                target_module,
-                "--in-venv",
-                "true",
-                "-s",
-                version
-            ]
+            args = [venv.env_exe, __file__, "-t", package_name, "-m", target_module, "--in-venv", "true", "-s", version]
             try:
                 subprocess.check_call(args)
             except subprocess.CalledProcessError:
@@ -650,9 +637,7 @@ def main(
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Run breaking changes checks against target folder."
-    )
+    parser = argparse.ArgumentParser(description="Run breaking changes checks against target folder.")
 
     parser.add_argument(
         "-t",
@@ -670,11 +655,7 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "-v",
-        "--in-venv",
-        dest="in_venv",
-        help="Check if we are in the newly created venv.",
-        default=False
+        "-v", "--in-venv", dest="in_venv", help="Check if we are in the newly created venv.", default=False
     )
 
     parser.add_argument(
@@ -682,7 +663,7 @@ if __name__ == "__main__":
         "--stable_version",
         dest="stable_version",
         help="The stable version of the target package, if it exists on PyPi.",
-        default=None
+        default=None,
     )
 
     parser.add_argument(
@@ -736,13 +717,18 @@ if __name__ == "__main__":
 
     # We dont need to block for code report generation
     if not args.code_report:
-        if package_name not in RUN_BREAKING_CHANGES_PACKAGES and not any(bool(re.findall(p, package_name)) for p in RUN_BREAKING_CHANGES_PACKAGES):
-            _LOGGER.info(f"{package_name} opted out of breaking changes checks. "
-                        f"See http://aka.ms/azsdk/breaking-changes-tool to opt-in.")
+        if package_name not in RUN_BREAKING_CHANGES_PACKAGES and not any(
+            bool(re.findall(p, package_name)) for p in RUN_BREAKING_CHANGES_PACKAGES
+        ):
+            _LOGGER.info(
+                f"{package_name} opted out of breaking changes checks. "
+                f"See http://aka.ms/azsdk/breaking-changes-tool to opt-in."
+            )
             exit(0)
 
     if not target_module and not (args.source_report and args.target_report):
         from ci_tools.parsing import ParsedSetup
+
         pkg_details = ParsedSetup.from_path(pkg_dir)
         target_module = pkg_details.namespace
 
@@ -755,4 +741,15 @@ if __name__ == "__main__":
             _LOGGER.exception("If providing the `--target-report` flag, the `--source-report` flag is also required.")
             exit(1)
 
-    main(package_name, target_module, stable_version, in_venv, pkg_dir, changelog, args.code_report, args.latest_pypi_version, args.source_report, args.target_report)
+    main(
+        package_name,
+        target_module,
+        stable_version,
+        in_venv,
+        pkg_dir,
+        changelog,
+        args.code_report,
+        args.latest_pypi_version,
+        args.source_report,
+        args.target_report,
+    )
