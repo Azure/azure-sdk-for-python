@@ -1,21 +1,15 @@
-from azure.ai.ml.constants._common import AssetTypes
-from azure.ai.ml.entities._inputs_outputs import Input, Output
-from typing import Optional, Dict
-from azure.ai.ml._restclient.v2024_10_01_preview.models import (
-    UriFileJobInput,
-    MLFlowModelJobInput,
-)
-from azure.ai.ml.constants._job.finetuning import FineTuningTaskTypes
-from azure.ai.ml.entities._job.finetuning.custom_model_finetuning_job import (
-    CustomModelFineTuningJob,
-)
-from azure.ai.ml.entities._job.finetuning.azure_openai_finetuning_job import (
-    AzureOpenAIFineTuningJob,
-)
-from azure.ai.ml.entities._job.finetuning.azure_openai_hyperparameters import (
-    AzureOpenAIHyperparameters,
-)
+from typing import Dict, Optional
+
 import pytest
+
+from azure.ai.ml._restclient.v2024_10_01_preview.models import MLFlowModelJobInput, UriFileJobInput
+from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml.constants._job.finetuning import FineTuningTaskTypes
+from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._job.finetuning.azure_openai_finetuning_job import AzureOpenAIFineTuningJob
+from azure.ai.ml.entities._job.finetuning.azure_openai_hyperparameters import AzureOpenAIHyperparameters
+from azure.ai.ml.entities._job.finetuning.custom_model_finetuning_job import CustomModelFineTuningJob
+from azure.ai.ml.finetuning import FineTuningTaskType, create_finetuning_job
 
 
 @pytest.mark.finetuning_test
@@ -255,3 +249,36 @@ class TestCustomModelFineTuningJob:
             **kwargs,
         )
         return custom_model_finetuning_job
+
+
+@pytest.mark.finetuning_test
+@pytest.mark.unittest
+class TestCreateFineTuningJobValidationDataNone:
+    def test_create_finetuning_job_without_validation_data(self):
+        """Test that create_finetuning_job works when validation_data is omitted (None)."""
+        job = create_finetuning_job(
+            task=FineTuningTaskType.TEXT_COMPLETION,
+            training_data="tests/test_configs/finetuning_job/test_datasets/text_completion/train.jsonl",
+            model="azureml://registries/azureml-meta/models/Meta-Llama-3-8B/versions/8",
+            output_model_name_prefix="llama-finetune-registered-1234",
+            hyperparameters={
+                "per_device_train_batch_size": "1",
+                "learning_rate": "0.00002",
+                "num_train_epochs": "1",
+            },
+            display_name="llama-3-8B-display-name",
+            name="llama-3-8B",
+            experiment_name="llama-3-8B-finetuning-experiment",
+            tags={"foo_tag": "bar"},
+            properties={"my_property": "my_value"},
+        )
+        assert isinstance(job, CustomModelFineTuningJob)
+        assert job.validation_data is None
+        assert job.training_data is not None
+        assert job.training_data.type == AssetTypes.URI_FILE
+        assert job.model.type == AssetTypes.MLFLOW_MODEL
+        assert job.hyperparameters == {
+            "per_device_train_batch_size": "1",
+            "learning_rate": "0.00002",
+            "num_train_epochs": "1",
+        }
