@@ -41,25 +41,53 @@ clients, focusing on edge cases like:
 
 \* CRUD tests require workspace with managed-network isolation enabled (`AllowInternetOutbound` or `AllowOnlyApprovedOutbound`). Skipped on `Disabled` workspaces.
 
-## Setup
+## Quick Start (Bug Bash)
+
+Copy-paste these commands to go from zero to a passing test in under 2 minutes:
+
+```powershell
+# 1. cd into scenario_tests
+cd sdk/ml/azure-ai-ml/tests/scenario_tests
+
+# 2. Create & activate a fresh venv
+python -m venv .venv
+& .\.venv\Scripts\Activate.ps1
+
+# 3. Install the wheel + test deps (replace path to your wheel)
+pip install <path-to-azure_ai_ml-wheel>.whl
+pip install pytest pytest-timeout
+
+# 4. Set env vars
+$env:ML_SUBSCRIPTION_ID = "<your-subscription-id>"
+$env:ML_RESOURCE_GROUP   = "<your-resource-group>"
+$env:ML_WORKSPACE_NAME   = "<your-workspace-name>"
+
+# 5. Verify with the fastest test (~15s)
+python -m pytest test_scenario_asset_lifecycle.py::TestScenarioAssetLifecycle::test_workspace_metadata_and_datastore_access -v -s
+```
+
+> **Note:** `azure-identity` and `msrest` are installed automatically as
+> dependencies of the wheel — you do **not** need to install them separately.
+
+## Setup (detailed)
 
 ### 1. Python environment
 
 These tests run against a **pre-built wheel** of `azure-ai-ml` (a release
-candidate produced by the CI pipeline). Place the `.whl` file in this
-`scenario_tests/` folder and install it into a fresh venv:
+candidate produced by the CI pipeline). Install it into a fresh venv:
 
 ```powershell
+cd sdk/ml/azure-ai-ml/tests/scenario_tests
 python -m venv .venv
 & .\.venv\Scripts\Activate.ps1
 
-# Install the RC wheel from this folder (the same wheel can be used for
-# sample testing and manual validation)
-pip install azure_ai_ml-<version>-py3-none-any.whl
-pip install pytest pytest-timeout azure-identity
+# Install the RC wheel (the same wheel can be used for sample testing
+# and manual validation)
+pip install <path-to>/azure_ai_ml-<version>-py3-none-any.whl
+pip install pytest pytest-timeout
 ```
 
-> **Tip:** You can also install directly by glob if there is exactly one wheel:
+> **Tip:** If you have exactly one wheel in the current directory:
 > ```powershell
 > pip install (Get-Item *.whl).FullName
 > ```
@@ -79,21 +107,29 @@ $env:ML_CLIENT_ID     = "..."
 $env:ML_CLIENT_SECRET = "..."
 ```
 
-### 3. Workspace requirements
+### 3. Azure CLI login
 
-- **Azure CLI login**: `az login` must be completed (unless using SP auth).
+Make sure you're logged in (unless using SP auth):
+
+```powershell
+az login
+az account set --subscription "<your-subscription-id>"
+```
+
+### 4. Workspace requirements
+
 - **Storage key auth**: Some tests (model upload) require the workspace storage
   account to allow key-based authentication. If disabled, those tests will
   `pytest.skip()` gracefully.
 - **Compute quota**: Tests that create compute need at least 4 vCPU quota for
   `STANDARD_DS3_V2` in the workspace region.
 
-### 4. Test isolation
+### 5. Test isolation
 
 These tests have their own `pytest.ini` inside `tests/scenario_tests/` that
 prevents pytest from loading the parent `tests/conftest.py` (which requires
-`devtools_testutils`). **You must run from the `scenario_tests/` directory**
-or specify `--rootdir`:
+`devtools_testutils`). **You must `cd` into the `scenario_tests/` directory
+before running.**
 
 ```powershell
 cd sdk/ml/azure-ai-ml/tests/scenario_tests
@@ -102,13 +138,13 @@ cd sdk/ml/azure-ai-ml/tests/scenario_tests
 ## Running
 
 All commands assume you are in `sdk/ml/azure-ai-ml/tests/scenario_tests/` with
-env vars set and the correct venv activated.
+env vars set and the `.venv` activated.
 
 ```powershell
 # List all scenarios (no execution)
 python -m pytest . -v --co
 
-# Run the fastest test (~10s, no compute)
+# Run the fastest test (~15s, no compute needed)
 python -m pytest test_scenario_asset_lifecycle.py::TestScenarioAssetLifecycle::test_workspace_metadata_and_datastore_access -v -s
 
 # Run asset CRUD tests (~30s, no compute)
@@ -126,11 +162,86 @@ python -m pytest . -v -s --timeout=1800
 | Error | Cause | Fix |
 |-------|-------|-----|
 | `ModuleNotFoundError: No module named 'devtools_testutils'` | Running from wrong directory; parent `conftest.py` is loaded | `cd` into `tests/scenario_tests/` before running |
-| `ModuleNotFoundError: No module named 'azure.mgmt'` | Missing `azure-mgmt-core` | `pip install azure-mgmt-core` |
-| `ModuleNotFoundError: No module named 'msrest'` | Missing `msrest` | `pip install msrest` |
+| `ModuleNotFoundError: No module named 'azure.mgmt'` | Missing `azure-mgmt-core` (should come with the wheel) | `pip install azure-mgmt-core` |
+| `ModuleNotFoundError: No module named 'msrest'` | Missing `msrest` (should come with the wheel) | `pip install msrest` |
 | `KeyBasedAuthenticationNotPermitted` | Workspace storage has key auth disabled | Test will `pytest.skip()` automatically; or use a workspace with storage keys enabled |
-| `KeyError: 'ML_SUBSCRIPTION_ID'` | Env vars not set | Set `$env:ML_SUBSCRIPTION_ID` etc. |
+| `KeyError: 'ML_SUBSCRIPTION_ID'` | Env vars not set | Set `$env:ML_SUBSCRIPTION_ID` etc. (see Quick Start above) |
 | `AttributeError: 'dict' object has no attribute '_to_compute_rest_object'` | Identity passed as dict instead of `IdentityConfiguration` | Already fixed — use `IdentityConfiguration(type="system_assigned")` |
+
+## Adding New Scenarios (Bug Bash)
+
+We have a Claude/Copilot skill file at `.copilot/scenario_skill.instructions.md`
+that teaches the AI how to generate scenario tests matching our conventions. Use
+the following prompt in **GitHub Copilot Chat** (or any Copilot agent) to generate
+new scenarios:
+
+### Prompt template
+
+> ```
+> Using the skill in .copilot/scenario_skill.instructions.md, generate a new
+> scenario test for the azure-ai-ml SDK.
+>
+> **Feature area:** <AREA>
+> **Customer story:** <STORY>
+>
+> Requirements:
+> - Use only public APIs from azure.ai.ml and azure.ai.ml.entities
+> - Follow the existing patterns in tests/scenario_tests/ (look at conftest.py
+>   fixtures: ml_client, rand_name, credential, wait_for_job)
+> - Each test method must do 5+ SDK calls in a realistic multi-step workflow
+> - try/finally cleanup for every resource created
+> - Round-trip fidelity assertions (create → get → assert properties match)
+> - Inline any training scripts via tempfile.TemporaryDirectory
+> - No mocking, no devtools_testutils — these run live
+> - Test edge cases and variations, not happy-path-only
+> ```
+
+### Example prompts for specific areas
+
+**AutoML classification:**
+> Using the skill in .copilot/scenario_skill.instructions.md, generate a scenario
+> test for AutoML classification. Customer story: A data scientist uploads a CSV
+> dataset, creates an AutoML classification job with a 15-minute timeout and
+> blocked algorithms, waits for completion, then retrieves the best model and
+> registers it. Test edge cases: special chars in display name, custom
+> featurization settings, ensemble disabled.
+
+**Batch endpoint with data asset:**
+> Using the skill in .copilot/scenario_skill.instructions.md, generate a scenario
+> test for batch endpoints. Customer story: An ML engineer creates a batch
+> endpoint, deploys a model, invokes the endpoint with a URI folder data asset,
+> polls the batch job to completion, and downloads the scoring output. Test edge
+> cases: deployment with mini_batch_size, error_threshold, max_concurrency settings.
+
+**Registry cross-workspace:**
+> Using the skill in .copilot/scenario_skill.instructions.md, generate a scenario
+> test for cross-workspace model sharing via Registry. Customer story: A platform
+> team registers an environment and model in a registry, then a workspace user
+> references those registry assets in a command job. Test round-trip fidelity of
+> registry asset references and verify job completes successfully.
+
+**Datastore & data pipeline:**
+> Using the skill in .copilot/scenario_skill.instructions.md, generate a scenario
+> test for data pipelines. Customer story: A data engineer registers an Azure Blob
+> datastore, creates a uri_folder data asset pointing to it, builds a 2-step
+> pipeline (prepare_data → train) where step 1 reads from the data asset and step
+> 2 outputs to the datastore path. Verify output data exists after pipeline
+> completes.
+
+### Scenario ideas not yet covered
+
+| Area | What to test | Complexity |
+|------|-------------|------------|
+| AutoML classification/regression | Job config, blocked algos, featurization, best model retrieval | Level 3 |
+| Batch endpoints | Deploy model, invoke with data asset, poll batch job, get output | Level 4 |
+| Registry cross-workspace | Register assets in registry, use in workspace job | Level 5 |
+| Distributed training | Multi-node PyTorch/TF command job | Level 3 |
+| Managed online endpoint + MLflow | No-code MLflow model deployment | Level 4 |
+| Data import job | Import data from external source into workspace | Level 2 |
+| Schedule/trigger | Create scheduled pipeline, verify it triggers | Level 3 |
+| Feature store | Create feature set, run materialization | Level 3 |
+| Responsible AI dashboard | RAI insights on a registered model | Level 5 |
+| Serverless compute job | Submit command job without named compute | Level 3 |
 
 ## Design Principles
 
