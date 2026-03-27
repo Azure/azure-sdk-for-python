@@ -49,6 +49,30 @@ azure/search/documents/
 
 ## Step 3: Check ApiVersion
 
+After regeneration, the generated code targets the API version in `_metadata.json`. The hand-maintained `ApiVersion` enum in `_patch.py` must include this version.
+
+```bash
+# 1. See what API version the generator used
+python -c "import json; print(json.load(open('_metadata.json'))['apiVersion'])"
+
+# 2. See what versions the SDK currently advertises
+grep -A 20 'class ApiVersion' azure/search/documents/_patch.py
+
+# 3. Check the current default
+grep 'DEFAULT_VERSION' azure/search/documents/_patch.py
+```
+
+If the generated API version is **not** in the `ApiVersion` enum:
+1. Add the new member to `ApiVersion` in `azure/search/documents/_patch.py` (e.g., `V2026_05_01_PREVIEW = "2026-05-01-preview"`)
+2. Update `DEFAULT_VERSION` to point to the new member
+3. Update the `ApiVersion` docstring in the class if one exists
+
+Verify the default round-trips correctly:
+
+```bash
+python -c "from azure.search.documents._patch import ApiVersion, DEFAULT_VERSION; print(DEFAULT_VERSION.value)"
+```
+
 ## Step 4: Check for New Operations That Need Wrappers
 
 Look at what changed in the generated operations files:
@@ -80,11 +104,52 @@ Watch for:
 - **Changed `SearchRequest` model** — `_build_search_request()` constructs this model directly; new parameters need to be wired through
 - **Changed `SearchFieldDataType` model** — `indexes/models/_patch.py` monkey-patches `SearchFieldDataType.Collection` as a `staticmethod` and adds camelCase backward-compat aliases (e.g., `Int32` → `INT32`). If values are added, removed, or renamed in the generated enum, the aliases and `Collection` helper must be updated to match
 
-## Step 6: Run azpysdk mypy and fix all failures
+## Step 6: Ensure mypy pass
 
-## Step 7: Run azpysdk pylint and fix all failures
+```bash
+cd sdk/search/azure-search-documents
+
+# Preferred — uses azpysdk CLI (install via: pip install -e eng/tools/azure-sdk-tools)
+azpysdk mypy
+```
+
+The package-level `mypy.ini` already ignores `_generated` internals — you only need to fix errors in `_patch.py` files and `samples/`.
+
+## Step 7: Ensure pylint pass
+
+```bash
+cd sdk/search/azure-search-documents
+
+# Preferred
+azpysdk pylint
+```
+
+The repo-level `pylintrc` already excludes `_generated/`, `_vendor/`, `tests/`, and `samples/` — only `_patch.py` customizations are linted.
 
 ## Step 8: Update Documentation and Samples
+
+If the regeneration added new operations, models, or changed the API version, update the docs and samples:
+
+### Changelog
+
+```bash
+# Edit CHANGELOG.md — add an entry under the next unreleased version
+# Format:
+#   ## 11.x.0bN (Unreleased)
+#   ### Features Added
+#   - Added `new_operation` to `SearchIndexClient`
+#   ### Breaking Changes
+#   - Renamed `OldModel` to `NewModel`
+code CHANGELOG.md
+```
+
+### README
+
+If new client classes or major features were added, update `README.md` with usage examples:
+
+```bash
+code README.md
+```
 
 # Customization Patterns Reference
 
