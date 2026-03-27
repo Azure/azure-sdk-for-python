@@ -75,7 +75,9 @@ with (
 
     data_source_config = AzureAIDataSourceConfig(type="azure_ai_source", scenario="responses")
     testing_criteria = [
-        EvalGraderAzureAIEvaluator(type="azure_ai_evaluator", name="violence_detection", evaluator_name="builtin.violence")
+        EvalGraderAzureAIEvaluator(
+            type="azure_ai_evaluator", name="violence_detection", evaluator_name="builtin.violence"
+        )
     ]
     eval_object = openai_client.evals.create(
         name="Continuous Evaluation",

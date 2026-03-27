@@ -14,17 +14,32 @@ from openai import NotGiven, Omit, OpenAI as OpenAIClient
 from openai._types import Body, Query, Headers
 from openai.resources.evals.evals import Evals
 from openai.resources.evals.runs.runs import Runs
-from openai.types.evals.run_create_params import DataSource
+from openai.types.evals.create_eval_jsonl_run_data_source_param import CreateEvalJSONLRunDataSourceParam
+from openai.types.evals.create_eval_completions_run_data_source_param import CreateEvalCompletionsRunDataSourceParam
+from openai.types.evals.run_create_params import DataSourceCreateEvalResponsesRunDataSource
 from openai.types.evals.run_create_response import RunCreateResponse
-from openai.types.eval_create_params import DataSourceConfig, TestingCriterion
+from openai.types.eval_create_params import (
+    DataSourceConfigCustom,
+    DataSourceConfigLogs,
+    DataSourceConfigStoredCompletions,
+    TestingCriterionLabelModel,
+    TestingCriterionTextSimilarity,
+    TestingCriterionPython,
+    TestingCriterionScoreModel,
+)
+from openai.types.graders.string_check_grader_param import StringCheckGraderParam
 from openai.types.eval_create_response import EvalCreateResponse
 from openai.types.shared_params.metadata import Metadata
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .models import (
-    EvalGraderAzureAIEvaluator,
-    TargetCompletionEvalRunDataSource,
+    AzureAIBenchmarkPreviewEvalRunDataSource,
     AzureAIDataSourceConfig,
     AzureAIResponsesEvalRunDataSource,
+    EvalCsvRunDataSource,
+    EvalGraderAzureAIEvaluator,
+    RedTeamEvalRunDataSource,
+    TargetCompletionEvalRunDataSource,
+    TracesPreviewEvalRunDataSource,
 )
 
 class _AzureEvalRuns(Runs):
@@ -33,7 +48,15 @@ class _AzureEvalRuns(Runs):
         eval_id: str,
         *,
         data_source: Union[
-            DataSource, TargetCompletionEvalRunDataSource, AzureAIResponsesEvalRunDataSource
+            CreateEvalJSONLRunDataSourceParam,
+            CreateEvalCompletionsRunDataSourceParam,
+            DataSourceCreateEvalResponsesRunDataSource,
+            AzureAIBenchmarkPreviewEvalRunDataSource,
+            AzureAIResponsesEvalRunDataSource,
+            EvalCsvRunDataSource,
+            RedTeamEvalRunDataSource,
+            TargetCompletionEvalRunDataSource,
+            TracesPreviewEvalRunDataSource,
         ],  # <=== Azure extention here
         metadata: Optional[Metadata] | Omit = ...,
         name: str | Omit = ...,
@@ -47,10 +70,16 @@ class _AzureEvals(Evals):
     def create(
         self,
         *,
-        data_source_config: Union[DataSourceConfig, AzureAIDataSourceConfig],  # <=== Azure extention here
+        data_source_config: Union[
+            DataSourceConfigCustom, DataSourceConfigLogs, DataSourceConfigStoredCompletions, AzureAIDataSourceConfig
+        ],  # <=== Azure extention here
         testing_criteria: Iterable[
             Union[
-                TestingCriterion,
+                TestingCriterionLabelModel,
+                StringCheckGraderParam,
+                TestingCriterionTextSimilarity,
+                TestingCriterionPython,
+                TestingCriterionScoreModel,
                 EvalGraderAzureAIEvaluator,  # <=== Azure extention here
             ]
         ],
