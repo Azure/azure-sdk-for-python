@@ -23,18 +23,19 @@ def extract_parameter_groups(kwargs: dict) -> None:
     """
     path_http_headers = kwargs.pop("path_http_headers", None)
     if path_http_headers is not None:
-        kwargs.setdefault("cache_control", getattr(path_http_headers, "cache_control", None))
-        kwargs.setdefault("content_encoding", getattr(path_http_headers, "content_encoding", None))
-        kwargs.setdefault("content_language", getattr(path_http_headers, "content_language", None))
-        kwargs.setdefault("content_disposition", getattr(path_http_headers, "content_disposition", None))
-        kwargs.setdefault("content_type", getattr(path_http_headers, "content_type", None))
-        kwargs.setdefault("content_md5", getattr(path_http_headers, "content_md5", None))
-        kwargs.setdefault("transactional_content_hash", getattr(path_http_headers, "transactional_content_hash", None))
+        for attr in ("cache_control", "content_encoding", "content_language",
+                     "content_disposition", "content_type", "content_md5",
+                     "transactional_content_hash"):
+            value = getattr(path_http_headers, attr, None)
+            if value is not None:
+                kwargs.setdefault(attr, value)
 
     modified_access_conditions = kwargs.pop("modified_access_conditions", None)
     if modified_access_conditions is not None:
-        kwargs.setdefault("if_modified_since", getattr(modified_access_conditions, "if_modified_since", None))
-        kwargs.setdefault("if_unmodified_since", getattr(modified_access_conditions, "if_unmodified_since", None))
+        for attr in ("if_modified_since", "if_unmodified_since"):
+            value = getattr(modified_access_conditions, attr, None)
+            if value is not None:
+                kwargs.setdefault(attr, value)
         if_match = getattr(modified_access_conditions, "if_match", None)
         if_none_match = getattr(modified_access_conditions, "if_none_match", None)
         if if_match:
@@ -48,20 +49,24 @@ def extract_parameter_groups(kwargs: dict) -> None:
 
     lease_access_conditions = kwargs.pop("lease_access_conditions", None)
     if lease_access_conditions is not None:
-        kwargs.setdefault("lease_id", getattr(lease_access_conditions, "lease_id", None))
+        lease_id = getattr(lease_access_conditions, "lease_id", None)
+        if lease_id is not None:
+            kwargs.setdefault("lease_id", lease_id)
 
     cpk_info = kwargs.pop("cpk_info", None)
     if cpk_info is not None:
-        kwargs.setdefault("encryption_key", getattr(cpk_info, "encryption_key", None))
-        kwargs.setdefault("encryption_key_sha256", getattr(cpk_info, "encryption_key_sha256", None))
-        kwargs.setdefault("encryption_algorithm", getattr(cpk_info, "encryption_algorithm", None))
+        for attr in ("encryption_key", "encryption_key_sha256", "encryption_algorithm"):
+            value = getattr(cpk_info, attr, None)
+            if value is not None:
+                kwargs.setdefault(attr, value)
 
     source_modified_access_conditions = kwargs.pop("source_modified_access_conditions", None)
     if source_modified_access_conditions is not None:
-        kwargs.setdefault("source_if_match", getattr(source_modified_access_conditions, "source_if_match", None))
-        kwargs.setdefault("source_if_none_match", getattr(source_modified_access_conditions, "source_if_none_match", None))
-        kwargs.setdefault("source_if_modified_since", getattr(source_modified_access_conditions, "source_if_modified_since", None))
-        kwargs.setdefault("source_if_unmodified_since", getattr(source_modified_access_conditions, "source_if_unmodified_since", None))
+        for attr in ("source_if_match", "source_if_none_match",
+                     "source_if_modified_since", "source_if_unmodified_since"):
+            value = getattr(source_modified_access_conditions, attr, None)
+            if value is not None:
+                kwargs.setdefault(attr, value)
 
 
 class _ParameterGroupExtractionMixin:
