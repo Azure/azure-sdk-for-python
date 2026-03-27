@@ -1,11 +1,10 @@
 {
-  "commit": "2b47198df3bc98a27d7be9891d4c4887392ff710",
+  "apiVersion": "2025-12-01-preview",
+  "apiVersions": {
+    "Microsoft.BillingBenefits": "2025-12-01-preview"
+  },
+  "commit": "5ab5095ac348920a811a10f40fbcc77510d0084b",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.10.2",
-  "use": [
-    "@autorest/python@6.50.0",
-    "@autorest/modelerfour@4.27.0"
-  ],
-  "autorest_command": "autorest specification/billingbenefits/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=C:\\dev\\worktrees\\sdk-azure-mgmt-billingbenefits\\sdk --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/billingbenefits/resource-manager/readme.md"
+  "typespec_src": "specification/billingbenefits/BillingBenefits.Management",
+  "emitterVersion": "0.61.1"
 }
