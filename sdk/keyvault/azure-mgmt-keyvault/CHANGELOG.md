@@ -1,5 +1,11 @@
 # Release History
 
+## 14.0.1 (2026-03-27)
+
+### Bugs Fixed
+
+  - Fix wrong replacement about api-version for `next_link` of API `VaultsOperations.list`
+
 ## 14.0.0 (2026-03-18)
 
 ### Breaking Changes
