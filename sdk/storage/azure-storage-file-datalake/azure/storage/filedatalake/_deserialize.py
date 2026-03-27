@@ -82,9 +82,9 @@ def return_headers_and_deserialized_path_list(  # pylint: disable=name-too-long,
     return deserialized.paths if deserialized.paths else {}, normalize_headers(response_headers)
 
 
-def get_deleted_path_properties_from_generated_code(
+def get_deleted_path_properties_from_generated_code(  # pylint: disable=name-too-long
     generated: "BlobItemInternal",
-) -> DeletedPathProperties:  # pylint: disable=name-too-long
+) -> DeletedPathProperties:
     deleted_path = DeletedPathProperties()
     deleted_path.name = generated.name
     deleted_path.deleted_time = generated.properties.deleted_time
@@ -101,9 +101,9 @@ def get_datalake_service_properties(datalake_properties: Dict[str, Any]) -> Dict
     datalake_properties["analytics_logging"] = AnalyticsLogging._from_generated(  # pylint: disable=protected-access
         datalake_properties["analytics_logging"]
     )
-    datalake_properties["hour_metrics"] = Metrics._from_generated(
+    datalake_properties["hour_metrics"] = Metrics._from_generated(  # pylint: disable=protected-access
         datalake_properties["hour_metrics"]
-    )  # pylint: disable=protected-access
+    )
     datalake_properties["minute_metrics"] = Metrics._from_generated(  # pylint: disable=protected-access
         datalake_properties["minute_metrics"]
     )

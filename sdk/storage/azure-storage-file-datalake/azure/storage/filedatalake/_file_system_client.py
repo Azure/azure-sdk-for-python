@@ -441,9 +441,9 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :caption: Getting properties on the file system.
         """
         container_properties = self._container_client.get_container_properties(**kwargs)
-        return FileSystemProperties._convert_from_container_props(
+        return FileSystemProperties._convert_from_container_props(  # pylint: disable=protected-access
             container_properties
-        )  # pylint: disable=protected-access
+        )
 
     @distributed_trace
     def set_file_system_metadata(self, metadata: Dict[str, str], **kwargs: Any) -> Dict[str, Union[str, "datetime"]]:
@@ -563,9 +563,9 @@ class FileSystemClient(StorageAccountHostsMixin):
         """
         access_policy = self._container_client.get_container_access_policy(**kwargs)
         return {
-            "public_access": PublicAccess._from_generated(
+            "public_access": PublicAccess._from_generated(  # pylint: disable=protected-access
                 access_policy["public_access"]
-            ),  # pylint: disable=protected-access
+            ),
             "signed_identifiers": access_policy["signed_identifiers"],
         }
 

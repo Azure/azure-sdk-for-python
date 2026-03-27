@@ -395,9 +395,9 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         return file_system
 
     @distributed_trace
-    def delete_file_system(
+    def delete_file_system(  # pylint: disable=delete-operation-wrong-return-type
         self, file_system: Union[FileSystemProperties, str], **kwargs: Any
-    ) -> FileSystemClient:  # pylint: disable=delete-operation-wrong-return-type
+    ) -> FileSystemClient:
         """Marks the specified file system for deletion.
 
         The file system and any files contained within it are later deleted during garbage collection.

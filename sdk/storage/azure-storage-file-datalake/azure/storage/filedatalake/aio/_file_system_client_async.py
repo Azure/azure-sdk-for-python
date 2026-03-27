@@ -443,9 +443,9 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
                 :caption: Getting properties on the file system.
         """
         container_properties = await self._container_client.get_container_properties(**kwargs)
-        return FileSystemProperties._convert_from_container_props(
+        return FileSystemProperties._convert_from_container_props(  # pylint: disable=protected-access
             container_properties
-        )  # pylint: disable=protected-access
+        )
 
     @distributed_trace_async
     async def set_file_system_metadata(
@@ -568,9 +568,9 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
         """
         access_policy = await self._container_client.get_container_access_policy(**kwargs)
         return {
-            "public_access": PublicAccess._from_generated(
+            "public_access": PublicAccess._from_generated(  # pylint: disable=protected-access
                 access_policy["public_access"]
-            ),  # pylint: disable=protected-access
+            ),
             "signed_identifiers": access_policy["signed_identifiers"],
         }
 
