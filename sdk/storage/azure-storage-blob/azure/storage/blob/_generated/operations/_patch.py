@@ -41,6 +41,7 @@ from ..models import (  # noqa: E402
 # bridge the gap by popping the group objects and flattening their fields.
 # ---------------------------------------------------------------------------
 
+
 def _set_if_not_none(kwargs: dict[str, Any], key: str, value: Any) -> None:
     """Set *key* in *kwargs* only if *value* is not None and *key* is absent."""
     if value is not None and kwargs.get(key) is None:
@@ -82,39 +83,82 @@ def _convert_to_etag_match_condition(
 # Maps parameter-group kwarg name → (model class, field names, special handler or None)
 _PARAMETER_GROUPS: list[tuple[str, list[str], bool]] = [
     # (kwarg_name, fields_to_flatten, needs_etag_conversion)
-    ("blob_http_headers", [
-        "blob_cache_control", "blob_content_type", "blob_content_md5",
-        "blob_content_encoding", "blob_content_language", "blob_content_disposition",
-    ], False),
+    (
+        "blob_http_headers",
+        [
+            "blob_cache_control",
+            "blob_content_type",
+            "blob_content_md5",
+            "blob_content_encoding",
+            "blob_content_language",
+            "blob_content_disposition",
+        ],
+        False,
+    ),
     ("lease_access_conditions", ["lease_id"], False),
     ("cpk_info", ["encryption_key", "encryption_key_sha256", "encryption_algorithm"], False),
     ("cpk_scope_info", ["encryption_scope"], False),
-    ("source_cpk_info", [
-        "source_encryption_key", "source_encryption_key_sha256", "source_encryption_algorithm",
-    ], False),
-    ("sequence_number_access_conditions", [
-        "if_sequence_number_less_than_or_equal_to",
-        "if_sequence_number_less_than",
-        "if_sequence_number_equal_to",
-    ], False),
+    (
+        "source_cpk_info",
+        [
+            "source_encryption_key",
+            "source_encryption_key_sha256",
+            "source_encryption_algorithm",
+        ],
+        False,
+    ),
+    (
+        "sequence_number_access_conditions",
+        [
+            "if_sequence_number_less_than_or_equal_to",
+            "if_sequence_number_less_than",
+            "if_sequence_number_equal_to",
+        ],
+        False,
+    ),
     ("append_position_access_conditions", ["max_size", "append_position"], False),
-    ("container_cpk_scope_info", [
-        "default_encryption_scope", "prevent_encryption_scope_override",
-    ], False),
+    (
+        "container_cpk_scope_info",
+        [
+            "default_encryption_scope",
+            "prevent_encryption_scope_override",
+        ],
+        False,
+    ),
     # ModifiedAccessConditions needs etag/match_condition conversion
-    ("modified_access_conditions", [
-        "if_modified_since", "if_unmodified_since", "if_tags",
-    ], True),
+    (
+        "modified_access_conditions",
+        [
+            "if_modified_since",
+            "if_unmodified_since",
+            "if_tags",
+        ],
+        True,
+    ),
     # SourceModifiedAccessConditions — fields pass through directly
-    ("source_modified_access_conditions", [
-        "source_if_modified_since", "source_if_unmodified_since",
-        "source_if_tags", "source_if_match", "source_if_none_match",
-    ], False),
+    (
+        "source_modified_access_conditions",
+        [
+            "source_if_modified_since",
+            "source_if_unmodified_since",
+            "source_if_tags",
+            "source_if_match",
+            "source_if_none_match",
+        ],
+        False,
+    ),
     # BlobModifiedAccessConditions — if_match/if_none_match pass through
     # directly (they map to x-ms-blob-if-match, not standard If-Match)
-    ("blob_modified_access_conditions", [
-        "if_modified_since", "if_unmodified_since", "if_match", "if_none_match",
-    ], False),
+    (
+        "blob_modified_access_conditions",
+        [
+            "if_modified_since",
+            "if_unmodified_since",
+            "if_match",
+            "if_none_match",
+        ],
+        False,
+    ),
 ]
 
 

@@ -28,7 +28,13 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._utils.model_base import Model as _Model, _deserialize_xml, _failsafe_deserialize_xml, _get_element
+from ..._utils.model_base import (
+    Model as _Model,
+    _deserialize,
+    _deserialize_xml,
+    _failsafe_deserialize_xml,
+    _get_element,
+)
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import prepare_multipart_form_data
 from ..._validation import api_version_validation

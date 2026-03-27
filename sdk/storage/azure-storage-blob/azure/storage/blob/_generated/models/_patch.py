@@ -57,6 +57,7 @@ def _patched_getattribute(self, name):
                 return rf.__get__(self, type(self))
     return object.__getattribute__(self, name)
 
+
 # The original ``Model.__new__`` does ``rf._module = cls.__module__`` which
 # lets an external subclass (e.g. from azure-storage-file-datalake) overwrite
 # ``_module`` on the *shared* descriptor, corrupting type resolution for
@@ -64,6 +65,7 @@ def _patched_getattribute(self, name):
 # against the module that *defined* the rest_field and uses that class's own
 # annotations (not merged subclass annotations) to avoid resolving to a type
 # whose ``__init__`` can't handle XML elements.
+
 
 def _patched_new(cls, *args, **kwargs):
     if f"{cls.__module__}.{cls.__qualname__}" not in cls._calculated:
@@ -93,11 +95,11 @@ def _patched_new(cls, *args, **kwargs):
 
     return object.__new__(cls)
 
+
 _MyMutableMapping.__getattr__ = _patched_getattr
 _MyMutableMapping.__setattr__ = _patched_setattr
 _MyMutableMapping.__getattribute__ = _patched_getattribute
 _Model.__new__ = _patched_new
-
 
 
 # The old autorest Serializer/Deserializer relies on class-level
@@ -105,6 +107,7 @@ _Model.__new__ = _patched_new
 # ``_create_xml_node()`` — none of which exist on the new model_base.Model
 # subclasses.  The mixin and wrapper classes below add exactly those
 # attributes so the operations code can keep serializing/deserializing them.
+
 
 def _create_xml_node(tag, prefix=None, ns=None):
     if prefix and ns:

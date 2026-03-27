@@ -81,7 +81,7 @@ class AzureBlobStorage(GeneratedBlobClient):
     def __init__(
         self, url: str, credential: Optional["AsyncTokenCredential"] = None, *, pipeline: Any = None, **kwargs: Any
     ) -> None:
-        
+
         _endpoint = "{url}"
         self._config = BlobClientConfiguration(url=url, credential=credential, **kwargs)
 

@@ -29,7 +29,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._configuration import BlobClientConfiguration
-from .._utils.model_base import Model as _Model, _deserialize_xml, _failsafe_deserialize_xml, _get_element
+from .._utils.model_base import Model as _Model, _deserialize, _deserialize_xml, _failsafe_deserialize_xml, _get_element
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import prep_if_match, prep_if_none_match, prepare_multipart_form_data
 from .._validation import api_version_validation
