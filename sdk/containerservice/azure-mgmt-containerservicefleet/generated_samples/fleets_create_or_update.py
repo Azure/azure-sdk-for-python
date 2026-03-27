@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -31,17 +32,31 @@ def main():
     )
 
     response = client.fleets.begin_create_or_update(
-        resource_group_name="rg1",
+        resource_group_name="rgfleets",
         fleet_name="fleet1",
         resource={
+            "identity": {"type": "None", "userAssignedIdentities": {"key126": {}}},
             "location": "East US",
-            "properties": {"hubProfile": {"agentProfile": {"vmSize": "Standard_DS1"}, "dnsPrefix": "dnsprefix1"}},
-            "tags": {"archv2": "", "tier": "production"},
+            "properties": {
+                "hubProfile": {
+                    "agentProfile": {
+                        "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgfleets/providers/Microsoft.Network/virtualNetwork/myvnet/subnets/mysubnet1",
+                        "vmSize": "Standard_DS1",
+                    },
+                    "apiServerAccessProfile": {
+                        "enablePrivateCluster": True,
+                        "enableVnetIntegration": True,
+                        "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgfleets/providers/Microsoft.Network/virtualNetwork/myvnet/subnets/mysubnet1",
+                    },
+                    "dnsPrefix": "dnsprefix1",
+                }
+            },
+            "tags": {},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-08-01-preview/Fleets_CreateOrUpdate.json
+# x-ms-original-file: 2026-02-01-preview/Fleets_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
