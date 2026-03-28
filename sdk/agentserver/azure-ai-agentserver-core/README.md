@@ -41,10 +41,10 @@ Protocol packages (e.g. `azure-ai-agentserver-invocations`) plug into `AgentHost
 | `FOUNDRY_AGENT_NAME` | Agent name (used in tracing) | `""` |
 | `FOUNDRY_AGENT_VERSION` | Agent version (used in tracing) | `""` |
 | `FOUNDRY_PROJECT_ENDPOINT` | Azure AI Foundry project endpoint | `""` |
+| `FOUNDRY_PROJECT_ARM_ID` | Foundry project ARM resource ID (used in tracing) | `""` |
+| `FOUNDRY_AGENT_SESSION_ID` | Default session ID when not provided per-request | `""` |
 | `APPLICATIONINSIGHTS_CONNECTION_STRING` | Azure Monitor connection string | — |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | OTLP collector endpoint | — |
-| `AGENT_GRACEFUL_SHUTDOWN_TIMEOUT` | Shutdown drain timeout (seconds) | `30` |
-| `AGENT_LOG_LEVEL` | Log level (`DEBUG`, `INFO`, etc.) | `INFO` |
 
 ## Examples
 
@@ -122,12 +122,6 @@ Set the log level to `DEBUG` for detailed diagnostics:
 
 ```python
 server = AgentHost(log_level="DEBUG")
-```
-
-Or via environment variable:
-
-```bash
-export AGENT_LOG_LEVEL=DEBUG
 ```
 
 ### Reporting issues

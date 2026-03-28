@@ -78,13 +78,10 @@ class AgentHost:
     :type application_insights_connection_string: Optional[str]
     :param graceful_shutdown_timeout: Seconds to wait for in-flight requests to
         complete after receiving SIGTERM / shutdown signal.  When *None* (default)
-        the ``AGENT_GRACEFUL_SHUTDOWN_TIMEOUT`` env var is consulted; if that is
-        also unset the default is 30 seconds.  Set to ``0`` to disable the
-        drain period.
+        the default is 30 seconds.  Set to ``0`` to disable the drain period.
     :type graceful_shutdown_timeout: Optional[int]
     :param log_level: Library log level (e.g. ``"DEBUG"``, ``"INFO"``).  When
-        *None* (default) the ``AGENT_LOG_LEVEL`` env var is consulted; if that
-        is also unset the default is ``"INFO"``.
+        *None* (default) the default is ``"INFO"``.
     :type log_level: Optional[str]
     """
 
@@ -111,9 +108,13 @@ class AgentHost:
         _conn_str = _config.resolve_appinsights_connection_string(application_insights_connection_string)
         _otlp_endpoint = _config.resolve_otlp_endpoint()
         _tracing_on = bool(_conn_str or _otlp_endpoint)
-        self._tracing: Optional[TracingHelper] = (
-            TracingHelper(connection_string=_conn_str) if _tracing_on else None
-        )
+        self._tracing: Optional[TracingHelper] = None
+        if _tracing_on:
+            try:
+                self._tracing = TracingHelper(connection_string=_conn_str)
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.warning("Failed to initialize tracing; continuing without tracing.", exc_info=True)
+                self._tracing = None
 
         # Timeouts ---------------------------------------------------------
         self._graceful_shutdown_timeout = _config.resolve_graceful_shutdown_timeout(

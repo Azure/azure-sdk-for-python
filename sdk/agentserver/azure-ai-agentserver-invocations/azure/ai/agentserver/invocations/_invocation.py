@@ -7,7 +7,9 @@ Provides the invocation protocol endpoints and handler decorators.
 Registers routes with the ``AgentHost`` on construction.
 """
 import contextlib
+import inspect
 import os
+import re
 import uuid
 from collections.abc import Awaitable, Callable  # pylint: disable=import-error
 from typing import TYPE_CHECKING, Any, Optional
@@ -28,6 +30,29 @@ if TYPE_CHECKING:
 from ._constants import InvocationConstants
 
 logger = AgentLogger.get()
+
+# Maximum length and allowed characters for user-provided IDs (defense in depth).
+_MAX_ID_LENGTH = 256
+_VALID_ID_RE = re.compile(r"^[a-zA-Z0-9\-_.:]+$")
+
+
+def _sanitize_id(value: str, fallback: str) -> str:
+    """Validate a user-provided ID string.
+
+    Returns *value* unchanged when it passes validation, otherwise returns
+    *fallback*.  This prevents excessively long or malformed IDs from
+    propagating into headers, span attributes, and log messages.
+
+    :param value: The raw ID from a header or query parameter.
+    :type value: str
+    :param fallback: A safe fallback value (typically a generated UUID).
+    :type fallback: str
+    :return: The validated ID or the fallback.
+    :rtype: str
+    """
+    if not value or len(value) > _MAX_ID_LENGTH or not _VALID_ID_RE.match(value):
+        return fallback
+    return value
 
 
 class InvocationHandler:
@@ -138,7 +163,13 @@ class InvocationHandler:
         :type fn: Callable[[Request], Awaitable[Response]]
         :return: The original function (unmodified).
         :rtype: Callable[[Request], Awaitable[Response]]
+        :raises TypeError: If *fn* is not an async function.
         """
+        if not inspect.iscoroutinefunction(fn):
+            raise TypeError(
+                f"invoke_handler expects an async function, got {type(fn).__name__}. "
+                "Use 'async def' to define your handler."
+            )
         self._invoke_fn = fn
         return fn
 
@@ -151,7 +182,13 @@ class InvocationHandler:
         :type fn: Callable[[Request], Awaitable[Response]]
         :return: The original function (unmodified).
         :rtype: Callable[[Request], Awaitable[Response]]
+        :raises TypeError: If *fn* is not an async function.
         """
+        if not inspect.iscoroutinefunction(fn):
+            raise TypeError(
+                f"get_invocation_handler expects an async function, got {type(fn).__name__}. "
+                "Use 'async def' to define your handler."
+            )
         self._get_invocation_fn = fn
         return fn
 
@@ -164,7 +201,13 @@ class InvocationHandler:
         :type fn: Callable[[Request], Awaitable[Response]]
         :return: The original function (unmodified).
         :rtype: Callable[[Request], Awaitable[Response]]
+        :raises TypeError: If *fn* is not an async function.
         """
+        if not inspect.iscoroutinefunction(fn):
+            raise TypeError(
+                f"cancel_invocation_handler expects an async function, got {type(fn).__name__}. "
+                "Use 'async def' to define your handler."
+            )
         self._cancel_invocation_fn = fn
         return fn
 
@@ -268,18 +311,18 @@ class InvocationHandler:
         return JSONResponse(spec)
 
     async def _create_invocation_endpoint(self, request: Request) -> Response:
-        invocation_id = (
-            request.headers.get(InvocationConstants.INVOCATION_ID_HEADER)
-            or str(uuid.uuid4())
-        )
+        generated_id = str(uuid.uuid4())
+        raw_invocation_id = request.headers.get(InvocationConstants.INVOCATION_ID_HEADER) or ""
+        invocation_id = _sanitize_id(raw_invocation_id, generated_id)
         request.state.invocation_id = invocation_id
 
         # Session ID: query param overrides env var / generated UUID
-        session_id = (
+        raw_session_id = (
             request.query_params.get("agent_session_id")
             or os.environ.get(Constants.FOUNDRY_AGENT_SESSION_ID)
-            or str(uuid.uuid4())
+            or ""
         )
+        session_id = _sanitize_id(raw_session_id, str(uuid.uuid4()))
         request.state.session_id = session_id
 
         baggage_token = None
@@ -307,6 +350,8 @@ class InvocationHandler:
 
             try:
                 response = await self._dispatch_invoke(request)
+                response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
+                response.headers[InvocationConstants.SESSION_ID_HEADER] = session_id
             except NotImplementedError as exc:
                 self._safe_set_attrs(otel_span, {
                     InvocationConstants.ATTR_SPAN_ERROR_CODE: "not_implemented",
@@ -341,9 +386,6 @@ class InvocationHandler:
                         InvocationConstants.SESSION_ID_HEADER: session_id,
                     },
                 )
-
-            response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
-            response.headers[InvocationConstants.SESSION_ID_HEADER] = session_id
 
             if isinstance(response, StreamingResponse):
                 wrapped = self._wrap_streaming_response(response, otel_span, baggage_token)
