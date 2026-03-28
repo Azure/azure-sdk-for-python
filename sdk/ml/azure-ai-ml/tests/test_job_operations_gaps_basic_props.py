@@ -17,7 +17,8 @@ from azure.ai.ml.constants._common import LOCAL_COMPUTE_TARGET, COMMON_RUNTIME_E
 
 
 @pytest.mark.e2etest
-class TestJobOperationsBasicProperties:
+@pytest.mark.usefixtures("recorded_test")
+class TestJobOperationsBasicProperties(AzureRecordedTestCase):
     @pytest.mark.e2etest
     def test_lazy_dataplane_and_operations_properties_accessible(self, client: MLClient) -> None:
         """Access a variety of JobOperations properties that lazily create clients/operations and ensure
