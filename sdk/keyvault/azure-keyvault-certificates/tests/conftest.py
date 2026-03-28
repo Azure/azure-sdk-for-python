@@ -36,6 +36,9 @@ from devtools_testutils import (
     set_custom_default_matcher,
 )
 
+# Exclude standalone live traffic test scripts from pytest collection
+collect_ignore = ["test_san_live_traffic.py"]
+
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
@@ -54,11 +57,8 @@ def add_sanitizers(test_proxy):
     #  - AZSDK3493: $..name
     remove_batch_sanitizers(["AZSDK3430", "AZSDK3493"])
 
-    # Ignore the Accept header to avoid test playback mismatches from generation updates.
-    # Also preserve excluded_headers from the global default matcher set during proxy startup.
-    set_custom_default_matcher(
-        excluded_headers="Authorization, x-ms-client-request-id, x-ms-request-id, Accept-Encoding, Accept",
-    )
+    # Ignore the Accept header to avoid test playback mismatches from generation updates
+    set_custom_default_matcher(ignored_headers="Accept")
 
 
 @pytest.fixture(scope="session", autouse=True)
