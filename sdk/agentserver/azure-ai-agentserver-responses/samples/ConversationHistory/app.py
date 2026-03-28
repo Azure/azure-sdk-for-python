@@ -6,8 +6,6 @@ Run:
     python samples/ConversationHistory/app.py
 """
 
-from __future__ import annotations
-
 from collections.abc import Sequence
 from typing import Any
 
@@ -36,7 +34,7 @@ server = AgentHost()
 responses = ResponseHandler(server, options=ResponsesServerOptions(default_fetch_history_count=20))
 
 @responses.create_handler
-async def create_async(request: CreateResponse, context: ResponseContext, cancellation_signal: Any) -> AsyncIterable[dict[str, Any]]:
+async def create_async(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
     stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
 
     yield stream.emit_created()
