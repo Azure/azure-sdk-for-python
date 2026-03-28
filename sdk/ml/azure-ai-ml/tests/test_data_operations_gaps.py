@@ -13,21 +13,27 @@ from azure.ai.ml.exceptions import ValidationException, MlException
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestDataOperationsGaps(AzureRecordedTestCase):
-    def test_get_with_both_version_and_label_raises(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_get_with_both_version_and_label_raises(
+        self, client: MLClient, randstr: Callable[[], str]
+    ) -> None:
         name = randstr("name")
         # call get with both version and label should raise MlException (wrapped ValidationException)
         with pytest.raises(MlException) as e:
             client.data.get(name=name, version="1", label="latest")
         assert "Cannot specify both version and label." in str(e.value)
 
-    def test_get_without_version_or_label_raises(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_get_without_version_or_label_raises(
+        self, client: MLClient, randstr: Callable[[], str]
+    ) -> None:
         name = randstr("name")
         # call get without version or label should raise MlException (wrapped ValidationException)
         with pytest.raises(MlException) as e:
             client.data.get(name=name)
         assert "Must provide either version or label." in str(e.value)
 
-    def test_create_or_update_registry_requires_version_raises(self, client: MLClient, tmp_path: Path, randstr: Callable[[], str]) -> None:
+    def test_create_or_update_registry_requires_version_raises(
+        self, client: MLClient, tmp_path: Path, randstr: Callable[[], str]
+    ) -> None:
         # Create a minimal data yaml without version and attempt to create in registry by passing registry name
         data_yaml = tmp_path / "data_no_version.yaml"
         tmp_folder = tmp_path / "tmp_folder"
@@ -55,7 +61,9 @@ class TestDataOperationsGaps(AzureRecordedTestCase):
         # ensure created object's name matches
         assert obj.name == name
 
-    def test_create_uri_folder_path_mismatch_raises(self, client: MLClient, tmp_path: Path, randstr: Callable[[], str]) -> None:
+    def test_create_uri_folder_path_mismatch_raises(
+        self, client: MLClient, tmp_path: Path, randstr: Callable[[], str]
+    ) -> None:
         # Create a data yaml that declares type uri_folder but points to a file path -> should raise MlException (wrapped ValidationException)
         data_yaml = tmp_path / "data_mismatch.yaml"
         tmp_file = tmp_path / "only_file.csv"
@@ -76,7 +84,9 @@ class TestDataOperationsGaps(AzureRecordedTestCase):
         # The validation should indicate file/folder mismatch
         assert "File path does not match asset type" in str(e.value)
 
-    def test_create_uri_folder_with_file_path_raises(self, client: MLClient, tmp_path: Path, randstr: Callable[[], str]) -> None:
+    def test_create_uri_folder_with_file_path_raises(
+        self, client: MLClient, tmp_path: Path, randstr: Callable[[], str]
+    ) -> None:
         # If type==uri_folder but path is a file, validation should raise ValidationException via create_or_update
         tmp_file = tmp_path / "tmp_file.csv"
         tmp_file.write_text("hello world")
@@ -96,7 +106,9 @@ class TestDataOperationsGaps(AzureRecordedTestCase):
         with pytest.raises(MlException):
             client.data.create_or_update(data_asset)
 
-    def test_create_missing_path_raises_validation(self, client: MLClient, tmp_path: Path, randstr: Callable[[], str]) -> None:
+    def test_create_missing_path_raises_validation(
+        self, client: MLClient, tmp_path: Path, randstr: Callable[[], str]
+    ) -> None:
         # Creating a Data asset with no path should raise a ValidationError during YAML loading
         name = randstr("name")
         config_path = tmp_path / "data_missing_path.yaml"
@@ -112,7 +124,9 @@ class TestDataOperationsGaps(AzureRecordedTestCase):
         with pytest.raises(MarshmallowValidationError):
             load_data(source=str(config_path))
 
-    def test_create_uri_folder_pointing_to_file_raises(self, client: MLClient, tmp_path: Path, randstr: Callable[[], str]) -> None:
+    def test_create_uri_folder_pointing_to_file_raises(
+        self, client: MLClient, tmp_path: Path, randstr: Callable[[], str]
+    ) -> None:
         """
         Covers branch where a data asset is declared as uri_folder but the provided path points to a file.
         The _validate call should raise ValidationException indicating file/folder mismatch.

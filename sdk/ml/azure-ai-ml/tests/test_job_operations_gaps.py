@@ -8,7 +8,10 @@ from devtools_testutils import AzureRecordedTestCase, is_live
 from azure.ai.ml import MLClient
 from azure.ai.ml.entities import PipelineJob, Job
 from azure.ai.ml.entities._job.job import Job as JobClass
-from azure.ai.ml.constants._common import GIT_PATH_PREFIX, AZUREML_PRIVATE_FEATURES_ENV_VAR
+from azure.ai.ml.constants._common import (
+    GIT_PATH_PREFIX,
+    AZUREML_PRIVATE_FEATURES_ENV_VAR,
+)
 from azure.ai.ml.exceptions import ValidationException, UserErrorException
 from azure.core.exceptions import ResourceNotFoundError
 
@@ -17,7 +20,9 @@ from azure.core.exceptions import ResourceNotFoundError
 @pytest.mark.usefixtures("recorded_test")
 class TestJobOperationsGaps(AzureRecordedTestCase):
     @pytest.mark.e2etest
-    def test_download_non_terminal_job_raises_job_exception(self, client: MLClient, randstr: Callable[[], str], tmp_path) -> None:
+    def test_download_non_terminal_job_raises_job_exception(
+        self, client: MLClient, randstr: Callable[[], str], tmp_path
+    ) -> None:
         """Covers download early-exit branch when job is not in terminal state.
         Create or get a job name that is unlikely to be terminal and call client.jobs.download to assert
         a JobException (or service-side error) is raised for non-terminal state."""
@@ -31,7 +36,8 @@ class TestJobOperationsGaps(AzureRecordedTestCase):
     @pytest.mark.e2etest
     def test_get_invalid_name_type_raises_user_error(self, client: MLClient) -> None:
         """Covers get() input validation branch where non-string name raises UserErrorException.
-        We call client.jobs.get with a non-string value and expect an exception to be raised."""
+        We call client.jobs.get with a non-string value and expect an exception to be raised.
+        """
         with pytest.raises(UserErrorException):
             # Intentionally pass non-string
             client.jobs.get(123)  # type: ignore[arg-type]
@@ -62,14 +68,18 @@ class TestJobOperationsGaps(AzureRecordedTestCase):
             client.jobs._get_named_output_uri(None)
 
     @pytest.mark.e2etest
-    def test_get_batch_job_scoring_output_uri_returns_none_for_unknown_job(self, client: MLClient) -> None:
+    def test_get_batch_job_scoring_output_uri_returns_none_for_unknown_job(
+        self, client: MLClient
+    ) -> None:
         # For a random/nonexistent job, there should be no child scoring output and function returns None
         fake_job_name = "nonexistent_rand_job"
         result = client.jobs._get_batch_job_scoring_output_uri(fake_job_name)
         assert result is None
 
     @pytest.mark.e2etest
-    @pytest.mark.skipif(condition=not is_live(), reason="JWT token decoding requires real credentials")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="JWT token decoding requires real credentials"
+    )
     def test_set_headers_with_user_aml_token_raises_when_aud_mismatch(
         self, client: MLClient, randstr: Callable[[], str]
     ) -> None:
@@ -105,8 +115,12 @@ class TestJobOperationsGaps(AzureRecordedTestCase):
 @pytest.mark.usefixtures("recorded_test")
 class TestJobOperationsGaps2(AzureRecordedTestCase):
     @pytest.mark.e2etest
-    @pytest.mark.skipif(condition=not is_live(), reason="JWT token decoding requires real credentials")
-    def test_create_or_update_pipeline_job_triggers_aml_token_validation(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="JWT token decoding requires real credentials"
+    )
+    def test_create_or_update_pipeline_job_triggers_aml_token_validation(
+        self, client: MLClient, randstr: Callable[[], str]
+    ) -> None:
         # Construct a minimal PipelineJob to force the code path that sets headers with user aml token
         pj_name = f"e2etest_{randstr('pj')}_headers"
         pj = PipelineJob(name=pj_name, experiment_name="test_experiment")
@@ -121,8 +135,12 @@ class TestJobOperationsGaps2(AzureRecordedTestCase):
             assert isinstance(result, Job)
 
     @pytest.mark.e2etest
-    @pytest.mark.skipif(condition=not is_live(), reason="JWT token decoding requires real credentials")
-    def test_validate_pipeline_job_headers_on_create_or_update_raises(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="JWT token decoding requires real credentials"
+    )
+    def test_validate_pipeline_job_headers_on_create_or_update_raises(
+        self, client: MLClient, randstr: Callable[[], str]
+    ) -> None:
         # Another variation to ensure create_or_update attempts to set user aml token headers for pipeline jobs
         pj_name = f"e2etest_{randstr('pj')}_headers2"
         pj = PipelineJob(name=pj_name, experiment_name="test_experiment")

@@ -11,7 +11,9 @@ from azure.ai.ml.entities import Hub, Project, Workspace
 @pytest.mark.usefixtures("recorded_test")
 class TestWorkspaceOperationsBaseGetBranches(AzureRecordedTestCase):
     @pytest.mark.e2etest
-    def test_get_returns_hub_and_project_types(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_get_returns_hub_and_project_types(
+        self, client: MLClient, randstr: Callable[[], str]
+    ) -> None:
         # Verify get() returns correct types for existing workspaces.
         # Hub/Project creation & deletion exceeds pytest-timeout (>120s),
         # so we only test get() on the pre-existing workspace.

@@ -4,8 +4,19 @@ from pathlib import Path
 import pytest
 from devtools_testutils import AzureRecordedTestCase
 
-from azure.ai.ml import MLClient, load_batch_deployment, load_batch_endpoint, load_environment, load_model
-from azure.ai.ml.entities import BatchDeployment, PipelineComponent, PipelineJob, BatchEndpoint
+from azure.ai.ml import (
+    MLClient,
+    load_batch_deployment,
+    load_batch_endpoint,
+    load_environment,
+    load_model,
+)
+from azure.ai.ml.entities import (
+    BatchDeployment,
+    PipelineComponent,
+    PipelineJob,
+    BatchEndpoint,
+)
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml.constants._common import AssetTypes
 from azure.core.exceptions import HttpResponseError
@@ -15,11 +26,19 @@ from azure.ai.ml.exceptions import ValidationException
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestBatchDeploymentGaps(AzureRecordedTestCase):
-    def test_begin_create_or_update_invalid_scoring_script_raises(self, client: MLClient, randstr: Callable[[], str], rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]) -> None:
+    def test_begin_create_or_update_invalid_scoring_script_raises(
+        self,
+        client: MLClient,
+        randstr: Callable[[], str],
+        rand_batch_name: Callable[[], str],
+        rand_batch_deployment_name: Callable[[], str],
+    ) -> None:
         # This test triggers the validate_scoring_script branch by providing a deployment
         # whose code configuration points to a local script path that does not exist.
         # The call should raise an exception from validation before attempting REST calls.
-        deployment_yaml = "./tests/test_configs/deployments/batch/batch_deployment_quick.yaml"
+        deployment_yaml = (
+            "./tests/test_configs/deployments/batch/batch_deployment_quick.yaml"
+        )
         name = rand_batch_deployment_name("deploy_name")
         endpoint_name = rand_batch_name("endpoint_name")
 
@@ -35,12 +54,22 @@ class TestBatchDeploymentGaps(AzureRecordedTestCase):
             # If it doesn't raise immediately, wait on poller to surface errors
             poller.result()
 
-    def test_validate_component_handles_missing_registered_component_and_creates(self, client: MLClient, randstr: Callable[[], str], rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]) -> None:
+    def test_validate_component_handles_missing_registered_component_and_creates(
+        self,
+        client: MLClient,
+        randstr: Callable[[], str],
+        rand_batch_name: Callable[[], str],
+        rand_batch_deployment_name: Callable[[], str],
+    ) -> None:
         # This test exercises _validate_component branch where deployment.component is a PipelineComponent
         # and the registered component is not found; the operations should attempt to create one.
         # We build a deployment from YAML and set its component to an inline PipelineComponent.
-        endpoint_yaml = "./tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml"
-        deployment_yaml = "./tests/test_configs/deployments/batch/batch_deployment_quick.yaml"
+        endpoint_yaml = (
+            "./tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml"
+        )
+        deployment_yaml = (
+            "./tests/test_configs/deployments/batch/batch_deployment_quick.yaml"
+        )
 
         endpoint = load_batch_endpoint(endpoint_yaml)
         # Ensure endpoint name meets validation: starts with a letter and contains only alphanumerics and '-'

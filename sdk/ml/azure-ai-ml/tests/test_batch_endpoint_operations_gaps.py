@@ -20,7 +20,9 @@ class TestBatchEndpointGaps(AzureRecordedTestCase):
         Trigger strategy: create a batch endpoint, do not create any deployments, then call invoke with a
         deployment_name that does not exist to force a ValidationException from _validate_deployment_name.
         """
-        endpoint_yaml = "./tests/test_configs/endpoints/batch/simple_batch_endpoint.yaml"
+        endpoint_yaml = (
+            "./tests/test_configs/endpoints/batch/simple_batch_endpoint.yaml"
+        )
         name = rand_batch_name("name")
 
         endpoint = load_batch_endpoint(endpoint_yaml)
@@ -33,7 +35,9 @@ class TestBatchEndpointGaps(AzureRecordedTestCase):
 
         # Invoke with a deployment name that doesn't exist; this should raise a ValidationException
         with pytest.raises(ValidationException):
-            client.batch_endpoints.invoke(endpoint_name=name, deployment_name="nonexistent_deployment")
+            client.batch_endpoints.invoke(
+                endpoint_name=name, deployment_name="nonexistent_deployment"
+            )
 
         # cleanup
         delete_res = client.batch_endpoints.begin_delete(name=name)
@@ -45,12 +49,16 @@ class TestBatchEndpointGaps(AzureRecordedTestCase):
             return
         raise Exception(f"Batch endpoint {name} is supposed to be deleted.")
 
-    def test_invoke_with_empty_input_path_raises_mlexception(self, client: MLClient, rand_batch_name: Callable[[], str]) -> None:
+    def test_invoke_with_empty_input_path_raises_mlexception(
+        self, client: MLClient, rand_batch_name: Callable[[], str]
+    ) -> None:
         """
         Covers: marker lines related to _resolve_input raising MlException when input.path is empty.
         Trigger strategy: create a batch endpoint and call invoke with input=Input(path="") to trigger validation.
         """
-        endpoint_yaml = "./tests/test_configs/endpoints/batch/simple_batch_endpoint.yaml"
+        endpoint_yaml = (
+            "./tests/test_configs/endpoints/batch/simple_batch_endpoint.yaml"
+        )
         name = rand_batch_name("name")
 
         endpoint = load_batch_endpoint(endpoint_yaml)
@@ -79,8 +87,12 @@ class TestBatchEndpointGaps(AzureRecordedTestCase):
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestBatchEndpointGaps_Generated(AzureRecordedTestCase):
-    def test_list_jobs_returns_list(self, client: MLClient, rand_batch_name: Callable[[], str]) -> None:
-        endpoint_yaml = "./tests/test_configs/endpoints/batch/simple_batch_endpoint.yaml"
+    def test_list_jobs_returns_list(
+        self, client: MLClient, rand_batch_name: Callable[[], str]
+    ) -> None:
+        endpoint_yaml = (
+            "./tests/test_configs/endpoints/batch/simple_batch_endpoint.yaml"
+        )
         endpoint_name = rand_batch_name("endpoint_name")
         endpoint = load_batch_endpoint(endpoint_yaml)
         endpoint.name = endpoint_name

@@ -37,19 +37,25 @@ class TestJobOpsHelperGaps:
         ]
 
         # When only_streamable=True, filter using COMMON_RUNTIME_STREAM_LOG_PATTERN
-        filtered = _get_sorted_filtered_logs(logs, job_type="command", processed_logs=None, only_streamable=True)
+        filtered = _get_sorted_filtered_logs(
+            logs, job_type="command", processed_logs=None, only_streamable=True
+        )
         # Result should be a subset of input logs and be sorted
         assert isinstance(filtered, list)
         assert all(isinstance(x, str) for x in filtered)
 
         # When only_streamable=False, should include more logs (all user logs pattern)
-        filtered_all = _get_sorted_filtered_logs(logs, job_type="command", processed_logs=None, only_streamable=False)
+        filtered_all = _get_sorted_filtered_logs(
+            logs, job_type="command", processed_logs=None, only_streamable=False
+        )
         assert isinstance(filtered_all, list)
         assert all(isinstance(x, str) for x in filtered_all)
 
         # Test legacy fallback by providing logs that do not match common runtime but match legacy command pattern
         legacy_logs = ["azureml-logs/nn/driver_0.txt", "azureml-logs/nn/user_1.txt"]
-        legacy_filtered = _get_sorted_filtered_logs(legacy_logs, job_type="command", processed_logs=None, only_streamable=True)
+        legacy_filtered = _get_sorted_filtered_logs(
+            legacy_logs, job_type="command", processed_logs=None, only_streamable=True
+        )
         assert isinstance(legacy_filtered, list)
         # Depending on runtime patterns and implementation details, legacy fallback may or may not return matches here.
         # Accept either the sorted legacy logs or an empty result to account for environment-specific pattern matching.
@@ -66,7 +72,11 @@ class TestJobOpsHelperGaps:
 
         props = get_git_properties()
         # Validate presence of keys when environment overrides are set
-        assert "mlflow.source.git.repoURL" in props or "mlflow.source.git.repo_url" in props or isinstance(props, dict)
+        assert (
+            "mlflow.source.git.repoURL" in props
+            or "mlflow.source.git.repo_url" in props
+            or isinstance(props, dict)
+        )
         # has_pat_token should detect the PAT in the URL
         assert has_pat_token(os.environ["AZURE_ML_GIT_URI"]) is True
 
@@ -99,7 +109,9 @@ class TestJobOpsHelperGapsGenerated:
         with pytest.raises(JobException):
             _wait_before_polling(-1)
 
-    def test_get_sorted_filtered_logs_common_and_legacy_with_date_patterns(self) -> None:
+    def test_get_sorted_filtered_logs_common_and_legacy_with_date_patterns(
+        self,
+    ) -> None:
         """Covers common runtime filtering and legacy fallback based on job type membership."""
         # Common runtime pattern matches filenames like "azureml-logs/some/run_0.txt" depending on pattern
         # Use patterns that match COMMON_RUNTIME_STREAM_LOG_PATTERN and legacy patterns to exercise both branches.
@@ -112,7 +124,9 @@ class TestJobOpsHelperGapsGenerated:
         ]
 
         # When only_streamable=True and patterns match, we should get a filtered, sorted list
-        filtered = _get_sorted_filtered_logs(logs, "command", processed_logs=None, only_streamable=True)
+        filtered = _get_sorted_filtered_logs(
+            logs, "command", processed_logs=None, only_streamable=True
+        )
         assert isinstance(filtered, list)
 
         # Force legacy fallback by providing a list that doesn't match common runtime patterns
@@ -122,7 +136,9 @@ class TestJobOpsHelperGapsGenerated:
             "another_0.txt",
         ]
         # Using job_type that is in JobType.COMMAND should select COMMAND_JOB_LOG_PATTERN in fallback
-        filtered_legacy = _get_sorted_filtered_logs(legacy_logs, "command", processed_logs=None, only_streamable=True)
+        filtered_legacy = _get_sorted_filtered_logs(
+            legacy_logs, "command", processed_logs=None, only_streamable=True
+        )
         assert isinstance(filtered_legacy, list)
 
     def test_get_git_properties_respects_env_overrides(self) -> None:
@@ -137,7 +153,10 @@ class TestJobOpsHelperGapsGenerated:
 
         props = get_git_properties()
         # Ensure the cleaned properties are present and correctly mapped
-        assert props.get(GitProperties.PROP_MLFLOW_GIT_REPO_URL) == "https://example.com/repo.git"
+        assert (
+            props.get(GitProperties.PROP_MLFLOW_GIT_REPO_URL)
+            == "https://example.com/repo.git"
+        )
         assert props.get(GitProperties.PROP_MLFLOW_GIT_BRANCH) == "test-branch"
         assert props.get(GitProperties.PROP_MLFLOW_GIT_COMMIT) == "abcdef123456"
         assert props.get(GitProperties.PROP_DIRTY) == "True"
@@ -170,7 +189,9 @@ class TestJobOpsHelperGapsGenerated:
         url3 = "https://dev.azure.com/org/project/_git/repo"
         assert has_pat_token(url3) is False
 
-    def test_incremental_print_writes_and_updates_processed_logs(self, tmp_path) -> None:
+    def test_incremental_print_writes_and_updates_processed_logs(
+        self, tmp_path
+    ) -> None:
         """Covers behavior where incremental print writes a header for new logs and updates processed_logs."""
         processed = {}
         content = "line1\nline2\n"
@@ -223,7 +244,9 @@ class TestJobOpsHelperGapsGenerated:
 # Merged additional generated tests from batch 1, class renamed to avoid duplicate class name
 @pytest.mark.e2etest
 class TestJobOpsHelperGapsExtra:
-    def test_get_git_properties_respects_env_overrides_with_whitespace_stripping(self) -> None:
+    def test_get_git_properties_respects_env_overrides_with_whitespace_stripping(
+        self,
+    ) -> None:
         # Preserve existing env and set overrides to validate parsing and cleaning
         env_keys = [
             GitProperties.ENV_REPOSITORY_URI,
@@ -235,7 +258,9 @@ class TestJobOpsHelperGapsExtra:
         ]
         old = {k: os.environ.get(k) for k in env_keys}
         try:
-            os.environ[GitProperties.ENV_REPOSITORY_URI] = " https://example.com/repo.git "
+            os.environ[GitProperties.ENV_REPOSITORY_URI] = (
+                " https://example.com/repo.git "
+            )
             os.environ[GitProperties.ENV_BRANCH] = " feature/x "
             os.environ[GitProperties.ENV_COMMIT] = " abcdef123456 "
             # dirty should be parsed as boolean-like string
@@ -245,7 +270,10 @@ class TestJobOpsHelperGapsExtra:
 
             props = get_git_properties()
 
-            assert props[GitProperties.PROP_MLFLOW_GIT_REPO_URL] == "https://example.com/repo.git"
+            assert (
+                props[GitProperties.PROP_MLFLOW_GIT_REPO_URL]
+                == "https://example.com/repo.git"
+            )
             assert props[GitProperties.PROP_MLFLOW_GIT_BRANCH] == "feature/x"
             assert props[GitProperties.PROP_MLFLOW_GIT_COMMIT] == "abcdef123456"
             # dirty stored as string of boolean

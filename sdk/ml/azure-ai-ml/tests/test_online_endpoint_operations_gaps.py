@@ -17,13 +17,18 @@ class _ConcreteOnlineEndpoint(OnlineEndpoint):
     def dump(self, *args, **kwargs):
         # minimal implementation to satisfy abstract method requirements for tests
         # return a simple dict representation; not used by operations under test
-        return {"name": getattr(self, "name", None), "auth_mode": getattr(self, "auth_mode", None)}
+        return {
+            "name": getattr(self, "name", None),
+            "auth_mode": getattr(self, "auth_mode", None),
+        }
 
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestOnlineEndpointOperationsGaps(AzureRecordedTestCase):
-    def test_begin_regenerate_keys_raises_for_non_key_auth(self, client: MLClient, rand_online_name: Callable[[str], str], tmp_path) -> None:
+    def test_begin_regenerate_keys_raises_for_non_key_auth(
+        self, client: MLClient, rand_online_name: Callable[[str], str], tmp_path
+    ) -> None:
         # Create an endpoint configured to use AAD token auth so that begin_regenerate_keys raises ValidationException
         endpoint_name = rand_online_name("endpoint_name_regen")
         try:
@@ -36,12 +41,16 @@ class TestOnlineEndpointOperationsGaps(AzureRecordedTestCase):
 
             # Attempting to regenerate keys should raise ValidationException because auth_mode is not 'key'
             with pytest.raises(ValidationException):
-                client.online_endpoints.begin_regenerate_keys(name=endpoint_name).result()
+                client.online_endpoints.begin_regenerate_keys(
+                    name=endpoint_name
+                ).result()
         finally:
             # Clean up
             client.online_endpoints.begin_delete(name=endpoint_name).result()
 
-    def test_begin_regenerate_keys_invalid_key_type_raises(self, client: MLClient, rand_online_name: Callable[[str], str], tmp_path) -> None:
+    def test_begin_regenerate_keys_invalid_key_type_raises(
+        self, client: MLClient, rand_online_name: Callable[[str], str], tmp_path
+    ) -> None:
         # Create an endpoint that uses keys so we can exercise invalid key_type validation in _regenerate_online_keys
         endpoint_name = rand_online_name("endpoint_name_invalid_key")
         try:
@@ -52,11 +61,15 @@ class TestOnlineEndpointOperationsGaps(AzureRecordedTestCase):
             # Using an invalid key_type should raise ValidationException
             with pytest.raises(ValidationException):
                 # use an invalid key string to trigger the branch that raises for non-primary/secondary
-                client.online_endpoints.begin_regenerate_keys(name=endpoint_name, key_type="tertiary").result()
+                client.online_endpoints.begin_regenerate_keys(
+                    name=endpoint_name, key_type="tertiary"
+                ).result()
         finally:
             client.online_endpoints.begin_delete(name=endpoint_name).result()
 
-    def test_invoke_with_nonexistent_deployment_raises(self, client: MLClient, rand_online_name: Callable[[str], str], tmp_path) -> None:
+    def test_invoke_with_nonexistent_deployment_raises(
+        self, client: MLClient, rand_online_name: Callable[[str], str], tmp_path
+    ) -> None:
         # Create a simple endpoint with no deployments, then attempt to invoke with a deployment_name that doesn't exist
         endpoint_name = rand_online_name("endpoint_name_invoke")
         request_file = tmp_path / "req.json"
@@ -68,7 +81,11 @@ class TestOnlineEndpointOperationsGaps(AzureRecordedTestCase):
 
             # Invoke with a deployment name when there are no deployments should raise ValidationException
             with pytest.raises(ValidationException):
-                client.online_endpoints.invoke(endpoint_name=endpoint_name, request_file=str(request_file), deployment_name="does-not-exist")
+                client.online_endpoints.invoke(
+                    endpoint_name=endpoint_name,
+                    request_file=str(request_file),
+                    deployment_name="does-not-exist",
+                )
         finally:
             client.online_endpoints.begin_delete(name=endpoint_name).result()
 
@@ -76,7 +93,10 @@ class TestOnlineEndpointOperationsGaps(AzureRecordedTestCase):
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test", "mock_asset_name", "mock_component_hash")
 class TestOnlineEndpointGaps(AzureRecordedTestCase):
-    @pytest.mark.skipif(condition=not is_live(), reason="Key regeneration produces non-deterministic values")
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="Key regeneration produces non-deterministic values",
+    )
     def test_begin_regenerate_keys_behaves_based_on_auth_mode(
         self,
         rand_online_name: Callable[[str], str],
@@ -101,7 +121,9 @@ class TestOnlineEndpointGaps(AzureRecordedTestCase):
 
             # If endpoint uses key auth, regenerate secondary key should succeed and return a poller
             if getattr(get_obj, "auth_mode", "").lower() == "key":
-                poller = client.online_endpoints.begin_regenerate_keys(name=endpoint_name, key_type=EndpointKeyType.SECONDARY_KEY_TYPE)
+                poller = client.online_endpoints.begin_regenerate_keys(
+                    name=endpoint_name, key_type=EndpointKeyType.SECONDARY_KEY_TYPE
+                )
                 # Should return a poller (LROPoller); do not wait on it to avoid transient service polling errors in CI
                 assert isinstance(poller, LROPoller)
                 # After regeneration request initiated, fetching keys should succeed
@@ -110,7 +132,9 @@ class TestOnlineEndpointGaps(AzureRecordedTestCase):
             else:
                 # For non-key auth endpoints, begin_regenerate_keys should raise ValidationException
                 with pytest.raises(ValidationException):
-                    client.online_endpoints.begin_regenerate_keys(name=endpoint_name, key_type=EndpointKeyType.PRIMARY_KEY_TYPE)
+                    client.online_endpoints.begin_regenerate_keys(
+                        name=endpoint_name, key_type=EndpointKeyType.PRIMARY_KEY_TYPE
+                    )
         finally:
             client.online_endpoints.begin_delete(name=endpoint_name).result()
 
@@ -132,11 +156,15 @@ class TestOnlineEndpointGaps(AzureRecordedTestCase):
             get_obj = client.online_endpoints.get(name=endpoint_name)
 
             if getattr(get_obj, "auth_mode", "").lower() != "key":
-                pytest.skip("Endpoint not key-authenticated; cannot test invalid key_type branch")
+                pytest.skip(
+                    "Endpoint not key-authenticated; cannot test invalid key_type branch"
+                )
 
             # For key-auth endpoint, passing an invalid key_type should raise ValidationException
             with pytest.raises(ValidationException):
-                client.online_endpoints.begin_regenerate_keys(name=endpoint_name, key_type="tertiary").result()
+                client.online_endpoints.begin_regenerate_keys(
+                    name=endpoint_name, key_type="tertiary"
+                ).result()
         finally:
             client.online_endpoints.begin_delete(name=endpoint_name).result()
 
@@ -162,7 +190,11 @@ class TestOnlineEndpointGaps(AzureRecordedTestCase):
 
             # Attempt to invoke with a deployment_name that does not exist should raise ValidationException
             with pytest.raises(ValidationException):
-                client.online_endpoints.invoke(endpoint_name=endpoint_name, request_file=str(request_file), deployment_name=bad_deployment)
+                client.online_endpoints.invoke(
+                    endpoint_name=endpoint_name,
+                    request_file=str(request_file),
+                    deployment_name=bad_deployment,
+                )
         finally:
             client.online_endpoints.begin_delete(name=endpoint_name).result()
 
@@ -198,7 +230,12 @@ class TestOnlineEndpointGaps(AzureRecordedTestCase):
         finally:
             client.online_endpoints.begin_delete(name=endpoint_name).result()
 
-    def test_get_keys_returns_expected_token_or_keys(self, endpoint_mir_yaml: str, rand_online_name: Callable[[], str], client: MLClient) -> None:
+    def test_get_keys_returns_expected_token_or_keys(
+        self,
+        endpoint_mir_yaml: str,
+        rand_online_name: Callable[[], str],
+        client: MLClient,
+    ) -> None:
         """Create an endpoint and call get_keys to exercise _get_online_credentials branches for KEY/AAD/token.
 
         Covers marker lines for _get_online_credentials behavior when auth_mode is key, aad_token, or other.
@@ -215,7 +252,11 @@ class TestOnlineEndpointGaps(AzureRecordedTestCase):
             creds = client.online_endpoints.get_keys(name=endpoint_name)
             assert creds is not None
             # Depending on service-configured auth_mode, creds should be one of these types
-            if isinstance(get_obj, OnlineEndpoint) and get_obj.auth_mode and get_obj.auth_mode.lower() == "key":
+            if (
+                isinstance(get_obj, OnlineEndpoint)
+                and get_obj.auth_mode
+                and get_obj.auth_mode.lower() == "key"
+            ):
                 assert isinstance(creds, EndpointAuthKeys)
             else:
                 # service may return token types
@@ -223,7 +264,12 @@ class TestOnlineEndpointGaps(AzureRecordedTestCase):
         finally:
             client.online_endpoints.begin_delete(name=endpoint_name).result()
 
-    def test_begin_regenerate_keys_with_invalid_key_type_raises(self, endpoint_mir_yaml: str, rand_online_name: Callable[[], str], client: MLClient) -> None:
+    def test_begin_regenerate_keys_with_invalid_key_type_raises(
+        self,
+        endpoint_mir_yaml: str,
+        rand_online_name: Callable[[], str],
+        client: MLClient,
+    ) -> None:
         """If endpoint uses key auth, passing an invalid key_type should raise ValidationException.
 
         Covers branches in begin_regenerate_keys -> _regenerate_online_keys where invalid key_type raises ValidationException.
@@ -236,11 +282,19 @@ class TestOnlineEndpointGaps(AzureRecordedTestCase):
             client.online_endpoints.begin_create_or_update(endpoint=endpoint).result()
 
             get_obj = client.online_endpoints.get(name=endpoint_name)
-            if not (isinstance(get_obj, OnlineEndpoint) and get_obj.auth_mode and get_obj.auth_mode.lower() == "key"):
-                pytest.skip("Endpoint not key-authenticated in this workspace; cannot exercise invalid key_type path")
+            if not (
+                isinstance(get_obj, OnlineEndpoint)
+                and get_obj.auth_mode
+                and get_obj.auth_mode.lower() == "key"
+            ):
+                pytest.skip(
+                    "Endpoint not key-authenticated in this workspace; cannot exercise invalid key_type path"
+                )
 
             # Passing an invalid key_type should raise ValidationException
             with pytest.raises(ValidationException):
-                client.online_endpoints.begin_regenerate_keys(name=endpoint_name, key_type="invalid-key-type").result()
+                client.online_endpoints.begin_regenerate_keys(
+                    name=endpoint_name, key_type="invalid-key-type"
+                ).result()
         finally:
             client.online_endpoints.begin_delete(name=endpoint_name).result()

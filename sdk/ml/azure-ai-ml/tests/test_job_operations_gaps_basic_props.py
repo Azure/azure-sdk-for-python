@@ -10,7 +10,9 @@ from azure.ai.ml.operations._job_operations import _get_job_compute_id
 from azure.ai.ml.operations._component_operations import ComponentOperations
 from azure.ai.ml.operations._compute_operations import ComputeOperations
 from azure.ai.ml.operations._virtual_cluster_operations import VirtualClusterOperations
-from azure.ai.ml.operations._dataset_dataplane_operations import DatasetDataplaneOperations
+from azure.ai.ml.operations._dataset_dataplane_operations import (
+    DatasetDataplaneOperations,
+)
 from azure.ai.ml.operations._model_dataplane_operations import ModelDataplaneOperations
 from azure.ai.ml.entities import Command
 from azure.ai.ml.constants._common import LOCAL_COMPUTE_TARGET, COMMON_RUNTIME_ENV_VAR
@@ -20,7 +22,9 @@ from azure.ai.ml.constants._common import LOCAL_COMPUTE_TARGET, COMMON_RUNTIME_E
 @pytest.mark.usefixtures("recorded_test")
 class TestJobOperationsBasicProperties(AzureRecordedTestCase):
     @pytest.mark.e2etest
-    def test_lazy_dataplane_and_operations_properties_accessible(self, client: MLClient) -> None:
+    def test_lazy_dataplane_and_operations_properties_accessible(
+        self, client: MLClient
+    ) -> None:
         """Access a variety of JobOperations properties that lazily create clients/operations and ensure
         they return operation objects without constructing internals directly.
         This exercises the property access branches for _component_operations, _compute_operations,
@@ -51,7 +55,9 @@ class TestJobOperationsBasicProperties(AzureRecordedTestCase):
         assert isinstance(model_dp_ops, ModelDataplaneOperations)
 
     @pytest.mark.e2etest
-    def test_api_url_property_and_datastore_operations_access(self, client: MLClient) -> None:
+    def test_api_url_property_and_datastore_operations_access(
+        self, client: MLClient
+    ) -> None:
         """Access _api_url and _datastore_operations to exercise workspace discovery and datastore lookup branches.
         The test asserts that properties are retrievable and of expected basic shapes.
         """
@@ -85,7 +91,9 @@ class TestJobOperationsGaps:
         _get_job_compute_id(job, resolver)
         assert job.compute == "resolved-original-compute"
 
-    def test_resolve_arm_id_or_azureml_id_unsupported_type_raises(self, client: MLClient) -> None:
+    def test_resolve_arm_id_or_azureml_id_unsupported_type_raises(
+        self, client: MLClient
+    ) -> None:
         # Pass an object that is not a supported job type to trigger ValidationException
         class NotAJob:
             pass
@@ -96,7 +104,9 @@ class TestJobOperationsGaps:
             client.jobs._resolve_arm_id_or_azureml_id(not_a_job, lambda x, **kwargs: x)
         assert "Non supported job type" in str(excinfo.value)
 
-    def test_append_tid_to_studio_url_no_services_no_exception(self, client: MLClient) -> None:
+    def test_append_tid_to_studio_url_no_services_no_exception(
+        self, client: MLClient
+    ) -> None:
         # Create a Job-like object with no services to exercise the _append_tid_to_studio_url no-op path
         class MinimalJob:
             pass
@@ -115,7 +125,9 @@ class TestJobOperationsGaps:
 @pytest.mark.usefixtures("recorded_test")
 class TestJobOperationsGaps_Additional(AzureRecordedTestCase):
     @pytest.mark.e2etest
-    @pytest.mark.skipif(condition=not is_live(), reason="Requires live workspace to validate behavior")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="Requires live workspace to validate behavior"
+    )
     def test_append_tid_to_studio_url_no_services(self, client: MLClient) -> None:
         """Covers branch where job.services is None and _append_tid_to_studio_url is a no-op."""
         # Create a minimal job object using a lightweight Job-like object. We avoid creating real services on the job.
@@ -133,7 +145,9 @@ class TestJobOperationsGaps_Additional(AzureRecordedTestCase):
         assert j.services is None
 
     @pytest.mark.e2etest
-    @pytest.mark.skipif(condition=not is_live(), reason="Requires live workspace to validate behavior")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="Requires live workspace to validate behavior"
+    )
     def test_get_job_compute_id_resolver_called(self, client: MLClient) -> None:
         """Covers _get_job_compute_id invocation path by calling it with a simple Job-like object and resolver.
         This test ensures resolver is invoked and sets job.compute accordingly when resolver returns a value.
@@ -158,8 +172,12 @@ class TestJobOperationsGaps_Additional(AzureRecordedTestCase):
         assert j.compute == "resolved-compute-arm-id"
 
     @pytest.mark.e2etest
-    @pytest.mark.skipif(condition=not is_live(), reason="Requires live workspace to validate behavior")
-    def test_set_headers_with_user_aml_token_validation_error_path(self, client: MLClient) -> None:
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="Requires live workspace to validate behavior"
+    )
+    def test_set_headers_with_user_aml_token_validation_error_path(
+        self, client: MLClient
+    ) -> None:
         """Attempts to trigger the validation path in _set_headers_with_user_aml_token by calling create_or_update
         for a simple job that will cause the header-setting code path to be exercised when the service call is attempted.
         The test asserts that either the operation completes or raises a ValidationException originating from
@@ -170,7 +188,12 @@ class TestJobOperationsGaps_Additional(AzureRecordedTestCase):
         job_name = f"e2etest_test_dummy_token"
         # Construct a trivial Command node which can be submitted via client.jobs.create_or_update
         # NOTE: component is a required keyword-only argument for Command; provide a minimal placeholder value.
-        cmd = Command(name=job_name, command="echo hello", compute="cpu-cluster", component="component-placeholder")
+        cmd = Command(
+            name=job_name,
+            command="echo hello",
+            compute="cpu-cluster",
+            component="component-placeholder",
+        )
 
         # Attempt to create/update and capture ValidationException if token validation fails
         try:
@@ -186,7 +209,9 @@ class TestJobOperationsGaps_Additional(AzureRecordedTestCase):
         condition=not is_live(),
         reason="Live-only: integration test against workspace needed",
     )
-    def test_create_or_update_local_compute_triggers_local_flag_or_validation(self, client: MLClient) -> None:
+    def test_create_or_update_local_compute_triggers_local_flag_or_validation(
+        self, client: MLClient
+    ) -> None:
         """
         Covers branches in create_or_update where job.compute == LOCAL_COMPUTE_TARGET
         which sets the COMMON_RUNTIME_ENV_VAR in job.environment_variables and then
@@ -194,7 +219,12 @@ class TestJobOperationsGaps_Additional(AzureRecordedTestCase):
         """
         # Create a simple Command job via builder with local compute to hit the branch
         name = f"e2etest_test_dummy_local"
-        cmd = Command(name=name, command="echo hello", compute=LOCAL_COMPUTE_TARGET, component="component-placeholder")
+        cmd = Command(
+            name=name,
+            command="echo hello",
+            compute=LOCAL_COMPUTE_TARGET,
+            component="component-placeholder",
+        )
 
         # The call is integration against service; depending on environment this may raise
         # ValidationException (if validation fails) or return a Job. We assert one of these concrete outcomes.
@@ -211,11 +241,14 @@ class TestJobOperationsGaps_Additional(AzureRecordedTestCase):
         condition=not is_live(),
         reason="Live-only: integration test that exercises credential-based tenant-id append behavior",
     )
-    def test_append_tid_to_studio_url_no_services_is_noop(self, client: MLClient) -> None:
+    def test_append_tid_to_studio_url_no_services_is_noop(
+        self, client: MLClient
+    ) -> None:
         """
         Exercises _append_tid_to_studio_url behavior when job.services is None (no-op path).
         This triggers the try/except branch where services missing prevents modification.
         """
+
         # Construct a minimal Job entity with no services. Use a lightweight Job-like object instead of concrete Job
         class MinimalJobEntity:
             def __init__(self, name: str):

@@ -4,7 +4,9 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient, load_workspace
-from azure.ai.ml.entities._workspace._ai_workspaces.capability_host import CapabilityHost
+from azure.ai.ml.entities._workspace._ai_workspaces.capability_host import (
+    CapabilityHost,
+)
 from azure.ai.ml.entities._workspace.workspace import Workspace
 from azure.ai.ml.constants._common import WorkspaceKind, DEFAULT_STORAGE_CONNECTION_NAME
 from azure.ai.ml.exceptions import ValidationException
@@ -61,8 +63,12 @@ class TestCapabilityHostsOperationsGaps(AzureRecordedTestCase):
             # Some subscriptions/regions require an associated hub to create Project workspaces.
             # If service rejects creation due to missing hub association, skip the test as the environment
             # cannot exercise the Project-path validation this test intends to cover.
-            if "Missing associated hub resourceId" in str(e) or 'Missing associated hub' in str(e):
-                pytest.skip("Cannot create Project workspace in this subscription/region: missing associated hub resourceId")
+            if "Missing associated hub resourceId" in str(
+                e
+            ) or "Missing associated hub" in str(e):
+                pytest.skip(
+                    "Cannot create Project workspace in this subscription/region: missing associated hub resourceId"
+                )
             raise
 
         assert isinstance(workspace, Workspace)
@@ -76,14 +82,17 @@ class TestCapabilityHostsOperationsGaps(AzureRecordedTestCase):
 
         with pytest.raises(ValidationException):
             # This should raise in _validate_properties because workspace is Project and ai_services_connections is None
-            client.capability_hosts.begin_create_or_update(capability_host=capability_host).result()
+            client.capability_hosts.begin_create_or_update(
+                capability_host=capability_host
+            ).result()
 
         # Cleanup workspace
         if workspace_created:
-            del_poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True)
+            del_poller = client.workspaces.begin_delete(
+                wps_name, delete_dependent_resources=True
+            )
             assert del_poller
             assert isinstance(del_poller, LROPoller)
-
 
     @pytest.mark.e2etest
     @pytest.mark.mlc
@@ -91,7 +100,9 @@ class TestCapabilityHostsOperationsGaps(AzureRecordedTestCase):
         condition=not is_live(),
         reason="This test requires live Azure and may be flaky against recordings",
     )
-    def test_get_default_storage_connections_returns_workspace_based_connection(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_get_default_storage_connections_returns_workspace_based_connection(
+        self, client: MLClient, randstr: Callable[[], str]
+    ) -> None:
         # This test exercises _get_default_storage_connections behavior indirectly by creating a Hub workspace
         raw_name = f"e2etest_{randstr('wps_name')}_capability_hub"
         wps_name = raw_name[:33]
@@ -114,7 +125,9 @@ class TestCapabilityHostsOperationsGaps(AzureRecordedTestCase):
         assert workspace.name == wps_name
         # If service returns a workspace kind other than Hub, skip the test as we cannot exercise Hub behavior
         if workspace._kind != WorkspaceKind.HUB:
-            pytest.skip(f"Service returned workspace kind {workspace._kind!r}; cannot exercise Hub behavior")
+            pytest.skip(
+                f"Service returned workspace kind {workspace._kind!r}; cannot exercise Hub behavior"
+            )
         assert workspace._kind == WorkspaceKind.HUB
 
         # Build a CapabilityHost for Hub (ai_services_connections not required)
@@ -123,15 +136,24 @@ class TestCapabilityHostsOperationsGaps(AzureRecordedTestCase):
 
         # Begin create should succeed for Hub workspace; poller.result() returns CapabilityHost
         try:
-            poller = client.capability_hosts.begin_create_or_update(capability_host=capability_host)
+            poller = client.capability_hosts.begin_create_or_update(
+                capability_host=capability_host
+            )
         except Exception as e:
             # In some environments the subsequent GET in the service may return a non-Hub kind
             # which causes validation in the SDK. If that happens, clean up and skip the test.
             msg = str(e)
-            if "Invalid workspace kind" in msg or "Workspace kind should be either 'Hub' or 'Project'" in msg:
+            if (
+                "Invalid workspace kind" in msg
+                or "Workspace kind should be either 'Hub' or 'Project'" in msg
+            ):
                 # cleanup workspace
-                client.workspaces.begin_delete(wps_name, delete_dependent_resources=True)
-                pytest.skip("Service returned non-Hub workspace on subsequent GET; cannot exercise Hub behavior")
+                client.workspaces.begin_delete(
+                    wps_name, delete_dependent_resources=True
+                )
+                pytest.skip(
+                    "Service returned non-Hub workspace on subsequent GET; cannot exercise Hub behavior"
+                )
             raise
 
         assert isinstance(poller, LROPoller)
@@ -148,10 +170,11 @@ class TestCapabilityHostsOperationsGaps(AzureRecordedTestCase):
         assert isinstance(del_ch, LROPoller)
         del_ch.result()
 
-        del_poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True)
+        del_poller = client.workspaces.begin_delete(
+            wps_name, delete_dependent_resources=True
+        )
         assert del_poller
         assert isinstance(del_poller, LROPoller)
-
 
     @pytest.mark.e2etest
     @pytest.mark.mlc
@@ -184,8 +207,12 @@ class TestCapabilityHostsOperationsGaps(AzureRecordedTestCase):
             # Some subscriptions/regions require an associated hub to create Project workspaces.
             # If service rejects creation due to missing hub association, skip the test as the environment
             # cannot exercise the Project-path behavior this test intends to cover.
-            if "Missing associated hub resourceId" in str(e) or 'Missing associated hub' in str(e):
-                pytest.skip("Cannot create Project workspace in this subscription/region: missing associated hub resourceId")
+            if "Missing associated hub resourceId" in str(
+                e
+            ) or "Missing associated hub" in str(e):
+                pytest.skip(
+                    "Cannot create Project workspace in this subscription/region: missing associated hub resourceId"
+                )
             raise
 
         assert isinstance(workspace, Workspace)
@@ -194,9 +221,15 @@ class TestCapabilityHostsOperationsGaps(AzureRecordedTestCase):
         # Build a CapabilityHost with minimal required ai_services_connections but no storage_connections
         ch_name = f"ch-{randstr('ch')}_defstorage"
         # Provide a minimal ai_services_connections structure to pass validation
-        capability_host = CapabilityHost(name=ch_name, ai_services_connections={"openai": {"resource": "dummy"}}, storage_connections=None)
+        capability_host = CapabilityHost(
+            name=ch_name,
+            ai_services_connections={"openai": {"resource": "dummy"}},
+            storage_connections=None,
+        )
 
-        poller = client.capability_hosts.begin_create_or_update(capability_host=capability_host)
+        poller = client.capability_hosts.begin_create_or_update(
+            capability_host=capability_host
+        )
         assert isinstance(poller, LROPoller)
         created = poller.result()
         assert isinstance(created, CapabilityHost)
@@ -207,4 +240,6 @@ class TestCapabilityHostsOperationsGaps(AzureRecordedTestCase):
 
         # cleanup created capability host and workspace
         client.capability_hosts.begin_delete(name=created.name).result()
-        client.workspaces.begin_delete(workspace.name, delete_dependent_resources=True).result()
+        client.workspaces.begin_delete(
+            workspace.name, delete_dependent_resources=True
+        ).result()

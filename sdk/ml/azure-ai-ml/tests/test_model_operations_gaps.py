@@ -12,7 +12,9 @@ from azure.ai.ml.exceptions import ValidationException
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestModelOperationsGaps(AzureRecordedTestCase):
-    def test_create_or_update_rejects_evaluator_when_using_models_ops(self, client: MLClient, randstr: Callable[[], str], tmp_path: Path) -> None:
+    def test_create_or_update_rejects_evaluator_when_using_models_ops(
+        self, client: MLClient, randstr: Callable[[], str], tmp_path: Path
+    ) -> None:
         # Attempting to create a model that is marked as an evaluator using ModelOperations should raise ValidationException
         name = f"model_{randstr('name')}"
         # create a dummy artifact file for the model path
@@ -33,7 +35,9 @@ class TestModelOperationsGaps(AzureRecordedTestCase):
         with pytest.raises(ValidationException):
             client.models.create_or_update(evaluator_model)
 
-    def test_create_or_update_evaluator_rejected_when_no_existing_model(self, client: MLClient, randstr: Callable[[], str], tmp_path: Path) -> None:
+    def test_create_or_update_evaluator_rejected_when_no_existing_model(
+        self, client: MLClient, randstr: Callable[[], str], tmp_path: Path
+    ) -> None:
         # Creating an evaluator via ModelOperations should be rejected even if no existing model exists
         name = f"model_{randstr('eval')}_noexist"
         model_path = tmp_path / "model2.pkl"
