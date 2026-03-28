@@ -51,9 +51,7 @@ class QueueAuthSamplesAsync(object):
         # [START async_auth_from_connection_string]
         from azure.storage.queue.aio import QueueServiceClient
 
-        queue_service = QueueServiceClient.from_connection_string(
-            conn_str=self.connection_string
-        )
+        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
         # [END async_auth_from_connection_string]
 
         # Get information for the Queue Service
@@ -73,9 +71,7 @@ class QueueAuthSamplesAsync(object):
         # [START async_create_queue_service_client]
         from azure.storage.queue.aio import QueueServiceClient
 
-        queue_service = QueueServiceClient(
-            account_url=self.account_url, credential=self.access_key
-        )
+        queue_service = QueueServiceClient(account_url=self.account_url, credential=self.access_key)
         # [END async_create_queue_service_client]
         # Get information for the Queue Service
         async with queue_service:
@@ -98,9 +94,7 @@ class QueueAuthSamplesAsync(object):
         # Instantiate a QueueServiceClient using a token credential
         from azure.storage.queue.aio import QueueServiceClient
 
-        queue_service = QueueServiceClient(
-            account_url=self.account_url, credential=token_credential
-        )
+        queue_service = QueueServiceClient(account_url=self.account_url, credential=token_credential)
         # [END async_create_queue_service_client_oauth]
 
         # Get information for the Queue Service
@@ -124,9 +118,7 @@ class QueueAuthSamplesAsync(object):
         # Instantiate a QueueServiceClient using a connection string
         from azure.storage.queue.aio import QueueServiceClient
 
-        queue_service = QueueServiceClient.from_connection_string(
-            conn_str=self.connection_string
-        )
+        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # Create a SAS token to use for authentication of a client
         from azure.storage.queue import (
@@ -142,9 +134,7 @@ class QueueAuthSamplesAsync(object):
             permission=AccountSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        token_auth_queue_service = QueueServiceClient(
-            account_url=self.account_url, credential=sas_token
-        )
+        token_auth_queue_service = QueueServiceClient(account_url=self.account_url, credential=sas_token)
 
         # Get information for the Queue Service
         async with token_auth_queue_service:

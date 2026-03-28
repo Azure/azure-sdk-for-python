@@ -140,11 +140,7 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
 
     @staticmethod
     def _get_headers(request, headers_to_sign):
-        headers = dict(
-            (name.lower(), value)
-            for name, value in request.http_request.headers.items()
-            if value
-        )
+        headers = dict((name.lower(), value) for name, value in request.http_request.headers.items() if value)
         if "content-length" in headers and headers["content-length"] == "0":
             del headers["content-length"]
         return "\n".join(headers.get(x, "") for x in headers_to_sign) + "\n"

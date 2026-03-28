@@ -41,11 +41,7 @@ class QueueMessageSamples(object):
 
         queue = QueueClient.from_connection_string(self.connection_string, "myqueue1")
         if queue.account_name is None:
-            print(
-                "Connection string did not provide an account name."
-                + "\n"
-                + "Test: set_access_policy"
-            )
+            print("Connection string did not provide an account name." + "\n" + "Test: set_access_policy")
             sys.exit(1)
         # [END create_queue_client_from_connection_string]
 
@@ -84,9 +80,7 @@ class QueueMessageSamples(object):
 
             # Authenticate with the sas token
             # [START create_queue_client]
-            token_auth_queue = QueueClient.from_queue_url(
-                queue_url=queue.url, credential=sas_token
-            )
+            token_auth_queue = QueueClient.from_queue_url(queue_url=queue.url, credential=sas_token)
             # [END create_queue_client]
 
             # Use the newly authenticated client to receive messages
@@ -139,9 +133,7 @@ class QueueMessageSamples(object):
         try:
             # [START send_messages]
             queue.send_message("message1")
-            queue.send_message(
-                "message2", visibility_timeout=30
-            )  # wait 30s before becoming visible
+            queue.send_message("message2", visibility_timeout=30)  # wait 30s before becoming visible
             queue.send_message("message3")
             queue.send_message("message4")
             queue.send_message("message5")

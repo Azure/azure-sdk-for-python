@@ -154,9 +154,7 @@ class AsyncStorageAccountHostsMixin(object):
                     AioHttpTransport,
                 )
             except ImportError as exc:
-                raise ImportError(
-                    "Unable to create async transport. Please check aiohttp is installed."
-                ) from exc
+                raise ImportError("Unable to create async transport. Please check aiohttp is installed.") from exc
             transport = AioHttpTransport(**kwargs)
         hosts = self._hosts
         policies = [
@@ -181,9 +179,7 @@ class AsyncStorageAccountHostsMixin(object):
         config.transport = transport  # type: ignore
         return config, AsyncPipeline(transport, policies=policies)  # type: ignore
 
-    async def _batch_send(
-        self, *reqs: "HttpRequest", **kwargs: Any
-    ) -> AsyncList["HttpResponse"]:
+    async def _batch_send(self, *reqs: "HttpRequest", **kwargs: Any) -> AsyncList["HttpResponse"]:
         """Given a series of request, do a Storage batch call.
 
         :param HttpRequest reqs: A collection of HttpRequest objects.
@@ -286,10 +282,7 @@ def parse_connection_str(
                 f"{conn_settings['DEFAULTENDPOINTSPROTOCOL']}://"
                 f"{conn_settings['ACCOUNTNAME']}.{service}.{conn_settings['ENDPOINTSUFFIX']}"
             )
-            secondary = (
-                f"{conn_settings['ACCOUNTNAME']}-secondary."
-                f"{service}.{conn_settings['ENDPOINTSUFFIX']}"
-            )
+            secondary = f"{conn_settings['ACCOUNTNAME']}-secondary." f"{service}.{conn_settings['ENDPOINTSUFFIX']}"
         except KeyError:
             pass
 
@@ -300,9 +293,7 @@ def parse_connection_str(
                 f"{service}.{conn_settings.get('ENDPOINTSUFFIX', SERVICE_HOST_BASE)}"
             )
         except KeyError as exc:
-            raise ValueError(
-                "Connection string missing required connection details."
-            ) from exc
+            raise ValueError("Connection string missing required connection details.") from exc
     if service == "dfs":
         primary = primary.replace(".blob.", ".dfs.")
         if secondary:

@@ -89,7 +89,7 @@ def _construct_endpoints(netloc: str, account_part: str) -> Tuple[str, str, str]
     Construct primary and secondary hostnames from a storage account URL's netloc.
 
     :param str netloc: The network location in a URL.
-    :param account_part: The account part after parsing the URL.
+    :param str account_part: The account part after parsing the URL.
     :return: The account name, primary hostname, and secondary hostname.
     :rtype: Tuple[str, str, str]
     """
@@ -109,9 +109,7 @@ def _construct_endpoints(netloc: str, account_part: str) -> Tuple[str, str, str]
                 account_name = account_name[: -len(suffix)]
                 break
         primary_hostname = f"{account_part}{domain_suffix}"
-        secondary_hostname = (
-            f"{account_name}{_SECONDARY_SUFFIX}{feature_suffix}{domain_suffix}"
-        )
+        secondary_hostname = f"{account_name}{_SECONDARY_SUFFIX}{feature_suffix}{domain_suffix}"
 
     return account_name, primary_hostname, secondary_hostname
 
@@ -158,8 +156,8 @@ class StorageAccountHostsMixin(object):
 
         secondary_hostname = ""
         if len(account) > 1:
-            self.account_name, primary_hostname, secondary_hostname = (
-                _construct_endpoints(parsed_url.netloc, account[0])
+            self.account_name, primary_hostname, secondary_hostname = _construct_endpoints(
+                parsed_url.netloc, account[0]
             )
         else:
             primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip("/")
@@ -184,9 +182,7 @@ class StorageAccountHostsMixin(object):
             }
 
         self._sdk_moniker = f"storage-{service}/{VERSION}"
-        self._config, self._pipeline = self._create_pipeline(
-            self.credential, sdk_moniker=self._sdk_moniker, **kwargs
-        )
+        self._config, self._pipeline = self._create_pipeline(self.credential, sdk_moniker=self._sdk_moniker, **kwargs)
 
     @property
     def url(self) -> str:
@@ -335,9 +331,7 @@ class StorageAccountHostsMixin(object):
                 audience = str(kwargs.pop("audience")).rstrip("/") + DEFAULT_OAUTH_SCOPE
             else:
                 audience = STORAGE_OAUTH_SCOPE
-            self._credential_policy = StorageBearerTokenCredentialPolicy(
-                cast(TokenCredential, credential), audience
-            )
+            self._credential_policy = StorageBearerTokenCredentialPolicy(cast(TokenCredential, credential), audience)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):
@@ -376,9 +370,7 @@ class StorageAccountHostsMixin(object):
         config.transport = transport  # type: ignore
         return config, Pipeline(transport, policies=policies)
 
-    def _batch_send(
-        self, *reqs: "HttpRequest", **kwargs: Any
-    ) -> Iterator["HttpResponse"]:
+    def _batch_send(self, *reqs: "HttpRequest", **kwargs: Any) -> Iterator["HttpResponse"]:
         """Given a series of request, do a Storage batch call.
 
         :param HttpRequest reqs: A collection of HttpRequest objects.
@@ -397,8 +389,7 @@ class StorageAccountHostsMixin(object):
             ),
             headers={
                 "x-ms-version": self.api_version,
-                "Content-Type": "multipart/mixed; boundary="
-                + _get_batch_request_delimiter(batch_id, False, False),
+                "Content-Type": "multipart/mixed; boundary=" + _get_batch_request_delimiter(batch_id, False, False),
             },
         )
 
@@ -408,9 +399,7 @@ class StorageAccountHostsMixin(object):
 
         request.set_multipart_mixed(*reqs, policies=policies, enforce_https=False)
 
-        Pipeline._prepare_multipart_mixed_request(
-            request
-        )  # pylint: disable=protected-access
+        Pipeline._prepare_multipart_mixed_request(request)  # pylint: disable=protected-access
         body = serialize_batch_body(request.multipart_mixed_info[0], batch_id)
         request.set_bytes_body(body)
 
@@ -479,9 +468,7 @@ def _format_shared_key_credential(
 ) -> Any:
     if isinstance(credential, str):
         if not account_name:
-            raise ValueError(
-                "Unable to determine account name for shared key credential."
-            )
+            raise ValueError("Unable to determine account name for shared key credential.")
         credential = {"account_name": account_name, "account_key": credential}
     if isinstance(credential, dict):
         if "account_name" not in credential:
@@ -490,9 +477,7 @@ def _format_shared_key_credential(
             raise ValueError("Shared key credential missing 'account_key")
         return SharedKeyCredentialPolicy(**credential)
     if isinstance(credential, AzureNamedKeyCredential):
-        return SharedKeyCredentialPolicy(
-            credential.named_key.name, credential.named_key.key
-        )
+        return SharedKeyCredentialPolicy(credential.named_key.name, credential.named_key.key)
     return credential
 
 
@@ -551,10 +536,7 @@ def parse_connection_str(
                 f"{conn_settings['DEFAULTENDPOINTSPROTOCOL']}://"
                 f"{conn_settings['ACCOUNTNAME']}.{service}.{conn_settings['ENDPOINTSUFFIX']}"
             )
-            secondary = (
-                f"{conn_settings['ACCOUNTNAME']}-secondary."
-                f"{service}.{conn_settings['ENDPOINTSUFFIX']}"
-            )
+            secondary = f"{conn_settings['ACCOUNTNAME']}-secondary." f"{service}.{conn_settings['ENDPOINTSUFFIX']}"
         except KeyError:
             pass
 
@@ -565,9 +547,7 @@ def parse_connection_str(
                 f"{service}.{conn_settings.get('ENDPOINTSUFFIX', SERVICE_HOST_BASE)}"
             )
         except KeyError as exc:
-            raise ValueError(
-                "Connection string missing required connection details."
-            ) from exc
+            raise ValueError("Connection string missing required connection details.") from exc
     if service == "dfs":
         primary = primary.replace(".blob.", ".dfs.")
         if secondary:
@@ -591,9 +571,7 @@ def create_configuration(**kwargs: Any) -> StorageConfiguration:
 def parse_query(query_str: str) -> Tuple[Optional[str], Optional[str]]:
     sas_values = QueryStringConstants.to_list()
     parsed_query = {k: v[0] for k, v in parse_qs(query_str).items()}
-    sas_params = [
-        f"{k}={quote(v, safe='')}" for k, v in parsed_query.items() if k in sas_values
-    ]
+    sas_params = [f"{k}={quote(v, safe='')}" for k, v in parsed_query.items() if k in sas_values]
     sas_token = None
     if sas_params:
         sas_token = "&".join(sas_params)

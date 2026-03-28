@@ -361,12 +361,7 @@ class KeyInfo(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        expiry: str,
-        start: Optional[str] = None,
-        delegated_user_tid: Optional[str] = None,
-        **kwargs: Any
+        self, *, expiry: str, start: Optional[str] = None, delegated_user_tid: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword start: The date-time the key is active in ISO 8601 UTC time.
@@ -664,9 +659,7 @@ class QueueItem(_serialization.Model):
     }
     _xml_map = {"name": "Queue"}
 
-    def __init__(
-        self, *, name: str, metadata: Optional[dict[str, str]] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, name: str, metadata: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the Queue. Required.
         :paramtype name: str
@@ -727,9 +720,7 @@ class RetentionPolicy(_serialization.Model):
         "days": {"key": "Days", "type": "int"},
     }
 
-    def __init__(
-        self, *, enabled: bool, days: Optional[int] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, enabled: bool, days: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: Indicates whether a retention policy is enabled for the storage service.
          Required.
@@ -862,12 +853,7 @@ class StorageServiceStats(_serialization.Model):
         "geo_replication": {"key": "GeoReplication", "type": "GeoReplication"},
     }
 
-    def __init__(
-        self,
-        *,
-        geo_replication: Optional["_models.GeoReplication"] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, geo_replication: Optional["_models.GeoReplication"] = None, **kwargs: Any) -> None:
         """
         :keyword geo_replication: Geo-Replication information for the Secondary Storage Service.
         :paramtype geo_replication: ~azure.storage.queue.models.GeoReplication

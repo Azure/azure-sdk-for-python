@@ -28,19 +28,11 @@ except ImportError:
 
 
 LOGGING_FORMAT = "%(asctime)s %(name)-20s %(levelname)-5s %(message)s"
-os.environ["STORAGE_ACCOUNT_NAME"] = (
-    os.environ.get("STORAGE_ACCOUNT_NAME", None) or STORAGE_ACCOUNT_NAME
-)
-os.environ["STORAGE_ACCOUNT_KEY"] = (
-    os.environ.get("STORAGE_ACCOUNT_KEY", None) or STORAGE_ACCOUNT_KEY
-)
+os.environ["STORAGE_ACCOUNT_NAME"] = os.environ.get("STORAGE_ACCOUNT_NAME", None) or STORAGE_ACCOUNT_NAME
+os.environ["STORAGE_ACCOUNT_KEY"] = os.environ.get("STORAGE_ACCOUNT_KEY", None) or STORAGE_ACCOUNT_KEY
 
-os.environ["AZURE_TEST_RUN_LIVE"] = (
-    os.environ.get("AZURE_TEST_RUN_LIVE", None) or RUN_IN_LIVE
-)
-os.environ["AZURE_SKIP_LIVE_RECORDING"] = (
-    os.environ.get("AZURE_SKIP_LIVE_RECORDING", None) or SKIP_LIVE_RECORDING
-)
+os.environ["AZURE_TEST_RUN_LIVE"] = os.environ.get("AZURE_TEST_RUN_LIVE", None) or RUN_IN_LIVE
+os.environ["AZURE_SKIP_LIVE_RECORDING"] = os.environ.get("AZURE_SKIP_LIVE_RECORDING", None) or SKIP_LIVE_RECORDING
 os.environ["PROTOCOL"] = PROTOCOL
 os.environ["ACCOUNT_URL_SUFFIX"] = ACCOUNT_URL_SUFFIX
 

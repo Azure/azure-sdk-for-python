@@ -41,9 +41,7 @@ class MessageEncodePolicy(object):
         if content:
             content = self.encode(content)
             if self.key_encryption_key is not None:
-                content = encrypt_queue_message(
-                    content, self.key_encryption_key, self.encryption_version
-                )
+                content = encrypt_queue_message(content, self.key_encryption_key, self.encryption_version)
         return content
 
     def configure(
@@ -78,9 +76,7 @@ class MessageDecodePolicy(object):
         self.key_encryption_key = None
         self.resolver = None
 
-    def __call__(
-        self, response: "PipelineResponse", obj: Iterable, headers: Dict[str, Any]
-    ) -> object:
+    def __call__(self, response: "PipelineResponse", obj: Iterable, headers: Dict[str, Any]) -> object:
         for message in obj:
             if message.message_text in [None, "", b""]:
                 continue
@@ -177,9 +173,7 @@ class NoEncodePolicy(MessageEncodePolicy):
 
     def encode(self, content: str) -> str:
         if isinstance(content, bytes):
-            raise TypeError(
-                "Message content must not be bytes. Use the BinaryBase64EncodePolicy to send bytes."
-            )
+            raise TypeError("Message content must not be bytes. Use the BinaryBase64EncodePolicy to send bytes.")
         return content
 
 

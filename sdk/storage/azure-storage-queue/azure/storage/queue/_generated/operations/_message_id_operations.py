@@ -28,9 +28,7 @@ from .._configuration import AzureQueueStorageConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[
-    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]
-]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -50,9 +48,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop(
-        "content_type", _headers.pop("Content-Type", None)
-    )
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -74,23 +70,12 @@ def build_update_request(
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header(
-            "request_id_parameter", request_id_parameter, "str"
-        )
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header(
-            "content_type", content_type, "str"
-        )
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="PUT",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
 def build_delete_request(
@@ -123,14 +108,10 @@ def build_delete_request(
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header(
-            "request_id_parameter", request_id_parameter, "str"
-        )
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="DELETE", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 class MessageIdOperations:
@@ -147,18 +128,10 @@ class MessageIdOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client: PipelineClient = (
-            input_args.pop(0) if input_args else kwargs.pop("client")
-        )
-        self._config: AzureQueueStorageConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
-        self._serialize: Serializer = (
-            input_args.pop(0) if input_args else kwargs.pop("serializer")
-        )
-        self._deserialize: Deserializer = (
-            input_args.pop(0) if input_args else kwargs.pop("deserializer")
-        )
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AzureQueueStorageConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def update(  # pylint: disable=inconsistent-return-statements
@@ -210,9 +183,7 @@ class MessageIdOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", "application/xml")
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         content_type = content_type if queue_message else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -236,18 +207,14 @@ class MessageIdOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = (
-            self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(
                 _models.StorageError,
                 pipeline_response,
@@ -255,18 +222,10 @@ class MessageIdOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["x-ms-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-request-id")
-        )
-        response_headers["x-ms-version"] = self._deserialize(
-            "str", response.headers.get("x-ms-version")
-        )
-        response_headers["Date"] = self._deserialize(
-            "rfc-1123", response.headers.get("Date")
-        )
-        response_headers["x-ms-popreceipt"] = self._deserialize(
-            "str", response.headers.get("x-ms-popreceipt")
-        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-popreceipt"] = self._deserialize("str", response.headers.get("x-ms-popreceipt"))
         response_headers["x-ms-time-next-visible"] = self._deserialize(
             "rfc-1123", response.headers.get("x-ms-time-next-visible")
         )
@@ -276,11 +235,7 @@ class MessageIdOperations:
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        pop_receipt: str,
-        timeout: Optional[int] = None,
-        request_id_parameter: Optional[str] = None,
-        **kwargs: Any
+        self, pop_receipt: str, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
     ) -> None:
         """The Delete operation deletes the specified message.
 
@@ -324,18 +279,14 @@ class MessageIdOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = (
-            self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(
                 _models.StorageError,
                 pipeline_response,
@@ -343,15 +294,9 @@ class MessageIdOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["x-ms-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-request-id")
-        )
-        response_headers["x-ms-version"] = self._deserialize(
-            "str", response.headers.get("x-ms-version")
-        )
-        response_headers["Date"] = self._deserialize(
-            "rfc-1123", response.headers.get("Date")
-        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore

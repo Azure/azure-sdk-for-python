@@ -62,8 +62,6 @@ def _parse_url(
 
     _, sas_token = parse_query(parsed_url.query)
     if not sas_token and not credential:
-        raise ValueError(
-            "You need to provide either a SAS token or an account shared key to authenticate."
-        )
+        raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
 
     return parsed_url, sas_token

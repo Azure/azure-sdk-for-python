@@ -55,9 +55,7 @@ class KeyResolver:
 
 class RSAKeyWrapper:
     def __init__(self, kid="local:key2"):
-        self.private_key = generate_private_key(
-            public_exponent=65537, key_size=2048, backend=default_backend()
-        )
+        self.private_key = generate_private_key(public_exponent=65537, key_size=2048, backend=default_backend())
         self.public_key = self.private_key.public_key()
         self.kid = kid
 
@@ -65,9 +63,7 @@ class RSAKeyWrapper:
         if algorithm == "RSA":
             return self.public_key.encrypt(
                 key,
-                OAEP(
-                    mgf=MGF1(algorithm=SHA1()), algorithm=SHA1(), label=None
-                ),  # nosec  # nosec
+                OAEP(mgf=MGF1(algorithm=SHA1()), algorithm=SHA1(), label=None),  # nosec  # nosec
             )
 
         raise ValueError(_ERROR_UNKNOWN_KEY_WRAP_ALGORITHM)
@@ -76,9 +72,7 @@ class RSAKeyWrapper:
         if algorithm == "RSA":
             return self.private_key.decrypt(
                 key,
-                OAEP(
-                    mgf=MGF1(algorithm=SHA1()), algorithm=SHA1(), label=None
-                ),  # nosec  # nosec
+                OAEP(mgf=MGF1(algorithm=SHA1()), algorithm=SHA1(), label=None),  # nosec  # nosec
             )
 
         raise ValueError(_ERROR_UNKNOWN_KEY_WRAP_ALGORITHM)

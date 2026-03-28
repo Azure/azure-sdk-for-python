@@ -17,9 +17,7 @@ from .request_handlers import get_length
 from .response_handlers import return_response_headers
 
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
-_ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = (
-    "{0} should be a seekable file-like/io.IOBase type stream object."
-)
+_ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = "{0} should be a seekable file-like/io.IOBase type stream object."
 
 
 def _parallel_uploads(executor, uploader, pending, running):
@@ -75,13 +73,9 @@ def upload_data_chunks(
                 executor.submit(with_current_context(uploader.process_chunk), u)
                 for u in islice(upload_tasks, 0, max_concurrency)
             ]
-            range_ids = _parallel_uploads(
-                executor, uploader.process_chunk, upload_tasks, running_futures
-            )
+            range_ids = _parallel_uploads(executor, uploader.process_chunk, upload_tasks, running_futures)
     else:
-        range_ids = [
-            uploader.process_chunk(result) for result in uploader.get_chunk_streams()
-        ]
+        range_ids = [uploader.process_chunk(result) for result in uploader.get_chunk_streams()]
     if any(range_ids):
         return [r[1] for r in sorted(range_ids, key=lambda r: r[0])]
     return uploader.response_headers
@@ -115,9 +109,7 @@ def upload_substream_blocks(
         with futures.ThreadPoolExecutor(max_concurrency) as executor:
             upload_tasks = uploader.get_substream_blocks()
             running_futures = [
-                executor.submit(
-                    with_current_context(uploader.process_substream_block), u
-                )
+                executor.submit(with_current_context(uploader.process_substream_block), u)
                 for u in islice(upload_tasks, 0, max_concurrency)
             ]
             range_ids = _parallel_uploads(
@@ -127,9 +119,7 @@ def upload_substream_blocks(
                 running_futures,
             )
     else:
-        range_ids = [
-            uploader.process_substream_block(b) for b in uploader.get_substream_blocks()
-        ]
+        range_ids = [uploader.process_substream_block(b) for b in uploader.get_substream_blocks()]
     if any(range_ids):
         return sorted(range_ids)
     return []
@@ -244,11 +234,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
                 raise ValueError("Unable to determine content length of upload data.")
 
         blocks = int(ceil(blob_length / (self.chunk_size * 1.0)))
-        last_block_size = (
-            self.chunk_size
-            if blob_length % self.chunk_size == 0
-            else blob_length % self.chunk_size
-        )
+        last_block_size = self.chunk_size if blob_length % self.chunk_size == 0 else blob_length % self.chunk_size
 
         for i in range(blocks):
             index = i * self.chunk_size
@@ -332,12 +318,8 @@ class PageBlobChunkUploader(_ChunkUploader):
                 **self.request_options,
             )
 
-            if not self.parallel and self.request_options.get(
-                "modified_access_conditions"
-            ):
-                self.request_options["modified_access_conditions"].if_match = (
-                    self.response_headers["etag"]
-                )
+            if not self.parallel and self.request_options.get("modified_access_conditions"):
+                self.request_options["modified_access_conditions"].if_match = self.response_headers["etag"]
 
     def _upload_substream_block(self, index, block_stream):
         pass
@@ -361,9 +343,9 @@ class AppendBlobChunkUploader(_ChunkUploader):
             )
             self.current_length = int(self.response_headers["blob_append_offset"])
         else:
-            self.request_options[
-                "append_position_access_conditions"
-            ].append_position = (self.current_length + chunk_offset)
+            self.request_options["append_position_access_conditions"].append_position = (
+                self.current_length + chunk_offset
+            )
             self.response_headers = self.service.append_block(
                 body=chunk_data,
                 content_length=len(chunk_data),
@@ -392,9 +374,7 @@ class DataLakeFileChunkUploader(_ChunkUploader):
         )
 
         if not self.parallel and self.request_options.get("modified_access_conditions"):
-            self.request_options["modified_access_conditions"].if_match = (
-                self.response_headers["etag"]
-            )
+            self.request_options["modified_access_conditions"].if_match = self.response_headers["etag"]
 
     def _upload_substream_block(self, index, block_stream):
         try:
@@ -453,9 +433,7 @@ class SubStream(IOBase):
         # we must avoid buffering more than necessary, and also not use up too much memory
         # so the max buffer size is capped at 4MB
         self._max_buffer_size = (
-            length
-            if length < _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE
-            else _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE
+            length if length < _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE else _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE
         )
         self._current_buffer_start = 0
         self._current_buffer_size = 0
@@ -503,9 +481,7 @@ class SubStream(IOBase):
             with self._buffer:
                 # either read in the max buffer size specified on the class
                 # or read in just enough data for the current block/sub stream
-                current_max_buffer_size = min(
-                    self._max_buffer_size, self._length - self._position
-                )
+                current_max_buffer_size = min(self._max_buffer_size, self._length - self._position)
 
                 # lock is only defined if max_concurrency > 1 (parallel uploads)
                 if self._lock:
@@ -515,12 +491,8 @@ class SubStream(IOBase):
                         self._wrapped_stream.seek(absolute_position, SEEK_SET)
                         # If we can't seek to the right location, our read will be corrupted so fail fast.
                         if self._wrapped_stream.tell() != absolute_position:
-                            raise IOError(
-                                "Stream failed to seek to the desired location."
-                            )
-                        buffer_from_stream = self._wrapped_stream.read(
-                            current_max_buffer_size
-                        )
+                            raise IOError("Stream failed to seek to the desired location.")
+                        buffer_from_stream = self._wrapped_stream.read(current_max_buffer_size)
                 else:
                     absolute_position = self._stream_begin_index + self._position
                     # It's possible that there's connection problem during data transfer,
@@ -529,9 +501,7 @@ class SubStream(IOBase):
                     if self._wrapped_stream.tell() != absolute_position:
                         self._wrapped_stream.seek(absolute_position, SEEK_SET)
 
-                    buffer_from_stream = self._wrapped_stream.read(
-                        current_max_buffer_size
-                    )
+                    buffer_from_stream = self._wrapped_stream.read(current_max_buffer_size)
 
             if buffer_from_stream:
                 # update the buffer with new data from the wrapped stream
@@ -573,10 +543,7 @@ class SubStream(IOBase):
 
         # check if buffer is still valid
         # if not, drop buffer
-        if (
-            pos < self._current_buffer_start
-            or pos >= self._current_buffer_start + self._current_buffer_size
-        ):
+        if pos < self._current_buffer_start or pos >= self._current_buffer_start + self._current_buffer_size:
             self._buffer.close()
             self._buffer = BytesIO()
         else:  # if yes seek to correct position

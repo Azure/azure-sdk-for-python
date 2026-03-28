@@ -37,9 +37,7 @@ class QueueServiceSamplesAsync(object):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient
 
-        queue_service = QueueServiceClient.from_connection_string(
-            conn_str=self.connection_string
-        )
+        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         async with queue_service:
             # [START async_set_queue_service_properties]
@@ -99,9 +97,7 @@ class QueueServiceSamplesAsync(object):
             cors = [cors_rule1, cors_rule2]
 
             # Set the service properties
-            await queue_service.set_service_properties(
-                logging, hour_metrics, minute_metrics, cors
-            )
+            await queue_service.set_service_properties(logging, hour_metrics, minute_metrics, cors)
             # [END async_set_queue_service_properties]
 
             # [START async_get_queue_service_properties]
@@ -116,9 +112,7 @@ class QueueServiceSamplesAsync(object):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient
 
-        queue_service = QueueServiceClient.from_connection_string(
-            conn_str=self.connection_string
-        )
+        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         async with queue_service:
             # [START async_qsc_create_queue]
@@ -151,9 +145,7 @@ class QueueServiceSamplesAsync(object):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient, QueueClient
 
-        queue_service = QueueServiceClient.from_connection_string(
-            conn_str=self.connection_string
-        )
+        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # [START async_get_queue_client]
         # Get the queue client to interact with a specific queue

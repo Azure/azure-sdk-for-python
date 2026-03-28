@@ -48,9 +48,7 @@ class AzureQueueStorage:  # pylint: disable=client-accepts-api-version-keyword
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self, url: str, version: str, base_url: str = "", **kwargs: Any
     ) -> None:
-        self._config = AzureQueueStorageConfiguration(
-            url=url, version=version, **kwargs
-        )
+        self._config = AzureQueueStorageConfiguration(url=url, version=version, **kwargs)
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -66,39 +64,21 @@ class AzureQueueStorage:  # pylint: disable=client-accepts-api-version-keyword
                 self._config.custom_hook_policy,
                 self._config.logging_policy,
                 policies.DistributedTracingPolicy(**kwargs),
-                (
-                    policies.SensitiveHeaderCleanupPolicy(**kwargs)
-                    if self._config.redirect_policy
-                    else None
-                ),
+                (policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None),
                 self._config.http_logging_policy,
             ]
-        self._client: PipelineClient = PipelineClient(
-            base_url=base_url, policies=_policies, **kwargs
-        )
+        self._client: PipelineClient = PipelineClient(base_url=base_url, policies=_policies, **kwargs)
 
-        client_models = {
-            k: v for k, v in _models.__dict__.items() if isinstance(v, type)
-        }
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.service = ServiceOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.queue = QueueOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.messages = MessagesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.message_id = MessageIdOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.queue = QueueOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.messages = MessagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.message_id = MessageIdOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(
-        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
-    ) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest

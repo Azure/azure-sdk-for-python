@@ -34,9 +34,7 @@ from ...operations._messages_operations import (
 from .._configuration import AzureQueueStorageConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[
-    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]
-]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
 class MessagesOperations:
@@ -53,18 +51,10 @@ class MessagesOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client: AsyncPipelineClient = (
-            input_args.pop(0) if input_args else kwargs.pop("client")
-        )
-        self._config: AzureQueueStorageConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
-        self._serialize: Serializer = (
-            input_args.pop(0) if input_args else kwargs.pop("serializer")
-        )
-        self._deserialize: Deserializer = (
-            input_args.pop(0) if input_args else kwargs.pop("deserializer")
-        )
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AzureQueueStorageConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def dequeue(
@@ -126,18 +116,14 @@ class MessagesOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = (
-            await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(
                 _models.StorageError,
                 pipeline_response,
@@ -145,19 +131,11 @@ class MessagesOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["x-ms-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-request-id")
-        )
-        response_headers["x-ms-version"] = self._deserialize(
-            "str", response.headers.get("x-ms-version")
-        )
-        response_headers["Date"] = self._deserialize(
-            "rfc-1123", response.headers.get("Date")
-        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
-        deserialized = self._deserialize(
-            "[DequeuedMessageItem]", pipeline_response.http_response
-        )
+        deserialized = self._deserialize("[DequeuedMessageItem]", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -166,10 +144,7 @@ class MessagesOperations:
 
     @distributed_trace_async
     async def clear(
-        self,
-        timeout: Optional[int] = None,
-        request_id_parameter: Optional[str] = None,
-        **kwargs: Any
+        self, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
     ) -> None:
         """The Clear operation deletes all messages from the specified queue.
 
@@ -209,18 +184,14 @@ class MessagesOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = (
-            await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(
                 _models.StorageError,
                 pipeline_response,
@@ -228,15 +199,9 @@ class MessagesOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["x-ms-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-request-id")
-        )
-        response_headers["x-ms-version"] = self._deserialize(
-            "str", response.headers.get("x-ms-version")
-        )
-        response_headers["Date"] = self._deserialize(
-            "rfc-1123", response.headers.get("Date")
-        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -295,9 +260,7 @@ class MessagesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", "application/xml")
-        )
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[list[_models.EnqueuedMessage]] = kwargs.pop("cls", None)
 
         _content = self._serialize.body(queue_message, "QueueMessage", is_xml=True)
@@ -317,18 +280,14 @@ class MessagesOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = (
-            await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(
                 _models.StorageError,
                 pipeline_response,
@@ -336,19 +295,11 @@ class MessagesOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["x-ms-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-request-id")
-        )
-        response_headers["x-ms-version"] = self._deserialize(
-            "str", response.headers.get("x-ms-version")
-        )
-        response_headers["Date"] = self._deserialize(
-            "rfc-1123", response.headers.get("Date")
-        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
-        deserialized = self._deserialize(
-            "[EnqueuedMessage]", pipeline_response.http_response
-        )
+        deserialized = self._deserialize("[EnqueuedMessage]", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -394,9 +345,7 @@ class MessagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        peekonly: Literal["true"] = kwargs.pop(
-            "peekonly", _params.pop("peekonly", "true")
-        )
+        peekonly: Literal["true"] = kwargs.pop("peekonly", _params.pop("peekonly", "true"))
         cls: ClsType[list[_models.PeekedMessageItem]] = kwargs.pop("cls", None)
 
         _request = build_peek_request(
@@ -412,18 +361,14 @@ class MessagesOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = (
-            await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(
                 _models.StorageError,
                 pipeline_response,
@@ -431,19 +376,11 @@ class MessagesOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["x-ms-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-request-id")
-        )
-        response_headers["x-ms-version"] = self._deserialize(
-            "str", response.headers.get("x-ms-version")
-        )
-        response_headers["Date"] = self._deserialize(
-            "rfc-1123", response.headers.get("Date")
-        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
-        deserialized = self._deserialize(
-            "[PeekedMessageItem]", pipeline_response.http_response
-        )
+        deserialized = self._deserialize("[PeekedMessageItem]", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore

@@ -35,9 +35,7 @@ class PartialBatchErrorException(HttpResponseError):
 
     def __init__(self, message, response, parts):
         self.parts = parts
-        super(PartialBatchErrorException, self).__init__(
-            message=message, response=response
-        )
+        super(PartialBatchErrorException, self).__init__(message=message, response=response)
 
 
 # Parses the blob length from the content range header: bytes 1-3/65537
@@ -62,35 +60,21 @@ def normalize_headers(headers):
 
 def deserialize_metadata(response, obj, headers):  # pylint: disable=unused-argument
     try:
-        raw_metadata = {
-            k: v
-            for k, v in response.http_response.headers.items()
-            if k.lower().startswith("x-ms-meta-")
-        }
+        raw_metadata = {k: v for k, v in response.http_response.headers.items() if k.lower().startswith("x-ms-meta-")}
     except AttributeError:
-        raw_metadata = {
-            k: v
-            for k, v in response.headers.items()
-            if k.lower().startswith("x-ms-meta-")
-        }
+        raw_metadata = {k: v for k, v in response.headers.items() if k.lower().startswith("x-ms-meta-")}
     return {k[10:]: v for k, v in raw_metadata.items()}
 
 
-def return_response_headers(
-    response, deserialized, response_headers
-):  # pylint: disable=unused-argument
+def return_response_headers(response, deserialized, response_headers):  # pylint: disable=unused-argument
     return normalize_headers(response_headers)
 
 
-def return_headers_and_deserialized(
-    response, deserialized, response_headers
-):  # pylint: disable=unused-argument
+def return_headers_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
     return normalize_headers(response_headers), deserialized
 
 
-def return_context_and_deserialized(
-    response, deserialized, response_headers
-):  # pylint: disable=unused-argument
+def return_context_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
     return response.http_response.location_mode, deserialized
 
 
@@ -127,9 +111,7 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
     additional_data = {}
     error_dict = {}
     try:
-        error_body = ContentDecodePolicy.deserialize_from_http_generics(
-            storage_error.response
-        )
+        error_body = ContentDecodePolicy.deserialize_from_http_generics(storage_error.response)
         try:
             if error_body is None or len(error_body) == 0:
                 error_body = storage_error.response.reason
@@ -153,9 +135,7 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
         if error_dict and isinstance(error_dict, dict):
             error_code = error_dict.get("code")
             error_message = error_dict.get("message")
-            additional_data = {
-                k: v for k, v in error_dict.items() if k not in {"code", "message"}
-            }
+            additional_data = {k: v for k, v in error_dict.items() if k not in {"code", "message"}}
     except DecodeError:
         pass
 
@@ -209,10 +189,7 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
     for name, info in additional_data.items():
         error_message += f"\n{name}:{info}"
 
-    if (
-        additional_data.get("headername") == "x-ms-version"
-        and error_code == StorageErrorCode.INVALID_HEADER_VALUE
-    ):
+    if additional_data.get("headername") == "x-ms-version" and error_code == StorageErrorCode.INVALID_HEADER_VALUE:
         error_message = (
             "The provided service version is not enabled on this storage account."
             + f"Please see {SV_DOCS_URL} for additional information.\n"
@@ -241,20 +218,10 @@ def parse_to_internal_user_delegation_key(service_user_delegation_key):
     internal_user_delegation_key = UserDelegationKey()
     internal_user_delegation_key.signed_oid = service_user_delegation_key.signed_oid
     internal_user_delegation_key.signed_tid = service_user_delegation_key.signed_tid
-    internal_user_delegation_key.signed_delegated_user_tid = (
-        service_user_delegation_key.signed_delegated_user_tid
-    )
-    internal_user_delegation_key.signed_start = _to_utc_datetime(
-        service_user_delegation_key.signed_start
-    )
-    internal_user_delegation_key.signed_expiry = _to_utc_datetime(
-        service_user_delegation_key.signed_expiry
-    )
-    internal_user_delegation_key.signed_service = (
-        service_user_delegation_key.signed_service
-    )
-    internal_user_delegation_key.signed_version = (
-        service_user_delegation_key.signed_version
-    )
+    internal_user_delegation_key.signed_delegated_user_tid = service_user_delegation_key.signed_delegated_user_tid
+    internal_user_delegation_key.signed_start = _to_utc_datetime(service_user_delegation_key.signed_start)
+    internal_user_delegation_key.signed_expiry = _to_utc_datetime(service_user_delegation_key.signed_expiry)
+    internal_user_delegation_key.signed_service = service_user_delegation_key.signed_service
+    internal_user_delegation_key.signed_version = service_user_delegation_key.signed_version
     internal_user_delegation_key.value = service_user_delegation_key.value
     return internal_user_delegation_key

@@ -36,9 +36,7 @@ class QueueServiceSamples(object):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue import QueueServiceClient
 
-        queue_service = QueueServiceClient.from_connection_string(
-            conn_str=self.connection_string
-        )
+        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # [START set_queue_service_properties]
         # Create service properties
@@ -97,9 +95,7 @@ class QueueServiceSamples(object):
         cors = [cors_rule1, cors_rule2]
 
         # Set the service properties
-        queue_service.set_service_properties(
-            logging, hour_metrics, minute_metrics, cors
-        )
+        queue_service.set_service_properties(logging, hour_metrics, minute_metrics, cors)
         # [END set_queue_service_properties]
 
         # [START get_queue_service_properties]
@@ -114,9 +110,7 @@ class QueueServiceSamples(object):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue import QueueServiceClient
 
-        queue_service = QueueServiceClient.from_connection_string(
-            conn_str=self.connection_string
-        )
+        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # [START qsc_create_queue]
         queue_service.create_queue("myqueueservice1")
@@ -148,9 +142,7 @@ class QueueServiceSamples(object):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue import QueueServiceClient, QueueClient
 
-        queue_service = QueueServiceClient.from_connection_string(
-            conn_str=self.connection_string
-        )
+        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # [START get_queue_client]
         # Get the queue client to interact with a specific queue

@@ -22,9 +22,7 @@ class TestStorageClient(StorageRecordedTestCase):
 
     def test_service_client_api_version_property(self):
         self.setUp()
-        service_client = QueueServiceClient(
-            "https://foo.queue.core.windows.net/account", credential="fake_key"
-        )
+        service_client = QueueServiceClient("https://foo.queue.core.windows.net/account", credential="fake_key")
         assert service_client.api_version == self.api_version_2
         assert service_client._client._config.version == self.api_version_2
 

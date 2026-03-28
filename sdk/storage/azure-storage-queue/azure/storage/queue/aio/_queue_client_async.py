@@ -124,22 +124,14 @@ class QueueClient(  # type: ignore [misc]
         *,
         api_version: Optional[str] = None,
         secondary_hostname: Optional[str] = None,
-        message_encode_policy: Optional[
-            Union["BinaryBase64EncodePolicy", "TextBase64EncodePolicy"]
-        ] = None,
-        message_decode_policy: Optional[
-            Union["BinaryBase64DecodePolicy", "TextBase64DecodePolicy"]
-        ] = None,
+        message_encode_policy: Optional[Union["BinaryBase64EncodePolicy", "TextBase64EncodePolicy"]] = None,
+        message_decode_policy: Optional[Union["BinaryBase64DecodePolicy", "TextBase64DecodePolicy"]] = None,
         audience: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(
-            **kwargs
-        )
+        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
         loop = kwargs.pop("loop", None)
-        parsed_url, sas_token = _parse_url(
-            account_url=account_url, queue_name=queue_name, credential=credential
-        )
+        parsed_url, sas_token = _parse_url(account_url=account_url, queue_name=queue_name, credential=credential)
         self.queue_name = queue_name
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(QueueClient, self).__init__(
@@ -173,9 +165,7 @@ class QueueClient(  # type: ignore [misc]
         exc: Optional[BaseException],
         tb: Optional[TracebackType],
     ) -> None:
-        await self._client.__aexit__(
-            typ, exc, tb
-        )  # pylint: disable=specify-parameter-names-in-call
+        await self._client.__aexit__(typ, exc, tb)  # pylint: disable=specify-parameter-names-in-call
 
     async def close(self) -> None:
         """This method is to close the sockets opened by the client.
@@ -217,12 +207,8 @@ class QueueClient(  # type: ignore [misc]
         *,
         api_version: Optional[str] = None,
         secondary_hostname: Optional[str] = None,
-        message_encode_policy: Optional[
-            Union["BinaryBase64EncodePolicy", "TextBase64EncodePolicy"]
-        ] = None,
-        message_decode_policy: Optional[
-            Union["BinaryBase64DecodePolicy", "TextBase64DecodePolicy"]
-        ] = None,
+        message_encode_policy: Optional[Union["BinaryBase64EncodePolicy", "TextBase64EncodePolicy"]] = None,
+        message_decode_policy: Optional[Union["BinaryBase64DecodePolicy", "TextBase64DecodePolicy"]] = None,
         audience: Optional[str] = None,
         **kwargs: Any
     ) -> Self:
@@ -292,12 +278,8 @@ class QueueClient(  # type: ignore [misc]
         *,
         api_version: Optional[str] = None,
         secondary_hostname: Optional[str] = None,
-        message_encode_policy: Optional[
-            Union["BinaryBase64EncodePolicy", "TextBase64EncodePolicy"]
-        ] = None,
-        message_decode_policy: Optional[
-            Union["BinaryBase64DecodePolicy", "TextBase64DecodePolicy"]
-        ] = None,
+        message_encode_policy: Optional[Union["BinaryBase64EncodePolicy", "TextBase64EncodePolicy"]] = None,
+        message_decode_policy: Optional[Union["BinaryBase64DecodePolicy", "TextBase64DecodePolicy"]] = None,
         audience: Optional[str] = None,
         **kwargs: Any
     ) -> Self:
@@ -349,9 +331,7 @@ class QueueClient(  # type: ignore [misc]
                 :dedent: 8
                 :caption: Create the queue client from connection string.
         """
-        account_url, secondary, credential = parse_connection_str(
-            conn_str, credential, "queue"
-        )
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, "queue")
         return cls(
             account_url,
             queue_name=queue_name,
@@ -366,11 +346,7 @@ class QueueClient(  # type: ignore [misc]
 
     @distributed_trace_async
     async def create_queue(
-        self,
-        *,
-        metadata: Optional[Dict[str, str]] = None,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, *, metadata: Optional[Dict[str, str]] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
         """Creates a new queue in the storage account.
 
@@ -404,19 +380,13 @@ class QueueClient(  # type: ignore [misc]
         headers.update(add_metadata_headers(metadata))
         try:
             return await self._client.queue.create(
-                metadata=metadata,
-                timeout=timeout,
-                headers=headers,
-                cls=deserialize_queue_creation,
-                **kwargs
+                metadata=metadata, timeout=timeout, headers=headers, cls=deserialize_queue_creation, **kwargs
             )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def delete_queue(
-        self, *, timeout: Optional[int] = None, **kwargs: Any
-    ) -> None:
+    async def delete_queue(self, *, timeout: Optional[int] = None, **kwargs: Any) -> None:
         """Deletes the specified queue and any messages it contains.
 
         When a queue is successfully deleted, it is immediately marked for deletion
@@ -450,9 +420,7 @@ class QueueClient(  # type: ignore [misc]
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_queue_properties(
-        self, *, timeout: Optional[int] = None, **kwargs: Any
-    ) -> "QueueProperties":
+    async def get_queue_properties(self, *, timeout: Optional[int] = None, **kwargs: Any) -> "QueueProperties":
         """Returns all user-defined metadata for the specified queue.
 
         The data returned does not include the queue's list of messages.
@@ -474,9 +442,7 @@ class QueueClient(  # type: ignore [misc]
         try:
             response = cast(
                 "QueueProperties",
-                await self._client.queue.get_properties(
-                    timeout=timeout, cls=deserialize_queue_properties, **kwargs
-                ),
+                await self._client.queue.get_properties(timeout=timeout, cls=deserialize_queue_properties, **kwargs),
             )
         except HttpResponseError as error:
             process_storage_error(error)
@@ -485,11 +451,7 @@ class QueueClient(  # type: ignore [misc]
 
     @distributed_trace_async
     async def set_queue_metadata(
-        self,
-        metadata: Optional[Dict[str, str]] = None,
-        *,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, metadata: Optional[Dict[str, str]] = None, *, timeout: Optional[int] = None, **kwargs: Any
     ) -> Dict[str, Any]:
         """Sets user-defined metadata on the specified queue.
 
@@ -526,9 +488,7 @@ class QueueClient(  # type: ignore [misc]
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_queue_access_policy(
-        self, *, timeout: Optional[int] = None, **kwargs: Any
-    ) -> Dict[str, AccessPolicy]:
+    async def get_queue_access_policy(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, AccessPolicy]:
         """Returns details about any stored access policies specified on the
         queue that may be used with Shared Access Signatures.
 
@@ -554,11 +514,7 @@ class QueueClient(  # type: ignore [misc]
 
     @distributed_trace_async
     async def set_queue_access_policy(
-        self,
-        signed_identifiers: Dict[str, AccessPolicy],
-        *,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, signed_identifiers: Dict[str, AccessPolicy], *, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
         """Sets stored access policies for the queue that may be used with Shared
         Access Signatures.
@@ -607,9 +563,7 @@ class QueueClient(  # type: ignore [misc]
                 value.expiry = serialize_iso(value.expiry)
             identifiers.append(SignedIdentifier(id=key, access_policy=value))
         try:
-            await self._client.queue.set_access_policy(
-                queue_acl=identifiers or None, timeout=timeout, **kwargs
-            )
+            await self._client.queue.set_access_policy(queue_acl=identifiers or None, timeout=timeout, **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -688,10 +642,12 @@ class QueueClient(  # type: ignore [misc]
                 encryption_version=self.encryption_version,
             )
         except TypeError:
-            warnings.warn("TypeError when calling message_encode_policy.configure. \
+            warnings.warn(
+                "TypeError when calling message_encode_policy.configure. \
                 It is likely missing the encryption_version parameter. \
                 Consider updating your encryption information/implementation. \
-                Retrying without encryption_version.")
+                Retrying without encryption_version."
+            )
             self._message_encode_policy.configure(
                 require_encryption=self.require_encryption,
                 key_encryption_key=self.key_encryption_key,
@@ -722,11 +678,7 @@ class QueueClient(  # type: ignore [misc]
 
     @distributed_trace_async
     async def receive_message(
-        self,
-        *,
-        visibility_timeout: Optional[int] = None,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, *, visibility_timeout: Optional[int] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> Optional[QueueMessage]:
         """Removes one message from the front of the queue.
 
@@ -787,9 +739,7 @@ class QueueClient(  # type: ignore [misc]
                 **kwargs
             )
             wrapped_message = (
-                QueueMessage._from_generated(message[0])
-                if message != []
-                else None  # pylint: disable=protected-access
+                QueueMessage._from_generated(message[0]) if message != [] else None  # pylint: disable=protected-access
             )
             return wrapped_message
         except HttpResponseError as error:
@@ -876,9 +826,7 @@ class QueueClient(  # type: ignore [misc]
             )
             if max_messages is not None and messages_per_page is not None:
                 if max_messages < messages_per_page:
-                    raise ValueError(
-                        "max_messages must be greater or equal to messages_per_page"
-                    )
+                    raise ValueError("max_messages must be greater or equal to messages_per_page")
             return AsyncItemPaged(
                 command,
                 results_per_page=messages_per_page,
@@ -983,10 +931,12 @@ class QueueClient(  # type: ignore [misc]
                     encryption_version=self.encryption_version,
                 )
             except TypeError:
-                warnings.warn("TypeError when calling message_encode_policy.configure. \
+                warnings.warn(
+                    "TypeError when calling message_encode_policy.configure. \
                     It is likely missing the encryption_version parameter. \
                     Consider updating your encryption information/implementation. \
-                    Retrying without encryption_version.")
+                    Retrying without encryption_version."
+                )
                 self._message_encode_policy.configure(
                     self.require_encryption,
                     self.key_encryption_key,
@@ -1024,11 +974,7 @@ class QueueClient(  # type: ignore [misc]
 
     @distributed_trace_async
     async def peek_messages(
-        self,
-        max_messages: Optional[int] = None,
-        *,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, max_messages: Optional[int] = None, *, timeout: Optional[int] = None, **kwargs: Any
     ) -> List[QueueMessage]:
         """Retrieves one or more messages from the front of the queue, but does
         not alter the visibility of the message.
@@ -1087,24 +1033,17 @@ class QueueClient(  # type: ignore [misc]
         )
         try:
             messages = await self._client.messages.peek(
-                number_of_messages=max_messages,
-                timeout=timeout,
-                cls=self._message_decode_policy,
-                **kwargs
+                number_of_messages=max_messages, timeout=timeout, cls=self._message_decode_policy, **kwargs
             )
             wrapped_messages = []
             for peeked in messages:
-                wrapped_messages.append(
-                    QueueMessage._from_generated(peeked)
-                )  # pylint: disable=protected-access
+                wrapped_messages.append(QueueMessage._from_generated(peeked))  # pylint: disable=protected-access
             return wrapped_messages
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def clear_messages(
-        self, *, timeout: Optional[int] = None, **kwargs: Any
-    ) -> None:
+    async def clear_messages(self, *, timeout: Optional[int] = None, **kwargs: Any) -> None:
         """Deletes all messages from the specified queue.
 
         :keyword int timeout:
@@ -1183,10 +1122,7 @@ class QueueClient(  # type: ignore [misc]
             raise ValueError("pop_receipt must be present")
         try:
             await self._client.message_id.delete(
-                pop_receipt=receipt,
-                timeout=timeout,
-                queue_message_id=message_id,
-                **kwargs
+                pop_receipt=receipt, timeout=timeout, queue_message_id=message_id, **kwargs
             )
         except HttpResponseError as error:
             process_storage_error(error)

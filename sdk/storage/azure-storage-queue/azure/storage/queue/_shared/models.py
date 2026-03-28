@@ -71,9 +71,7 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     # Blob values
     APPEND_POSITION_CONDITION_NOT_MET = "AppendPositionConditionNotMet"
-    BLOB_ACCESS_TIER_NOT_SUPPORTED_FOR_ACCOUNT_TYPE = (
-        "BlobAccessTierNotSupportedForAccountType"
-    )
+    BLOB_ACCESS_TIER_NOT_SUPPORTED_FOR_ACCOUNT_TYPE = "BlobAccessTierNotSupportedForAccountType"
     BLOB_ALREADY_EXISTS = "BlobAlreadyExists"
     BLOB_NOT_FOUND = "BlobNotFound"
     BLOB_OVERWRITTEN = "BlobOverwritten"
@@ -91,17 +89,11 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COPY_ID_MISMATCH = "CopyIdMismatch"
     FEATURE_VERSION_MISMATCH = "FeatureVersionMismatch"
     INCREMENTAL_COPY_BLOB_MISMATCH = "IncrementalCopyBlobMismatch"
-    INCREMENTAL_COPY_OF_EARLIER_SNAPSHOT_NOT_ALLOWED = (
-        "IncrementalCopyOfEarlierSnapshotNotAllowed"
-    )
+    INCREMENTAL_COPY_OF_EARLIER_SNAPSHOT_NOT_ALLOWED = "IncrementalCopyOfEarlierSnapshotNotAllowed"
     #: Deprecated: Please use INCREMENTAL_COPY_OF_EARLIER_SNAPSHOT_NOT_ALLOWED instead.
-    INCREMENTAL_COPY_OF_EARLIER_VERSION_SNAPSHOT_NOT_ALLOWED = (
-        "IncrementalCopyOfEarlierVersionSnapshotNotAllowed"
-    )
+    INCREMENTAL_COPY_OF_EARLIER_VERSION_SNAPSHOT_NOT_ALLOWED = "IncrementalCopyOfEarlierVersionSnapshotNotAllowed"
     #: Deprecated: Please use INCREMENTAL_COPY_OF_EARLIER_VERSION_SNAPSHOT_NOT_ALLOWED instead.
-    INCREMENTAL_COPY_OF_ERALIER_VERSION_SNAPSHOT_NOT_ALLOWED = (
-        "IncrementalCopyOfEarlierVersionSnapshotNotAllowed"
-    )
+    INCREMENTAL_COPY_OF_ERALIER_VERSION_SNAPSHOT_NOT_ALLOWED = "IncrementalCopyOfEarlierVersionSnapshotNotAllowed"
     INCREMENTAL_COPY_SOURCE_MUST_BE_SNAPSHOT = "IncrementalCopySourceMustBeSnapshot"
     INFINITE_LEASE_DURATION_REQUIRED = "InfiniteLeaseDurationRequired"
     INVALID_BLOB_OR_BLOCK = "InvalidBlobOrBlock"
@@ -129,9 +121,7 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LEASE_NOT_PRESENT_WITH_LEASE_OPERATION = "LeaseNotPresentWithLeaseOperation"
     MAX_BLOB_SIZE_CONDITION_NOT_MET = "MaxBlobSizeConditionNotMet"
     NO_PENDING_COPY_OPERATION = "NoPendingCopyOperation"
-    OPERATION_NOT_ALLOWED_ON_INCREMENTAL_COPY_BLOB = (
-        "OperationNotAllowedOnIncrementalCopyBlob"
-    )
+    OPERATION_NOT_ALLOWED_ON_INCREMENTAL_COPY_BLOB = "OperationNotAllowedOnIncrementalCopyBlob"
     PENDING_COPY_OPERATION = "PendingCopyOperation"
     PREVIOUS_SNAPSHOT_CANNOT_BE_NEWER = "PreviousSnapshotCannotBeNewer"
     PREVIOUS_SNAPSHOT_NOT_FOUND = "PreviousSnapshotNotFound"
@@ -169,13 +159,9 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETE_PENDING = "DeletePending"
     DIRECTORY_NOT_EMPTY = "DirectoryNotEmpty"
     FILE_LOCK_CONFLICT = "FileLockConflict"
-    FILE_SHARE_PROVISIONED_BANDWIDTH_DOWNGRADE_NOT_ALLOWED = (
-        "FileShareProvisionedBandwidthDowngradeNotAllowed"
-    )
+    FILE_SHARE_PROVISIONED_BANDWIDTH_DOWNGRADE_NOT_ALLOWED = "FileShareProvisionedBandwidthDowngradeNotAllowed"
     FILE_SHARE_PROVISIONED_BANDWIDTH_INVALID = "FileShareProvisionedBandwidthInvalid"
-    FILE_SHARE_PROVISIONED_IOPS_DOWNGRADE_NOT_ALLOWED = (
-        "FileShareProvisionedIopsDowngradeNotAllowed"
-    )
+    FILE_SHARE_PROVISIONED_IOPS_DOWNGRADE_NOT_ALLOWED = "FileShareProvisionedIopsDowngradeNotAllowed"
     FILE_SHARE_PROVISIONED_IOPS_INVALID = "FileShareProvisionedIopsInvalid"
     FILE_SHARE_PROVISIONED_STORAGE_INVALID = "FileShareProvisionedStorageInvalid"
     INVALID_FILE_OR_DIRECTORY_PATH_NAME = "InvalidFileOrDirectoryPathName"
@@ -191,15 +177,9 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SHARE_SNAPSHOT_NOT_FOUND = "ShareSnapshotNotFound"
     SHARE_SNAPSHOT_OPERATION_NOT_SUPPORTED = "ShareSnapshotOperationNotSupported"
     SHARE_HAS_SNAPSHOTS = "ShareHasSnapshots"
-    TOTAL_SHARES_PROVISIONED_CAPACITY_EXCEEDS_ACCOUNT_LIMIT = (
-        "TotalSharesProvisionedCapacityExceedsAccountLimit"
-    )
-    TOTAL_SHARES_PROVISIONED_IOPS_EXCEEDS_ACCOUNT_LIMIT = (
-        "TotalSharesProvisionedIopsExceedsAccountLimit"
-    )
-    TOTAL_SHARES_PROVISIONED_BANDWIDTH_EXCEEDS_ACCOUNT_LIMIT = (
-        "TotalSharesProvisionedBandwidthExceedsAccountLimit"
-    )
+    TOTAL_SHARES_PROVISIONED_CAPACITY_EXCEEDS_ACCOUNT_LIMIT = "TotalSharesProvisionedCapacityExceedsAccountLimit"
+    TOTAL_SHARES_PROVISIONED_IOPS_EXCEEDS_ACCOUNT_LIMIT = "TotalSharesProvisionedIopsExceedsAccountLimit"
+    TOTAL_SHARES_PROVISIONED_BANDWIDTH_EXCEEDS_ACCOUNT_LIMIT = "TotalSharesProvisionedBandwidthExceedsAccountLimit"
     TOTAL_SHARES_COUNT_EXCEEDS_ACCOUNT_LIMIT = "TotalSharesCountExceedsAccountLimit"
 
     # DataLake values
@@ -218,9 +198,7 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FILE_SYSTEM_BEING_DELETED = "FilesystemBeingDeleted"
     INVALID_DESTINATION_PATH = "InvalidDestinationPath"
     INVALID_RENAME_SOURCE_PATH = "InvalidRenameSourcePath"
-    INVALID_SOURCE_OR_DESTINATION_RESOURCE_TYPE = (
-        "InvalidSourceOrDestinationResourceType"
-    )
+    INVALID_SOURCE_OR_DESTINATION_RESOURCE_TYPE = "InvalidSourceOrDestinationResourceType"
     LEASE_IS_ALREADY_BROKEN = "LeaseIsAlreadyBroken"
     LEASE_NAME_MISMATCH = "LeaseNameMismatch"
     PATH_CONFLICT = "PathConflict"
@@ -289,9 +267,7 @@ class LocationMode(object):
     """
 
     PRIMARY = "primary"  #: Requests should be sent to the primary location.
-    SECONDARY = (
-        "secondary"  #: Requests should be sent to the secondary location, if possible.
-    )
+    SECONDARY = "secondary"  #: Requests should be sent to the secondary location, if possible.
 
 
 class ResourceTypes(object):
@@ -324,11 +300,7 @@ class ResourceTypes(object):
         self.service = service
         self.container = container
         self.object = object
-        self._str = (
-            ("s" if self.service else "")
-            + ("c" if self.container else "")
-            + ("o" if self.object else "")
-        )
+        self._str = ("s" if self.service else "") + ("c" if self.container else "") + ("o" if self.object else "")
 
     def __str__(self):
         return self._str
@@ -513,17 +485,11 @@ class Services(object):
         Access for the `~azure.storage.fileshare.ShareServiceClient`. Default is False.
     """
 
-    def __init__(
-        self, *, blob: bool = False, queue: bool = False, fileshare: bool = False
-    ) -> None:
+    def __init__(self, *, blob: bool = False, queue: bool = False, fileshare: bool = False) -> None:
         self.blob = blob
         self.queue = queue
         self.fileshare = fileshare
-        self._str = (
-            ("b" if self.blob else "")
-            + ("q" if self.queue else "")
-            + ("f" if self.fileshare else "")
-        )
+        self._str = ("b" if self.blob else "") + ("q" if self.queue else "") + ("f" if self.fileshare else "")
 
     def __str__(self):
         return self._str
@@ -627,14 +593,10 @@ class StorageConfiguration(Configuration):
         self.max_single_put_size = kwargs.pop("max_single_put_size", 64 * 1024 * 1024)
         self.copy_polling_interval = 15
         self.max_block_size = kwargs.pop("max_block_size", 4 * 1024 * 1024)
-        self.min_large_block_upload_threshold = kwargs.get(
-            "min_large_block_upload_threshold", 4 * 1024 * 1024 + 1
-        )
+        self.min_large_block_upload_threshold = kwargs.get("min_large_block_upload_threshold", 4 * 1024 * 1024 + 1)
         self.use_byte_buffer = kwargs.pop("use_byte_buffer", False)
         self.max_page_size = kwargs.pop("max_page_size", 4 * 1024 * 1024)
-        self.min_large_chunk_upload_threshold = kwargs.pop(
-            "min_large_chunk_upload_threshold", 100 * 1024 * 1024 + 1
-        )
+        self.min_large_chunk_upload_threshold = kwargs.pop("min_large_chunk_upload_threshold", 100 * 1024 * 1024 + 1)
         self.max_single_get_size = kwargs.pop("max_single_get_size", 32 * 1024 * 1024)
         self.max_chunk_get_size = kwargs.pop("max_chunk_get_size", 4 * 1024 * 1024)
         self.max_range_size = kwargs.pop("max_range_size", 4 * 1024 * 1024)

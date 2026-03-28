@@ -121,13 +121,9 @@ class QueueServiceClient(  # type: ignore [misc]
         audience: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
-        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(
-            **kwargs
-        )
+        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
         loop = kwargs.pop("loop", None)
-        parsed_url, sas_token = _parse_url(
-            account_url=account_url, credential=credential
-        )
+        parsed_url, sas_token = _parse_url(account_url=account_url, credential=credential)
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(QueueServiceClient, self).__init__(
             parsed_url,
@@ -157,9 +153,7 @@ class QueueServiceClient(  # type: ignore [misc]
         exc: Optional[BaseException],
         tb: Optional[TracebackType],
     ) -> None:
-        await self._client.__aexit__(
-            typ, exc, tb
-        )  # pylint: disable=specify-parameter-names-in-call
+        await self._client.__aexit__(typ, exc, tb)  # pylint: disable=specify-parameter-names-in-call
 
     async def close(self) -> None:
         """This method is to close the sockets opened by the client.
@@ -234,9 +228,7 @@ class QueueServiceClient(  # type: ignore [misc]
                 :dedent: 8
                 :caption: Creating the QueueServiceClient with a connection string.
         """
-        account_url, secondary, credential = parse_connection_str(
-            conn_str, credential, "queue"
-        )
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, "queue")
         return cls(
             account_url,
             credential=credential,
@@ -290,9 +282,7 @@ class QueueServiceClient(  # type: ignore [misc]
         return parse_to_internal_user_delegation_key(user_delegation_key)
 
     @distributed_trace_async
-    async def get_service_stats(
-        self, *, timeout: Optional[int] = None, **kwargs: Any
-    ) -> Dict[str, Any]:
+    async def get_service_stats(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]:
         """Retrieves statistics related to replication for the Queue service.
 
         It is only available when read-access geo-redundant replication is enabled for
@@ -325,9 +315,7 @@ class QueueServiceClient(  # type: ignore [misc]
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_service_properties(
-        self, *, timeout: Optional[int] = None, **kwargs: Any
-    ) -> Dict[str, Any]:
+    async def get_service_properties(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]:
         """Gets the properties of a storage account's Queue service, including
         Azure Storage Analytics.
 
@@ -347,9 +335,7 @@ class QueueServiceClient(  # type: ignore [misc]
                 :caption: Getting queue service properties.
         """
         try:
-            service_props = await self._client.service.get_properties(
-                timeout=timeout, **kwargs
-            )
+            service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)
             return service_properties_deserialize(service_props)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -545,9 +531,7 @@ class QueueServiceClient(  # type: ignore [misc]
         kwargs.setdefault("merge_span", True)
         await queue_client.delete_queue(timeout=timeout, **kwargs)
 
-    def get_queue_client(
-        self, queue: Union["QueueProperties", str], **kwargs: Any
-    ) -> QueueClient:
+    def get_queue_client(self, queue: Union["QueueProperties", str], **kwargs: Any) -> QueueClient:
         """Get a client to interact with the specified queue.
 
         The queue need not already exist.
@@ -574,9 +558,7 @@ class QueueServiceClient(  # type: ignore [misc]
             queue_name = queue
 
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(
-                self._pipeline._transport
-            ),  # pylint: disable=protected-access
+            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
             policies=self._pipeline._impl_policies,  # type: ignore # pylint: disable=protected-access
         )
 

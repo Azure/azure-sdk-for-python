@@ -193,9 +193,7 @@ class CorsRule(GeneratedCorsRule):
     """The comma-delimited string representation of the list of headers allowed to be part of the cross-origin
         request."""
 
-    def __init__(
-        self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any
-    ) -> None:
+    def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
         self.allowed_origins = ",".join(allowed_origins)
         self.allowed_methods = ",".join(allowed_methods)
         self.allowed_headers = ",".join(kwargs.get("allowed_headers", []))
@@ -463,9 +461,7 @@ class MessagesPaged(PageIterator):
             raise StopIteration("End of paging")
         if self._max_messages is not None:
             self._max_messages = self._max_messages - len(messages)
-        return "TOKEN_IGNORED", [
-            QueueMessage._from_generated(q) for q in messages
-        ]  # pylint: disable=protected-access
+        return "TOKEN_IGNORED", [QueueMessage._from_generated(q) for q in messages]  # pylint: disable=protected-access
 
 
 class QueueProperties(DictMixin):
@@ -555,17 +551,14 @@ class QueuePropertiesPaged(PageIterator):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def _extract_data_cb(
-        self, get_next_return: Any
-    ) -> Tuple[Optional[str], List[QueueProperties]]:
+    def _extract_data_cb(self, get_next_return: Any) -> Tuple[Optional[str], List[QueueProperties]]:
         self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
         self.prefix = self._response.prefix
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         props_list = [
-            QueueProperties._from_generated(q)
-            for q in self._response.queue_items  # pylint: disable=protected-access
+            QueueProperties._from_generated(q) for q in self._response.queue_items  # pylint: disable=protected-access
         ]
         return self._response.next_marker or None, props_list
 
@@ -596,13 +589,7 @@ def service_properties_deserialize(generated: Any) -> Dict[str, Any]:
         "analytics_logging": QueueAnalyticsLogging._from_generated(  # pylint: disable=protected-access
             generated.logging
         ),
-        "hour_metrics": Metrics._from_generated(
-            generated.hour_metrics
-        ),  # pylint: disable=protected-access
-        "minute_metrics": Metrics._from_generated(
-            generated.minute_metrics
-        ),  # pylint: disable=protected-access
-        "cors": [
-            CorsRule._from_generated(cors) for cors in generated.cors
-        ],  # pylint: disable=protected-access
+        "hour_metrics": Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
+        "minute_metrics": Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
+        "cors": [CorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access
     }

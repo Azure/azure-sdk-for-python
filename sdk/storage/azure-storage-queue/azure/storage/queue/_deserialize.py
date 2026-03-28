@@ -16,17 +16,13 @@ if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
 
 
-def deserialize_queue_properties(
-    response: "PipelineResponse", obj: Any, headers: Dict[str, Any]
-) -> QueueProperties:
+def deserialize_queue_properties(response: "PipelineResponse", obj: Any, headers: Dict[str, Any]) -> QueueProperties:
     metadata = deserialize_metadata(response, obj, headers)
     queue_properties = QueueProperties(metadata=metadata, **headers)
     return queue_properties
 
 
-def deserialize_queue_creation(
-    response: "PipelineResponse", obj: Any, headers: Dict[str, Any]
-) -> Dict[str, Any]:
+def deserialize_queue_creation(response: "PipelineResponse", obj: Any, headers: Dict[str, Any]) -> Dict[str, Any]:
     response = response.http_response
     if response.status_code == 204:  # type: ignore [attr-defined]
         error_code = StorageErrorCode.queue_already_exists
