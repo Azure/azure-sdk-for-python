@@ -40,8 +40,6 @@ Usage::
     curl http://localhost:8088/healthy
 """
 
-from __future__ import annotations
-
 from collections.abc import AsyncIterable
 from typing import Any
 

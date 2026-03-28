@@ -6,8 +6,6 @@ Run:
     python samples/MultiOutput/app.py
 """
 
-from __future__ import annotations
-
 import asyncio
 from collections.abc import AsyncIterable
 from typing import Any

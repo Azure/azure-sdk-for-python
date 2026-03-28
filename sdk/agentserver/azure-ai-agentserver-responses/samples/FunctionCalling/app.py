@@ -6,8 +6,6 @@ Run:
     python samples/FunctionCalling/app.py
 """
 
-from __future__ import annotations
-
 import asyncio
 import json
 from collections.abc import AsyncIterable
