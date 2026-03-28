@@ -10,7 +10,10 @@ from typing import Any, Callable, List, Optional, Tuple
 from azure.core.async_paging import AsyncPageIterator
 from azure.core.exceptions import HttpResponseError
 from .._models import QueueMessage, QueueProperties
-from .._shared.response_handlers import process_storage_error, return_context_and_deserialized
+from .._shared.response_handlers import (
+    process_storage_error,
+    return_context_and_deserialized,
+)
 
 
 class MessagesPaged(AsyncPageIterator):
@@ -66,7 +69,9 @@ class MessagesPaged(AsyncPageIterator):
             raise StopAsyncIteration("End of paging")
         if self._max_messages is not None:
             self._max_messages = self._max_messages - len(messages)
-        return "TOKEN_IGNORED", [QueueMessage._from_generated(q) for q in messages]  # pylint: disable=protected-access
+        return "TOKEN_IGNORED", [
+            QueueMessage._from_generated(q) for q in messages
+        ]  # pylint: disable=protected-access
 
 
 class QueuePropertiesPaged(AsyncPageIterator):
@@ -127,14 +132,17 @@ class QueuePropertiesPaged(AsyncPageIterator):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    async def _extract_data_cb(self, get_next_return: Any) -> Tuple[Optional[str], List[QueueProperties]]:
+    async def _extract_data_cb(
+        self, get_next_return: Any
+    ) -> Tuple[Optional[str], List[QueueProperties]]:
         self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
         self.prefix = self._response.prefix
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         props_list = [
-            QueueProperties._from_generated(q) for q in self._response.queue_items  # pylint: disable=protected-access
+            QueueProperties._from_generated(q)
+            for q in self._response.queue_items  # pylint: disable=protected-access
         ]
         next_marker = self._response.next_marker
         return next_marker or None, props_list

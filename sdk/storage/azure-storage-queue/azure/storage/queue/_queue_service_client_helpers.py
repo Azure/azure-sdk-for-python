@@ -9,7 +9,11 @@ from urllib.parse import urlparse
 from ._shared.base_client import parse_query
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials import (
+        AzureNamedKeyCredential,
+        AzureSasCredential,
+        TokenCredential,
+    )
     from azure.core.credentials_async import AsyncTokenCredential
     from urllib.parse import ParseResult
 
@@ -58,6 +62,8 @@ def _parse_url(
 
     _, sas_token = parse_query(parsed_url.query)
     if not sas_token and not credential:
-        raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
+        raise ValueError(
+            "You need to provide either a SAS token or an account shared key to authenticate."
+        )
 
     return parsed_url, sas_token

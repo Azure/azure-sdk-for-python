@@ -12,7 +12,11 @@ from unittest import mock
 
 import pytest
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
-from azure.storage.queue import BinaryBase64DecodePolicy, BinaryBase64EncodePolicy, VERSION
+from azure.storage.queue import (
+    BinaryBase64DecodePolicy,
+    BinaryBase64EncodePolicy,
+    VERSION,
+)
 from azure.storage.queue.aio import QueueServiceClient
 from azure.storage.queue._encryption import (
     _dict_to_encryption_data,
@@ -72,7 +76,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         qsc.key_encryption_key = KeyWrapper("key1")
         queue = await self._create_queue(qsc)
         await queue.send_message("encrypted_message_2")
@@ -92,7 +98,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         qsc.key_encryption_key = KeyWrapper("key1")
         queue = await self._create_queue(qsc)
         await queue.send_message("encrypted_message_2")
@@ -115,7 +123,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         # Arrange
         qsc.key_encryption_key = KeyWrapper("key1")
         queue = await self._create_queue(qsc)
@@ -133,7 +143,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         # Arrange
         qsc.key_encryption_key = KeyWrapper("key1")
         queue = await self._create_queue(qsc)
@@ -155,7 +167,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         # We can only generate random RSA keys, so this must be run live or
         # the playback test will fail due to a change in kek values.
 
@@ -176,7 +190,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         # Arrange
         queue = await self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper("key1")
@@ -203,10 +219,14 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         # Arrange
         queue = await self._create_queue(
-            qsc, message_encode_policy=BinaryBase64EncodePolicy(), message_decode_policy=BinaryBase64DecodePolicy()
+            qsc,
+            message_encode_policy=BinaryBase64EncodePolicy(),
+            message_decode_policy=BinaryBase64DecodePolicy(),
         )
         queue.key_encryption_key = KeyWrapper("key1")
 
@@ -235,9 +255,13 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         # Arrange
-        queue = await self._create_queue(qsc, message_encode_policy=None, message_decode_policy=None)
+        queue = await self._create_queue(
+            qsc, message_encode_policy=None, message_decode_policy=None
+        )
         queue.key_encryption_key = KeyWrapper("key1")
 
         raw_text = "Update Me"
@@ -263,9 +287,13 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         # Arrange
-        queue = await self._create_queue(qsc, message_encode_policy=None, message_decode_policy=None)
+        queue = await self._create_queue(
+            qsc, message_encode_policy=None, message_decode_policy=None
+        )
         queue.key_encryption_key = KeyWrapper("key1")
 
         message_dict = {"val1": 1, "val2": "2"}
@@ -296,7 +324,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         # Arrange
         queue = await self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper("key1")
@@ -305,7 +335,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         with pytest.raises(AttributeError) as e:
             await queue.send_message("message")
 
-        assert str(e.value.args[0]), _ERROR_OBJECT_INVALID.format("key encryption key" == "get_kid")
+        assert str(e.value.args[0]), _ERROR_OBJECT_INVALID.format(
+            "key encryption key" == "get_kid"
+        )
 
         queue.key_encryption_key = KeyWrapper("key1")
         queue.key_encryption_key.get_kid = None
@@ -323,14 +355,18 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         # Arrange
         queue = await self._create_queue(qsc)
 
         valid_key = KeyWrapper("key1")
 
         # Act
-        invalid_key_1 = lambda: None  # functions are objects, so this effectively creates an empty object
+        invalid_key_1 = (
+            lambda: None
+        )  # functions are objects, so this effectively creates an empty object
         invalid_key_1.get_key_wrap_algorithm = valid_key.get_key_wrap_algorithm
         invalid_key_1.get_kid = valid_key.get_kid
         # No attribute wrap_key
@@ -338,7 +374,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         with pytest.raises(AttributeError):
             await queue.send_message("message")
 
-        invalid_key_2 = lambda: None  # functions are objects, so this effectively creates an empty object
+        invalid_key_2 = (
+            lambda: None
+        )  # functions are objects, so this effectively creates an empty object
         invalid_key_2.wrap_key = valid_key.wrap_key
         invalid_key_2.get_kid = valid_key.get_kid
         # No attribute get_key_wrap_algorithm
@@ -346,7 +384,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         with pytest.raises(AttributeError):
             await queue.send_message("message")
 
-        invalid_key_3 = lambda: None  # functions are objects, so this effectively creates an empty object
+        invalid_key_3 = (
+            lambda: None
+        )  # functions are objects, so this effectively creates an empty object
         invalid_key_3.get_key_wrap_algorithm = valid_key.get_key_wrap_algorithm
         invalid_key_3.wrap_key = valid_key.wrap_key
         # No attribute get_kid
@@ -360,7 +400,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         # Arrange
         queue = await self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper("key1")
@@ -381,7 +423,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         # Arrange
         queue = await self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper("key1")
@@ -389,7 +433,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
 
         # Act
         valid_key = KeyWrapper("key1")
-        invalid_key_1 = lambda: None  # functions are objects, so this effectively creates an empty object
+        invalid_key_1 = (
+            lambda: None
+        )  # functions are objects, so this effectively creates an empty object
         invalid_key_1.unwrap_key = valid_key.unwrap_key
         # No attribute get_kid
         queue.key_encryption_key = invalid_key_1
@@ -398,7 +444,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
 
         assert "Decryption failed." in str(e.value.args[0])
 
-        invalid_key_2 = lambda: None  # functions are objects, so this effectively creates an empty object
+        invalid_key_2 = (
+            lambda: None
+        )  # functions are objects, so this effectively creates an empty object
         invalid_key_2.get_kid = valid_key.get_kid
         # No attribute unwrap_key
         queue.key_encryption_key = invalid_key_2
@@ -411,7 +459,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         # Arrange
         queue = await self._create_queue(qsc)
         kek = KeyWrapper("key1")
@@ -434,7 +484,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         )
 
         encryption_agent = encryption_data["EncryptionAgent"]
-        encryption_agent = _EncryptionAgent(encryption_agent["EncryptionAlgorithm"], encryption_agent["Protocol"])
+        encryption_agent = _EncryptionAgent(
+            encryption_agent["EncryptionAlgorithm"], encryption_agent["Protocol"]
+        )
 
         encryption_data = _EncryptionData(
             b64decode(encryption_data["ContentEncryptionIV"].encode(encoding="utf-8")),
@@ -446,7 +498,8 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
 
         message = message["EncryptedMessageContents"]
         content_encryption_key = kek.unwrap_key(
-            encryption_data.wrapped_content_key.encrypted_key, encryption_data.wrapped_content_key.algorithm
+            encryption_data.wrapped_content_key.encrypted_key,
+            encryption_data.wrapped_content_key.algorithm,
         )
 
         # Create decryption cipher
@@ -475,7 +528,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         # Arrange
         queue = await self._create_queue(qsc)
         kek = KeyWrapper("key1")
@@ -497,7 +552,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         # Arrange
         queue = await self._create_queue(qsc)
         await queue.send_message("message")
@@ -509,7 +566,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
             async for m in queue.receive_messages():
                 messages.append(m)
             _ = messages[0]
-        assert "Message was either not encrypted or metadata was incorrect." in str(e.value.args[0])
+        assert "Message was either not encrypted or metadata was incorrect." in str(
+            e.value.args[0]
+        )
 
     @QueuePreparer()
     @recorded_by_proxy_async
@@ -517,7 +576,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         # Arrange
         queue = await self._create_queue(qsc)
         message = "a" * 1024 * 64
@@ -536,7 +597,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         # Arrange
         queue = await self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper("key1")
@@ -676,7 +739,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
             key_encryption_key=KeyWrapper("key1"),
         )
         queue = await self._create_queue(
-            qsc, message_encode_policy=BinaryBase64EncodePolicy(), message_decode_policy=BinaryBase64DecodePolicy()
+            qsc,
+            message_encode_policy=BinaryBase64EncodePolicy(),
+            message_decode_policy=BinaryBase64DecodePolicy(),
         )
         queue.key_encryption_key = KeyWrapper("key1")
 
@@ -813,7 +878,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
             key_encryption_key=kek,
         )
         queue = await self._create_queue(qsc)
-        await queue.send_message(content, raw_request_hook=assert_user_agent, user_agent=app_id)
+        await queue.send_message(
+            content, raw_request_hook=assert_user_agent, user_agent=app_id
+        )
 
         # Test client constructor level keyword
         qsc = QueueServiceClient(

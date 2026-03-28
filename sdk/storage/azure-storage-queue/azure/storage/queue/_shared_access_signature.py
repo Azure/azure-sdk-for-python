@@ -18,7 +18,11 @@ from azure.storage.queue._shared.shared_access_signature import (
 )
 
 if TYPE_CHECKING:
-    from azure.storage.queue import AccountSasPermissions, QueueSasPermissions, ResourceTypes
+    from azure.storage.queue import (
+        AccountSasPermissions,
+        QueueSasPermissions,
+        ResourceTypes,
+    )
     from datetime import datetime
 
 
@@ -46,7 +50,9 @@ class QueueSharedAccessSignature(SharedAccessSignature):
             A user delegation key can be obtained from the service by authenticating with an AAD identity;
             this can be accomplished by calling get_user_delegation_key on any Queue service object.
         """
-        super(QueueSharedAccessSignature, self).__init__(account_name, account_key, x_ms_version=X_MS_VERSION)
+        super(QueueSharedAccessSignature, self).__init__(
+            account_name, account_key, x_ms_version=X_MS_VERSION
+        )
         self.user_delegation_key = user_delegation_key
 
     def generate_queue(
@@ -116,7 +122,10 @@ class QueueSharedAccessSignature(SharedAccessSignature):
         sas.add_id(policy_id)
         sas.add_user_delegation_oid(user_delegation_oid)
         sas.add_resource_signature(
-            self.account_name, self.account_key, queue_name, user_delegation_key=self.user_delegation_key
+            self.account_name,
+            self.account_key,
+            queue_name,
+            user_delegation_key=self.user_delegation_key,
         )
 
         if sts_hook is not None:
@@ -127,7 +136,9 @@ class QueueSharedAccessSignature(SharedAccessSignature):
 
 class _QueueSharedAccessHelper(_SharedAccessHelper):
 
-    def add_resource_signature(self, account_name: str, account_key: str, path: str, user_delegation_key=None):
+    def add_resource_signature(
+        self, account_name: str, account_key: str, path: str, user_delegation_key=None
+    ):
         def get_value_to_append(query):
             return_value = self.query_dict.get(query) or ""
             return return_value + "\n"
@@ -147,14 +158,30 @@ class _QueueSharedAccessHelper(_SharedAccessHelper):
         )
 
         if user_delegation_key is not None:
-            self._add_query(QueryStringConstants.SIGNED_OID, user_delegation_key.signed_oid)
-            self._add_query(QueryStringConstants.SIGNED_TID, user_delegation_key.signed_tid)
-            self._add_query(QueryStringConstants.SIGNED_KEY_START, user_delegation_key.signed_start)
-            self._add_query(QueryStringConstants.SIGNED_KEY_EXPIRY, user_delegation_key.signed_expiry)
-            self._add_query(QueryStringConstants.SIGNED_KEY_SERVICE, user_delegation_key.signed_service)
-            self._add_query(QueryStringConstants.SIGNED_KEY_VERSION, user_delegation_key.signed_version)
             self._add_query(
-                QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID, user_delegation_key.signed_delegated_user_tid
+                QueryStringConstants.SIGNED_OID, user_delegation_key.signed_oid
+            )
+            self._add_query(
+                QueryStringConstants.SIGNED_TID, user_delegation_key.signed_tid
+            )
+            self._add_query(
+                QueryStringConstants.SIGNED_KEY_START, user_delegation_key.signed_start
+            )
+            self._add_query(
+                QueryStringConstants.SIGNED_KEY_EXPIRY,
+                user_delegation_key.signed_expiry,
+            )
+            self._add_query(
+                QueryStringConstants.SIGNED_KEY_SERVICE,
+                user_delegation_key.signed_service,
+            )
+            self._add_query(
+                QueryStringConstants.SIGNED_KEY_VERSION,
+                user_delegation_key.signed_version,
+            )
+            self._add_query(
+                QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID,
+                user_delegation_key.signed_delegated_user_tid,
             )
 
             string_to_sign += (
@@ -164,11 +191,15 @@ class _QueueSharedAccessHelper(_SharedAccessHelper):
                 + get_value_to_append(QueryStringConstants.SIGNED_KEY_EXPIRY)
                 + get_value_to_append(QueryStringConstants.SIGNED_KEY_SERVICE)
                 + get_value_to_append(QueryStringConstants.SIGNED_KEY_VERSION)
-                + get_value_to_append(QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID)
+                + get_value_to_append(
+                    QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID
+                )
                 + get_value_to_append(QueryStringConstants.SIGNED_DELEGATED_USER_OID)
             )
         else:
-            string_to_sign += get_value_to_append(QueryStringConstants.SIGNED_IDENTIFIER)
+            string_to_sign += get_value_to_append(
+                QueryStringConstants.SIGNED_IDENTIFIER
+            )
 
         string_to_sign += (
             get_value_to_append(QueryStringConstants.SIGNED_IP)
@@ -182,7 +213,14 @@ class _QueueSharedAccessHelper(_SharedAccessHelper):
 
         self._add_query(
             QueryStringConstants.SIGNED_SIGNATURE,
-            sign_string(account_key if user_delegation_key is None else user_delegation_key.value, string_to_sign),
+            sign_string(
+                (
+                    account_key
+                    if user_delegation_key is None
+                    else user_delegation_key.value
+                ),
+                string_to_sign,
+            ),
         )
         self.string_to_sign = string_to_sign
 
@@ -340,12 +378,18 @@ def generate_queue_sas(
     """
     if not policy_id:
         if not expiry:
-            raise ValueError("'expiry' parameter must be provided when not using a stored access policy.")
+            raise ValueError(
+                "'expiry' parameter must be provided when not using a stored access policy."
+            )
         if not permission:
-            raise ValueError("'permission' parameter must be provided when not using a stored access policy.")
+            raise ValueError(
+                "'permission' parameter must be provided when not using a stored access policy."
+            )
     if not user_delegation_key and not account_key:
         raise ValueError("Either user_delegation_key or account_key must be provided.")
-    sas = QueueSharedAccessSignature(account_name, account_key=account_key, user_delegation_key=user_delegation_key)
+    sas = QueueSharedAccessSignature(
+        account_name, account_key=account_key, user_delegation_key=user_delegation_key
+    )
     return sas.generate_queue(
         queue_name,
         permission=permission,

@@ -7,7 +7,6 @@
 from ._queue_client_async import QueueClient
 from ._queue_service_client_async import QueueServiceClient
 
-
 __all__ = [
     "QueueClient",
     "QueueServiceClient",

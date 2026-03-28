@@ -9,7 +9,10 @@ import sys
 from typing import Any, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING, Union
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
-from ._shared.response_handlers import process_storage_error, return_context_and_deserialized
+from ._shared.response_handlers import (
+    process_storage_error,
+    return_context_and_deserialized,
+)
 from ._shared.models import DictMixin
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
@@ -190,7 +193,9 @@ class CorsRule(GeneratedCorsRule):
     """The comma-delimited string representation of the list of headers allowed to be part of the cross-origin
         request."""
 
-    def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
+    def __init__(
+        self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any
+    ) -> None:
         self.allowed_origins = ",".join(allowed_origins)
         self.allowed_methods = ",".join(allowed_methods)
         self.allowed_headers = ",".join(kwargs.get("allowed_headers", []))
@@ -198,7 +203,9 @@ class CorsRule(GeneratedCorsRule):
         self.max_age_in_seconds = kwargs.get("max_age_in_seconds", 0)
 
     @staticmethod
-    def _to_generated(rules: Optional[List["CorsRule"]]) -> Optional[List[GeneratedCorsRule]]:
+    def _to_generated(
+        rules: Optional[List["CorsRule"]],
+    ) -> Optional[List[GeneratedCorsRule]]:
         if rules is None:
             return rules
 
@@ -251,7 +258,13 @@ class QueueSasPermissions(object):
     process: bool = False
     """Get and delete messages from the queue."""
 
-    def __init__(self, read: bool = False, add: bool = False, update: bool = False, process: bool = False) -> None:
+    def __init__(
+        self,
+        read: bool = False,
+        add: bool = False,
+        update: bool = False,
+        process: bool = False,
+    ) -> None:
         self.read = read
         self.add = add
         self.update = update
@@ -450,7 +463,9 @@ class MessagesPaged(PageIterator):
             raise StopIteration("End of paging")
         if self._max_messages is not None:
             self._max_messages = self._max_messages - len(messages)
-        return "TOKEN_IGNORED", [QueueMessage._from_generated(q) for q in messages]  # pylint: disable=protected-access
+        return "TOKEN_IGNORED", [
+            QueueMessage._from_generated(q) for q in messages
+        ]  # pylint: disable=protected-access
 
 
 class QueueProperties(DictMixin):
@@ -540,14 +555,17 @@ class QueuePropertiesPaged(PageIterator):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def _extract_data_cb(self, get_next_return: Any) -> Tuple[Optional[str], List[QueueProperties]]:
+    def _extract_data_cb(
+        self, get_next_return: Any
+    ) -> Tuple[Optional[str], List[QueueProperties]]:
         self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
         self.prefix = self._response.prefix
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         props_list = [
-            QueueProperties._from_generated(q) for q in self._response.queue_items  # pylint: disable=protected-access
+            QueueProperties._from_generated(q)
+            for q in self._response.queue_items  # pylint: disable=protected-access
         ]
         return self._response.next_marker or None, props_list
 
@@ -578,7 +596,13 @@ def service_properties_deserialize(generated: Any) -> Dict[str, Any]:
         "analytics_logging": QueueAnalyticsLogging._from_generated(  # pylint: disable=protected-access
             generated.logging
         ),
-        "hour_metrics": Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
-        "minute_metrics": Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
-        "cors": [CorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access
+        "hour_metrics": Metrics._from_generated(
+            generated.hour_metrics
+        ),  # pylint: disable=protected-access
+        "minute_metrics": Metrics._from_generated(
+            generated.minute_metrics
+        ),  # pylint: disable=protected-access
+        "cors": [
+            CorsRule._from_generated(cors) for cors in generated.cors
+        ],  # pylint: disable=protected-access
     }

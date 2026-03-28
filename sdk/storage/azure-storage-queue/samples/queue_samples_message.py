@@ -22,7 +22,6 @@ USAGE:
     1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
-
 from datetime import datetime, timedelta
 import os
 import sys
@@ -42,7 +41,11 @@ class QueueMessageSamples(object):
 
         queue = QueueClient.from_connection_string(self.connection_string, "myqueue1")
         if queue.account_name is None:
-            print("Connection string did not provide an account name." + "\n" + "Test: set_access_policy")
+            print(
+                "Connection string did not provide an account name."
+                + "\n"
+                + "Test: set_access_policy"
+            )
             sys.exit(1)
         # [END create_queue_client_from_connection_string]
 
@@ -72,13 +75,18 @@ class QueueMessageSamples(object):
             from azure.storage.queue import generate_queue_sas
 
             sas_token = generate_queue_sas(
-                queue.account_name, queue.queue_name, queue.credential.account_key, policy_id="my-access-policy-id"
+                queue.account_name,
+                queue.queue_name,
+                queue.credential.account_key,
+                policy_id="my-access-policy-id",
             )
             # [END queue_client_sas_token]
 
             # Authenticate with the sas token
             # [START create_queue_client]
-            token_auth_queue = QueueClient.from_queue_url(queue_url=queue.url, credential=sas_token)
+            token_auth_queue = QueueClient.from_queue_url(
+                queue_url=queue.url, credential=sas_token
+            )
             # [END create_queue_client]
 
             # Use the newly authenticated client to receive messages
@@ -131,7 +139,9 @@ class QueueMessageSamples(object):
         try:
             # [START send_messages]
             queue.send_message("message1")
-            queue.send_message("message2", visibility_timeout=30)  # wait 30s before becoming visible
+            queue.send_message(
+                "message2", visibility_timeout=30
+            )  # wait 30s before becoming visible
             queue.send_message("message3")
             queue.send_message("message4")
             queue.send_message("message5")
@@ -333,7 +343,10 @@ class QueueMessageSamples(object):
             # Update the message
             list_result = next(messages)
             message = queue.update_message(
-                list_result.id, pop_receipt=list_result.pop_receipt, visibility_timeout=0, content="updated"
+                list_result.id,
+                pop_receipt=list_result.pop_receipt,
+                visibility_timeout=0,
+                content="updated",
             )
             # [END update_message]
 

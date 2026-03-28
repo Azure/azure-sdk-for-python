@@ -9,7 +9,11 @@ from urllib.parse import quote, unquote, urlparse
 from ._shared.base_client import parse_query
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials import (
+        AzureNamedKeyCredential,
+        AzureSasCredential,
+        TokenCredential,
+    )
     from azure.core.credentials_async import AsyncTokenCredential
     from urllib.parse import ParseResult
 
@@ -62,12 +66,16 @@ def _parse_url(
 
     _, sas_token = parse_query(parsed_url.query)
     if not sas_token and not credential:
-        raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
+        raise ValueError(
+            "You need to provide either a SAS token or an account shared key to authenticate."
+        )
 
     return parsed_url, sas_token
 
 
-def _format_url(queue_name: Union[bytes, str], hostname: str, scheme: str, query_str: str) -> str:
+def _format_url(
+    queue_name: Union[bytes, str], hostname: str, scheme: str, query_str: str
+) -> str:
     """Format the endpoint URL according to the current location mode hostname.
 
     :param Union[bytes, str] queue_name: The name of the queue.
@@ -105,7 +113,10 @@ def _from_queue_url(queue_url: str) -> Tuple[str, str]:
     account_path = ""
     if len(queue_path) > 1:
         account_path = "/" + "/".join(queue_path[:-1])
-    account_url = f"{parsed_url.scheme}://{parsed_url.netloc.rstrip('/')}" f"{account_path}?{parsed_url.query}"
+    account_url = (
+        f"{parsed_url.scheme}://{parsed_url.netloc.rstrip('/')}"
+        f"{account_path}?{parsed_url.query}"
+    )
     queue_name = unquote(queue_path[-1])
     if not queue_name:
         raise ValueError("Invalid URL. Please provide a URL with a valid queue name")

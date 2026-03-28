@@ -25,7 +25,6 @@ USAGE:
     4) STORAGE_ACCOUNT_KEY - the storage account access key
 """
 
-
 from datetime import datetime, timedelta
 import os
 import sys
@@ -51,7 +50,9 @@ class QueueAuthSamples(object):
         # [START auth_from_connection_string]
         from azure.storage.queue import QueueServiceClient
 
-        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
+        queue_service = QueueServiceClient.from_connection_string(
+            conn_str=self.connection_string
+        )
         # [END auth_from_connection_string]
 
         # Get information for the Queue Service
@@ -70,7 +71,9 @@ class QueueAuthSamples(object):
         # [START create_queue_service_client]
         from azure.storage.queue import QueueServiceClient
 
-        queue_service = QueueServiceClient(account_url=self.account_url, credential=self.access_key)
+        queue_service = QueueServiceClient(
+            account_url=self.account_url, credential=self.access_key
+        )
         # [END create_queue_service_client]
 
         # Get information for the Queue Service
@@ -93,7 +96,9 @@ class QueueAuthSamples(object):
         # Instantiate a QueueServiceClient using a token credential
         from azure.storage.queue import QueueServiceClient
 
-        queue_service = QueueServiceClient(account_url=self.account_url, credential=token_credential)
+        queue_service = QueueServiceClient(
+            account_url=self.account_url, credential=token_credential
+        )
         # [END create_queue_service_client_oauth]
 
         # Get information for the Queue Service
@@ -116,10 +121,16 @@ class QueueAuthSamples(object):
         # Instantiate a QueueServiceClient using a connection string
         from azure.storage.queue import QueueServiceClient
 
-        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
+        queue_service = QueueServiceClient.from_connection_string(
+            conn_str=self.connection_string
+        )
 
         # Create a SAS token to use for authentication of a client
-        from azure.storage.queue import generate_account_sas, ResourceTypes, AccountSasPermissions
+        from azure.storage.queue import (
+            generate_account_sas,
+            ResourceTypes,
+            AccountSasPermissions,
+        )
 
         sas_token = generate_account_sas(
             self.account_name,
@@ -129,7 +140,9 @@ class QueueAuthSamples(object):
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
-        token_auth_queue_service = QueueServiceClient(account_url=self.account_url, credential=sas_token)
+        token_auth_queue_service = QueueServiceClient(
+            account_url=self.account_url, credential=sas_token
+        )
 
         # Get information for the Queue Service
         properties = token_auth_queue_service.get_service_properties()

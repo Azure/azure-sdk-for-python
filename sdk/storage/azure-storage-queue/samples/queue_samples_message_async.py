@@ -40,9 +40,15 @@ class QueueMessageSamplesAsync(object):
         # [START async_create_queue_client_from_connection_string]
         from azure.storage.queue.aio import QueueClient
 
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueueasync1")
+        queue = QueueClient.from_connection_string(
+            self.connection_string, "myqueueasync1"
+        )
         if queue.account_name is None:
-            print("Connection string did not provide an account name." + "\n" + "Test: set_access_policy_async")
+            print(
+                "Connection string did not provide an account name."
+                + "\n"
+                + "Test: set_access_policy_async"
+            )
             sys.exit(1)
         # [END async_create_queue_client_from_connection_string]
 
@@ -72,12 +78,17 @@ class QueueMessageSamplesAsync(object):
                 from azure.storage.queue import generate_queue_sas
 
                 sas_token = generate_queue_sas(
-                    queue.account_name, queue.queue_name, queue.credential.account_key, policy_id="my-access-policy-id"
+                    queue.account_name,
+                    queue.queue_name,
+                    queue.credential.account_key,
+                    policy_id="my-access-policy-id",
                 )
 
                 # Authenticate with the sas token
                 # [START async_create_queue_client]
-                token_auth_queue = QueueClient.from_queue_url(queue_url=queue.url, credential=sas_token)
+                token_auth_queue = QueueClient.from_queue_url(
+                    queue_url=queue.url, credential=sas_token
+                )
                 # [END async_create_queue_client]
 
                 # Use the newly authenticated client to receive messages
@@ -95,7 +106,9 @@ class QueueMessageSamplesAsync(object):
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
 
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueueasync2")
+        queue = QueueClient.from_connection_string(
+            self.connection_string, "myqueueasync2"
+        )
 
         # Create the queue
         async with queue:
@@ -123,7 +136,9 @@ class QueueMessageSamplesAsync(object):
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
 
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueueasync3")
+        queue = QueueClient.from_connection_string(
+            self.connection_string, "myqueueasync3"
+        )
 
         # Create the queue
         async with queue:
@@ -133,7 +148,9 @@ class QueueMessageSamplesAsync(object):
                 # [START async_send_messages]
                 await asyncio.gather(
                     queue.send_message("message1"),
-                    queue.send_message("message2", visibility_timeout=30),  # wait 30s before becoming visible
+                    queue.send_message(
+                        "message2", visibility_timeout=30
+                    ),  # wait 30s before becoming visible
                     queue.send_message("message3"),
                     queue.send_message("message4"),
                     queue.send_message("message5"),
@@ -172,7 +189,9 @@ class QueueMessageSamplesAsync(object):
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
 
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueueasync4")
+        queue = QueueClient.from_connection_string(
+            self.connection_string, "myqueueasync4"
+        )
 
         # Create the queue
         async with queue:
@@ -180,7 +199,9 @@ class QueueMessageSamplesAsync(object):
 
             try:
                 await asyncio.gather(
-                    queue.send_message("message1"), queue.send_message("message2"), queue.send_message("message3")
+                    queue.send_message("message1"),
+                    queue.send_message("message2"),
+                    queue.send_message("message3"),
                 )
 
                 # [START receive_one_message]
@@ -209,7 +230,9 @@ class QueueMessageSamplesAsync(object):
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
 
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueueasync5")
+        queue = QueueClient.from_connection_string(
+            self.connection_string, "myqueueasync5"
+        )
 
         # Create the queue
         async with queue:
@@ -250,7 +273,9 @@ class QueueMessageSamplesAsync(object):
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
 
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueueasync6")
+        queue = QueueClient.from_connection_string(
+            self.connection_string, "myqueueasync6"
+        )
 
         # Create the queue
         async with queue:
@@ -290,7 +315,9 @@ class QueueMessageSamplesAsync(object):
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
 
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueueasync7")
+        queue = QueueClient.from_connection_string(
+            self.connection_string, "myqueueasync7"
+        )
 
         # Create the queue
         async with queue:
@@ -306,7 +333,9 @@ class QueueMessageSamplesAsync(object):
 
                 # Update the message
                 async for message in messages:
-                    message = await queue.update_message(message, visibility_timeout=0, content="updated")
+                    message = await queue.update_message(
+                        message, visibility_timeout=0, content="updated"
+                    )
                     # [END async_update_message]
                     break
 
@@ -322,7 +351,9 @@ class QueueMessageSamplesAsync(object):
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
 
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueueasync8")
+        queue = QueueClient.from_connection_string(
+            self.connection_string, "myqueueasync8"
+        )
 
         # Create the queue
         async with queue:

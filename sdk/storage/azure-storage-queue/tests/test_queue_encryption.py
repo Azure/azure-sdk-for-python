@@ -41,7 +41,6 @@ from devtools_testutils.storage import StorageRecordedTestCase
 from encryption_test_helper import KeyResolver, KeyWrapper, mock_urandom, RSAKeyWrapper
 from settings.testcase import QueuePreparer
 
-
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = "encryptionqueue"
 # ------------------------------------------------------------------------------
@@ -78,7 +77,9 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         qsc.key_encryption_key = KeyWrapper("key1")
         queue = self._create_queue(qsc)
         queue.send_message("encrypted_message_2")
@@ -96,7 +97,9 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         qsc.key_encryption_key = KeyWrapper("key1")
         queue = self._create_queue(qsc)
         queue.send_message("encrypted_message_2")
@@ -118,7 +121,9 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         qsc.key_encryption_key = KeyWrapper("key1")
         queue = self._create_queue(qsc)
         queue.send_message("encrypted_message_3")
@@ -136,7 +141,9 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         qsc.key_encryption_key = KeyWrapper("key1")
         queue = self._create_queue(qsc)
         queue.send_message("encrypted_message_4")
@@ -161,7 +168,9 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         # the playback test will fail due to a change in kek values.
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         qsc.key_encryption_key = RSAKeyWrapper("key2")
         queue = self._create_queue(qsc)
         queue.send_message("encrypted_message_3")
@@ -179,7 +188,9 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         queue = self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper("key1")
         queue.send_message("Update Me")
@@ -202,9 +213,13 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         queue = self._create_queue(
-            qsc, message_encode_policy=BinaryBase64EncodePolicy(), message_decode_policy=BinaryBase64DecodePolicy()
+            qsc,
+            message_encode_policy=BinaryBase64EncodePolicy(),
+            message_decode_policy=BinaryBase64DecodePolicy(),
         )
         queue.key_encryption_key = KeyWrapper("key1")
 
@@ -234,8 +249,12 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
-        queue = self._create_queue(qsc, message_encode_policy=None, message_decode_policy=None)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
+        queue = self._create_queue(
+            qsc, message_encode_policy=None, message_decode_policy=None
+        )
         queue.key_encryption_key = KeyWrapper("key1")
 
         raw_text = "Update Me"
@@ -260,8 +279,12 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
-        queue = self._create_queue(qsc, message_encode_policy=None, message_decode_policy=None)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
+        queue = self._create_queue(
+            qsc, message_encode_policy=None, message_decode_policy=None
+        )
         queue.key_encryption_key = KeyWrapper("key1")
 
         message_dict = {"val1": 1, "val2": "2"}
@@ -289,7 +312,9 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         queue = self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper("key1")
         queue.key_encryption_key.get_kid = None
@@ -297,7 +322,9 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         with pytest.raises(AttributeError) as e:
             queue.send_message("message")
 
-        assert str(e.value.args[0]), _ERROR_OBJECT_INVALID.format("key encryption key" == "get_kid")
+        assert str(e.value.args[0]), _ERROR_OBJECT_INVALID.format(
+            "key encryption key" == "get_kid"
+        )
 
         queue.key_encryption_key = KeyWrapper("key1")
         queue.key_encryption_key.get_kid = None
@@ -316,13 +343,17 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         queue = self._create_queue(qsc)
 
         valid_key = KeyWrapper("key1")
 
         # Act
-        invalid_key_1 = lambda: None  # functions are objects, so this effectively creates an empty object
+        invalid_key_1 = (
+            lambda: None
+        )  # functions are objects, so this effectively creates an empty object
         invalid_key_1.get_key_wrap_algorithm = valid_key.get_key_wrap_algorithm
         invalid_key_1.get_kid = valid_key.get_kid
         # No attribute wrap_key
@@ -330,7 +361,9 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         with pytest.raises(AttributeError):
             queue.send_message("message")
 
-        invalid_key_2 = lambda: None  # functions are objects, so this effectively creates an empty object
+        invalid_key_2 = (
+            lambda: None
+        )  # functions are objects, so this effectively creates an empty object
         invalid_key_2.wrap_key = valid_key.wrap_key
         invalid_key_2.get_kid = valid_key.get_kid
         # No attribute get_key_wrap_algorithm
@@ -338,7 +371,9 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         with pytest.raises(AttributeError):
             queue.send_message("message")
 
-        invalid_key_3 = lambda: None  # functions are objects, so this effectively creates an empty object
+        invalid_key_3 = (
+            lambda: None
+        )  # functions are objects, so this effectively creates an empty object
         invalid_key_3.get_key_wrap_algorithm = valid_key.get_key_wrap_algorithm
         invalid_key_3.wrap_key = valid_key.wrap_key
         # No attribute get_kid
@@ -353,7 +388,9 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         queue = self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper("key1")
         queue.send_message("message")
@@ -374,14 +411,18 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         queue = self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper("key1")
         queue.send_message("message")
 
         # Act
         valid_key = KeyWrapper("key1")
-        invalid_key_1 = lambda: None  # functions are objects, so this effectively creates an empty object
+        invalid_key_1 = (
+            lambda: None
+        )  # functions are objects, so this effectively creates an empty object
         invalid_key_1.unwrap_key = valid_key.unwrap_key
         # No attribute get_kid
         queue.key_encryption_key = invalid_key_1
@@ -390,7 +431,9 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
 
         assert "Decryption failed." in str(e.value.args[0])
 
-        invalid_key_2 = lambda: None  # functions are objects, so this effectively creates an empty object
+        invalid_key_2 = (
+            lambda: None
+        )  # functions are objects, so this effectively creates an empty object
         invalid_key_2.get_kid = valid_key.get_kid
         # No attribute unwrap_key
         queue.key_encryption_key = invalid_key_2
@@ -404,7 +447,9 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         queue = self._create_queue(qsc)
         kek = KeyWrapper("key1")
         queue.key_encryption_key = kek
@@ -426,7 +471,9 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         )
 
         encryption_agent = encryption_data["EncryptionAgent"]
-        encryption_agent = _EncryptionAgent(encryption_agent["EncryptionAlgorithm"], encryption_agent["Protocol"])
+        encryption_agent = _EncryptionAgent(
+            encryption_agent["EncryptionAlgorithm"], encryption_agent["Protocol"]
+        )
 
         encryption_data = _EncryptionData(
             b64decode(encryption_data["ContentEncryptionIV"].encode(encoding="utf-8")),
@@ -438,7 +485,8 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
 
         message = message["EncryptedMessageContents"]
         content_encryption_key = kek.unwrap_key(
-            encryption_data.wrapped_content_key.encrypted_key, encryption_data.wrapped_content_key.algorithm
+            encryption_data.wrapped_content_key.encrypted_key,
+            encryption_data.wrapped_content_key.algorithm,
         )
 
         # Create decryption cipher
@@ -468,7 +516,9 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         queue = self._create_queue(qsc)
         kek = KeyWrapper("key1")
         queue.key_encryption_key = kek
@@ -490,7 +540,9 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         queue = self._create_queue(qsc)
         queue.send_message("message")
 
@@ -499,7 +551,9 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         with pytest.raises(ValueError) as e:
             next(queue.receive_messages())
 
-        assert "Message was either not encrypted or metadata was incorrect." in str(e.value.args[0])
+        assert "Message was either not encrypted or metadata was incorrect." in str(
+            e.value.args[0]
+        )
 
     @QueuePreparer()
     @recorded_by_proxy
@@ -508,7 +562,9 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         queue = self._create_queue(qsc)
         message = "a" * 1024 * 64
 
@@ -527,7 +583,9 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), storage_account_key.secret
+        )
         queue = self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper("key1")
         queue.send_message("message")
@@ -664,7 +722,9 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
             key_encryption_key=KeyWrapper("key1"),
         )
         queue = self._create_queue(
-            qsc, message_encode_policy=BinaryBase64EncodePolicy(), message_decode_policy=BinaryBase64DecodePolicy()
+            qsc,
+            message_encode_policy=BinaryBase64EncodePolicy(),
+            message_decode_policy=BinaryBase64DecodePolicy(),
         )
         queue.key_encryption_key = KeyWrapper("key1")
 
@@ -801,7 +861,9 @@ class TestStorageQueueEncryption(StorageRecordedTestCase):
             key_encryption_key=kek,
         )
         queue = self._create_queue(qsc)
-        queue.send_message(content, raw_request_hook=assert_user_agent, user_agent=app_id)
+        queue.send_message(
+            content, raw_request_hook=assert_user_agent, user_agent=app_id
+        )
 
         # Test client constructor level keyword
         qsc = QueueServiceClient(

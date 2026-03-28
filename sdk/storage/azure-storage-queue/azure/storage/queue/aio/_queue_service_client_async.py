@@ -19,15 +19,27 @@ from ._queue_client_async import QueueClient
 from .._encryption import StorageEncryptionMixin
 from .._generated.aio import AzureQueueStorage
 from .._generated.models import KeyInfo, StorageServiceProperties
-from .._models import CorsRule, QueueProperties, service_properties_deserialize, service_stats_deserialize
+from .._models import (
+    CorsRule,
+    QueueProperties,
+    service_properties_deserialize,
+    service_stats_deserialize,
+)
 from .._queue_service_client_helpers import _parse_url
 from .._serialize import get_api_version
 from .._shared.base_client import StorageAccountHostsMixin
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
+from .._shared.base_client_async import (
+    AsyncStorageAccountHostsMixin,
+    AsyncTransportWrapper,
+    parse_connection_str,
+)
 from .._shared.models import LocationMode
 from .._shared.parser import _to_utc_datetime
 from .._shared.policies_async import ExponentialRetry
-from .._shared.response_handlers import parse_to_internal_user_delegation_key, process_storage_error
+from .._shared.response_handlers import (
+    parse_to_internal_user_delegation_key,
+    process_storage_error,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -95,7 +107,13 @@ class QueueServiceClient(  # type: ignore [misc]
         self,
         account_url: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "AsyncTokenCredential",
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -103,9 +121,13 @@ class QueueServiceClient(  # type: ignore [misc]
         audience: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
-        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
+        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(
+            **kwargs
+        )
         loop = kwargs.pop("loop", None)
-        parsed_url, sas_token = _parse_url(account_url=account_url, credential=credential)
+        parsed_url, sas_token = _parse_url(
+            account_url=account_url, credential=credential
+        )
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(QueueServiceClient, self).__init__(
             parsed_url,
@@ -116,7 +138,11 @@ class QueueServiceClient(  # type: ignore [misc]
             **kwargs,
         )
         self._client = AzureQueueStorage(
-            self.url, get_api_version(api_version), base_url=self.url, pipeline=self._pipeline, loop=loop
+            self.url,
+            get_api_version(api_version),
+            base_url=self.url,
+            pipeline=self._pipeline,
+            loop=loop,
         )
         self._loop = loop
         self._configure_encryption(kwargs)
@@ -126,9 +152,14 @@ class QueueServiceClient(  # type: ignore [misc]
         return self
 
     async def __aexit__(
-        self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
+        self,
+        typ: Optional[type[BaseException]],
+        exc: Optional[BaseException],
+        tb: Optional[TracebackType],
     ) -> None:
-        await self._client.__aexit__(typ, exc, tb)  # pylint: disable=specify-parameter-names-in-call
+        await self._client.__aexit__(
+            typ, exc, tb
+        )  # pylint: disable=specify-parameter-names-in-call
 
     async def close(self) -> None:
         """This method is to close the sockets opened by the client.
@@ -154,7 +185,13 @@ class QueueServiceClient(  # type: ignore [misc]
         cls,
         conn_str: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "AsyncTokenCredential",
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -197,7 +234,9 @@ class QueueServiceClient(  # type: ignore [misc]
                 :dedent: 8
                 :caption: Creating the QueueServiceClient with a connection string.
         """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, "queue")
+        account_url, secondary, credential = parse_connection_str(
+            conn_str, credential, "queue"
+        )
         return cls(
             account_url,
             credential=credential,
@@ -251,7 +290,9 @@ class QueueServiceClient(  # type: ignore [misc]
         return parse_to_internal_user_delegation_key(user_delegation_key)
 
     @distributed_trace_async
-    async def get_service_stats(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]:
+    async def get_service_stats(
+        self, *, timeout: Optional[int] = None, **kwargs: Any
+    ) -> Dict[str, Any]:
         """Retrieves statistics related to replication for the Queue service.
 
         It is only available when read-access geo-redundant replication is enabled for
@@ -284,7 +325,9 @@ class QueueServiceClient(  # type: ignore [misc]
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_service_properties(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]:
+    async def get_service_properties(
+        self, *, timeout: Optional[int] = None, **kwargs: Any
+    ) -> Dict[str, Any]:
         """Gets the properties of a storage account's Queue service, including
         Azure Storage Analytics.
 
@@ -304,7 +347,9 @@ class QueueServiceClient(  # type: ignore [misc]
                 :caption: Getting queue service properties.
         """
         try:
-            service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)
+            service_props = await self._client.service.get_properties(
+                timeout=timeout, **kwargs
+            )
             return service_properties_deserialize(service_props)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -425,7 +470,12 @@ class QueueServiceClient(  # type: ignore [misc]
 
     @distributed_trace_async
     async def create_queue(
-        self, name: str, metadata: Optional[Dict[str, str]] = None, *, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        name: str,
+        metadata: Optional[Dict[str, str]] = None,
+        *,
+        timeout: Optional[int] = None,
+        **kwargs: Any,
     ) -> QueueClient:
         """Creates a new queue under the specified account.
 
@@ -458,7 +508,11 @@ class QueueServiceClient(  # type: ignore [misc]
 
     @distributed_trace_async
     async def delete_queue(
-        self, queue: Union["QueueProperties", str], *, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        queue: Union["QueueProperties", str],
+        *,
+        timeout: Optional[int] = None,
+        **kwargs: Any,
     ) -> None:
         """Deletes the specified queue and any messages it contains.
 
@@ -491,7 +545,9 @@ class QueueServiceClient(  # type: ignore [misc]
         kwargs.setdefault("merge_span", True)
         await queue_client.delete_queue(timeout=timeout, **kwargs)
 
-    def get_queue_client(self, queue: Union["QueueProperties", str], **kwargs: Any) -> QueueClient:
+    def get_queue_client(
+        self, queue: Union["QueueProperties", str], **kwargs: Any
+    ) -> QueueClient:
         """Get a client to interact with the specified queue.
 
         The queue need not already exist.
@@ -518,7 +574,9 @@ class QueueServiceClient(  # type: ignore [misc]
             queue_name = queue
 
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            transport=AsyncTransportWrapper(
+                self._pipeline._transport
+            ),  # pylint: disable=protected-access
             policies=self._pipeline._impl_policies,  # type: ignore # pylint: disable=protected-access
         )
 

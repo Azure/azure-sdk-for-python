@@ -20,7 +20,6 @@ USAGE:
     1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
-
 import asyncio
 import os
 import sys
@@ -42,7 +41,9 @@ class QueueHelloWorldSamplesAsync(object):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient
 
-        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
+        queue_service = QueueServiceClient.from_connection_string(
+            conn_str=self.connection_string
+        )
 
         # Get queue service properties
         async with queue_service:
@@ -60,7 +61,9 @@ class QueueHelloWorldSamplesAsync(object):
         # Instantiate the QueueClient from a connection string
         from azure.storage.queue.aio import QueueClient
 
-        queue = QueueClient.from_connection_string(conn_str=self.connection_string, queue_name="asyncmyqueue")
+        queue = QueueClient.from_connection_string(
+            conn_str=self.connection_string, queue_name="asyncmyqueue"
+        )
 
         async with queue:
             # Create the queue
@@ -71,7 +74,8 @@ class QueueHelloWorldSamplesAsync(object):
             try:
                 # Send messages
                 await asyncio.gather(
-                    queue.send_message("I'm using queues!"), queue.send_message("This is my second message")
+                    queue.send_message("I'm using queues!"),
+                    queue.send_message("This is my second message"),
                 )
 
                 # Receive the messages

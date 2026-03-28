@@ -28,7 +28,9 @@ from .._configuration import AzureQueueStorageConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]
+]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -46,9 +48,13 @@ def build_set_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
+    restype: Literal["service"] = kwargs.pop(
+        "restype", _params.pop("restype", "service")
+    )
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    content_type: Optional[str] = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -68,21 +74,39 @@ def build_set_properties_request(
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header(
+            "request_id_parameter", request_id_parameter, "str"
+        )
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["Content-Type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
+    return HttpRequest(
+        method="PUT",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        content=content,
+        **kwargs
+    )
 
 
 def build_get_properties_request(
-    url: str, *, version: str, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
+    url: str,
+    *,
+    version: str,
+    timeout: Optional[int] = None,
+    request_id_parameter: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
+    restype: Literal["service"] = kwargs.pop(
+        "restype", _params.pop("restype", "service")
+    )
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
     accept = _headers.pop("Accept", "application/xml")
 
@@ -103,19 +127,30 @@ def build_get_properties_request(
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header(
+            "request_id_parameter", request_id_parameter, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_get_statistics_request(
-    url: str, *, version: str, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
+    url: str,
+    *,
+    version: str,
+    timeout: Optional[int] = None,
+    request_id_parameter: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
+    restype: Literal["service"] = kwargs.pop(
+        "restype", _params.pop("restype", "service")
+    )
     comp: Literal["stats"] = kwargs.pop("comp", _params.pop("comp", "stats"))
     accept = _headers.pop("Accept", "application/xml")
 
@@ -136,10 +171,14 @@ def build_get_statistics_request(
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header(
+            "request_id_parameter", request_id_parameter, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_get_user_delegation_key_request(
@@ -154,9 +193,15 @@ def build_get_user_delegation_key_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
-    comp: Literal["userdelegationkey"] = kwargs.pop("comp", _params.pop("comp", "userdelegationkey"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    restype: Literal["service"] = kwargs.pop(
+        "restype", _params.pop("restype", "service")
+    )
+    comp: Literal["userdelegationkey"] = kwargs.pop(
+        "comp", _params.pop("comp", "userdelegationkey")
+    )
+    content_type: Optional[str] = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -176,12 +221,23 @@ def build_get_user_delegation_key_request(
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header(
+            "request_id_parameter", request_id_parameter, "str"
+        )
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["Content-Type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        content=content,
+        **kwargs
+    )
 
 
 def build_list_queues_segment_request(
@@ -217,7 +273,9 @@ def build_list_queues_segment_request(
     if marker is not None:
         _params["marker"] = _SERIALIZER.query("marker", marker, "str")
     if maxresults is not None:
-        _params["maxresults"] = _SERIALIZER.query("maxresults", maxresults, "int", minimum=1)
+        _params["maxresults"] = _SERIALIZER.query(
+            "maxresults", maxresults, "int", minimum=1
+        )
     if include is not None:
         _params["include"] = _SERIALIZER.query("include", include, "[str]", div=",")
     if timeout is not None:
@@ -226,10 +284,14 @@ def build_list_queues_segment_request(
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header(
+            "request_id_parameter", request_id_parameter, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 class ServiceOperations:
@@ -246,10 +308,18 @@ class ServiceOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AzureQueueStorageConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = (
+            input_args.pop(0) if input_args else kwargs.pop("client")
+        )
+        self._config: AzureQueueStorageConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = (
+            input_args.pop(0) if input_args else kwargs.pop("serializer")
+        )
+        self._deserialize: Deserializer = (
+            input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        )
 
     @distributed_trace
     def set_properties(  # pylint: disable=inconsistent-return-statements
@@ -287,12 +357,20 @@ class ServiceOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
-        comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        restype: Literal["service"] = kwargs.pop(
+            "restype", _params.pop("restype", "service")
+        )
+        comp: Literal["properties"] = kwargs.pop(
+            "comp", _params.pop("comp", "properties")
+        )
+        content_type: str = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/xml")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = self._serialize.body(storage_service_properties, "StorageServiceProperties", is_xml=True)
+        _content = self._serialize.body(
+            storage_service_properties, "StorageServiceProperties", is_xml=True
+        )
 
         _request = build_set_properties_request(
             url=self._config.url,
@@ -309,14 +387,18 @@ class ServiceOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = self._deserialize.failsafe_deserialize(
                 _models.StorageError,
                 pipeline_response,
@@ -324,15 +406,22 @@ class ServiceOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-request-id")
+        )
+        response_headers["x-ms-version"] = self._deserialize(
+            "str", response.headers.get("x-ms-version")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def get_properties(
-        self, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
+        self,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        **kwargs: Any
     ) -> _models.StorageServiceProperties:
         """gets the properties of a storage account's Queue service, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.
@@ -360,8 +449,12 @@ class ServiceOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
-        comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
+        restype: Literal["service"] = kwargs.pop(
+            "restype", _params.pop("restype", "service")
+        )
+        comp: Literal["properties"] = kwargs.pop(
+            "comp", _params.pop("comp", "properties")
+        )
         cls: ClsType[_models.StorageServiceProperties] = kwargs.pop("cls", None)
 
         _request = build_get_properties_request(
@@ -377,14 +470,18 @@ class ServiceOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = self._deserialize.failsafe_deserialize(
                 _models.StorageError,
                 pipeline_response,
@@ -392,10 +489,16 @@ class ServiceOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-request-id")
+        )
+        response_headers["x-ms-version"] = self._deserialize(
+            "str", response.headers.get("x-ms-version")
+        )
 
-        deserialized = self._deserialize("StorageServiceProperties", pipeline_response.http_response)
+        deserialized = self._deserialize(
+            "StorageServiceProperties", pipeline_response.http_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -404,7 +507,10 @@ class ServiceOperations:
 
     @distributed_trace
     def get_statistics(
-        self, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
+        self,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        **kwargs: Any
     ) -> _models.StorageServiceStats:
         """Retrieves statistics related to replication for the Queue service. It is only available on the
         secondary location endpoint when read-access geo-redundant replication is enabled for the
@@ -433,7 +539,9 @@ class ServiceOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
+        restype: Literal["service"] = kwargs.pop(
+            "restype", _params.pop("restype", "service")
+        )
         comp: Literal["stats"] = kwargs.pop("comp", _params.pop("comp", "stats"))
         cls: ClsType[_models.StorageServiceStats] = kwargs.pop("cls", None)
 
@@ -450,14 +558,18 @@ class ServiceOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = self._deserialize.failsafe_deserialize(
                 _models.StorageError,
                 pipeline_response,
@@ -465,11 +577,19 @@ class ServiceOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-request-id")
+        )
+        response_headers["x-ms-version"] = self._deserialize(
+            "str", response.headers.get("x-ms-version")
+        )
+        response_headers["Date"] = self._deserialize(
+            "rfc-1123", response.headers.get("Date")
+        )
 
-        deserialized = self._deserialize("StorageServiceStats", pipeline_response.http_response)
+        deserialized = self._deserialize(
+            "StorageServiceStats", pipeline_response.http_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -512,9 +632,15 @@ class ServiceOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
-        comp: Literal["userdelegationkey"] = kwargs.pop("comp", _params.pop("comp", "userdelegationkey"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        restype: Literal["service"] = kwargs.pop(
+            "restype", _params.pop("restype", "service")
+        )
+        comp: Literal["userdelegationkey"] = kwargs.pop(
+            "comp", _params.pop("comp", "userdelegationkey")
+        )
+        content_type: str = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/xml")
+        )
         cls: ClsType[_models.UserDelegationKey] = kwargs.pop("cls", None)
 
         _content = self._serialize.body(key_info, "KeyInfo", is_xml=True)
@@ -534,14 +660,18 @@ class ServiceOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = self._deserialize.failsafe_deserialize(
                 _models.StorageError,
                 pipeline_response,
@@ -552,11 +682,19 @@ class ServiceOperations:
         response_headers["x-ms-client-request-id"] = self._deserialize(
             "str", response.headers.get("x-ms-client-request-id")
         )
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-request-id")
+        )
+        response_headers["x-ms-version"] = self._deserialize(
+            "str", response.headers.get("x-ms-version")
+        )
+        response_headers["Date"] = self._deserialize(
+            "rfc-1123", response.headers.get("Date")
+        )
 
-        deserialized = self._deserialize("UserDelegationKey", pipeline_response.http_response)
+        deserialized = self._deserialize(
+            "UserDelegationKey", pipeline_response.http_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -638,14 +776,18 @@ class ServiceOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = self._deserialize.failsafe_deserialize(
                 _models.StorageError,
                 pipeline_response,
@@ -653,11 +795,19 @@ class ServiceOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-request-id")
+        )
+        response_headers["x-ms-version"] = self._deserialize(
+            "str", response.headers.get("x-ms-version")
+        )
+        response_headers["Date"] = self._deserialize(
+            "rfc-1123", response.headers.get("Date")
+        )
 
-        deserialized = self._deserialize("ListQueuesSegmentResponse", pipeline_response.http_response)
+        deserialized = self._deserialize(
+            "ListQueuesSegmentResponse", pipeline_response.http_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
