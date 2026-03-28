@@ -51,7 +51,7 @@ class CopilotResponseConverter:
         if extra_output:
             output.extend(extra_output)
 
-        return OpenAIResponse(
+        return OpenAIResponse(  # type: ignore[call-overload]
             id=context.response_id,
             created_at=datetime.datetime.now(datetime.timezone.utc),
             output=output,

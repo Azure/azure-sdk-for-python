@@ -252,7 +252,8 @@ async def _discover_via_openai_api(resource_url: str, access_token: str) -> List
 
         # Try multiple endpoint formats and API versions
         parsed = urlparse(resource_url)
-        hostname_parts = parsed.hostname.split('.')
+        hostname = parsed.hostname or ""
+        hostname_parts = hostname.split('.')
         resource_name = hostname_parts[0]
 
         # Try different URL formats and paths
