@@ -9,4 +9,4 @@ adapter = GitHubCopilotAdapter.from_project(".")
 adapter.run()
 ```
 
-See the [README](../README.md) for environment variable configuration.
+See the [package README](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-github) for environment variable configuration.
