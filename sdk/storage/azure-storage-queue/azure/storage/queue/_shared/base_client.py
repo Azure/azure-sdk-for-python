@@ -85,7 +85,14 @@ _KNOWN_FEATURE_SUFFIXES = {"-ipv6", "-dualstack"}
 
 
 def _construct_endpoints(netloc: str, account_part: str) -> Tuple[str, str, str]:
-    """Construct primary and secondary hostnames from a storage account URL's netloc."""
+    """
+    Construct primary and secondary hostnames from a storage account URL's netloc.
+
+    :param str netloc: The network location in a URL.
+    :param account_part: The account part after parsing the URL.
+    :return: The account name, primary hostname, and secondary hostname.
+    :rtype: Tuple[str, str, str]
+    """
     domain_suffix = netloc[len(account_part) :]
     secondary_idx = account_part.find(_SECONDARY_SUFFIX)
 

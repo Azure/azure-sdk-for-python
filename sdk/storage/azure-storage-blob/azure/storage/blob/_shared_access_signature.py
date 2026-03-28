@@ -150,7 +150,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :param Dict[str, str] request_query_params:
             Specifies a set of query parameters and their corresponding values that
             must be present in the request when using this SAS.
-        :keyword Optional[bool] is_directory:
+        :param Optional[bool] is_directory:
             Specifies whether the `blob_name` is a virtual directory. If set, the `blob_name` is treated
             to be a virtual directory name for a Directory SAS. When set, do not prefix or suffix the `blob_name`
             with `/`. If not set, the `blob_name` is assumed to be a blob name for a Blob SAS.
@@ -323,7 +323,7 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
         # sdd may be provided from Datalake
         # If not provided, it will be manually computed from blob_name
         if sdd is None:
-            if blob_name == "" or blob_name == "/":
+            if blob_name in ["", "/"]:
                 sdd = 0
             else:
                 sdd = len(blob_name.strip("/").split("/"))
