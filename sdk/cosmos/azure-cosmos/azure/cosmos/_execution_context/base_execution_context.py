@@ -200,7 +200,8 @@ class _QueryExecutionContextBase(object):
                                 self._resource_link, previous_map, refresh_feed_options)
                         else:
                             _LOGGER.debug(
-                                "Partition split retry: No cached map for collection %s, falling back to global refresh",
+                                "Partition split retry: No cached map for collection %s,"
+                                " falling back to global refresh",
                                 self._resource_link
                             )
                             self._client.refresh_routing_map_provider()

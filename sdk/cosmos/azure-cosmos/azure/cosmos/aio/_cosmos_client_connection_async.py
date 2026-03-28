@@ -3122,7 +3122,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         if feed_range_epk is not None:
             over_lapping_ranges = await self._routing_map_provider.get_overlapping_ranges(id_, [feed_range_epk],
-                                                                                          options)
+                                                                                          dict(options))
             results: dict[str, Any] = {}
             # For each over lapping range we will take a sub range of the feed range EPK that overlaps with the over
             # lapping physical partition. The EPK sub range will be one of four:

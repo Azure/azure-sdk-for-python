@@ -2,11 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
+import logging
 
 import pytest
 
 import azure.cosmos._routing.routing_range as routing_range
-from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
+from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap, _build_routing_map_from_ranges
 
 
 @pytest.mark.cosmosEmulator
@@ -298,6 +299,101 @@ class TestCollectionRoutingMap(unittest.TestCase):
         self.assertIsNotNone(result, "try_combine should succeed even with evicted grandparent in parents")
         ids = [r['id'] for r in result._orderedPartitionKeyRanges]
         self.assertEqual(ids, ['0', '3', '2'])
+
+    # =========================================================
+    # Tests for _build_routing_map_from_ranges parent filtering
+    # =========================================================
+
+    def test_build_routing_map_filters_gone_parent_ranges(self):
+        """_build_routing_map_from_ranges filters out parent (gone) ranges
+        referenced in children's 'parents' lists and builds a complete map
+        from only the child ranges."""
+        _logger = logging.getLogger("test")
+        # Parent '0' split into children '1' and '2'
+        ranges = [
+            {'id': '0', 'minInclusive': '', 'maxExclusive': 'FF'},          # gone parent
+            {'id': '1', 'minInclusive': '', 'maxExclusive': '80', 'parents': ['0']},
+            {'id': '2', 'minInclusive': '80', 'maxExclusive': 'FF', 'parents': ['0']},
+        ]
+        result = _build_routing_map_from_ranges(ranges, 'coll1', '"etag-1"', 'dbs/db/colls/coll1', _logger)
+
+        self.assertIsNotNone(result, "Should build a valid routing map after filtering parent")
+        ids = [r['id'] for r in result._orderedPartitionKeyRanges]
+        self.assertEqual(ids, ['1', '2'])
+        self.assertNotIn('0', ids, "Gone parent '0' should be filtered out")
+        self.assertEqual(result.change_feed_etag, '"etag-1"')
+
+    def test_build_routing_map_filters_multiple_parent_levels(self):
+        """_build_routing_map_from_ranges filters out all ancestors referenced
+        as parents, even when multiple levels of splits are present in a single
+        change feed response."""
+        _logger = logging.getLogger("test")
+        # Grandparent '0' split into '1' and '2', then '1' split into '3' and '4'
+        # All appear in the same change feed response
+        ranges = [
+            {'id': '0', 'minInclusive': '', 'maxExclusive': 'FF'},
+            {'id': '1', 'minInclusive': '', 'maxExclusive': '80', 'parents': ['0']},
+            {'id': '2', 'minInclusive': '80', 'maxExclusive': 'FF', 'parents': ['0']},
+            {'id': '3', 'minInclusive': '', 'maxExclusive': '40', 'parents': ['1']},
+            {'id': '4', 'minInclusive': '40', 'maxExclusive': '80', 'parents': ['1']},
+        ]
+        result = _build_routing_map_from_ranges(ranges, 'coll1', '"etag-2"', 'dbs/db/colls/coll1', _logger)
+
+        self.assertIsNotNone(result, "Should build a valid routing map after multi-level filtering")
+        ids = [r['id'] for r in result._orderedPartitionKeyRanges]
+        # '0' is gone (parent of '1' and '2'), '1' is gone (parent of '3' and '4')
+        self.assertEqual(ids, ['3', '4', '2'])
+
+    def test_build_routing_map_no_parents_passes_through_all(self):
+        """_build_routing_map_from_ranges passes through all ranges when none
+        have parents (no splits occurred)."""
+        _logger = logging.getLogger("test")
+        ranges = [
+            {'id': '0', 'minInclusive': '', 'maxExclusive': '80'},
+            {'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'},
+        ]
+        result = _build_routing_map_from_ranges(ranges, 'coll1', '"etag-3"', 'dbs/db/colls/coll1', _logger)
+
+        self.assertIsNotNone(result)
+        ids = [r['id'] for r in result._orderedPartitionKeyRanges]
+        self.assertEqual(ids, ['0', '1'])
+
+    def test_build_routing_map_returns_none_for_incomplete_ranges(self):
+        """_build_routing_map_from_ranges returns None when the filtered ranges
+        don't form a complete partition key space (gap exists)."""
+        _logger = logging.getLogger("test")
+        ranges = [
+            {'id': '0', 'minInclusive': '', 'maxExclusive': '80'},
+            # Gap from '80' to 'FF' — incomplete
+        ]
+        result = _build_routing_map_from_ranges(ranges, 'coll1', '"etag-4"', 'dbs/db/colls/coll1', _logger)
+        self.assertIsNone(result, "Should return None for incomplete range coverage")
+
+    def test_build_routing_map_empty_parents_list_not_treated_as_gone(self):
+        """_build_routing_map_from_ranges does NOT filter a range whose 'parents'
+        key exists but is an empty list — only non-empty parents trigger filtering."""
+        _logger = logging.getLogger("test")
+        ranges = [
+            {'id': '0', 'minInclusive': '', 'maxExclusive': '80', 'parents': []},
+            {'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF', 'parents': []},
+        ]
+        result = _build_routing_map_from_ranges(ranges, 'coll1', '"etag-5"', 'dbs/db/colls/coll1', _logger)
+
+        self.assertIsNotNone(result, "Empty parents list should not cause filtering")
+        ids = [r['id'] for r in result._orderedPartitionKeyRanges]
+        self.assertEqual(ids, ['0', '1'])
+
+    def test_build_routing_map_stores_etag(self):
+        """_build_routing_map_from_ranges stores the provided ETag on the
+        resulting CollectionRoutingMap, and None etag is handled gracefully."""
+        _logger = logging.getLogger("test")
+        ranges = [{'id': '0', 'minInclusive': '', 'maxExclusive': 'FF'}]
+
+        result_with_etag = _build_routing_map_from_ranges(ranges, 'coll1', '"etag-X"', 'link', _logger)
+        self.assertEqual(result_with_etag.change_feed_etag, '"etag-X"')
+
+        result_none_etag = _build_routing_map_from_ranges(ranges, 'coll1', None, 'link', _logger)
+        self.assertIsNone(result_none_etag.change_feed_etag)
 
 
 if __name__ == '__main__':

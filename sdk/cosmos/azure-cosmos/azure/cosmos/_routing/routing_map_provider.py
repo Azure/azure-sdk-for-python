@@ -27,10 +27,9 @@ import logging
 from typing import Dict, Any, Optional, List, TYPE_CHECKING
 from .. import _base, http_constants
 from .collection_routing_map import CollectionRoutingMap, _build_routing_map_from_ranges
-from . import routing_range
+from . import routing_range  # pylint: disable=unused-import
 from .routing_range import (
     PartitionKeyRange,
-    _second_range_is_after_first_range,
     _is_sorted_and_non_overlapping,
     _subtract_range,
 )
@@ -224,15 +223,15 @@ class PartitionKeyRangeCache(object):
         ranges: List[Dict[str, Any]] = []
         response_headers: Dict[str, Any] = {}
 
-        def capture_response_hook(headers: Dict[str, Any], _):
+        def capture_response_hook(hook_headers: Dict[str, Any], _):
             """Hook to capture response headers.
 
-            :param dict headers: The response headers to capture.
+            :param dict hook_headers: The response headers to capture.
             :param _: Unused parameter (response body).
             :type _: Any
             """
             nonlocal response_headers
-            response_headers = headers
+            response_headers = hook_headers
 
         # Pop any upstream response_hook from kwargs to avoid a TypeError
         # when we pass our own capture_response_hook explicitly to _ReadPartitionKeyRanges.
@@ -241,11 +240,13 @@ class PartitionKeyRangeCache(object):
         if upstream_hook:
             original_capture = capture_response_hook
 
-            def capture_response_hook(headers: Dict[str, Any], body,  # type: ignore[misc]
-                                      _upstream=upstream_hook):
-                original_capture(headers, body)
+            def _chained_response_hook(hook_headers: Dict[str, Any], body,
+                                       _upstream=upstream_hook):
+                original_capture(hook_headers, body)
                 if _upstream is not None:
-                    _upstream(headers, body)
+                    _upstream(hook_headers, body)
+
+            capture_response_hook = _chained_response_hook  # type: ignore[misc]
 
         # Sanitize options to only include those relevant for a PKRange read.
         change_feed_options = _base.format_pk_range_options(feed_options if feed_options is not None else {})

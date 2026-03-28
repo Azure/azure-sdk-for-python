@@ -24,7 +24,7 @@ from azure.cosmos import _base, http_constants
 # =====================================================================
 
 COLLECTION_LINK = "dbs/mydb/colls/mycoll"
-CONTAINER_RID = "XkwmAA=="
+CONTAINER_RID = "XkwmAA=="  # cspell:disable-line
 
 PARTITION_KEY_RANGES = [
     {"id": "0", "minInclusive": "", "maxExclusive": "3F"},

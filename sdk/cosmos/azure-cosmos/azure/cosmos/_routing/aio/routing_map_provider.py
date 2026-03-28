@@ -22,25 +22,19 @@
 """Internal class for partition key range cache implementation in the Azure
 Cosmos database service.
 """
-import logging
-from typing import Any, Optional
-
-from ... import _base
 import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 from typing import Dict, Any, Optional, List, TYPE_CHECKING
 from ..routing_range import PartitionKeyRange
 from ... import _base, http_constants
 from ..collection_routing_map import CollectionRoutingMap, _build_routing_map_from_ranges
-from .. import routing_range
+from .. import routing_range  # pylint: disable=unused-import
 from ..routing_range import (
-    _second_range_is_after_first_range,
     _is_sorted_and_non_overlapping,
     _subtract_range,
 )
 from ...exceptions import CosmosHttpResponseError
 
-_LOGGER = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from ...aio._cosmos_client_connection_async import CosmosClientConnection
@@ -84,7 +78,9 @@ class PartitionKeyRangeCache(object):
                 self._collection_locks[collection_id] = asyncio.Lock()
             return self._collection_locks[collection_id]
 
-    async def get_overlapping_ranges(self, collection_link, partition_key_ranges, feed_options: Optional[Dict[str, Any]] = None, **kwargs):
+    async def get_overlapping_ranges(
+            self, collection_link, partition_key_ranges,
+            feed_options: Optional[Dict[str, Any]] = None, **kwargs):
         """Efficiently gets overlapping ranges for a collection.
 
         Overrides the parent method to optimize performance by minimizing unnecessary
@@ -101,6 +97,9 @@ class PartitionKeyRangeCache(object):
             return []  # Return empty list directly instead of delegating to parent
 
         routing_map = await self.get_routing_map(collection_link, feed_options, **kwargs)
+
+        if routing_map is None:
+            return []
 
         ranges = routing_map.get_overlapping_ranges(partition_key_ranges)
         return ranges
@@ -239,14 +238,14 @@ class PartitionKeyRangeCache(object):
         ranges: List[Dict[str, Any]] = []
         response_headers: Dict[str, Any] = {}
 
-        def capture_response_hook(headers: Dict[str, Any], _):
+        def capture_response_hook(hook_headers: Dict[str, Any], _):
             """Hook to capture response headers.
 
-            :param Dict[str, Any] headers: The response headers to capture.
+            :param Dict[str, Any] hook_headers: The response headers to capture.
             :param Any _: Unused response parameter (typically the response body or item).
             """
             nonlocal response_headers
-            response_headers = headers
+            response_headers = hook_headers
 
         # Pop any upstream response_hook from kwargs to avoid a TypeError
         # when we pass our own capture_response_hook explicitly to _ReadPartitionKeyRanges.
@@ -255,11 +254,13 @@ class PartitionKeyRangeCache(object):
         if upstream_hook:
             original_capture = capture_response_hook
 
-            def capture_response_hook(headers: Dict[str, Any], body,  # type: ignore[misc]
-                                      _upstream=upstream_hook):
-                original_capture(headers, body)
+            def _chained_response_hook(hook_headers: Dict[str, Any], body,
+                                       _upstream=upstream_hook):
+                original_capture(hook_headers, body)
                 if _upstream is not None:
-                    _upstream(headers, body)
+                    _upstream(hook_headers, body)
+
+            capture_response_hook = _chained_response_hook  # type: ignore[misc]
 
         # Sanitize options to only include those relevant for a PKRange read.
         change_feed_options = _base.format_pk_range_options(feed_options if feed_options is not None else {})
@@ -369,7 +370,7 @@ class PartitionKeyRangeCache(object):
     async def get_range_by_partition_key_range_id(
             self,
             collection_link: str,
-            partition_key_range_id: int,
+            partition_key_range_id: str,
             feed_options: Dict[str, Any],
             **kwargs: Dict[str, Any]
     ) -> Optional[Dict[str, Any]]:
@@ -394,14 +395,16 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
     invocation of CollectionRoutingMap.get_overlapping_ranges()
     """
 
-    async def get_overlapping_ranges(self, collection_link, partition_key_ranges, feed_options: Optional[Dict[str, Any]] = None, **kwargs):
+    async def get_overlapping_ranges(
+            self, collection_link, partition_key_ranges,
+            feed_options: Optional[Dict[str, Any]] = None, **kwargs):
         if not partition_key_ranges:
             return []  # Return empty list directly instead of delegating to parent
 
         if not _is_sorted_and_non_overlapping(partition_key_ranges):
             raise ValueError("the list of ranges is not a non-overlapping sorted ranges")
 
-        target_partition_key_ranges = []
+        target_partition_key_ranges: List[Dict[str, Any]] = []
         it = iter(partition_key_ranges)
         try:
             currentProvidedRange = next(it)

@@ -263,9 +263,9 @@ def _build_routing_map_from_ranges(
 
     :param list ranges: Raw partition key range dicts from the service.
     :param str collection_id: The collection identifier used as the routing map key.
-    :param new_etag: The ETag from the change feed response.
+    :param str new_etag: The ETag from the change feed response.
     :param str collection_link: The collection link, used for log messages.
-    :param _logger: Logger instance for error reporting.
+    :param logging.Logger _logger: Logger instance for error reporting.
     :return: A complete CollectionRoutingMap, or None if the ranges are incomplete.
     :rtype: Optional[CollectionRoutingMap]
     """
