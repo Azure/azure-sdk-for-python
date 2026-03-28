@@ -36,9 +36,7 @@ class TestBatchDeploymentGaps(AzureRecordedTestCase):
         # This test triggers the validate_scoring_script branch by providing a deployment
         # whose code configuration points to a local script path that does not exist.
         # The call should raise an exception from validation before attempting REST calls.
-        deployment_yaml = (
-            "./tests/test_configs/deployments/batch/batch_deployment_quick.yaml"
-        )
+        deployment_yaml = "./tests/test_configs/deployments/batch/batch_deployment_quick.yaml"
         name = rand_batch_deployment_name("deploy_name")
         endpoint_name = rand_batch_name("endpoint_name")
 
@@ -64,12 +62,8 @@ class TestBatchDeploymentGaps(AzureRecordedTestCase):
         # This test exercises _validate_component branch where deployment.component is a PipelineComponent
         # and the registered component is not found; the operations should attempt to create one.
         # We build a deployment from YAML and set its component to an inline PipelineComponent.
-        endpoint_yaml = (
-            "./tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml"
-        )
-        deployment_yaml = (
-            "./tests/test_configs/deployments/batch/batch_deployment_quick.yaml"
-        )
+        endpoint_yaml = "./tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml"
+        deployment_yaml = "./tests/test_configs/deployments/batch/batch_deployment_quick.yaml"
 
         endpoint = load_batch_endpoint(endpoint_yaml)
         # Ensure endpoint name meets validation: starts with a letter and contains only alphanumerics and '-'

@@ -14,9 +14,7 @@ class TestWorkspaceOperationsBaseGaps(AzureRecordedTestCase):
         condition=not is_live(),
         reason="Live-only integration validation for workspace operations base gaps",
     )
-    def test_placeholder_list_workspaces_does_not_error(
-        self, client: MLClient, randstr: Callable[[], str]
-    ) -> None:
+    def test_placeholder_list_workspaces_does_not_error(self, client: MLClient, randstr: Callable[[], str]) -> None:
         # This placeholder integration test ensures the test scaffolding runs in a live environment.
         # It does not attempt to mock or construct internal operation objects.
         workspaces = list(client.workspaces.list())

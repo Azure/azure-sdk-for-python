@@ -35,9 +35,7 @@ class TestEnvironmentOperationsGaps:
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestEnvironmentOperationsGapsAdditional(AzureRecordedTestCase):
-    def test_get_preprocess_environment_name_strips_arm_prefix(
-        self, client: MLClient
-    ) -> None:
+    def test_get_preprocess_environment_name_strips_arm_prefix(self, client: MLClient) -> None:
         """Verify that get preprocesses ARM id prefixed names by stripping the ARM prefix.
 
         This uses a known public curated environment that exists in the workspace and a known
@@ -68,9 +66,7 @@ class TestEnvironmentOperationsGapsGenerated:
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestEnvironmentOperationsGapsShare(AzureRecordedTestCase):
-    def test_share_restores_registry_client_on_failure(
-        self, client: MLClient, randstr: Callable[[str], str]
-    ) -> None:
+    def test_share_restores_registry_client_on_failure(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         # Choose unique names to avoid collisions
         name = randstr("name")
         version = randstr("ver")

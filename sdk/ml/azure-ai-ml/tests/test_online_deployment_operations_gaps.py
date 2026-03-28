@@ -43,16 +43,12 @@ class TestOnlineDeploymentGaps(AzureRecordedTestCase):
 
         try:
             # prepare a minimal deployment
-            model = Model(
-                name="test-model", path="tests/test_configs/deployments/model-1/model"
-            )
+            model = Model(name="test-model", path="tests/test_configs/deployments/model-1/model")
             code_config = CodeConfiguration(
                 code="tests/test_configs/deployments/model-1/onlinescoring/",
                 scoring_script="score.py",
             )
-            environment = Environment(
-                conda_file="tests/test_configs/deployments/model-1/environment/conda.yml"
-            )
+            environment = Environment(conda_file="tests/test_configs/deployments/model-1/environment/conda.yml")
 
             blue_deployment = ManagedOnlineDeployment(
                 name=online_deployment_name,
@@ -66,9 +62,7 @@ class TestOnlineDeploymentGaps(AzureRecordedTestCase):
 
             with pytest.raises(InvalidVSCodeRequestError):
                 # This should raise before any remote call because vscode_debug requires local=True
-                client.online_deployments.begin_create_or_update(
-                    blue_deployment, vscode_debug=True
-                ).result()
+                client.online_deployments.begin_create_or_update(blue_deployment, vscode_debug=True).result()
         finally:
             client.online_endpoints.begin_delete(name=online_endpoint_name).result()
 
@@ -92,16 +86,12 @@ class TestOnlineDeploymentGaps(AzureRecordedTestCase):
         client.begin_create_or_update(endpoint).result()
 
         try:
-            model = Model(
-                name="test-model", path="tests/test_configs/deployments/model-1/model"
-            )
+            model = Model(name="test-model", path="tests/test_configs/deployments/model-1/model")
             code_config = CodeConfiguration(
                 code="tests/test_configs/deployments/model-1/onlinescoring/",
                 scoring_script="score.py",
             )
-            environment = Environment(
-                conda_file="tests/test_configs/deployments/model-1/environment/conda.yml"
-            )
+            environment = Environment(conda_file="tests/test_configs/deployments/model-1/environment/conda.yml")
 
             blue_deployment = ManagedOnlineDeployment(
                 name=online_deployment_name,
@@ -174,9 +164,7 @@ class TestOnlineDeploymentOperationsGaps(AzureRecordedTestCase):
                 container_type="INVALID_CONTAINER_TYPE",
             )
 
-    def test_get_logs_accepts_known_container_enum(
-        self, client: MLClient, randstr: Callable[[], str]
-    ) -> None:
+    def test_get_logs_accepts_known_container_enum(self, client: MLClient, randstr: Callable[[], str]) -> None:
         """Passing a supported EndpointDeploymentLogContainerType should be accepted by validator (may still fail on service call)."""
         endpoint_name = randstr("endpoint-name")
         deployment_name = randstr("deployment-name")
@@ -198,9 +186,7 @@ class TestOnlineDeploymentOperationsGaps(AzureRecordedTestCase):
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestOnlineDeploymentLogsValidation(AzureRecordedTestCase):
-    def test_get_logs_with_invalid_container_type_raises_validation(
-        self, client: MLClient
-    ) -> None:
+    def test_get_logs_with_invalid_container_type_raises_validation(self, client: MLClient) -> None:
         """Ensure passing an unsupported container_type raises a ValidationException.
 
         Covers: branch where _validate_deployment_log_container_type raises ValidationException for invalid value.
@@ -214,9 +200,7 @@ class TestOnlineDeploymentLogsValidation(AzureRecordedTestCase):
                 container_type="INVALID",
             )
 
-    def test_get_logs_with_known_container_enum_does_not_raise_validation(
-        self, client: MLClient
-    ) -> None:
+    def test_get_logs_with_known_container_enum_does_not_raise_validation(self, client: MLClient) -> None:
         """Ensure passing a known EndpointDeploymentLogContainerType enum value does not raise client-side ValidationException.
 
         Covers: mapping branches for EndpointDeploymentLogContainerType.INFERENCE_SERVER (and by symmetry STORAGE_INITIALIZER).

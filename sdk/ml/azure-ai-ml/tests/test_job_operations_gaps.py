@@ -68,18 +68,14 @@ class TestJobOperationsGaps(AzureRecordedTestCase):
             client.jobs._get_named_output_uri(None)
 
     @pytest.mark.e2etest
-    def test_get_batch_job_scoring_output_uri_returns_none_for_unknown_job(
-        self, client: MLClient
-    ) -> None:
+    def test_get_batch_job_scoring_output_uri_returns_none_for_unknown_job(self, client: MLClient) -> None:
         # For a random/nonexistent job, there should be no child scoring output and function returns None
         fake_job_name = "nonexistent_rand_job"
         result = client.jobs._get_batch_job_scoring_output_uri(fake_job_name)
         assert result is None
 
     @pytest.mark.e2etest
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="JWT token decoding requires real credentials"
-    )
+    @pytest.mark.skipif(condition=not is_live(), reason="JWT token decoding requires real credentials")
     def test_set_headers_with_user_aml_token_raises_when_aud_mismatch(
         self, client: MLClient, randstr: Callable[[], str]
     ) -> None:
@@ -115,9 +111,7 @@ class TestJobOperationsGaps(AzureRecordedTestCase):
 @pytest.mark.usefixtures("recorded_test")
 class TestJobOperationsGaps2(AzureRecordedTestCase):
     @pytest.mark.e2etest
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="JWT token decoding requires real credentials"
-    )
+    @pytest.mark.skipif(condition=not is_live(), reason="JWT token decoding requires real credentials")
     def test_create_or_update_pipeline_job_triggers_aml_token_validation(
         self, client: MLClient, randstr: Callable[[], str]
     ) -> None:
@@ -135,9 +129,7 @@ class TestJobOperationsGaps2(AzureRecordedTestCase):
             assert isinstance(result, Job)
 
     @pytest.mark.e2etest
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="JWT token decoding requires real credentials"
-    )
+    @pytest.mark.skipif(condition=not is_live(), reason="JWT token decoding requires real credentials")
     def test_validate_pipeline_job_headers_on_create_or_update_raises(
         self, client: MLClient, randstr: Callable[[], str]
     ) -> None:

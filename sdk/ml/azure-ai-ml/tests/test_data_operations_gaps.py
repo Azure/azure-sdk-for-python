@@ -13,18 +13,14 @@ from azure.ai.ml.exceptions import ValidationException, MlException
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestDataOperationsGaps(AzureRecordedTestCase):
-    def test_get_with_both_version_and_label_raises(
-        self, client: MLClient, randstr: Callable[[], str]
-    ) -> None:
+    def test_get_with_both_version_and_label_raises(self, client: MLClient, randstr: Callable[[], str]) -> None:
         name = randstr("name")
         # call get with both version and label should raise MlException (wrapped ValidationException)
         with pytest.raises(MlException) as e:
             client.data.get(name=name, version="1", label="latest")
         assert "Cannot specify both version and label." in str(e.value)
 
-    def test_get_without_version_or_label_raises(
-        self, client: MLClient, randstr: Callable[[], str]
-    ) -> None:
+    def test_get_without_version_or_label_raises(self, client: MLClient, randstr: Callable[[], str]) -> None:
         name = randstr("name")
         # call get without version or label should raise MlException (wrapped ValidationException)
         with pytest.raises(MlException) as e:

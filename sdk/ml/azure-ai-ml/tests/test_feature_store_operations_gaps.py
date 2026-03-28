@@ -15,9 +15,7 @@ from azure.ai.ml.entities._feature_store.materialization_store import (
 
 @pytest.mark.e2etest
 class TestFeatureStoreOperationsGaps:
-    def test_begin_create_rejects_invalid_offline_store_type(
-        self, client: MLClient
-    ) -> None:
+    def test_begin_create_rejects_invalid_offline_store_type(self, client: MLClient) -> None:
         """Verify begin_create raises ValidationError when offline_store.type is invalid.
 
         Covers validation branch in begin_create that checks offline store type and raises
@@ -34,9 +32,7 @@ class TestFeatureStoreOperationsGaps:
         with pytest.raises(ValidationError):
             client.feature_stores.begin_create(fs)
 
-    def test_begin_create_rejects_invalid_online_store_type(
-        self, client: MLClient
-    ) -> None:
+    def test_begin_create_rejects_invalid_online_store_type(self, client: MLClient) -> None:
         """Verify begin_create raises ValidationError when online_store.type is invalid.
 
         Covers validation branch in begin_create that checks online store type and raises
@@ -57,9 +53,7 @@ class TestFeatureStoreOperationsGaps:
 
 @pytest.mark.e2etest
 class TestFeatureStoreOperationsGapsGenerated:
-    def test_begin_create_raises_on_invalid_offline_store_type(
-        self, client: MLClient
-    ) -> None:
+    def test_begin_create_raises_on_invalid_offline_store_type(self, client: MLClient) -> None:
         """Verify begin_create raises ValidationError when offline_store.type is incorrect.
 
         Covers branch where begin_create checks offline_store.type != OFFLINE_MATERIALIZATION_STORE_TYPE
@@ -76,9 +70,7 @@ class TestFeatureStoreOperationsGapsGenerated:
         with pytest.raises(ValidationError):
             client.feature_stores.begin_create(fs)
 
-    def test_begin_create_raises_on_invalid_online_store_type(
-        self, client: MLClient
-    ) -> None:
+    def test_begin_create_raises_on_invalid_online_store_type(self, client: MLClient) -> None:
         """Verify begin_create raises ValidationError when online_store.type is incorrect.
 
         Covers branch where begin_create checks online_store.type != ONLINE_MATERIALIZATION_STORE_TYPE
@@ -113,9 +105,7 @@ class TestFeatureStoreOperationsGapsAdditional(AzureRecordedTestCase):
             # the method raises ValidationError as validated by the source under test.
             client.feature_stores.begin_update(feature_store=fs)
 
-    def test_begin_update_raises_on_invalid_online_store_type_when_workspace_missing(
-        self, client: MLClient
-    ) -> None:
+    def test_begin_update_raises_on_invalid_online_store_type_when_workspace_missing(self, client: MLClient) -> None:
         """Attempting to update with an invalid online_store.type should raise ValidationError,
         but begin_update first validates the workspace kind. This test exercises the path where the
         workspace is missing/not a feature store and ensures ValidationError is raised by the pre-check.
@@ -136,9 +126,7 @@ class TestFeatureStoreOperationsGapsAdditional(AzureRecordedTestCase):
 
 @pytest.mark.e2etest
 class TestFeatureStoreOperationsGapsExtraGenerated:
-    def test_begin_create_raises_on_invalid_offline_store_type_not_adls(
-        self, client: MLClient
-    ) -> None:
+    def test_begin_create_raises_on_invalid_offline_store_type_not_adls(self, client: MLClient) -> None:
         """Ensure begin_create validation rejects non-azure_data_lake_gen2 offline store types.
 
         Covers validation branch that checks offline_store.type against OFFLINE_MATERIALIZATION_STORE_TYPE.
@@ -157,9 +145,7 @@ class TestFeatureStoreOperationsGapsExtraGenerated:
             # begin_create triggers the pre-flight validation and should raise
             client.feature_stores.begin_create(fs)
 
-    def test_begin_create_raises_on_invalid_online_store_type_not_redis(
-        self, client: MLClient
-    ) -> None:
+    def test_begin_create_raises_on_invalid_online_store_type_not_redis(self, client: MLClient) -> None:
         """Ensure begin_create validation rejects non-redis online store types.
 
         Covers validation branch that checks online_store.type against ONLINE_MATERIALIZATION_STORE_TYPE.
@@ -182,9 +168,7 @@ class TestFeatureStoreOperationsGapsExtraGenerated:
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestFeatureStoreOperationsGaps_GeneratedExtra(AzureRecordedTestCase):
-    def test_begin_update_raises_if_workspace_not_feature_store(
-        self, client: MLClient
-    ) -> None:
+    def test_begin_update_raises_if_workspace_not_feature_store(self, client: MLClient) -> None:
         """If the named workspace does not exist or is not a feature store, begin_update should raise ValidationError.
         Covers branches where rest_workspace_obj is missing or not of kind FEATURE_STORE.
         """
@@ -203,9 +187,7 @@ class TestFeatureStoreOperationsGaps_GeneratedExtra(AzureRecordedTestCase):
         with pytest.raises((ValidationError, ResourceNotFoundError)):
             client.feature_stores.begin_delete(random_name)
 
-    def test_begin_create_raises_on_invalid_offline_and_online_store_type(
-        self, client: MLClient
-    ) -> None:
+    def test_begin_create_raises_on_invalid_offline_and_online_store_type(self, client: MLClient) -> None:
         """Validate begin_create input checks for offline/online store types.
         This triggers ValidationError before any network calls.
         """

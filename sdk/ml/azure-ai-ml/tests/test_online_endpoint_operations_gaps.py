@@ -41,9 +41,7 @@ class TestOnlineEndpointOperationsGaps(AzureRecordedTestCase):
 
             # Attempting to regenerate keys should raise ValidationException because auth_mode is not 'key'
             with pytest.raises(ValidationException):
-                client.online_endpoints.begin_regenerate_keys(
-                    name=endpoint_name
-                ).result()
+                client.online_endpoints.begin_regenerate_keys(name=endpoint_name).result()
         finally:
             # Clean up
             client.online_endpoints.begin_delete(name=endpoint_name).result()
@@ -61,9 +59,7 @@ class TestOnlineEndpointOperationsGaps(AzureRecordedTestCase):
             # Using an invalid key_type should raise ValidationException
             with pytest.raises(ValidationException):
                 # use an invalid key string to trigger the branch that raises for non-primary/secondary
-                client.online_endpoints.begin_regenerate_keys(
-                    name=endpoint_name, key_type="tertiary"
-                ).result()
+                client.online_endpoints.begin_regenerate_keys(name=endpoint_name, key_type="tertiary").result()
         finally:
             client.online_endpoints.begin_delete(name=endpoint_name).result()
 
@@ -156,15 +152,11 @@ class TestOnlineEndpointGaps(AzureRecordedTestCase):
             get_obj = client.online_endpoints.get(name=endpoint_name)
 
             if getattr(get_obj, "auth_mode", "").lower() != "key":
-                pytest.skip(
-                    "Endpoint not key-authenticated; cannot test invalid key_type branch"
-                )
+                pytest.skip("Endpoint not key-authenticated; cannot test invalid key_type branch")
 
             # For key-auth endpoint, passing an invalid key_type should raise ValidationException
             with pytest.raises(ValidationException):
-                client.online_endpoints.begin_regenerate_keys(
-                    name=endpoint_name, key_type="tertiary"
-                ).result()
+                client.online_endpoints.begin_regenerate_keys(name=endpoint_name, key_type="tertiary").result()
         finally:
             client.online_endpoints.begin_delete(name=endpoint_name).result()
 
@@ -252,11 +244,7 @@ class TestOnlineEndpointGaps(AzureRecordedTestCase):
             creds = client.online_endpoints.get_keys(name=endpoint_name)
             assert creds is not None
             # Depending on service-configured auth_mode, creds should be one of these types
-            if (
-                isinstance(get_obj, OnlineEndpoint)
-                and get_obj.auth_mode
-                and get_obj.auth_mode.lower() == "key"
-            ):
+            if isinstance(get_obj, OnlineEndpoint) and get_obj.auth_mode and get_obj.auth_mode.lower() == "key":
                 assert isinstance(creds, EndpointAuthKeys)
             else:
                 # service may return token types
@@ -282,19 +270,11 @@ class TestOnlineEndpointGaps(AzureRecordedTestCase):
             client.online_endpoints.begin_create_or_update(endpoint=endpoint).result()
 
             get_obj = client.online_endpoints.get(name=endpoint_name)
-            if not (
-                isinstance(get_obj, OnlineEndpoint)
-                and get_obj.auth_mode
-                and get_obj.auth_mode.lower() == "key"
-            ):
-                pytest.skip(
-                    "Endpoint not key-authenticated in this workspace; cannot exercise invalid key_type path"
-                )
+            if not (isinstance(get_obj, OnlineEndpoint) and get_obj.auth_mode and get_obj.auth_mode.lower() == "key"):
+                pytest.skip("Endpoint not key-authenticated in this workspace; cannot exercise invalid key_type path")
 
             # Passing an invalid key_type should raise ValidationException
             with pytest.raises(ValidationException):
-                client.online_endpoints.begin_regenerate_keys(
-                    name=endpoint_name, key_type="invalid-key-type"
-                ).result()
+                client.online_endpoints.begin_regenerate_keys(name=endpoint_name, key_type="invalid-key-type").result()
         finally:
             client.online_endpoints.begin_delete(name=endpoint_name).result()

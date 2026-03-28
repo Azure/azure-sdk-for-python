@@ -13,14 +13,10 @@ from azure.core.exceptions import ResourceNotFoundError
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestScheduleGaps(AzureRecordedTestCase):
-    def test_basic_schedule_lifecycle_triggers_and_enable_disable(
-        self, client: MLClient, randstr: Callable[[], str]
-    ):
+    def test_basic_schedule_lifecycle_triggers_and_enable_disable(self, client: MLClient, randstr: Callable[[], str]):
         # create a schedule from existing test config that uses a cron trigger
         params_override = [{"name": randstr("name")}]
-        test_path = (
-            "./tests/test_configs/schedule/hello_cron_schedule_with_file_reference.yml"
-        )
+        test_path = "./tests/test_configs/schedule/hello_cron_schedule_with_file_reference.yml"
         schedule = load_schedule(test_path, params_override=params_override)
 
         # use hardcoded far-future dates to ensure deterministic playback
@@ -42,43 +38,29 @@ class TestScheduleGaps(AzureRecordedTestCase):
         assert isinstance(rest_schedule_list, list)
 
         # trigger once
-        result = client.schedules.trigger(
-            schedule.name, schedule_time="2024-02-19T00:00:00"
-        )
+        result = client.schedules.trigger(schedule.name, schedule_time="2024-02-19T00:00:00")
         # result should be a ScheduleTriggerResult with a job_name attribute when trigger succeeds
         assert getattr(result, "job_name", None) is not None
 
         # disable
-        rest_schedule = client.schedules.begin_disable(schedule.name).result(
-            timeout=LROConfigurations.POLLING_TIMEOUT
-        )
+        rest_schedule = client.schedules.begin_disable(schedule.name).result(timeout=LROConfigurations.POLLING_TIMEOUT)
         assert rest_schedule._is_enabled is False
 
         # enable
-        rest_schedule = client.schedules.begin_enable(schedule.name).result(
-            timeout=LROConfigurations.POLLING_TIMEOUT
-        )
+        rest_schedule = client.schedules.begin_enable(schedule.name).result(timeout=LROConfigurations.POLLING_TIMEOUT)
         assert rest_schedule._is_enabled is True
 
         # cleanup: disable then delete
-        client.schedules.begin_disable(schedule.name).result(
-            timeout=LROConfigurations.POLLING_TIMEOUT
-        )
-        client.schedules.begin_delete(schedule.name).result(
-            timeout=LROConfigurations.POLLING_TIMEOUT
-        )
+        client.schedules.begin_disable(schedule.name).result(timeout=LROConfigurations.POLLING_TIMEOUT)
+        client.schedules.begin_delete(schedule.name).result(timeout=LROConfigurations.POLLING_TIMEOUT)
         # after delete, getting should raise
         with pytest.raises(ResourceNotFoundError):
             client.schedules.get(schedule.name)
 
-    def test_cron_trigger_roundtrip_properties(
-        self, client: MLClient, randstr: Callable[[], str]
-    ):
+    def test_cron_trigger_roundtrip_properties(self, client: MLClient, randstr: Callable[[], str]):
         # ensure CronTrigger properties roundtrip via schedule create and get
         params_override = [{"name": randstr("name")}]
-        test_path = (
-            "./tests/test_configs/schedule/hello_cron_schedule_with_file_reference.yml"
-        )
+        test_path = "./tests/test_configs/schedule/hello_cron_schedule_with_file_reference.yml"
         schedule = load_schedule(test_path, params_override=params_override)
 
         # use hardcoded far-future dates to ensure deterministic playback
@@ -98,9 +80,5 @@ class TestScheduleGaps(AzureRecordedTestCase):
         assert getattr(rest_schedule.trigger, "expression", None) is not None
 
         # disable and cleanup
-        client.schedules.begin_disable(schedule.name).result(
-            timeout=LROConfigurations.POLLING_TIMEOUT
-        )
-        client.schedules.begin_delete(schedule.name).result(
-            timeout=LROConfigurations.POLLING_TIMEOUT
-        )
+        client.schedules.begin_disable(schedule.name).result(timeout=LROConfigurations.POLLING_TIMEOUT)
+        client.schedules.begin_delete(schedule.name).result(timeout=LROConfigurations.POLLING_TIMEOUT)
