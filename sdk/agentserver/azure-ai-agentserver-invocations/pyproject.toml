@@ -16,11 +16,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
-<<<<<<< HEAD
-    "Programming Language :: Python :: 3.14"
-=======
     "Programming Language :: Python :: 3.14",
->>>>>>> 7445ddd3de7ce8364cc8c1fb703685e02a6cbd1a
 ]
 keywords = ["azure", "azure sdk", "agent", "agentserver", "invocations"]
 
