@@ -24,7 +24,7 @@ dependencies = [
     "github-copilot-sdk>=0.2.0,<0.3.0",
     "opentelemetry-exporter-otlp-proto-http",
     "azure-identity",
-    "PyYAML>=6.0",
+    "pyyaml>=6.0",
 ]
 
 [build-system]
