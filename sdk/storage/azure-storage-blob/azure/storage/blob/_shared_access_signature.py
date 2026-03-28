@@ -26,19 +26,19 @@ class BlobQueryStringConstants(object):
 
 
 class BlobSharedAccessSignature(SharedAccessSignature):
-    '''
+    """
     Provides a factory for creating blob and container access
     signature tokens with a common account name and account key.  Users can either
     use the factory or can construct the appropriate service and use the
-    generate_*_shared_access_signature method directly.
-    '''
+    generate_*_sas method directly.
+    """
 
     def __init__(
         self, account_name: str,
         account_key: Optional[str] = None,
         user_delegation_key: Optional[UserDelegationKey] = None
     ) -> None:
-        '''
+        """
         :param str account_name:
             The storage account name used to generate the shared access signatures.
         :param Optional[str] account_key:
@@ -47,7 +47,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
             Instead of an account key, the user could pass in a user delegation key.
             A user delegation key can be obtained from the service by authenticating with an AAD identity;
             this can be accomplished by calling get_user_delegation_key on any Blob service object.
-        '''
+        """
         super(BlobSharedAccessSignature, self).__init__(account_name, account_key, x_ms_version=X_MS_VERSION)
         self.user_delegation_key = user_delegation_key
 
@@ -74,7 +74,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         sts_hook: Optional[Callable[[str], None]] = None,
         **kwargs: Any
     ) -> str:
-        '''
+        """
         Generates a shared access signature for the blob or one of its snapshots.
         Use the returned signature with the sas_token parameter of any BlobService.
 
@@ -150,7 +150,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :param Dict[str, str] request_query_params:
             Specifies a set of query parameters and their corresponding values that
             must be present in the request when using this SAS.
-        :keyword Optional[bool] is_directory:
+        :param Optional[bool] is_directory:
             Specifies whether the `blob_name` is a virtual directory. If set, the `blob_name` is treated
             to be a virtual directory name for a Directory SAS. When set, do not prefix or suffix the `blob_name`
             with `/`. If not set, the `blob_name` is assumed to be a blob name for a Blob SAS.
@@ -160,7 +160,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :type sts_hook: Optional[Callable[[str], None]]
         :return: A Shared Access Signature (sas) token.
         :rtype: str
-        '''
+        """
         resource_path = container_name + '/' + blob_name
 
         sas = _BlobSharedAccessHelper()
@@ -170,7 +170,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
 
         resource = 'bs' if snapshot else 'b'
         resource = 'bv' if version_id else resource
-        resource = 'd' if kwargs.pop("is_directory", None) else resource
+        resource = 'd' if is_directory else resource
         sas.add_resource(resource)
 
         sas.add_timestamp(snapshot or version_id)
@@ -178,6 +178,10 @@ class BlobSharedAccessSignature(SharedAccessSignature):
                                           content_encoding, content_language,
                                           content_type)
         sas.add_encryption_scope(**kwargs)
+
+        if is_directory:
+            sas.add_directory_depth(blob_name, kwargs.pop('sdd', None))
+
         sas.add_info_for_hns_account(**kwargs)
         sas.add_resource_signature(
             self.account_name,
@@ -212,7 +216,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         sts_hook: Optional[Callable[[str], None]] = None,
         **kwargs: Any
     ) -> str:
-        '''
+        """
         Generates a shared access signature for the container.
         Use the returned signature with the sas_token parameter of any BlobService.
 
@@ -284,7 +288,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :type sts_hook: Optional[Callable[[str], None]]
         :return: A Shared Access Signature (sas) token.
         :rtype: str
-        '''
+        """
         sas = _BlobSharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
         sas.add_id(policy_id)
@@ -315,8 +319,17 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
     def add_timestamp(self, timestamp):
         self._add_query(BlobQueryStringConstants.SIGNED_TIMESTAMP, timestamp)
 
+    def add_directory_depth(self, blob_name, sdd):
+        # sdd may be provided from Datalake
+        # If not provided, it will be manually computed from blob_name
+        if sdd is None:
+            if blob_name in ["", "/"]:
+                sdd = 0
+            else:
+                sdd = len(blob_name.strip("/").split("/"))
+        self._add_query(QueryStringConstants.SIGNED_DIRECTORY_DEPTH, str(sdd))
+
     def add_info_for_hns_account(self, **kwargs):
-        self._add_query(QueryStringConstants.SIGNED_DIRECTORY_DEPTH, kwargs.pop('sdd', None))
         self._add_query(QueryStringConstants.SIGNED_AUTHORIZED_OID, kwargs.pop('preauthorized_agent_object_id', None))
         self._add_query(QueryStringConstants.SIGNED_UNAUTHORIZED_OID, kwargs.pop('agent_object_id', None))
         self._add_query(QueryStringConstants.SIGNED_CORRELATION_ID, kwargs.pop('correlation_id', None))
@@ -792,6 +805,7 @@ def generate_blob_sas(
         user_delegation_oid=user_delegation_oid,
         request_headers=request_headers,
         request_query_params=request_query_params,
+        is_directory=is_directory,
         sts_hook=sts_hook,
         **kwargs
     )

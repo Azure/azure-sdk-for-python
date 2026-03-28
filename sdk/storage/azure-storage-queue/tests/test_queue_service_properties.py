@@ -9,12 +9,17 @@ import unittest
 
 import pytest
 from azure.core.exceptions import HttpResponseError
-from azure.storage.queue import CorsRule, Metrics, QueueAnalyticsLogging, QueueServiceClient, RetentionPolicy
+from azure.storage.queue import (
+    CorsRule,
+    Metrics,
+    QueueAnalyticsLogging,
+    QueueServiceClient,
+    RetentionPolicy,
+)
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import QueuePreparer
-
 
 # ------------------------------------------------------------------------------
 
@@ -106,7 +111,10 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         # Act
         resp = qsc.set_service_properties(
-            analytics_logging=QueueAnalyticsLogging(), hour_metrics=Metrics(), minute_metrics=Metrics(), cors=[]
+            analytics_logging=QueueAnalyticsLogging(),
+            hour_metrics=Metrics(),
+            minute_metrics=Metrics(),
+            cors=[],
         )
 
         # Assert
@@ -124,7 +132,10 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         logging = QueueAnalyticsLogging(
-            read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5)
+            read=True,
+            write=True,
+            delete=True,
+            retention_policy=RetentionPolicy(enabled=True, days=5),
         )
 
         # Act
@@ -142,7 +153,11 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
 
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
-        hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+        hour_metrics = Metrics(
+            enabled=True,
+            include_apis=True,
+            retention_policy=RetentionPolicy(enabled=True, days=5),
+        )
 
         # Act
         qsc.set_service_properties(hour_metrics=hour_metrics)
@@ -160,7 +175,9 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         minute_metrics = Metrics(
-            enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5)
+            enabled=True,
+            include_apis=True,
+            retention_policy=RetentionPolicy(enabled=True, days=5),
         )
 
         # Act
@@ -183,8 +200,18 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
         allowed_origins = ["www.xyz.com", "www.ab.com", "www.bc.com"]
         allowed_methods = ["GET", "PUT"]
         max_age_in_seconds = 500
-        exposed_headers = ["x-ms-meta-data*", "x-ms-meta-source*", "x-ms-meta-abc", "x-ms-meta-bcd"]
-        allowed_headers = ["x-ms-meta-data*", "x-ms-meta-target*", "x-ms-meta-xyz", "x-ms-meta-foo"]
+        exposed_headers = [
+            "x-ms-meta-data*",
+            "x-ms-meta-source*",
+            "x-ms-meta-abc",
+            "x-ms-meta-bcd",
+        ]
+        allowed_headers = [
+            "x-ms-meta-data*",
+            "x-ms-meta-target*",
+            "x-ms-meta-xyz",
+            "x-ms-meta-foo",
+        ]
         cors_rule2 = CorsRule(
             allowed_origins,
             allowed_methods,
@@ -235,7 +262,9 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         minute_metrics = Metrics(
-            enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=366)
+            enabled=True,
+            include_apis=True,
+            retention_policy=RetentionPolicy(enabled=True, days=366),
         )
 
         # Assert

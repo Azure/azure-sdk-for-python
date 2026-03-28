@@ -292,7 +292,10 @@ class ResourceTypes(object):
     _str: str
 
     def __init__(
-        self, service: bool = False, container: bool = False, object: bool = False  # pylint: disable=redefined-builtin
+        self,
+        service: bool = False,
+        container: bool = False,
+        object: bool = False,  # pylint: disable=redefined-builtin
     ) -> None:
         self.service = service
         self.container = container

@@ -8,8 +8,17 @@ import unittest
 from datetime import datetime, timedelta
 
 import pytest
-from azure.storage.queue import AccountSasPermissions, generate_account_sas, LocationMode, ResourceTypes, VERSION
-from azure.storage.queue._shared.parser import DEVSTORE_ACCOUNT_KEY, DEVSTORE_ACCOUNT_NAME
+from azure.storage.queue import (
+    AccountSasPermissions,
+    generate_account_sas,
+    LocationMode,
+    ResourceTypes,
+    VERSION,
+)
+from azure.storage.queue._shared.parser import (
+    DEVSTORE_ACCOUNT_KEY,
+    DEVSTORE_ACCOUNT_NAME,
+)
 from azure.storage.queue.aio import QueueClient, QueueServiceClient
 
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -72,7 +81,9 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret, queue_name="foo"
+                self.account_url(storage_account_name, "queue"),
+                credential=storage_account_key.secret,
+                queue_name="foo",
             )
 
             # Assert
@@ -87,7 +98,8 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         for service_type in SERVICES.items():
             # Act
             service = service_type[0].from_connection_string(
-                self.connection_string(storage_account_name, storage_account_key.secret), queue_name="test"
+                self.connection_string(storage_account_name, storage_account_key.secret),
+                queue_name="test",
             )
 
             # Assert
@@ -106,7 +118,9 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         for service_type in SERVICES:
             # Act
             service = service_type(
-                self.account_url(storage_account_name, "queue"), credential=self.sas_token, queue_name="foo"
+                self.account_url(storage_account_name, "queue"),
+                credential=self.sas_token,
+                queue_name="foo",
             )
 
             # Assert
@@ -124,7 +138,9 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         for service_type in SERVICES:
             # Act
             service = service_type(
-                self.account_url(storage_account_name, "queue"), credential=self.token_credential, queue_name="foo"
+                self.account_url(storage_account_name, "queue"),
+                credential=self.token_credential,
+                queue_name="foo",
             )
 
             # Assert
@@ -219,7 +235,9 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         for service_type in SERVICES.items():
             # Act
             default_service = service_type[0](
-                self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret, queue_name="foo"
+                self.account_url(storage_account_name, "queue"),
+                credential=storage_account_key.secret,
+                queue_name="foo",
             )
             service = service_type[0](
                 self.account_url(storage_account_name, "queue"),
@@ -278,9 +296,17 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         queue_name = "queue"
 
         for service_type in SERVICES.keys():
-            service = service_type(account_url, credential=storage_account_key.secret, queue_name=queue_name)
+            service = service_type(
+                account_url,
+                credential=storage_account_key.secret,
+                queue_name=queue_name,
+            )
             self.validate_ipv6_account_endpoints(
-                service, storage_account_name, storage_account_key.secret, expected_primary, expected_secondary
+                service,
+                storage_account_name,
+                storage_account_key.secret,
+                expected_primary,
+                expected_secondary,
             )
 
             conn_str = (
@@ -293,14 +319,23 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
                 conn_str, credential=storage_account_key.secret, queue_name=queue_name
             )
             self.validate_ipv6_account_endpoints(
-                service, storage_account_name, storage_account_key.secret, expected_primary, expected_secondary
+                service,
+                storage_account_name,
+                storage_account_key.secret,
+                expected_primary,
+                expected_secondary,
             )
 
         service = QueueClient.from_queue_url(
-            queue_url=f"{account_url}/{queue_name}-secondary", credential=storage_account_key.secret
+            queue_url=f"{account_url}/{queue_name}-secondary",
+            credential=storage_account_key.secret,
         )
         self.validate_ipv6_account_endpoints(
-            service, storage_account_name, storage_account_key.secret, expected_primary, expected_secondary
+            service,
+            storage_account_name,
+            storage_account_key.secret,
+            expected_primary,
+            expected_secondary,
         )
 
     @QueuePreparer()
@@ -310,11 +345,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         hostname = "github.com"
         account_url = f"https://{hostname}"
         for service_type in SERVICES.keys():
-            service = service_type(
-                account_url,
-                credential=token_credential,
-                queue_name="foo"
-            )
+            service = service_type(account_url, credential=token_credential, queue_name="foo")
             assert service is not None
             assert service.scheme == "https"
             assert service.account_name is None
@@ -580,7 +611,8 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
 
         # Arrange
         service = QueueServiceClient(
-            self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret
+            self.account_url(storage_account_name, "queue"),
+            credential=storage_account_key.secret,
         )
         name = self.get_resource_name("cont")
 
@@ -604,7 +636,8 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
 
         # Arrange
         service = QueueServiceClient(
-            self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret
+            self.account_url(storage_account_name, "queue"),
+            credential=storage_account_key.secret,
         )
         name = self.get_resource_name("cont")
         queue = service.get_queue_client(name)
@@ -624,7 +657,8 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         service = QueueServiceClient(
-            self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret
+            self.account_url(storage_account_name, "queue"),
+            credential=storage_account_key.secret,
         )
 
         def callback(response):
@@ -672,7 +706,8 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         service = QueueServiceClient(
-            self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret
+            self.account_url(storage_account_name, "queue"),
+            credential=storage_account_key.secret,
         )
 
         def callback(response):

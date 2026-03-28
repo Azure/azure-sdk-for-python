@@ -55,7 +55,12 @@ def encode_base64(data):
 
 # Are we out of retries?
 def is_exhausted(settings):
-    retry_counts = (settings["total"], settings["connect"], settings["read"], settings["status"])
+    retry_counts = (
+        settings["total"],
+        settings["connect"],
+        settings["read"],
+        settings["status"],
+    )
     retry_counts = list(filter(None, retry_counts))
     if not retry_counts:
         return False
@@ -228,7 +233,16 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
                         parsed_qs["sig"] = "*****"
 
                         # the SAS needs to be put back together
-                        value = urlunparse((scheme, netloc, path, params, urlencode(parsed_qs), fragment))
+                        value = urlunparse(
+                            (
+                                scheme,
+                                netloc,
+                                path,
+                                params,
+                                urlencode(parsed_qs),
+                                fragment,
+                            )
+                        )
 
                     _LOGGER.debug("    %r: %r", header, value)
                 _LOGGER.debug("Request body:")
@@ -572,11 +586,16 @@ class StorageRetryPolicy(HTTPPolicy):
                 response = self.next.send(request)
                 if is_retry(response, retry_settings["mode"]) or is_checksum_retry(response):
                     retries_remaining = self.increment(
-                        retry_settings, request=request.http_request, response=response.http_response
+                        retry_settings,
+                        request=request.http_request,
+                        response=response.http_response,
                     )
                     if retries_remaining:
                         retry_hook(
-                            retry_settings, request=request.http_request, response=response.http_response, error=None
+                            retry_settings,
+                            request=request.http_request,
+                            response=response.http_response,
+                            error=None,
                         )
                         self.sleep(retry_settings, request.context.transport)
                         continue
@@ -586,7 +605,12 @@ class StorageRetryPolicy(HTTPPolicy):
                     raise
                 retries_remaining = self.increment(retry_settings, request=request.http_request, error=err)
                 if retries_remaining:
-                    retry_hook(retry_settings, request=request.http_request, response=None, error=err)
+                    retry_hook(
+                        retry_settings,
+                        request=request.http_request,
+                        response=None,
+                        error=err,
+                    )
                     self.sleep(retry_settings, request.context.transport)
                     continue
                 raise err

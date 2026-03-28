@@ -53,7 +53,10 @@ def _filetime_to_datetime(filetime: str) -> Optional[datetime]:
         if temp_filetime == 0:
             return None
 
-        return datetime.fromtimestamp((temp_filetime - EPOCH_AS_FILETIME) / HUNDREDS_OF_NANOSECONDS, tz=timezone.utc)
+        return datetime.fromtimestamp(
+            (temp_filetime - EPOCH_AS_FILETIME) / HUNDREDS_OF_NANOSECONDS,
+            tz=timezone.utc,
+        )
     except ValueError:
         pass
 
