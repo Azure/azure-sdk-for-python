@@ -54,8 +54,11 @@ def add_sanitizers(test_proxy):
     #  - AZSDK3493: $..name
     remove_batch_sanitizers(["AZSDK3430", "AZSDK3493"])
 
-    # Ignore the Accept header to avoid test playback mismatches from generation updates
-    set_custom_default_matcher(ignored_headers="Accept")
+    # Ignore the Accept header to avoid test playback mismatches from generation updates.
+    # Also preserve excluded_headers from the global default matcher set during proxy startup.
+    set_custom_default_matcher(
+        excluded_headers="Authorization, x-ms-client-request-id, x-ms-request-id, Accept-Encoding, Accept",
+    )
 
 
 @pytest.fixture(scope="session", autouse=True)
