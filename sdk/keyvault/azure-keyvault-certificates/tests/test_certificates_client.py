@@ -125,6 +125,27 @@ class TestCertificateClient(KeyVaultTestCase):
             assert set(a.san_emails) == set(b.san_emails)
         if a.san_user_principal_names:
             assert set(a.san_user_principal_names) == set(b.san_user_principal_names)
+        if a.san_uris:
+            assert set(a.san_uris) == set(b.san_uris)
+        if a.san_ip_addresses:
+            assert set(a.san_ip_addresses) == set(b.san_ip_addresses)
+
+    def test_validate_sans_with_uris_and_ip_addresses(self):
+        "`Unit test: ensures _validate_sans exercises the new san_uris and san_ip_addresses paths."
+        policy_a = CertificatePolicy(
+            issuer_name=WellKnownIssuerNames.self,
+            subject="CN=example.com",
+            san_uris=["urn:example:one", "https://example.com/service"],
+            san_ip_addresses=["192.0.2.1", "2001:db8::1"],
+        )
+        policy_b = CertificatePolicy(
+            issuer_name=WellKnownIssuerNames.self,
+            subject="CN=example.com",
+            san_uris=["https://example.com/service", "urn:example:one"],
+            san_ip_addresses=["2001:db8::1", "192.0.2.1"],
+        )
+        # _validate_sans compares sets, so ordering differences should not matter
+        self._validate_sans(policy_a, policy_b)
 
     def _validate_lifetime_actions(self, a, b):
         assert len(a) == len(b)
