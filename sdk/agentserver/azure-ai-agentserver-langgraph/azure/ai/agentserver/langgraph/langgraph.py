@@ -101,7 +101,7 @@ class LangGraphAdapter(FoundryCBAgent):
         try:
             config = self.create_runnable_config(context)
             stream_mode = self.state_converter.get_stream_mode(context)
-            result = await self.graph.ainvoke(input_data, config=config, stream_mode=stream_mode)
+            result = await self.graph.ainvoke(input_data, config=config, stream_mode=stream_mode)  # type: ignore
             output = self.state_converter.state_to_response(result, context)
             return output
         except Exception as e:
