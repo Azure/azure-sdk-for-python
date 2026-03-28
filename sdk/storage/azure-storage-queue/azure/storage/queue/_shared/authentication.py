@@ -16,9 +16,9 @@ except ImportError:
     pass
 
 try:
-    from azure.core.pipeline.transport import (
+    from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import
         AioHttpTransport,
-    )  # pylint: disable=non-abstract-transport-import
+    )
 except ImportError:
     AioHttpTransport = None
 

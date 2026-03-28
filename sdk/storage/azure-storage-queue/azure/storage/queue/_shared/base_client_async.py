@@ -49,10 +49,10 @@ from .response_handlers import PartialBatchErrorException, process_storage_error
 from .._shared_access_signature import _is_credential_sastoken
 
 if TYPE_CHECKING:
-    from azure.core.pipeline.transport import (
+    from azure.core.pipeline.transport import (  # pylint: disable=C4756
         HttpRequest,
         HttpResponse,
-    )  # pylint: disable=C4756
+    )
 _LOGGER = logging.getLogger(__name__)
 
 _SERVICE_PARAMS = {
