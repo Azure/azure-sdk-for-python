@@ -1,3 +1,6 @@
+import os
+from unittest.mock import patch
+
 import pytest
 from typing import Callable
 from devtools_testutils import AzureRecordedTestCase, is_live
@@ -5,7 +8,7 @@ from devtools_testutils import AzureRecordedTestCase, is_live
 from azure.ai.ml import MLClient
 from azure.ai.ml.entities import PipelineJob, Job
 from azure.ai.ml.entities._job.job import Job as JobClass
-from azure.ai.ml.constants._common import GIT_PATH_PREFIX
+from azure.ai.ml.constants._common import GIT_PATH_PREFIX, AZUREML_PRIVATE_FEATURES_ENV_VAR
 from azure.ai.ml.exceptions import ValidationException, UserErrorException
 from azure.core.exceptions import ResourceNotFoundError
 
@@ -43,9 +46,11 @@ class TestJobOperationsGaps(AzureRecordedTestCase):
         # set code to a git path string to trigger the GIT_PATH_PREFIX check
         pj.code = GIT_PATH_PREFIX + "some/repo.git"
 
-        # When private preview is disabled, validation should capture the git-code error and raise when raise_on_failure=True
-        with pytest.raises(ValidationException):
-            client.jobs.validate(pj, raise_on_failure=True)
+        # Explicitly ensure private preview is disabled so the git-code check is active,
+        # even if a prior test in the session enabled it.
+        with patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "False"}):
+            with pytest.raises(ValidationException):
+                client.jobs.validate(pj, raise_on_failure=True)
 
     @pytest.mark.e2etest
     def test_get_named_output_uri_with_none_job_name_raises_user_error(
