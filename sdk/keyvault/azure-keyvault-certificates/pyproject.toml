@@ -1,16 +1,21 @@
 [build-system]
-requires = ["setuptools>=61.0.0", "wheel"]  # Requires 61.0.0 for dynamic version
+requires = [
+    "setuptools>=61.0.0",
+    "wheel",
+]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "azure-keyvault-certificates"
 authors = [
-    {name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com"},
+    { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
 description = "Microsoft Corporation Key Vault Certificates Client Library for Python"
-keywords = ["azure", "azure sdk"]
+keywords = [
+    "azure",
+    "azure sdk",
+]
 requires-python = ">=3.9"
-license = {text = "MIT License"}
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
@@ -28,29 +33,58 @@ dependencies = [
     "azure-core>=1.31.0",
     "typing-extensions>=4.6.0",
 ]
-dynamic = ["version", "readme"]
+dynamic = [
+    "version",
+    "readme",
+]
+
+[project.license]
+text = "MIT License"
 
 [project.urls]
 repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk"
 
-[tool.setuptools.dynamic]
-version = {attr = "azure.keyvault.certificates._version.VERSION"}
-readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
+[tool.setuptools.dynamic.version]
+attr = "azure.keyvault.certificates._version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = [
+    "README.md",
+    "CHANGELOG.md",
+]
+content-type = "text/markdown"
 
 [tool.setuptools.packages.find]
-exclude = ["samples*", "tests*", "azure", "azure.keyvault"]
+exclude = [
+    "samples*",
+    "tests*",
+    "azure",
+    "azure.keyvault",
+]
 
 [tool.setuptools.package-data]
-pytyped = ["py.typed"]
+pytyped = [
+    "py.typed",
+]
 
 [tool.azure-sdk-build]
 pyright = false
 
-[tool.uv.sources]
-azure-core = { path = "../../core/azure-core" }
-azure-identity = { path = "../../identity/azure-identity" }
-azure-keyvault-nspkg = { path = "../../nspkg/azure-keyvault-nspkg" }
-azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }
+[tool.uv.sources.azure-core]
+path = "../../core/azure-core"
+
+[tool.uv.sources.azure-identity]
+path = "../../identity/azure-identity"
+
+[tool.uv.sources.azure-keyvault-nspkg]
+path = "../../nspkg/azure-keyvault-nspkg"
+
+[tool.uv.sources.azure-sdk-tools]
+path = "../../../eng/tools/azure-sdk-tools"
+
+[tool.azure-sdk-conda]
+in_bundle = true
+bundle_name = "azure-keyvault"
 
 [dependency-groups]
 dev = [
@@ -64,6 +98,5 @@ dev = [
     "python-dateutil>=2.8.0",
 ]
 
-[tool.azure-sdk-conda]
-in_bundle = true
-bundle_name = "azure-keyvault"
+[packaging]
+auto_update = false
