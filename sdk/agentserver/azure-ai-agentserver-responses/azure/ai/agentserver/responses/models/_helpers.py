@@ -1,16 +1,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Helper functions for CreateResponse and Response model expansion.
-
-Mirrors .NET Azure.AI.AgentHost.Responses.Contracts/src/Custom/ extensions,
-adapted for the Python code generator's native union types.
-"""
+"""Helper functions for CreateResponse and Response model expansion."""
 
 from __future__ import annotations
 
-from typing import Any, Mapping, Optional, Union
-
-from azure.ai.agentserver.responses.models._generated.sdk.models._types import InputParam
+from typing import Any, Optional
 
 from ._generated import (
     ConversationParam_2,
@@ -190,7 +184,7 @@ def get_conversation_expanded(request: CreateResponse) -> Optional[ConversationP
 # ---------------------------------------------------------------------------
 
 
-def get_instruction_items(response: Response) -> list[dict]:
+def get_instruction_items(response: Response) -> list[Item]:
     """Expand ``Response.instructions`` into a list of :class:`Item`.
 
     - If instructions is ``None``, returns ``[]``.

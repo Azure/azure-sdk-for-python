@@ -21,7 +21,7 @@ from azure.ai.agentserver.responses.models._generated.sdk.models.models._models 
 
 from .._response_context import ResponseContext
 from .._options import ResponsesServerOptions
-from ..models import ResponseModeFlags
+from ..models.runtime import ResponseModeFlags
 from ..streaming._helpers import _encode_sse
 from ..streaming._sse import encode_sse_payload
 from ..streaming._state_machine import LifecycleStateMachineError, normalize_lifecycle_events

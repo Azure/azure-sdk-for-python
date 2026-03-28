@@ -2,10 +2,8 @@
 # Licensed under the MIT license.
 """Canonical non-generated model types for the response server."""
 
-# from .errors import RequestValidationError
 from .runtime import (
     ResponseExecution,
-    ResponseModeFlags,
     ResponseStatus,
     StreamEventRecord,
     StreamReplayState,
@@ -21,11 +19,11 @@ from ._helpers import (
     get_output_item_id,
     get_tool_choice_expanded,
 )
+from ._generated import *  # type: ignore # noqa: F401,F403
+from ._generated.sdk.models.models import __all__ as _generated_all
 
 __all__ = [
-    # "RequestValidationError",
     "ResponseExecution",
-    "ResponseModeFlags",
     "ResponseStatus",
     "StreamEventRecord",
     "StreamReplayState",
@@ -38,4 +36,5 @@ __all__ = [
     "get_instruction_items",
     "get_output_item_id",
     "get_tool_choice_expanded",
+    *_generated_all,
 ]

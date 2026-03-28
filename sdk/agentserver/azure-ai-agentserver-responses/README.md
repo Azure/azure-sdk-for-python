@@ -17,15 +17,26 @@ pip install azure-ai-agentserver-responses
 ### Implement a handler and register routes
 
 ```python
-from starlette.applications import Starlette
-from starlette.responses import JSONResponse
-from azure.ai.agentserver.responses import ResponseEventStream
-from azure.ai.agentserver.responses.hosting import map_responses_server
+import asyncio
+from collections.abc import AsyncIterable
+from typing import Any
 
-class EchoHandler:
-    """Simple handler yielding a deterministic response lifecycle."""
+from azure.ai.agentserver.core import AgentHost
+from azure.ai.agentserver.responses import ResponseContext
+from azure.ai.agentserver.responses.models._generated import CreateResponse
+from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
+from azure.ai.agentserver.responses.hosting import ResponseHandler
 
-    async def create_async(self, request, context, cancellation_signal):
+
+server = AgentHost()
+responses = ResponseHandler(server)
+
+
+@responses.create_handler
+def my_handler(
+    request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
+) -> AsyncIterable[dict[str, Any]]:
+    async def _events() -> AsyncIterable[dict[str, Any]]:
         stream = ResponseEventStream(
             response_id=context.response_id,
             model=getattr(request, "model", None),
@@ -39,25 +50,24 @@ class EchoHandler:
 
         text = message.add_text_content()
         yield text.emit_added()
-
-        yield text.emit_delta("Hello, ")
-        yield text.emit_delta("world!")
-
-        yield text.emit_done("Hello, world!")
+        yield text.emit_delta("Hello from the Python GettingStarted sample!")
+        yield text.emit_done("Hello from the Python GettingStarted sample!")
         yield message.emit_content_done(text)
+
         yield message.emit_done()
 
         yield stream.emit_completed()
 
-app = Starlette()
-app.add_route("/ready", lambda r: JSONResponse({"status": "ready"}), methods=["GET"])
-map_responses_server(app, EchoHandler())
+    return _events()
+
+
+server.run(host="127.0.0.1", port=5100)
 ```
 
-Run with [uvicorn](https://www.uvicorn.org/):
+Run:
 
 ```bash
-uvicorn app:app --host 0.0.0.0 --port 5100
+python app.py
 ```
 
 This gives you five endpoints:

@@ -12,14 +12,9 @@ from collections.abc import Sequence
 from typing import Any
 
 from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.responses._response_context import ResponseContext
-from azure.ai.agentserver.responses.models._generated.sdk.models._types import InputParam
-from azure.ai.agentserver.responses.models._generated.sdk.models.models._models import CreateResponse, OutputItem
-from azure.ai.agentserver.responses.models._helpers import get_input_text
-from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
+from azure.ai.agentserver.responses import ResponseContext, ResponsesServerOptions, ResponseEventStream
+from azure.ai.agentserver.responses.models import CreateResponse, OutputItem, get_input_text
 from azure.ai.agentserver.responses.hosting import ResponseHandler
-from azure.ai.agentserver.responses._options import ResponsesServerOptions
-
 
 
 def _build_reply(current_input: str, history: Sequence[OutputItem]) -> str:

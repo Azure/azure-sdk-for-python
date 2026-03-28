@@ -14,10 +14,8 @@ from collections.abc import AsyncIterable
 from typing import Any
 
 from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.responses import ResponseContext
-from azure.ai.agentserver.responses.models import get_input_expanded
-from azure.ai.agentserver.responses.models._generated.sdk.models.models._models import CreateResponse, ItemType
-from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
+from azure.ai.agentserver.responses import ResponseContext, ResponseEventStream
+from azure.ai.agentserver.responses.models import get_input_expanded, CreateResponse, ItemType
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 
 

@@ -4,13 +4,12 @@
 
 ### Features Added
 
-- Renamed package from `azure-ai-agentserver-hosting` to `azure-ai-agentserver-core`.
 - `AgentHost` host framework with health probe, graceful shutdown, and port binding.
 - `TracingHelper` for OpenTelemetry tracing with Azure Monitor and OTLP exporters.
 - Auto-enable tracing when Application Insights or OTLP endpoint is configured.
 - W3C Trace Context propagation and `leaf_customer_span_id` baggage re-parenting.
-- `error_response()` utility for standard error envelope responses.
-- `get_logger()` for library-scoped logging.
+- `ErrorResponse.create()` utility for standard error envelope responses.
+- `Agent` for library-scoped logging.
 - `StructuredLogFilter` and `LogScope` for per-request structured logging.
 - `register_routes()` for pluggable protocol composition.
 - Hypercorn-based ASGI server with HTTP/1.1 support.

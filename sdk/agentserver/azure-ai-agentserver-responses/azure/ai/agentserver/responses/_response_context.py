@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any, Sequence
 from azure.ai.agentserver.responses.models._generated.sdk.models._types import InputParam
 
 from .models._generated import CreateResponse, OutputItem
-from .models import ResponseModeFlags
+from .models.runtime import ResponseModeFlags
 
 if TYPE_CHECKING:
     from .store._base import ResponseProviderProtocol

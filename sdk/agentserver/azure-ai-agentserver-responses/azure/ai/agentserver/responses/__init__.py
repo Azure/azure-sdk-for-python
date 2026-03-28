@@ -27,6 +27,8 @@ from .store._foundry_errors import FoundryApiError, FoundryBadRequestError, Foun
 from .store._foundry_provider import FoundryStorageProvider
 from .store._foundry_settings import FoundryStorageSettings
 from .store._memory import InMemoryResponseProvider
+from .models._generated import *  # type: ignore # noqa: F401,F403
+from .models._generated.sdk.models.models import __all__ as _generated_all
 
 __all__ = [
     "ResponseContext",
@@ -56,4 +58,5 @@ __all__ = [
     "OutputItemMcpListToolsBuilder",
     "OutputItemCustomToolCallBuilder",
     "ResponseEventStream",
+    *_generated_all,
 ]
