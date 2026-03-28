@@ -110,46 +110,44 @@ def echo_response_handler(
     :param cancellation_signal: Event that signals cancellation.
     :return: Async iterable of response events.
     """
-    async def _events() -> AsyncIterable[dict[str, Any]]:
-        # Build the event stream helper
-        stream = ResponseEventStream(
-            response_id=context.response_id,
-            model=getattr(request, "model", None),
-        )
+    # Build the event stream helper
+    stream = ResponseEventStream(
+        response_id=context.response_id,
+        model=getattr(request, "model", None),
+    )
 
-        # Lifecycle: created -> in_progress
-        yield stream.emit_created()
-        yield stream.emit_in_progress()
+    # Lifecycle: created -> in_progress
+    yield stream.emit_created()
+    yield stream.emit_in_progress()
 
-        # Extract input text
-        echo_text = get_input_text(request) or "hello!"
+    # Extract input text
+    echo_text = get_input_text(request) or "hello!"
 
-        # Emit an output message with text content
-        message_item = stream.add_output_item_message()
-        yield message_item.emit_added()
+    # Emit an output message with text content
+    message_item = stream.add_output_item_message()
+    yield message_item.emit_added()
 
-        text_content = message_item.add_text_content()
-        yield text_content.emit_added()
+    text_content = message_item.add_text_content()
+    yield text_content.emit_added()
 
-        # Stream the echo text word-by-word for demonstration
-        words = f"[Response] Echo: {echo_text}".split()
-        for i, word in enumerate(words):
-            # Check for cancellation between chunks
-            if cancellation_signal.is_set():
-                yield stream.emit_incomplete(reason="cancelled")
-                return
+    # Stream the echo text word-by-word for demonstration
+    words = f"[Response] Echo: {echo_text}".split()
+    for i, word in enumerate(words):
+        # Check for cancellation between chunks
+        if cancellation_signal.is_set():
+            yield stream.emit_incomplete(reason="cancelled")
+            return
 
-            delta = word if i == 0 else f" {word}"
-            yield text_content.emit_delta(delta)
+        delta = word if i == 0 else f" {word}"
+        yield text_content.emit_delta(delta)
 
-        yield text_content.emit_done()
-        yield message_item.emit_content_done(text_content)
-        yield message_item.emit_done()
+    yield text_content.emit_done()
+    yield message_item.emit_content_done(text_content)
+    yield message_item.emit_done()
 
-        # Lifecycle: completed
-        yield stream.emit_completed()
+    # Lifecycle: completed
+    yield stream.emit_completed()
 
-    return _events()
 
 
 # =====================================================================

@@ -9,7 +9,8 @@ Provides the Responses API endpoints and registers them with the
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Optional
+import types
+from typing import TYPE_CHECKING, AsyncIterator, Callable, Optional
 
 from starlette.routing import Route
 
@@ -26,6 +27,12 @@ if TYPE_CHECKING:
     from azure.ai.agentserver.core import AgentHost, TracingHelper
 
 logger = AgentLogger.get()
+
+
+async def _sync_to_async_gen(sync_gen: types.GeneratorType) -> AsyncIterator:
+    """Wrap a synchronous generator into an async generator."""
+    for item in sync_gen:
+        yield item
 
 
 class ResponseHandler:
@@ -49,9 +56,7 @@ class ResponseHandler:
 
         @responses.create_handler
         def my_handler(request, context, cancellation_signal):
-            async def _events():
-                yield event
-            return _events()
+            yield event
 
         server.run()
 
@@ -175,9 +180,7 @@ class ResponseHandler:
 
             @responses.create_handler
             def my_handler(request, context, cancellation_signal):
-                async def _events():
-                    yield event
-                return _events()
+                yield event
 
         :param fn: A callable accepting (request, context, cancellation_signal).
         :type fn: Callable
@@ -195,6 +198,9 @@ class ResponseHandler:
         """Dispatch to the registered create handler.
 
         Called by the orchestrator when processing a create request.
+        If the handler returns a sync generator, it is automatically
+        wrapped into an async generator so the orchestrator can
+        ``await __anext__()`` uniformly.
 
         :param request: The parsed create-response request.
         :type request: Any
@@ -209,7 +215,10 @@ class ResponseHandler:
             raise NotImplementedError(
                 "No create handler registered. Use the @responses.create_handler decorator."
             )
-        return self._create_fn(request, context, cancellation_signal)
+        result = self._create_fn(request, context, cancellation_signal)
+        if isinstance(result, types.GeneratorType):
+            return _sync_to_async_gen(result)
+        return result
 
     # ------------------------------------------------------------------
     # Routes
