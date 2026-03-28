@@ -60,7 +60,7 @@ class UsagesOperations:
     def list(self, location: str, filter: Optional[str] = None, **kwargs: Any) -> AsyncItemPaged["_models.Usage"]:
         """Get usages for the requested subscription.
 
-        :param location: Resource location. Required.
+        :param location: The name of Azure region. Required.
         :type location: str
         :param filter: An OData filter expression that describes a subset of usages to return. The
          supported parameter is name.value (name of the metric, can have an or of multiple names).

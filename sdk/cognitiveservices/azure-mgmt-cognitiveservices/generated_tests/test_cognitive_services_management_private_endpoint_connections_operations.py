@@ -24,7 +24,7 @@ class TestCognitiveServicesManagementPrivateEndpointConnectionsOperations(AzureM
         response = self.client.private_endpoint_connections.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestCognitiveServicesManagementPrivateEndpointConnectionsOperations(AzureM
             resource_group_name=resource_group.name,
             account_name="str",
             private_endpoint_connection_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -75,7 +75,7 @@ class TestCognitiveServicesManagementPrivateEndpointConnectionsOperations(AzureM
                 },
                 "type": "str",
             },
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -88,7 +88,7 @@ class TestCognitiveServicesManagementPrivateEndpointConnectionsOperations(AzureM
             resource_group_name=resource_group.name,
             account_name="str",
             private_endpoint_connection_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

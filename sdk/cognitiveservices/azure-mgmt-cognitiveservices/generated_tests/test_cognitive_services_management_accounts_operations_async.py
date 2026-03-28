@@ -21,6 +21,39 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_accounts_list(self, resource_group):
+        response = self.client.accounts.list(
+            api_version="2026-01-15-preview",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_accounts_list_by_resource_group(self, resource_group):
+        response = self.client.accounts.list_by_resource_group(
+            resource_group_name=resource_group.name,
+            api_version="2026-01-15-preview",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_accounts_get(self, resource_group):
+        response = await self.client.accounts.get(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            api_version="2026-01-15-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_accounts_begin_create(self, resource_group):
         response = await (
             await self.client.accounts.begin_create(
@@ -83,7 +116,7 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
                         "disableLocalAuth": bool,
                         "dynamicThrottlingEnabled": bool,
                         "encryption": {
-                            "keySource": "Microsoft.KeyVault",
+                            "keySource": "str",
                             "keyVaultProperties": {
                                 "identityClientId": "str",
                                 "keyName": "str",
@@ -178,7 +211,7 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-09-01",
+                api_version="2026-01-15-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -249,7 +282,7 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
                         "disableLocalAuth": bool,
                         "dynamicThrottlingEnabled": bool,
                         "encryption": {
-                            "keySource": "Microsoft.KeyVault",
+                            "keySource": "str",
                             "keyVaultProperties": {
                                 "identityClientId": "str",
                                 "keyName": "str",
@@ -344,7 +377,7 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-09-01",
+                api_version="2026-01-15-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -358,43 +391,10 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
             await self.client.accounts.begin_delete(
                 resource_group_name=resource_group.name,
                 account_name="str",
-                api_version="2025-09-01",
+                api_version="2026-01-15-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_accounts_get(self, resource_group):
-        response = await self.client.accounts.get(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            api_version="2025-09-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_accounts_list_by_resource_group(self, resource_group):
-        response = self.client.accounts.list_by_resource_group(
-            resource_group_name=resource_group.name,
-            api_version="2025-09-01",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_accounts_list(self, resource_group):
-        response = self.client.accounts.list(
-            api_version="2025-09-01",
-        )
-        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -404,44 +404,7 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
         response = await self.client.accounts.list_keys(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-09-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_accounts_regenerate_key(self, resource_group):
-        response = await self.client.accounts.regenerate_key(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            key_name="str",
-            api_version="2025-09-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_accounts_list_skus(self, resource_group):
-        response = await self.client.accounts.list_skus(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            api_version="2025-09-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_accounts_list_usages(self, resource_group):
-        response = await self.client.accounts.list_usages(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -453,8 +416,45 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
         response = self.client.accounts.list_models(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         )
         result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_accounts_regenerate_key(self, resource_group):
+        response = await self.client.accounts.regenerate_key(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            parameters={"keyName": "str"},
+            api_version="2026-01-15-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_accounts_list_skus(self, resource_group):
+        response = await self.client.accounts.list_skus(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            api_version="2026-01-15-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_accounts_list_usages(self, resource_group):
+        response = await self.client.accounts.list_usages(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            api_version="2026-01-15-preview",
+        )
+
         # please add some check logic here by yourself
         # ...

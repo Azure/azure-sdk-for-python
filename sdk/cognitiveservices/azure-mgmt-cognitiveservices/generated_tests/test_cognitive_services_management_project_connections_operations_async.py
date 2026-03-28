@@ -21,15 +21,14 @@ class TestCognitiveServicesManagementProjectConnectionsOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_project_connections_delete(self, resource_group):
-        response = await self.client.project_connections.delete(
+    async def test_project_connections_list(self, resource_group):
+        response = self.client.project_connections.list(
             resource_group_name=resource_group.name,
             account_name="str",
             project_name="str",
-            connection_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         )
-
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -41,21 +40,7 @@ class TestCognitiveServicesManagementProjectConnectionsOperationsAsync(AzureMgmt
             account_name="str",
             project_name="str",
             connection_name="str",
-            api_version="2025-09-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_project_connections_update(self, resource_group):
-        response = await self.client.project_connections.update(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            project_name="str",
-            connection_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -69,7 +54,7 @@ class TestCognitiveServicesManagementProjectConnectionsOperationsAsync(AzureMgmt
             account_name="str",
             project_name="str",
             connection_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -77,13 +62,28 @@ class TestCognitiveServicesManagementProjectConnectionsOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_project_connections_list(self, resource_group):
-        response = self.client.project_connections.list(
+    async def test_project_connections_update(self, resource_group):
+        response = await self.client.project_connections.update(
             resource_group_name=resource_group.name,
             account_name="str",
             project_name="str",
-            api_version="2025-09-01",
+            connection_name="str",
+            api_version="2026-01-15-preview",
         )
-        result = [r async for r in response]
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_project_connections_delete(self, resource_group):
+        response = await self.client.project_connections.delete(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            project_name="str",
+            connection_name="str",
+            api_version="2026-01-15-preview",
+        )
+
         # please add some check logic here by yourself
         # ...

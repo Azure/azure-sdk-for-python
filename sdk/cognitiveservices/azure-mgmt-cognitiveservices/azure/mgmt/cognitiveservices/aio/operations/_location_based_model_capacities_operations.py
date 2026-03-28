@@ -62,7 +62,7 @@ class LocationBasedModelCapacitiesOperations:
     ) -> AsyncItemPaged["_models.ModelCapacityListResultValueItem"]:
         """List Location Based ModelCapacities.
 
-        :param location: Resource location. Required.
+        :param location: The name of Azure region. Required.
         :type location: str
         :param model_format: The format of the Model. Required.
         :type model_format: str

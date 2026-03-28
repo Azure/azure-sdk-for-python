@@ -42,7 +42,7 @@ def build_list_request(location: str, subscription_id: str, **kwargs: Any) -> Ht
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -52,7 +52,7 @@ def build_list_request(location: str, subscription_id: str, **kwargs: Any) -> Ht
     )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "location": _SERIALIZER.url("location", location, "str"),
+        "location": _SERIALIZER.url("location", location, "str", min_length=1),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -70,7 +70,7 @@ def build_get_request(location: str, filter_name: str, subscription_id: str, **k
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -80,7 +80,7 @@ def build_get_request(location: str, filter_name: str, subscription_id: str, **k
     )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "location": _SERIALIZER.url("location", location, "str"),
+        "location": _SERIALIZER.url("location", location, "str", min_length=1),
         "filterName": _SERIALIZER.url("filter_name", filter_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"),
     }
 
@@ -120,7 +120,7 @@ class RaiContentFiltersOperations:
     def list(self, location: str, **kwargs: Any) -> ItemPaged["_models.RaiContentFilter"]:
         """List Content Filters types.
 
-        :param location: Resource location. Required.
+        :param location: The name of Azure region. Required.
         :type location: str
         :return: An iterator like instance of either RaiContentFilter or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cognitiveservices.models.RaiContentFilter]
@@ -198,7 +198,7 @@ class RaiContentFiltersOperations:
     def get(self, location: str, filter_name: str, **kwargs: Any) -> _models.RaiContentFilter:
         """Get Content Filters by Name.
 
-        :param location: Resource location. Required.
+        :param location: The name of Azure region. Required.
         :type location: str
         :param filter_name: The name of the RAI Content Filter. Required.
         :type filter_name: str

@@ -46,7 +46,7 @@ def build_list_request(resource_group_name: str, account_name: str, subscription
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -55,13 +55,13 @@ def build_list_request(resource_group_name: str, account_name: str, subscription
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/networkSecurityPerimeterConfigurations",
     )
     path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
             "account_name", account_name, "str", max_length=64, min_length=2, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -81,7 +81,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -90,13 +90,13 @@ def build_get_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/networkSecurityPerimeterConfigurations/{nspConfigurationName}",
     )
     path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
             "account_name", account_name, "str", max_length=64, min_length=2, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "nspConfigurationName": _SERIALIZER.url(
             "nsp_configuration_name", nsp_configuration_name, "str", pattern=r"^.*$"
         ),
@@ -119,7 +119,7 @@ def build_reconcile_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -128,13 +128,13 @@ def build_reconcile_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/networkSecurityPerimeterConfigurations/{nspConfigurationName}/reconcile",
     )
     path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
             "account_name", account_name, "str", max_length=64, min_length=2, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "nspConfigurationName": _SERIALIZER.url(
             "nsp_configuration_name", nsp_configuration_name, "str", pattern=r"^.*$"
         ),
@@ -366,6 +366,7 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)

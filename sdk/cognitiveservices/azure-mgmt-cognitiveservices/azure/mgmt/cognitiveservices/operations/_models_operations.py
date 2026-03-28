@@ -41,7 +41,7 @@ def build_list_request(location: str, subscription_id: str, **kwargs: Any) -> Ht
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -51,7 +51,7 @@ def build_list_request(location: str, subscription_id: str, **kwargs: Any) -> Ht
     )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "location": _SERIALIZER.url("location", location, "str"),
+        "location": _SERIALIZER.url("location", location, "str", min_length=1),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -90,7 +90,7 @@ class ModelsOperations:
     def list(self, location: str, **kwargs: Any) -> ItemPaged["_models.Model"]:
         """List Models.
 
-        :param location: Resource location. Required.
+        :param location: The name of Azure region. Required.
         :type location: str
         :return: An iterator like instance of either Model or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cognitiveservices.models.Model]

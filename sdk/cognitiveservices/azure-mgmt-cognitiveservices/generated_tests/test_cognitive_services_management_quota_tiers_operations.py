@@ -22,7 +22,7 @@ class TestCognitiveServicesManagementQuotaTiersOperations(AzureMgmtRecordedTestC
     @recorded_by_proxy
     def test_quota_tiers_list_by_subscription(self, resource_group):
         response = self.client.quota_tiers.list_by_subscription(
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,42 +33,7 @@ class TestCognitiveServicesManagementQuotaTiersOperations(AzureMgmtRecordedTestC
     def test_quota_tiers_get(self, resource_group):
         response = self.client.quota_tiers.get(
             default="str",
-            api_version="2025-09-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_quota_tiers_update(self, resource_group):
-        response = self.client.quota_tiers.update(
-            default="str",
-            tier={
-                "id": "str",
-                "name": "str",
-                "properties": {
-                    "assignmentDate": "2020-02-20 00:00:00",
-                    "currentTierName": "str",
-                    "tierUpgradeEligibilityInfo": {
-                        "nextTierName": "str",
-                        "upgradeApplicableDate": "2020-02-20 00:00:00",
-                        "upgradeAvailabilityStatus": "str",
-                        "upgradeUnavailabilityReason": "str",
-                    },
-                    "tierUpgradePolicy": "str",
-                },
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
-                },
-                "type": "str",
-            },
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -103,7 +68,42 @@ class TestCognitiveServicesManagementQuotaTiersOperations(AzureMgmtRecordedTestC
                 },
                 "type": "str",
             },
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_quota_tiers_update(self, resource_group):
+        response = self.client.quota_tiers.update(
+            default="str",
+            tier={
+                "id": "str",
+                "name": "str",
+                "properties": {
+                    "assignmentDate": "2020-02-20 00:00:00",
+                    "currentTierName": "str",
+                    "tierUpgradeEligibilityInfo": {
+                        "nextTierName": "str",
+                        "upgradeApplicableDate": "2020-02-20 00:00:00",
+                        "upgradeAvailabilityStatus": "str",
+                        "upgradeUnavailabilityReason": "str",
+                    },
+                    "tierUpgradePolicy": "str",
+                },
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "type": "str",
+            },
+            api_version="2026-01-15-preview",
         )
 
         # please add some check logic here by yourself

@@ -20,12 +20,24 @@ class TestCognitiveServicesManagementRaiTopicsOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_rai_topics_list(self, resource_group):
+        response = self.client.rai_topics.list(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            api_version="2026-01-15-preview",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_rai_topics_get(self, resource_group):
         response = self.client.rai_topics.get(
             resource_group_name=resource_group.name,
             account_name="str",
             rai_topic_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -63,7 +75,7 @@ class TestCognitiveServicesManagementRaiTopicsOperations(AzureMgmtRecordedTestCa
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -76,20 +88,8 @@ class TestCognitiveServicesManagementRaiTopicsOperations(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             account_name="str",
             rai_topic_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_rai_topics_list(self, resource_group):
-        response = self.client.rai_topics.list(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            api_version="2025-09-01",
-        )
-        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

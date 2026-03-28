@@ -24,7 +24,7 @@ class TestCognitiveServicesManagementEncryptionScopesOperations(AzureMgmtRecorde
         response = self.client.encryption_scopes.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestCognitiveServicesManagementEncryptionScopesOperations(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             account_name="str",
             encryption_scope_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -55,7 +55,7 @@ class TestCognitiveServicesManagementEncryptionScopesOperations(AzureMgmtRecorde
                 "id": "str",
                 "name": "str",
                 "properties": {
-                    "keySource": "Microsoft.KeyVault",
+                    "keySource": "str",
                     "keyVaultProperties": {
                         "identityClientId": "str",
                         "keyName": "str",
@@ -76,7 +76,7 @@ class TestCognitiveServicesManagementEncryptionScopesOperations(AzureMgmtRecorde
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -89,7 +89,7 @@ class TestCognitiveServicesManagementEncryptionScopesOperations(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             account_name="str",
             encryption_scope_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

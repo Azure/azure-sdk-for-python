@@ -31,10 +31,19 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.calculate_model_capacity()
+    response = client.calculate_model_capacity(
+        parameters={
+            "model": {"format": "OpenAI", "name": "gpt-4", "version": "0613"},
+            "skuName": "ProvisionedManaged",
+            "workloads": [
+                {"requestParameters": {"avgGeneratedTokens": 50, "avgPromptTokens": 30}, "requestPerMinute": 10},
+                {"requestParameters": {"avgGeneratedTokens": 20, "avgPromptTokens": 60}, "requestPerMinute": 20},
+            ],
+        },
+    )
     print(response)
 
 
-# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2025-09-01/examples/CalculateModelCapacity.json
+# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/preview/2026-01-15-preview/examples/CalculateModelCapacity.json
 if __name__ == "__main__":
     main()
