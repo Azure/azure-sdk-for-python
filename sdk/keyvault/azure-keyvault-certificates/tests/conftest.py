@@ -33,6 +33,7 @@ from devtools_testutils import (
     add_oauth_response_sanitizer,
     add_general_regex_sanitizer,
     remove_batch_sanitizers,
+    set_custom_default_matcher,
 )
 
 
@@ -52,6 +53,9 @@ def add_sanitizers(test_proxy):
     #  - AZSDK3430: $..id
     #  - AZSDK3493: $..name
     remove_batch_sanitizers(["AZSDK3430", "AZSDK3493"])
+
+    # Ignore the Accept header to avoid test playback mismatches from generation updates
+    set_custom_default_matcher(ignored_headers="Accept")
 
 
 @pytest.fixture(scope="session", autouse=True)
