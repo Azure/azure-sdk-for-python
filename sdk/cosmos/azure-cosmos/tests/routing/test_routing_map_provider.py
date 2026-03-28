@@ -13,6 +13,7 @@ from azure.cosmos import http_constants
 
 from typing import Optional, Mapping, Any
 from unittest.mock import patch, MagicMock
+import threading
 
 @pytest.mark.cosmosEmulator
 class TestRoutingMapProvider(unittest.TestCase):
@@ -230,7 +231,16 @@ class TestRoutingMapProvider(unittest.TestCase):
         self.assertEqual(call_count['count'], 1, "Service should only be called once")
 
     def test_get_routing_map_force_refresh(self):
-        """force_refresh=True causes a re-fetch even when cache is populated."""
+        """force_refresh=True causes a re-fetch even when cache is populated.
+
+        The force_refresh path passes the previous routing map as the base for an
+        incremental update. When the service returns the same ranges without parents
+        (simulating no actual changes), the no-parents defensive check triggers a
+        full refresh fallback, resulting in 3 total service calls:
+        1. Initial load
+        2. Incremental attempt (force_refresh)
+        3. Full refresh fallback (no parents on incremental ranges)
+        """
         call_count = {'count': 0}
         original_ranges = self.partition_key_ranges
 
@@ -252,7 +262,8 @@ class TestRoutingMapProvider(unittest.TestCase):
             collection_link, feed_options={},
             force_refresh=True, previous_routing_map=result1
         )
-        self.assertEqual(call_count['count'], 2, "force_refresh should trigger a second fetch")
+        # Incremental attempt sees ranges without parents -> falls back to full refresh
+        self.assertEqual(call_count['count'], 3, "force_refresh should trigger incremental + full fallback")
         self.assertIsNotNone(result2)
 
     def test_is_cache_stale_etag_logic(self):
@@ -484,8 +495,13 @@ class TestRoutingMapProvider(unittest.TestCase):
         # Second call (full load fallback) should NOT have IfNoneMatch
         self.assertNotIn(http_constants.HttpHeaders.IfNoneMatch, captured_headers_list[1])
 
-    def test_fetch_routing_map_incremental_existing_range_no_parents(self):
-        """Incremental update correctly handles an existing range reappearing without parents (metadata update)."""
+    def test_fetch_routing_map_incremental_no_parents_falls_back_to_full_refresh(self):
+        """Incremental update falls back to full refresh when a range has no parents.
+
+        No known service behavior produces a range with no parents in an incremental
+        change feed response. When encountered, the code defensively falls back to a
+        full refresh rather than silently accepting the range.
+        """
         initial_ranges = [
             {'id': '0', 'minInclusive': '', 'maxExclusive': '80'},
             {'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'}
@@ -496,21 +512,31 @@ class TestRoutingMapProvider(unittest.TestCase):
             '"etag-1"'
         )
 
-        # Range '1' reappears with no parents (metadata update) + range '0' splits
+        call_count = {'count': 0}
+        # Delta includes a split + a range with no parents
         delta_ranges = [
             {'id': '2', 'minInclusive': '', 'maxExclusive': '40', 'parents': ['0']},
             {'id': '3', 'minInclusive': '40', 'maxExclusive': '80', 'parents': ['0']},
-            {'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'},  # no parents — stable
+            {'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'},  # no parents — triggers fallback
+        ]
+        # Full refresh returns the final state
+        full_ranges = [
+            {'id': '2', 'minInclusive': '', 'maxExclusive': '40'},
+            {'id': '3', 'minInclusive': '40', 'maxExclusive': '80'},
+            {'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'}
         ]
 
-        class DeltaClient:
+        class FallbackClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
-                    response_hook({'etag': '"etag-2"'}, None)
-                return delta_ranges
+                    response_hook({'etag': f'"etag-{call_count["count"]}"'}, None)
+                if call_count['count'] == 1:
+                    return delta_ranges
+                return full_ranges
 
-        provider = PartitionKeyRangeCache(DeltaClient())
+        provider = PartitionKeyRangeCache(FallbackClient())
         from azure.cosmos import _base
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
@@ -522,7 +548,8 @@ class TestRoutingMapProvider(unittest.TestCase):
             feed_options={}
         )
 
-        self.assertIsNotNone(result)
+        self.assertIsNotNone(result, "Should succeed via full refresh fallback")
+        self.assertEqual(call_count['count'], 2, "Should call service twice (incremental + full fallback)")
         ranges = list(result._orderedPartitionKeyRanges)
         self.assertEqual(len(ranges), 3)
         self.assertEqual(ranges[0]['id'], '2')
@@ -530,7 +557,12 @@ class TestRoutingMapProvider(unittest.TestCase):
         self.assertEqual(ranges[2]['id'], '1')
 
     def test_fetch_routing_map_incremental_unknown_range_no_parents_falls_back(self):
-        """Incremental update with an unknown range ID and no parents (merge scenario) falls back to full refresh."""
+        """Incremental update with an unknown range ID and no parents falls back to full refresh.
+
+        No known service behavior produces a range with no parents in an incremental
+        change feed response. The code defensively falls back to a full refresh
+        immediately upon encountering such a range.
+        """
         initial_ranges = [
             {'id': '0', 'minInclusive': '', 'maxExclusive': '40'},
             {'id': '1', 'minInclusive': '40', 'maxExclusive': '80'},
@@ -580,6 +612,401 @@ class TestRoutingMapProvider(unittest.TestCase):
         self.assertEqual(len(ranges), 2)
         self.assertEqual(ranges[0]['id'], '7')
         self.assertEqual(ranges[1]['id'], '2')
+
+    def test_fetch_routing_map_merge_parents0_evicted_later_parent_cached(self):
+        """Merge where parents[0] is an evicted grandparent but a later parent IS in cache.
+
+        This is the core scenario the fix addresses. Before the fix, the code only
+        checked parents[0] and would fall back to a full refresh unnecessarily.
+
+        Scenario:
+        - Range '1' split into '1A' and '1B' (SDK processed this earlier, evicted '1')
+        - Cache has: {0, 1A, 1B, 2}
+        - Now '1A' and '1B' merge into '3' with parents=['1', '1A', '1B']
+        - parents[0]='1' is NOT in cache (evicted grandparent)
+        - parents[1]='1A' IS in cache -> should find it and succeed incrementally
+        """
+        initial_ranges = [
+            {'id': '0', 'minInclusive': '', 'maxExclusive': '40'},
+            {'id': '1A', 'minInclusive': '40', 'maxExclusive': '60'},
+            {'id': '1B', 'minInclusive': '60', 'maxExclusive': '80'},
+            {'id': '2', 'minInclusive': '80', 'maxExclusive': 'FF'}
+        ]
+        initial_map = CollectionRoutingMap.CompleteRoutingMap(
+            [(r, True) for r in initial_ranges],
+            'dbs/db/colls/container',
+            '"etag-B"'
+        )
+
+        # Merge delta: '1A' and '1B' merge into '3', parents includes evicted '1'
+        delta_ranges = [
+            {'id': '3', 'minInclusive': '40', 'maxExclusive': '80', 'parents': ['1', '1A', '1B']}
+        ]
+        call_count = {'count': 0}
+
+        class MergeClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
+                response_hook = kwargs.get('response_hook')
+                if response_hook:
+                    response_hook({'etag': '"etag-C"'}, None)
+                return delta_ranges
+
+        provider = PartitionKeyRangeCache(MergeClient())
+        from azure.cosmos import _base
+        collection_link = "dbs/db/colls/container"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        result = provider._fetch_routing_map(
+            collection_link=collection_link,
+            collection_id=collection_id,
+            previous_routing_map=initial_map,
+            feed_options={}
+        )
+
+        self.assertIsNotNone(result, "Should succeed incrementally — parents[1] is in cache")
+        self.assertEqual(call_count['count'], 1, "Should only call service once (no fallback needed)")
+        ranges = list(result._orderedPartitionKeyRanges)
+        self.assertEqual(len(ranges), 3)
+        ids = [r['id'] for r in ranges]
+        self.assertEqual(ids, ['0', '3', '2'])
+
+    def test_fetch_routing_map_merge_all_parents_cached(self):
+        """Merge where all parents are in cache — validates first-match range_info inheritance.
+
+        Scenario:
+        - Cache has: {0, 1, 2} with distinct range_info values
+        - Ranges '0' and '1' merge into '3' with parents=['0', '1']
+        - Both '0' and '1' are in cache → should pick '0' (first match) range_info
+        """
+        initial_ranges = [
+            {'id': '0', 'minInclusive': '', 'maxExclusive': '40'},
+            {'id': '1', 'minInclusive': '40', 'maxExclusive': '80'},
+            {'id': '2', 'minInclusive': '80', 'maxExclusive': 'FF'}
+        ]
+        initial_map = CollectionRoutingMap.CompleteRoutingMap(
+            [(initial_ranges[0], 'info_0'), (initial_ranges[1], 'info_1'), (initial_ranges[2], 'info_2')],
+            'dbs/db/colls/container',
+            '"etag-1"'
+        )
+
+        delta_ranges = [
+            {'id': '3', 'minInclusive': '', 'maxExclusive': '80', 'parents': ['0', '1']}
+        ]
+
+        class MergeClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                response_hook = kwargs.get('response_hook')
+                if response_hook:
+                    response_hook({'etag': '"etag-2"'}, None)
+                return delta_ranges
+
+        provider = PartitionKeyRangeCache(MergeClient())
+        from azure.cosmos import _base
+        collection_link = "dbs/db/colls/container"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        result = provider._fetch_routing_map(
+            collection_link=collection_link,
+            collection_id=collection_id,
+            previous_routing_map=initial_map,
+            feed_options={}
+        )
+
+        self.assertIsNotNone(result, "Should succeed incrementally with all parents in cache")
+        ranges = list(result._orderedPartitionKeyRanges)
+        self.assertEqual(len(ranges), 2)
+        self.assertEqual(ranges[0]['id'], '3')
+        self.assertEqual(ranges[1]['id'], '2')
+        # range_info should be inherited from the first cached parent ('0' → 'info_0')
+        self.assertEqual(result._orderedPartitionInfo[0], 'info_0')
+        # Stable range '2' should keep its original range_info
+        self.assertEqual(result._orderedPartitionInfo[1], 'info_2')
+
+    def test_fetch_routing_map_two_rapid_splits_all_parents_missing(self):
+        """Two rapid splits where the intermediate range was never cached.
+
+        Scenario:
+        - SDK cache has: {0, 1, 2} with etag="etag-ANCIENT"
+        - Meanwhile on the service:
+          1. Range '1' split into '1A' and '1B'
+          2. Range '1A' split again into '1A-i' and '1A-ii'
+        - Delta returns '1A-i' with parents=['1A'], '1A-ii' with parents=['1A'], '1B' with parents=['1']
+        - '1B' has parent '1' → found in cache ✅
+        - '1A-i' has parent '1A' → NOT found (intermediate, never cached) → falls back to full refresh
+
+        This scenario validates that when none of a range's parents are in cache,
+        the code correctly falls back to a full refresh.
+        """
+        initial_ranges = [
+            {'id': '0', 'minInclusive': '', 'maxExclusive': '40'},
+            {'id': '1', 'minInclusive': '40', 'maxExclusive': '80'},
+            {'id': '2', 'minInclusive': '80', 'maxExclusive': 'FF'}
+        ]
+        initial_map = CollectionRoutingMap.CompleteRoutingMap(
+            [(r, True) for r in initial_ranges],
+            'dbs/db/colls/container',
+            '"etag-ANCIENT"'
+        )
+
+        call_count = {'count': 0}
+        # Delta from two rapid splits: '1A' was intermediate (never cached)
+        delta_ranges = [
+            {'id': '1B', 'minInclusive': '60', 'maxExclusive': '80', 'parents': ['1']},
+            {'id': '1A-i', 'minInclusive': '40', 'maxExclusive': '50', 'parents': ['1A']},
+            {'id': '1A-ii', 'minInclusive': '50', 'maxExclusive': '60', 'parents': ['1A']}
+        ]
+        # Full refresh returns the final state
+        full_ranges = [
+            {'id': '0', 'minInclusive': '', 'maxExclusive': '40'},
+            {'id': '1A-i', 'minInclusive': '40', 'maxExclusive': '50'},
+            {'id': '1A-ii', 'minInclusive': '50', 'maxExclusive': '60'},
+            {'id': '1B', 'minInclusive': '60', 'maxExclusive': '80'},
+            {'id': '2', 'minInclusive': '80', 'maxExclusive': 'FF'}
+        ]
+
+        class RapidSplitClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
+                response_hook = kwargs.get('response_hook')
+                if response_hook:
+                    response_hook({'etag': f'"etag-{call_count["count"]}"'}, None)
+                if call_count['count'] == 1:
+                    return delta_ranges
+                return full_ranges
+
+        provider = PartitionKeyRangeCache(RapidSplitClient())
+        from azure.cosmos import _base
+        collection_link = "dbs/db/colls/container"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        result = provider._fetch_routing_map(
+            collection_link=collection_link,
+            collection_id=collection_id,
+            previous_routing_map=initial_map,
+            feed_options={}
+        )
+
+        self.assertIsNotNone(result, "Should succeed via full refresh fallback")
+        self.assertEqual(call_count['count'], 2, "Should call service twice (incremental + full fallback)")
+        ranges = list(result._orderedPartitionKeyRanges)
+        self.assertEqual(len(ranges), 5)
+        ids = [r['id'] for r in ranges]
+        self.assertEqual(ids, ['0', '1A-i', '1A-ii', '1B', '2'])
+
+    def test_fetch_routing_map_merge_range_info_from_correct_parent(self):
+        """Verifies range_info is inherited from the first CACHED parent, not necessarily parents[0].
+
+        Scenario:
+        - Cache has: {0, 1A, 1B, 2} with range_info='info_1A' for '1A' and 'info_1B' for '1B'
+        - Merge: '1A' and '1B' into '3' with parents=['1', '1A', '1B']
+        - parents[0]='1' not in cache, parents[1]='1A' is in cache
+        - range_info should be 'info_1A' (from '1A', the first cached parent)
+        """
+        initial_ranges = [
+            {'id': '0', 'minInclusive': '', 'maxExclusive': '40'},
+            {'id': '1A', 'minInclusive': '40', 'maxExclusive': '60'},
+            {'id': '1B', 'minInclusive': '60', 'maxExclusive': '80'},
+            {'id': '2', 'minInclusive': '80', 'maxExclusive': 'FF'}
+        ]
+        initial_map = CollectionRoutingMap.CompleteRoutingMap(
+            [(initial_ranges[0], 'info_0'),
+             (initial_ranges[1], 'info_1A'),
+             (initial_ranges[2], 'info_1B'),
+             (initial_ranges[3], 'info_2')],
+            'dbs/db/colls/container',
+            '"etag-1"'
+        )
+
+        delta_ranges = [
+            {'id': '3', 'minInclusive': '40', 'maxExclusive': '80', 'parents': ['1', '1A', '1B']}
+        ]
+
+        class MergeClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                response_hook = kwargs.get('response_hook')
+                if response_hook:
+                    response_hook({'etag': '"etag-2"'}, None)
+                return delta_ranges
+
+        provider = PartitionKeyRangeCache(MergeClient())
+        from azure.cosmos import _base
+        collection_link = "dbs/db/colls/container"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        result = provider._fetch_routing_map(
+            collection_link=collection_link,
+            collection_id=collection_id,
+            previous_routing_map=initial_map,
+            feed_options={}
+        )
+
+        self.assertIsNotNone(result)
+        ranges = list(result._orderedPartitionKeyRanges)
+        self.assertEqual(len(ranges), 3)
+        self.assertEqual(ranges[0]['id'], '0')
+        self.assertEqual(ranges[1]['id'], '3')
+        self.assertEqual(ranges[2]['id'], '2')
+        # range_info for '3' should come from '1A' (first cached parent), not '1' (evicted)
+        self.assertEqual(result._orderedPartitionInfo[1], 'info_1A')
+
+    def test_force_refresh_without_previous_map_skips_redundant_fetch(self):
+        """force_refresh=True without previous_routing_map should NOT trigger a redundant fetch.
+
+        This validates that `and` is correct: force_refresh=True alone is NOT sufficient
+        to trigger a fetch when the cache is already populated. The `_is_cache_stale()` check
+        returns False when no previous_routing_map is provided, so `and` short-circuits to False.
+        The `is_initial_load` check handles the empty-cache case separately.
+
+        No production caller ever calls get_routing_map(force_refresh=True) without also
+        providing a previous_routing_map. The gone retry policy always provides both, and
+        all other callers take the global nuke path (replacing the entire provider).
+        """
+        call_count = {'count': 0}
+        original_ranges = self.partition_key_ranges
+
+        class CountingClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
+                response_hook = kwargs.get('response_hook')
+                if response_hook:
+                    response_hook({'etag': f'"test-etag-{call_count["count"]}"'}, None)
+                return original_ranges
+
+        provider = PartitionKeyRangeCache(CountingClient())
+        collection_link = "dbs/db/colls/container"
+
+        # Initial load
+        result1 = provider.get_routing_map(collection_link, feed_options={})
+        self.assertEqual(call_count['count'], 1)
+        self.assertIsNotNone(result1)
+
+        # force_refresh=True without previous_routing_map — should NOT re-fetch
+        # because _is_cache_stale() returns False (no previous_routing_map to compare),
+        # and the cache is already populated (is_initial_load is False).
+        result2 = provider.get_routing_map(
+            collection_link, feed_options={},
+            force_refresh=True
+        )
+        self.assertEqual(call_count['count'], 1, "force_refresh=True without previous_routing_map should skip fetch")
+        self.assertIsNotNone(result2)
+
+    def test_concurrent_refresh_serialized_by_lock(self):
+        """Under concurrent force_refresh calls, the per-collection lock serializes refreshes.
+
+        Verifies that threads don't corrupt the cache and all get a valid result.
+        With `and`, only the first thread that finds the cache stale actually fetches.
+        Subsequent threads see the updated ETag and skip the redundant fetch.
+        """
+        call_count = {'count': 0}
+        original_ranges = self.partition_key_ranges
+        fetch_event = threading.Event()
+
+        class SlowCountingClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
+                # Simulate a slow service call to widen the contention window
+                fetch_event.wait(timeout=2)
+                response_hook = kwargs.get('response_hook')
+                if response_hook:
+                    response_hook({'etag': f'"test-etag-{call_count["count"]}"'}, None)
+                return original_ranges
+
+        provider = PartitionKeyRangeCache(SlowCountingClient())
+        collection_link = "dbs/db/colls/container"
+
+        # Populate cache with initial map
+        fetch_event.set()  # Let the initial load go fast
+        initial_map = provider.get_routing_map(collection_link, feed_options={})
+        self.assertEqual(call_count['count'], 1)
+        fetch_event.clear()  # Now make subsequent fetches slow
+
+        results = [None] * 5
+        errors = []
+
+        def thread_fn(idx):
+            try:
+                results[idx] = provider.get_routing_map(
+                    collection_link, feed_options={},
+                    force_refresh=True, previous_routing_map=initial_map
+                )
+            except Exception as e:
+                errors.append(e)
+
+        threads = [threading.Thread(target=thread_fn, args=(i,)) for i in range(5)]
+        for t in threads:
+            t.start()
+
+        # Give threads time to all start and contend on the lock
+        import time
+        time.sleep(0.2)
+        # Release the slow fetch
+        fetch_event.set()
+
+        for t in threads:
+            t.join(timeout=10)
+
+        self.assertEqual(len(errors), 0, f"Threads raised errors: {errors}")
+        # All threads should get a non-None result
+        for i, r in enumerate(results):
+            self.assertIsNotNone(r, f"Thread {i} got None")
+
+    def test_cache_never_none_during_refresh(self):
+        """Fast-path readers should never see None in the cache during a refresh.
+
+        The cache entry is atomically replaced, never deleted. This test verifies
+        that concurrent readers always see either the old valid map or the new valid map.
+        """
+        original_ranges = self.partition_key_ranges
+        call_count = {'count': 0}
+
+        class SlowClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
+                import time
+                time.sleep(0.1)  # Simulate network delay
+                response_hook = kwargs.get('response_hook')
+                if response_hook:
+                    response_hook({'etag': f'"etag-{call_count["count"]}"'}, None)
+                return original_ranges
+
+        provider = PartitionKeyRangeCache(SlowClient())
+        collection_link = "dbs/db/colls/container"
+        from azure.cosmos import _base
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        # Populate cache
+        initial_map = provider.get_routing_map(collection_link, feed_options={})
+        self.assertIsNotNone(initial_map)
+
+        none_seen = {'count': 0}
+        stop_event = threading.Event()
+
+        def reader_fn():
+            """Continuously reads the cache and checks it's never None."""
+            while not stop_event.is_set():
+                cached = provider._collection_routing_map_by_item.get(collection_id)
+                if cached is None:
+                    none_seen['count'] += 1
+
+        def refresher_fn():
+            """Triggers a force refresh."""
+            provider.get_routing_map(
+                collection_link, feed_options={},
+                force_refresh=True, previous_routing_map=initial_map
+            )
+
+        reader = threading.Thread(target=reader_fn)
+        refresher = threading.Thread(target=refresher_fn)
+
+        reader.start()
+        refresher.start()
+        refresher.join(timeout=10)
+        stop_event.set()
+        reader.join(timeout=5)
+
+        self.assertEqual(none_seen['count'], 0,
+                         "Cache entry should never be None during a refresh — it should be atomically replaced")
 
 if __name__ == "__main__":
     # import sys;sys.argv = ['', 'Test.testName']

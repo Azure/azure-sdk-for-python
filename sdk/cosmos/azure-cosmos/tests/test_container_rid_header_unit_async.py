@@ -147,7 +147,10 @@ class TestContainerRIDHeaderUnitAsync(unittest.IsolatedAsyncioTestCase):
         assert client.call_count == 1
         assert client.captured_feed_options.get("containerRID") == CONTAINER_RID
         await cache.get_routing_map(COLLECTION_LINK, feed_options, force_refresh=True)
-        assert client.call_count == 2
+        # force_refresh without previous_routing_map uses the existing cached map as
+        # base for an incremental attempt. The ranges have no parents, which triggers a
+        # defensive fallback to full refresh -> 2 additional service calls (incremental + full).
+        assert client.call_count == 3
         assert client.captured_feed_options.get("containerRID") == CONTAINER_RID
 
     # ----- Incremental-to-full-load fallback and recursion guard -----

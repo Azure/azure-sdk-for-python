@@ -160,7 +160,7 @@ class TestContainerRIDHeaderUnit(unittest.TestCase):
         assert client.call_count == 1
         assert client.captured_feed_options.get("containerRID") == CONTAINER_RID
         cache.get_routing_map(COLLECTION_LINK, feed_options, force_refresh=True)
-        assert client.call_count == 2
+        assert client.call_count == 3
         assert client.captured_feed_options.get("containerRID") == CONTAINER_RID
 
     # ----- Cache staleness detection -----

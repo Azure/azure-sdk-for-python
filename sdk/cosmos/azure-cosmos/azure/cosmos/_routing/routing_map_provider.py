@@ -131,7 +131,7 @@ class PartitionKeyRangeCache(object):
             # Note: _is_cache_stale() only compares ETags — it returns False when the cache is empty.
             # That's intentional: the empty-cache case is handled separately by is_initial_load.
             is_initial_load = not existing_routing_map
-            needs_refresh = force_refresh or self._is_cache_stale(collection_id, previous_routing_map)
+            needs_refresh = force_refresh and self._is_cache_stale(collection_id, previous_routing_map)
 
             if is_initial_load or needs_refresh:
                 # If refresh is forced by a stale previous_routing_map, use it as the base for the incremental
@@ -298,36 +298,43 @@ class PartitionKeyRangeCache(object):
                 # For incremental updates, the range_info (server endpoint) is not in the response.
                 # We find the parent range in the old map to get the associated range_info.
                 parents = r.get(PartitionKeyRange.Parents)
-                if parents:  # This is a new partition from a split
-                    parent_id = parents[0]
-                    if parent_id in previous_routing_map._rangeById:
-                        parent_range_tuple = previous_routing_map._rangeById[parent_id]
-                        range_info = parent_range_tuple[1]  # Get the range_info from the parent
+                if parents:  # This is a new partition from a split or merge
+                    # Iterate through all parents to find one in our cache.
+                    # For splits, parents[0] is the direct parent and is always cached.
+                    # For merges, parents is a flat union that includes ancestors the SDK
+                    # may have already evicted (e.g., grandparents). The actual replaced
+                    # ranges may be at any position in the list.
+                    range_info = None
+                    for parent_id in parents:
+                        if parent_id in previous_routing_map._rangeById:
+                            parent_range_tuple = previous_routing_map._rangeById[parent_id]
+                            range_info = parent_range_tuple[1]
+                            break
+                    if range_info is not None:
                         range_tuples.append((r, range_info))
                     else:
                         logger.warning(
-                            "Incremental update failed: Parent range '%s' not found in routing map "
-                            "for collection '%s'. Falling back to full refresh.",
-                            parent_id, collection_link
+                            "Incremental update failed: None of the parent ranges %s found in "
+                            "routing map for collection '%s'. Falling back to full refresh.",
+                            parents, collection_link
                         )
-                        self._collection_routing_map_by_item.pop(collection_id, None)
+                        # Fall back to a full refresh.
                         return self._fetch_routing_map(collection_link, collection_id, None,
                                                                       feed_options, **kwargs)
                 else:
-                    range_id = r[PartitionKeyRange.Id]
-                    if range_id in previous_routing_map._rangeById:
-                        existing_range_tuple = previous_routing_map._rangeById[range_id]
-                        range_info = existing_range_tuple[1]
-                        range_tuples.append((r, range_info))
-                    else:
-                        logger.warning(
-                            "Incremental update failed: Existing range '%s' not found in routing map "
-                            "for collection '%s'. Falling back to full refresh.",
-                            range_id, collection_link
-                        )
-                        self._collection_routing_map_by_item.pop(collection_id, None)
-                        return self._fetch_routing_map(collection_link, collection_id, None,
-                                                                      feed_options, **kwargs)
+                    # No parents — this range is not from a split or merge.
+                    # No known service behavior produces a range with no parents in an
+                    # incremental change feed response. Fall back to a full refresh as
+                    # a defensive measure; the try_combine() completeness check would
+                    # catch inconsistencies anyway, but failing fast avoids masking
+                    # unexpected service behavior.
+                    logger.warning(
+                        "Incremental update encountered range '%s' with no parents for "
+                        "collection '%s'. Falling back to full refresh.",
+                        r.get('id', '<unknown>'), collection_link
+                    )
+                    return self._fetch_routing_map(collection_link, collection_id, None,
+                                                                  feed_options, **kwargs)
 
             routing_map = previous_routing_map.try_combine(range_tuples, new_etag or "")
             if not routing_map:
@@ -338,7 +345,6 @@ class PartitionKeyRangeCache(object):
                     "Falling back to full refresh.",
                     collection_link
                 )
-                self._collection_routing_map_by_item.pop(collection_id, None)
                 return self._fetch_routing_map(collection_link, collection_id, None, feed_options, **kwargs)
 
         return routing_map

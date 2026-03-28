@@ -235,6 +235,70 @@ class TestCollectionRoutingMap(unittest.TestCase):
         self.assertIsNotNone(crm_no_etag)
         self.assertIsNone(crm_no_etag.change_feed_etag)
 
+    def test_try_combine_valid_merge(self):
+        """try_combine correctly handles a merge: two adjacent ranges merge into one.
+
+        Scenario: Range '1' originally split into '1A' and '1B'. The SDK's cache
+        has '0', '1A', '1B', '2' (range '1' was evicted when the split was processed).
+        Now '1A' and '1B' merge back into range '3'.
+
+        The delta contains: range '3' with parents ['1', '1A', '1B'].
+        - '1' is not in the cache (evicted grandparent) -> no-op on removal
+        - '1A' and '1B' ARE in the cache → removed
+        - '3' is added
+        Result: {0, 3, 2}
+        """
+        initial_ranges = [
+            ({'id': '0', 'minInclusive': '', 'maxExclusive': '40'}, 'info_0'),
+            ({'id': '1A', 'minInclusive': '40', 'maxExclusive': '60'}, 'info_1A'),
+            ({'id': '1B', 'minInclusive': '60', 'maxExclusive': '80'}, 'info_1B'),
+            ({'id': '2', 'minInclusive': '80', 'maxExclusive': 'FF'}, 'info_2')
+        ]
+        crm = CollectionRoutingMap.CompleteRoutingMap(initial_ranges, 'coll1', '"etag-B"')
+        self.assertIsNotNone(crm)
+
+        # Merge: '1A' and '1B' merge into '3', parents includes evicted grandparent '1'
+        delta = [
+            ({'id': '3', 'minInclusive': '40', 'maxExclusive': '80', 'parents': ['1', '1A', '1B']}, 'info_1A')
+        ]
+        result = crm.try_combine(delta, '"etag-C"')
+
+        self.assertIsNotNone(result, "try_combine should succeed for a valid merge")
+        ranges = list(result._orderedPartitionKeyRanges)
+        self.assertEqual(len(ranges), 3)
+        ids = [r['id'] for r in ranges]
+        self.assertEqual(ids, ['0', '3', '2'])
+        self.assertEqual(result.change_feed_etag, '"etag-C"')
+
+        # Verify stable ranges preserved their range_info
+        self.assertEqual(result._orderedPartitionInfo[0], 'info_0')
+        self.assertEqual(result._orderedPartitionInfo[2], 'info_2')
+
+    def test_try_combine_merge_evicted_grandparent_noop(self):
+        """try_combine gracefully handles parents that are not in the cache (already evicted).
+
+        When the parents list includes an ancestor that was already removed from the cache
+        in a prior split, try_combine should simply skip removing it (no-op) without error.
+        """
+        initial_ranges = [
+            ({'id': '0', 'minInclusive': '', 'maxExclusive': '40'}, True),
+            ({'id': '1A', 'minInclusive': '40', 'maxExclusive': '60'}, True),
+            ({'id': '1B', 'minInclusive': '60', 'maxExclusive': '80'}, True),
+            ({'id': '2', 'minInclusive': '80', 'maxExclusive': 'FF'}, True)
+        ]
+        crm = CollectionRoutingMap.CompleteRoutingMap(initial_ranges, 'coll1', '"etag-1"')
+        self.assertIsNotNone(crm)
+
+        # '99' is a grandparent that was never in the cache
+        delta = [
+            ({'id': '3', 'minInclusive': '40', 'maxExclusive': '80', 'parents': ['99', '1A', '1B']}, True)
+        ]
+        result = crm.try_combine(delta, '"etag-2"')
+
+        self.assertIsNotNone(result, "try_combine should succeed even with evicted grandparent in parents")
+        ids = [r['id'] for r in result._orderedPartitionKeyRanges]
+        self.assertEqual(ids, ['0', '3', '2'])
+
 
 if __name__ == '__main__':
     unittest.main()
