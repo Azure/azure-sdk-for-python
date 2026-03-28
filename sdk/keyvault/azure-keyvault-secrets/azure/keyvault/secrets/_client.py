@@ -4,12 +4,13 @@
 # ------------------------------------
 from datetime import datetime
 from functools import partial
-from typing import Any, cast, Dict, Optional
+from typing import Any, cast, Dict, Optional, Union
 
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
+from ._generated.models import ContentType
 from ._models import KeyVaultSecret, DeletedSecret, SecretProperties
 from ._shared import KeyVaultClientBase
 from ._shared._polling import DeleteRecoverPollingMethod, KeyVaultOperationPoller
@@ -42,11 +43,24 @@ class SecretClient(KeyVaultClientBase):
     # pylint:disable=protected-access
 
     @distributed_trace
-    def get_secret(self, name: str, version: Optional[str] = None, **kwargs: Any) -> KeyVaultSecret:
+    def get_secret(
+        self,
+        name: str,
+        version: Optional[str] = None,
+        *,
+        out_content_type: Optional[Union[str, ContentType]] = None,
+        **kwargs: Any,
+    ) -> KeyVaultSecret:
         """Get a secret. Requires the secrets/get permission.
 
         :param str name: The name of the secret
         :param str version: (optional) Version of the secret to get. If unspecified, gets the latest version.
+
+        :keyword out_content_type: The media type (MIME type) of the certificate. If a supported format is specified,
+            the certificate content is converted to the requested format. Currently, only PFX to PEM conversion is
+            supported. If not specified, the certificate is returned in its original format. Known values are
+            ``"application/x-pkcs12"`` and ``"application/x-pem-file"``.
+        :paramtype out_content_type: str or ~azure.keyvault.secrets.ContentType or None
 
         :returns: The fetched secret.
         :rtype: ~azure.keyvault.secrets.KeyVaultSecret
@@ -65,6 +79,7 @@ class SecretClient(KeyVaultClientBase):
         bundle = self._client.get_secret(
             secret_name=name,
             secret_version=version or "",
+            out_content_type=out_content_type,
             **kwargs
         )
         return KeyVaultSecret._from_secret_bundle(bundle)

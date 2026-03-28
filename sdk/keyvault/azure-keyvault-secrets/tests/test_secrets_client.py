@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import base64
 import functools
 import json
 import logging
@@ -11,7 +12,7 @@ from unittest.mock import Mock, patch
 import pytest
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.secrets import SecretClient
+from azure.keyvault.secrets import ContentType, SecretClient
 from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
 from dateutil import parser as date_parse
 from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
@@ -379,9 +380,79 @@ class TestSecretClient(KeyVaultTestCase):
         # Test that 409 is raised correctly (`set_secret` shouldn't actually trigger this, but for raising behavior)
         def run(*_, **__):
             return Mock(http_response=Mock(status_code=409))
+
         with patch.object(client._client._client._pipeline, "run", run):
             with pytest.raises(ResourceExistsError):
                 client.set_secret("...", "...")
+
+    @pytest.mark.parametrize("api_version", only_latest)
+    @SecretsClientPreparer()
+    @recorded_by_proxy
+    def test_get_secret_previous_version(self, client, **kwargs):
+        """Test that the previous_version property is accessible on SecretProperties.
+        For certificate-backed secrets, this will contain the prior certificate version.
+        For regular secrets it returns None (the field is not populated by the service).
+        """
+        from azure.keyvault.certificates import CertificateClient, CertificatePolicy
+
+        cert_client = self.create_client_from_credential(
+            CertificateClient,
+            credential=self.get_credential(CertificateClient),
+            vault_url=client.vault_url,
+        )
+        cert_name = self.get_resource_name("pvtest")
+
+        # Create first certificate version
+        poller = cert_client.begin_create_certificate(cert_name, CertificatePolicy.get_default())
+        poller.wait()
+
+        # Create second certificate version (renew), which creates a new backing-secret version
+        poller2 = cert_client.begin_create_certificate(cert_name, CertificatePolicy.get_default())
+        poller2.wait()
+
+        # Get the certificate's backing secret; previousVersion should reference the prior cert version
+        secret = client.get_secret(cert_name)
+        assert secret.properties.previous_version is not None, (
+            "Expected previous_version to be set for a certificate-backed secret after renewal"
+        )
+
+        # Cleanup: delete and purge the certificate (also removes the backing secret)
+        cert_client.begin_delete_certificate(cert_name).wait()
+        cert_client.purge_deleted_certificate(cert_name)
+
+    @pytest.mark.parametrize("api_version", only_latest)
+    @SecretsClientPreparer()
+    @recorded_by_proxy
+    def test_get_secret_out_content_type_pem(self, client, **kwargs):
+        """Test PFX-to-PEM conversion by passing outContentType=PEM when retrieving a
+        certificate-backed secret.  The service returns the certificate data in PEM format
+        rather than the default PFX (PKCS#12) format.
+        """
+        from azure.keyvault.certificates import CertificateClient, CertificatePolicy
+
+        cert_client = self.create_client_from_credential(
+            CertificateClient,
+            credential=self.get_credential(CertificateClient),
+            vault_url=client.vault_url,
+        )
+        cert_name = self.get_resource_name("pemtest")
+
+        # Create a self-signed certificate; its backing secret uses PFX content type
+        poller = cert_client.begin_create_certificate(cert_name, CertificatePolicy.get_default())
+        poller.wait()
+
+        # Retrieve backing secret with PEM conversion requested
+        secret_pem = client.get_secret(cert_name, out_content_type=ContentType.PEM)
+        assert secret_pem.value is not None
+        # The returned value should be a PEM-encoded certificate chain
+        assert "-----BEGIN" in secret_pem.value, (
+            "Expected PEM-encoded certificate data starting with '-----BEGIN'"
+        )
+        assert secret_pem.properties.content_type == "application/x-pem-file"
+
+        # Cleanup
+        cert_client.begin_delete_certificate(cert_name).wait()
+        cert_client.purge_deleted_certificate(cert_name)
 
 
 def test_service_headers_allowed_in_logs():

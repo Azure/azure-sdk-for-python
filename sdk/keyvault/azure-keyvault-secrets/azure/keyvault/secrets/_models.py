@@ -21,6 +21,7 @@ class SecretProperties(object):
         self._key_id = kwargs.get("key_id", None)
         self._managed = kwargs.get("managed", None)
         self._tags = kwargs.get("tags", None)
+        self._previous_version = kwargs.get("previous_version", None)
 
     def __repr__(self) -> str:
         return f"<SecretProperties [{self.id}]>"[:1024]
@@ -36,6 +37,7 @@ class SecretProperties(object):
             key_id=secret_bundle.kid,
             managed=secret_bundle.managed,
             tags=secret_bundle.tags,
+            previous_version=secret_bundle.previous_version,
         )
 
     @classmethod
@@ -186,6 +188,18 @@ class SecretProperties(object):
         :rtype: bool or None
         """
         return self._managed
+
+    @property
+    def previous_version(self) -> Optional[str]:
+        """The version of the previous certificate, if applicable.
+
+        Applies only to certificates created after June 1, 2025. Certificates created before this
+        date are not retroactively updated.
+
+        :returns: The version of the previous certificate, or None.
+        :rtype: str or None
+        """
+        return self._previous_version
 
 
 class KeyVaultSecret(object):
