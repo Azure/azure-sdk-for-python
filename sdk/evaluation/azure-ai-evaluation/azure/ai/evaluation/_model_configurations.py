@@ -61,6 +61,8 @@ class OpenAIModelConfiguration(TypedDict):
     :type base_url: NotRequired[str]
     :param organization: OpenAI organization. Optional.
     :type organization: NotRequired[str]
+    :param extra_headers: Additional HTTP headers to include in every request. Optional.
+    :type extra_headers: NotRequired[Dict[str, str]]
 
     .. admonition:: Example:
 
@@ -78,6 +80,7 @@ class OpenAIModelConfiguration(TypedDict):
     model: str
     base_url: NotRequired[str]
     organization: NotRequired[str]
+    extra_headers: NotRequired[Dict[str, str]]
 
 
 class AzureAIProject(TypedDict):

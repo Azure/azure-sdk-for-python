@@ -1,0 +1,10 @@
+{
+    "CrossLanguagePackageId": "Microsoft.MachineLearningServices.RegistryDiscovery",
+    "CrossLanguageDefinitionId": {
+        "registry_discovery.models.RegistryDiscoveryDto": "Microsoft.MachineLearningServices.RegistryDiscovery.RegistryDiscoveryDto",
+        "registry_discovery.operations.AsyncOperationsOperations.get_status": "Microsoft.MachineLearningServices.RegistryDiscovery.AsyncOperations.getStatus",
+        "registry_discovery.aio.operations.AsyncOperationsOperations.get_status": "Microsoft.MachineLearningServices.RegistryDiscovery.AsyncOperations.getStatus",
+        "registry_discovery.operations.RegistryManagementNonWorkspaceOperations.registry_management_non_workspace": "Microsoft.MachineLearningServices.RegistryDiscovery.RegistryManagementNonWorkspace.registryManagementNonWorkspace",
+        "registry_discovery.aio.operations.RegistryManagementNonWorkspaceOperations.registry_management_non_workspace": "Microsoft.MachineLearningServices.RegistryDiscovery.RegistryManagementNonWorkspace.registryManagementNonWorkspace"
+    }
+}

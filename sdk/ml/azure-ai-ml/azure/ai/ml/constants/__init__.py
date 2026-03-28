@@ -5,7 +5,7 @@
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-from azure.ai.ml._restclient.v2023_10_01.models import ListViewType
+from azure.ai.ml._restclient.arm_ml_service.models import ListViewType
 
 from ._assets import IPProtectionLevel
 from ._common import AssetTypes, InputOutputModes, InputTypes, ModelType, Scope, TimeZone, WorkspaceKind
