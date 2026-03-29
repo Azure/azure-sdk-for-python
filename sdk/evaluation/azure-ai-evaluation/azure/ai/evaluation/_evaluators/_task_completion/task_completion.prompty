@@ -66,8 +66,8 @@ C. Assess Task Completion:
 - **Incomplete**: No usable deliverable or major requirements unmet
 
 D. Assign a Score:
-   - **TRUE**: The agent delivered a complete and correct solution that accomplishes the user's entire goal. The user does not need to take further action or ask follow-up questions to get what they originally asked for.
-   - **FALSE**: The agent failed to complete one or more parts of the task, provided an incorrect/incomplete result, or left the user's goal unresolved.
+   - "true": The agent delivered a complete and correct solution that accomplishes the user's entire goal. The user does not need to take further action or ask follow-up questions to get what they originally asked for.
+   - "false": The agent failed to complete one or more parts of the task, provided an incorrect/incomplete result, or left the user's goal unresolved.
 
 OUTPUT FORMAT
 =============
@@ -79,7 +79,7 @@ Output a JSON object with these keys:
     "delivered_outcome": "<15-60 words on what the agent actually provided>",
     "completion_gaps": "<15-60 words on missing elements if task is incomplete>"
   },
-  "success": <TRUE or FALSE>
+  "success": "true" or "false"
 }
 
 SCORING EXAMPLES
@@ -119,7 +119,7 @@ EXPECTED OUTPUT:
     "delivered_outcome": "Detailed 3-day schedule with specific landmarks, restaurants, and practical tips",
     "completion_gaps": "None"
   },
-  "success": TRUE
+  "success": "true"
 }
 
 ### SUCCESS: TRUE - Example B
@@ -144,7 +144,7 @@ EXPECTED OUTPUT:
     "delivered_outcome": "Diagnostic completed with specific fix instructions, data plan upgrade confirmed active",
     "completion_gaps": "None"
   },
-  "success": TRUE
+  "success": "true"
 }
 
 ### SUCCESS: FALSE - Example A
@@ -163,7 +163,7 @@ EXPECTED OUTPUT:
     "delivered_outcome": "General recommendations without structured itinerary",
     "completion_gaps": "No day-by-day schedule, no specific restaurant recommendations, no detailed cultural landmarks"
   },
-  "success": FALSE
+  "success": "false"
 }
 
 ### SUCCESS: FALSE - Example B
@@ -184,7 +184,7 @@ EXPECTED OUTPUT:
     "delivered_outcome": "Identified router firmware issue but no specific fix instructions, data upgrade not completed",
     "completion_gaps": "No specific firmware update steps, data plan upgrade not processed"
   },
-  "success": FALSE
+  "success": "false"
 }
 
 ### SUCCESS: FALSE - Example C
@@ -203,7 +203,7 @@ EXPECTED OUTPUT:
     "delivered_outcome": "General information about sales analysis concepts",
     "completion_gaps": "No data analysis performed, no summary report created"
   },
-  "success": FALSE
+  "success": "false"
 }
 
 KEY PRINCIPLES
