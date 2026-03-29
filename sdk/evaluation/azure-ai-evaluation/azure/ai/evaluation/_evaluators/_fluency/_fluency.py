@@ -151,6 +151,20 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         return super().__call__(*args, **kwargs)
 
     @override
+    async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:
+        """Reformat agent response to extract text content (stripping tool calls)
+        before delegating to the base class for the LLM evaluation.
+
+        :param eval_input: The input to the evaluator.
+        :type eval_input: Dict
+        :return: The evaluation result.
+        :rtype: Dict
+        """
+        eval_input["response"] = reformat_agent_response(eval_input.get("response"), logger)
+
+        return await super()._do_eval(eval_input)
+
+    @override
     async def _real_call(self, **kwargs):
         """The asynchronous call where real end-to-end evaluation logic is performed.
 
