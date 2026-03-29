@@ -246,7 +246,7 @@ class PartitionKeyRangeCache(object):
                 if _upstream is not None:
                     _upstream(hook_headers, body)
 
-            capture_response_hook = _chained_response_hook  # type: ignore[misc]
+            capture_response_hook = _chained_response_hook  # type: ignore[assignment]
 
         # Sanitize options to only include those relevant for a PKRange read.
         change_feed_options = _base.format_pk_range_options(feed_options if feed_options is not None else {})

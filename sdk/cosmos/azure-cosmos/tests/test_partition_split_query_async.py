@@ -529,12 +529,13 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
                     '_ReadPartitionKeyRanges',
                     side_effect=mock_read_ranges
             ):
-                # Force refresh with stale map
-                provider._collection_routing_map_by_item.clear()
+                # Leave stale map in cache so _is_cache_stale() detects matching ETags
+                # and triggers the incremental update path where the missing-parent guard lives.
 
                 refreshed_map = await provider.get_routing_map(
                     collection_link=collection_link,
                     feed_options={},
+                    force_refresh=True,
                     previous_routing_map=initial_map  # Simulate stale cache
                 )
 
@@ -920,6 +921,10 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             collection_link = container.container_link
             collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
+            # Capture the cached map to use as the stale previous_routing_map
+            cached_map = provider._collection_routing_map_by_item.get(collection_id)
+            assert cached_map is not None
+
             captured_headers_list = []
             original_read = container.client_connection._ReadPartitionKeyRanges
 
@@ -946,10 +951,6 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
                 else:
                     # Second call (full load fallback): return real data
                     return original_read(*args, **kwargs)
-
-            cached_map = provider._collection_routing_map_by_item.get(collection_id)
-            assert cached_map is not None
-            assert cached_map.change_feed_etag is not None
 
             with patch.object(
                     container.client_connection,

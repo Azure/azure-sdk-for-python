@@ -937,7 +937,6 @@ class ContainerProxy:
                 _validate_request_hedging_strategy(feed_options.pop(Constants.Kwargs.AVAILABILITY_STRATEGY))
 
         feed_options["correlatedActivityId"] = GenerateGuidId()
-        feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         # Set query with 'query' and 'parameters' from kwargs
         query_str = kwargs.pop("query", None)

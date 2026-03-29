@@ -534,12 +534,13 @@ class TestPartitionSplitQuery(unittest.TestCase):
                     '_ReadPartitionKeyRanges',
                     side_effect=mock_read_ranges
             ):
-                # Force refresh with stale map
-                provider._collection_routing_map_by_item.clear()
+                # Leave stale map in cache so _is_cache_stale() detects matching ETags
+                # and triggers the incremental update path where the missing-parent guard lives.
 
                 refreshed_map = provider.get_routing_map(
                     collection_link=collection_link,
                     feed_options={},
+                    force_refresh=True,
                     previous_routing_map=initial_map  # Simulate stale cache
                 )
 

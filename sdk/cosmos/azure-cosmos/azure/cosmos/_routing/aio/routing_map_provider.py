@@ -260,7 +260,7 @@ class PartitionKeyRangeCache(object):
                 if _upstream is not None:
                     _upstream(hook_headers, body)
 
-            capture_response_hook = _chained_response_hook  # type: ignore[misc]
+            capture_response_hook = _chained_response_hook  # type: ignore[assignment]
 
         # Sanitize options to only include those relevant for a PKRange read.
         change_feed_options = _base.format_pk_range_options(feed_options if feed_options is not None else {})
@@ -272,8 +272,8 @@ class PartitionKeyRangeCache(object):
 
         # Prepare headers for change feed
         headers = kwargs.get('headers', {}).copy()
-        headers[http_constants.HttpHeaders.PageSize] = self.page_size_change_feed
-        headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
+        headers.update({http_constants.HttpHeaders.PageSize: self.page_size_change_feed,
+                        http_constants.HttpHeaders.AIM: http_constants.HttpHeaders.IncrementalFeedHeaderValue})
 
         if previous_routing_map and previous_routing_map.change_feed_etag:
             headers[http_constants.HttpHeaders.IfNoneMatch] = previous_routing_map.change_feed_etag
