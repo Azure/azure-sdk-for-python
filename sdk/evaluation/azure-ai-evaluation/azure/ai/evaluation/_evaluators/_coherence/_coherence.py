@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import logging
 import os
 from typing import Dict, Union, List
 
@@ -10,6 +11,9 @@ from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common._validators import ConversationValidator, ValidatorInterface
 from azure.ai.evaluation._exceptions import ErrorTarget
 from azure.ai.evaluation._model_configurations import Conversation
+from ..._common.utils import reformat_conversation_history, reformat_agent_response
+
+logger = logging.getLogger(__name__)
 
 
 class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
@@ -163,3 +167,18 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self._validator.validate_eval_input(kwargs)
 
         return await super()._real_call(**kwargs)
+
+    @override
+    async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:
+        """Do coherence evaluation.
+
+        :param eval_input: The input to the evaluator. Expected to contain whatever inputs are needed for the _flow method
+        :type eval_input: Dict
+        :return: The evaluation result.
+        :rtype: Dict
+        """
+        # reformat query and response to the format expected by the prompty flow
+        eval_input["query"] = reformat_conversation_history(eval_input["query"], logger)
+        eval_input["response"] = reformat_agent_response(eval_input["response"], logger)
+
+        return await super()._do_eval(eval_input)
