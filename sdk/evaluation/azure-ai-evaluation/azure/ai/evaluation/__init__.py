@@ -34,6 +34,7 @@ from ._evaluators._tool_call_accuracy import ToolCallAccuracyEvaluator
 from ._evaluators._document_retrieval import DocumentRetrievalEvaluator
 from ._evaluators._tool_output_utilization import _ToolOutputUtilizationEvaluator
 from ._evaluators._tool_call_success import _ToolCallSuccessEvaluator
+from ._evaluators._task_completion import _TaskCompletionEvaluator
 from ._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
