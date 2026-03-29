@@ -77,7 +77,7 @@ def _format_parts(parts: List[Dict], indent: str = "  ") -> List[str]:
             args = p.get("arguments", "")
             lines.append(f"{indent}[Tool Call] {name}({args})")
         elif ptype == "tool_call_response":
-            resp = str(p.get("response", ""))
+            resp = str(p.get("response", p.get("result", "")))
             lines.append(f"{indent}[Tool Result] {resp}")
     return lines
 
@@ -90,7 +90,7 @@ def _get_tool_call_id(part: Dict, msg: Dict = None) -> str:
 
 
 def _format_tool_result_line(part: Dict, indent: str = "  ") -> str:
-    resp = str(part.get("response", ""))
+    resp = str(part.get("response", part.get("result", "")))
     return f"{indent}[Tool Result] {resp}"
 
 
@@ -170,7 +170,7 @@ def _normalize_tool_call_for_dedup(part: Dict) -> str:
 
 
 def _normalize_tool_call_response_for_dedup(part: Dict) -> str:
-    resp = str(part.get("response", ""))
+    resp = str(part.get("response", part.get("result", "")))
     return _normalize_text_for_dedup(f"tool_result:{resp}")
 
 

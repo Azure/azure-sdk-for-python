@@ -20,15 +20,46 @@ from azure.monitor.query import LogsQueryClient, LogsQueryStatus
 logger = logging.getLogger(__name__)
 
 DEFAULT_LOOKBACK_HOURS = 24 * 7
+_MAX_TRACE_IDS = 1000
+_MAX_TRACE_ID_LENGTH = 512
+
+
+def _validate_trace_ids(trace_ids: List[str], *, allow_empty: bool = False) -> List[str]:
+    if not isinstance(trace_ids, list):
+        raise ValueError("trace_ids must be a list of strings.")
+    if not trace_ids:
+        if allow_empty:
+            return []
+        raise ValueError("trace_ids must contain at least one trace ID.")
+    if len(trace_ids) > _MAX_TRACE_IDS:
+        raise ValueError(f"trace_ids must contain at most {_MAX_TRACE_IDS} items.")
+
+    normalized_trace_ids: List[str] = []
+    for trace_id in trace_ids:
+        if not isinstance(trace_id, str):
+            raise ValueError("Each trace ID must be a string.")
+        normalized_trace_id = trace_id.strip()
+        if not normalized_trace_id:
+            raise ValueError("Each trace ID must be non-empty.")
+        if len(normalized_trace_id) > _MAX_TRACE_ID_LENGTH:
+            raise ValueError(f"Each trace ID must be at most {_MAX_TRACE_ID_LENGTH} characters.")
+        if any(ord(character) < 32 for character in normalized_trace_id):
+            raise ValueError("Trace IDs cannot contain control characters.")
+        normalized_trace_ids.append(normalized_trace_id)
+    return normalized_trace_ids
 
 
 def build_full_workflow_query(trace_ids: List[str]) -> str:
     """Construct a KQL query that fetches ALL telemetry types (traces, dependencies, requests)
     for the given trace IDs — needed for full workflow reconstruction.
     """
-    trace_ids_json = json.dumps(trace_ids)
+    normalized_trace_ids = _validate_trace_ids(trace_ids)
+    # Use a KQL string literal that is parsed with `todynamic` to keep IDs as pure data.
+    # This avoids embedding a directly executable KQL dynamic literal from user-controlled content.
+    trace_ids_json = json.dumps(normalized_trace_ids)
+    trace_ids_json_literal = json.dumps(trace_ids_json)
     return f"""
-let trace_ids = dynamic({trace_ids_json});
+let trace_ids = todynamic({trace_ids_json_literal});
 union traces, dependencies, requests
 | where operation_Id in (trace_ids)
 | summarize arg_max(timestamp, *) by operation_Id, id
@@ -99,6 +130,11 @@ def query_traces(
     Returns:
         List of raw row dicts from the query result.
     """
+    trace_ids = _validate_trace_ids(trace_ids, allow_empty=True)
+    if not trace_ids:
+        logger.info("No trace IDs provided; skipping App Insights query.")
+        return []
+
     credential = DefaultAzureCredential()
     client = LogsQueryClient(credential=credential)
 
