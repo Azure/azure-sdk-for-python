@@ -24,7 +24,7 @@ import threading
 import warnings
 from concurrent.futures.thread import ThreadPoolExecutor
 from datetime import datetime
-from typing import Any, Callable, cast, Iterable, Mapping, Optional, overload, Sequence, Tuple, Union
+from typing import Any, Callable, cast, Iterable, Mapping, Optional, overload, Sequence, Tuple, Union, Dict
 from typing_extensions import Literal
 
 from azure.core import MatchConditions
@@ -1798,7 +1798,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        options = {Constants.ContainerRID: properties["_rid"]}
+        options: Dict[str, Any] = {Constants.ContainerRID: properties["_rid"]}
+
         throughput_properties = list(self.client_connection.QueryOffers(query_spec, options, **kwargs))
 
         if response_hook:
@@ -1834,7 +1835,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        options = {Constants.ContainerRID: properties["_rid"]}
+        options: Dict[str, Any] = {Constants.ContainerRID: properties["_rid"]}
         throughput_properties = list(self.client_connection.QueryOffers(query_spec, options, **kwargs))
         new_throughput_properties = throughput_properties[0].copy()
         _replace_throughput(throughput=throughput, new_throughput_properties=new_throughput_properties)

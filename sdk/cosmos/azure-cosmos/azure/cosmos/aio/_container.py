@@ -25,7 +25,7 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import warnings
 from datetime import datetime
 from typing import (Any, Mapping, Optional, Sequence, Union, Tuple, cast, overload, AsyncIterable,
-                    Callable)
+                    Callable, Dict)
 from typing_extensions import Literal
 
 from azure.core import MatchConditions
@@ -1690,7 +1690,7 @@ class ContainerProxy:
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        options = {Constants.ContainerRID: properties["_rid"]}
+        options: Dict[str, Any] = {Constants.ContainerRID: properties["_rid"]}
         throughput_properties = [throughput async for throughput in
                                  self.client_connection.QueryOffers(query_spec, options, **kwargs)]
 
@@ -1727,7 +1727,7 @@ class ContainerProxy:
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        options = {Constants.ContainerRID: properties["_rid"]}
+        options: Dict[str, Any] = {Constants.ContainerRID: properties["_rid"]}
         throughput_properties = [throughput async for throughput in
                                  self.client_connection.QueryOffers(query_spec, options, **kwargs)]
 
@@ -2046,7 +2046,7 @@ class ContainerProxy:
 
         # Ensure container properties cache is populated so we can get the container RID.
         await self._get_properties_with_options()
-        feed_options = {Constants.ContainerRID: self.__get_client_container_caches()[self.container_link]["_rid"]}
+        feed_options: Dict[str, Any] = {Constants.ContainerRID: self.__get_client_container_caches()[self.container_link]["_rid"]}
 
         async def get_next(continuation_token: str) -> list[dict[str, Any]]:  # pylint: disable=unused-argument
             partition_key_ranges = \
