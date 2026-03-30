@@ -88,8 +88,6 @@ def get_input_expanded(request: CreateResponse) -> list[dict]:
     if isinstance(inp, str):
         return [
             ItemMessage(
-                id="",
-                status="completed",
                 role=MessageRole.USER,
                 content=[MessageContentInputTextContent(text=inp)],
             ).as_dict()
