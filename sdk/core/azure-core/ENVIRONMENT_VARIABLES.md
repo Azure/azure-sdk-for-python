@@ -30,7 +30,11 @@ Enables or disables distributed tracing across Azure SDK clients.
 | **Default** | Auto-detected based on whether `AZURE_SDK_TRACING_IMPLEMENTATION` is set |
 | **Accepted values** | `true`, `yes`, `1`, `on` to enable; `false`, `no`, `0`, `off` to disable (case-insensitive) |
 
-When not set, tracing is automatically enabled if a tracing implementation is configured (via `AZURE_SDK_TRACING_IMPLEMENTATION`), and disabled otherwise.
+If enabled and `settings.tracing_implementation` is not set (i.e. `AZURE_SDK_TRACING_IMPLEMENTATION` is unset), native OpenTelemetry tracing is used, provided that `opentelemetry-api` is installed. However, if a tracing implementation is configured, then that configured plugin is used instead.
+
+If disabled, distributed tracing is disabled entirely, regardless of the other configuration.
+
+If not set, tracing is automatically enabled if a tracing implementation is configured (via `AZURE_SDK_TRACING_IMPLEMENTATION`), and disabled otherwise.
 
 **Example:**
 
