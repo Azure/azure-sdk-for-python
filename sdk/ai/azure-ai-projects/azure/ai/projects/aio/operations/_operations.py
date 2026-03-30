@@ -7372,15 +7372,15 @@ class BetaTrainingJobsOperations:
 
     @overload
     async def create_or_update(
-        self, name: str, body: _models.Job, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, job: _models.Job, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Job:
         """Create and execute a Job. For update case, the Tags in the definition passed in will replace
         Tags in the existing job.
 
         :param name: The name of the Job. This is case-sensitive. Required.
         :type name: str
-        :param body: The job to create or update. Required.
-        :type body: ~azure.ai.projects.models.Job
+        :param job: The job to create or update. Required.
+        :type job: ~azure.ai.projects.models.Job
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7391,15 +7391,15 @@ class BetaTrainingJobsOperations:
 
     @overload
     async def create_or_update(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, job: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Job:
         """Create and execute a Job. For update case, the Tags in the definition passed in will replace
         Tags in the existing job.
 
         :param name: The name of the Job. This is case-sensitive. Required.
         :type name: str
-        :param body: The job to create or update. Required.
-        :type body: JSON
+        :param job: The job to create or update. Required.
+        :type job: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7410,15 +7410,15 @@ class BetaTrainingJobsOperations:
 
     @overload
     async def create_or_update(
-        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, job: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Job:
         """Create and execute a Job. For update case, the Tags in the definition passed in will replace
         Tags in the existing job.
 
         :param name: The name of the Job. This is case-sensitive. Required.
         :type name: str
-        :param body: The job to create or update. Required.
-        :type body: IO[bytes]
+        :param job: The job to create or update. Required.
+        :type job: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7428,17 +7428,15 @@ class BetaTrainingJobsOperations:
         """
 
     @distributed_trace_async
-    async def create_or_update(
-        self, name: str, body: Union[_models.Job, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.Job:
+    async def create_or_update(self, name: str, job: Union[_models.Job, JSON, IO[bytes]], **kwargs: Any) -> _models.Job:
         """Create and execute a Job. For update case, the Tags in the definition passed in will replace
         Tags in the existing job.
 
         :param name: The name of the Job. This is case-sensitive. Required.
         :type name: str
-        :param body: The job to create or update. Is one of the following types: Job, JSON, IO[bytes]
+        :param job: The job to create or update. Is one of the following types: Job, JSON, IO[bytes]
          Required.
-        :type body: ~azure.ai.projects.models.Job or JSON or IO[bytes]
+        :type job: ~azure.ai.projects.models.Job or JSON or IO[bytes]
         :return: Job. The Job is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Job
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7459,10 +7457,10 @@ class BetaTrainingJobsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(job, (IOBase, bytes)):
+            _content = job
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(job, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_training_jobs_create_or_update_request(
             name=name,

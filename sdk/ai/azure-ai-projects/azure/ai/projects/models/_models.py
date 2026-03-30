@@ -6104,7 +6104,7 @@ class Job(_Model):
     :ivar properties: Properties of the job. Required.
     :vartype properties: ~azure.ai.projects.models.JobProperties
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.ai.projects.models.JobSystemData
+    :vartype system_data: ~azure.ai.projects.models.SystemData
     """
 
     name: str = rest_field(visibility=["read"])
@@ -6115,7 +6115,7 @@ class Job(_Model):
     """The resource type."""
     properties: "_models.JobProperties" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Properties of the job. Required."""
-    system_data: Optional["_models.JobSystemData"] = rest_field(name="systemData", visibility=["read"])
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
     """Metadata pertaining to creation and last modification of the resource."""
 
     @overload
@@ -6256,39 +6256,6 @@ class JobService(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class JobSystemData(_Model):
-    """Metadata pertaining to creation and last modification of the resource.
-
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource.
-    :vartype created_by_type: str
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource.
-    :vartype last_modified_by_type: str
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: ~datetime.datetime
-    """
-
-    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
-    """The identity that created the resource."""
-    created_by_type: Optional[str] = rest_field(name="createdByType", visibility=["read"])
-    """The type of identity that created the resource."""
-    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
-    """The timestamp of resource creation (UTC)."""
-    last_modified_by: Optional[str] = rest_field(name="lastModifiedBy", visibility=["read"])
-    """The identity that last modified the resource."""
-    last_modified_by_type: Optional[str] = rest_field(name="lastModifiedByType", visibility=["read"])
-    """The type of identity that last modified the resource."""
-    last_modified_at: Optional[datetime.datetime] = rest_field(
-        name="lastModifiedAt", visibility=["read"], format="rfc3339"
-    )
-    """The timestamp of resource last modification (UTC)."""
 
 
 class LocalShellToolParam(Tool, discriminator="local_shell"):
@@ -9081,6 +9048,39 @@ class StructuredOutputDefinition(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class SystemData(_Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource.
+    :vartype created_by_type: str
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource.
+    :vartype last_modified_by_type: str
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
+    """The identity that created the resource."""
+    created_by_type: Optional[str] = rest_field(name="createdByType", visibility=["read"])
+    """The type of identity that created the resource."""
+    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
+    """The timestamp of resource creation (UTC)."""
+    last_modified_by: Optional[str] = rest_field(name="lastModifiedBy", visibility=["read"])
+    """The identity that last modified the resource."""
+    last_modified_by_type: Optional[str] = rest_field(name="lastModifiedByType", visibility=["read"])
+    """The type of identity that last modified the resource."""
+    last_modified_at: Optional[datetime.datetime] = rest_field(
+        name="lastModifiedAt", visibility=["read"], format="rfc3339"
+    )
+    """The timestamp of resource last modification (UTC)."""
 
 
 class TaxonomyCategory(_Model):

@@ -25,7 +25,19 @@ from ._operations import (
     BetaRedTeamsOperations,
     BetaSchedulesOperations,
     BetaToolsetsOperations,
+    BetaTrainingOperations as GeneratedBetaTrainingOperations,
 )
+
+
+class BetaTrainingOperations(GeneratedBetaTrainingOperations):
+    """Training operations with patched :class:`~azure.ai.projects.aio.operations.TrainingJobsOperations`."""
+
+    jobs: TrainingJobsOperations
+    """:class:`~azure.ai.projects.aio.operations.TrainingJobsOperations` operations"""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.jobs = TrainingJobsOperations(*args, **kwargs)
 
 
 class BetaOperations(GeneratedBetaOperations):
@@ -38,6 +50,8 @@ class BetaOperations(GeneratedBetaOperations):
         :attr:`beta` attribute.
     """
 
+    training: BetaTrainingOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaTrainingOperations` operations"""
     evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
     """:class:`~azure.ai.projects.aio.operations.BetaEvaluationTaxonomiesOperations` operations"""
     evaluators: BetaEvaluatorsOperations
@@ -55,8 +69,8 @@ class BetaOperations(GeneratedBetaOperations):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        # Swap generated jobs sub-client with the patched flat-CommandJob version
-        self.training.jobs = TrainingJobsOperations(self._client, self._config, self._serialize, self._deserialize)
+        # Replace with patched class that returns CommandJob from get/create_or_update operations
+        self.training = BetaTrainingOperations(*args, **kwargs)
         # Replace with patched class that includes upload()
         self.evaluators = BetaEvaluatorsOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes begin_update_memories

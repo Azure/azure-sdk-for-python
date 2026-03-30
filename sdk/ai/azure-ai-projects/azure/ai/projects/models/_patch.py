@@ -32,6 +32,7 @@ _BETA_OPERATION_FEATURE_HEADERS: dict = {
     "red_teams": FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW.value,
     "schedules": FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW.value,
     "toolsets": FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW.value,
+    "training": FoundryFeaturesOptInKeys.JOBS_V1_PREVIEW.value,
 }
 """Foundry-Features header values keyed by beta sub-client property name."""
 

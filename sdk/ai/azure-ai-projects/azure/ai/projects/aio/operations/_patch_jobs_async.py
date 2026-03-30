@@ -81,10 +81,14 @@ class TrainingJobsOperations(_GeneratedTrainingJobsOps):
         if local_path.exists():
             version = "1"
             if local_path.is_dir():
-                _logger.debug("[TrainingJobsOperations] Uploading folder '%s' as dataset '%s' v%s.", uri, dataset_name, version)
+                _logger.debug(
+                    "[TrainingJobsOperations] Uploading folder '%s' as dataset '%s' v%s.", uri, dataset_name, version
+                )
                 result = await self._datasets.upload_folder(name=dataset_name, version=version, folder=uri)
             else:
-                _logger.debug("[TrainingJobsOperations] Uploading file '%s' as dataset '%s' v%s.", uri, dataset_name, version)
+                _logger.debug(
+                    "[TrainingJobsOperations] Uploading file '%s' as dataset '%s' v%s.", uri, dataset_name, version
+                )
                 result = await self._datasets.upload_file(name=dataset_name, version=version, file_path=uri)
             if not result.data_uri:
                 raise ValueError(f"Dataset upload succeeded but the service did not return a URI for '{uri}'.")
@@ -92,7 +96,7 @@ class TrainingJobsOperations(_GeneratedTrainingJobsOps):
             return result.data_uri
 
         if ":" in uri and "://" not in uri:
-            raw = uri[len("azureai:"):] if uri.startswith("azureai:") else uri
+            raw = uri[len("azureai:") :] if uri.startswith("azureai:") else uri
             ds_name, ds_version = raw.split(":", 1)
             _logger.debug("[TrainingJobsOperations] Resolving name:version '%s' to dataset URI.", uri)
             result = await self._datasets.get(name=ds_name, version=ds_version)
@@ -205,23 +209,23 @@ class TrainingJobsOperations(_GeneratedTrainingJobsOps):
         return CommandJob._from_rest_object(rest_result)
 
     @distributed_trace_async
-    async def create_or_update(self, name: str, body: CommandJob, **kwargs: Any) -> CommandJob:  # type: ignore[override]
+    async def create_or_update(self, name: str, job: CommandJob, **kwargs: Any) -> CommandJob:  # type: ignore[override]
         """Async create or update a training job.
 
         :param name: The name of the job. Required.
         :type name: str
-        :param body: The command job to create or update. Required.
-        :type body: ~azure.ai.projects.models.CommandJob
+        :param job: The command job to create or update. Required.
+        :type job: ~azure.ai.projects.models.CommandJob
         :return: The created/updated job.
         :rtype: ~azure.ai.projects.models.CommandJob
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ValueError: If required fields are missing or empty.
         """
-        self._validate(name, body)
-        await self._resolve_local_paths(name, body)
+        self._validate(name, job)
+        await self._resolve_local_paths(name, job)
         self._inject_preview_header(kwargs)
-        rest_body = _RestJob(properties=body)
-        rest_result = await super().create_or_update(name=name, body=rest_body, **kwargs)
+        rest_body = _RestJob(properties=job)
+        rest_result = await super().create_or_update(name=name, job=rest_body, **kwargs)
         return CommandJob._from_rest_object(rest_result)
 
     @distributed_trace_async
