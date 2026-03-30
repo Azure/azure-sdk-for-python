@@ -715,7 +715,7 @@ class WorkspaceOperationsBase(ABC):
             identity = IdentityConfiguration(
                 type=camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED)
             )._to_workspace_rest_object()
-        _set_val(param["identity"], identity)
+        _set_obj_val(param["identity"], identity)
 
         if workspace.primary_user_assigned_identity:
             _set_val(param["primaryUserAssignedIdentity"], workspace.primary_user_assigned_identity)
@@ -931,13 +931,16 @@ def _set_obj_val(dict: dict, val: Any) -> None:
     :param dict: Parameters dict.
     :type dict: dict
     :param val: The obj to serialize.
-    :type val: Any type. Must have `.serialize() -> MutableMapping[str, Any]` method.
+    :type val: Any type. Must have `.serialize() -> MutableMapping[str, Any]` or `.as_dict()` method.
     :return: No Return.
     :rtype: None
     """
     from copy import deepcopy
 
-    json: MutableMapping[str, Any] = val.serialize()
+    if hasattr(val, "_is_model"):
+        json: MutableMapping[str, Any] = val.as_dict()
+    else:
+        json = val.serialize()
     dict["value"] = deepcopy(json)
 
 

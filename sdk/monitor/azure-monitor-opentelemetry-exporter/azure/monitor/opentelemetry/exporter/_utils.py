@@ -297,12 +297,12 @@ def _get_cloud_role(resource: Resource) -> str:
 
 
 def _get_cloud_role_instance(resource: Resource) -> str:
-    service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
-    if service_instance_id:
-        return service_instance_id  # type: ignore
     k8s_pod_name = resource.attributes.get(ResourceAttributes.K8S_POD_NAME)
     if k8s_pod_name:
         return k8s_pod_name  # type: ignore
+    service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
+    if service_instance_id:
+        return service_instance_id  # type: ignore
     return platform.node()  # hostname default
 
 
