@@ -234,7 +234,7 @@ def test_hosting__non_stream_mode_returns_completed_response_with_output_items()
     assert payload["id"].startswith("caresp_")
     assert isinstance(payload.get("output"), list)
     assert len(payload["output"]) == 1
-    assert payload["output"][0]["type"] == "output_message"
+    assert payload["output"][0]["type"] == "message"
     assert payload["output"][0]["content"][0]["type"] == "output_text"
     assert payload["output"][0]["content"][0]["text"] == "hello"
 

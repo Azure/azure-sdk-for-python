@@ -67,7 +67,7 @@ def test_output_item_message_builder__emits_added_content_done_and_done() -> Non
     assert added["type"] == "response.output_item.added"
     assert content_done["type"] == "response.content_part.done"
     assert done["type"] == "response.output_item.done"
-    assert done["payload"]["item"]["type"] == "output_message"
+    assert done["payload"]["item"]["type"] == "message"
     assert done["payload"]["item"]["content"][0]["text"] == "alpha"
 
 
@@ -292,5 +292,5 @@ def test_response_event_stream__tracks_completed_output_items_into_response_outp
     assert done["type"] == "response.output_item.done"
     output_item = stream.response.output[0].as_dict()
     assert output_item["id"] == message.item_id
-    assert output_item["type"] == "output_message"
+    assert output_item["type"] == "message"
     assert output_item["content"][0]["text"] == "hello"

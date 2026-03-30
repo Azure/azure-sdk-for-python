@@ -19,7 +19,7 @@ def _build_reply(current_input: str, history: Sequence[OutputItem]) -> str:
     if len(history) == 0:
         return f"[Turn 1] No history. You said: \"{current_input}\""
 
-    history_messages = [item for item in history if getattr(item, "type", None) == "output_message"]
+    history_messages = [item for item in history if getattr(item, "type", None) == "message"]
     turn_number = len(history_messages) + 1
     last_message = history_messages[-1] if history_messages else None
     last_text = last_message["content"][0]["text"] if last_message and last_message.get("content") else "(no text)"

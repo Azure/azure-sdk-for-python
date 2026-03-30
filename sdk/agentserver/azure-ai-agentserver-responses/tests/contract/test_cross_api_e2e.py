@@ -736,7 +736,7 @@ class TestC3BgPollStored:
         assert terminal["status"] == "completed"
         assert isinstance(terminal.get("output"), list)
         assert len(terminal["output"]) >= 1
-        assert terminal["output"][0]["type"] == "output_message"
+        assert terminal["output"][0]["type"] == "message"
         assert terminal["output"][0]["content"][0]["text"] == "hello"
 
 

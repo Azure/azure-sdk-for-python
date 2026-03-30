@@ -285,7 +285,7 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         """
         return self._emit_added(
             {
-                "type": "output_message",
+                "type": "message",
                 "id": self._item_id,
                 "role": "assistant",
                 "content": [],
@@ -370,7 +370,7 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
             raise ValueError("message output item requires at least one content part before emit_done")
         return self._emit_done(
             {
-                "type": "output_message",
+                "type": "message",
                 "id": self._item_id,
                 "role": "assistant",
                 "content": deepcopy(self._completed_contents),

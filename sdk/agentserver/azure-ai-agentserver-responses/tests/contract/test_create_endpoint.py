@@ -255,7 +255,7 @@ def test_create__non_stream_returns_completed_response_with_output_items() -> No
     assert "sequence_number" not in payload
     assert isinstance(payload.get("output"), list)
     assert len(payload["output"]) == 1
-    assert payload["output"][0].get("type") == "output_message"
+    assert payload["output"][0].get("type") == "message"
     assert payload["output"][0].get("content", [])[0].get("type") == "output_text"
     assert payload["output"][0].get("content", [])[0].get("text") == "hello"
 
@@ -327,7 +327,7 @@ def test_create__background_non_stream_get_eventually_returns_output_items() -> 
     )
     assert ok, failure
 
-    assert latest_snapshot["output"][0].get("type") == "output_message"
+    assert latest_snapshot["output"][0].get("type") == "message"
     assert latest_snapshot["output"][0].get("content", [])[0].get("type") == "output_text"
     assert latest_snapshot["output"][0].get("content", [])[0].get("text") == "hello"
     assert "sequence_number" not in latest_snapshot
