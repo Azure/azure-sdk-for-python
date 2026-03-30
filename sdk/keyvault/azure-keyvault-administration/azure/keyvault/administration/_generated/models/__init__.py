@@ -14,6 +14,9 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    EkmConnection,
+    EkmProxyClientCertificateInfo,
+    EkmProxyInfo,
     FullBackupOperation,
     FullBackupOperationError,
     KeyVaultError,
@@ -50,6 +53,9 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "EkmConnection",
+    "EkmProxyClientCertificateInfo",
+    "EkmProxyInfo",
     "FullBackupOperation",
     "FullBackupOperationError",
     "KeyVaultError",
