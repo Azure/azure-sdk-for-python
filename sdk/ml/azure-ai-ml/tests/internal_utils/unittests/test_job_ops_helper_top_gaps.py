@@ -6,7 +6,6 @@ import sys
 from typing import Callable
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.exceptions import JobException
@@ -19,11 +18,19 @@ from azure.ai.ml.operations._job_ops_helper import (
     has_pat_token,
 )
 from azure.ai.ml.constants._common import GitProperties
+import random
 
 
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestJobOpsHelperTopGaps(AzureRecordedTestCase):
+@pytest.fixture
+def randstr():
+    """Simple randstr fixture for unit tests that generates random strings without recording infrastructure."""
+    def _generate(variable_name: str) -> str:
+        return f"test_{random.randint(1, 1000000000000)}"
+    return _generate
+
+
+@pytest.mark.unittest
+class TestJobOpsHelperTopGaps:
     def test_get_sorted_filtered_logs_only_streamable_and_processed_slice(self, client: MLClient, randstr: Callable[[], str]) -> None:
         # Create logs that match the COMMON_RUNTIME_STREAM_LOG_PATTERN and ALL_USER patterns
         # Use names that would be matched by the SDK patterns (they are regex-based); we only need deterministic behavior
@@ -81,10 +88,8 @@ class TestJobOpsHelperTopGaps(AzureRecordedTestCase):
         assert "Streaming log1.txt" not in appended
         assert "c" in appended
 
-
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestJobOpsHelperGaps(AzureRecordedTestCase):
+@pytest.mark.unittest
+class TestJobOpsHelperGaps:
     def test_get_sorted_filtered_logs_legacy_fallback_and_processed_slice(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         # Create a list of logs that do NOT match the common runtime patterns so the function falls back to legacy patterns
         # Use job_type that maps to COMMAND so legacy COMMAND_JOB_LOG_PATTERN is selected
@@ -172,10 +177,8 @@ class TestJobOpsHelperGaps(AzureRecordedTestCase):
         # None input
         assert has_pat_token(None) is False
 
-
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestJobOpsHelperGapsGenerated(AzureRecordedTestCase):
+@pytest.mark.unittest
+class TestJobOpsHelperGapsGenerated:
     def test_incremental_print_headers_and_append_behavior(self, client: MLClient, randstr: Callable[[], str]) -> None:
         filebuf = io.StringIO()
         processed = {}
@@ -244,11 +247,9 @@ class TestJobOpsHelperGapsGenerated(AzureRecordedTestCase):
             if k in os.environ:
                 del os.environ[k]
 
-
 # Additional generated tests merged below with a unique class name to avoid duplicate test blocks
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestJobOpsHelperGapsAdditional(AzureRecordedTestCase):
+@pytest.mark.unittest
+class TestJobOpsHelperGapsAdditional:
     def test_get_git_properties_with_env_overrides(self, client: MLClient, randstr: Callable[[], str]) -> None:
         # Set environment variables to override git properties and ensure they are returned
         env_vars = {

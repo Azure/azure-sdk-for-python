@@ -7,8 +7,7 @@ import pytest
 from azure.ai.ml import MLClient
 from azure.ai.ml.exceptions import ValidationException
 
-
-@pytest.mark.e2etest
+@pytest.mark.unittest
 class TestMLClientGaps:
     def test_create_or_update_with_unsupported_entity_raises_type_error(self, client: MLClient) -> None:
         # Pass an unsupported entity type (a plain dict) to client.create_or_update to trigger singledispatch TypeError
@@ -80,8 +79,7 @@ class TestMLClientGaps:
         assert isinstance(cli_client, MLClient)
         assert cli_client.subscription_id == subscription
 
-
-@pytest.mark.e2etest
+@pytest.mark.unittest
 class TestMLClientFromConfig:
     def test_from_config_missing_keys_raises_validation(self, client: MLClient, tmp_path: Path) -> None:
         # Create a config file missing required keys (no subscription_id/resource_group/workspace_name and no Scope)
@@ -112,7 +110,6 @@ class TestMLClientFromConfig:
         assert new_client.subscription_id == subscription
         assert new_client.resource_group_name == resource_group
         assert new_client.workspace_name == workspace
-
 
 def test_begin_create_or_update_singledispatch_default_raises_type_error(
     client: MLClient,

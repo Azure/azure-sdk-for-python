@@ -2,7 +2,6 @@ import json
 from typing import Callable
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.entities._assets import Index
@@ -16,9 +15,18 @@ from devtools_testutils import add_uri_regex_sanitizer
 from devtools_testutils.fake_credentials import SANITIZED
 from azure.ai.ml.constants._common import LONG_URI_REGEX_FORMAT
 from azure.ai.ml.entities._indexes import IndexDataSource, GitSource
+import random
+
+
+@pytest.fixture
+def randstr():
+    """Simple randstr fixture for unit tests that generates random strings without recording infrastructure."""
+    def _generate(variable_name: str) -> str:
+        return f"test_{random.randint(1, 1000000000000)}"
+    return _generate
+
 
 TEST_CONFIGS = Path(__file__).resolve().parent.parent.parent / "test_configs"
-
 
 def is_datastore_uri(s: str) -> bool:
     """Check whether the string is a datastore uri.
@@ -36,8 +44,9 @@ def storage_account_uri_sanitizer():
         function_scoped=True,
     )
 
-
 @dataclass
+
+
 class IndexesVersionInfo:
     name: str
     """The index name."""
@@ -46,10 +55,8 @@ class IndexesVersionInfo:
     latest: Index
     """The latest version of the index."""
 
-
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestIndexOperationsGaps(AzureRecordedTestCase):
+@pytest.mark.unittest
+class TestIndexOperationsGaps:
     def test_get_with_both_version_and_label_raises(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         """Validate that get() raises if both version and label are provided."""
         name = randstr("idx")
@@ -96,10 +103,8 @@ class TestIndexOperationsGaps(AzureRecordedTestCase):
 
         assert "Unsupported input source type" in str(ex.value)
 
-
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestIndexCreateOrUpdateValidation(AzureRecordedTestCase):
+@pytest.mark.unittest
+class TestIndexCreateOrUpdateValidation:
     def test_create_or_update_missing_version_and_no_autoincrement_raises(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         """Validate that create_or_update raises when version is missing and auto-increment is disabled."""
         name = randstr("index_name")
@@ -114,10 +119,8 @@ class TestIndexCreateOrUpdateValidation(AzureRecordedTestCase):
 
         assert "Must specify a version." in str(ex.value)
 
-
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestIndexValidationBranches(AzureRecordedTestCase):
+@pytest.mark.unittest
+class TestIndexValidationBranches:
     def test_build_index_parses_document_path_regex_and_unsupported_input_source_raises(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         """Validate that build_index parses document_path_replacement_regex JSON and raises for unsupported input_source types."""
 
@@ -146,10 +149,9 @@ class TestIndexValidationBranches(AzureRecordedTestCase):
 
         assert "Unsupported input source type" in str(exinfo.value)
 
-
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test", "storage_account_uri_sanitizer")
-class TestIndexOperationsGaps_Generated(AzureRecordedTestCase):
+@pytest.mark.usefixtures("storage_account_uri_sanitizer")
+@pytest.mark.unittest
+class TestIndexOperationsGaps_Generated:
     def test_build_index_with_parsed_document_path_regex_and_unsupported_input_source_raises(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
@@ -206,10 +208,8 @@ class TestIndexOperationsGaps_Generated(AzureRecordedTestCase):
                 input_source=123,  # unsupported but JSON parsing should fail first
             )
 
-
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestIndexBuildIndexGaps(AzureRecordedTestCase):
+@pytest.mark.unittest
+class TestIndexBuildIndexGaps:
     def test_build_index_with_parsed_document_path_regex_and_unsupported_input_source_raises(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:

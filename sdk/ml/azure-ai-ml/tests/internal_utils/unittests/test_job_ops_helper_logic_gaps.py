@@ -3,7 +3,6 @@ import os
 from typing import Callable
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.constants._common import GitProperties
@@ -18,9 +17,8 @@ from azure.ai.ml.operations._job_ops_helper import (
 )
 
 
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestJobOpsHelperLogicGaps(AzureRecordedTestCase):
+@pytest.mark.unittest
+class TestJobOpsHelperLogicGaps:
     def test_get_sorted_filtered_logs_common_and_legacy(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         # Prepare logs that match common runtime streaming pattern and legacy patterns
         logs = [
@@ -109,9 +107,8 @@ class TestJobOpsHelperLogicGaps(AzureRecordedTestCase):
         assert val >= 1
 
 
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestJobOpsHelperMoreGaps(AzureRecordedTestCase):
+@pytest.mark.unittest
+class TestJobOpsHelperMoreGaps:
     def test_get_git_properties_with_env_overrides(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         # Set environment overrides for git properties and ensure they are cleaned and returned
         os.environ[GitProperties.ENV_REPOSITORY_URI] = "  https://example.com/repo.git  "
@@ -166,10 +163,19 @@ class TestJobOpsHelperMoreGaps(AzureRecordedTestCase):
 # Additional generated tests merged below. Existing tests above are preserved unchanged.
 import time
 import re
+import random
 
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestJobOpsHelper(AzureRecordedTestCase):
+
+@pytest.fixture
+def randstr():
+    """Simple randstr fixture for unit tests that generates random strings without recording infrastructure."""
+    def _generate(variable_name: str) -> str:
+        return f"test_{random.randint(1, 1000000000000)}"
+    return _generate
+
+
+@pytest.mark.unittest
+class TestJobOpsHelper:
     def test_log_helpers_incremental_and_sorting(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         # Prepare a list of logs that match common runtime and legacy patterns
         logs = [
@@ -265,9 +271,8 @@ class TestJobOpsHelper(AzureRecordedTestCase):
             _wait_before_polling(-1.0)
 
 
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestJobOpsHelperGaps(AzureRecordedTestCase):
+@pytest.mark.unittest
+class TestJobOpsHelperGaps:
     def test_log_helpers_incremental_and_sorting(self, client: MLClient, randstr):
         # _get_sorted_filtered_logs should filter and sort logs; when no common-runtime matches,
         # it should fall back to legacy patterns based on job type membership.
@@ -374,9 +379,8 @@ class TestJobOpsHelperGaps(AzureRecordedTestCase):
 
 
 # Generated tests appended from batch 1 (class renamed to avoid duplication)
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestJobOpsHelperGapsGenerated(AzureRecordedTestCase):
+@pytest.mark.unittest
+class TestJobOpsHelperGapsGenerated:
     def test_log_helpers_incremental_and_sorting(self, client: MLClient, randstr: Callable[[], str]) -> None:
         # Prepare a legacy-style set of logs for a command job to trigger fallback branch in _get_sorted_filtered_logs
         logs = [

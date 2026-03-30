@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import Callable
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.entities import OnlineDeployment
@@ -17,10 +16,10 @@ from azure.ai.ml.operations._local_deployment_helper import (
     LocalEndpointConstants,
 )
 
+@pytest.mark.unittest
 
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestLocalDeploymentHelperGaps(AzureRecordedTestCase):
+
+class TestLocalDeploymentHelperGaps:
     def test_write_conda_and_readback(self, client: MLClient, tmp_path: Path, randstr: Callable[[], str]) -> None:
         # Ensure _write_conda_file writes the conda contents to the expected path with correct encoding
         conda_contents = "name: testenv\ndependencies:\n  - python=3.8\n"
@@ -82,14 +81,21 @@ class TestLocalDeploymentHelperGaps(AzureRecordedTestCase):
         parsed = json.loads(stubbed)
         assert parsed.get("name") == endpoint
 
-
 # Additional tests merged from generated batch, placed in a separate class to avoid duplicating existing test blocks
 import uuid
+import random
 
 
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestLocalDeploymentHelperGaps_Additional(AzureRecordedTestCase):
+@pytest.fixture
+def randstr():
+    """Simple randstr fixture for unit tests that generates random strings without recording infrastructure."""
+    def _generate(variable_name: str) -> str:
+        return f"test_{random.randint(1, 1000000000000)}"
+    return _generate
+
+
+@pytest.mark.unittest
+class TestLocalDeploymentHelperGaps_Additional:
     def test_write_conda_file_and_readback(self, client: MLClient, tmp_path: Path) -> None:
         """Verify _write_conda_file writes contents with correct encoding and filename."""
         conda_contents = "name: test-env\ndependencies:\n  - python=3.8\n"

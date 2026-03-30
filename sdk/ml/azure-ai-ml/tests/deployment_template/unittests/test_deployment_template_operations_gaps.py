@@ -1,14 +1,21 @@
 import pytest
-from devtools_testutils import AzureRecordedTestCase
 from typing import Callable
 
 from azure.ai.ml import MLClient
 from azure.core.exceptions import ResourceNotFoundError
+import random
 
 
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestDeploymentTemplateOperationsGaps(AzureRecordedTestCase):
+@pytest.fixture
+def randstr():
+    """Simple randstr fixture for unit tests that generates random strings without recording infrastructure."""
+    def _generate(variable_name: str) -> str:
+        return f"test_{random.randint(1, 1000000000000)}"
+    return _generate
+
+
+@pytest.mark.unittest
+class TestDeploymentTemplateOperationsGaps:
     def test_create_or_update_rejects_non_deploymenttemplate(
         self, client: MLClient, randstr: Callable[[], str]
     ) -> None:

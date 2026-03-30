@@ -17,8 +17,7 @@ from azure.ai.ml.operations._job_ops_helper import (
     has_pat_token,
 )
 
-
-@pytest.mark.e2etest
+@pytest.mark.unittest
 class TestJobOpsHelperGaps:
     def test_wait_before_polling_negative_raises(self) -> None:
         # Ensure negative seconds raises the JobException as implemented
@@ -90,11 +89,9 @@ class TestJobOpsHelperGaps:
         assert has_pat_token(None) is False
         assert has_pat_token("https://dev.azure.com/withoutpat/repo") is False
 
-
 # Additional generated tests merged below. Existing tests above are preserved verbatim.
 
-
-@pytest.mark.e2etest
+@pytest.mark.unittest
 class TestJobOpsHelperGapsGenerated:
     def test_wait_before_polling_raises_on_negative(self) -> None:
         """Covers validation branch that raises JobException when current_seconds < 0."""
@@ -223,9 +220,8 @@ class TestJobOpsHelperGapsGenerated:
         primary2 = _get_last_log_primary_instance(logs)
         assert primary2 in logs
 
-
 # Merged additional generated tests from batch 1, class renamed to avoid duplicate class name
-@pytest.mark.e2etest
+@pytest.mark.unittest
 class TestJobOpsHelperGapsExtra:
     def test_get_git_properties_respects_env_overrides_with_whitespace_stripping(
         self,

@@ -7,8 +7,7 @@ from azure.ai.ml import MLClient
 from azure.ai.ml.entities import Component
 from azure.ai.ml.exceptions import ValidationException
 
-
-@pytest.mark.e2etest
+@pytest.mark.unittest
 class TestComponentOperationsGaps:
     def test_refine_component_rejects_variable_inputs(self, client: MLClient) -> None:
         # function with variable positional args should be rejected by _refine_component via create_or_update
@@ -35,8 +34,7 @@ class TestComponentOperationsGaps:
         with pytest.raises(ValidationException):
             client.components.create_or_update(plain_func)
 
-
-@pytest.mark.e2etest
+@pytest.mark.unittest
 class TestComponentOperationsRefine:
     def test_refine_component_raises_on_variable_args(self, client: MLClient) -> None:
         # Define a function with variable positional and keyword args which should trigger the VAR_POSITIONAL/VAR_KEYWORD check
@@ -84,8 +82,7 @@ class TestComponentOperationsRefine:
             client.components.create_or_update(_regular_function)
         assert "must be a dsl or mldesigner" in str(exc.value)
 
-
-@pytest.mark.e2etest
+@pytest.mark.unittest
 class TestComponentOperationsValidation:
     def test_component_function_with_variable_args_raises(self, client: MLClient) -> None:
         # Function with *args and **kwargs should be rejected by _refine_component
@@ -130,8 +127,7 @@ class TestComponentOperationsValidation:
 
         assert "Function must be a dsl or mldesigner component function" in str(exinfo.value)
 
-
-@pytest.mark.e2etest
+@pytest.mark.unittest
 class TestComponentOperationsValidationErrors:
     def test_create_or_update_with_plain_function_raises_validation(self, client: MLClient) -> None:
         """Ensure passing a plain function (not DSL/mldesigner) into create_or_update raises ValidationException.
@@ -149,8 +145,7 @@ class TestComponentOperationsValidationErrors:
         # Exact message must indicate function must be a dsl or mldesigner component function
         assert "Function must be a dsl or mldesigner component function" in str(excinfo.value)
 
-
-@pytest.mark.e2etest
+@pytest.mark.unittest
 class TestComponentOperationsGeneratedBatch1:
     def test_create_or_update_with_untyped_function_raises_validation(self, client: MLClient) -> None:
         """

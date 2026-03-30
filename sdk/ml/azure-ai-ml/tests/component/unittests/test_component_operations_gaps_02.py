@@ -1,15 +1,12 @@
 import pytest
-from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient
 from collections.abc import Iterable
 from azure.ai.ml.entities import PipelineComponent
 from azure.ai.ml.operations._component_operations import ComponentOperations
 
-
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestComponentOperationsInitAndList(AzureRecordedTestCase):
+@pytest.mark.unittest
+class TestComponentOperationsInitAndList:
     def test_managed_label_resolver_contains_latest(self, client: MLClient) -> None:
         ops = client.components
         # _managed_label_resolver should contain 'latest' mapped to a callable
@@ -29,10 +26,8 @@ class TestComponentOperationsInitAndList(AzureRecordedTestCase):
         # do not materialize the iterator to avoid network calls in environments where auth may fail
         assert isinstance(iterator, Iterable)
 
-
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestComponentOperationsDivideLayers(AzureRecordedTestCase):
+@pytest.mark.unittest
+class TestComponentOperationsDivideLayers:
     def test_divide_nodes_to_resolve_into_layers_with_all_leaf_nodes(self, client: MLClient) -> None:
         """Verify _divide_nodes_to_resolve_into_layers places all non-pipeline jobs into the final layer.
 

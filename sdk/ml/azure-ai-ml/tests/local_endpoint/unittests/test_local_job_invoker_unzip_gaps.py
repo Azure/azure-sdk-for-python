@@ -8,7 +8,6 @@ import json
 import base64
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.operations._local_job_invoker import (
@@ -20,11 +19,19 @@ from azure.ai.ml.operations._local_job_invoker import (
     CommonRuntimeHelper,
 )
 from azure.ai.ml.constants._common import AZUREML_RUN_SETUP_DIR, INVOCATION_BASH_FILE
+import random
 
 
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestLocalJobInvokerUnzip(AzureRecordedTestCase):
+@pytest.fixture
+def randstr():
+    """Simple randstr fixture for unit tests that generates random strings without recording infrastructure."""
+    def _generate(variable_name: str) -> str:
+        return f"test_{random.randint(1, 1000000000000)}"
+    return _generate
+
+
+@pytest.mark.unittest
+class TestLocalJobInvokerUnzip:
     def test_unzip_to_temporary_file_extracts_contents(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         # Create a fake job definition with a name attribute
         class _JD:
@@ -76,9 +83,8 @@ class TestLocalJobInvokerUnzip(AzureRecordedTestCase):
             pass
 
 
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestLocalJobInvokerGaps(AzureRecordedTestCase):
+@pytest.mark.unittest
+class TestLocalJobInvokerGaps:
     def test_get_creationflags_windows_and_unix(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         # Windows override should include creationflags and startupinfo
         try:
@@ -140,9 +146,8 @@ class TestLocalJobInvokerGaps(AzureRecordedTestCase):
         assert is_local_run(job4) is True
 
 
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestLocalJobInvokerInvoke(AzureRecordedTestCase):
+@pytest.mark.unittest
+class TestLocalJobInvokerInvoke:
     @pytest.mark.skip(reason="Background bash process race condition in playback")
     def test_invoke_command_runs_bash_invocation(self, client: MLClient, randstr: Callable[[str], str], tmp_path: Path) -> None:
         # Create project temp dir with AZUREML_RUN_SETUP_DIR and invocation bash file
@@ -170,9 +175,8 @@ class TestLocalJobInvokerInvoke(AzureRecordedTestCase):
 
 
 # Additional tests from generated batch merged below. Renamed class to avoid duplication with existing TestLocalJobInvokerGaps
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestLocalJobInvokerCommonRuntime(AzureRecordedTestCase):
+@pytest.mark.unittest
+class TestLocalJobInvokerCommonRuntime:
     def test_common_runtime_helper_init_creates_temp_and_files(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         """
         Covers: lines 113-115

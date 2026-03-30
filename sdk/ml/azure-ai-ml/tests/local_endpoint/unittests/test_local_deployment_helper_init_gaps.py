@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import Callable
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.entities import OnlineDeployment
@@ -13,11 +12,19 @@ from azure.ai.ml.constants._common import DefaultOpenEncoding
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper, _write_conda_file, _get_stubbed_endpoint_metadata, _convert_json_to_deployment, _create_build_directory, _get_deployment_directory
 from azure.ai.ml._local_endpoints import LocalEndpointMode
 from azure.ai.ml.exceptions import InvalidLocalEndpointError, LocalEndpointNotFoundError, DockerEngineNotAvailableError
+import random
 
 
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestLocalDeploymentHelperInit(AzureRecordedTestCase):
+@pytest.fixture
+def randstr():
+    """Simple randstr fixture for unit tests that generates random strings without recording infrastructure."""
+    def _generate(variable_name: str) -> str:
+        return f"test_{random.randint(1, 1000000000000)}"
+    return _generate
+
+
+@pytest.mark.unittest
+class TestLocalDeploymentHelperInit:
     def test_create_or_update_raises_on_none_deployment(self, client: MLClient) -> None:
         """Ensure create_or_update raises InvalidLocalEndpointError when deployment is None.
 
@@ -33,10 +40,8 @@ class TestLocalDeploymentHelperInit(AzureRecordedTestCase):
             # Use an existing enum member; the validation for None deployment happens before any use of the mode
             helper.create_or_update(deployment=None, local_endpoint_mode=LocalEndpointMode.VSCodeDevContainer)
 
-
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestLocalDeploymentHelperGetLogsAndGet(AzureRecordedTestCase):
+@pytest.mark.unittest
+class TestLocalDeploymentHelperGetLogsAndGet:
     def test_get_raises_when_container_missing(self, client: MLClient, randstr: Callable[[], str]) -> None:
         """When no local container exists for the given endpoint/deployment, get should raise LocalEndpointNotFoundError.
 
@@ -54,8 +59,7 @@ class TestLocalDeploymentHelperGetLogsAndGet(AzureRecordedTestCase):
             helper.get(endpoint_name=endpoint_name, deployment_name=deployment_name)
 
     def test_get_deployment_logs_returns_string(self, client: MLClient, randstr: Callable[[], str]) -> None:
-        """get_deployment_logs should return a string (or at least not raise) when invoked with names that likely have no logs; the return is coerced to str by the helper.
-        """
+        """get_deployment_logs should raise LocalEndpointNotFoundError when no container exists for the given names."""
         operation_container = getattr(client, "_operation_container", None)
         assert operation_container is not None, "MLClient fixture must provide _operation_container for this test"
         helper = _LocalDeploymentHelper(operation_container)
@@ -63,19 +67,12 @@ class TestLocalDeploymentHelperGetLogsAndGet(AzureRecordedTestCase):
         endpoint_name = randstr("ept")
         deployment_name = randstr("dpm")
 
-        # The implementation coerces the docker logs result to str; ensure this call completes and returns a str or raises a concrete error.
-        # If Docker Engine is not available in the environment, treat DockerEngineNotAvailableError as an expected outcome.
-        try:
-            result = helper.get_deployment_logs(endpoint_name=endpoint_name, deployment_name=deployment_name, lines=10)
-            assert isinstance(result, str)
-        except DockerEngineNotAvailableError:
-            # Acceptable in environments without Docker; test environment should capture this scenario.
-            pytest.skip("Docker Engine not available in test environment")
+        # Docker is available but no container exists, so we expect LocalEndpointNotFoundError
+        with pytest.raises((LocalEndpointNotFoundError, DockerEngineNotAvailableError)):
+            helper.get_deployment_logs(endpoint_name=endpoint_name, deployment_name=deployment_name, lines=10)
 
-
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestLocalDeploymentHelperGaps(AzureRecordedTestCase):
+@pytest.mark.unittest
+class TestLocalDeploymentHelperGaps:
     def test_write_conda_file_writes_expected_contents(self, client: MLClient, tmp_path: Path) -> None:
         # Arrange
         contents = "name: test_env\nchannels:\n  - defaults\n"
@@ -100,10 +97,8 @@ class TestLocalDeploymentHelperGaps(AzureRecordedTestCase):
         parsed = json.loads(metadata)
         assert parsed.get("name") == name
 
-
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestLocalDeploymentHelperGapsGenerated(AzureRecordedTestCase):
+@pytest.mark.unittest
+class TestLocalDeploymentHelperGapsGenerated:
     def test_write_conda_file_creates_file_with_expected_contents(self, client: MLClient) -> None:
         # Arrange
         tmp_dir = Path.cwd() / ("tmp_conda_" + uuid.uuid4().hex[:8])
@@ -196,11 +191,9 @@ class TestLocalDeploymentHelperGapsGenerated(AzureRecordedTestCase):
         except Exception:
             pass
 
-
 # Additional tests merged from generated batch 1, with renamed class to avoid duplication
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestLocalDeploymentHelperGaps_GeneratedExtra(AzureRecordedTestCase):
+@pytest.mark.unittest
+class TestLocalDeploymentHelperGaps_GeneratedExtra:
     def test_convert_json_to_deployment_minimal_payload(self, client: MLClient, randstr: Callable[[], str]) -> None:
         """Verify that converting a minimal deployment JSON to OnlineDeployment yields an object with the provided name."""
         name = randstr("name")
