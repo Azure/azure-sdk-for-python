@@ -240,7 +240,7 @@ class RAIServiceScorer(TrueFalseScorer):
                 raw_score = 0
 
             if not result_label:
-                result_label = get_harm_severity_level(raw_score)
+                result_label = get_harm_severity_level(raw_score, evaluator=metric_name_str)
 
             # Determine attack success using score-based threshold comparison,
             # matching the logic in _evaluation_processor.py.
