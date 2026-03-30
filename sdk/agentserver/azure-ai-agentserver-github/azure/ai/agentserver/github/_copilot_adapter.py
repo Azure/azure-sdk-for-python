@@ -927,8 +927,17 @@ async def _iter_copilot_events(
 
         event_count += 1
         event_name = event.type.name if event.type else "UNKNOWN"
-        if text:
-            logger.info(f"Copilot event #{event_count:03d}: {event_name} content_len={len(text)}")
+
+        # Rich logging: tool details, content preview, or basic event name
+        data = event.data
+        if event_name in ("TOOL_EXECUTION_START", "TOOL_EXECUTION_COMPLETE", "TOOL_EXECUTION_PARTIAL_RESULT") and data:
+            tool_name = getattr(data, "tool_name", None) or getattr(data, "name", "")
+            call_id = getattr(data, "call_id", "")
+            args = str(getattr(data, "arguments", ""))[:500]
+            logger.info(f"Copilot event #{event_count:03d}: {event_name} tool={tool_name!r} call_id={call_id!r} args={args}")
+        elif text:
+            preview = text[:300].replace("\n", "\\n")
+            logger.info(f"Copilot event #{event_count:03d}: {event_name} content_len={len(text)} preview={preview!r}")
         else:
             logger.info(f"Copilot event #{event_count:03d}: {event_name}")
 
