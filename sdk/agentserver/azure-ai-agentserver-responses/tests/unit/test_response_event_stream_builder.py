@@ -209,7 +209,7 @@ def test_event_stream_builder__add_output_item_generic_emits_added_and_done() ->
 
 
 def test_event_stream_builder__constructor_accepts_seed_response() -> None:
-    seed_response = generated_models.Response(
+    seed_response = generated_models.ResponseObject(
         {
             "id": "resp_builder_seed_response",
             "object": "response",

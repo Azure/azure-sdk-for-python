@@ -29,7 +29,7 @@ def _response(
     status: str = "completed",
     output: list[dict[str, Any]] | None = None,
     conversation_id: str | None = None,
-) -> generated_models.Response:
+) -> generated_models.ResponseObject:
     payload: dict[str, Any] = {
         "id": response_id,
         "object": "response",
@@ -39,7 +39,7 @@ def _response(
     }
     if conversation_id is not None:
         payload["conversation"] = {"id": conversation_id}
-    return generated_models.Response(payload)
+    return generated_models.ResponseObject(payload)
 
 
 def _input_item(item_id: str, text: str) -> dict[str, Any]:

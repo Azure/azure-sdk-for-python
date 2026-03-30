@@ -9,7 +9,7 @@ from copy import deepcopy
 from datetime import datetime, timezone
 from typing import Any, Literal, Mapping
 
-from ._generated import Response, ResponseStreamEvent, ResponseStreamEventType
+from ._generated import ResponseObject, ResponseStreamEvent, ResponseStreamEventType
 
 EVENT_TYPE = ResponseStreamEventType
 
@@ -88,7 +88,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         updated_at: datetime | None = None,
         completed_at: datetime | None = None,
         status: ResponseStatus = "queued",
-        response: Response | None = None,
+        response: ResponseObject | None = None,
         execution_task: asyncio.Task[Any] | None = None,
         cancel_requested: bool = False,
         client_disconnected: bool = False,
@@ -159,11 +159,11 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         """
         return self.status in {"completed", "failed", "cancelled", "incomplete"}
 
-    def set_response_snapshot(self, response: Response) -> None:
+    def set_response_snapshot(self, response: ResponseObject) -> None:
         """Replace the current response snapshot from handler-emitted events.
 
         :param response: The latest response snapshot to store.
-        :type response: Response
+        :type response: ResponseObject
         """
         self.response = response
         self.updated_at = datetime.now(timezone.utc)
@@ -216,7 +216,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
                 agent_reference=agent_reference,
                 model=model,
             )
-            self.set_response_snapshot(Response(snapshot))
+            self.set_response_snapshot(ResponseObject(snapshot))
             resolved = snapshot.get("status")
             if isinstance(resolved, str):
                 self.status = resolved
@@ -300,7 +300,7 @@ def build_cancelled_response(
     agent_reference: dict[str, Any],
     model: str | None,
     created_at: datetime | None = None,
-) -> Response:
+) -> ResponseObject:
     """Build a Response object representing a cancelled terminal state.
 
     :param response_id: The response identifier.
@@ -312,7 +312,7 @@ def build_cancelled_response(
     :param created_at: Optional creation timestamp; defaults to now if omitted.
     :type created_at: datetime | None
     :returns: A Response object with status ``"cancelled"`` and empty output.
-    :rtype: Response
+    :rtype: ResponseObject
     """
     payload: dict[str, Any] = {
         "id": response_id,
@@ -325,7 +325,7 @@ def build_cancelled_response(
     }
     if created_at is not None:
         payload["created_at"] = created_at.isoformat()
-    return Response(payload)
+    return ResponseObject(payload)
 
 
 def build_failed_response(
@@ -334,8 +334,8 @@ def build_failed_response(
     model: str | None,
     created_at: datetime | None = None,
     error_message: str = "An internal server error occurred.",
-) -> Response:
-    """Build a Response object representing a failed terminal state.
+) -> ResponseObject:
+    """Build a ResponseObject representing a failed terminal state.
 
     :param response_id: The response identifier.
     :type response_id: str
@@ -348,7 +348,7 @@ def build_failed_response(
     :param error_message: Human-readable error message.
     :type error_message: str
     :returns: A Response object with status ``"failed"`` and empty output.
-    :rtype: Response
+    :rtype: ResponseObject
     """
     payload: dict[str, Any] = {
         "id": response_id,
@@ -362,4 +362,4 @@ def build_failed_response(
     }
     if created_at is not None:
         payload["created_at"] = created_at.isoformat()
-    return Response(payload)
+    return ResponseObject(payload)

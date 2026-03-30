@@ -10,7 +10,7 @@ from urllib.parse import quote as _url_quote
 import httpx
 from azure.core.credentials_async import AsyncTokenCredential
 
-from ..models._generated import Response  # type: ignore[attr-defined]
+from ..models._generated import ResponseObject  # type: ignore[attr-defined]
 from ._foundry_errors import raise_for_storage_error
 from ._foundry_serializer import (
     deserialize_history_ids,
@@ -97,14 +97,14 @@ class FoundryStorageProvider:
 
     async def create_response_async(
         self,
-        response: Response,
+        response: ResponseObject,
         input_items: Iterable[Any] | None,
         history_item_ids: Iterable[str] | None,
     ) -> None:
         """Persist a new response with its associated input items and history.
 
         :param response: The initial response snapshot.
-        :type response: Response
+        :type response: ResponseObject
         :param input_items: Ordered input items for this response turn.
         :type input_items: Iterable[Any] | None
         :param history_item_ids: Item IDs from the prior conversation turn, if any.
@@ -116,13 +116,13 @@ class FoundryStorageProvider:
         http_resp = await self._http_client.post(url, content=body, headers=await self._auth_headers())
         raise_for_storage_error(http_resp)
 
-    async def get_response_async(self, response_id: str) -> Response:
+    async def get_response_async(self, response_id: str) -> ResponseObject:
         """Retrieve a stored response by its ID.
 
         :param response_id: The response identifier.
         :type response_id: str
-        :returns: The deserialized :class:`Response` model.
-        :rtype: Response
+        :returns: The deserialized :class:`ResponseObject` model.
+        :rtype: ResponseObject
         :raises FoundryResourceNotFoundError: If the response does not exist.
         :raises FoundryApiError: On other non-success HTTP response.
         """
@@ -131,11 +131,11 @@ class FoundryStorageProvider:
         raise_for_storage_error(http_resp)
         return deserialize_response(http_resp.text)
 
-    async def update_response_async(self, response: Response) -> None:
+    async def update_response_async(self, response: ResponseObject) -> None:
         """Persist an updated response snapshot.
 
         :param response: The updated response model.  Must contain a valid ``id`` field.
-        :type response: Response
+        :type response: ResponseObject
         :raises FoundryResourceNotFoundError: If the response does not exist.
         :raises FoundryApiError: On other non-success HTTP response.
         """

@@ -15,7 +15,7 @@ from ._generated import (
     MessageContentInputTextContent,
     MessageRole,
     OutputItem,
-    Response,
+    ResponseObject,
     ToolChoiceAllowed,
     ToolChoiceOptions,
     ToolChoiceParam,
@@ -184,7 +184,7 @@ def get_conversation_expanded(request: CreateResponse) -> Optional[ConversationP
 # ---------------------------------------------------------------------------
 
 
-def get_instruction_items(response: Response) -> list[Item]:
+def get_instruction_items(response: ResponseObject) -> list[Item]:
     """Expand ``Response.instructions`` into a list of :class:`Item`.
 
     - If instructions is ``None``, returns ``[]``.
@@ -193,7 +193,7 @@ def get_instruction_items(response: Response) -> list[Item]:
     - If instructions is already a list, returns a shallow copy.
 
     :param response: The response object.
-    :type response: Response
+    :type response: ResponseObject
     :returns: A list of instruction items.
     :rtype: list[Item]
     """

@@ -294,13 +294,13 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             previous_response_id=ctx.previous_response_id,
             cancel_signal=ctx.cancellation_signal,
         )
-        execution.set_response_snapshot(generated_models.Response(initial_payload))
+        execution.set_response_snapshot(generated_models.ResponseObject(initial_payload))
         execution.subject = _ResponseEventSubject()
         state.bg_record = execution
         await state.bg_record.subject.publish(first_normalized)
         await self._runtime_state.add(execution)
         if ctx.store:
-            _initial_response_obj = generated_models.Response(initial_payload)
+            _initial_response_obj = generated_models.ResponseObject(initial_payload)
             _history_ids = (
                 await self._provider.get_history_item_ids_async(ctx.previous_response_id, None, 10000)
                 if ctx.previous_response_id
@@ -477,7 +477,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 previous_response_id=ctx.previous_response_id,
                 cancel_signal=ctx.cancellation_signal,
             )
-            execution.set_response_snapshot(generated_models.Response(response_payload))
+            execution.set_response_snapshot(generated_models.ResponseObject(response_payload))
             await self._runtime_state.add(execution)
             if ctx.store:
                 try:
@@ -487,7 +487,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                         else None
                     )
                     await self._provider.create_response_async(
-                        generated_models.Response(response_payload), ctx.input_items or None, _history_ids
+                        generated_models.ResponseObject(response_payload), ctx.input_items or None, _history_ids
                     )
                 except Exception:  # pylint: disable=broad-exception-caught
                     pass  # best effort
@@ -522,7 +522,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 )
                 resolved_status = response_payload.get("status")
                 status = resolved_status if isinstance(resolved_status, str) else "in_progress"
-                record.set_response_snapshot(generated_models.Response(response_payload))
+                record.set_response_snapshot(generated_models.ResponseObject(response_payload))
                 record.transition_to(status)  # type: ignore[arg-type]
 
             # Persist terminal state update via provider (bg+stream: initial create already done)
@@ -594,7 +594,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 input_items=deepcopy(ctx.input_items),
                 previous_response_id=ctx.previous_response_id,
             )
-            stream_record.set_response_snapshot(generated_models.Response(response_payload))
+            stream_record.set_response_snapshot(generated_models.ResponseObject(response_payload))
             await self._runtime_state.add(stream_record)
             # Persist via provider (non-bg stream: single create at terminal state)
             try:
@@ -604,7 +604,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     else None
                 )
                 await self._provider.create_response_async(
-                    generated_models.Response(response_payload), ctx.input_items or None, _history_ids
+                    generated_models.ResponseObject(response_payload), ctx.input_items or None, _history_ids
                 )
             except Exception:  # pylint: disable=broad-exception-caught
                 pass  # best effort
@@ -816,13 +816,13 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             previous_response_id=ctx.previous_response_id,
             response_context=ctx.context,
         )
-        record.set_response_snapshot(generated_models.Response(response_payload))
+        record.set_response_snapshot(generated_models.ResponseObject(response_payload))
 
         if ctx.store:
             await self._runtime_state.add(record)
             # Persist via provider (non-bg sync: single create at terminal state)
             try:
-                _response_obj = generated_models.Response(response_payload)
+                _response_obj = generated_models.ResponseObject(response_payload)
                 _history_ids = (
                     await self._provider.get_history_item_ids_async(ctx.previous_response_id, None, 10000)
                     if ctx.previous_response_id
@@ -866,7 +866,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         if ctx.store:
             try:
                 _initial_snapshot = _RuntimeState.to_snapshot(record)
-                _response_obj = generated_models.Response(_initial_snapshot)
+                _response_obj = generated_models.ResponseObject(_initial_snapshot)
                 _history_ids = (
                     await self._provider.get_history_item_ids_async(ctx.previous_response_id, None, 10000)
                     if ctx.previous_response_id

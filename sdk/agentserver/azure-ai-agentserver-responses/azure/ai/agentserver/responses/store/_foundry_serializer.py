@@ -7,18 +7,18 @@ from __future__ import annotations
 import json
 from typing import Any, Iterable
 
-from ..models._generated import OutputItem, Response  # type: ignore[attr-defined]
+from ..models._generated import OutputItem, ResponseObject  # type: ignore[attr-defined]
 
 
 def serialize_create_request(
-    response: Response,
+    response: ResponseObject,
     input_items: Iterable[Any] | None,
     history_item_ids: Iterable[str] | None,
 ) -> bytes:
     """Serialize a create-response request envelope to JSON bytes.
 
     :param response: The initial response snapshot.
-    :type response: Response
+    :type response: ResponseObject
     :param input_items: Ordered input items to store alongside the response.
     :type input_items: Iterable[Any] | None
     :param history_item_ids: Item IDs drawn from a prior conversation turn.
@@ -34,11 +34,11 @@ def serialize_create_request(
     return json.dumps(payload).encode("utf-8")
 
 
-def serialize_response(response: Response) -> bytes:
-    """Serialize a single :class:`Response` snapshot to JSON bytes.
+def serialize_response(response: ResponseObject) -> bytes:
+    """Serialize a single :class:`ResponseObject` snapshot to JSON bytes.
 
     :param response: The response model to encode.
-    :type response: Response
+    :type response: ResponseObject
     :returns: UTF-8 encoded JSON body.
     :rtype: bytes
     """
@@ -56,15 +56,15 @@ def serialize_batch_request(item_ids: list[str]) -> bytes:
     return json.dumps({"item_ids": item_ids}).encode("utf-8")
 
 
-def deserialize_response(body: str) -> Response:
-    """Deserialize a JSON response body into a :class:`Response` model.
+def deserialize_response(body: str) -> ResponseObject:
+    """Deserialize a JSON response body into a :class:`ResponseObject` model.
 
     :param body: The raw JSON response text from the storage API.
     :type body: str
-    :returns: A populated :class:`Response` model.
-    :rtype: Response
+    :returns: A populated :class:`ResponseObject` model.
+    :rtype: ResponseObject
     """
-    return Response(json.loads(body))  # type: ignore[call-arg]
+    return ResponseObject(json.loads(body))  # type: ignore[call-arg]
 
 
 def deserialize_paged_items(body: str) -> list[Any]:

@@ -227,7 +227,7 @@ def assign_sequence_numbers(events: list[dict[str, Any]]) -> None:
 
 
 def track_completed_output_item(
-    response: generated_models.Response,
+    response: generated_models.ResponseObject,
     event: dict[str, Any],
 ) -> None:
     """When an output-item-done event arrives, persist the item on the response.
@@ -288,7 +288,7 @@ def coerce_usage(
     raise TypeError("usage must be a dict or a generated ResponseUsage model")
 
 
-def compute_output_text(response: generated_models.Response) -> str | None:
+def compute_output_text(response: generated_models.ResponseObject) -> str | None:
     """Concatenate all ``output_text`` content parts from message output items.
 
     :param response: The response envelope whose output items to scan.
@@ -326,7 +326,7 @@ def compute_output_text(response: generated_models.Response) -> str | None:
     return "".join(fragments)
 
 
-def extract_agent_reference(response: generated_models.Response) -> dict[str, Any] | None:
+def extract_agent_reference(response: generated_models.ResponseObject) -> dict[str, Any] | None:
     """Pull the ``agent_reference`` dict from a response, if present.
 
     :param response: The response envelope to inspect.
@@ -343,7 +343,7 @@ def extract_agent_reference(response: generated_models.Response) -> dict[str, An
     return None
 
 
-def extract_model(response: generated_models.Response) -> str | None:
+def extract_model(response: generated_models.ResponseObject) -> str | None:
     """Pull the ``model`` string from a response, if present.
 
     :param response: The response envelope to inspect.

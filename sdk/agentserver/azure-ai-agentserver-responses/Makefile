@@ -3,12 +3,12 @@
 
 OUTPUT_DIR  ?= azure/ai/agentserver/responses/models/_generated
 TYPESPEC_DIR ?= type_spec
-OPENAPI_SPEC ?= type_spec/TempTypeSpecFiles/Foundry/openapi3/v1/microsoft-foundry-openapi3.yaml
+OPENAPI_SPEC ?= type_spec/TempTypeSpecFiles/Foundry/openapi.v1.yaml
 VALIDATORS_OUTPUT ?= $(OUTPUT_DIR)/_validators.py
 ROOT_SCHEMAS ?= CreateResponse
 LOCAL_TYPESPEC_PACKAGES := @typespec/compiler @typespec/http @typespec/openapi @typespec/openapi3 @typespec/versioning @typespec/events @typespec/sse @azure-tools/typespec-python @azure-tools/typespec-azure-core @azure-tools/typespec-client-generator-core @azure-tools/openai-typespec
 TEMP_OUTPUT_DIR := $(OUTPUT_DIR)/.tmp_codegen
-MODEL_PACKAGE_DIR := $(TEMP_OUTPUT_DIR)/azure/ai/agentserver/responses/sdk/models
+MODEL_PACKAGE_DIR := $(TEMP_OUTPUT_DIR)/azure/ai/agentserver/responses/models
 MODEL_SHIMS_DIR := scripts/generated_shims
 
 .PHONY: generate-models generate-validators generate-contracts clean install-typespec-deps
@@ -48,8 +48,6 @@ endif
 # --------------------------------------------------------------------------
 generate-contracts: generate-models generate-validators
 
-TYPESPEC_OUTPUT_DIR := {cwd}/../$(TEMP_OUTPUT_DIR)
-
 # --------------------------------------------------------------------------
 # generate-models: Compile TypeSpec definitions into Python model classes
 # --------------------------------------------------------------------------
@@ -63,7 +61,7 @@ generate-models:
 	npm install --prefix $(TYPESPEC_DIR) --no-save $(LOCAL_TYPESPEC_PACKAGES)
 	@echo Generating Python models...
 	@if exist "$(OUTPUT_DIR)" rmdir /s /q "$(OUTPUT_DIR)"
-	cd /d $(TYPESPEC_DIR) && npx tsp compile . --emit @azure-tools/typespec-python --option "@azure-tools/typespec-python.emitter-output-dir=$(TYPESPEC_OUTPUT_DIR)"
+	cd /d $(TYPESPEC_DIR)\TempTypeSpecFiles\sdk-service-agentserver-contracts && npx --prefix ..\..\ tsp compile client.tsp --emit @azure-tools/typespec-python --option "@azure-tools/typespec-python.emitter-output-dir=$(abspath $(TEMP_OUTPUT_DIR))"
 	@if not exist "$(MODEL_PACKAGE_DIR)" (echo Error: generated model package was not found. 1>&2 && exit /b 1)
 	@if not exist "$(OUTPUT_DIR)\sdk" mkdir "$(OUTPUT_DIR)\sdk"
 	@xcopy /E /I /Y "$(MODEL_PACKAGE_DIR)" "$(OUTPUT_DIR)\sdk\models" >NUL
@@ -96,7 +94,7 @@ generate-models:
 	npm install --prefix $(TYPESPEC_DIR) --no-save $(LOCAL_TYPESPEC_PACKAGES)
 	@echo "Generating Python models..."
 	rm -rf $(OUTPUT_DIR)
-	cd $(TYPESPEC_DIR) && npx tsp compile . --emit @azure-tools/typespec-python --option "@azure-tools/typespec-python.emitter-output-dir=$(TYPESPEC_OUTPUT_DIR)"
+	cd $(TYPESPEC_DIR)/TempTypeSpecFiles/sdk-service-agentserver-contracts && npx --prefix ../../ tsp compile client.tsp --emit @azure-tools/typespec-python --option "@azure-tools/typespec-python.emitter-output-dir=$(abspath $(TEMP_OUTPUT_DIR))"
 	@test -d $(MODEL_PACKAGE_DIR) || { \
 		echo "Error: generated model package was not found." >&2; \
 		exit 1; \

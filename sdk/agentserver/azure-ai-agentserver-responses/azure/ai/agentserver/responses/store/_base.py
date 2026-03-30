@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Protocol, runtime_checkable
 
-from ..models._generated import Response
+from ..models._generated import ResponseObject
 
 
 @runtime_checkable
@@ -18,14 +18,14 @@ class ResponseProviderProtocol(Protocol):
 
     async def create_response_async(
         self,
-        response: Response,
+        response: ResponseObject,
         input_items: Iterable[Any] | None,
         history_item_ids: Iterable[str] | None,
     ) -> None:
         """Persist a new response envelope and optional input/history references.
 
         :param response: The response envelope to persist.
-        :type response: ~azure.ai.agentserver.responses.models._generated.Response
+        :type response: ~azure.ai.agentserver.responses.models._generated.ResponseObject
         :param input_items: Optional input items to associate with the response.
         :type input_items: Iterable[Any] | None
         :param history_item_ids: Optional history item IDs to link to the response.
@@ -33,21 +33,21 @@ class ResponseProviderProtocol(Protocol):
         :rtype: None
         """
 
-    async def get_response_async(self, response_id: str) -> Response:
+    async def get_response_async(self, response_id: str) -> ResponseObject:
         """Load one response envelope by ID.
 
         :param response_id: The unique identifier of the response to retrieve.
         :type response_id: str
         :returns: The response envelope matching the given ID.
-        :rtype: ~azure.ai.agentserver.responses.models._generated.Response
+        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseObject
         :raises KeyError: If the response does not exist.
         """
 
-    async def update_response_async(self, response: Response) -> None:
+    async def update_response_async(self, response: ResponseObject) -> None:
         """Persist an updated response envelope.
 
         :param response: The response envelope with updated fields to persist.
-        :type response: ~azure.ai.agentserver.responses.models._generated.Response
+        :type response: ~azure.ai.agentserver.responses.models._generated.ResponseObject
         :rtype: None
         """
 

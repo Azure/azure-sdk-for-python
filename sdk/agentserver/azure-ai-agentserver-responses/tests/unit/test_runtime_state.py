@@ -7,7 +7,7 @@ from __future__ import annotations
 import pytest
 
 from azure.ai.agentserver.responses.hosting._runtime_state import _RuntimeState
-from azure.ai.agentserver.responses.models._generated import Response
+from azure.ai.agentserver.responses.models._generated import ResponseObject
 from azure.ai.agentserver.responses.models.runtime import ResponseExecution, ResponseModeFlags
 
 
@@ -139,7 +139,7 @@ async def test_get_input_items_deleted_raises_value_error() -> None:
 def test_to_snapshot_with_response() -> None:
     rid = "caresp_eee0000000000000000000000000000"
     execution = _make_execution(rid, status="completed")
-    execution.response = Response(
+    execution.response = ResponseObject(
         {
             "id": rid,
             "response_id": rid,
@@ -184,7 +184,7 @@ def test_to_snapshot_status_matches_execution_status() -> None:
     rid = "caresp_ggg0000000000000000000000000000"
     execution = _make_execution(rid, status="in_progress")
     # Give a response that says completed but execution.status says in_progress
-    execution.response = Response({"id": rid, "status": "completed", "output": []})
+    execution.response = ResponseObject({"id": rid, "status": "completed", "output": []})
 
     snapshot = _RuntimeState.to_snapshot(execution)
 
@@ -199,7 +199,7 @@ def test_to_snapshot_injects_defaults_when_response_missing_ids() -> None:
     rid = "caresp_hhh0000000000000000000000000000"
     execution = _make_execution(rid, status="completed")
     # Response without id/response_id
-    execution.response = Response({"status": "completed", "output": []})
+    execution.response = ResponseObject({"status": "completed", "output": []})
 
     snapshot = _RuntimeState.to_snapshot(execution)
 

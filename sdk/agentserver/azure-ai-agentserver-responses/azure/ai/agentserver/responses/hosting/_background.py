@@ -91,7 +91,7 @@ async def _run_background_non_stream(
                         agent_reference=agent_reference,
                         model=model,
                     )
-                    record.set_response_snapshot(generated_models.Response(_initial_snapshot))
+                    record.set_response_snapshot(generated_models.ResponseObject(_initial_snapshot))
                     record.response_created_signal.set()
         except Exception:  # pylint: disable=broad-exception-caught
             if record.status != "cancelled":
@@ -131,7 +131,7 @@ async def _run_background_non_stream(
 
         resolved_status = response_payload.get("status")
         if record.status != "cancelled":
-            record.set_response_snapshot(generated_models.Response(response_payload))
+            record.set_response_snapshot(generated_models.ResponseObject(response_payload))
             record.transition_to(resolved_status if isinstance(resolved_status, str) else "completed")
     finally:
         # Always unblock run_background (idempotent if already set)

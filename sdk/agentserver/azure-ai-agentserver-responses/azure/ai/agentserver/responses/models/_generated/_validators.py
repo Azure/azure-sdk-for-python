@@ -470,7 +470,7 @@ def _validate_OpenAI_IncludeEnum_2(value: Any, path: str, errors: list[dict[str,
         return
 
 def _validate_OpenAI_InputParam_array_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _validate_OpenAI_InputItem(value, path, errors)
+    _validate_OpenAI_Item(value, path, errors)
 
 def _validate_OpenAI_TextResponseFormatConfiguration(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
@@ -529,14 +529,14 @@ def _validate_OpenAI_Tool(value: Any, path: str, errors: list[dict[str, str]]) -
         _append_error(errors, f"{path}.type", "Required discriminator 'type' is missing or invalid")
         return
 
-def _validate_OpenAI_InputItem(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+def _validate_OpenAI_Item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
         _append_type_mismatch(errors, path, 'object', value)
         return
     if 'type' not in value:
         _append_error(errors, f"{path}.type", "Required property 'type' is missing")
     if 'type' in value:
-        _validate_OpenAI_InputItem_type(value['type'], f"{path}.type", errors)
+        _validate_OpenAI_Item_type(value['type'], f"{path}.type", errors)
     _disc_value = value.get('type')
     if not isinstance(_disc_value, str):
         _append_error(errors, f"{path}.type", "Required discriminator 'type' is missing or invalid")
@@ -561,8 +561,8 @@ def _validate_OpenAI_ToolChoiceParamType_2(value: Any, path: str, errors: list[d
 def _validate_OpenAI_Tool_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_ToolType(value, path, errors)
 
-def _validate_OpenAI_InputItem_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _validate_OpenAI_InputItemType(value, path, errors)
+def _validate_OpenAI_Item_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _validate_OpenAI_ItemType(value, path, errors)
 
 def _validate_OpenAI_TextResponseFormatConfigurationType(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
@@ -596,7 +596,7 @@ def _validate_OpenAI_ToolType(value: Any, path: str, errors: list[dict[str, str]
         _append_error(errors, path, f"Expected ToolType to be a string value, got {_type_label(value)}")
         return
 
-def _validate_OpenAI_InputItemType(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+def _validate_OpenAI_ItemType(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
     if not _matched_union and _is_type(value, 'string'):
         _branch_errors_0: list[dict[str, str]] = []
@@ -605,11 +605,11 @@ def _validate_OpenAI_InputItemType(value: Any, path: str, errors: list[dict[str,
             _matched_union = True
     if not _matched_union and _is_type(value, 'string'):
         _branch_errors_1: list[dict[str, str]] = []
-        _validate_OpenAI_InputItemType_2(value, path, _branch_errors_1)
+        _validate_OpenAI_ItemType_2(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
     if not _matched_union:
-        _append_error(errors, path, f"Expected InputItemType to be a string value, got {_type_label(value)}")
+        _append_error(errors, path, f"Expected ItemType to be a string value, got {_type_label(value)}")
         return
 
 def _validate_OpenAI_TextResponseFormatConfigurationType_2(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -638,8 +638,8 @@ def _validate_OpenAI_ToolType_2(value: Any, path: str, errors: list[dict[str, st
         _append_type_mismatch(errors, path, 'string', value)
         return
 
-def _validate_OpenAI_InputItemType_2(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _allowed_values, _enum_error = _enum_values('InputItemType')
+def _validate_OpenAI_ItemType_2(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values, _enum_error = _enum_values('ItemType')
     if _enum_error is not None:
         _append_error(errors, path, _enum_error)
         return

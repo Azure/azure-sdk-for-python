@@ -40,7 +40,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         agent_reference: dict[str, Any] | None = None,
         model: str | None = None,
         request: generated_models.CreateResponse | dict[str, Any] | None = None,
-        response: generated_models.Response | dict[str, Any] | None = None,
+        response: generated_models.ResponseObject | dict[str, Any] | None = None,
     ) -> None:
         """Initialize a new response event stream.
 
@@ -53,7 +53,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :param request: Optional create-response request to seed the response envelope from.
         :type request: ~azure.ai.agentserver.responses.models._generated.CreateResponse | dict[str, Any] | None
         :param response: Optional pre-existing response envelope to build upon.
-        :type response: ~azure.ai.agentserver.responses.models._generated.Response | dict[str, Any] | None
+        :type response: ~azure.ai.agentserver.responses.models._generated.ResponseObject | dict[str, Any] | None
         :raises ValueError: If both *request* and *response* are provided, or if *response_id* cannot be resolved.
         """
         if request is not None and response is not None:
@@ -78,9 +78,9 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             payload["id"] = self._response_id
             payload.setdefault("object", "response")
             payload.setdefault("output", [])
-            self._response = generated_models.Response(payload)
+            self._response = generated_models.ResponseObject(payload)
         else:
-            self._response = generated_models.Response(
+            self._response = generated_models.ResponseObject(
                 {
                     "id": self._response_id,
                     "object": "response",
@@ -112,11 +112,11 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self._output_index = 0
 
     @property
-    def response(self) -> generated_models.Response:
+    def response(self) -> generated_models.ResponseObject:
         """Return the current response envelope.
 
         :returns: The mutable response envelope being built by this stream.
-        :rtype: ~azure.ai.agentserver.responses.models._generated.Response
+        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseObject
         """
         return self._response
 
@@ -203,7 +203,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         """
         self._response.status = "failed"
         self._response.incomplete_details = None  # type: ignore[assignment]
-        self._response.error = generated_models.ResponseError(
+        self._response.error = generated_models.ResponseErrorInfo(
             {
                 "code": _internals.enum_value(code),
                 "message": message,

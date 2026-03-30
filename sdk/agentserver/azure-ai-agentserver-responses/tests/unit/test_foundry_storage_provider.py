@@ -98,9 +98,9 @@ def settings() -> FoundryStorageSettings:
 async def test_create_response_async__posts_to_responses_endpoint(credential: Any, settings: FoundryStorageSettings) -> None:
     client = _make_client(_make_response(200, {}))
     provider = FoundryStorageProvider(credential, settings=settings, http_client=client)
-    from azure.ai.agentserver.responses.models._generated import Response
+    from azure.ai.agentserver.responses.models._generated import ResponseObject
 
-    response = Response(_RESPONSE_DICT)
+    response = ResponseObject(_RESPONSE_DICT)
     await provider.create_response_async(response, None, None)
 
     call_args = client.post.call_args
@@ -113,9 +113,9 @@ async def test_create_response_async__posts_to_responses_endpoint(credential: An
 async def test_create_response_async__sends_correct_envelope(credential: Any, settings: FoundryStorageSettings) -> None:
     client = _make_client(_make_response(200, {}))
     provider = FoundryStorageProvider(credential, settings=settings, http_client=client)
-    from azure.ai.agentserver.responses.models._generated import Response
+    from azure.ai.agentserver.responses.models._generated import ResponseObject
 
-    response = Response(_RESPONSE_DICT)
+    response = ResponseObject(_RESPONSE_DICT)
     await provider.create_response_async(response, [MagicMock(as_dict=lambda: _INPUT_ITEM_DICT)], ["prev_item_1"])
 
     body_bytes: bytes = client.post.call_args.kwargs["content"]
@@ -129,9 +129,9 @@ async def test_create_response_async__sends_correct_envelope(credential: Any, se
 async def test_create_response_async__sends_bearer_token(credential: Any, settings: FoundryStorageSettings) -> None:
     client = _make_client(_make_response(200, {}))
     provider = FoundryStorageProvider(credential, settings=settings, http_client=client)
-    from azure.ai.agentserver.responses.models._generated import Response
+    from azure.ai.agentserver.responses.models._generated import ResponseObject
 
-    await provider.create_response_async(Response(_RESPONSE_DICT), None, None)
+    await provider.create_response_async(ResponseObject(_RESPONSE_DICT), None, None)
 
     headers: dict[str, str] = client.post.call_args.kwargs["headers"]
     assert headers["Authorization"] == "Bearer tok_test"
@@ -142,10 +142,10 @@ async def test_create_response_async__sends_bearer_token(credential: Any, settin
 async def test_create_response_async__raises_foundry_api_error_on_500(credential: Any, settings: FoundryStorageSettings) -> None:
     client = _make_client(_make_response(500, {"error": {"message": "server fault"}}))
     provider = FoundryStorageProvider(credential, settings=settings, http_client=client)
-    from azure.ai.agentserver.responses.models._generated import Response
+    from azure.ai.agentserver.responses.models._generated import ResponseObject
 
     with pytest.raises(FoundryApiError) as exc_info:
-        await provider.create_response_async(Response(_RESPONSE_DICT), None, None)
+        await provider.create_response_async(ResponseObject(_RESPONSE_DICT), None, None)
 
     assert exc_info.value.status_code == 500
     assert "server fault" in exc_info.value.message
@@ -209,9 +209,9 @@ async def test_get_response_async__url_encodes_special_characters(credential: An
 async def test_update_response_async__posts_to_response_id_url(credential: Any, settings: FoundryStorageSettings) -> None:
     client = _make_client(_make_response(200, {}))
     provider = FoundryStorageProvider(credential, settings=settings, http_client=client)
-    from azure.ai.agentserver.responses.models._generated import Response
+    from azure.ai.agentserver.responses.models._generated import ResponseObject
 
-    response = Response(_RESPONSE_DICT)
+    response = ResponseObject(_RESPONSE_DICT)
     await provider.update_response_async(response)
 
     called_url: str = client.post.call_args[0][0]
@@ -222,9 +222,9 @@ async def test_update_response_async__posts_to_response_id_url(credential: Any, 
 async def test_update_response_async__sends_serialized_response_body(credential: Any, settings: FoundryStorageSettings) -> None:
     client = _make_client(_make_response(200, {}))
     provider = FoundryStorageProvider(credential, settings=settings, http_client=client)
-    from azure.ai.agentserver.responses.models._generated import Response
+    from azure.ai.agentserver.responses.models._generated import ResponseObject
 
-    response = Response(_RESPONSE_DICT)
+    response = ResponseObject(_RESPONSE_DICT)
     await provider.update_response_async(response)
 
     body_bytes: bytes = client.post.call_args.kwargs["content"]
@@ -236,10 +236,10 @@ async def test_update_response_async__sends_serialized_response_body(credential:
 async def test_update_response_async__raises_bad_request_on_409(credential: Any, settings: FoundryStorageSettings) -> None:
     client = _make_client(_make_response(409, {"error": {"message": "conflict"}}))
     provider = FoundryStorageProvider(credential, settings=settings, http_client=client)
-    from azure.ai.agentserver.responses.models._generated import Response
+    from azure.ai.agentserver.responses.models._generated import ResponseObject
 
     with pytest.raises(FoundryBadRequestError) as exc_info:
-        await provider.update_response_async(Response(_RESPONSE_DICT))
+        await provider.update_response_async(ResponseObject(_RESPONSE_DICT))
 
     assert "conflict" in exc_info.value.message
 

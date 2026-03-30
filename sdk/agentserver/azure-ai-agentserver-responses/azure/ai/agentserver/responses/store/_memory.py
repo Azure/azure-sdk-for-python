@@ -9,7 +9,7 @@ from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Iterable
 
-from ..models._generated import Response
+from ..models._generated import ResponseObject
 from ..models._helpers import get_conversation_id
 from ..models.runtime import ResponseExecution, ResponseModeFlags, ResponseStatus, StreamEventRecord, StreamReplayState
 from ._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
@@ -24,7 +24,7 @@ class _StoreEntry:
         execution: ResponseExecution,
         replay: StreamReplayState,
         expires_at: datetime | None = None,
-        response: Response | None = None,
+        response: ResponseObject | None = None,
         input_item_ids: list[str] | None = None,
         output_item_ids: list[str] | None = None,
         history_item_ids: list[str] | None = None,
@@ -53,7 +53,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
 
     async def create_response_async(
         self,
-        response: Response,
+        response: ResponseObject,
         input_items: Iterable[Any] | None,
         history_item_ids: Iterable[str] | None,
     ) -> None:
@@ -107,7 +107,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
             if conversation_id is not None:
                 self._conversation_responses.setdefault(conversation_id, []).append(response_id)
 
-    async def get_response_async(self, response_id: str) -> Response:
+    async def get_response_async(self, response_id: str) -> ResponseObject:
         """Retrieve one response envelope by identifier.
 
         :param response_id: The unique identifier of the response to retrieve.
@@ -123,7 +123,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
                 raise KeyError(f"response '{response_id}' not found")
             return deepcopy(entry.response)
 
-    async def update_response_async(self, response: Response) -> None:
+    async def update_response_async(self, response: ResponseObject) -> None:
         """Update a stored response envelope.
 
         Replaces the stored response with a deep copy and updates
@@ -317,7 +317,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
     async def set_response_snapshot(
         self,
         response_id: str,
-        response: Response,
+        response: ResponseObject,
         *,
         ttl_seconds: int | None = None,
     ) -> bool:
@@ -564,7 +564,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
 
         return len(expired_ids)
 
-    def _store_output_items_unlocked(self, response: Response) -> list[str]:
+    def _store_output_items_unlocked(self, response: ResponseObject) -> list[str]:
         """Extract output items from a response, store them in the item store, and return their IDs.
 
         Must be called while holding ``self._lock``.
@@ -606,7 +606,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         return str(value) if value is not None else None
 
     @staticmethod
-    def _resolve_mode_flags_from_response(response: Response) -> ResponseModeFlags:
+    def _resolve_mode_flags_from_response(response: ResponseObject) -> ResponseModeFlags:
         """Build mode flags from a response snapshot where available.
 
         :param response: The response envelope to extract mode flags from.
