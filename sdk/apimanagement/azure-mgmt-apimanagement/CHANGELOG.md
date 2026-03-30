@@ -4,7 +4,7 @@
 
 ### Features Added
 
-  - Model `ApiManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ApiManagementClient` added parameter `cloud_setting` in method `__init__`
   - Client `ApiManagementClient` added method `send_request`
   - Client `ApiManagementClient` added operation group `api_tool`
   - Client `ApiManagementClient` added operation group `api_gateway_hostname_binding`
@@ -26,7 +26,6 @@
   - Model `ApiManagementServiceUpdateParameters` added property `properties`
   - Model `ApiManagementServiceUpdateProperties` added property `release_channel`
   - Model `ApiManagementServiceUpdateProperties` added property `zone_redundant`
-  - Model `ApiManagementSkuRestrictions` added property `values_property`
   - Model `ApiManagementWorkspaceLinksResource` added property `properties`
   - Model `ApiManagementWorkspaceLinksResource` added property `system_data`
   - Model `ApiReleaseContract` added property `system_data`
@@ -93,7 +92,6 @@
   - Model `OperationContract` added property `properties`
   - Model `OperationContract` added property `system_data`
   - Model `OperationResultContract` added property `system_data`
-  - Model `ParameterContract` added property `values_property`
   - Model `PolicyContract` added property `system_data`
   - Model `PolicyDescriptionContract` added property `system_data`
   - Model `PolicyFragmentContract` added property `system_data`
@@ -210,239 +208,101 @@
   - Added operation group `ApiToolOperations`
   - Added operation group `ClientApplicationOperations`
   - Added operation group `ClientApplicationProductLinkOperations`
+  - Model `AccessInformationCreateParameters` added property `properties`
+  - Model `AccessInformationUpdateParameters` added property `properties`
+  - Model `ApiUpdateContract` added property `properties`
+  - Model `ApiVersionSetUpdateParameters` added property `properties`
+  - Model `CacheUpdateParameters` added property `properties`
+  - Model `DeployConfigurationParameters` added property `properties`
+  - Model `DocumentationUpdateContract` added property `properties`
+  - Model `GroupCreateParameters` added property `properties`
+  - Model `GroupUpdateParameters` added property `properties`
+  - Model `IdentityProviderUpdateParameters` added property `properties`
+  - Model `IssueUpdateContract` added property `properties`
+  - Model `LoggerUpdateContract` added property `properties`
+  - Model `OpenidConnectProviderUpdateContract` added property `properties`
+  - Model `OperationUpdateContract` added property `properties`
+  - Model `PolicyRestrictionUpdateContract` added property `properties`
+  - Model `ProductUpdateParameters` added property `properties`
+  - Model `QuotaCounterValueUpdateContract` added property `properties`
+  - Model `ResolverUpdateContract` added property `properties`
+  - Model `SaveConfigurationParameter` added property `properties`
+  - Model `SubscriptionCreateParameters` added property `properties`
+  - Model `SubscriptionUpdateParameters` added property `properties`
+  - Model `TagCreateUpdateParameters` added property `properties`
+  - Model `TagDescriptionCreateParameters` added property `properties`
+  - Model `UserCreateParameters` added property `properties`
+  - Model `UserTokenParameters` added property `properties`
+  - Model `UserUpdateParameters` added property `properties`
+  - Model `WikiUpdateContract` added property `properties`
 
 ### Breaking Changes
 
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
-  - Model `AccessInformationCreateParameters` deleted or renamed its instance variable `principal_id`
-  - Model `AccessInformationCreateParameters` deleted or renamed its instance variable `primary_key`
-  - Model `AccessInformationCreateParameters` deleted or renamed its instance variable `secondary_key`
-  - Model `AccessInformationCreateParameters` deleted or renamed its instance variable `enabled`
-  - Model `AccessInformationUpdateParameters` deleted or renamed its instance variable `enabled`
+  - Model `AccessInformationCreateParameters` moved instance variable `principal_id`, `primary_key`, `secondary_key` and `enabled` under property `properties`
+  - Model `AccessInformationUpdateParameters` moved instance variable `enabled` under property `properties`
   - Model `ApiContract` moved instance variable `description`, `authentication_settings`, `subscription_key_parameter_names`, `api_type`, `api_revision`, `api_version`, `is_current`, `is_online`, `api_revision_description`, `api_version_description`, `api_version_set_id`, `subscription_required`, `terms_of_service_url`, `contact`, `license`, `source_api_id`, `display_name`, `service_url`, `path`, `protocols`, `api_version_set`, `provisioning_state` under property `properties`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `description`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `authentication_settings`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `subscription_key_parameter_names`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `api_type`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `api_revision`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `api_version`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `is_current`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `is_online`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `api_revision_description`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `api_version_description`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `api_version_set_id`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `subscription_required`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `terms_of_service_url`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `contact`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `license`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `source_api_id`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `display_name`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `service_url`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `path`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `protocols`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `api_version_set`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `provisioning_state`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `value`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `format`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `wsdl_selector`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `soap_api_type`
-  - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `translate_required_query_parameters_conduct`
+  - Model `ApiCreateOrUpdateParameter` moved instance variable `description`, `authentication_settings`, `subscription_key_parameter_names`, `api_type`, `api_revision`, `api_version`, `is_current`, `is_online`, `api_revision_description`, `api_version_description`, `api_version_set_id`, `subscription_required`, `terms_of_service_url`, `contact`, `license`, `source_api_id`, `display_name`, `service_url`, `path`, `protocols`, `api_version_set`, `provisioning_state`, `value`, `format`, `wsdl_selector`, `soap_api_type` and `translate_required_query_parameters_conduct` under property `properties`
   - Model `ApiManagementGatewayConfigConnectionResource` moved instance variable `provisioning_state`, `source_id`, `default_hostname`, `hostnames` under property `properties`
   - Model `ApiManagementGatewayResource` moved instance variable `provisioning_state`, `target_provisioning_state`, `created_at_utc`, `frontend`, `backend`, `configuration_api`, `virtual_network_type` under property `properties`
   - Model `ApiManagementGatewayUpdateParameters` moved instance variable `provisioning_state`, `target_provisioning_state`, `created_at_utc`, `frontend`, `backend`, `configuration_api`, `virtual_network_type` under property `properties`
   - Model `ApiManagementServiceResource` moved instance variable `notification_sender_email`, `provisioning_state`, `target_provisioning_state`, `created_at_utc`, `gateway_url`, `gateway_regional_url`, `portal_url`, `management_api_url`, `scm_url`, `developer_portal_url`, `hostname_configurations`, `public_ip_addresses`, `private_ip_addresses`, `public_ip_address_id`, `public_network_access`, `configuration_api`, `virtual_network_configuration`, `additional_locations`, `custom_properties`, `certificates`, `enable_client_certificate`, `nat_gateway_state`, `outbound_public_ip_addresses`, `disable_gateway`, `virtual_network_type`, `api_version_constraint`, `restore`, `private_endpoint_connections`, `platform_version`, `legacy_portal_status`, `developer_portal_status`, `publisher_email`, `publisher_name` under property `properties`
   - Model `ApiManagementServiceUpdateParameters` moved instance variable `notification_sender_email`, `provisioning_state`, `target_provisioning_state`, `created_at_utc`, `gateway_url`, `gateway_regional_url`, `portal_url`, `management_api_url`, `scm_url`, `developer_portal_url`, `hostname_configurations`, `public_ip_addresses`, `private_ip_addresses`, `public_ip_address_id`, `public_network_access`, `configuration_api`, `virtual_network_configuration`, `additional_locations`, `custom_properties`, `certificates`, `enable_client_certificate`, `nat_gateway_state`, `outbound_public_ip_addresses`, `disable_gateway`, `virtual_network_type`, `api_version_constraint`, `restore`, `private_endpoint_connections`, `platform_version`, `legacy_portal_status`, `developer_portal_status`, `publisher_email`, `publisher_name` under property `properties`
-  - Model `ApiManagementSkuRestrictions` deleted or renamed its instance variable `values`
+  - Model `ApiManagementSkuRestrictions` renamed its instance variable `values` to `values_property`
   - Model `ApiManagementWorkspaceLinksResource` moved instance variable `workspace_id`, `gateways` under property `properties`
-  - Model `ApiUpdateContract` deleted or renamed its instance variable `description`
-  - Model `ApiUpdateContract` deleted or renamed its instance variable `authentication_settings`
-  - Model `ApiUpdateContract` deleted or renamed its instance variable `subscription_key_parameter_names`
-  - Model `ApiUpdateContract` deleted or renamed its instance variable `api_type`
-  - Model `ApiUpdateContract` deleted or renamed its instance variable `api_revision`
-  - Model `ApiUpdateContract` deleted or renamed its instance variable `api_version`
-  - Model `ApiUpdateContract` deleted or renamed its instance variable `is_current`
-  - Model `ApiUpdateContract` deleted or renamed its instance variable `is_online`
-  - Model `ApiUpdateContract` deleted or renamed its instance variable `api_revision_description`
-  - Model `ApiUpdateContract` deleted or renamed its instance variable `api_version_description`
-  - Model `ApiUpdateContract` deleted or renamed its instance variable `api_version_set_id`
-  - Model `ApiUpdateContract` deleted or renamed its instance variable `subscription_required`
-  - Model `ApiUpdateContract` deleted or renamed its instance variable `terms_of_service_url`
-  - Model `ApiUpdateContract` deleted or renamed its instance variable `contact`
-  - Model `ApiUpdateContract` deleted or renamed its instance variable `license`
-  - Model `ApiUpdateContract` deleted or renamed its instance variable `display_name`
-  - Model `ApiUpdateContract` deleted or renamed its instance variable `service_url`
-  - Model `ApiUpdateContract` deleted or renamed its instance variable `path`
-  - Model `ApiUpdateContract` deleted or renamed its instance variable `protocols`
+  - Model `ApiUpdateContract` moved instance variable `description`, `authentication_settings`, `subscription_key_parameter_names`, `api_type`, `api_revision`, `api_version`, `is_current`, `is_online`, `api_revision_description`, `api_version_description`, `api_version_set_id`, `subscription_required`, `terms_of_service_url`, `contact`, `license`, `display_name`, `service_url`, `path` and `protocols` under property `properties`
   - Model `ApiVersionSetContract` moved instance variable `description`, `version_query_name`, `version_header_name`, `display_name`, `versioning_scheme` under property `properties`
-  - Model `ApiVersionSetUpdateParameters` deleted or renamed its instance variable `description`
-  - Model `ApiVersionSetUpdateParameters` deleted or renamed its instance variable `version_query_name`
-  - Model `ApiVersionSetUpdateParameters` deleted or renamed its instance variable `version_header_name`
-  - Model `ApiVersionSetUpdateParameters` deleted or renamed its instance variable `display_name`
-  - Model `ApiVersionSetUpdateParameters` deleted or renamed its instance variable `versioning_scheme`
+  - Model `ApiVersionSetUpdateParameters` moved instance variable `description`, `version_query_name`, `version_header_name`, `display_name` and `versioning_scheme` under property `properties`
   - Model `AuthorizationServerContract` moved instance variable `description`, `authorization_methods`, `client_authentication_method`, `token_body_parameters`, `token_endpoint`, `support_state`, `default_scope`, `bearer_token_sending_methods`, `resource_owner_username`, `resource_owner_password`, `display_name`, `use_in_test_console`, `use_in_api_documentation`, `client_registration_endpoint`, `authorization_endpoint`, `grant_types`, `client_id`, `client_secret` under property `properties`
   - Model `AuthorizationServerUpdateContract` moved instance variable `description`, `authorization_methods`, `client_authentication_method`, `token_body_parameters`, `token_endpoint`, `support_state`, `default_scope`, `bearer_token_sending_methods`, `resource_owner_username`, `resource_owner_password`, `display_name`, `use_in_test_console`, `use_in_api_documentation`, `client_registration_endpoint`, `authorization_endpoint`, `grant_types`, `client_id`, `client_secret` under property `properties`
-  - Model `BackendContract` deleted or renamed its instance variable `title`
-  - Model `BackendContract` deleted or renamed its instance variable `description`
-  - Model `BackendContract` deleted or renamed its instance variable `resource_id`
-  - Model `BackendContract` deleted or renamed its instance variable `credentials`
-  - Model `BackendContract` deleted or renamed its instance variable `proxy`
-  - Model `BackendContract` deleted or renamed its instance variable `tls`
-  - Model `BackendContract` deleted or renamed its instance variable `circuit_breaker`
-  - Model `BackendContract` deleted or renamed its instance variable `pool`
-  - Model `BackendContract` deleted or renamed its instance variable `type_properties_type`
-  - Model `BackendContract` deleted or renamed its instance variable `url`
-  - Model `BackendContract` deleted or renamed its instance variable `protocol`
+  - Model `BackendContract` moved instance variable `title`, `description`, `resource_id`, `credentials`, `proxy`, `tls`, `circuit_breaker`, `pool`, `type_properties_type`, `url` and `protocol` under property `properties`
   - Model `BackendReconnectContract` moved instance variable `after` under property `properties`
-  - Model `BackendUpdateParameters` deleted or renamed its instance variable `title`
-  - Model `BackendUpdateParameters` deleted or renamed its instance variable `description`
-  - Model `BackendUpdateParameters` deleted or renamed its instance variable `resource_id`
-  - Model `BackendUpdateParameters` deleted or renamed its instance variable `credentials`
-  - Model `BackendUpdateParameters` deleted or renamed its instance variable `proxy`
-  - Model `BackendUpdateParameters` deleted or renamed its instance variable `tls`
-  - Model `BackendUpdateParameters` deleted or renamed its instance variable `circuit_breaker`
-  - Model `BackendUpdateParameters` deleted or renamed its instance variable `pool`
-  - Model `BackendUpdateParameters` deleted or renamed its instance variable `type`
-  - Model `BackendUpdateParameters` deleted or renamed its instance variable `url`
-  - Model `BackendUpdateParameters` deleted or renamed its instance variable `protocol`
-  - Model `CacheUpdateParameters` deleted or renamed its instance variable `description`
-  - Model `CacheUpdateParameters` deleted or renamed its instance variable `connection_string`
-  - Model `CacheUpdateParameters` deleted or renamed its instance variable `use_from_location`
-  - Model `CacheUpdateParameters` deleted or renamed its instance variable `resource_id`
-  - Model `CertificateCreateOrUpdateParameters` deleted or renamed its instance variable `data`
-  - Model `CertificateCreateOrUpdateParameters` deleted or renamed its instance variable `password`
-  - Model `CertificateCreateOrUpdateParameters` deleted or renamed its instance variable `key_vault`
-  - Model `DeployConfigurationParameters` deleted or renamed its instance variable `branch`
-  - Model `DeployConfigurationParameters` deleted or renamed its instance variable `force`
+  - Model `BackendUpdateParameters` moved instance variable `title`, `description`, `resource_id`, `credentials`, `proxy`, `tls`, `circuit_breaker`, `pool`, `type`, `url` and `protocol` under property `properties`
+  - Model `CacheUpdateParameters` moved instance variable `description`, `connection_string`, `use_from_location` and `resource_id` under property `properties`
+  - Model `CertificateCreateOrUpdateParameters` moved instance variable `data`, `password` and `key_vault` under property `properties`
+  - Model `DeployConfigurationParameters` moved instance variable `branch` and `force` under property `properties`
   - Model `DiagnosticUpdateContract` moved instance variable `always_log`, `logger_id`, `sampling`, `frontend`, `backend`, `log_client_ip`, `http_correlation_protocol`, `verbosity`, `operation_name_format`, `metrics` under property `properties`
-  - Model `DocumentationUpdateContract` deleted or renamed its instance variable `title`
-  - Model `DocumentationUpdateContract` deleted or renamed its instance variable `content`
-  - Model `EmailTemplateUpdateParameters` deleted or renamed its instance variable `subject`
-  - Model `EmailTemplateUpdateParameters` deleted or renamed its instance variable `title`
-  - Model `EmailTemplateUpdateParameters` deleted or renamed its instance variable `description`
-  - Model `EmailTemplateUpdateParameters` deleted or renamed its instance variable `body`
-  - Model `EmailTemplateUpdateParameters` deleted or renamed its instance variable `parameters`
+  - Model `DocumentationUpdateContract` moved instance variable `title` and `content` under property `properties`
+  - Model `EmailTemplateUpdateParameters` moved instance variable `subject`, `title`, `description`, `body` and `parameters` under property `properties`
   - Model `GroupContract` moved instance variable `display_name`, `description`, `built_in`, `type_properties_type`, `external_id` under property `properties`
-  - Model `GroupCreateParameters` deleted or renamed its instance variable `display_name`
-  - Model `GroupCreateParameters` deleted or renamed its instance variable `description`
-  - Model `GroupCreateParameters` deleted or renamed its instance variable `type`
-  - Model `GroupCreateParameters` deleted or renamed its instance variable `external_id`
-  - Model `GroupUpdateParameters` deleted or renamed its instance variable `display_name`
-  - Model `GroupUpdateParameters` deleted or renamed its instance variable `description`
-  - Model `GroupUpdateParameters` deleted or renamed its instance variable `type`
-  - Model `GroupUpdateParameters` deleted or renamed its instance variable `external_id`
+  - Model `GroupCreateParameters` moved instance variable `display_name`, `description`, `type` and `external_id` under property `properties`
+  - Model `GroupUpdateParameters` moved instance variable `display_name`, `description`, `type` and `external_id` under property `properties`
   - Model `IdentityProviderContract` moved instance variable `type_properties_type`, `signin_tenant`, `allowed_tenants`, `authority`, `signup_policy_name`, `signin_policy_name`, `profile_editing_policy_name`, `password_reset_policy_name`, `client_library`, `client_id`, `client_secret` under property `properties`
   - Model `IdentityProviderCreateContract` moved instance variable `type_properties_type`, `signin_tenant`, `allowed_tenants`, `authority`, `signup_policy_name`, `signin_policy_name`, `profile_editing_policy_name`, `password_reset_policy_name`, `client_library`, `client_id`, `client_secret` under property `properties`
-  - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `type`
-  - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `signin_tenant`
-  - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `allowed_tenants`
-  - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `authority`
-  - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `signup_policy_name`
-  - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `signin_policy_name`
-  - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `profile_editing_policy_name`
-  - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `password_reset_policy_name`
-  - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `client_library`
-  - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `client_id`
-  - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `client_secret`
+  - Model `IdentityProviderUpdateParameters` moved instance variable `type`, `signin_tenant`, `allowed_tenants`, `authority`, `signup_policy_name`, `signin_policy_name`, `profile_editing_policy_name`, `password_reset_policy_name`, `client_library`, `client_id` and `client_secret` under property `properties`
   - Model `IssueContract` moved instance variable `created_date`, `state`, `api_id`, `title`, `description`, `user_id` under property `properties`
-  - Model `IssueUpdateContract` deleted or renamed its instance variable `created_date`
-  - Model `IssueUpdateContract` deleted or renamed its instance variable `state`
-  - Model `IssueUpdateContract` deleted or renamed its instance variable `api_id`
-  - Model `IssueUpdateContract` deleted or renamed its instance variable `title`
-  - Model `IssueUpdateContract` deleted or renamed its instance variable `description`
-  - Model `IssueUpdateContract` deleted or renamed its instance variable `user_id`
-  - Model `LoggerUpdateContract` deleted or renamed its instance variable `logger_type`
-  - Model `LoggerUpdateContract` deleted or renamed its instance variable `description`
-  - Model `LoggerUpdateContract` deleted or renamed its instance variable `credentials`
-  - Model `LoggerUpdateContract` deleted or renamed its instance variable `is_buffered`
+  - Model `IssueUpdateContract` moved instance variable `created_date`, `state`, `api_id`, `title`, `description` and `user_id` under property `properties`
+  - Model `LoggerUpdateContract` moved instance variable `logger_type`, `description`, `credentials` and `is_buffered` under property `properties`
   - Model `NamedValueContract` moved instance variable `tags`, `secret`, `display_name`, `value`, `key_vault`, `provisioning_state` under property `properties`
   - Model `NamedValueCreateContract` moved instance variable `tags`, `secret`, `display_name`, `value`, `key_vault` under property `properties`
-  - Model `NamedValueUpdateParameters` deleted or renamed its instance variable `tags`
-  - Model `NamedValueUpdateParameters` deleted or renamed its instance variable `secret`
-  - Model `NamedValueUpdateParameters` deleted or renamed its instance variable `display_name`
-  - Model `NamedValueUpdateParameters` deleted or renamed its instance variable `value`
-  - Model `NamedValueUpdateParameters` deleted or renamed its instance variable `key_vault`
-  - Model `OpenidConnectProviderUpdateContract` deleted or renamed its instance variable `display_name`
-  - Model `OpenidConnectProviderUpdateContract` deleted or renamed its instance variable `description`
-  - Model `OpenidConnectProviderUpdateContract` deleted or renamed its instance variable `metadata_endpoint`
-  - Model `OpenidConnectProviderUpdateContract` deleted or renamed its instance variable `client_id`
-  - Model `OpenidConnectProviderUpdateContract` deleted or renamed its instance variable `client_secret`
-  - Model `OpenidConnectProviderUpdateContract` deleted or renamed its instance variable `use_in_test_console`
-  - Model `OpenidConnectProviderUpdateContract` deleted or renamed its instance variable `use_in_api_documentation`
+  - Model `NamedValueUpdateParameters` moved instance variable `tags`, `secret`, `display_name`, `value` and `key_vault` under property `properties`
+  - Model `OpenidConnectProviderUpdateContract` moved instance variable `display_name`, `description`, `metadata_endpoint`, `client_id`, `client_secret`, `use_in_test_console` and `use_in_api_documentation` under property `properties`
   - Model `OperationContract` moved instance variable `template_parameters`, `description`, `request`, `responses`, `policies`, `display_name`, `method`, `url_template` under property `properties`
   - Model `OperationStatusResult` deleted or renamed its instance variable `resource_id`
-  - Model `OperationUpdateContract` deleted or renamed its instance variable `template_parameters`
-  - Model `OperationUpdateContract` deleted or renamed its instance variable `description`
-  - Model `OperationUpdateContract` deleted or renamed its instance variable `request`
-  - Model `OperationUpdateContract` deleted or renamed its instance variable `responses`
-  - Model `OperationUpdateContract` deleted or renamed its instance variable `policies`
-  - Model `OperationUpdateContract` deleted or renamed its instance variable `display_name`
-  - Model `OperationUpdateContract` deleted or renamed its instance variable `method`
-  - Model `OperationUpdateContract` deleted or renamed its instance variable `url_template`
-  - Model `ParameterContract` deleted or renamed its instance variable `values`
-  - Model `PolicyRestrictionUpdateContract` deleted or renamed its instance variable `scope`
-  - Model `PolicyRestrictionUpdateContract` deleted or renamed its instance variable `require_base`
+  - Model `OperationUpdateContract` moved instance variable `template_parameters`, `description`, `request`, `responses`, `policies`, `display_name`, `method` and `url_template` under property `properties`
+  - Model `ParameterContract` renamed its instance variable `values` to `values_property`
+  - Model `PolicyRestrictionUpdateContract` moved instance variable `scope` and `require_base` under property `properties`
   - Model `PortalConfigContract` moved instance variable `enable_basic_auth`, `signin`, `signup`, `delegation`, `cors`, `csp` under property `properties`
   - Model `PortalSigninSettings` moved instance variable `enabled` under property `properties`
   - Model `ProductContract` moved instance variable `description`, `terms`, `subscription_required`, `approval_required`, `subscriptions_limit`, `state`, `display_name` under property `properties`
-  - Model `ProductUpdateParameters` deleted or renamed its instance variable `description`
-  - Model `ProductUpdateParameters` deleted or renamed its instance variable `terms`
-  - Model `ProductUpdateParameters` deleted or renamed its instance variable `subscription_required`
-  - Model `ProductUpdateParameters` deleted or renamed its instance variable `approval_required`
-  - Model `ProductUpdateParameters` deleted or renamed its instance variable `subscriptions_limit`
-  - Model `ProductUpdateParameters` deleted or renamed its instance variable `state`
-  - Model `ProductUpdateParameters` deleted or renamed its instance variable `display_name`
-  - Model `QuotaCounterValueUpdateContract` deleted or renamed its instance variable `calls_count`
-  - Model `QuotaCounterValueUpdateContract` deleted or renamed its instance variable `kb_transferred`
+  - Model `ProductUpdateParameters` moved instance variable `description`, `terms`, `subscription_required`, `approval_required`, `subscriptions_limit`, `state` and `display_name` under property `properties`
+  - Model `QuotaCounterValueUpdateContract` moved instance variable `calls_count` and `kb_transferred` under property `properties`
   - Model `RecipientUserContract` moved instance variable `user_id` under property `properties`
   - Model `RemotePrivateEndpointConnectionWrapper` moved instance variable `private_endpoint`, `private_link_service_connection_state`, `provisioning_state`, `group_ids` under property `properties`
   - Model `ResolverContract` moved instance variable `display_name`, `path`, `description` under property `properties`
-  - Model `ResolverUpdateContract` deleted or renamed its instance variable `display_name`
-  - Model `ResolverUpdateContract` deleted or renamed its instance variable `path`
-  - Model `ResolverUpdateContract` deleted or renamed its instance variable `description`
-  - Model `SaveConfigurationParameter` deleted or renamed its instance variable `branch`
-  - Model `SaveConfigurationParameter` deleted or renamed its instance variable `force`
-  - Model `SubscriptionCreateParameters` deleted or renamed its instance variable `owner_id`
-  - Model `SubscriptionCreateParameters` deleted or renamed its instance variable `scope`
-  - Model `SubscriptionCreateParameters` deleted or renamed its instance variable `display_name`
-  - Model `SubscriptionCreateParameters` deleted or renamed its instance variable `primary_key`
-  - Model `SubscriptionCreateParameters` deleted or renamed its instance variable `secondary_key`
-  - Model `SubscriptionCreateParameters` deleted or renamed its instance variable `state`
-  - Model `SubscriptionCreateParameters` deleted or renamed its instance variable `allow_tracing`
-  - Model `SubscriptionUpdateParameters` deleted or renamed its instance variable `owner_id`
-  - Model `SubscriptionUpdateParameters` deleted or renamed its instance variable `scope`
-  - Model `SubscriptionUpdateParameters` deleted or renamed its instance variable `expiration_date`
-  - Model `SubscriptionUpdateParameters` deleted or renamed its instance variable `display_name`
-  - Model `SubscriptionUpdateParameters` deleted or renamed its instance variable `primary_key`
-  - Model `SubscriptionUpdateParameters` deleted or renamed its instance variable `secondary_key`
-  - Model `SubscriptionUpdateParameters` deleted or renamed its instance variable `state`
-  - Model `SubscriptionUpdateParameters` deleted or renamed its instance variable `state_comment`
-  - Model `SubscriptionUpdateParameters` deleted or renamed its instance variable `allow_tracing`
-  - Model `TagCreateUpdateParameters` deleted or renamed its instance variable `display_name`
+  - Model `ResolverUpdateContract` moved instance variable `display_name`, `path` and `description` under property `properties`
+  - Model `SaveConfigurationParameter` moved instance variable `branch` and `force` under property `properties`
+  - Model `SubscriptionCreateParameters` moved instance variable `owner_id`, `scope`, `display_name`, `primary_key`, `secondary_key`, `state` and `allow_tracing` under property `properties`
+  - Model `SubscriptionUpdateParameters` moved instance variable `owner_id`, `scope`, `expiration_date`, `display_name`, `primary_key`, `secondary_key`, `state`, `state_comment` and `allow_tracing` under property `properties`
+  - Model `TagCreateUpdateParameters` moved instance variable `display_name` under property `properties`
   - Model `TagDescriptionContract` moved instance variable `description`, `external_docs_url`, `external_docs_description`, `tag_id`, `display_name` under property `properties`
-  - Model `TagDescriptionCreateParameters` deleted or renamed its instance variable `description`
-  - Model `TagDescriptionCreateParameters` deleted or renamed its instance variable `external_docs_url`
-  - Model `TagDescriptionCreateParameters` deleted or renamed its instance variable `external_docs_description`
+  - Model `TagDescriptionCreateParameters` moved instance variable `description`, `external_docs_url` and `external_docs_description` under property `properties`
   - Model `UserContract` moved instance variable `state`, `note`, `identities`, `first_name`, `last_name`, `email`, `registration_date`, `groups` under property `properties`
-  - Model `UserCreateParameters` deleted or renamed its instance variable `state`
-  - Model `UserCreateParameters` deleted or renamed its instance variable `note`
-  - Model `UserCreateParameters` deleted or renamed its instance variable `identities`
-  - Model `UserCreateParameters` deleted or renamed its instance variable `email`
-  - Model `UserCreateParameters` deleted or renamed its instance variable `first_name`
-  - Model `UserCreateParameters` deleted or renamed its instance variable `last_name`
-  - Model `UserCreateParameters` deleted or renamed its instance variable `password`
-  - Model `UserCreateParameters` deleted or renamed its instance variable `app_type`
-  - Model `UserCreateParameters` deleted or renamed its instance variable `confirmation`
-  - Model `UserTokenParameters` deleted or renamed its instance variable `key_type`
-  - Model `UserTokenParameters` deleted or renamed its instance variable `expiry`
-  - Model `UserUpdateParameters` deleted or renamed its instance variable `state`
-  - Model `UserUpdateParameters` deleted or renamed its instance variable `note`
-  - Model `UserUpdateParameters` deleted or renamed its instance variable `identities`
-  - Model `UserUpdateParameters` deleted or renamed its instance variable `email`
-  - Model `UserUpdateParameters` deleted or renamed its instance variable `password`
-  - Model `UserUpdateParameters` deleted or renamed its instance variable `first_name`
-  - Model `UserUpdateParameters` deleted or renamed its instance variable `last_name`
-  - Model `WikiUpdateContract` deleted or renamed its instance variable `documents`
+  - Model `UserCreateParameters` moved instance variable `state`, `note`, `identities`, `email`, `first_name`, `last_name`, `password`, `app_type` and `confirmation` under property `properties`
+  - Model `UserTokenParameters` moved instance variable `key_type` and `expiry` under property `properties`
+  - Model `UserUpdateParameters` moved instance variable `state`, `note`, `identities`, `email`, `password`, `first_name` and `last_name` under property `properties`
+  - Model `WikiUpdateContract` moved instance variable `documents` under property `properties`
   - Deleted or renamed model `ApiRevisionInfoContract`
   - Deleted or renamed model `AsyncResolverStatus`
   - Deleted or renamed model `PolicyWithComplianceContract`
@@ -450,15 +310,6 @@
   - Deleted or renamed model `ResolverResultContract`
   - Deleted or renamed model `ResolverResultLogItemContract`
   - Deleted or renamed model `ApiManagementClientOperationsMixin`
-  - Parameter `format` of method `ApiOperationPolicyOperations.get` is now optional
-  - Parameter `format` of method `ApiPolicyOperations.get` is now optional
-  - Parameter `format` of method `GraphQLApiResolverPolicyOperations.get` is now optional
-  - Parameter `format` of method `PolicyOperations.get` is now optional
-  - Parameter `format` of method `ProductPolicyOperations.get` is now optional
-  - Parameter `format` of method `WorkspaceApiOperationPolicyOperations.get` is now optional
-  - Parameter `format` of method `WorkspaceApiPolicyOperations.get` is now optional
-  - Parameter `format` of method `WorkspacePolicyOperations.get` is now optional
-  - Parameter `format` of method `WorkspaceProductPolicyOperations.get` is now optional
   - Method `ApiDiagnosticOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
   - Method `ApiDiagnosticOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
   - Method `ApiDiagnosticOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
