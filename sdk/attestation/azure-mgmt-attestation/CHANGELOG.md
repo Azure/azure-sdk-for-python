@@ -4,7 +4,7 @@
 
 ### Features Added
 
-  - Model `AttestationManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `AttestationManagementClient` added parameter `cloud_setting` in method `__init__`
   - Client `AttestationManagementClient` added method `send_request`
   - Client `AttestationManagementClient` added operation group `private_link_resources`
   - Model `AttestationServiceCreationSpecificParams` added property `public_network_access`
