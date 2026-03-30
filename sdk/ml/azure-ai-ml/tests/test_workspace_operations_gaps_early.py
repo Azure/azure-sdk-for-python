@@ -6,7 +6,6 @@ from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.constants._common import Scope
-from azure.core.polling import LROPoller
 from azure.core.exceptions import HttpResponseError
 from azure.ai.ml.entities._workspace.workspace import Workspace
 from marshmallow import ValidationError
@@ -43,27 +42,18 @@ class TestWorkspaceOperationsEarlyGaps(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_begin_sync_keys_and_begin_provision_network_behaviors(self, client: MLClient, randstr: Callable[[], str]) -> None:
-        """Verify begin_sync_keys and begin_provision_network return pollers or raise HttpResponseError when workspace missing."""
+        """Verify begin_sync_keys and begin_provision_network raise HttpResponseError for non-existent workspace."""
         name = f"e2etest_{randstr('missing')}_ops"
 
-        # begin_sync_keys may return a poller or raise synchronously; accept either but assert behavior
-        try:
-            poller = client.workspaces.begin_sync_keys(name)
-        except HttpResponseError:
-            pytest.skip("begin_sync_keys initiation raised HttpResponseError in this environment.")
-
-        assert isinstance(poller, LROPoller)
+        # begin_sync_keys should raise HttpResponseError for a non-existent workspace
+        # (either synchronously during initiation or when polling for result)
         with pytest.raises(HttpResponseError):
+            poller = client.workspaces.begin_sync_keys(name)
             poller.result()
 
-        # begin_provision_network may return a poller or raise synchronously; exercise include_spark path
-        try:
-            prov_poller = client.workspaces.begin_provision_network(workspace_name=name, include_spark=True)
-        except HttpResponseError:
-            pytest.skip("begin_provision_network initiation raised HttpResponseError in this environment.")
-
-        assert isinstance(prov_poller, LROPoller)
+        # begin_provision_network should also raise for a non-existent workspace
         with pytest.raises(HttpResponseError):
+            prov_poller = client.workspaces.begin_provision_network(workspace_name=name, include_spark=True)
             prov_poller.result()
 
 
@@ -81,16 +71,10 @@ class TestWorkspaceOperationsGaps(AzureRecordedTestCase):
         # use a likely-nonexistent workspace name to exercise error propagation from the service
         fake_name = f"e2etest_{randstr('wps_name')}_diag"
 
-        # begin_diagnose may raise synchronously in some environments (e.g., ResourceNotFound)
-        try:
-            poller = client.workspaces.begin_diagnose(fake_name)
-        except HttpResponseError:
-            pytest.skip("begin_diagnose initiation raised HttpResponseError in this environment.")
-
-        assert isinstance(poller, LROPoller)
-
-        # The service is expected to raise when attempting to finish diagnosing a non-existent workspace.
+        # begin_diagnose should raise HttpResponseError for a non-existent workspace
+        # (either synchronously during initiation or when polling for result)
         with pytest.raises(HttpResponseError):
+            poller = client.workspaces.begin_diagnose(fake_name)
             poller.result()
 
     @pytest.mark.e2etest

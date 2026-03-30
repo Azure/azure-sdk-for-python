@@ -1,20 +1,29 @@
+import os
+
 from pathlib import Path
 from typing import Callable
 
 import pytest
-import yaml
 import marshmallow
-from devtools_testutils import AzureRecordedTestCase, is_live
-from test_utilities.utils import sleep_if_live
 
 from azure.ai.ml import MLClient, load_data
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType
-from azure.ai.ml.exceptions import ValidationException, MlException
+from azure.ai.ml.exceptions import MlException
 
 
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test", "mock_code_hash")
-class TestDataOperationsGetBranches(AzureRecordedTestCase):
+TESTS_ROOT = os.path.join(os.path.dirname(__file__), "..", "..")
+
+
+@pytest.fixture
+def randstr():
+    """Generate a random string for test isolation."""
+    import random, string
+    def _gen(prefix=""):
+        return prefix + "".join(random.choices(string.ascii_lowercase, k=8))
+    return _gen
+
+
+@pytest.mark.unittest
+class TestDataOperationsGetBranches:
     def test_get_raises_when_both_version_and_label_specified(self, client: MLClient, randstr: Callable[[], str]) -> None:
         """Get should raise ValidationException when both version and label are provided."""
         name = randstr("name")
@@ -30,51 +39,10 @@ class TestDataOperationsGetBranches(AzureRecordedTestCase):
             client.data.get(name)
         assert "Must provide either version or label." in str(e.value)
 
-    @pytest.mark.skip(reason="No recording available — skips in live, no playback data")
-    def test_get_label_resolves_latest_version(self, client: MLClient, tmp_path: Path, randstr: Callable[[], str]) -> None:
-        """Creating multiple versions and resolving via label 'latest' should return the most recent version."""
-        if is_live():
-            pytest.skip("Skipping live run for this test due to tenant authentication constraints.")
-
-        name = randstr("name")
-        # create two simple data assets using load_data + a remote URL so service has versions
-        cfg = tmp_path / "data.yaml"
-        # use a URL path to avoid uploading to datastores during create_or_update
-        url_path = "https://example.com/f1.csv"
-
-        # create version 1
-        cfg.write_text(
-            f"""
-            name: {name}
-            version: 1
-            path: {url_path}
-            type: uri_file
-        """
-        )
-        data_asset = load_data(source=cfg)
-        client.data.create_or_update(data_asset)
-
-        # create version 2
-        cfg.write_text(
-            f"""
-            name: {name}
-            version: 2
-            path: {url_path}
-            type: uri_file
-        """
-        )
-        data_asset = load_data(source=cfg)
-        client.data.create_or_update(data_asset)
-
-        # wait briefly if live to allow indexing
-        sleep_if_live(3)
-        latest = client.data.get(name, label="latest")
-        assert latest.version == "2"
 
 
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test", "mock_code_hash")
-class TestData(AzureRecordedTestCase):
+@pytest.mark.unittest
+class TestData:
     def test_validate_missing_path_raises(self, client: MLClient, randstr: Callable[[], str]) -> None:
         """
         Covers branch where data.path is missing in _validate which should raise a ValidationException.
@@ -85,7 +53,7 @@ class TestData(AzureRecordedTestCase):
         with pytest.raises(marshmallow.exceptions.ValidationError) as exc:
             client.data.create_or_update(
                 load_data(
-                    source="./tests/test_configs/dataset/data_file.yaml",
+                    source=os.path.join(TESTS_ROOT, "test_configs/dataset/data_file.yaml"),
                     params_override=[{"name": name}, {"version": "1"}, {"path": None}],
                 )
             )
@@ -116,7 +84,7 @@ class TestData(AzureRecordedTestCase):
             client.data.create_or_update(data_asset)
         assert "File path does not match asset type" in str(excinfo.value)
 
-    @pytest.mark.skip(reason="Depends on local azureml-dataprep package state — not recordable")
+    @pytest.mark.live_test_only("mount requires real credentials")
     def test_mount_requires_dataprep_installed(self, client: MLClient, tmp_path: Path) -> None:
         """
         Covers the ImportError branch in mount where absence of azureml.dataprep should raise MlException.
@@ -136,9 +104,8 @@ class TestData(AzureRecordedTestCase):
         )
 
 
-@pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-class TestDataMountValidation(AzureRecordedTestCase):
+@pytest.mark.unittest
+class TestDataMountValidation:
     def test_mount_invalid_mode_raises(self, client: MLClient) -> None:
         # mode must be either 'ro_mount' or 'rw_mount' and read-write mounts are not supported
         with pytest.raises(AssertionError) as e:

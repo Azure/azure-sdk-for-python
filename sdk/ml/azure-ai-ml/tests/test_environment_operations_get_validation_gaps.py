@@ -35,10 +35,10 @@ class TestEnvironmentOperationsGetValidation(AzureRecordedTestCase):
 class TestEnvironmentOperationsGaps(AzureRecordedTestCase):
     def test_preprocess_environment_name_strips_arm_prefix(self, client: MLClient) -> None:
         # Verify helper strips ARM id prefix when present
-        arm_prefixed = "\/subscriptions\/00000000-0000-0000-0000-000000000000\/resourceGroups\/rg\/providers\/Microsoft.MachineLearningServices\/workspaces\/ws\/environments\/env-name"
-        # _preprocess_environment_name should remove the ARM_ID_PREFIX if present
+        arm_prefixed = ARM_ID_PREFIX + "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/ws/environments/env-name"
         processed = _preprocess_environment_name(arm_prefixed)
-        assert processed.endswith("environments\/env-name") is True
+        assert not processed.startswith(ARM_ID_PREFIX)
+        assert "environments/env-name" in processed
 
     def test_set_registry_client_restores_state_on_failure(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         # Ensure that even when share fails (likely due to invalid registry), operation scope and clients are restored
