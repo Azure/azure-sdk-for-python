@@ -4,7 +4,7 @@
 
 ### Features Added
 
-  - Model `PeeringManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `PeeringManagementClient` added parameter `cloud_setting` in method `__init__`
   - Client `PeeringManagementClient` added method `send_request`
   - Model `CdnPeeringPrefix` added property `system_data`
   - Model `ConnectionMonitorTest` added property `system_data`
