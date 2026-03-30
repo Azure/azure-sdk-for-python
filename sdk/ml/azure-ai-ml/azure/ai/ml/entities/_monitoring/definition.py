@@ -111,6 +111,8 @@ class MonitorDefinition(RestTranslatableMixin):
             compute_configuration=self.compute._to_rest_object(),
             monitoring_target=self.monitoring_target._to_rest_object() if self.monitoring_target else None,
             signals=_signals,  # pylint: disable=possibly-used-before-assignment
+            # TypeSpec model uses alert_notification_settings (plural), old autorest uses singular
+            alert_notification_settings=rest_alert_notification,
             alert_notification_setting=rest_alert_notification,
         )
 
@@ -121,11 +123,15 @@ class MonitorDefinition(RestTranslatableMixin):
         **kwargs: Any,
     ) -> "MonitorDefinition":
         from_rest_alert_notification: Any = None
-        if obj.alert_notification_setting:
-            if isinstance(obj.alert_notification_setting, AzMonMonitoringAlertNotificationSettings):
+        # TypeSpec model uses alert_notification_settings (plural), old autorest uses alert_notification_setting
+        _alert_setting = getattr(obj, "alert_notification_settings", None) or getattr(
+            obj, "alert_notification_setting", None
+        )
+        if _alert_setting:
+            if isinstance(_alert_setting, AzMonMonitoringAlertNotificationSettings):
                 from_rest_alert_notification = AZMONITORING
             else:
-                from_rest_alert_notification = AlertNotification._from_rest_object(obj.alert_notification_setting)
+                from_rest_alert_notification = AlertNotification._from_rest_object(_alert_setting)
 
         _monitoring_signals = {}
         for signal_name, signal in obj.signals.items():

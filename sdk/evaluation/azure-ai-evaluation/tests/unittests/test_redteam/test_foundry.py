@@ -3817,3 +3817,272 @@ class TestAdversarialChatTargetRegression:
         assert not isinstance(
             adversarial_target, _CallbackChatTarget
         ), "adversarial_chat_target must NOT be a _CallbackChatTarget (user's callback)"
+
+
+class TestRAIServiceScorerTokenMetrics:
+    """Tests for token usage extraction and memory save in RAIServiceScorer."""
+
+    @pytest.mark.asyncio
+    async def test_score_metadata_includes_token_usage_from_sample(
+        self, mock_credential, mock_azure_ai_project, mock_logger
+    ):
+        """Token usage from eval_result.sample.usage is included in score_metadata."""
+        scorer = RAIServiceScorer(
+            credential=mock_credential,
+            azure_ai_project=mock_azure_ai_project,
+            risk_category=RiskCategory.Violence,
+            logger=mock_logger,
+        )
+
+        mock_piece = MagicMock()
+        mock_piece.id = "test-id"
+        mock_piece.converted_value = "Harmful content"
+        mock_piece.original_value = "Original"
+        mock_piece.labels = {}
+        mock_piece.api_role = "assistant"
+
+        mock_message = MagicMock()
+        mock_message.message_pieces = [mock_piece]
+
+        mock_eval_result = MagicMock()
+        mock_eval_result.results = [
+            MagicMock(
+                name="violence",
+                metric="violence",
+                score=5,
+                reason="Violent content",
+                threshold=3,
+                passed=False,
+                label="high",
+            )
+        ]
+        mock_eval_result.sample = MagicMock()
+        mock_eval_result.sample.usage = {
+            "prompt_tokens": 100,
+            "completion_tokens": 50,
+            "total_tokens": 150,
+        }
+
+        with patch(
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
+            new_callable=AsyncMock,
+        ) as mock_eval, patch("azure.ai.evaluation.red_team._foundry._rai_scorer.CentralMemory") as mock_memory_cls:
+            mock_memory_instance = MagicMock()
+            mock_memory_cls.get_memory_instance.return_value = mock_memory_instance
+            mock_eval.return_value = mock_eval_result
+
+            scores = await scorer.score_async(mock_message, objective="Test")
+
+            assert len(scores) == 1
+            metadata = scores[0].score_metadata
+            assert "token_usage" in metadata
+            assert metadata["token_usage"]["prompt_tokens"] == 100
+            assert metadata["token_usage"]["completion_tokens"] == 50
+            assert metadata["token_usage"]["total_tokens"] == 150
+
+    @pytest.mark.asyncio
+    async def test_score_metadata_includes_token_usage_from_result_properties(
+        self, mock_credential, mock_azure_ai_project, mock_logger
+    ):
+        """Token usage from result properties.metrics is used as fallback."""
+        scorer = RAIServiceScorer(
+            credential=mock_credential,
+            azure_ai_project=mock_azure_ai_project,
+            risk_category=RiskCategory.Violence,
+            logger=mock_logger,
+        )
+
+        mock_piece = MagicMock()
+        mock_piece.id = "test-id"
+        mock_piece.converted_value = "Harmful content"
+        mock_piece.original_value = "Original"
+        mock_piece.labels = {}
+        mock_piece.api_role = "assistant"
+
+        mock_message = MagicMock()
+        mock_message.message_pieces = [mock_piece]
+
+        # No sample.usage, but result has properties.metrics
+        mock_result_item = {
+            "name": "violence",
+            "metric": "violence",
+            "score": 5,
+            "reason": "Violent",
+            "threshold": 3,
+            "passed": False,
+            "label": "high",
+            "properties": {
+                "metrics": {
+                    "prompt_tokens": 200,
+                    "completion_tokens": 80,
+                    "total_tokens": 280,
+                }
+            },
+        }
+        mock_eval_result = {"results": [mock_result_item]}
+
+        with patch(
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
+            new_callable=AsyncMock,
+        ) as mock_eval, patch("azure.ai.evaluation.red_team._foundry._rai_scorer.CentralMemory") as mock_memory_cls:
+            mock_memory_instance = MagicMock()
+            mock_memory_cls.get_memory_instance.return_value = mock_memory_instance
+            mock_eval.return_value = mock_eval_result
+
+            scores = await scorer.score_async(mock_message, objective="Test")
+
+            assert len(scores) == 1
+            metadata = scores[0].score_metadata
+            assert "token_usage" in metadata
+            assert metadata["token_usage"]["prompt_tokens"] == 200
+            assert metadata["token_usage"]["total_tokens"] == 280
+
+    @pytest.mark.asyncio
+    async def test_score_metadata_no_token_usage_when_absent(self, mock_credential, mock_azure_ai_project, mock_logger):
+        """Score metadata has no token_usage key when eval_result lacks token data."""
+        scorer = RAIServiceScorer(
+            credential=mock_credential,
+            azure_ai_project=mock_azure_ai_project,
+            risk_category=RiskCategory.Violence,
+            logger=mock_logger,
+        )
+
+        mock_piece = MagicMock()
+        mock_piece.id = "test-id"
+        mock_piece.converted_value = "Content"
+        mock_piece.original_value = "Original"
+        mock_piece.labels = {}
+        mock_piece.api_role = "assistant"
+
+        mock_message = MagicMock()
+        mock_message.message_pieces = [mock_piece]
+
+        mock_eval_result = MagicMock()
+        mock_eval_result.results = [
+            MagicMock(
+                name="violence",
+                metric="violence",
+                score=1,
+                reason="Safe",
+                threshold=3,
+                passed=True,
+                label="low",
+            )
+        ]
+        # No sample or sample without usage
+        mock_eval_result.sample = None
+
+        with patch(
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
+            new_callable=AsyncMock,
+        ) as mock_eval, patch("azure.ai.evaluation.red_team._foundry._rai_scorer.CentralMemory") as mock_memory_cls:
+            mock_memory_instance = MagicMock()
+            mock_memory_cls.get_memory_instance.return_value = mock_memory_instance
+            mock_eval.return_value = mock_eval_result
+
+            scores = await scorer.score_async(mock_message, objective="Test")
+
+            assert len(scores) == 1
+            metadata = scores[0].score_metadata
+            assert "token_usage" not in metadata
+            # Verify core metadata is still present
+            assert metadata["raw_score"] == 1
+            assert metadata["metric_name"] == "violence"
+
+    @pytest.mark.asyncio
+    async def test_scores_saved_to_memory(self, mock_credential, mock_azure_ai_project, mock_logger):
+        """Scores are saved to PyRIT CentralMemory after creation."""
+        scorer = RAIServiceScorer(
+            credential=mock_credential,
+            azure_ai_project=mock_azure_ai_project,
+            risk_category=RiskCategory.Violence,
+            logger=mock_logger,
+        )
+
+        mock_piece = MagicMock()
+        mock_piece.id = "test-id"
+        mock_piece.converted_value = "Response"
+        mock_piece.original_value = "Original"
+        mock_piece.labels = {}
+        mock_piece.api_role = "assistant"
+
+        mock_message = MagicMock()
+        mock_message.message_pieces = [mock_piece]
+
+        mock_eval_result = MagicMock()
+        mock_eval_result.results = [
+            MagicMock(
+                name="violence",
+                metric="violence",
+                score=5,
+                reason="Violent",
+                threshold=3,
+                passed=False,
+                label="high",
+            )
+        ]
+        mock_eval_result.sample = None
+
+        with patch(
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
+            new_callable=AsyncMock,
+        ) as mock_eval, patch("azure.ai.evaluation.red_team._foundry._rai_scorer.CentralMemory") as mock_memory_cls:
+            mock_memory_instance = MagicMock()
+            mock_memory_cls.get_memory_instance.return_value = mock_memory_instance
+            mock_eval.return_value = mock_eval_result
+
+            scores = await scorer.score_async(mock_message, objective="Test")
+
+            mock_memory_instance.add_scores_to_memory.assert_called_once()
+            saved_scores = mock_memory_instance.add_scores_to_memory.call_args[1]["scores"]
+            assert len(saved_scores) == 1
+            assert saved_scores[0] is scores[0]
+
+    @pytest.mark.asyncio
+    async def test_memory_save_failure_does_not_break_scoring(
+        self, mock_credential, mock_azure_ai_project, mock_logger
+    ):
+        """If memory save fails, scoring still returns the score."""
+        scorer = RAIServiceScorer(
+            credential=mock_credential,
+            azure_ai_project=mock_azure_ai_project,
+            risk_category=RiskCategory.Violence,
+            logger=mock_logger,
+        )
+
+        mock_piece = MagicMock()
+        mock_piece.id = "test-id"
+        mock_piece.converted_value = "Response"
+        mock_piece.original_value = "Original"
+        mock_piece.labels = {}
+        mock_piece.api_role = "assistant"
+
+        mock_message = MagicMock()
+        mock_message.message_pieces = [mock_piece]
+
+        mock_eval_result = MagicMock()
+        mock_eval_result.results = [
+            MagicMock(
+                name="violence",
+                metric="violence",
+                score=5,
+                reason="Violent",
+                threshold=3,
+                passed=False,
+                label="high",
+            )
+        ]
+        mock_eval_result.sample = None
+
+        with patch(
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
+            new_callable=AsyncMock,
+        ) as mock_eval, patch("azure.ai.evaluation.red_team._foundry._rai_scorer.CentralMemory") as mock_memory_cls:
+            mock_memory_cls.get_memory_instance.side_effect = RuntimeError("No memory configured")
+            mock_eval.return_value = mock_eval_result
+
+            # Should succeed despite memory error
+            scores = await scorer.score_async(mock_message, objective="Test")
+
+            assert len(scores) == 1
+            assert scores[0].score_value == "true"
