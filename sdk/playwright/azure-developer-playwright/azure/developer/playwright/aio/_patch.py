@@ -7,9 +7,27 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+from typing import Any, TYPE_CHECKING
+
+from ._client import PlaywrightClient as _GeneratedPlaywrightClient
+
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
-__all__: list[str] = []  # Add all objects you want publicly available to users at this package level
+class PlaywrightClient(_GeneratedPlaywrightClient):
+    """Customized PlaywrightClient with correct credential scope.
+
+    The generated scope (playwright.microsoft.com) is incorrect due to a
+    spec bug. This override sets the working scope until the spec is fixed.
+    """
+
+    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+        kwargs.setdefault("credential_scopes", ["https://management.core.windows.net/.default"])
+        super().__init__(endpoint, credential, **kwargs)
+
+
+__all__: list[str] = ["PlaywrightClient"]
 
 
 def patch_sdk():
