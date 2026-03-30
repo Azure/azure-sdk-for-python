@@ -36,7 +36,14 @@ from ._http_errors import (
     _not_found,
     _service_unavailable,
 )
-from ._observability import build_create_span_tags, start_create_span
+from ._observability import (
+    _initial_create_span_tags,
+    build_create_baggage,
+    build_create_otel_attrs,
+    build_create_span_tags,
+    extract_request_id,
+    start_create_span
+)
 from ._orchestrator import _HandlerError, _ResponseOrchestrator
 from ._request_parsing import (
     _apply_item_cursors,
@@ -335,12 +342,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         # Also maintain CreateSpanHook for backward compat (tests etc.)
         span = start_create_span(
             "create_response",
-            build_create_span_tags(
-                response_id=None,
-                model=None,
-                agent_reference=None,
-                service_name="azure-ai-agentserver-responses",
-            ),
+            _initial_create_span_tags(),
             hook=self._runtime_options.create_span_hook,
         )
         captured_error: Exception | None = None
@@ -376,30 +378,28 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             request=request,
         )
 
-        # Start OTel request span now that we have the response_id
+        # Extract X-Request-Id header for request ID propagation (truncated to 256 chars).
+        request_id = extract_request_id(request.headers)
+
+        # Start OTel request span now that we have the response_id.
+        # Span display name: "create_response {model}" per spec.
         if self._tracing is not None:
             otel_span = self._tracing.start_request_span(
                 request.headers,
                 response_id,
                 span_operation="create_response",
-                operation_name="create_response",
+                operation_name="invoke_agent",
             )
-            self._safe_set_attrs(otel_span, {
-                "gen_ai.response.id": response_id,
-                "gen_ai.request.model": ctx.model or "",
-            })
-            baggage_token = self._tracing.set_baggage({
-                "response_id": response_id,
-            })
+            _span_name = f"create_response {ctx.model}".strip() if ctx.model else "create_response"
+            if otel_span is not None:
+                try:
+                    otel_span.update_name(_span_name)
+                except Exception:  # pylint: disable=broad-exception-caught
+                    pass
+            self._safe_set_attrs(otel_span, build_create_otel_attrs(ctx, request_id=request_id))
+            baggage_token = self._tracing.set_baggage(build_create_baggage(ctx, request_id=request_id))
 
-        span.set_tags(
-            build_create_span_tags(
-                response_id=response_id,
-                model=ctx.model,
-                agent_reference=agent_reference,
-                service_name="azure-ai-agentserver-responses",
-            )
-        )
+        span.set_tags(build_create_span_tags(ctx, request_id=request_id))
 
         try:
             if ctx.stream:
