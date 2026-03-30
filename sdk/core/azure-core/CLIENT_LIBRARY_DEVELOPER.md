@@ -20,8 +20,8 @@
   - [Implementation Guidance](#implementation-guidance)
   - [Known uses of token request parameters](#known-uses-of-token-request-parameters)
   - [BearerTokenCredentialPolicy and AsyncBearerTokenCredentialPolicy](#bearertokencredentialpolicy-and-asyncbearertokencredentialpolicy)
-- [Long-running operation (LRO) customization](#long-running-operation-lro-customization)
 - [Environment Variables](#environment-variables)
+- [Long-running operation (LRO) customization](#long-running-operation-lro-customization)
 
 ## Pipeline
 
