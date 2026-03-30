@@ -10,7 +10,6 @@ from devtools_testutils import recorded_by_proxy
 from testpreparer import PlaywrightClientTestBase, PlaywrightPreparer
 
 
-@pytest.mark.skip("you may need to update the auto-generated test case before run it")
 class TestPlaywrightAccessTokensOperations(PlaywrightClientTestBase):
     @PlaywrightPreparer()
     @recorded_by_proxy
@@ -18,43 +17,62 @@ class TestPlaywrightAccessTokensOperations(PlaywrightClientTestBase):
         client = self.create_client(endpoint=playwright_endpoint)
         response = client.access_tokens.create_or_replace(
             workspace_id="str",
-            access_token_id="str",
+            access_token_id="test-access-token-id",
             resource={
-                "createdAt": "2020-02-20 00:00:00",
-                "expiryAt": "2020-02-20 00:00:00",
-                "id": "str",
-                "name": "str",
-                "state": "str",
-                "jwtToken": "str",
+                "name": "test-token",
+                "expiryAt": "2030-01-01T00:00:00Z",
             },
         )
 
-        # please add some check logic here by yourself
-        # ...
+        assert response is not None
+        assert response["name"] == "test-token"
+        assert "id" in response
+        assert "state" in response
+        assert "createdAt" in response
+        assert "expiryAt" in response
 
     @PlaywrightPreparer()
     @recorded_by_proxy
     def test_access_tokens_get(self, playwright_endpoint):
         client = self.create_client(endpoint=playwright_endpoint)
-        response = client.access_tokens.get(
+        # Create a token first so we can get it
+        client.access_tokens.create_or_replace(
             workspace_id="str",
-            access_token_id="str",
+            access_token_id="test-access-token-get",
+            resource={
+                "name": "test-token-get",
+                "expiryAt": "2030-01-01T00:00:00Z",
+            },
         )
 
-        # please add some check logic here by yourself
-        # ...
+        response = client.access_tokens.get(
+            workspace_id="str",
+            access_token_id="test-access-token-get",
+        )
+
+        assert response is not None
+        assert response["name"] == "test-token-get"
+        assert response["id"] is not None
 
     @PlaywrightPreparer()
     @recorded_by_proxy
     def test_access_tokens_delete(self, playwright_endpoint):
         client = self.create_client(endpoint=playwright_endpoint)
-        response = client.access_tokens.delete(
+        # Create a token first so we can delete it
+        client.access_tokens.create_or_replace(
             workspace_id="str",
-            access_token_id="str",
+            access_token_id="test-access-token-delete",
+            resource={
+                "name": "test-token-delete",
+                "expiryAt": "2030-01-01T00:00:00Z",
+            },
         )
 
-        # please add some check logic here by yourself
-        # ...
+        response = client.access_tokens.delete(
+            workspace_id="str",
+            access_token_id="test-access-token-delete",
+        )
+        assert response is None
 
     @PlaywrightPreparer()
     @recorded_by_proxy
@@ -64,5 +82,4 @@ class TestPlaywrightAccessTokensOperations(PlaywrightClientTestBase):
             workspace_id="str",
         )
         result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
+        assert isinstance(result, list)

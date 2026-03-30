@@ -7,12 +7,10 @@
 # --------------------------------------------------------------------------
 
 from azure.developer.playwright import PlaywrightClient
-from azure.identity import DefaultAzureCredential
 
 """
 # PREREQUISITES
     pip install azure-developer-playwright
-    pip install azure-identity
 # USAGE
     python test_runs_list.py
 """
@@ -21,7 +19,7 @@ from azure.identity import DefaultAzureCredential
 def main():
     client = PlaywrightClient(
         endpoint="ENDPOINT",
-        credential=DefaultAzureCredential(),
+        credential="CREDENTIAL",
     )
 
     response = client.test_runs.list(
@@ -31,6 +29,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2026-01-01-preview/TestRuns_List.json
+# x-ms-original-file: 2025-09-01/TestRuns_List.json
 if __name__ == "__main__":
     main()

@@ -7,12 +7,10 @@
 # --------------------------------------------------------------------------
 
 from azure.developer.playwright import PlaywrightClient
-from azure.identity import DefaultAzureCredential
 
 """
 # PREREQUISITES
     pip install azure-developer-playwright
-    pip install azure-identity
 # USAGE
     python workspaces_get_browsers.py
 """
@@ -21,7 +19,7 @@ from azure.identity import DefaultAzureCredential
 def main():
     client = PlaywrightClient(
         endpoint="ENDPOINT",
-        credential=DefaultAzureCredential(),
+        credential="CREDENTIAL",
     )
 
     client.workspaces.get_browsers(
@@ -30,6 +28,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2026-01-01-preview/Workspaces_GetBrowsers.json
+# x-ms-original-file: 2025-09-01/Workspaces_GetBrowsers.json
 if __name__ == "__main__":
     main()

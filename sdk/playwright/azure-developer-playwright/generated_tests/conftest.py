@@ -22,13 +22,7 @@ load_dotenv()
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     playwright_subscription_id = os.environ.get("PLAYWRIGHT_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
-    playwright_tenant_id = os.environ.get("PLAYWRIGHT_TENANT_ID", "00000000-0000-0000-0000-000000000000")
-    playwright_client_id = os.environ.get("PLAYWRIGHT_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
-    playwright_client_secret = os.environ.get("PLAYWRIGHT_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=playwright_subscription_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=playwright_tenant_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=playwright_client_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=playwright_client_secret, value="00000000-0000-0000-0000-000000000000")
 
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")

@@ -10,7 +10,6 @@ from devtools_testutils import recorded_by_proxy
 from testpreparer import PlaywrightClientTestBase, PlaywrightPreparer
 
 
-@pytest.mark.skip("you may need to update the auto-generated test case before run it")
 class TestPlaywrightTestRunsOperations(PlaywrightClientTestBase):
     @PlaywrightPreparer()
     @recorded_by_proxy
@@ -18,39 +17,16 @@ class TestPlaywrightTestRunsOperations(PlaywrightClientTestBase):
         client = self.create_client(endpoint=playwright_endpoint)
         response = client.test_runs.create_or_update(
             workspace_id="str",
-            run_id="str",
+            run_id="test-run-id",
             resource={
-                "creatorId": "str",
-                "displayName": "str",
-                "id": "str",
-                "summary": {
-                    "startTime": "2020-02-20 00:00:00",
-                    "status": "str",
-                    "billableTime": 0,
-                    "duration": 0,
-                    "endTime": "2020-02-20 00:00:00",
-                    "errorMessages": ["str"],
-                    "maxConcurrentBrowserSessions": 0,
-                    "numBrowserSessions": 0,
-                },
-                "ciConfig": {
-                    "author": "str",
-                    "branch": "str",
-                    "commitId": "str",
-                    "providerName": "str",
-                    "revisionUrl": "str",
-                },
-                "config": {
-                    "framework": {"name": "str", "runnerName": "str", "version": "str"},
-                    "maxWorkers": 0,
-                    "sdkLanguage": "str",
-                },
-                "creatorName": "str",
+                "displayName": "test-run",
             },
         )
 
-        # please add some check logic here by yourself
-        # ...
+        assert response is not None
+        assert response["displayName"] == "test-run"
+        assert "id" in response
+        assert "creatorId" in response
 
     @PlaywrightPreparer()
     @recorded_by_proxy
@@ -60,5 +36,4 @@ class TestPlaywrightTestRunsOperations(PlaywrightClientTestBase):
             workspace_id="str",
         )
         result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
+        assert isinstance(result, list)

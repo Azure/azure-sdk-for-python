@@ -32,7 +32,6 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.serialization import Deserializer, Serializer
-from ..._validation import api_version_validation
 from ...operations._operations import (
     build_access_tokens_create_or_replace_request,
     build_access_tokens_delete_request,
@@ -41,7 +40,6 @@ from ...operations._operations import (
     build_test_runs_create_or_update_request,
     build_test_runs_list_request,
     build_workspaces_get_browsers_request,
-    build_workspaces_get_request,
 )
 from .._configuration import PlaywrightClientConfiguration
 
@@ -67,85 +65,6 @@ class WorkspacesOperations:
         self._config: PlaywrightClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": ["api_version", "workspace_id", "client_request_id", "x_ms_useragent", "accept"]
-        },
-        api_versions_list=["2026-01-01-preview"],
-    )
-    async def get(self, workspace_id: str, *, x_ms_useragent: Optional[str] = None, **kwargs: Any) -> _models.Workspace:
-        """Get details of the Azure resource mapped to a workspace for the given workspace id.
-        Authorization required is Bearer JWT Access token provided by EntraID.
-
-        :param workspace_id: The workspace ID in GUID format. Required.
-        :type workspace_id: str
-        :keyword x_ms_useragent: Optional header to specify additional client information when the
-         standard 'User-Agent' header cannot be explicitly set, such as when using Playwright Client.
-         The value should follow the standard 'User-Agent' header format. Default value is None.
-        :paramtype x_ms_useragent: str
-        :return: Workspace. The Workspace is compatible with MutableMapping
-        :rtype: ~azure.developer.playwright.models.Workspace
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.Workspace] = kwargs.pop("cls", None)
-
-        _request = build_workspaces_get_request(
-            workspace_id=workspace_id,
-            x_ms_useragent=x_ms_useragent,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.Workspace, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_browsers(

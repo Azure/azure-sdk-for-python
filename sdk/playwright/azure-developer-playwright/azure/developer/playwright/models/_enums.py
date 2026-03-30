@@ -19,15 +19,6 @@ class AccessTokenState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The access token has expired and cannot be used for authentication."""
 
 
-class EnablementStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The enablement status of a feature."""
-
-    ENABLED = "Enabled"
-    """The feature is Enabled."""
-    DISABLED = "Disabled"
-    """The feature is Disabled."""
-
-
 class OS(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operating system to configure for remote script execution."""
 
@@ -57,27 +48,3 @@ class SDKLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TypeScript SDK."""
     CSHARP = "CSHARP"
     """C# SDK."""
-
-
-class SubscriptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The Azure subscription state."""
-
-    REGISTERED = "Registered"
-    """The subscription state is Registered."""
-    WARNED = "Warned"
-    """The subscription state is Warned."""
-    SUSPENDED = "Suspended"
-    """The subscription state is Suspended."""
-    DELETED = "Deleted"
-    """The subscription state is Deleted."""
-    UNREGISTERED = "Unregistered"
-    """The subscription state is Unregistered."""
-
-
-class WorkspaceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The Playwright workspace state."""
-
-    ACTIVE = "Active"
-    """The workspace is Active."""
-    INACTIVE = "Inactive"
-    """The workspace is Inactive."""

@@ -7,12 +7,10 @@
 # --------------------------------------------------------------------------
 
 from azure.developer.playwright import PlaywrightClient
-from azure.identity import DefaultAzureCredential
 
 """
 # PREREQUISITES
     pip install azure-developer-playwright
-    pip install azure-identity
 # USAGE
     python access_tokens_create_or_replace.py
 """
@@ -21,7 +19,7 @@ from azure.identity import DefaultAzureCredential
 def main():
     client = PlaywrightClient(
         endpoint="ENDPOINT",
-        credential=DefaultAzureCredential(),
+        credential="CREDENTIAL",
     )
 
     response = client.access_tokens.create_or_replace(
@@ -32,6 +30,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-01-01-preview/AccessTokens_CreateOrReplace.json
+# x-ms-original-file: 2025-09-01/AccessTokens_CreateOrReplace.json
 if __name__ == "__main__":
     main()

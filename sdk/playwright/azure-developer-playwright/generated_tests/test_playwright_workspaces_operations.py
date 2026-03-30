@@ -10,27 +10,13 @@ from devtools_testutils import recorded_by_proxy
 from testpreparer import PlaywrightClientTestBase, PlaywrightPreparer
 
 
-@pytest.mark.skip("you may need to update the auto-generated test case before run it")
 class TestPlaywrightWorkspacesOperations(PlaywrightClientTestBase):
-    @PlaywrightPreparer()
-    @recorded_by_proxy
-    def test_workspaces_get(self, playwright_endpoint):
-        client = self.create_client(endpoint=playwright_endpoint)
-        response = client.workspaces.get(
-            workspace_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
     @PlaywrightPreparer()
     @recorded_by_proxy
     def test_workspaces_get_browsers(self, playwright_endpoint):
         client = self.create_client(endpoint=playwright_endpoint)
         response = client.workspaces.get_browsers(
             workspace_id="str",
-            os="str",
+            os="Linux",
         )
-
-        # please add some check logic here by yourself
-        # ...
+        assert response is None

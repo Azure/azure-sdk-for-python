@@ -1,6 +1,6 @@
 {
-  "apiVersion": "2026-01-01-preview",
+  "apiVersion": "2025-09-01",
   "apiVersions": {
-    "Playwright": "2026-01-01-preview"
+    "Playwright": "2025-09-01"
   }
 }

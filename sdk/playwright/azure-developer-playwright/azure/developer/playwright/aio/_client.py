@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING, Union
 from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
@@ -40,9 +40,9 @@ class PlaywrightClient:
      following types: token credential Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2026-01-01-preview". Default value is "2026-01-01-preview". Note that overriding this default
-     value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2025-09-01".
+     Default value is "2025-09-01". Note that overriding this default value may result in
+     unsupported behavior.
     :paramtype api_version: str
     """
 

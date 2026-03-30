@@ -11,27 +11,13 @@ from testpreparer import PlaywrightPreparer
 from testpreparer_async import PlaywrightClientTestBaseAsync
 
 
-@pytest.mark.skip("you may need to update the auto-generated test case before run it")
 class TestPlaywrightWorkspacesOperationsAsync(PlaywrightClientTestBaseAsync):
-    @PlaywrightPreparer()
-    @recorded_by_proxy_async
-    async def test_workspaces_get(self, playwright_endpoint):
-        client = self.create_async_client(endpoint=playwright_endpoint)
-        response = await client.workspaces.get(
-            workspace_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
     @PlaywrightPreparer()
     @recorded_by_proxy_async
     async def test_workspaces_get_browsers(self, playwright_endpoint):
         client = self.create_async_client(endpoint=playwright_endpoint)
         response = await client.workspaces.get_browsers(
             workspace_id="str",
-            os="str",
+            os="Linux",
         )
-
-        # please add some check logic here by yourself
-        # ...
+        assert response is None

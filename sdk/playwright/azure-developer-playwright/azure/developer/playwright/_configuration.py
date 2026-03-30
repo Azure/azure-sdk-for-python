@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, Union
 
 from azure.core.pipeline import policies
 
@@ -31,14 +31,14 @@ class PlaywrightClientConfiguration:  # pylint: disable=too-many-instance-attrib
      following types: token credential Required.
     :type credential: ~azure.core.credentials.TokenCredential or
      ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2026-01-01-preview". Default value is "2026-01-01-preview". Note that overriding this default
-     value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2025-09-01".
+     Default value is "2025-09-01". Note that overriding this default value may result in
+     unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2026-01-01-preview")
+        api_version: str = kwargs.pop("api_version", "2025-09-01")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -48,7 +48,7 @@ class PlaywrightClientConfiguration:  # pylint: disable=too-many-instance-attrib
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop("credential_scopes", ["https://playwright.microsoft.com/.default"])
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.core.windows.net/.default"])
         kwargs.setdefault("sdk_moniker", "developer-playwright/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
