@@ -1361,4 +1361,3 @@ class _VoiceLiveInstrumentorPreview:
         """
         global _trace_voicelive_content  # pylint: disable=global-statement
         _trace_voicelive_content = enable_content_recording
-
