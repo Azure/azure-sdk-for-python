@@ -1541,7 +1541,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         options = _get_ranges_options(snapshot=self.snapshot, offset=offset, length=length, **kwargs)
         options["allow_trailing_dot"] = self.allow_trailing_dot
         options["file_request_intent"] = self.file_request_intent
-        options["sharesnapshot"] = self.snapshot
         try:
             ranges = await self._client.file.get_range_list(**options)
         except HttpResponseError as error:
@@ -1601,7 +1600,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         )
         options["allow_trailing_dot"] = self.allow_trailing_dot
         options["file_request_intent"] = self.file_request_intent
-        options["sharesnapshot"] = self.snapshot
         try:
             ranges = await self._client.file.get_range_list(**options)
         except HttpResponseError as error:
