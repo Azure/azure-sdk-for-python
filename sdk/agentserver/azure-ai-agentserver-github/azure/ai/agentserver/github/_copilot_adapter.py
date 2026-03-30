@@ -56,7 +56,7 @@ from azure.ai.agentserver.core.server.base import FoundryCBAgent
 from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
 
 from ._copilot_request_converter import ConvertedAttachments, CopilotRequestConverter
-from ._copilot_response_converter import CopilotResponseConverter
+from ._copilot_response_converter import CopilotResponseConverter, CopilotStreamingResponseConverter
 from ._tool_acl import ToolAcl
 
 logger = get_logger()
@@ -279,6 +279,12 @@ class CopilotAdapter(FoundryCBAgent):
         self, context: AgentRunContext
     ) -> Union[OpenAIResponse, AsyncGenerator[ResponseStreamEvent, None]]:
 
+        logger.info(f"agent_run: stream={context.stream} conversation_id={context.conversation_id}")
+
+        # Diagnostic bypass: skip Copilot SDK entirely, return synthetic stream
+        if os.getenv("DIAG_BYPASS") and context.stream:
+            return self._diag_bypass_stream(context)
+
         req_converter = CopilotRequestConverter(context.request)
         prompt = req_converter.convert()
         converted_attachments = req_converter.convert_attachments()
@@ -315,49 +321,54 @@ class CopilotAdapter(FoundryCBAgent):
             )
             # Filter out internal flags (starting with _) before passing to SDK
             sdk_config = {k: v for k, v in config.items() if not k.startswith("_")}
-            session = await client.create_session(**sdk_config, on_permission_request=_on_permission)
+            # Always enable streaming — the SDK only emits
+            # ASSISTANT_MESSAGE_DELTA when streaming=True.
+            session = await client.create_session(
+                **sdk_config,
+                on_permission_request=_on_permission,
+                streaming=True,
+            )
             if conversation_id:
                 self._sessions[conversation_id] = session
         else:
             logger.info(f"Reusing session for conversation {conversation_id!r}")
 
-        if not context.stream:
-            # Non-streaming: collect events, extract final text + consent requests.
-            text = ""
-            oauth_items = []
-            try:
-                async for event in _iter_copilot_events(session, prompt, attachments=converted_attachments.attachments):
-                    if event.type == SessionEventType.ASSISTANT_MESSAGE and event.data and event.data.content:
-                        text = event.data.content
-                    elif event.type == SessionEventType.SESSION_ERROR and event.data:
-                        error_msg = (
-                            getattr(event.data, "message", None)
-                            or getattr(event.data, "content", None)
-                            or repr(event.data)
-                        )
-                        logger.error(f"Copilot session error: {error_msg}")
-                        if not text:
-                            text = f"(Agent error: {error_msg})"
-                    elif event.type == SessionEventType.MCP_OAUTH_REQUIRED and event.data:
-                        consent_url = getattr(event.data, "url", "") or ""
-                        server_label = (
-                            getattr(event.data, "server_name", "")
-                            or getattr(event.data, "name", "")
-                            or "unknown"
-                        )
-                        logger.info(f"MCP OAuth consent required: server={server_label} url={consent_url}")
-                        oauth_items.append({
-                            "type": "oauth_consent_request",
-                            "id": context.id_generator.generate_message_id(),
-                            "consent_link": consent_url,
-                            "server_label": server_label,
-                        })
-            finally:
-                converted_attachments.cleanup()
-            return CopilotResponseConverter.to_response(text, context, extra_output=oauth_items)
+        if context.stream:
+            return self._run_streaming(session, prompt, converted_attachments, context)
 
-        # Streaming
-        return self._run_streaming(session, prompt, converted_attachments, context)
+        # Non-streaming: collect events, extract final text + consent requests.
+        text = ""
+        oauth_items = []
+        try:
+            async for event in _iter_copilot_events(session, prompt, attachments=converted_attachments.attachments):
+                if event.type == SessionEventType.ASSISTANT_MESSAGE and event.data and event.data.content:
+                    text = event.data.content
+                elif event.type == SessionEventType.SESSION_ERROR and event.data:
+                    error_msg = (
+                        getattr(event.data, "message", None)
+                        or getattr(event.data, "content", None)
+                        or repr(event.data)
+                    )
+                    logger.error(f"Copilot session error: {error_msg}")
+                    if not text:
+                        text = f"(Agent error: {error_msg})"
+                elif event.type == SessionEventType.MCP_OAUTH_REQUIRED and event.data:
+                    consent_url = getattr(event.data, "url", "") or ""
+                    server_label = (
+                        getattr(event.data, "server_name", "")
+                        or getattr(event.data, "name", "")
+                        or "unknown"
+                    )
+                    logger.info(f"MCP OAuth consent required: server={server_label} url={consent_url}")
+                    oauth_items.append({
+                        "type": "oauth_consent_request",
+                        "id": context.id_generator.generate_message_id(),
+                        "consent_link": consent_url,
+                        "server_label": server_label,
+                    })
+        finally:
+            converted_attachments.cleanup()
+        return CopilotResponseConverter.to_response(text, context, extra_output=oauth_items)
 
     # ------------------------------------------------------------------
     # Streaming
@@ -372,169 +383,200 @@ class CopilotAdapter(FoundryCBAgent):
     ) -> AsyncGenerator[ResponseStreamEvent, None]:
         """Async generator: emits RAPI SSE events from Copilot SDK events.
 
-        Uses dict-based event construction matching the proven pattern from
-        the hosted-agent-cli skills template.
+        The ADC platform proxy requires continuous data flow to keep SSE
+        connections alive.  This method:
+
+        1. Yields envelope events (created, in_progress, output_item.added,
+           content_part.added) **immediately** — before any ``await``.
+        2. Starts the Copilot SDK session.
+        3. Emits empty text delta heartbeats every 50 ms while waiting for
+           Copilot events.
+        4. When Copilot content arrives, yields the real text delta + done
+           events.
+
+        All RAPI events use **keyword-arg construction with model objects**
+        for nested fields — dict-based construction causes stream truncation
+        on the ADC proxy.
         """
+        from azure.ai.agentserver.core.models import Response as _OAIResponse
+        from azure.ai.agentserver.core.models.projects import (
+            ItemContentOutputText as _Part,
+            ResponsesAssistantMessageItemResource as _Item,
+        )
+
         response_id = context.response_id
         item_id = context.id_generator.generate_message_id()
         created_at = int(time.time())
-        seq = -1
+        seq = 0
 
-        def _seq():
-            nonlocal seq
-            seq += 1
-            return seq
+        def next_seq():
+            nonlocal seq; seq += 1; return seq
 
-        def _resp(status, output=None, usage=None):
-            resp = {
-                "object": "response",
-                "id": response_id,
-                "status": status,
-                "created_at": created_at,
-            }
+        def resp_minimal(status):
+            return _OAIResponse({"id": response_id, "object": "response",
+                                  "status": status, "created_at": created_at})
+
+        def resp_full(status, output=None, usage=None):
+            d = {"id": response_id, "object": "response", "status": status,
+                 "created_at": created_at, "output": output or []}
             agent_id = context.get_agent_id_object()
             if agent_id is not None:
-                resp["agent_id"] = agent_id
+                d["agent_id"] = agent_id
             conversation = context.get_conversation_object()
             if conversation is not None:
-                resp["conversation"] = conversation
-            if output is not None:
-                resp["output"] = output
+                d["conversation"] = conversation
             if usage is not None:
-                resp["usage"] = usage
-            return resp
+                d["usage"] = usage
+            return _OAIResponse(d)
 
-        def _item(text, status="completed"):
-            return {
-                "type": "message", "id": item_id, "role": "assistant",
-                "status": status,
-                "content": [{"type": "output_text", "text": text, "annotations": []}],
-            }
+        # -- Phase 1: Yield envelope BEFORE any await -----------------------
+        yield ResponseCreatedEvent(
+            sequence_number=next_seq(), response=resp_minimal("in_progress"))
+        yield ResponseInProgressEvent(
+            sequence_number=next_seq(), response=resp_minimal("in_progress"))
+        yield ResponseOutputItemAddedEvent(
+            sequence_number=next_seq(), output_index=0,
+            item=_Item(id=item_id, status="in_progress", content=[]))
+        yield ResponseContentPartAddedEvent(
+            sequence_number=next_seq(), item_id=item_id,
+            output_index=0, content_index=0,
+            part=_Part(text="", annotations=[], logprobs=[]))
 
-        # 1. Lifecycle
-        yield ResponseCreatedEvent({
-            "type": "response.created",
-            "sequence_number": _seq(),
-            "response": _resp("in_progress"),
-        })
-        yield ResponseInProgressEvent({
-            "type": "response.in_progress",
-            "sequence_number": _seq(),
-            "response": _resp("in_progress"),
-        })
+        # -- Phase 2: Start Copilot SDK and collect events ------------------
+        queue: asyncio.Queue = asyncio.Queue()
+        last_key = None
+        event_count = 0
 
-        # 2. Output item + content part
-        yield ResponseOutputItemAddedEvent({
-            "type": "response.output_item.added",
-            "sequence_number": _seq(),
-            "output_index": 0,
-            "item": _item("", status="in_progress"),
-        })
-        yield ResponseContentPartAddedEvent({
-            "type": "response.content_part.added",
-            "sequence_number": _seq(),
-            "item_id": item_id,
-            "output_index": 0,
-            "content_index": 0,
-            "part": {"type": "output_text", "text": "", "annotations": []},
-        })
+        def _on_stream_event(event):
+            nonlocal last_key, event_count
+            text = ""
+            if event.data and hasattr(event.data, "content") and event.data.content:
+                text = event.data.content
+            key = (event.type, text)
+            if key == last_key:
+                return
+            last_key = key
+            event_count += 1
+            event_name = event.type.name if event.type else "UNKNOWN"
+            if text:
+                logger.info(f"Copilot event #{event_count:03d}: {event_name} len={len(text)}")
+            else:
+                logger.info(f"Copilot event #{event_count:03d}: {event_name}")
+            queue.put_nowait(event)
+            if event.type == SessionEventType.SESSION_IDLE:
+                queue.put_nowait(None)
 
-        # 3. Stream text from Copilot SDK
+        unsubscribe = session.on(_on_stream_event)
+        await session.send(prompt, attachments=converted_attachments.attachments or None)
+
+        # -- Phase 3: Heartbeat + collect content ---------------------------
+        _HEARTBEAT_SEC = 0.05
         full_text = ""
-        oauth_consent_items = []  # Collect MCP OAuth consent requests
+        content_started = False
+        usage = None
+        oauth_items = []
+        done_sent = False
+        loop = asyncio.get_running_loop()
+        deadline = loop.time() + 120
         try:
-            async for event in _iter_copilot_events(session, prompt, attachments=converted_attachments.attachments):
-                if event.type == SessionEventType.ASSISTANT_MESSAGE_DELTA and event.data and event.data.content:
-                    chunk = event.data.content
-                    full_text += chunk
-                    yield ResponseTextDeltaEvent({
-                        "type": "response.output_text.delta",
-                        "sequence_number": _seq(),
-                        "item_id": item_id,
-                        "output_index": 0,
-                        "content_index": 0,
-                        "delta": chunk,
-                    })
-                elif event.type == SessionEventType.ASSISTANT_MESSAGE and event.data and event.data.content:
-                    if not full_text:
-                        full_text = event.data.content
-                        yield ResponseTextDeltaEvent({
-                            "type": "response.output_text.delta",
-                            "sequence_number": _seq(),
-                            "item_id": item_id,
-                            "output_index": 0,
-                            "content_index": 0,
-                            "delta": full_text,
+            while True:
+                remaining = deadline - loop.time()
+                if remaining <= 0:
+                    logger.error("Copilot streaming timeout after 120s")
+                    break
+                try:
+                    event = await asyncio.wait_for(
+                        queue.get(), timeout=min(_HEARTBEAT_SEC, remaining))
+                except asyncio.TimeoutError:
+                    # Heartbeats only during the "thinking" gap before content.
+                    # Once real text deltas start flowing, they keep the
+                    # connection alive and empty deltas confuse the Playground.
+                    if not content_started:
+                        yield ResponseTextDeltaEvent(
+                            sequence_number=next_seq(), item_id=item_id,
+                            output_index=0, content_index=0, delta="")
+                    continue
+                if event is None:
+                    break
+
+                # Process Copilot events — extract text/usage/consent
+                if event.type == SessionEventType.ASSISTANT_MESSAGE_DELTA:
+                    # Streaming deltas use delta_content (not content)
+                    chunk = getattr(event.data, "delta_content", None) or getattr(event.data, "content", None) or ""
+                    if chunk:
+                        content_started = True
+                        full_text += chunk
+                        yield ResponseTextDeltaEvent(
+                            sequence_number=next_seq(), item_id=item_id,
+                            output_index=0, content_index=0, delta=chunk)
+                elif event.type == SessionEventType.ASSISTANT_MESSAGE:
+                    if event.data and event.data.content:
+                        if not full_text:
+                            full_text = event.data.content
+                            yield ResponseTextDeltaEvent(
+                                sequence_number=next_seq(), item_id=item_id,
+                                output_index=0, content_index=0, delta=full_text)
+                        else:
+                            full_text = event.data.content
+
+                elif event.type == SessionEventType.ASSISTANT_USAGE:
+                    if event.data:
+                        u = {}
+                        if event.data.input_tokens is not None:
+                            u["input_tokens"] = int(event.data.input_tokens)
+                        if event.data.output_tokens is not None:
+                            u["output_tokens"] = int(event.data.output_tokens)
+                        if u:
+                            u["total_tokens"] = sum(u.values())
+                            usage = u
+                elif event.type == SessionEventType.MCP_OAUTH_REQUIRED:
+                    if event.data:
+                        oauth_items.append({
+                            "type": "oauth_consent_request",
+                            "id": context.id_generator.generate_message_id(),
+                            "consent_link": getattr(event.data, "url", "") or "",
+                            "server_label": getattr(event.data, "server_name", "") or getattr(event.data, "name", "") or "unknown",
                         })
-                elif event.type == SessionEventType.MCP_OAUTH_REQUIRED and event.data:
-                    # MCP server needs OAuth consent — collect for output
-                    consent_url = getattr(event.data, "url", "") or ""
-                    server_label = (
-                        getattr(event.data, "server_name", "")
-                        or getattr(event.data, "name", "")
-                        or "unknown"
-                    )
-                    logger.info(f"MCP OAuth consent required: server={server_label} url={consent_url}")
-                    oauth_consent_items.append({
-                        "type": "oauth_consent_request",
-                        "id": context.id_generator.generate_message_id(),
-                        "consent_link": consent_url,
-                        "server_label": server_label,
-                    })
-        except Exception as exc:
+                elif event.type == SessionEventType.SESSION_ERROR:
+                    if event.data:
+                        msg = getattr(event.data, "message", None) or repr(event.data)
+                        logger.error(f"Copilot session error: {msg}")
+                        if not full_text:
+                            full_text = f"(Agent error: {msg})"
+            # Safety net: if SESSION_IDLE arrived without ASSISTANT_MESSAGE
+        except Exception:
             logger.exception("Agent streaming failed")
-            full_text = f"Error: {exc}"
         finally:
+            # Unsubscribe FIRST to stop all Copilot SDK callbacks.
+            # This ensures no background async activity interferes
+            # with the done event yields below.
+            unsubscribe()
             converted_attachments.cleanup()
 
-        # 4. Finalize
-        final_item = _item(full_text)
-        yield ResponseTextDoneEvent({
-            "type": "response.output_text.done",
-            "sequence_number": _seq(),
-            "item_id": item_id,
-            "output_index": 0,
-            "content_index": 0,
-            "text": full_text,
-        })
-        yield ResponseContentPartDoneEvent({
-            "type": "response.content_part.done",
-            "sequence_number": _seq(),
-            "item_id": item_id,
-            "output_index": 0,
-            "content_index": 0,
-            "part": {"type": "output_text", "text": full_text, "annotations": []},
-        })
-        yield ResponseOutputItemDoneEvent({
-            "type": "response.output_item.done",
-            "sequence_number": _seq(),
-            "output_index": 0,
-            "item": final_item,
-        })
+        # -- Phase 4: Done events AFTER unsubscribe -------------------------
+        # Drain any pending event loop work from the Copilot SDK subprocess
+        # before yielding done events. This gives the event loop a clean
+        # state so uvicorn doesn't flush between done yields.
+        await asyncio.sleep(0)
+        await asyncio.sleep(0)
 
-        # Emit MCP OAuth consent request items (if any)
-        all_output = [final_item]
-        for idx, consent_item in enumerate(oauth_consent_items):
-            output_idx = idx + 1
-            yield ResponseOutputItemAddedEvent({
-                "type": "response.output_item.added",
-                "sequence_number": _seq(),
-                "output_index": output_idx,
-                "item": consent_item,
-            })
-            yield ResponseOutputItemDoneEvent({
-                "type": "response.output_item.done",
-                "sequence_number": _seq(),
-                "output_index": output_idx,
-                "item": consent_item,
-            })
-            all_output.append(consent_item)
-
-        yield ResponseCompletedEvent({
-            "type": "response.completed",
-            "sequence_number": _seq(),
-            "response": _resp("completed", output=all_output),
-        })
+        if not full_text:
+            full_text = "(No response text was produced by the agent.)"
+            yield ResponseTextDeltaEvent(
+                sequence_number=next_seq(), item_id=item_id,
+                output_index=0, content_index=0, delta=full_text)
+        empty_part = _Part(text="", annotations=[])
+        empty_item = _Item(id=item_id, status="completed", content=[empty_part])
+        yield ResponseTextDoneEvent(
+            sequence_number=next_seq(), item_id=item_id,
+            output_index=0, content_index=0, text="")
+        yield ResponseContentPartDoneEvent(
+            sequence_number=next_seq(), item_id=item_id,
+            output_index=0, content_index=0, part=empty_part)
+        yield ResponseOutputItemDoneEvent(
+            sequence_number=next_seq(), output_index=0, item=empty_item)
+        yield ResponseCompletedEvent(
+            sequence_number=next_seq(), response=resp_minimal("completed"))
 
     # ------------------------------------------------------------------
     # Identifiers
@@ -553,6 +595,90 @@ class CopilotAdapter(FoundryCBAgent):
         if agent_id:
             return agent_id
         return "HostedAgent-GitHubCopilot"
+
+    # ------------------------------------------------------------------
+    # Diagnostic bypass — mimics diag-echo-delayed inside real adapter
+    # ------------------------------------------------------------------
+
+    async def _diag_bypass_stream(
+        self, context: AgentRunContext,
+    ) -> AsyncGenerator[ResponseStreamEvent, None]:
+        """Synthetic stream matching diag-echo-delayed pattern exactly.
+
+        Proves whether the issue is in the adapter class/base class
+        interaction or in the Copilot SDK async pattern.
+        """
+        from azure.ai.agentserver.core.models import Response as _OAIResponse
+        from azure.ai.agentserver.core.models.projects import (
+            ItemContentOutputText as _Part,
+            ResponsesAssistantMessageItemResource as _Item,
+        )
+
+        response_id = context.response_id
+        item_id = context.id_generator.generate_message_id()
+        created_at = int(time.time())
+        seq = 0
+
+        def next_seq():
+            nonlocal seq; seq += 1; return seq
+
+        def resp(status, output=None):
+            return _OAIResponse({"object": "response", "id": response_id,
+                                  "status": status, "created_at": created_at,
+                                  "output": output or []})
+
+        logger.info("DIAG_BYPASS: starting synthetic stream with 4s delay")
+
+        # Envelope (keyword args + model objects — proven pattern)
+        yield ResponseCreatedEvent(sequence_number=next_seq(), response=resp("in_progress"))
+        yield ResponseInProgressEvent(sequence_number=next_seq(), response=resp("in_progress"))
+        yield ResponseOutputItemAddedEvent(
+            sequence_number=next_seq(), output_index=0,
+            item=_Item(id=item_id, status="in_progress", content=[]),
+        )
+        yield ResponseContentPartAddedEvent(
+            sequence_number=next_seq(), item_id=item_id,
+            output_index=0, content_index=0,
+            part=_Part(text="", annotations=[], logprobs=[]),
+        )
+
+        # 4-second delay with 50ms heartbeats (same as diag-echo-delayed)
+        import asyncio as _aio
+        deadline = _aio.get_running_loop().time() + 4.0
+        while _aio.get_running_loop().time() < deadline:
+            await _aio.sleep(0.05)
+            yield ResponseTextDeltaEvent(
+                sequence_number=next_seq(), item_id=item_id,
+                output_index=0, content_index=0, delta="",
+            )
+
+        # Content
+        text = "[DIAG_BYPASS] Synthetic response after 4s delay"
+        yield ResponseTextDeltaEvent(
+            sequence_number=next_seq(), item_id=item_id,
+            output_index=0, content_index=0, delta=text,
+        )
+
+        # Done
+        final_part = _Part(text=text, annotations=[], logprobs=[])
+        yield ResponseTextDoneEvent(
+            sequence_number=next_seq(), item_id=item_id,
+            output_index=0, content_index=0, text=text,
+        )
+        yield ResponseContentPartDoneEvent(
+            sequence_number=next_seq(), item_id=item_id,
+            output_index=0, content_index=0, part=final_part,
+        )
+        yield ResponseOutputItemDoneEvent(
+            sequence_number=next_seq(), output_index=0,
+            item=_Item(id=item_id, status="completed", content=[final_part]),
+        )
+        yield ResponseCompletedEvent(
+            sequence_number=next_seq(),
+            response=resp("completed", output=[
+                _Item(id=item_id, status="completed", content=[final_part])]),
+        )
+        logger.info("DIAG_BYPASS: complete, %d events", seq)
 
 
 # ---------------------------------------------------------------------------
@@ -747,6 +873,7 @@ class GitHubCopilotAdapter(CopilotAdapter):
                 session = await client.create_session(
                     **sdk_config,
                     on_permission_request=_approve_all,
+                    streaming=True,
                 )
                 preamble = (
                     "The following is the prior conversation history. "

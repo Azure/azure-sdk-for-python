@@ -194,6 +194,8 @@ def main():
         val = os.environ.get(key)
         if val:
             env_vars[key] = val
+    # Enable SSE keepalive to prevent platform proxy from closing streaming connections
+    env_vars["SSE_KEEPALIVE_INTERVAL"] = "5"
 
     create_agent(endpoint, args.name, full_image, env_vars)
     wait_for_ready(endpoint, args.name)
