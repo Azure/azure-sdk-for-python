@@ -124,8 +124,7 @@ def _default_disable_logging(configurations):
     configurations[DISABLE_LOGGING_ARG] = default
 
 def _default_enable_code_attributes(configurations):
-    default = False
-    configurations[ENABLE_CODE_ATTRIBUTES_ARG] = configurations.get(ENABLE_CODE_ATTRIBUTES_ARG, default)
+    configurations.setdefault(ENABLE_CODE_ATTRIBUTES_ARG, False)
 
 
 def _default_disable_metrics(configurations):
