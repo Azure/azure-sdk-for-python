@@ -32,6 +32,8 @@ user:
 # Definition
 **Completeness** refers to how accurately and thoroughly a response represents the information provided in the ground truth. It considers both the inclusion of all relevant statements and the correctness of those statements. Each statement in the ground truth should be evaluated individually to determine if it is accurately reflected in the response without missing any key information. The scale ranges from 1 to 5, with higher numbers indicating greater completeness.
 
+**Note:** When the ground truth is a short entity or phrase, the response is fully complete (Score 5) if it semantically includes that entity. Additional accurate context is not a penalty.
+
 # Ratings
 ## [Completeness: 1] (Fully Incomplete)
 **Definition:** A response that does not contain any of the necessary and relevant information with respect to the ground truth. It completely misses all the information, especially claims and statements, established in the ground truth.
@@ -39,6 +41,9 @@ user:
 **Examples:**
   **Response:** "Flu shot cannot cure cancer. Stay healthy requires sleeping exactly 8 hours a day. A few hours of exercise per week will have little benefits for physical and mental health. Physical and mental health benefits are separate topics. Scientists have not studied any of them."
   **Ground Truth:** "Flu shot can prevent flu-related illnesses. Staying healthy requires proper hydration and moderate exercise. Even a few hours of exercise per week can have long-term benefits for physical and mental health. This is because physical and mental health benefits have intricate relationships through behavioral changes. Scientists are starting to discover them through rigorous studies."
+
+  **Response:** "Mount Kilimanjaro is the tallest peak in Africa."
+  **Ground Truth:** "Everest"
 
 ## [Completeness: 2] (Barely Complete)
 **Definition:** A response that contains only a small percentage of all the necessary and relevant information with respect to the ground truth. It misses almost all the information, especially claims and statements, established in the ground truth.
@@ -67,6 +72,9 @@ user:
 **Examples:**
   **Response:** "Flu shot can prevent flu-related illnesses. Stay healthy by proper hydration and moderate exercise. Even a few hours of exercise per week can have long-term benefits for physical and mental health. This is because physical and mental health benefits have intricate relationships through behavioral changes. Scientists are starting to discover them through rigorous studies."
   **Ground Truth:** "Flu shot can prevent flu-related illnesses. Stay healthy by proper hydration and moderate exercise. Even a few hours of exercise per week can have long-term benefits for physical and mental health. This is because physical and mental health benefits have intricate relationships through behavioral changes. Scientists are starting to discover them through rigorous studies."
+
+  **Response:** "The Amazon River is the longest river in South America, stretching over 6,400 kilometers."
+  **Ground Truth:** "Amazon River"
 
 
 # Data
