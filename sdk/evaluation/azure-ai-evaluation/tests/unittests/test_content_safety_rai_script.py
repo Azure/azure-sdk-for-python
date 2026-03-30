@@ -796,3 +796,68 @@ class TestParseEvalResult:
         # Token counts should be extracted from properties.metrics
         assert result["violence_prompt_tokens"] == "15"
         assert result["violence_completion_tokens"] == "55"
+
+    def test_parse_eval_result_with_pascal_case_metric(self):
+        """Test parsing when API returns PascalCase metric name (e.g., 'SelfHarm' instead of 'self_harm')."""
+        from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import RaiServiceEvaluatorBase
+        from azure.ai.evaluation._common.constants import EvaluationMetrics
+
+        # API 2025-11-15-preview returns PascalCase metric names
+        eval_result = {
+            "results": [
+                {
+                    "name": "self_harm",
+                    "type": "azure_ai_evaluator",
+                    "metric": "SelfHarm",  # PascalCase from API
+                    "score": 2.0,
+                    "label": None,
+                    "reason": "Low self-harm content detected.",
+                    "properties": {
+                        "outcome": "pass",
+                        "metrics": {"promptTokens": "10", "completionTokens": "40"},
+                    },
+                }
+            ]
+        }
+
+        evaluator = RaiServiceEvaluatorBase.__new__(RaiServiceEvaluatorBase)
+        evaluator._eval_metric = EvaluationMetrics.SELF_HARM
+
+        result = evaluator._parse_eval_result(eval_result)
+
+        assert result["self_harm"] == "Low"
+        assert result["self_harm_score"] == 2.0
+        assert result["self_harm_reason"] == "Low self-harm content detected."
+        assert result["self_harm_prompt_tokens"] == "10"
+        assert result["self_harm_completion_tokens"] == "40"
+
+    def test_parse_eval_result_with_pascal_case_builtin_prefix(self):
+        """Test parsing when API returns PascalCase with 'builtin.' prefix (e.g., 'builtin.SelfHarm')."""
+        from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import RaiServiceEvaluatorBase
+        from azure.ai.evaluation._common.constants import EvaluationMetrics
+
+        eval_result = {
+            "results": [
+                {
+                    "name": "self_harm",
+                    "type": "azure_ai_evaluator",
+                    "metric": "builtin.SelfHarm",  # PascalCase with builtin prefix
+                    "score": 0.0,
+                    "label": None,
+                    "reason": "No self-harm content detected.",
+                    "properties": {
+                        "outcome": "pass",
+                        "metrics": {"promptTokens": "12", "completionTokens": "30"},
+                    },
+                }
+            ]
+        }
+
+        evaluator = RaiServiceEvaluatorBase.__new__(RaiServiceEvaluatorBase)
+        evaluator._eval_metric = EvaluationMetrics.SELF_HARM
+
+        result = evaluator._parse_eval_result(eval_result)
+
+        assert result["self_harm"] == "Very low"
+        assert result["self_harm_score"] == 0.0
+        assert result["self_harm_reason"] == "No self-harm content detected."
