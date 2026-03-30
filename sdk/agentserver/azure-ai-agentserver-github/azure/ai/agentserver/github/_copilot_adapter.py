@@ -903,14 +903,23 @@ class GitHubCopilotAdapter(CopilotAdapter):
 # ---------------------------------------------------------------------------
 
 async def _iter_copilot_events(
-    session, prompt: str, attachments: Optional[list] = None, timeout: int = 120
+    session, prompt: str, attachments: Optional[list] = None, timeout: int = 0
 ):
     """Send *prompt* to *session* and yield each ``SessionEvent`` as it arrives.
 
     True async generator — yields events immediately as the Copilot SDK
     emits them.  Consecutive duplicate events are silently dropped.  Stops
     after ``SESSION_IDLE``.
+
+    The *timeout* is an **idle timeout** — it resets every time an event
+    is received.  Configurable via ``COPILOT_IDLE_TIMEOUT`` env var
+    (default 300 s).  A heartbeat log is emitted every
+    ``COPILOT_HEARTBEAT_INTERVAL`` seconds (default 30 s) while waiting.
     """
+    if timeout <= 0:
+        timeout = int(os.getenv("COPILOT_IDLE_TIMEOUT", "300"))
+    heartbeat_interval = int(os.getenv("COPILOT_HEARTBEAT_INTERVAL", "30"))
+
     queue: asyncio.Queue = asyncio.Queue()
     last_key = None
     event_count = 0
@@ -952,15 +961,27 @@ async def _iter_copilot_events(
     unsubscribe = session.on(on_event)
     try:
         await session.send(prompt, attachments=attachments or None)
-        loop = asyncio.get_running_loop()
-        deadline = loop.time() + timeout
+        last_event_name = "SEND"
+        elapsed_since_last_event = 0.0
         while True:
-            remaining = deadline - loop.time()
-            if remaining <= 0:
-                raise asyncio.TimeoutError(f"Copilot session idle timeout after {timeout}s")
-            event = await asyncio.wait_for(queue.get(), timeout=remaining)
-            if event is None:
-                return
-            yield event
+            try:
+                event = await asyncio.wait_for(queue.get(), timeout=heartbeat_interval)
+                elapsed_since_last_event = 0.0
+                last_event_name = event.type.name if event and event.type else "UNKNOWN"
+                if event is None:
+                    return
+                yield event
+            except asyncio.TimeoutError:
+                elapsed_since_last_event += heartbeat_interval
+                if elapsed_since_last_event >= timeout:
+                    raise asyncio.TimeoutError(
+                        f"Copilot idle timeout: no events for {timeout}s "
+                        f"(last: {last_event_name}, total events: {event_count})"
+                    )
+                logger.info(
+                    f"Heartbeat: waiting for Copilot events... "
+                    f"{elapsed_since_last_event:.0f}s/{timeout}s idle "
+                    f"(last: {last_event_name}, total events: {event_count})"
+                )
     finally:
         unsubscribe()
