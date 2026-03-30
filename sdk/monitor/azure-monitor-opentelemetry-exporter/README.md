@@ -173,10 +173,8 @@ import os
 import logging
 
 from opentelemetry._logs import set_logger_provider
-from opentelemetry.sdk._logs import (
-    LoggerProvider,
-    LoggingHandler,
-)
+from opentelemetry.sdk._logs import LoggerProvider
+from opentelemetry.instrumentation.logging.handler import LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
@@ -214,12 +212,10 @@ import logging
 
 from opentelemetry import trace
 from opentelemetry._logs import set_logger_provider
-from opentelemetry.sdk._logs import (
-    LoggerProvider,
-    LoggingHandler,
-)
+from opentelemetry.sdk._logs import LoggerProvider
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.instrumentation.logging.handler import LoggingHandler
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
 
@@ -256,10 +252,8 @@ import os
 import logging
 
 from opentelemetry._logs import set_logger_provider
-from opentelemetry.sdk._logs import (
-    LoggerProvider,
-    LoggingHandler,
-)
+from opentelemetry.sdk._logs import LoggerProvider
+from opentelemetry.instrumentation.logging.handler import LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
@@ -296,10 +290,8 @@ from opentelemetry._logs import (
     get_logger_provider,
     set_logger_provider,
 )
-from opentelemetry.sdk._logs import (
-    LoggerProvider,
-    LoggingHandler,
-)
+from opentelemetry.sdk._logs import LoggerProvider
+from opentelemetry.instrumentation.logging.handler import LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter

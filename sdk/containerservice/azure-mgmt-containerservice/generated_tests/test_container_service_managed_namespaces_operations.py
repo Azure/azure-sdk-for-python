@@ -38,9 +38,9 @@ class TestContainerServiceManagedNamespacesOperations(AzureMgmtRecordedTestCase)
             resource_name="str",
             managed_namespace_name="str",
             parameters={
+                "location": "str",
                 "eTag": "str",
                 "id": "str",
-                "location": "str",
                 "name": "str",
                 "properties": {
                     "adoptionPolicy": "str",

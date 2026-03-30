@@ -269,8 +269,8 @@ class TestStandardSettings(object):
         assert isinstance(val, tuple)
         assert val.log_level == 10
         del os.environ["AZURE_LOG_LEVEL"]
-        os.environ["AZURE_CLOUD"] = "AZURE_CHINA_CLOUD"
+        os.environ["AZURE_SDK_CLOUD_CONF"] = "AZURE_CHINA_CLOUD"
         val = m.settings.current
         assert isinstance(val, tuple)
         assert val.azure_cloud == AzureClouds.AZURE_CHINA_CLOUD
-        del os.environ["AZURE_CLOUD"]
+        del os.environ["AZURE_SDK_CLOUD_CONF"]

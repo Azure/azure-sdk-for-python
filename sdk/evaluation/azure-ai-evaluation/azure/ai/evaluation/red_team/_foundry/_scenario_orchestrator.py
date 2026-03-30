@@ -141,7 +141,10 @@ class ScenarioOrchestrator:
         """Create attack scoring configuration from RAI scorer.
 
         FoundryScenario uses AttackScoringConfig to configure how attacks are scored.
-        We wrap our RAI scorer in the appropriate configuration.
+        We use the RAI scorer for both objective scoring AND refusal detection.
+        For refusal: a safe response (score=False) means the model refused the attack,
+        triggering crescendo's backtrack logic. A harmful response (score=True) means
+        the model didn't refuse and crescendo should continue escalating.
 
         :return: Attack scoring configuration
         :rtype: Any
@@ -151,6 +154,7 @@ class ScenarioOrchestrator:
 
         return AttackScoringConfig(
             objective_scorer=self.rai_scorer,
+            refusal_scorer=self.rai_scorer,
             use_score_as_feedback=True,
         )
 

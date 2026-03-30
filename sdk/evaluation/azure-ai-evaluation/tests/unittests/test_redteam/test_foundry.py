@@ -913,6 +913,7 @@ class TestScenarioOrchestrator:
 
             mock_config.assert_called_once_with(
                 objective_scorer=mock_scorer,
+                refusal_scorer=mock_scorer,
                 use_score_as_feedback=True,
             )
 
@@ -1245,11 +1246,13 @@ class TestFoundryResultProcessor:
         # Create mock pieces
         user_piece = MagicMock()
         user_piece.api_role = "user"
+        user_piece.original_value = "User message"
         user_piece.converted_value = "User message"
         user_piece.sequence = 0
 
         assistant_piece = MagicMock()
         assistant_piece.api_role = "assistant"
+        assistant_piece.original_value = "Assistant response"
         assistant_piece.converted_value = "Assistant response"
         assistant_piece.sequence = 1
 
@@ -1325,6 +1328,7 @@ class TestFoundryResultProcessor:
         mock_memory = MagicMock()
         user_piece = MagicMock()
         user_piece.api_role = "user"
+        user_piece.original_value = "Attack prompt"
         user_piece.converted_value = "Attack prompt"
         user_piece.sequence = 0
         user_piece.prompt_metadata = {}
@@ -2272,6 +2276,7 @@ class TestFoundryResultProcessorExtended:
         mock_memory = MagicMock()
         mock_piece = MagicMock()
         mock_piece.api_role = "user"
+        mock_piece.original_value = "Attack prompt"
         mock_piece.converted_value = "Attack prompt"
         mock_piece.sequence = 0
         mock_piece.prompt_metadata = {}
@@ -2345,6 +2350,7 @@ class TestFoundryResultProcessorExtended:
         # Piece with context in labels
         piece = MagicMock()
         piece.api_role = "user"
+        piece.original_value = "Message content"
         piece.converted_value = "Message content"
         piece.sequence = 0
         piece.labels = {
@@ -2364,6 +2370,101 @@ class TestFoundryResultProcessorExtended:
         assert messages[0]["content"] == "Message content"
         assert "context" in messages[0]
         assert len(messages[0]["context"]) == 2
+
+    def test_build_messages_with_token_usage_in_labels(self):
+        """Test that token_usage from labels is included in assistant messages."""
+        mock_scenario = MagicMock()
+        mock_dataset = MagicMock()
+        mock_dataset.get_all_seed_groups.return_value = []
+
+        processor = FoundryResultProcessor(
+            scenario=mock_scenario,
+            dataset_config=mock_dataset,
+            risk_category="violence",
+        )
+
+        token_usage_data = {
+            "model_name": "gpt-4",
+            "prompt_tokens": 100,
+            "completion_tokens": 50,
+            "total_tokens": 150,
+            "cached_tokens": 0,
+        }
+
+        # User piece — should NOT get token_usage
+        user_piece = MagicMock()
+        user_piece.api_role = "user"
+        user_piece.converted_value = "User message"
+        user_piece.sequence = 0
+        user_piece.labels = {}
+
+        # Assistant piece — should get token_usage
+        assistant_piece = MagicMock()
+        assistant_piece.api_role = "assistant"
+        assistant_piece.converted_value = "Assistant response"
+        assistant_piece.sequence = 1
+        assistant_piece.labels = {"token_usage": token_usage_data}
+
+        messages = processor._build_messages_from_pieces([user_piece, assistant_piece])
+
+        assert len(messages) == 2
+        assert "token_usage" not in messages[0]
+        assert "token_usage" in messages[1]
+        assert messages[1]["token_usage"] == token_usage_data
+        assert messages[1]["token_usage"]["model_name"] == "gpt-4"
+        assert messages[1]["token_usage"]["prompt_tokens"] == 100
+        assert messages[1]["token_usage"]["completion_tokens"] == 50
+        assert messages[1]["token_usage"]["total_tokens"] == 150
+
+    def test_build_messages_token_usage_not_added_when_absent(self):
+        """Test that token_usage is not added when not in labels."""
+        mock_scenario = MagicMock()
+        mock_dataset = MagicMock()
+        mock_dataset.get_all_seed_groups.return_value = []
+
+        processor = FoundryResultProcessor(
+            scenario=mock_scenario,
+            dataset_config=mock_dataset,
+            risk_category="violence",
+        )
+
+        assistant_piece = MagicMock()
+        assistant_piece.api_role = "assistant"
+        assistant_piece.converted_value = "Response"
+        assistant_piece.sequence = 0
+        assistant_piece.labels = {}
+
+        messages = processor._build_messages_from_pieces([assistant_piece])
+
+        assert len(messages) == 1
+        assert "token_usage" not in messages[0]
+
+    def test_build_messages_token_usage_extracted_for_all_roles(self):
+        """Test that token_usage is extracted from labels regardless of role."""
+        mock_scenario = MagicMock()
+        mock_dataset = MagicMock()
+        mock_dataset.get_all_seed_groups.return_value = []
+
+        processor = FoundryResultProcessor(
+            scenario=mock_scenario,
+            dataset_config=mock_dataset,
+            risk_category="violence",
+        )
+
+        token_usage_data = {"model_name": "gpt-4", "prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15}
+
+        # User piece with token_usage in labels — should be extracted (matches formatting_utils.py behavior)
+        user_piece = MagicMock()
+        user_piece.api_role = "user"
+        user_piece.converted_value = "User message"
+        user_piece.sequence = 0
+        user_piece.labels = {"token_usage": token_usage_data}
+
+        messages = processor._build_messages_from_pieces([user_piece])
+
+        assert len(messages) == 1
+        assert "token_usage" in messages[0]
+        assert messages[0]["token_usage"] == token_usage_data
 
     def test_build_context_lookup_with_attack_vehicles(self):
         """Test context lookup building with XPIA attack vehicles."""
@@ -3498,3 +3599,490 @@ class TestFoundryScanPathWiring:
         )
 
         assert "Foundry" in result
+
+
+@pytest.mark.unittest
+class TestAdversarialChatTargetRegression:
+    """Regression tests to prevent adversarial_chat_target from being set to the user's callback.
+
+    The adversarial_chat_target is used by PyRIT's FoundryScenario for:
+    - TenseConverter (converter_target for prompt rephrasing)
+    - Multi-turn attacks (Crescendo, RedTeaming adversarial LLM)
+
+    If set to the user's callback, the callback response leaks into converted prompts,
+    causing the callback response to appear as the user message in results.
+    """
+
+    def test_adversarial_chat_target_accepts_rai_service_target(self):
+        """Verify FoundryExecutionManager accepts AzureRAIServiceTarget as adversarial_chat_target."""
+        from azure.ai.evaluation.red_team._utils._rai_service_target import AzureRAIServiceTarget
+
+        rai_target = AzureRAIServiceTarget(
+            client=MagicMock(),
+            model="gpt-4",
+            prompt_template_key="prompt_converters/tense_converter.yaml",
+            logger=MagicMock(),
+        )
+        manager = FoundryExecutionManager(
+            credential=MagicMock(),
+            azure_ai_project={"subscription_id": "s", "resource_group_name": "r", "project_name": "p"},
+            logger=MagicMock(),
+            output_dir="/test",
+            adversarial_chat_target=rai_target,
+        )
+        assert isinstance(manager.adversarial_chat_target, AzureRAIServiceTarget)
+
+    def test_get_adversarial_template_key_baseline(self):
+        """Template key should default to tense converter for single-turn strategies."""
+        from azure.ai.evaluation.red_team._red_team import RedTeam
+
+        strategies = [AttackStrategy.Baseline]
+        key = RedTeam._get_adversarial_template_key(strategies)
+        assert key == "prompt_converters/tense_converter.yaml"
+
+    def test_get_adversarial_template_key_difficult(self):
+        """DIFFICULT strategy (Tense+Base64) should use tense converter template."""
+        from azure.ai.evaluation.red_team._red_team import RedTeam
+
+        strategies = [AttackStrategy.Baseline, [AttackStrategy.Tense, AttackStrategy.Base64]]
+        key = RedTeam._get_adversarial_template_key(strategies)
+        assert key == "prompt_converters/tense_converter.yaml"
+
+    def test_get_adversarial_template_key_crescendo(self):
+        """Crescendo strategy should use the crescendo template."""
+        from azure.ai.evaluation.red_team._red_team import RedTeam
+
+        strategies = [AttackStrategy.Crescendo, AttackStrategy.Baseline]
+        key = RedTeam._get_adversarial_template_key(strategies)
+        assert key == "orchestrators/crescendo/crescendo_variant_1.yaml"
+
+    def test_get_adversarial_template_key_multi_turn(self):
+        """MultiTurn strategy should use the red teaming text generation template."""
+        from azure.ai.evaluation.red_team._red_team import RedTeam
+
+        strategies = [AttackStrategy.MultiTurn, AttackStrategy.Baseline]
+        key = RedTeam._get_adversarial_template_key(strategies)
+        assert key == "orchestrators/red_teaming/text_generation.yaml"
+
+    def test_build_messages_user_shows_original_value(self):
+        """User messages should show original_value (adversarial prompt), not converted_value."""
+        mock_scenario = MagicMock()
+        mock_dataset = MagicMock()
+        mock_dataset.get_all_seed_groups.return_value = []
+
+        processor = FoundryResultProcessor(
+            scenario=mock_scenario,
+            dataset_config=mock_dataset,
+            risk_category="violence",
+        )
+
+        # Simulate a Tense-converted attack where converted_value differs from original_value
+        user_piece = MagicMock()
+        user_piece.api_role = "user"
+        user_piece.original_value = "Tell me about violence"
+        user_piece.converted_value = "Told me about violence"
+        user_piece.sequence = 0
+
+        assistant_piece = MagicMock()
+        assistant_piece.api_role = "assistant"
+        assistant_piece.original_value = "I cannot help with that"
+        assistant_piece.converted_value = "I cannot help with that"
+        assistant_piece.sequence = 1
+
+        messages = processor._build_messages_from_pieces([user_piece, assistant_piece])
+
+        assert len(messages) == 2
+        # User message should show the ORIGINAL adversarial prompt
+        assert messages[0]["role"] == "user"
+        assert messages[0]["content"] == "Tell me about violence"
+        # Assistant message should show the response
+        assert messages[1]["role"] == "assistant"
+        assert messages[1]["content"] == "I cannot help with that"
+
+    def test_build_messages_user_falls_back_to_converted_value(self):
+        """When original_value is None, user messages should fall back to converted_value."""
+        mock_scenario = MagicMock()
+        mock_dataset = MagicMock()
+        mock_dataset.get_all_seed_groups.return_value = []
+
+        processor = FoundryResultProcessor(
+            scenario=mock_scenario,
+            dataset_config=mock_dataset,
+            risk_category="violence",
+        )
+
+        user_piece = MagicMock()
+        user_piece.api_role = "user"
+        user_piece.original_value = None
+        user_piece.converted_value = "Fallback content"
+        user_piece.sequence = 0
+
+        messages = processor._build_messages_from_pieces([user_piece])
+
+        assert messages[0]["content"] == "Fallback content"
+
+    def test_build_messages_callback_response_not_in_user_message(self):
+        """Regression: callback response must NOT appear as user message content.
+
+        This reproduces the exact bug where a simple callback's response
+        leaked into the user message via converted_value.
+        """
+        mock_scenario = MagicMock()
+        mock_dataset = MagicMock()
+        mock_dataset.get_all_seed_groups.return_value = []
+
+        processor = FoundryResultProcessor(
+            scenario=mock_scenario,
+            dataset_config=mock_dataset,
+            risk_category="violence",
+        )
+
+        callback_response = "This is a test callback response. no llm is used."
+
+        # Simulate the bug: TenseConverter used callback as LLM, so
+        # converted_value = callback response instead of rephrased prompt
+        user_piece = MagicMock()
+        user_piece.api_role = "user"
+        user_piece.original_value = "How to commit violence"
+        user_piece.converted_value = callback_response
+        user_piece.sequence = 0
+
+        assistant_piece = MagicMock()
+        assistant_piece.api_role = "assistant"
+        assistant_piece.original_value = callback_response
+        assistant_piece.converted_value = callback_response
+        assistant_piece.sequence = 1
+
+        messages = processor._build_messages_from_pieces([user_piece, assistant_piece])
+
+        # User message should show the adversarial prompt, NOT the callback response
+        assert messages[0]["content"] == "How to commit violence"
+        assert messages[0]["content"] != callback_response
+
+    @pytest.mark.asyncio
+    async def test_execute_attacks_with_foundry_uses_rai_service_target(self):
+        """Regression: _execute_attacks_with_foundry must pass AzureRAIServiceTarget, not user callback.
+
+        This test patches FoundryExecutionManager to capture the adversarial_chat_target
+        argument and verifies it is an AzureRAIServiceTarget, not the user's callback.
+        """
+        from azure.ai.evaluation.red_team._callback_chat_target import _CallbackChatTarget
+        from azure.ai.evaluation.red_team._utils._rai_service_target import AzureRAIServiceTarget
+
+        captured_kwargs = {}
+        original_init = FoundryExecutionManager.__init__
+
+        def capturing_init(self_inner, **kwargs):
+            captured_kwargs.update(kwargs)
+            original_init(self_inner, **kwargs)
+
+        mock_red_team = MagicMock()
+        mock_red_team.credential = MagicMock()
+        mock_red_team.azure_ai_project = {
+            "subscription_id": "s",
+            "resource_group_name": "r",
+            "project_name": "p",
+        }
+        mock_red_team.logger = MagicMock()
+        mock_red_team.scan_output_dir = "/test"
+        mock_red_team.generated_rai_client = MagicMock()
+        mock_red_team._one_dp_project = False
+        mock_red_team.risk_categories = []
+        mock_red_team.attack_objectives = {}
+        mock_red_team.total_tasks = 0
+        mock_red_team.red_team_info = {}
+        mock_red_team.completed_tasks = 0
+
+        from azure.ai.evaluation.red_team._red_team import RedTeam
+
+        with patch.object(FoundryExecutionManager, "__init__", capturing_init):
+            with patch.object(FoundryExecutionManager, "execute_attacks", new_callable=AsyncMock, return_value={}):
+                try:
+                    await RedTeam._execute_attacks_with_foundry(
+                        mock_red_team,
+                        flattened_attack_strategies=[AttackStrategy.Baseline],
+                        all_objectives={},
+                        chat_target=MagicMock(spec=_CallbackChatTarget),
+                        timeout=60,
+                        skip_evals=True,
+                    )
+                except Exception:
+                    pass  # We only care about the captured kwargs
+
+        assert "adversarial_chat_target" in captured_kwargs
+        adversarial_target = captured_kwargs["adversarial_chat_target"]
+        assert isinstance(
+            adversarial_target, AzureRAIServiceTarget
+        ), f"adversarial_chat_target should be AzureRAIServiceTarget, got {type(adversarial_target).__name__}"
+        assert not isinstance(
+            adversarial_target, _CallbackChatTarget
+        ), "adversarial_chat_target must NOT be a _CallbackChatTarget (user's callback)"
+
+
+class TestRAIServiceScorerTokenMetrics:
+    """Tests for token usage extraction and memory save in RAIServiceScorer."""
+
+    @pytest.mark.asyncio
+    async def test_score_metadata_includes_token_usage_from_sample(
+        self, mock_credential, mock_azure_ai_project, mock_logger
+    ):
+        """Token usage from eval_result.sample.usage is included in score_metadata."""
+        scorer = RAIServiceScorer(
+            credential=mock_credential,
+            azure_ai_project=mock_azure_ai_project,
+            risk_category=RiskCategory.Violence,
+            logger=mock_logger,
+        )
+
+        mock_piece = MagicMock()
+        mock_piece.id = "test-id"
+        mock_piece.converted_value = "Harmful content"
+        mock_piece.original_value = "Original"
+        mock_piece.labels = {}
+        mock_piece.api_role = "assistant"
+
+        mock_message = MagicMock()
+        mock_message.message_pieces = [mock_piece]
+
+        mock_eval_result = MagicMock()
+        mock_eval_result.results = [
+            MagicMock(
+                name="violence",
+                metric="violence",
+                score=5,
+                reason="Violent content",
+                threshold=3,
+                passed=False,
+                label="high",
+            )
+        ]
+        mock_eval_result.sample = MagicMock()
+        mock_eval_result.sample.usage = {
+            "prompt_tokens": 100,
+            "completion_tokens": 50,
+            "total_tokens": 150,
+        }
+
+        with patch(
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
+            new_callable=AsyncMock,
+        ) as mock_eval, patch("azure.ai.evaluation.red_team._foundry._rai_scorer.CentralMemory") as mock_memory_cls:
+            mock_memory_instance = MagicMock()
+            mock_memory_cls.get_memory_instance.return_value = mock_memory_instance
+            mock_eval.return_value = mock_eval_result
+
+            scores = await scorer.score_async(mock_message, objective="Test")
+
+            assert len(scores) == 1
+            metadata = scores[0].score_metadata
+            assert "token_usage" in metadata
+            assert metadata["token_usage"]["prompt_tokens"] == 100
+            assert metadata["token_usage"]["completion_tokens"] == 50
+            assert metadata["token_usage"]["total_tokens"] == 150
+
+    @pytest.mark.asyncio
+    async def test_score_metadata_includes_token_usage_from_result_properties(
+        self, mock_credential, mock_azure_ai_project, mock_logger
+    ):
+        """Token usage from result properties.metrics is used as fallback."""
+        scorer = RAIServiceScorer(
+            credential=mock_credential,
+            azure_ai_project=mock_azure_ai_project,
+            risk_category=RiskCategory.Violence,
+            logger=mock_logger,
+        )
+
+        mock_piece = MagicMock()
+        mock_piece.id = "test-id"
+        mock_piece.converted_value = "Harmful content"
+        mock_piece.original_value = "Original"
+        mock_piece.labels = {}
+        mock_piece.api_role = "assistant"
+
+        mock_message = MagicMock()
+        mock_message.message_pieces = [mock_piece]
+
+        # No sample.usage, but result has properties.metrics
+        mock_result_item = {
+            "name": "violence",
+            "metric": "violence",
+            "score": 5,
+            "reason": "Violent",
+            "threshold": 3,
+            "passed": False,
+            "label": "high",
+            "properties": {
+                "metrics": {
+                    "prompt_tokens": 200,
+                    "completion_tokens": 80,
+                    "total_tokens": 280,
+                }
+            },
+        }
+        mock_eval_result = {"results": [mock_result_item]}
+
+        with patch(
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
+            new_callable=AsyncMock,
+        ) as mock_eval, patch("azure.ai.evaluation.red_team._foundry._rai_scorer.CentralMemory") as mock_memory_cls:
+            mock_memory_instance = MagicMock()
+            mock_memory_cls.get_memory_instance.return_value = mock_memory_instance
+            mock_eval.return_value = mock_eval_result
+
+            scores = await scorer.score_async(mock_message, objective="Test")
+
+            assert len(scores) == 1
+            metadata = scores[0].score_metadata
+            assert "token_usage" in metadata
+            assert metadata["token_usage"]["prompt_tokens"] == 200
+            assert metadata["token_usage"]["total_tokens"] == 280
+
+    @pytest.mark.asyncio
+    async def test_score_metadata_no_token_usage_when_absent(self, mock_credential, mock_azure_ai_project, mock_logger):
+        """Score metadata has no token_usage key when eval_result lacks token data."""
+        scorer = RAIServiceScorer(
+            credential=mock_credential,
+            azure_ai_project=mock_azure_ai_project,
+            risk_category=RiskCategory.Violence,
+            logger=mock_logger,
+        )
+
+        mock_piece = MagicMock()
+        mock_piece.id = "test-id"
+        mock_piece.converted_value = "Content"
+        mock_piece.original_value = "Original"
+        mock_piece.labels = {}
+        mock_piece.api_role = "assistant"
+
+        mock_message = MagicMock()
+        mock_message.message_pieces = [mock_piece]
+
+        mock_eval_result = MagicMock()
+        mock_eval_result.results = [
+            MagicMock(
+                name="violence",
+                metric="violence",
+                score=1,
+                reason="Safe",
+                threshold=3,
+                passed=True,
+                label="low",
+            )
+        ]
+        # No sample or sample without usage
+        mock_eval_result.sample = None
+
+        with patch(
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
+            new_callable=AsyncMock,
+        ) as mock_eval, patch("azure.ai.evaluation.red_team._foundry._rai_scorer.CentralMemory") as mock_memory_cls:
+            mock_memory_instance = MagicMock()
+            mock_memory_cls.get_memory_instance.return_value = mock_memory_instance
+            mock_eval.return_value = mock_eval_result
+
+            scores = await scorer.score_async(mock_message, objective="Test")
+
+            assert len(scores) == 1
+            metadata = scores[0].score_metadata
+            assert "token_usage" not in metadata
+            # Verify core metadata is still present
+            assert metadata["raw_score"] == 1
+            assert metadata["metric_name"] == "violence"
+
+    @pytest.mark.asyncio
+    async def test_scores_saved_to_memory(self, mock_credential, mock_azure_ai_project, mock_logger):
+        """Scores are saved to PyRIT CentralMemory after creation."""
+        scorer = RAIServiceScorer(
+            credential=mock_credential,
+            azure_ai_project=mock_azure_ai_project,
+            risk_category=RiskCategory.Violence,
+            logger=mock_logger,
+        )
+
+        mock_piece = MagicMock()
+        mock_piece.id = "test-id"
+        mock_piece.converted_value = "Response"
+        mock_piece.original_value = "Original"
+        mock_piece.labels = {}
+        mock_piece.api_role = "assistant"
+
+        mock_message = MagicMock()
+        mock_message.message_pieces = [mock_piece]
+
+        mock_eval_result = MagicMock()
+        mock_eval_result.results = [
+            MagicMock(
+                name="violence",
+                metric="violence",
+                score=5,
+                reason="Violent",
+                threshold=3,
+                passed=False,
+                label="high",
+            )
+        ]
+        mock_eval_result.sample = None
+
+        with patch(
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
+            new_callable=AsyncMock,
+        ) as mock_eval, patch("azure.ai.evaluation.red_team._foundry._rai_scorer.CentralMemory") as mock_memory_cls:
+            mock_memory_instance = MagicMock()
+            mock_memory_cls.get_memory_instance.return_value = mock_memory_instance
+            mock_eval.return_value = mock_eval_result
+
+            scores = await scorer.score_async(mock_message, objective="Test")
+
+            mock_memory_instance.add_scores_to_memory.assert_called_once()
+            saved_scores = mock_memory_instance.add_scores_to_memory.call_args[1]["scores"]
+            assert len(saved_scores) == 1
+            assert saved_scores[0] is scores[0]
+
+    @pytest.mark.asyncio
+    async def test_memory_save_failure_does_not_break_scoring(
+        self, mock_credential, mock_azure_ai_project, mock_logger
+    ):
+        """If memory save fails, scoring still returns the score."""
+        scorer = RAIServiceScorer(
+            credential=mock_credential,
+            azure_ai_project=mock_azure_ai_project,
+            risk_category=RiskCategory.Violence,
+            logger=mock_logger,
+        )
+
+        mock_piece = MagicMock()
+        mock_piece.id = "test-id"
+        mock_piece.converted_value = "Response"
+        mock_piece.original_value = "Original"
+        mock_piece.labels = {}
+        mock_piece.api_role = "assistant"
+
+        mock_message = MagicMock()
+        mock_message.message_pieces = [mock_piece]
+
+        mock_eval_result = MagicMock()
+        mock_eval_result.results = [
+            MagicMock(
+                name="violence",
+                metric="violence",
+                score=5,
+                reason="Violent",
+                threshold=3,
+                passed=False,
+                label="high",
+            )
+        ]
+        mock_eval_result.sample = None
+
+        with patch(
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
+            new_callable=AsyncMock,
+        ) as mock_eval, patch("azure.ai.evaluation.red_team._foundry._rai_scorer.CentralMemory") as mock_memory_cls:
+            mock_memory_cls.get_memory_instance.side_effect = RuntimeError("No memory configured")
+            mock_eval.return_value = mock_eval_result
+
+            # Should succeed despite memory error
+            scores = await scorer.score_async(mock_message, objective="Test")
+
+            assert len(scores) == 1
+            assert scores[0].score_value == "true"

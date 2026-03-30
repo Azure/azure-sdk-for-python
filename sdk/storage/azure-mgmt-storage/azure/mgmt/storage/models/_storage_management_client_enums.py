@@ -321,7 +321,6 @@ class LeaseContainerRequestEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CHANGE = "Change"
     RELEASE = "Release"
     BREAK = "Break"
-    BREAK_ENUM = "Break"
 
 
 class LeaseDuration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -341,7 +340,6 @@ class LeaseShareAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CHANGE = "Change"
     RELEASE = "Release"
     BREAK = "Break"
-    BREAK_ENUM = "Break"
 
 
 class LeaseState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -429,7 +427,9 @@ class Name(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ACCESS_TIME_TRACKING = "AccessTimeTracking"
 
 
-class NetworkSecurityPerimeterConfigurationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class NetworkSecurityPerimeterConfigurationProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Provisioning state of Network Security Perimeter configuration propagation."""
 
     ACCEPTED = "Accepted"
@@ -486,7 +486,9 @@ class PostPlannedFailoverRedundancy(str, Enum, metaclass=CaseInsensitiveEnumMeta
     STANDARD_RAGZRS = "Standard_RAGZRS"
 
 
-class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PrivateEndpointConnectionProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"

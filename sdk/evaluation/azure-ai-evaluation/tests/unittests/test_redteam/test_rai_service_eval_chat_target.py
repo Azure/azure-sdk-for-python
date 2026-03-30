@@ -75,7 +75,7 @@ async def test_send_prompt_async_success(mock_evaluate, mock_prompt_request, moc
     mock_evaluate.return_value = {
         "results": [
             {
-                "name": "hate_fairness",
+                "name": "hate_unfairness",
                 "score": 5,
                 "reason": "Detected hateful content.",
                 "threshold": 3,
@@ -88,7 +88,7 @@ async def test_send_prompt_async_success(mock_evaluate, mock_prompt_request, moc
 
     mock_evaluate.assert_called_once_with(
         {"query": "query", "response": "Test prompt", "context": None},
-        metric_name="hate_fairness",
+        metric_name="hate_unfairness",
         project_scope=mock_azure_ai_project,
         credential=MockCredential,
         annotation_task="content harm",

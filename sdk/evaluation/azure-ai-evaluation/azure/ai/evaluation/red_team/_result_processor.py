@@ -12,6 +12,7 @@ import hashlib
 import json
 import math
 import os
+import re
 import uuid
 from collections import defaultdict
 from datetime import datetime
@@ -212,6 +213,7 @@ class ResultProcessor:
                                         # Determine attack success based on evaluation results if available
                                         attack_success = None
                                         risk_assessment = {}
+                                        scorer_token_usage = None
 
                                         eval_row = None
 
@@ -290,12 +292,22 @@ class ResultProcessor:
                                             score_data = conv_data.get("score", {})
                                             if score_data and isinstance(score_data, dict):
                                                 score_metadata = score_data.get("metadata", {})
-                                                raw_score = score_metadata.get("raw_score")
-                                                if raw_score is not None:
-                                                    risk_assessment[risk_category] = {
-                                                        "severity_label": get_harm_severity_level(raw_score),
-                                                        "reason": score_data.get("rationale", ""),
-                                                    }
+                                                # Handle string metadata (e.g. from PyRIT serialization)
+                                                if isinstance(score_metadata, str):
+                                                    try:
+                                                        score_metadata = json.loads(score_metadata)
+                                                    except (json.JSONDecodeError, TypeError):
+                                                        score_metadata = {}
+                                                if isinstance(score_metadata, dict):
+                                                    raw_score = score_metadata.get("raw_score")
+                                                    if raw_score is not None:
+                                                        risk_assessment[risk_category] = {
+                                                            "severity_label": get_harm_severity_level(raw_score),
+                                                            "reason": score_data.get("rationale", ""),
+                                                        }
+
+                                                    # Extract scorer token usage for downstream propagation
+                                                    scorer_token_usage = score_metadata.get("token_usage")
 
                                         # Add to tracking arrays for statistical analysis
                                         converters.append(strategy_name)
@@ -348,6 +360,10 @@ class ResultProcessor:
                                         # Add risk_sub_type if present in the data
                                         if "risk_sub_type" in conv_data:
                                             conversation["risk_sub_type"] = conv_data["risk_sub_type"]
+
+                                        # Add scorer token usage if extracted from score metadata
+                                        if scorer_token_usage and isinstance(scorer_token_usage, dict):
+                                            conversation["scorer_token_usage"] = scorer_token_usage
 
                                         # Add evaluation error if present in eval_row
                                         if eval_row and "error" in eval_row:
@@ -640,6 +656,124 @@ class ResultProcessor:
         return sample_payload
 
     @staticmethod
+    def _clean_content_filter_response(content: Any) -> str:
+        """If content looks like a raw content-filter API response, replace with friendly text.
+
+        Prefers structured JSON parsing over regex heuristics.  Only content
+        that actually parses as a serialised API payload (or nested JSON
+        inside one) is rewritten; plain-text that merely *mentions*
+        ``content_filter`` is returned unchanged.
+        """
+        if not isinstance(content, str):
+            return str(content) if content is not None else ""
+        if not content:
+            return content
+
+        filter_details: List[str] = []
+        stripped = content.strip()
+
+        # --- Step 1: try to parse the whole content as JSON -----------------
+        if stripped.startswith(("{", "[")):
+            try:
+                parsed = json.loads(stripped)
+                filter_details = ResultProcessor._extract_filter_details_from_parsed(parsed)
+                if filter_details:
+                    return f"[Response blocked by content filter: {', '.join(filter_details)}]"
+                # Only emit a generic blocked message when finish_reason
+                # actually indicates content filtering.  Azure OpenAI always
+                # includes content_filter_results in responses (even unfiltered
+                # ones), so key-presence alone is not sufficient.
+                if ResultProcessor._has_finish_reason_content_filter(parsed):
+                    return "[Response blocked by Azure OpenAI content filter]"
+            except (json.JSONDecodeError, TypeError, ValueError):
+                pass
+
+        # --- Step 2: try to extract nested "message" JSON -------------------
+        if '"message":' in content:
+            try:
+                match = re.search(r'"message"\s*:\s*"((?:[^"\\]|\\.)*)"', content)
+                if match:
+                    inner = match.group(1).replace('\\"', '"').replace("\\\\", "\\")
+                    try:
+                        inner_json = json.loads(inner)
+                        filter_details = ResultProcessor._extract_filter_details_from_parsed(inner_json)
+                    except (json.JSONDecodeError, TypeError, ValueError):
+                        pass
+            except (re.error, AttributeError):
+                pass
+
+        if filter_details:
+            return f"[Response blocked by content filter: {', '.join(filter_details)}]"
+
+        # --- Step 3: regex fallback for non-JSON edge cases -----------------
+        # Only fire when the content actually starts with '{' / '[' (i.e. it
+        # looks like a payload but json.loads failed, e.g. truncated JSON).
+        if stripped.startswith(("{", "[")):
+            try:
+                # Generic scan: find any key whose object has "filtered": true
+                for m in re.finditer(
+                    r'"([^"]+)"\s*:\s*\{[^}]*"filtered"\s*:\s*true[^}]*\}',
+                    content,
+                    re.IGNORECASE,
+                ):
+                    category = m.group(1)
+                    sev_match = re.search(
+                        rf'"{re.escape(category)}".*?"severity"\s*:\s*"(\w+)"',
+                        content,
+                        re.IGNORECASE,
+                    )
+                    severity = sev_match.group(1) if sev_match else "unknown"
+                    filter_details.append(f"{category} (severity: {severity})")
+            except (re.error, AttributeError):
+                pass
+
+            if filter_details:
+                return f"[Response blocked by content filter: {', '.join(filter_details)}]"
+            # Last resort: only rewrite if finish_reason indicates content filtering
+            if '"finish_reason"' in content and '"content_filter"' in content:
+                return "[Response blocked by Azure OpenAI content filter]"
+
+        return content
+
+    @staticmethod
+    def _extract_filter_details_from_parsed(parsed: Any) -> List[str]:
+        """Extract content-filter category details from a parsed JSON structure."""
+        details: List[str] = []
+        if not isinstance(parsed, dict):
+            return details
+        choices = parsed.get("choices", [])
+        if isinstance(choices, list):
+            for choice in choices:
+                if not isinstance(choice, dict):
+                    continue
+                cfr = choice.get("content_filter_results", {})
+                if isinstance(cfr, dict):
+                    for category, info in cfr.items():
+                        if isinstance(info, dict) and info.get("filtered"):
+                            severity = info.get("severity", "unknown")
+                            details.append(f"{category} (severity: {severity})")
+        # Also handle top-level content_filter_results (non-choices wrapper)
+        cfr_top = parsed.get("content_filter_results", {})
+        if isinstance(cfr_top, dict) and not details:
+            for category, info in cfr_top.items():
+                if isinstance(info, dict) and info.get("filtered"):
+                    severity = info.get("severity", "unknown")
+                    details.append(f"{category} (severity: {severity})")
+        return details
+
+    @staticmethod
+    def _has_finish_reason_content_filter(parsed: Any) -> bool:
+        """Return True if the parsed response has finish_reason == 'content_filter'."""
+        if not isinstance(parsed, dict):
+            return False
+        if parsed.get("finish_reason") == "content_filter":
+            return True
+        for choice in parsed.get("choices", []):
+            if isinstance(choice, dict) and choice.get("finish_reason") == "content_filter":
+                return True
+        return False
+
+    @staticmethod
     def _normalize_sample_message(message: Dict[str, Any]) -> Dict[str, Any]:
         """Return a shallow copy of a message limited to supported fields."""
 
@@ -656,6 +790,10 @@ class ResultProcessor:
             tool_calls_value = message["tool_calls"]
             if isinstance(tool_calls_value, list):
                 normalized["tool_calls"] = [call for call in tool_calls_value if isinstance(call, dict)]
+
+        # Clean raw content-filter API responses for assistant messages
+        if normalized.get("role") == "assistant":
+            normalized["content"] = ResultProcessor._clean_content_filter_response(normalized.get("content", ""))
 
         return normalized
 
@@ -777,6 +915,12 @@ class ResultProcessor:
                                     if reasoning and not reason:
                                         reason = reasoning
                                 break
+
+            # Fallback: use scorer token usage from conversation when eval_row doesn't provide metrics
+            if "metrics" not in properties:
+                scorer_token_usage = conversation.get("scorer_token_usage")
+                if scorer_token_usage and isinstance(scorer_token_usage, dict):
+                    properties["metrics"] = scorer_token_usage
 
             if (
                 passed is None

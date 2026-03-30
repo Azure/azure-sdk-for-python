@@ -842,6 +842,7 @@ from ._artifacts_client_enums import GreenplumAuthenticationType
 from ._artifacts_client_enums import HBaseAuthenticationType
 from ._artifacts_client_enums import HDInsightActivityDebugInfoOption
 from ._artifacts_client_enums import HDInsightClusterAuthenticationType
+from ._artifacts_client_enums import HDInsightOndemandClusterResourceGroupAuthenticationType
 from ._artifacts_client_enums import HdiNodeTypes
 from ._artifacts_client_enums import HiveAuthenticationType
 from ._artifacts_client_enums import HiveServerType
@@ -863,6 +864,7 @@ from ._artifacts_client_enums import LivyStates
 from ._artifacts_client_enums import ManagedVirtualNetworkReferenceType
 from ._artifacts_client_enums import MongoDbAuthenticationType
 from ._artifacts_client_enums import NetezzaPartitionOption
+from ._artifacts_client_enums import NetezzaSecurityLevelType
 from ._artifacts_client_enums import NodeSize
 from ._artifacts_client_enums import NodeSizeFamily
 from ._artifacts_client_enums import NotebookParameterType
@@ -1777,6 +1779,7 @@ __all__ = [
     "HBaseAuthenticationType",
     "HDInsightActivityDebugInfoOption",
     "HDInsightClusterAuthenticationType",
+    "HDInsightOndemandClusterResourceGroupAuthenticationType",
     "HdiNodeTypes",
     "HiveAuthenticationType",
     "HiveServerType",
@@ -1798,6 +1801,7 @@ __all__ = [
     "ManagedVirtualNetworkReferenceType",
     "MongoDbAuthenticationType",
     "NetezzaPartitionOption",
+    "NetezzaSecurityLevelType",
     "NodeSize",
     "NodeSizeFamily",
     "NotebookParameterType",

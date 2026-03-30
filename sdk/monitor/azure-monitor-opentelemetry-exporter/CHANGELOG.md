@@ -1,12 +1,26 @@
 # Release History
 
-## 1.0.0b49 (Unreleased)
+## 1.0.0b50 (Unreleased)
 
 ### Features Added
 
-- Add Browser SDK loader SDK Stats feature bit ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/44162))
-
 ### Breaking Changes
+
+### Bugs Fixed
+- Suppress internal sdkstats HTTP pipeline logs from appearing in user's logs
+  ([#45966](https://github.com/Azure/azure-sdk-for-python/pull/45966))
+- Kubernetes pod name takes precedence when populating `cloud_RoleInstance`
+  ([#45884](https://github.com/Azure/azure-sdk-for-python/pull/45884))
+
+### Other Changes
+
+## 1.0.0b49 (2026-03-19)
+
+### Features Added
+- Added a 256kb custom properties truncation limit on specific GenAI attributes
+  ([#45749](https://github.com/Azure/azure-sdk-for-python/pull/45749))
+- Add Browser SDK loader SDK Stats feature bit
+  ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/42904))
 
 ### Bugs Fixed
 - Exempt specific GenAI attributes values from custom properties truncation
@@ -23,6 +37,13 @@
   ([#45252](https://github.com/Azure/azure-sdk-for-python/pull/45252))
 
 ### Other Changes
+- Change import path for `LoggingHandler` to accommodate upstream breaking changes -
+[core](https://github.com/open-telemetry/opentelemetry-python/pull/4919) and [contrib](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4210)
+  ([#45516](https://github.com/Azure/azure-sdk-for-python/pull/45516))
+- Generate exporter with TypeSpec
+  ([#44442](https://github.com/Azure/azure-sdk-for-python/pull/44442))
+- Generate LiveMetrics from TypeSpec
+  ([#44696](https://github.com/Azure/azure-sdk-for-python/pull/44696))
 
 ## 1.0.0b48 (2026-02-05)
 

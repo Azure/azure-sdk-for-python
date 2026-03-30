@@ -205,6 +205,19 @@ def construct_prompty_model_config(
 
     prompty_model_config: dict = {"configuration": model_config, "parameters": {"extra_headers": {}}}
 
+    # Apply user-provided extra_headers first
+    if "extra_headers" in model_config:
+        extra_headers = model_config["extra_headers"]
+        if not isinstance(extra_headers, dict):
+            msg = "The 'extra_headers' field in 'model_config' must be a dictionary of strings to strings."
+            raise EvaluationException(
+                message=msg,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
+        prompty_model_config["parameters"]["extra_headers"].update(extra_headers)
+
+    # Internal headers applied after user headers to prevent accidental overrides
     # Handle "RuntimeError: Event loop is closed" from httpx AsyncClient
     # https://github.com/encode/httpx/discussions/2959
     prompty_model_config["parameters"]["extra_headers"].update({"Connection": "close"})
