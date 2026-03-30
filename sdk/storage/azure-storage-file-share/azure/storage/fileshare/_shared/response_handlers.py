@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -177,11 +176,8 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
         error_message += f"\n{name}:{info}"
 
     if additional_data.get("headername") == "x-ms-version" and error_code == StorageErrorCode.INVALID_HEADER_VALUE:
-        error_message = (
-            "The provided service version is not enabled on this storage account."
-            + f"Please see {SV_DOCS_URL} for additional information.\n"
-            + error_message
-        )
+        error_message = ("The provided service version is not enabled on this storage account." +
+                         f"Please see {SV_DOCS_URL} for additional information.\n" + error_message)
 
     # No need to create an instance if it has already been serialized by the generated layer
     if serialized:
@@ -201,34 +197,22 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
         raise error from exc
 
 
-def _extract_text(value):
-    """Extract text from a value that may be an XML Element.
-
-    :param Any value: The value to extract text from.
-    :returns: The text content if value is an XML Element, otherwise the value itself.
-    :rtype: str or None
-    """
-    if isinstance(value, Element):
-        return value.text
-    return value
-
-
 def parse_to_internal_user_delegation_key(service_user_delegation_key):
     internal_user_delegation_key = UserDelegationKey()
-    internal_user_delegation_key.signed_oid = _extract_text(service_user_delegation_key.signed_oid)
-    internal_user_delegation_key.signed_tid = _extract_text(service_user_delegation_key.signed_tid)
-    internal_user_delegation_key.signed_delegated_user_tid = _extract_text(
-        service_user_delegation_key.signed_delegated_user_tid
-    )
-    signed_start = _extract_text(service_user_delegation_key.signed_start)
+    internal_user_delegation_key.signed_oid = service_user_delegation_key.signed_oid
+    internal_user_delegation_key.signed_tid = service_user_delegation_key.signed_tid
+    internal_user_delegation_key.signed_delegated_user_tid = service_user_delegation_key.signed_delegated_user_tid
     internal_user_delegation_key.signed_start = (
-        signed_start if isinstance(signed_start, str) else _to_utc_datetime(signed_start)
+        service_user_delegation_key.signed_start
+        if isinstance(service_user_delegation_key.signed_start, str)
+        else _to_utc_datetime(service_user_delegation_key.signed_start)
     )
-    signed_expiry = _extract_text(service_user_delegation_key.signed_expiry)
     internal_user_delegation_key.signed_expiry = (
-        signed_expiry if isinstance(signed_expiry, str) else _to_utc_datetime(signed_expiry)
+        service_user_delegation_key.signed_expiry
+        if isinstance(service_user_delegation_key.signed_expiry, str)
+        else _to_utc_datetime(service_user_delegation_key.signed_expiry)
     )
-    internal_user_delegation_key.signed_service = _extract_text(service_user_delegation_key.signed_service)
-    internal_user_delegation_key.signed_version = _extract_text(service_user_delegation_key.signed_version)
-    internal_user_delegation_key.value = _extract_text(service_user_delegation_key.value)
+    internal_user_delegation_key.signed_service = service_user_delegation_key.signed_service
+    internal_user_delegation_key.signed_version = service_user_delegation_key.signed_version
+    internal_user_delegation_key.value = service_user_delegation_key.value
     return internal_user_delegation_key
