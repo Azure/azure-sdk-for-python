@@ -38,4 +38,3 @@ steps:
         Write-Host "UV authentication is currently disabled. To enable, uncomment the variable assignment above."
       }
     displayName: 'Configure UV Authentication (Disabled)'
-    condition: false  # Explicitly disabled - change to 'true' or remove to enable
