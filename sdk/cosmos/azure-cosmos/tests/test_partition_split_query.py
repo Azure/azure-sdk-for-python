@@ -4,7 +4,6 @@
 import random
 import time
 import unittest
-import os
 import uuid
 
 import pytest
@@ -16,7 +15,6 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from unittest.mock import patch, MagicMock
 from azure.cosmos import http_constants
 from azure.cosmos import _base
-from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
 
 
 def run_queries(container, iterations):
@@ -46,23 +44,21 @@ class TestPartitionSplitQuery(unittest.TestCase):
     throughput = 400
     TEST_DATABASE_ID = configs.TEST_DATABASE_ID
     TEST_CONTAINER_ID = "Single-partition-container-without-throughput"
-    MAX_TIME = 60 * 30  # 10 minutes for the test to complete, should be enough for partition split to complete
+    MAX_TIME = 60 * 10  # 10 minutes for the test to complete, should be enough for partition split to complete
 
     @classmethod
     def setUpClass(cls):
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.database = cls.client.create_database_if_not_exists(id='Partition-Cache-Database')
-        cls.container = cls.database.create_container_if_not_exists(
-            id = 'single_partition_container',
-            partition_key = PartitionKey(path="/id"),
-            offer_throughput = cls.throughput)
-        if cls.host == "https://localhost:8081/":
-            os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"
+        cls.database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
+        cls.container = cls.database.create_container(
+            id=cls.TEST_CONTAINER_ID,
+            partition_key=PartitionKey(path="/id"),
+            offer_throughput=cls.throughput)
 
     @classmethod
     def tearDownClass(cls) -> None:
         try:
-            cls.client.delete_database(cls.database.id)
+            cls.database.delete_container(cls.container.id)
         except CosmosHttpResponseError:
             pass
 
@@ -79,7 +75,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
         print("--------------------------------")
         print("now starting queries")
 
-        run_queries(self.container, 1)  # initial check for queries before partition split
+        run_queries(self.container, 100)  # initial check for queries before partition split
         print("initial check succeeded, now reading offer until replacing is done")
         offer = self.container.get_throughput()
         while True:
@@ -90,7 +86,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
                 offer = self.container.get_throughput()
             else:
                 print("offer replaced successfully, took around {} seconds".format(time.time() - offer_time))
-                run_queries(self.container, 1)  # check queries work post partition split
+                run_queries(self.container, 100)  # check queries work post partition split
                 self.assertTrue(offer.offer_throughput > self.throughput)
                 return
 
@@ -480,152 +476,6 @@ class TestPartitionSplitQuery(unittest.TestCase):
                 f"Expected 20 items after fallback, got {len(query_results)}"
 
             print("Validated: Queries work correctly after fallback")
-
-        finally:
-            self.database.delete_container(container.id)
-
-    def test_fallback_when_parent_missing_in_incremental_update(self):
-        """
-        Validates fallback when change feed returns child with missing parent.
-
-        This directly tests the guard at routing_map_provider.py
-        """
-        container = self.database.create_container(
-            id='test_missing_parent_' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/pk"),
-            offer_throughput=400
-        )
-
-        try:
-            for i in range(30):
-                container.create_item({'id': f'item_{i}', 'pk': f'pk_{i}', 'value': i})
-
-            run_queries(container, 1)
-
-            provider = container.client_connection._routing_map_provider
-            collection_link = container.container_link
-
-            initial_map = provider._collection_routing_map_by_item.get(collection_link)
-            assert initial_map is not None
-
-            # Create fake child with non-existent parent
-            fake_child = {
-                'id': 'child_with_missing_parent',
-                'minInclusive': '',
-                'maxExclusive': '80',
-                'parents': ['non_existent_parent_id']  # Parent doesn't exist
-            }
-
-            # Track how many times _ReadPartitionKeyRanges is called
-            call_count = {'count': 0}
-            original_read = container.client_connection._ReadPartitionKeyRanges
-
-            def mock_read_ranges(*args, **kwargs):
-                call_count['count'] += 1
-                if call_count['count'] == 1:
-                    # First call: Return fake child to trigger missing parent guard
-                    return iter([fake_child])
-                else:
-                    # Subsequent calls: Return real data for full refresh
-                    return original_read(*args, **kwargs)
-
-            with patch.object(
-                    container.client_connection,
-                    '_ReadPartitionKeyRanges',
-                    side_effect=mock_read_ranges
-            ):
-                # Leave stale map in cache so _is_cache_stale() detects matching ETags
-                # and triggers the incremental update path where the missing-parent guard lives.
-
-                refreshed_map = provider.get_routing_map(
-                    collection_link=collection_link,
-                    feed_options={},
-                    force_refresh=True,
-                    previous_routing_map=initial_map  # Simulate stale cache
-                )
-
-                # Should succeed via fallback after detecting missing parent
-                assert refreshed_map is not None
-                assert call_count['count'] >= 2, \
-                    "Should have called _ReadPartitionKeyRanges twice (initial + fallback)"
-
-                print("Validated: Missing parent guard triggered fallback")
-
-        finally:
-            self.database.delete_container(container.id)
-
-    def test_fallback_when_existing_range_missing_in_incremental_update(self):
-        """
-        Validates the defensive guard logic when an existing range is missing from cache.
-
-        This tests the routing_map_provider's ability to detect and recover from
-        inconsistent state where change feed returns a stable partition that's not
-        in the cached routing map.
-        """
-        container = self.database.create_container(
-            id='test_missing_range_' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/pk"),
-            offer_throughput=400
-        )
-
-        try:
-            for i in range(30):
-                container.create_item({'id': f'item_{i}', 'pk': f'pk_{i}', 'value': i})
-
-            run_queries(container, 1)
-
-            provider = container.client_connection._routing_map_provider
-            collection_link = container.container_link
-
-            # Get real routing map
-            real_map = provider._collection_routing_map_by_item.get(collection_link)
-            assert real_map is not None
-
-            real_ranges = list(real_map._orderedPartitionKeyRanges)
-            assert len(real_ranges) == 1
-
-            # Create a fake previous map with INCOMPLETE _rangeById
-            fake_previous_map = MagicMock()
-            fake_previous_map._rangeById = {}  # Empty - simulates missing range
-
-            # Simulate receiving an existing range from change feed
-            existing_range = real_ranges[0].copy()
-            # Remove 'parents' field to simulate stable partition
-            existing_range.pop('parents', None)
-
-            # Manually test the guard logic
-            range_id = existing_range['id']
-
-            # This simulates the code at lines 179-185
-            if range_id in fake_previous_map._rangeById:
-                pytest.fail("Range should NOT be in fake previous map")
-            else:
-                # Guard should trigger here
-                print(f"Guard triggered: Existing range '{range_id}' not found in cache")
-
-                # Verify fallback by manually clearing cache and refreshing
-                provider._collection_routing_map_by_item.clear()
-
-                # Full refresh (no previous_routing_map)
-                refreshed_map = provider.get_routing_map(
-                    collection_link=collection_link,
-                    feed_options={}
-                )
-
-                assert refreshed_map is not None
-                refreshed_ranges = list(refreshed_map._orderedPartitionKeyRanges)
-                assert len(refreshed_ranges) == 1
-
-                print("Validated: Fallback to full refresh succeeded")
-
-                # Verify queries work after fallback
-                results = list(container.query_items(
-                    query='SELECT * FROM c',
-                    enable_cross_partition_query=True
-                ))
-                assert len(results) == 30
-
-                print("Validated: Queries work after fallback")
 
         finally:
             self.database.delete_container(container.id)

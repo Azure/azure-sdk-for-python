@@ -30,6 +30,8 @@ to both code paths simultaneously.
 import logging
 from typing import Any, Dict, List, Optional, Tuple
 
+from azure.core.utils import CaseInsensitiveDict
+
 from .. import _base, http_constants
 from .collection_routing_map import CollectionRoutingMap, _build_routing_map_from_ranges
 from . import routing_range
@@ -85,17 +87,21 @@ def build_response_hook(kwargs: Dict[str, Any]):
     If the caller already supplied a ``response_hook`` in *kwargs* it is
     chained so that both hooks are invoked.
 
+    The captured headers are stored in a ``CaseInsensitiveDict`` so that
+    header lookups (e.g. for ``ETag``) are always case-insensitive,
+    regardless of the casing used by the service or test mocks.
+
     :param dict kwargs: The keyword arguments dict (mutated in-place --
         ``response_hook`` is popped if present).
     :return: A 2-tuple ``(hook_callable, captured_headers_dict)``.  The
         *captured_headers_dict* is populated by the hook when it fires.
-    :rtype: tuple[Callable, dict]
+    :rtype: tuple[Callable, CaseInsensitiveDict]
     """
-    response_headers: Dict[str, Any] = {}
+    response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
 
     def capture_response_hook(hook_headers: Dict[str, Any], _):
-        nonlocal response_headers
-        response_headers = hook_headers
+        response_headers.clear()
+        response_headers.update(hook_headers)
 
     upstream_hook = kwargs.pop('response_hook', None)
     if upstream_hook:
@@ -126,6 +132,9 @@ def prepare_fetch_options_and_headers(
 
     :param previous_routing_map: The base routing map for incremental
         updates, or ``None`` for a full load.
+    :type previous_routing_map:
+        ~azure.cosmos._routing.collection_routing_map.CollectionRoutingMap
+        or None
     :param dict feed_options: Raw feed options from the caller.
     :param dict kwargs: Keyword arguments (mutated -- ``headers`` is set).
     :return: The sanitised ``change_feed_options`` dict.
@@ -171,7 +180,16 @@ def process_fetched_ranges(
     Handles both initial-load (when *previous_routing_map* is ``None``)
     and incremental-update paths.
 
-    :returns: The new/updated routing map, or ``None`` when an
+    :param list ranges: The raw partition key range dicts returned by the service.
+    :param previous_routing_map: The existing routing map for incremental updates,
+        or ``None`` for initial load.
+    :type previous_routing_map:
+        ~azure.cosmos._routing.collection_routing_map.CollectionRoutingMap
+        or None
+    :param str collection_id: The ID of the collection.
+    :param str collection_link: The link to the collection.
+    :param str new_etag: The ETag from the change feed response, or ``None``.
+    :return: The new/updated routing map, or ``None`` when an
         initial load yields no ranges.
     :rtype: ~azure.cosmos._routing.collection_routing_map.CollectionRoutingMap
         or None
@@ -190,29 +208,20 @@ def process_fetched_ranges(
     range_tuples: List[Tuple[Dict[str, Any], Any]] = []
     for r in ranges:
         parents = r.get(PartitionKeyRange.Parents)
-        if parents:
-            range_info = None
-            for parent_id in parents:
-                if parent_id in previous_routing_map._rangeById:  # pylint: disable=protected-access
-                    parent_range_tuple = previous_routing_map._rangeById[parent_id]
-                    range_info = parent_range_tuple[1]
-                    break
-            if range_info is not None:
-                range_tuples.append((r, range_info))
-            else:
-                logger.warning(
-                    "Incremental update failed: None of the parent ranges %s "
-                    "found in routing map for collection '%s'. "
-                    "Falling back to full refresh.",
-                    parents,
-                    collection_link,
-                )
-                raise _NeedFullRefresh()
+        range_info = None
+        for parent_id in parents:
+            if parent_id in previous_routing_map._rangeById:  # pylint: disable=protected-access
+                parent_range_tuple = previous_routing_map._rangeById[parent_id]  # pylint: disable=protected-access
+                range_info = parent_range_tuple[1]
+                break
+        if range_info is not None:
+            range_tuples.append((r, range_info))
         else:
             logger.warning(
-                "Incremental update encountered range '%s' with no parents "
-                "for collection '%s'. Falling back to full refresh.",
-                r.get('id', '<unknown>'),
+                "Incremental update failed: None of the parent ranges %s "
+                "found in routing map for collection '%s'. "
+                "Falling back to full refresh.",
+                parents,
                 collection_link,
             )
             raise _NeedFullRefresh()
@@ -240,7 +249,16 @@ def determine_refresh_action(
 
     Called **inside** the per-collection lock.
 
-    :returns: ``(should_fetch, base_routing_map)``
+    :param dict collection_routing_map_by_item: The cache dictionary mapping
+        collection IDs to their routing maps.
+    :param str collection_id: The ID of the collection.
+    :param bool force_refresh: Whether to force a refresh of the routing map.
+    :param previous_routing_map: The routing map from the previous operation,
+        used to detect staleness, or ``None``.
+    :type previous_routing_map:
+        ~azure.cosmos._routing.collection_routing_map.CollectionRoutingMap
+        or None
+    :return: A tuple of ``(should_fetch, base_routing_map)``.
     :rtype: tuple[bool, CollectionRoutingMap | None]
     """
     existing_routing_map = collection_routing_map_by_item.get(collection_id)
@@ -254,7 +272,7 @@ def determine_refresh_action(
         return False, None
 
     if needs_refresh and previous_routing_map:
-        base_routing_map = previous_routing_map
+        base_routing_map: Optional[CollectionRoutingMap] = previous_routing_map
     else:
         base_routing_map = existing_routing_map
 
@@ -282,8 +300,11 @@ def get_smart_overlapping_ranges(partition_key_ranges):
     function, because a generator function in Python always returns a
     generator object (never a plain list).
 
-    :param partition_key_ranges: Sorted, non-overlapping list of ranges.
+    :param list partition_key_ranges: Sorted, non-overlapping list of ranges.
         Must not be empty.
+    :return: A generator that yields query ranges and ultimately returns
+        the list of target partition key ranges via ``StopIteration.value``.
+    :rtype: list
     :raises ValueError: If the ranges are not sorted and non-overlapping.
     """
 

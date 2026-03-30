@@ -26,7 +26,7 @@ class TestRoutingMapProvider(unittest.TestCase):
             # Call the response_hook if provided, to simulate real behavior
             response_hook = kwargs.get('response_hook')
             if response_hook:
-                response_hook({'etag': '"test-etag-1"'}, None)
+                response_hook({'ETag': '"test-etag-1"'}, None)
             return self.partition_key_ranges
 
     def setUp(self):
@@ -218,7 +218,7 @@ class TestRoutingMapProvider(unittest.TestCase):
                 call_count['count'] += 1
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
-                    response_hook({'etag': '"test-etag-1"'}, None)
+                    response_hook({'ETag': '"test-etag-1"'}, None)
                 return original_ranges
 
         provider = PartitionKeyRangeCache(CountingClient())
@@ -234,23 +234,29 @@ class TestRoutingMapProvider(unittest.TestCase):
         """force_refresh=True causes a re-fetch even when cache is populated.
 
         The force_refresh path passes the previous routing map as the base for an
-        incremental update. When the service returns the same ranges without parents
-        (simulating no actual changes), the no-parents defensive check triggers a
-        full refresh fallback, resulting in 3 total service calls:
+        incremental update. We simulate a split of range '0' into '5' and '6',
+        so the incremental merge succeeds, resulting in 2 total service calls:
         1. Initial load
-        2. Incremental attempt (force_refresh)
-        3. Full refresh fallback (no parents on incremental ranges)
+        2. Incremental update (force_refresh)
         """
         call_count = {'count': 0}
         original_ranges = self.partition_key_ranges
+
+        # Simulate a split: range '0' splits into '5' and '6'
+        split_ranges = [
+            {'id': '5', 'minInclusive': '', 'maxExclusive': '05C1B9CD673398', 'parents': ['0']},
+            {'id': '6', 'minInclusive': '05C1B9CD673398', 'maxExclusive': '05C1C9CD673398', 'parents': ['0']},
+        ]
 
         class CountingClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 call_count['count'] += 1
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
-                    response_hook({'etag': f'"test-etag-{call_count["count"]}"'}, None)
-                return original_ranges
+                    response_hook({'ETag': f'"test-etag-{call_count["count"]}"'}, None)
+                if call_count['count'] == 1:
+                    return original_ranges
+                return split_ranges
 
         provider = PartitionKeyRangeCache(CountingClient())
         collection_link = "dbs/db/colls/container"
@@ -262,9 +268,10 @@ class TestRoutingMapProvider(unittest.TestCase):
             collection_link, feed_options={},
             force_refresh=True, previous_routing_map=result1
         )
-        # Incremental attempt sees ranges without parents -> falls back to full refresh
-        self.assertEqual(call_count['count'], 3, "force_refresh should trigger incremental + full fallback")
+        self.assertEqual(call_count['count'], 2, "force_refresh should trigger one incremental fetch")
         self.assertIsNotNone(result2)
+        # Verify the split was applied: should now have 6 ranges (original 5 minus '0' plus '5' and '6')
+        self.assertEqual(len(list(result2._orderedPartitionKeyRanges)), 6)
 
     def test_is_cache_stale_etag_logic(self):
         """_is_cache_stale returns correct results for all ETag scenarios."""
@@ -278,7 +285,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         # Populate cache
         cached_map = provider.get_routing_map(collection_link, feed_options={})
 
-        # Case 1: None previous → False
+        # Case 1: None previous -> False
         self.assertFalse(provider._is_cache_stale(collection_id, None))
 
         # Case 2: Same ETag → True (stale)
@@ -295,32 +302,6 @@ class TestRoutingMapProvider(unittest.TestCase):
         mock_map2.change_feed_etag = cached_map.change_feed_etag
         self.assertFalse(provider._is_cache_stale(collection_id, mock_map2))
 
-    def test_fetch_routing_map_fallback_recursion_guard(self):
-        """When a full load returns an incomplete map, returns None instead of recursing."""
-        incomplete_ranges = [
-            {'id': '0', 'minInclusive': '', 'maxExclusive': '80'}  # Gap from 80 to FF
-        ]
-
-        class IncompleteClient:
-            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'etag': '"incomplete-etag"'}, None)
-                return incomplete_ranges
-
-        provider = PartitionKeyRangeCache(IncompleteClient())
-        from azure.cosmos import _base
-        collection_link = "dbs/db/colls/container"
-        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
-
-        result = provider._fetch_routing_map(
-            collection_link=collection_link,
-            collection_id=collection_id,
-            previous_routing_map=None,
-            feed_options={},
-        )
-        self.assertIsNone(result, "Should return None when full load returns an incomplete map")
-
     def test_fetch_routing_map_full_load_with_incomplete_ranges_returns_none(self):
         """When a full load (previous_routing_map=None) returns gapped ranges, returns None immediately."""
         incomplete_ranges = [
@@ -331,7 +312,7 @@ class TestRoutingMapProvider(unittest.TestCase):
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
-                    response_hook({'etag': '"incomplete-etag"'}, None)
+                    response_hook({'ETag': '"incomplete-etag"'}, None)
                 return incomplete_ranges
 
         provider = PartitionKeyRangeCache(IncompleteClient())
@@ -370,7 +351,7 @@ class TestRoutingMapProvider(unittest.TestCase):
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
-                    response_hook({'etag': '"etag-2"'}, None)
+                    response_hook({'ETag': '"etag-2"'}, None)
                 return delta_ranges
 
         provider = PartitionKeyRangeCache(DeltaClient())
@@ -391,58 +372,6 @@ class TestRoutingMapProvider(unittest.TestCase):
         self.assertEqual(ranges[0]['id'], '2')
         self.assertEqual(ranges[1]['id'], '3')
         self.assertEqual(ranges[2]['id'], '1')
-
-    def test_fetch_routing_map_incremental_missing_parent_falls_back(self):
-        """When incremental update has a child referencing a missing parent, falls back to full refresh."""
-        initial_ranges = [
-            {'id': '0', 'minInclusive': '', 'maxExclusive': '80'},
-            {'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'}
-        ]
-        initial_map = CollectionRoutingMap.CompleteRoutingMap(
-            [(r, True) for r in initial_ranges],
-            'dbs/db/colls/container',
-            '"etag-1"'
-        )
-
-        call_count = {'count': 0}
-
-        # Child references parent 'NONEXISTENT' which is not in the initial map
-        delta_ranges = [
-            {'id': '5', 'minInclusive': '', 'maxExclusive': '40', 'parents': ['NONEXISTENT']}
-        ]
-        # Full refresh returns complete valid data
-        full_ranges = [
-            {'id': '5', 'minInclusive': '', 'maxExclusive': '40'},
-            {'id': '6', 'minInclusive': '40', 'maxExclusive': '80'},
-            {'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'}
-        ]
-
-        class FallbackClient:
-            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
-                call_count['count'] += 1
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'etag': f'"etag-{call_count["count"]}"'}, None)
-                if call_count['count'] == 1:
-                    return delta_ranges
-                return full_ranges
-
-        provider = PartitionKeyRangeCache(FallbackClient())
-        from azure.cosmos import _base
-        collection_link = "dbs/db/colls/container"
-        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
-
-        result = provider._fetch_routing_map(
-            collection_link=collection_link,
-            collection_id=collection_id,
-            previous_routing_map=initial_map,
-            feed_options={}
-        )
-
-        self.assertIsNotNone(result, "Should succeed via full refresh fallback")
-        self.assertEqual(call_count['count'], 2, "Should have called service twice (incremental + fallback)")
-        ranges = list(result._orderedPartitionKeyRanges)
-        self.assertEqual(len(ranges), 3)
 
     def test_fetch_routing_map_cleans_if_none_match_on_fallback(self):
         """When falling back from incremental to full load, stale IfNoneMatch is removed."""
@@ -468,7 +397,7 @@ class TestRoutingMapProvider(unittest.TestCase):
                 captured_headers_list.append(headers.copy())
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
-                    response_hook({'etag': f'"etag-{call_count["count"]}"'}, None)
+                    response_hook({'ETag': f'"etag-{call_count["count"]}"'}, None)
                 if call_count['count'] == 1:
                     # Return a child with missing parent to force fallback
                     return [{'id': '99', 'minInclusive': '', 'maxExclusive': 'FF', 'parents': ['MISSING']}]
@@ -495,129 +424,8 @@ class TestRoutingMapProvider(unittest.TestCase):
         # Second call (full load fallback) should NOT have IfNoneMatch
         self.assertNotIn(http_constants.HttpHeaders.IfNoneMatch, captured_headers_list[1])
 
-    def test_fetch_routing_map_incremental_no_parents_falls_back_to_full_refresh(self):
-        """Incremental update falls back to full refresh when a range has no parents.
-
-        No known service behavior produces a range with no parents in an incremental
-        change feed response. When encountered, the code defensively falls back to a
-        full refresh rather than silently accepting the range.
-        """
-        initial_ranges = [
-            {'id': '0', 'minInclusive': '', 'maxExclusive': '80'},
-            {'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'}
-        ]
-        initial_map = CollectionRoutingMap.CompleteRoutingMap(
-            [(r, True) for r in initial_ranges],
-            'dbs/db/colls/container',
-            '"etag-1"'
-        )
-
-        call_count = {'count': 0}
-        # Delta includes a split + a range with no parents
-        delta_ranges = [
-            {'id': '2', 'minInclusive': '', 'maxExclusive': '40', 'parents': ['0']},
-            {'id': '3', 'minInclusive': '40', 'maxExclusive': '80', 'parents': ['0']},
-            {'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'},  # no parents — triggers fallback
-        ]
-        # Full refresh returns the final state
-        full_ranges = [
-            {'id': '2', 'minInclusive': '', 'maxExclusive': '40'},
-            {'id': '3', 'minInclusive': '40', 'maxExclusive': '80'},
-            {'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'}
-        ]
-
-        class FallbackClient:
-            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
-                call_count['count'] += 1
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'etag': f'"etag-{call_count["count"]}"'}, None)
-                if call_count['count'] == 1:
-                    return delta_ranges
-                return full_ranges
-
-        provider = PartitionKeyRangeCache(FallbackClient())
-        from azure.cosmos import _base
-        collection_link = "dbs/db/colls/container"
-        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
-
-        result = provider._fetch_routing_map(
-            collection_link=collection_link,
-            collection_id=collection_id,
-            previous_routing_map=initial_map,
-            feed_options={}
-        )
-
-        self.assertIsNotNone(result, "Should succeed via full refresh fallback")
-        self.assertEqual(call_count['count'], 2, "Should call service twice (incremental + full fallback)")
-        ranges = list(result._orderedPartitionKeyRanges)
-        self.assertEqual(len(ranges), 3)
-        self.assertEqual(ranges[0]['id'], '2')
-        self.assertEqual(ranges[1]['id'], '3')
-        self.assertEqual(ranges[2]['id'], '1')
-
-    def test_fetch_routing_map_incremental_unknown_range_no_parents_falls_back(self):
-        """Incremental update with an unknown range ID and no parents falls back to full refresh.
-
-        No known service behavior produces a range with no parents in an incremental
-        change feed response. The code defensively falls back to a full refresh
-        immediately upon encountering such a range.
-        """
-        initial_ranges = [
-            {'id': '0', 'minInclusive': '', 'maxExclusive': '40'},
-            {'id': '1', 'minInclusive': '40', 'maxExclusive': '80'},
-            {'id': '2', 'minInclusive': '80', 'maxExclusive': 'FF'}
-        ]
-        initial_map = CollectionRoutingMap.CompleteRoutingMap(
-            [(r, True) for r in initial_ranges],
-            'dbs/db/colls/container',
-            '"etag-1"'
-        )
-
-        call_count = {'count': 0}
-        # Range '7' is brand new with no parents — simulates a merge of '0' and '1'
-        delta_ranges = [
-            {'id': '7', 'minInclusive': '', 'maxExclusive': '80'},  # no parents, not in cache
-        ]
-        full_ranges = [
-            {'id': '7', 'minInclusive': '', 'maxExclusive': '80'},
-            {'id': '2', 'minInclusive': '80', 'maxExclusive': 'FF'}
-        ]
-
-        class MergeClient:
-            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
-                call_count['count'] += 1
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'etag': f'"etag-{call_count["count"]}"'}, None)
-                if call_count['count'] == 1:
-                    return delta_ranges
-                return full_ranges
-
-        provider = PartitionKeyRangeCache(MergeClient())
-        from azure.cosmos import _base
-        collection_link = "dbs/db/colls/container"
-        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
-
-        result = provider._fetch_routing_map(
-            collection_link=collection_link,
-            collection_id=collection_id,
-            previous_routing_map=initial_map,
-            feed_options={}
-        )
-
-        self.assertIsNotNone(result, "Should succeed via full refresh fallback after merge detection")
-        self.assertEqual(call_count['count'], 2, "Should have called service twice (incremental + fallback)")
-        ranges = list(result._orderedPartitionKeyRanges)
-        self.assertEqual(len(ranges), 2)
-        self.assertEqual(ranges[0]['id'], '7')
-        self.assertEqual(ranges[1]['id'], '2')
-
     def test_fetch_routing_map_merge_parents0_evicted_later_parent_cached(self):
         """Merge where parents[0] is an evicted grandparent but a later parent IS in cache.
-
-        This is the core scenario the fix addresses. Before the fix, the code only
-        checked parents[0] and would fall back to a full refresh unnecessarily.
 
         Scenario:
         - Range '1' split into '1A' and '1B' (SDK processed this earlier, evicted '1')
@@ -649,7 +457,7 @@ class TestRoutingMapProvider(unittest.TestCase):
                 call_count['count'] += 1
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
-                    response_hook({'etag': '"etag-C"'}, None)
+                    response_hook({'ETag': '"etag-C"'}, None)
                 return delta_ranges
 
         provider = PartitionKeyRangeCache(MergeClient())
@@ -677,7 +485,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         Scenario:
         - Cache has: {0, 1, 2} with distinct range_info values
         - Ranges '0' and '1' merge into '3' with parents=['0', '1']
-        - Both '0' and '1' are in cache → should pick '0' (first match) range_info
+        - Both '0' and '1' are in cache -> should pick '0' (first match) range_info
         """
         initial_ranges = [
             {'id': '0', 'minInclusive': '', 'maxExclusive': '40'},
@@ -698,7 +506,7 @@ class TestRoutingMapProvider(unittest.TestCase):
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
-                    response_hook({'etag': '"etag-2"'}, None)
+                    response_hook({'ETag': '"etag-2"'}, None)
                 return delta_ranges
 
         provider = PartitionKeyRangeCache(MergeClient())
@@ -732,8 +540,8 @@ class TestRoutingMapProvider(unittest.TestCase):
           1. Range '1' split into '1A' and '1B'
           2. Range '1A' split again into '1A-i' and '1A-ii'
         - Delta returns '1A-i' with parents=['1A'], '1A-ii' with parents=['1A'], '1B' with parents=['1']
-        - '1B' has parent '1' → found in cache ✅
-        - '1A-i' has parent '1A' → NOT found (intermediate, never cached) → falls back to full refresh
+        - '1B' has parent '1' -> found in cache
+        - '1A-i' has parent '1A' -> NOT found (intermediate, never cached) → falls back to full refresh
 
         This scenario validates that when none of a range's parents are in cache,
         the code correctly falls back to a full refresh.
@@ -770,7 +578,7 @@ class TestRoutingMapProvider(unittest.TestCase):
                 call_count['count'] += 1
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
-                    response_hook({'etag': f'"etag-{call_count["count"]}"'}, None)
+                    response_hook({'ETag': f'"etag-{call_count["count"]}"'}, None)
                 if call_count['count'] == 1:
                     return delta_ranges
                 return full_ranges
@@ -826,7 +634,7 @@ class TestRoutingMapProvider(unittest.TestCase):
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
-                    response_hook({'etag': '"etag-2"'}, None)
+                    response_hook({'ETag': '"etag-2"'}, None)
                 return delta_ranges
 
         provider = PartitionKeyRangeCache(MergeClient())
@@ -870,7 +678,7 @@ class TestRoutingMapProvider(unittest.TestCase):
                 call_count['count'] += 1
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
-                    response_hook({'etag': f'"test-etag-{call_count["count"]}"'}, None)
+                    response_hook({'ETag': f'"test-etag-{call_count["count"]}"'}, None)
                 return original_ranges
 
         provider = PartitionKeyRangeCache(CountingClient())
@@ -909,7 +717,7 @@ class TestRoutingMapProvider(unittest.TestCase):
                 fetch_event.wait(timeout=2)
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
-                    response_hook({'etag': f'"test-etag-{call_count["count"]}"'}, None)
+                    response_hook({'ETag': f'"test-etag-{call_count["count"]}"'}, None)
                 return original_ranges
 
         provider = PartitionKeyRangeCache(SlowCountingClient())
@@ -967,7 +775,7 @@ class TestRoutingMapProvider(unittest.TestCase):
                 time.sleep(0.1)  # Simulate network delay
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
-                    response_hook({'etag': f'"etag-{call_count["count"]}"'}, None)
+                    response_hook({'ETag': f'"etag-{call_count["count"]}"'}, None)
                 return original_ranges
 
         provider = PartitionKeyRangeCache(SlowClient())

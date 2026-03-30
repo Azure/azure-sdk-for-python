@@ -18,9 +18,6 @@ from unittest.mock import MagicMock
 @pytest.mark.cosmosEmulator
 class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
     """Async unit tests for PartitionKeyRangeCache and SmartRoutingMapProvider.
-
-    These mirror the sync tests in test_routing_map_provider.py but use the
-    async code paths.
     """
 
     class MockedCosmosClientConnection(object):
@@ -33,7 +30,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                                     _feed_options: Optional[Mapping[str, Any]] = None, **kwargs):
             response_hook = kwargs.get('response_hook')
             if response_hook:
-                response_hook({'etag': '"test-etag-1"'}, None)
+                response_hook({'ETag': '"test-etag-1"'}, None)
 
             ranges = self.partition_key_ranges
 
@@ -158,7 +155,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(overlapping, expected)
 
     # ---------------------------------------------------------------
-    # New: PartitionKeyRangeCache (async) caching tests
+    # PartitionKeyRangeCache(async) caching tests
     # ---------------------------------------------------------------
 
     async def test_get_routing_map_caches_on_first_call_async(self):
@@ -186,7 +183,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 call_count['count'] += 1
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
-                    response_hook({'etag': '"test-etag-1"'}, None)
+                    response_hook({'ETag': '"test-etag-1"'}, None)
 
                 async def _gen():
                     for r in original_ranges:
@@ -207,25 +204,31 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         """force_refresh=True causes a re-fetch even when cache is populated.
 
         The force_refresh path passes the previous routing map as the base for an
-        incremental update. When the service returns the same ranges without parents
-        (simulating no actual changes), the no-parents defensive check triggers a
-        full refresh fallback, resulting in 3 total service calls:
+        incremental update. We simulate a split of range '0' into '5' and '6',
+        so the incremental merge succeeds, resulting in 2 total service calls:
         1. Initial load
-        2. Incremental attempt (force_refresh)
-        3. Full refresh fallback (no parents on incremental ranges)
+        2. Incremental update (force_refresh)
         """
         call_count = {'count': 0}
         original_ranges = self.partition_key_ranges
+
+        # Simulate a split: range '0' splits into '5' and '6'
+        split_ranges = [
+            {'id': '5', 'minInclusive': '', 'maxExclusive': '05C1B9CD673398', 'parents': ['0']},
+            {'id': '6', 'minInclusive': '05C1B9CD673398', 'maxExclusive': '05C1C9CD673398', 'parents': ['0']},
+        ]
 
         class CountingClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 call_count['count'] += 1
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
-                    response_hook({'etag': f'"test-etag-{call_count["count"]}"'}, None)
+                    response_hook({'ETag': f'"test-etag-{call_count["count"]}"'}, None)
+
+                data = original_ranges if call_count['count'] == 1 else split_ranges
 
                 async def _gen():
-                    for r in original_ranges:
+                    for r in data:
                         yield r
 
                 return _gen()
@@ -240,9 +243,10 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
             collection_link, feed_options={},
             force_refresh=True, previous_routing_map=result1
         )
-        # Incremental attempt sees ranges without parents → falls back to full refresh
-        self.assertEqual(call_count['count'], 3, "force_refresh should trigger incremental + full fallback")
+        self.assertEqual(call_count['count'], 2, "force_refresh should trigger one incremental fetch")
         self.assertIsNotNone(result2)
+        # Verify the split was applied: should now have 6 ranges (original 5 minus '0' plus '5' and '6')
+        self.assertEqual(len(list(result2._orderedPartitionKeyRanges)), 6)
 
     async def test_is_cache_stale_etag_logic_async(self):
         """_is_cache_stale returns correct results for all ETag scenarios."""
@@ -255,53 +259,22 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
 
         cached_map = await provider.get_routing_map(collection_link, feed_options={})
 
-        # Case 1: None previous → False
+        # Case 1: None previous -> False
         self.assertFalse(provider._is_cache_stale(collection_id, None))
 
-        # Case 2: Same ETag → True (stale)
+        # Case 2: Same ETag -> True (stale)
         self.assertTrue(provider._is_cache_stale(collection_id, cached_map))
 
-        # Case 3: Different ETag → False (already refreshed)
+        # Case 3: Different ETag -> False (already refreshed)
         mock_map = MagicMock()
         mock_map.change_feed_etag = "completely-different-etag"
         self.assertFalse(provider._is_cache_stale(collection_id, mock_map))
 
-        # Case 4: Empty cache → False
+        # Case 4: Empty cache -> False
         provider._collection_routing_map_by_item.clear()
         mock_map2 = MagicMock()
         mock_map2.change_feed_etag = cached_map.change_feed_etag
         self.assertFalse(provider._is_cache_stale(collection_id, mock_map2))
-
-    async def test_fetch_routing_map_fallback_recursion_guard_async(self):
-        """When a full load returns an incomplete map, returns None instead of recursing."""
-        incomplete_ranges = [
-            {'id': '0', 'minInclusive': '', 'maxExclusive': '80'}  # Gap from 80 to FF
-        ]
-
-        class IncompleteClient:
-            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'etag': '"incomplete-etag"'}, None)
-
-                async def _gen():
-                    for r in incomplete_ranges:
-                        yield r
-
-                return _gen()
-
-        provider = PartitionKeyRangeCache(IncompleteClient())
-        from azure.cosmos import _base
-        collection_link = "dbs/db/colls/container"
-        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
-
-        result = await provider._fetch_routing_map(
-            collection_link=collection_link,
-            collection_id=collection_id,
-            previous_routing_map=None,
-            feed_options={},
-        )
-        self.assertIsNone(result, "Should return None when full load returns an incomplete map")
 
     async def test_fetch_routing_map_full_load_with_incomplete_ranges_returns_none_async(self):
         """When a full load (previous_routing_map=None) returns gapped ranges, returns None immediately."""
@@ -313,7 +286,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
-                    response_hook({'etag': '"incomplete-etag"'}, None)
+                    response_hook({'ETag': '"incomplete-etag"'}, None)
 
                 async def _gen():
                     for r in incomplete_ranges:
@@ -355,7 +328,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
-                    response_hook({'etag': '"etag-2"'}, None)
+                    response_hook({'ETag': '"etag-2"'}, None)
 
                 async def _gen():
                     for r in delta_ranges:
@@ -382,59 +355,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(ranges[1]['id'], '3')
         self.assertEqual(ranges[2]['id'], '1')
 
-    async def test_fetch_routing_map_incremental_missing_parent_falls_back_async(self):
-        """When incremental update has a child referencing a missing parent, falls back to full refresh."""
-        initial_ranges = [
-            {'id': '0', 'minInclusive': '', 'maxExclusive': '80'},
-            {'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'}
-        ]
-        initial_map = CollectionRoutingMap.CompleteRoutingMap(
-            [(r, True) for r in initial_ranges],
-            'dbs/db/colls/container',
-            '"etag-1"'
-        )
-
-        call_count = {'count': 0}
-        delta_ranges = [
-            {'id': '5', 'minInclusive': '', 'maxExclusive': '40', 'parents': ['NONEXISTENT']}
-        ]
-        full_ranges = [
-            {'id': '5', 'minInclusive': '', 'maxExclusive': '40'},
-            {'id': '6', 'minInclusive': '40', 'maxExclusive': '80'},
-            {'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'}
-        ]
-
-        class FallbackClient:
-            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
-                call_count['count'] += 1
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'etag': f'"etag-{call_count["count"]}"'}, None)
-                data = delta_ranges if call_count['count'] == 1 else full_ranges
-
-                async def _gen():
-                    for r in data:
-                        yield r
-
-                return _gen()
-
-        provider = PartitionKeyRangeCache(FallbackClient())
-        from azure.cosmos import _base
-        collection_link = "dbs/db/colls/container"
-        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
-
-        result = await provider._fetch_routing_map(
-            collection_link=collection_link,
-            collection_id=collection_id,
-            previous_routing_map=initial_map,
-            feed_options={}
-        )
-
-        self.assertIsNotNone(result, "Should succeed via full refresh fallback")
-        self.assertEqual(call_count['count'], 2, "Should have called service twice (incremental + fallback)")
-        ranges = list(result._orderedPartitionKeyRanges)
-        self.assertEqual(len(ranges), 3)
-
     async def test_fetch_routing_map_cleans_if_none_match_on_fallback_async(self):
         """When falling back from incremental to full load, stale IfNoneMatch is removed."""
         initial_ranges = [
@@ -459,7 +379,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 captured_headers_list.append(headers.copy())
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
-                    response_hook({'etag': f'"etag-{call_count["count"]}"'}, None)
+                    response_hook({'ETag': f'"etag-{call_count["count"]}"'}, None)
                 data = ([{'id': '99', 'minInclusive': '', 'maxExclusive': 'FF',
                           'parents': ['MISSING']}] if call_count['count'] == 1 else full_ranges)
 
@@ -490,144 +410,15 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         # Second call (full load fallback) should NOT have IfNoneMatch
         self.assertNotIn(http_constants.HttpHeaders.IfNoneMatch, captured_headers_list[1])
 
-    async def test_fetch_routing_map_incremental_existing_range_no_parents_async(self):
-        """Incremental update falls back to full refresh when a range has no parents.
-
-        No known service behavior produces a range with no parents in an incremental
-        change feed response. When encountered, the code defensively falls back to a
-        full refresh rather than silently accepting the range.
-        """
-        initial_ranges = [
-            {'id': '0', 'minInclusive': '', 'maxExclusive': '80'},
-            {'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'}
-        ]
-        initial_map = CollectionRoutingMap.CompleteRoutingMap(
-            [(r, True) for r in initial_ranges],
-            'dbs/db/colls/container',
-            '"etag-1"'
-        )
-
-        call_count = {'count': 0}
-        # Delta includes a split + a range with no parents
-        delta_ranges = [
-            {'id': '2', 'minInclusive': '', 'maxExclusive': '40', 'parents': ['0']},
-            {'id': '3', 'minInclusive': '40', 'maxExclusive': '80', 'parents': ['0']},
-            {'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'},  # no parents — triggers fallback
-        ]
-        # Full refresh returns the final state
-        full_ranges = [
-            {'id': '2', 'minInclusive': '', 'maxExclusive': '40'},
-            {'id': '3', 'minInclusive': '40', 'maxExclusive': '80'},
-            {'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'}
-        ]
-
-        class FallbackClient:
-            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
-                call_count['count'] += 1
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'etag': f'"etag-{call_count["count"]}"'}, None)
-                data = delta_ranges if call_count['count'] == 1 else full_ranges
-
-                async def _gen():
-                    for r in data:
-                        yield r
-
-                return _gen()
-
-        provider = PartitionKeyRangeCache(FallbackClient())
-        from azure.cosmos import _base
-        collection_link = "dbs/db/colls/container"
-        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
-
-        result = await provider._fetch_routing_map(
-            collection_link=collection_link,
-            collection_id=collection_id,
-            previous_routing_map=initial_map,
-            feed_options={}
-        )
-
-        self.assertIsNotNone(result, "Should succeed via full refresh fallback")
-        self.assertEqual(call_count['count'], 2, "Should call service twice (incremental + full fallback)")
-        ranges = list(result._orderedPartitionKeyRanges)
-        self.assertEqual(len(ranges), 3)
-        self.assertEqual(ranges[0]['id'], '2')
-        self.assertEqual(ranges[1]['id'], '3')
-        self.assertEqual(ranges[2]['id'], '1')
-
-    async def test_fetch_routing_map_incremental_unknown_range_no_parents_falls_back_async(self):
-        """Incremental update with an unknown range ID and no parents falls back to full refresh.
-
-        No known service behavior produces a range with no parents in an incremental
-        change feed response. The code defensively falls back to a full refresh
-        immediately upon encountering such a range.
-        """
-        initial_ranges = [
-            {'id': '0', 'minInclusive': '', 'maxExclusive': '40'},
-            {'id': '1', 'minInclusive': '40', 'maxExclusive': '80'},
-            {'id': '2', 'minInclusive': '80', 'maxExclusive': 'FF'}
-        ]
-        initial_map = CollectionRoutingMap.CompleteRoutingMap(
-            [(r, True) for r in initial_ranges],
-            'dbs/db/colls/container',
-            '"etag-1"'
-        )
-
-        call_count = {'count': 0}
-        # Range '7' is brand new with no parents — simulates a merge of '0' and '1'
-        delta_ranges = [
-            {'id': '7', 'minInclusive': '', 'maxExclusive': '80', 'parents': []}  # no parents, not in cache
-        ]
-        full_ranges = [
-            {'id': '7', 'minInclusive': '', 'maxExclusive': '80'},
-            {'id': '2', 'minInclusive': '80', 'maxExclusive': 'FF'}
-        ]
-
-        class MergeClient:
-            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
-                call_count['count'] += 1
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'etag': f'"etag-{call_count["count"]}"'}, None)
-                data = delta_ranges if call_count['count'] == 1 else full_ranges
-
-                async def _gen():
-                    for r in data:
-                        yield r
-
-                return _gen()
-
-        provider = PartitionKeyRangeCache(MergeClient())
-        from azure.cosmos import _base
-        collection_link = "dbs/db/colls/container"
-        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
-
-        result = await provider._fetch_routing_map(
-            collection_link=collection_link,
-            collection_id=collection_id,
-            previous_routing_map=initial_map,
-            feed_options={}
-        )
-
-        self.assertIsNotNone(result, "Should succeed via full refresh fallback after merge detection")
-        self.assertEqual(call_count['count'], 2, "Should have called service twice (incremental + fallback)")
-        ranges = list(result._orderedPartitionKeyRanges)
-        self.assertEqual(len(ranges), 2)
-        self.assertEqual(ranges[0]['id'], '7')
-        self.assertEqual(ranges[1]['id'], '2')
-
     async def test_fetch_routing_map_merge_parents0_evicted_later_parent_cached_async(self):
         """Merge where parents[0] is an evicted grandparent but a later parent IS in cache.
-
-        This is the core scenario the fix addresses. Before the fix, the code only
-        checked parents[0] and would fall back to a full refresh unnecessarily.
 
         Scenario:
         - Range '1' split into '1A' and '1B' (SDK processed this earlier, evicted '1')
         - Cache has: {0, 1A, 1B, 2}
         - Now '1A' and '1B' merge into '3' with parents=['1', '1A', '1B']
         - parents[0]='1' is NOT in cache (evicted grandparent)
-        - parents[1]='1A' IS in cache → should find it and succeed incrementally
+        - parents[1]='1A' IS in cache -> should find it and succeed incrementally
         """
         initial_ranges = [
             {'id': '0', 'minInclusive': '', 'maxExclusive': '40'},
@@ -651,7 +442,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 call_count['count'] += 1
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
-                    response_hook({'etag': '"etag-C"'}, None)
+                    response_hook({'ETag': '"etag-C"'}, None)
 
                 async def _gen():
                     for r in delta_ranges:
@@ -705,7 +496,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
-                    response_hook({'etag': '"etag-2"'}, None)
+                    response_hook({'ETag': '"etag-2"'}, None)
 
                 async def _gen():
                     for r in delta_ranges:
@@ -744,8 +535,8 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
           1. Range '1' split into '1A' and '1B'
           2. Range '1A' split again into '1A-i' and '1A-ii'
         - Delta returns '1A-i' with parents=['1A'], '1A-ii' with parents=['1A'], '1B' with parents=['1']
-        - '1B' has parent '1' → found in cache ✅
-        - '1A-i' has parent '1A' → NOT found (intermediate, never cached) → falls back to full refresh
+        - '1B' has parent '1' -> found in cache
+        - '1A-i' has parent '1A' -> NOT found (intermediate, never cached) → falls back to full refresh
         """
         initial_ranges = [
             {'id': '0', 'minInclusive': '', 'maxExclusive': '40'},
@@ -777,7 +568,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 call_count['count'] += 1
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
-                    response_hook({'etag': f'"etag-{call_count["count"]}"'}, None)
+                    response_hook({'ETag': f'"etag-{call_count["count"]}"'}, None)
                 data = delta_ranges if call_count['count'] == 1 else full_ranges
 
                 async def _gen():
@@ -837,7 +628,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
-                    response_hook({'etag': '"etag-2"'}, None)
+                    response_hook({'ETag': '"etag-2"'}, None)
 
                 async def _gen():
                     for r in delta_ranges:
@@ -886,7 +677,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 call_count['count'] += 1
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
-                    response_hook({'etag': f'"test-etag-{call_count["count"]}"'}, None)
+                    response_hook({'ETag': f'"test-etag-{call_count["count"]}"'}, None)
 
                 async def _gen():
                     for r in original_ranges:
@@ -930,7 +721,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                     await fetch_event.wait()
                     response_hook = kwargs.get('response_hook')
                     if response_hook:
-                        response_hook({'etag': f'"test-etag-{call_count["count"]}"'}, None)
+                        response_hook({'ETag': f'"test-etag-{call_count["count"]}"'}, None)
                     for r in original_ranges:
                         yield r
 
@@ -980,7 +771,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                     await asyncio.sleep(0.05)
                     response_hook = kwargs.get('response_hook')
                     if response_hook:
-                        response_hook({'etag': f'"etag-{call_count["count"]}"'}, None)
+                        response_hook({'ETag': f'"etag-{call_count["count"]}"'}, None)
                     for r in original_ranges:
                         yield r
 

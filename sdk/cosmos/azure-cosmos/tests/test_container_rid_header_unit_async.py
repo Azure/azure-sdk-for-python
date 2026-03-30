@@ -6,7 +6,6 @@ Async unit tests to verify that the `containerRID` option (which becomes the
 `x-ms-cosmos-intended-collection-rid` HTTP header) flows through every
 async code path that can trigger a partition key range fetch.
 
-This is the async counterpart of test_container_rid_header_unit.py.
 """
 
 import unittest
@@ -67,9 +66,7 @@ class TestContainerRIDHeaderUnitAsync(unittest.IsolatedAsyncioTestCase):
     x-ms-cosmos-intended-collection-rid HTTP header) flows correctly through
     the async PartitionKeyRangeCache, SmartRoutingMapProvider, response_hook
     chaining, and the incremental-to-full-load fallback path.
-
-    format_pk_range_options and _is_cache_stale are not async — they are
-    tested only in the sync file (test_container_rid_header_unit.py)."""
+    """
 
     # ----- PartitionKeyRangeCache -----
 
@@ -101,7 +98,6 @@ class TestContainerRIDHeaderUnitAsync(unittest.IsolatedAsyncioTestCase):
             COLLECTION_LINK, [routing_range.Range("", "3F", True, False)], feed_options)
         assert client.call_count == 1, "Cache hit should not trigger another service call"
 
-    # ----- End-to-end: SmartRoutingMapProvider -> Cache -> _ReadPartitionKeyRanges -----
 
     async def test_end_to_end_containerRID_and_pk_range_flag_async(self):
         """Verifies the full async path: SmartRoutingMapProvider delegates to
@@ -153,7 +149,6 @@ class TestContainerRIDHeaderUnitAsync(unittest.IsolatedAsyncioTestCase):
         assert client.call_count == 3
         assert client.captured_feed_options.get("containerRID") == CONTAINER_RID
 
-    # ----- Incremental-to-full-load fallback and recursion guard -----
 
     async def test_full_load_removes_stale_if_none_match_header_async(self):
         """When async _fetch_routing_map falls back to a full load (no previous
@@ -257,7 +252,6 @@ class TestContainerRIDHeaderUnitAsync(unittest.IsolatedAsyncioTestCase):
         assert result is not None, "Fallback to full load should succeed"
         assert call_count[0] == 2, "Should have called service twice: incremental + full fallback"
 
-    # ----- response_hook chaining -----
 
     async def test_upstream_response_hook_is_called_async(self):
         """When the caller passes a response_hook, it must be invoked with the

@@ -245,7 +245,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
 
         The delta contains: range '3' with parents ['1', '1A', '1B'].
         - '1' is not in the cache (evicted grandparent) -> no-op on removal
-        - '1A' and '1B' ARE in the cache → removed
+        - '1A' and '1B' ARE in the cache -> removed
         - '3' is added
         Result: {0, 3, 2}
         """
