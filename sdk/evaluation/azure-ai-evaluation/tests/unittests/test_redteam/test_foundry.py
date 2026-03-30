@@ -666,8 +666,6 @@ class TestRAIServiceScorer:
                 metric="violence",
                 score=5,
                 reason="Contains violent content",
-                threshold=3,
-                passed=False,
                 label="high",
             )
         ]
@@ -682,7 +680,7 @@ class TestRAIServiceScorer:
 
             assert len(scores) == 1
             score = scores[0]
-            assert score.score_value == "true"  # Attack succeeded (score > threshold)
+            assert score.score_value == "true"  # Attack succeeded (score 5 > default threshold 3)
             assert score.score_type == "true_false"
 
     @pytest.mark.asyncio
@@ -712,8 +710,6 @@ class TestRAIServiceScorer:
                 metric="violence",
                 score=1,
                 reason="No harmful content",
-                threshold=3,
-                passed=True,
                 label="low",
             )
         ]
@@ -728,7 +724,7 @@ class TestRAIServiceScorer:
 
             assert len(scores) == 1
             score = scores[0]
-            assert score.score_value == "false"  # Attack failed
+            assert score.score_value == "false"  # Attack failed (score 1 <= default threshold 3)
 
     @pytest.mark.asyncio
     async def test_score_async_error_handling(self, mock_credential, mock_azure_ai_project, mock_logger):
