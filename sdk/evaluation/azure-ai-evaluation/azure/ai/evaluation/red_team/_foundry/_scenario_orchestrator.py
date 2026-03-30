@@ -135,7 +135,8 @@ class ScenarioOrchestrator:
                     stored_results = memory.get_scenario_results(scenario_result_ids=[scenario_result_id])
                     if stored_results:
                         self._scenario_result = stored_results[0]
-                        attack_count = len(getattr(self._scenario_result, "attack_results", []))
+                        attack_results = getattr(self._scenario_result, "attack_results", {}) or {}
+                        attack_count = len(attack_results)
                         self.logger.info(
                             "Retrieved partial results from memory for %s: %d attack groups recovered.",
                             self.risk_category,
