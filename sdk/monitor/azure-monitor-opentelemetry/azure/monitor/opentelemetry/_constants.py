@@ -40,6 +40,7 @@ TRACE_ID_RATIO_SAMPLER = "trace_id_ratio"
 PARENT_BASED_ALWAYS_ON_SAMPLER = "parentbased_always_on"
 PARENT_BASED_ALWAYS_OFF_SAMPLER = "parentbased_always_off"
 PARENT_BASED_TRACE_ID_RATIO_SAMPLER = "parentbased_trace_id_ratio"
+ENABLE_CODE_ATTRIBUTES_ARG = "enable_code_attributes"
 SUPPORTED_OTEL_SAMPLERS = (
     RATE_LIMITED_SAMPLER,
     FIXED_PERCENTAGE_SAMPLER,

@@ -71,6 +71,7 @@ from azure.monitor.opentelemetry._constants import (
     PARENT_BASED_TRACE_ID_RATIO_SAMPLER,
     SAMPLING_ARG,
     SAMPLER_TYPE,
+    ENABLE_CODE_ATTRIBUTES_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry._version import VERSION
@@ -110,6 +111,7 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     _default_views(configurations)
     _default_enable_trace_based_sampling(configurations)
     _default_browser_sdk_loader(configurations)
+    _default_enable_code_attributes(configurations)
 
     return configurations
 
@@ -120,6 +122,10 @@ def _default_disable_logging(configurations):
         if environ[OTEL_LOGS_EXPORTER].lower().strip() == "none":
             default = True
     configurations[DISABLE_LOGGING_ARG] = default
+
+def _default_enable_code_attributes(configurations):
+    default = False
+    configurations[ENABLE_CODE_ATTRIBUTES_ARG] = configurations.get(ENABLE_CODE_ATTRIBUTES_ARG, default)
 
 
 def _default_disable_metrics(configurations):

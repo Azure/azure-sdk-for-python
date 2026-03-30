@@ -3,6 +3,7 @@
 ## 1.8.8 (Unreleased)
 
 ### Features Added
+- Added `enable_code_attributes` configuration option to include log code attributes in custom dimensions
 
 ### Breaking Changes
 
