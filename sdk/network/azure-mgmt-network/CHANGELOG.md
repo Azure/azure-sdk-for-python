@@ -144,28 +144,29 @@
   - Added model `VpnClientRootCertificatePropertiesFormat`
   - Added model `WebApplicationFirewallPolicyPropertiesFormat`
   - Added model `WritableResource`
-  - Operation group `IpamPoolsOperations` added parameter `etag` in method `begin_create`
-  - Operation group `IpamPoolsOperations` added parameter `match_condition` in method `begin_create`
-  - Operation group `IpamPoolsOperations` added parameter `etag` in method `begin_delete`
-  - Operation group `IpamPoolsOperations` added parameter `match_condition` in method `begin_delete`
-  - Operation group `IpamPoolsOperations` added parameter `etag` in method `update`
-  - Operation group `IpamPoolsOperations` added parameter `match_condition` in method `update`
-  - Operation group `NetworkGroupsOperations` added parameter `etag` in method `create_or_update`
-  - Operation group `NetworkGroupsOperations` added parameter `match_condition` in method `create_or_update`
-  - Operation group `VerifierWorkspacesOperations` added parameter `etag` in method `begin_delete`
-  - Operation group `VerifierWorkspacesOperations` added parameter `match_condition` in method `begin_delete`
-  - Operation group `VerifierWorkspacesOperations` added parameter `etag` in method `create`
-  - Operation group `VerifierWorkspacesOperations` added parameter `match_condition` in method `create`
-  - Operation group `VerifierWorkspacesOperations` added parameter `etag` in method `update`
-  - Operation group `VerifierWorkspacesOperations` added parameter `match_condition` in method `update`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Method `IpamPoolsOperations.begin_create` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `IpamPoolsOperations.begin_delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `IpamPoolsOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `NetworkGroupsOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `VerifierWorkspacesOperations.begin_delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `VerifierWorkspacesOperations.create` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `VerifierWorkspacesOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `ConnectionMonitorEndpointFilter` renamed its instance variable `items` to `items_property`
   - Model `ExceptionEntry` renamed its instance variable `values` to `values_property`
   - Model `FilterItems` renamed its instance variable `values` to `values_property`
   - Model `ServiceTagsListResult` renamed its instance variable `values` to `values_property`
+  - Renamed model `Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties` to `ManagedServiceIdentityUserAssignedIdentities`
+  - Deleted or renamed model `TrackedResource`
+
+### Other Changes
+
+  - Model `IpamPoolPrefixAllocation` moved instance variable `id` under property `pool`
   - Model `ActiveConnectivityConfiguration` moved instance variable `description`, `connectivity_topology`, `hubs`, `is_global`, `connectivity_capabilities`, `applies_to_groups`, `provisioning_state`, `delete_existing_peering` and `resource_guid` under property `properties`
   - Model `ActiveDefaultSecurityAdminRule` moved instance variable `description`, `flag`, `protocol`, `sources`, `destinations`, `source_port_ranges`, `destination_port_ranges`, `access`, `priority`, `direction`, `provisioning_state` and `resource_guid` under property `properties`
   - Model `ActiveSecurityAdminRule` moved instance variable `description`, `protocol`, `sources`, `destinations`, `source_port_ranges`, `destination_port_ranges`, `access`, `priority`, `direction`, `provisioning_state` and `resource_guid` under property `properties`
@@ -245,7 +246,6 @@
   - Model `InboundNatRule` moved instance variable `frontend_ip_configuration`, `backend_ip_configuration`, `protocol`, `frontend_port`, `backend_port`, `idle_timeout_in_minutes`, `enable_floating_ip`, `enable_tcp_reset`, `frontend_port_range_start`, `frontend_port_range_end`, `backend_address_pool` and `provisioning_state` under property `properties`
   - Model `IpAllocation` moved instance variable `subnet`, `virtual_network`, `type_properties_type`, `prefix`, `prefix_length`, `prefix_type`, `ipam_allocation_id` and `allocation_tags` under property `properties`
   - Model `IpGroup` moved instance variable `provisioning_state`, `ip_addresses`, `firewalls` and `firewall_policies` under property `properties`
-  - Model `IpamPoolPrefixAllocation` moved instance variable `id` under property `pool`
   - Model `LoadBalancer` moved instance variable `frontend_ip_configurations`, `backend_address_pools`, `load_balancing_rules`, `probes`, `inbound_nat_rules`, `inbound_nat_pools`, `outbound_rules`, `resource_guid`, `provisioning_state` and `scope` under property `properties`
   - Model `LoadBalancerBackendAddress` moved instance variable `virtual_network`, `subnet`, `ip_address`, `network_interface_ip_configuration`, `load_balancer_frontend_ip_configuration`, `inbound_nat_rules_port_mapping` and `admin_state` under property `properties`
   - Model `LoadBalancingRule` moved instance variable `frontend_ip_configuration`, `backend_address_pool`, `backend_address_pools`, `probe`, `protocol`, `load_distribution`, `frontend_port`, `backend_port`, `idle_timeout_in_minutes`, `enable_floating_ip`, `enable_tcp_reset`, `disable_outbound_snat`, `enable_connection_tracking` and `provisioning_state` under property `properties`
@@ -302,34 +302,9 @@
   - Model `VpnClientRevokedCertificate` moved instance variable `thumbprint` and `provisioning_state` under property `properties`
   - Model `VpnClientRootCertificate` moved instance variable `public_cert_data` and `provisioning_state` under property `properties`
   - Model `WebApplicationFirewallPolicy` moved instance variable `policy_settings`, `custom_rules`, `application_gateways`, `provisioning_state`, `resource_state`, `managed_rules`, `http_listeners`, `path_based_rules` and `application_gateway_for_containers` under property `properties`
-  - Model `PacketCapture` deleted or renamed its instance variable `target`
-  - Model `PacketCapture` deleted or renamed its instance variable `scope`
-  - Model `PacketCapture` deleted or renamed its instance variable `target_type`
-  - Model `PacketCapture` deleted or renamed its instance variable `bytes_to_capture_per_packet`
-  - Model `PacketCapture` deleted or renamed its instance variable `total_bytes_per_session`
-  - Model `PacketCapture` deleted or renamed its instance variable `time_limit_in_seconds`
-  - Model `PacketCapture` deleted or renamed its instance variable `storage_location`
-  - Model `PacketCapture` deleted or renamed its instance variable `filters`
-  - Model `PacketCapture` deleted or renamed its instance variable `continuous_capture`
-  - Model `PacketCapture` deleted or renamed its instance variable `capture_settings`
-  - Deleted or renamed model `AzureAsyncOperationResult`
-  - Deleted or renamed model `Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties`
-  - Deleted or renamed model `ConnectionMonitorQueryResult`
-  - Deleted or renamed model `ConnectionMonitorSourceStatus`
-  - Deleted or renamed model `ConnectionState`
-  - Deleted or renamed model `ConnectionStateSnapshot`
-  - Deleted or renamed model `EvaluationState`
-  - Deleted or renamed model `HubVirtualNetworkConnectionStatus`
-  - Deleted or renamed model `NetworkOperationStatus`
-  - Deleted or renamed model `PatchRouteFilter`
-  - Deleted or renamed model `PatchRouteFilterRule`
-  - Deleted or renamed model `TrackedResource`
-  - Deleted or renamed model `TunnelConnectionStatus`
-  - Deleted or renamed model `VpnSiteId`
+  - Model `PacketCapture` moved instance variable `target`, `scope`, `target_type`, `bytes_to_capture_per_packet`, `total_bytes_per_session`, `time_limit_in_seconds`, `storage_location`, `filters`, `continuous_capture` and `capture_settings` under property `properties`
+  - Deleted model `ApplicationGatewayAvailableSslPredefinedPolicies`/`ApplicationGatewayWafDynamicManifestResultList`/`AutoApprovedPrivateLinkServicesResult`/`AvailableDelegationsResult`/`AvailablePrivateEndpointTypesResult`/`AvailableServiceAliasesResult`/`BastionSessionDeleteResult`/`ConnectionSharedKeyResultList`/`ExpressRouteCrossConnectionPeeringList`/`GetServiceGatewayAddressLocationsResult`/`GetServiceGatewayServicesResult`/`IpamPoolList`/`ListHubRouteTablesResult`/`ListHubVirtualNetworkConnectionsResult`/`ListP2SVpnGatewaysResult`/`ListRouteMapsResult`/`ListRoutingIntentResult`/`ListVirtualHubBgpConnectionResults`/`ListVirtualHubIpConfigurationResults`/`ListVirtualHubRouteTableV2SResult`/`ListVirtualHubsResult`/`ListVirtualNetworkGatewayNatRulesResult`/`ListVirtualWANsResult`/`ListVpnConnectionsResult`/`ListVpnGatewayNatRulesResult`/`ListVpnGatewaysResult`/`ListVpnServerConfigurationPolicyGroupsResult`/`ListVpnServerConfigurationsResult`/`ListVpnSiteLinkConnectionsResult`/`ListVpnSiteLinksResult`/`ListVpnSitesResult`/`NetworkVirtualApplianceConnectionList`/`PoolAssociationList`/`StaticCidrList`/`VirtualNetworkDdosProtectionStatusResult`/`VirtualNetworkGatewayListConnectionsResult`/`VirtualNetworkListUsageResult`/`AzureAsyncOperationResult`/`ConnectionMonitorQueryResult`/`ConnectionMonitorSourceStatus`/`ConnectionState`/`ConnectionStateSnapshot`/`EvaluationState`/`HubVirtualNetworkConnectionStatus`/`NetworkOperationStatus`/`PatchRouteFilter`/`PatchRouteFilterRule`/`TunnelConnectionStatus`/`VpnSiteId` which actually were not used by SDK users
 
-### Other Changes
-
-  - Deleted model `ApplicationGatewayAvailableSslPredefinedPolicies`/`ApplicationGatewayWafDynamicManifestResultList`/`AutoApprovedPrivateLinkServicesResult`/`AvailableDelegationsResult`/`AvailablePrivateEndpointTypesResult`/`AvailableServiceAliasesResult`/`BastionSessionDeleteResult`/`ConnectionSharedKeyResultList`/`ExpressRouteCrossConnectionPeeringList`/`GetServiceGatewayAddressLocationsResult`/`GetServiceGatewayServicesResult`/`IpamPoolList`/`ListHubRouteTablesResult`/`ListHubVirtualNetworkConnectionsResult`/`ListP2SVpnGatewaysResult`/`ListRouteMapsResult`/`ListRoutingIntentResult`/`ListVirtualHubBgpConnectionResults`/`ListVirtualHubIpConfigurationResults`/`ListVirtualHubRouteTableV2SResult`/`ListVirtualHubsResult`/`ListVirtualNetworkGatewayNatRulesResult`/`ListVirtualWANsResult`/`ListVpnConnectionsResult`/`ListVpnGatewayNatRulesResult`/`ListVpnGatewaysResult`/`ListVpnServerConfigurationPolicyGroupsResult`/`ListVpnServerConfigurationsResult`/`ListVpnSiteLinkConnectionsResult`/`ListVpnSiteLinksResult`/`ListVpnSitesResult`/`NetworkVirtualApplianceConnectionList`/`PoolAssociationList`/`StaticCidrList`/`VirtualNetworkDdosProtectionStatusResult`/`VirtualNetworkGatewayListConnectionsResult`/`VirtualNetworkListUsageResult` which actually were not used by SDK users
 
 ## 30.3.0 (2026-03-25)
 
