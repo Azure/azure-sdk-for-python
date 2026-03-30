@@ -15,7 +15,16 @@ from azure.mgmt.core import ARMPipelineClient
 
 from . import models
 from ._configuration import AzureMachineLearningWorkspacesConfiguration
-from .operations import DeleteOperations, EventsOperations, ExperimentsOperations, MetricOperations, RunArtifactsOperations, RunOperations, RunsOperations, SpansOperations
+from .operations import (
+    DeleteOperations,
+    EventsOperations,
+    ExperimentsOperations,
+    MetricOperations,
+    RunArtifactsOperations,
+    RunOperations,
+    RunsOperations,
+    SpansOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -24,7 +33,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.rest import HttpRequest, HttpResponse
 
-class AzureMachineLearningWorkspaces(object):    # pylint: disable=too-many-instance-attributes
+
+class AzureMachineLearningWorkspaces(object):  # pylint: disable=too-many-instance-attributes
     """AzureMachineLearningWorkspaces.
 
     :ivar delete: DeleteOperations operations
@@ -73,7 +83,6 @@ class AzureMachineLearningWorkspaces(object):    # pylint: disable=too-many-inst
         self.run_artifacts = RunArtifactsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.run = RunOperations(self._client, self._config, self._serialize, self._deserialize)
         self.spans = SpansOperations(self._client, self._config, self._serialize, self._deserialize)
-
 
     def _send_request(
         self,

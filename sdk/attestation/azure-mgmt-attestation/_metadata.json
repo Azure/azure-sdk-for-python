@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2021-06-01",
+  "apiVersions": {
+    "Microsoft.Attestation": "2021-06-01"
+  },
+  "commit": "a941611fa76a4d4e12bc9398ee7df36c100df137",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/attestation/resource-manager/Microsoft.Attestation/Attestation",
+  "emitterVersion": "0.61.1"
+}
