@@ -108,46 +108,38 @@
   - Added enum `SkuTier`
   - Added model `TrackedResource`
   - Added model `UserAssignedIdentity`
-  - Model `SavingsPlanOperations` added method `begin_update`
-  - Added model `ApplicableMaccsOperations`
-  - Added model `BenefitOperations`
-  - Added model `ConditionalCreditContributorsOperations`
-  - Added model `ConditionalCreditsOperations`
-  - Added model `ContributorsOperations`
-  - Added model `CreditsOperations`
-  - Added model `DiscountOperations`
-  - Added model `DiscountsOperations`
-  - Added model `FreeServicesOperations`
-  - Added model `MaccsOperations`
-  - Added model `SellerResourceOperations`
-  - Added model `SourcesOperations`
+  - Operation group `SavingsPlanOperations` added method `begin_update`
+  - Added operation group `ApplicableMaccsOperations`
+  - Added operation group `BenefitOperations`
+  - Added operation group `ConditionalCreditContributorsOperations`
+  - Added operation group `ConditionalCreditsOperations`
+  - Added operation group `ContributorsOperations`
+  - Added operation group `CreditsOperations`
+  - Added operation group `DiscountOperations`
+  - Added operation group `DiscountsOperations`
+  - Added operation group `FreeServicesOperations`
+  - Added operation group `MaccsOperations`
+  - Added operation group `SellerResourceOperations`
+  - Added operation group `SourcesOperations`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Deleted or renamed model `BillingBenefitsRP`
-  - Model `SavingsPlanOrderAliasModel` deleted or renamed its instance variable `display_name`
-  - Model `SavingsPlanOrderAliasModel` deleted or renamed its instance variable `savings_plan_order_id`
-  - Model `SavingsPlanOrderAliasModel` deleted or renamed its instance variable `provisioning_state`
-  - Model `SavingsPlanOrderAliasModel` deleted or renamed its instance variable `billing_scope_id`
-  - Model `SavingsPlanOrderAliasModel` deleted or renamed its instance variable `term`
-  - Model `SavingsPlanOrderAliasModel` deleted or renamed its instance variable `billing_plan`
-  - Model `SavingsPlanOrderAliasModel` deleted or renamed its instance variable `applied_scope_type`
-  - Model `SavingsPlanOrderAliasModel` deleted or renamed its instance variable `applied_scope_properties`
-  - Model `SavingsPlanOrderAliasModel` deleted or renamed its instance variable `commitment`
+  - Model `SavingsPlanOrderAliasModel` moved instance variable `display_name`, `savings_plan_order_id`, `provisioning_state`, `billing_scope_id`, `term`, `billing_plan`, `applied_scope_type`, `applied_scope_properties` and `commitment` under property `properties`
   - Deleted or renamed model `BillingInformation`
   - Deleted or renamed model `OperationResultError`
   - Deleted or renamed model `PricingCurrencyDuration`
   - Deleted or renamed model `PricingCurrencyTotal`
-  - Deleted or renamed model `SavingsPlanModelList`
-  - Deleted or renamed model `SavingsPlanOrderModelList`
   - Deleted or renamed model `SavingsPlanPurchaseValidateRequest`
-  - Method `SavingsPlanOperations.list_all` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
-  - Method `SavingsPlanOperations.list_all` changed its parameter `refresh_summary` from `positional_or_keyword` to `keyword_only`
-  - Method `SavingsPlanOperations.list_all` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
-  - Method `SavingsPlanOperations.list_all` changed its parameter `selected_state` from `positional_or_keyword` to `keyword_only`
-  - Method `SavingsPlanOperations.list_all` changed its parameter `take` from `positional_or_keyword` to `keyword_only`
+  - Method `SavingsPlanOperations.list_all` changed its parameter `orderby`/`refresh_summary`/`skiptoken`/`selected_state`/`take` from `positional_or_keyword` to `keyword_only`
   - Deleted or renamed method `SavingsPlanOperations.update`
-  - Deleted or renamed model `BillingBenefitsRPOperationsMixin`
+  - Deleted or renamed client mixin `BillingBenefitsRPOperationsMixin`
+
+### Other Changes
+
+  - Deleted model `SavingsPlanModelList`/`SavingsPlanOrderModelList` which actually were not used by SDK users
 
 ## 1.0.0b1 (2022-12-14)
 
