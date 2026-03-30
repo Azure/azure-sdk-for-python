@@ -389,7 +389,7 @@ class QueueMessage(DictMixin):
         # Prefer _decoded_content if set by MessageDecodePolicy (handles base64 decoding and decryption).
         # The decode policy stores results in _decoded_content because the generated model's message_text
         # RestField descriptor may re-serialize bytes back to base64 if set directly.
-        content = getattr(generated, '_decoded_content', None)
+        content = getattr(generated, "_decoded_content", None)
         if content is None:
             content = generated.message_text
         message = cls(content=content)
@@ -456,7 +456,9 @@ class MessagesPaged(PageIterator):
             raise StopIteration("End of paging")
         if self._max_messages is not None:
             self._max_messages = self._max_messages - len(messages.items_property)
-        return "TOKEN_IGNORED", [QueueMessage._from_generated(q) for q in messages.items_property]  # pylint: disable=protected-access
+        return "TOKEN_IGNORED", [
+            QueueMessage._from_generated(q) for q in messages.items_property
+        ]  # pylint: disable=protected-access
 
 
 class QueueProperties(DictMixin):

@@ -98,8 +98,7 @@ _MyMutableMapping.__getattribute__ = _patched_getattribute
 _Model.__new__ = _patched_new
 
 
-__all__: List[str] = [
-]
+__all__: List[str] = []
 
 
 def patch_sdk():
