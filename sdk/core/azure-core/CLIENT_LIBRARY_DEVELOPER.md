@@ -758,7 +758,7 @@ The following environment variables are recognized by `azure-core`. They are res
 | --- | --- | --- | --- |
 | `AZURE_LOG_LEVEL` | Logging level for all Azure SDK clients. | `CRITICAL`, `ERROR`, `WARNING`, `INFO`, `DEBUG` (case-insensitive) | `INFO` |
 | `AZURE_TRACING_ENABLED` | Enable/disable distributed tracing. | `true`/`false`, `yes`/`no`, `1`/`0`, `on`/`off` (case-insensitive) | Auto-detected based on `AZURE_SDK_TRACING_IMPLEMENTATION` |
-| `AZURE_SDK_TRACING_IMPLEMENTATION` | Tracing implementation to use. Requires the corresponding plugin package (`azure-core-tracing-opentelemetry` or `azure-core-tracing-opencensus`). | `opentelemetry`, `opencensus` | None |
+| `AZURE_SDK_TRACING_IMPLEMENTATION` | Tracing implementation to use. Requires the corresponding plugin package (`azure-core-tracing-opentelemetry`). | `opentelemetry` | None |
 | `AZURE_SDK_CLOUD_CONF` | Azure cloud environment. | `AZURE_PUBLIC_CLOUD`, `AZURE_CHINA_CLOUD`, `AZURE_US_GOVERNMENT` | `AZURE_PUBLIC_CLOUD` |
 
 These settings can also be read or set programmatically:

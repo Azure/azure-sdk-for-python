@@ -50,12 +50,11 @@ Specifies which distributed tracing implementation the SDK should use.
 |---|---|
 | **Used by** | `azure.core.settings.Settings.tracing_implementation` |
 | **Default** | None |
-| **Accepted values** | `opentelemetry`, `opencensus` |
+| **Accepted values** | `opentelemetry` |
 
 The corresponding tracing plugin package must be installed:
 
 - `opentelemetry` — requires `azure-core-tracing-opentelemetry`
-- `opencensus` — requires `azure-core-tracing-opencensus`
 
 **Example:**
 
