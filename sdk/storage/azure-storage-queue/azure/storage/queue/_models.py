@@ -457,7 +457,7 @@ class MessagesPaged(PageIterator):
         if self._max_messages is not None:
             self._max_messages = self._max_messages - len(messages.items_property)
         return "TOKEN_IGNORED", [
-            QueueMessage._from_generated(q) for q in messages.items_property   # pylint: disable=protected-access
+            QueueMessage._from_generated(q) for q in messages.items_property  # pylint: disable=protected-access
         ]
 
 
