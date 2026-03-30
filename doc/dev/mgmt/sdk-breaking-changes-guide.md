@@ -311,3 +311,20 @@ Removal of multiple parameters and addition of parameters `properties` entries f
 **Impact**: Users can only get the property following the actual model structure which matches the REST API documentation.
 
 **Resolution**: Accept these breaking changes.
+
+## 12. Renaming of `values`/`keys` Properties
+
+**Changelog Pattern**:
+
+Removal of a property named `values` or `keys` and addition of a corresponding `values_property` or `keys_property`:
+
+```md
+- Model `ExceptionEntry` deleted or renamed its instance variable `values`
+- Model `ExceptionEntry` added property `values_property`
+```
+
+**Reason**: In the base model class of TypeSpec-based SDKs, `keys` and `values` are native method names. To avoid name conflicts, properties named `keys` or `values` are automatically renamed to `keys_property` or `values_property`.
+
+**Impact**: Users need to update property access from `.values` to `.values_property` (or `.keys` to `.keys_property`).
+
+**Resolution**: Accept these breaking changes.

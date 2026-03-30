@@ -8,7 +8,7 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_10_01.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     FeaturestoreEntityContainer,
     FeaturestoreEntityContainerProperties,
     FeaturestoreEntityVersion,
