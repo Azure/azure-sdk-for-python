@@ -113,7 +113,7 @@ Chronus reads the package version from the Python package metadata and writes ch
 
 ## Further Reading
 
-- [Chronus CLI Reference](https://github.com/timotheeguerin/chronus/blob/main/docs/cli.md)
-- [Chronus Change Kinds](https://github.com/timotheeguerin/chronus/blob/main/docs/change-kinds.md)
+- [Chronus CLI Reference](https://github.com/timotheeguerin/chronus/blob/main/packages/website/src/content/docs/reference/cli.md)
+- [Chronus Change Kinds](https://github.com/timotheeguerin/chronus/blob/main/packages/website/src/content/docs/guides/change-kinds.md)
 - [Azure SDK Release Process](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/release.md)
 - [Package Version Rules](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/package_version/package_version_rule.md)
