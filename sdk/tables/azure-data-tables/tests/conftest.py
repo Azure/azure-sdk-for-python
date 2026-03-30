@@ -29,6 +29,7 @@ import pytest
 from devtools_testutils import (
     add_general_regex_sanitizer,
     add_body_key_sanitizer,
+    add_remove_header_sanitizer,
     test_proxy,
     add_oauth_response_sanitizer,
     remove_batch_sanitizers,
@@ -84,6 +85,9 @@ def add_sanitizers(test_proxy):
     # sanitizes access tokens in response bodies
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
     add_oauth_response_sanitizer()
+    # Remove the Server header from recordings — the test proxy replays multi-value
+    # Server headers as duplicates, which aiohttp rejects with BadHttpMessage.
+    add_remove_header_sanitizer(headers="Server")
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3490: $..etag
     remove_batch_sanitizers(["AZSDK3490"])
