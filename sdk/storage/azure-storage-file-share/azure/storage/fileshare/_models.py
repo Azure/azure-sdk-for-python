@@ -308,8 +308,8 @@ class ShareNfsSettings(GeneratedShareNfsSettings):
     """Sets the encryption in transit settings."""
 
     def __init__(
-        self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any
-    ) -> None:  # pylint: disable=unused-argument
+        self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any   # pylint: disable=unused-argument
+    ) -> None:
         self._data = {}
         self.encryption_in_transit = encryption_in_transit
 
@@ -1149,8 +1149,9 @@ class DirectoryPropertiesPaged(PageIterator):
         ]
         self.current_page.extend(
             [
-                FileProperties._from_generated(i) for i in self._response.segment.file_items
-            ]  # pylint: disable=protected-access
+                FileProperties._from_generated(i)  # pylint: disable=protected-access
+                for i in self._response.segment.file_items
+            ]
         )
         return self._response.next_marker or None, self.current_page
 

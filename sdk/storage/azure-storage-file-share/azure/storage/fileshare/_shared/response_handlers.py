@@ -202,7 +202,12 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
 
 
 def _extract_text(value):
-    """Extract text from a value that may be an XML Element."""
+    """Extract text from a value that may be an XML Element.
+
+    :param Any value: The value to extract text from.
+    :returns: The text content if value is an XML Element, otherwise the value itself.
+    :rtype: str or None
+    """
     if isinstance(value, Element):
         return value.text
     return value
