@@ -1,0 +1,125 @@
+# Evaluation TypeSpec Issues
+
+## General issues
+
+* All TypeSpec model names need to be reviewed, as those get emitted as SDK class names. In particular, we need to decide on a common patter to identify Azure-specific sub models, when we extend existing OpenAI-defined base model.
+
+* Decide if and how we enumerate the many evaluators (around 40?). Should we have a TypeSpec for them, and TypedDicts in emitted Python code? Or do we only have one for the base class?
+
+## Model `AzureAIDataSourceConfig`, property `scenario`
+
+Values there should be defined as enum: 
+
+```
+@discriminator("scenario")
+model AzureAIDataSourceConfig extends DataSourceConfig {
+  /** The object type, which is always `azure_ai_source`. */
+  type: "azure_ai_source";
+
+  /** Data schema scenario. */
+  #suppress "@azure-tools/typespec-azure-core/no-unnamed-union" "Auto-suppressed warnings non-applicable rules during import."
+  scenario:
+    | "red_team"
+    | "responses"
+    | "traces_preview"
+    | "synthetic_data_gen_preview"
+    | "benchmark_preview";
+}
+```
+
+## Model `TargetCompletionEvalRunDataSource`, property `input_messages`
+
+The TypeSpec model TargetCompletionEvalRunDataSource has a property:
+
+```
+/** Input messages configuration. */
+  input_messages?: OpenAI.CreateEvalCompletionsRunDataSourceInputMessagesItemReference;
+```
+
+where OpenAI.CreateEvalCompletionsRunDataSourceInputMessagesItemReference has a type discriminator: "item_reference".
+ 
+Now looking at the Python sample `sample_agent_evaluation.py` it defines input_messages as the following:
+
+``` 
+"input_messages": {
+    "type": "template",
+    "template": [
+        {"type": "message", "role": "user", "content": {"type": "input_text", "text": "{{item.query}}"}}
+    ],
+},
+```
+ 
+So it uses type discriminator "template", not "item_reference".
+ 
+So I think our TypeSpec is missing a Union with other OpenAI TypeSpec models.
+
+##  Model `ResponseRetrievalItemGenerationParams`, property `max_runs_hourly`
+
+Is defined in TypeSpec (using type discriminator "response_retrieval"), having `max_runs_hourly` as required properties. Yet the sample code `sample_agent_evaluation.py` does not set it. Should it be made optional in TypeSpec? Removed?
+
+## Model AzureAIResponsesEvalRunDataSource, properties `max_runs_hourly` and `event_configuration_id`
+
+Is defined in TypeSpec (using type discriminator "azure_ai_responses"), having required properties max_runs_hourly and event_configuration_id. Yet the same sample code `sample_agent_evaluation.py` does not set them. Should they be made optional in TypeSpec?
+
+## Score Model Grader
+
+Python OpenAI package defines this:
+
+```python
+class ScoreModelGraderParam(TypedDict, total=False):
+    """A ScoreModelGrader object that uses a model to assign a score to the input."""
+
+    input: Required[Iterable[Input]]
+    """The input messages evaluated by the grader.
+
+    Supports text, output text, input image, and input audio content blocks, and may
+    include template strings.
+    """
+
+    model: Required[str]
+    """The model to use for the evaluation."""
+
+    name: Required[str]
+    """The name of the grader."""
+
+    type: Required[Literal["score_model"]]
+    """The object type, which is always `score_model`."""
+
+    range: Iterable[float]
+    """The range of the score. Defaults to `[0, 1]`."""
+
+    sampling_params: SamplingParams
+    """The sampling parameters for the model."""
+```
+
+Our OpenAI TypeSpec defines it like this:
+
+```
+model GraderScoreModel {
+  /** The object type, which is always `score_model`. */
+  #suppress "@azure-tools/typespec-azure-core/no-openapi" "Auto-suppressed warnings non-applicable rules during import."
+  @extension("x-stainless-const", true)
+  type: "score_model";
+
+  /** The name of the grader. */
+  name: string;
+
+  /** The model to use for the evaluation. */
+  `model`: string;
+
+  /** The sampling parameters for the model. */
+  #suppress "@azure-tools/typespec-azure-core/casing-style" "Auto-suppressed warnings non-applicable rules during import."
+  sampling_params?: EvalGraderScoreModelSamplingParams;
+
+  /** The input messages evaluated by the grader. Supports text, output text, input image, and input audio content blocks, and may include template strings. */
+  input: EvalItem[];
+
+  /** The range of the score. Defaults to `[0, 1]`. */
+  range?: numeric[];
+}
+```
+
+Yet sample code `sample_evaluations_graders.py` sets this additional property: `"image_tag": "2025-05-08"`. Where did that come from?
+
+
+

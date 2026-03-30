@@ -39,7 +39,6 @@ from azure.ai.projects.models._patch_evaluation_typeddicts import TypedDictAzure
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    AzureAIAgentTarget,
     EvalGraderAzureAIEvaluator,
     PromptAgentDefinition,
     TargetCompletionEvalRunDataSource,
