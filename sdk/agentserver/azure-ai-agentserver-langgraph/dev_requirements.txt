@@ -2,3 +2,4 @@
 ../azure-ai-agentserver-core
 python-dotenv
 langchain-azure-ai[opentelemetry]>=0.1.4
+opentelemetry-exporter-otlp-proto-http
