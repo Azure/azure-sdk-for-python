@@ -212,7 +212,7 @@ class SmbMultichannel(GeneratedSmbMultichannel):
     enabled: bool
     """If SMB Multichannel is enabled."""
 
-    def __init__(self, *, enabled: bool, **kwargs: Any) -> None:
+    def __init__(self, *, enabled: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self.enabled = enabled
 
 
@@ -225,7 +225,7 @@ class SmbEncryptionInTransit(GeneratedSmbEncryptionInTransit):
     required: bool
     """If encryption in transit is enabled."""
 
-    def __init__(self, *, required: bool, **kwargs: Any) -> None:
+    def __init__(self, *, required: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self.required = required
 
 
@@ -247,7 +247,7 @@ class ShareSmbSettings(GeneratedShareSmbSettings):
         multichannel: Optional[SmbMultichannel] = None,
         encryption_in_transit: Optional[SmbEncryptionInTransit] = None,
         **kwargs: Any
-    ) -> None:
+    ) -> None:  # pylint: disable=unused-argument
         self.multichannel = multichannel
         self.encryption_in_transit = encryption_in_transit
         if self.multichannel is None and self.encryption_in_transit is None:
@@ -263,7 +263,7 @@ class NfsEncryptionInTransit(GeneratedNfsEncryptionInTransit):
     required: bool
     """If encryption in transit is enabled."""
 
-    def __init__(self, *, required: bool, **kwargs: Any) -> None:
+    def __init__(self, *, required: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self.required = required
 
 
@@ -276,7 +276,7 @@ class ShareNfsSettings(GeneratedShareNfsSettings):
     encryption_in_transit: NfsEncryptionInTransit
     """Sets the encryption in transit settings."""
 
-    def __init__(self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any) -> None:
+    def __init__(self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self.encryption_in_transit = encryption_in_transit
 
 
@@ -300,7 +300,7 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings):
         smb: Optional[ShareSmbSettings] = None,
         nfs: Optional[ShareNfsSettings] = None,
         **kwargs: Any
-    ) -> None:
+    ) -> None:  # pylint: disable=unused-argument
         self.smb = smb
         self.nfs = nfs
         if self.smb is None and self.nfs is None:
