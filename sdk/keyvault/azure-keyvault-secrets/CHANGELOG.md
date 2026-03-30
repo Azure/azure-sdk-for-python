@@ -5,8 +5,8 @@
 ### Features Added
 
 - Added support for service API version `2025-07-01`
-- Added support for retrieving secrets with `out_content_type`
-- Added the `previous_version` property to `SecretProperties`
+  - Added support for retrieving secrets with `out_content_type`
+  - Added the `previous_version` property to `SecretProperties`
 
 ### Other Changes
 

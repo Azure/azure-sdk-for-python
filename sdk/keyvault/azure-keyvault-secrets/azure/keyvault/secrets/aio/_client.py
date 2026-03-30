@@ -3,13 +3,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
-from typing import Any, cast, Dict, Optional
+from typing import Any, cast, Dict, Optional, Union
 from functools import partial
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 
+from .._generated.models import ContentType
 from .._models import KeyVaultSecret, DeletedSecret, SecretProperties
 from .._shared import AsyncKeyVaultClientBase
 from .._shared._polling_async import AsyncDeleteRecoverPollingMethod
@@ -47,15 +48,17 @@ class SecretClient(AsyncKeyVaultClientBase):
         name: str,
         version: Optional[str] = None,
         *,
-        out_content_type: Optional[str] = None,
+        out_content_type: Optional[Union[str, ContentType]] = None,
         **kwargs: Any,
     ) -> KeyVaultSecret:
         """Get a secret. Requires the secrets/get permission.
 
         :param str name: The name of the secret
         :param str version: (optional) Version of the secret to get. If unspecified, gets the latest version.
-        :keyword str out_content_type: The desired media type of the certificate secret value. For certificate-backed
-            secrets, the service can convert supported values such as ``application/x-pem-file``.
+        :keyword out_content_type: The desired media type of the certificate secret value. For certificate-backed
+            secrets, the service can convert supported values such as ``application/x-pem-file``. Accepted values
+            include members of :class:`~azure.keyvault.secrets.ContentType`.
+        :paramtype out_content_type: str or ~azure.keyvault.secrets.ContentType or None
 
         :returns: The fetched secret.
         :rtype: ~azure.keyvault.secrets.KeyVaultSecret
