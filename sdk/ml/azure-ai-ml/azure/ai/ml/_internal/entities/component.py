@@ -14,7 +14,7 @@ import yaml  # type: ignore[import]
 from marshmallow import Schema
 
 from ... import Input, Output
-from ..._restclient.v2022_10_01.models import ComponentVersion, ComponentVersionProperties
+from ..._restclient.arm_ml_service.models import ComponentVersion, ComponentVersionProperties
 from ..._schema import PathAwareSchema
 from ..._utils._arm_id_utils import parse_name_label
 from ..._utils._asset_utils import IgnoreFile
