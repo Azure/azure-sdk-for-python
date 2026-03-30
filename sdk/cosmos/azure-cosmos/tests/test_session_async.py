@@ -108,7 +108,7 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
                 })
 
             # Get feed ranges and verify multiple exist
-            feed_ranges = [feed_range async for feed_range in await test_container.read_feed_ranges()]
+            feed_ranges = [feed_range async for feed_range in test_container.read_feed_ranges()]
             self.assertGreater(len(feed_ranges), 1, "Expected multiple feed ranges")
 
             # Capture session token sent with feed range query
@@ -154,7 +154,7 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
                 })
 
             # Get feed ranges and verify multiple exist
-            feed_ranges = [feed_range async for feed_range in await test_container.read_feed_ranges()]
+            feed_ranges = [feed_range async for feed_range in test_container.read_feed_ranges()]
             self.assertGreater(len(feed_ranges), 1, "Expected multiple feed ranges")
 
             # Create a full-range feed range that spans all physical partitions

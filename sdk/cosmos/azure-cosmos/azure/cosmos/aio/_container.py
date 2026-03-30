@@ -2022,7 +2022,7 @@ class ContainerProxy:
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
 
     @distributed_trace
-    async def read_feed_ranges(
+    def read_feed_ranges(
             self,
             *,
             force_refresh: bool = False,
@@ -2040,14 +2040,20 @@ class ContainerProxy:
           are present. It therefore should only be treated as an opaque value.
 
         """
-        if force_refresh is True:
-            await self.client_connection.refresh_routing_map_provider()
-
-        # Ensure container properties cache is populated so we can get the container RID.
-        await self._get_properties_with_options()
-        feed_options: Dict[str, Any] = {Constants.ContainerRID: self.__get_client_container_caches()[self.container_link]["_rid"]}
+        feed_options: Dict[str, Any] = {}
+        setup_complete = False
 
         async def get_next(continuation_token: str) -> list[dict[str, Any]]:  # pylint: disable=unused-argument
+            nonlocal setup_complete
+            if not setup_complete:
+                if force_refresh is True:
+                    await self.client_connection.refresh_routing_map_provider()
+
+                # Ensure container properties cache is populated so we can get the container RID.
+                await self._get_properties_with_options()
+                feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+                setup_complete = True
+
             partition_key_ranges = \
                 await self.client_connection._routing_map_provider.get_overlapping_ranges(
                     # pylint: disable=protected-access

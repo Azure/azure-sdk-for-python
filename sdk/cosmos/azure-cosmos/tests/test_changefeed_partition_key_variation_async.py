@@ -185,7 +185,7 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
         container_v1 = await self.create_container(db, container_id_v1, "/pk", version=1, throughput=throughput)
 
         # Verify the container has more than one physical partition
-        feed_ranges_v1 = await container_v1.read_feed_ranges()
+        feed_ranges_v1 = container_v1.read_feed_ranges()
         feed_ranges_v1 = [feed_range async for feed_range in feed_ranges_v1]
         assert len(feed_ranges_v1) > 1, "Hash V1 container does not have multiple physical partitions."
 
@@ -199,7 +199,7 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
         container_v2 = await self.create_container(db, container_id_v2, "/pk", version=2, throughput=throughput)
 
         # Verify the container has more than one physical partition
-        feed_ranges_v2 = await container_v2.read_feed_ranges()
+        feed_ranges_v2 = container_v2.read_feed_ranges()
         feed_ranges_v2 = [feed_range async for feed_range in feed_ranges_v2]
         assert len(feed_ranges_v2) > 1, "Hash V2 container does not have multiple physical partitions."
 
@@ -213,7 +213,7 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
         container_hpk = await self.create_container(db, container_id_hpk, ["/pk1", "/pk2"], throughput=throughput)
 
         # Verify the container has more than one physical partition
-        feed_ranges_hpk = await container_hpk.read_feed_ranges()
+        feed_ranges_hpk = container_hpk.read_feed_ranges()
         feed_ranges_hpk = [feed_range async for feed_range in feed_ranges_hpk]
         assert len(feed_ranges_hpk) > 1, "HPK container does not have multiple physical partitions."
 

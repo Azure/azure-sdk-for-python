@@ -318,7 +318,7 @@ async def examples_async():
         # Query items with feed range is also supported. This example
         # gets all items within the feed range.
         # [START query_items_feed_range]
-        async for feed_range in await container.read_feed_ranges():
+        async for feed_range in container.read_feed_ranges():
             items_in_range = container.query_items(
                 query='SELECT * from c',
                 feed_range=feed_range
@@ -329,7 +329,7 @@ async def examples_async():
 
         # Get the feed ranges list from container.
         # [START read_feed_ranges]
-        feed_ranges_iterable = await container.read_feed_ranges()
+        feed_ranges_iterable = container.read_feed_ranges()
         feed_ranges = [feed_range async for feed_range in feed_ranges_iterable]
         # [END read_feed_ranges]
 

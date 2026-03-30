@@ -66,7 +66,7 @@ class TestQueryFeedRangeAsync:
 
         expected_pk_values = set(PK_VALUES)
         actual_pk_values = set()
-        async for feed_range in await container.read_feed_ranges():
+        async for feed_range in container.read_feed_ranges():
             items = [item async for item in
                 (container.query_items(
                     query=query,
@@ -146,7 +146,7 @@ class TestQueryFeedRangeAsync:
         actual_pk_values = set()
 
         # Get feed ranges before any splits
-        feed_ranges = [feed_range async for feed_range in await container.read_feed_ranges()]
+        feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
 
         # Trigger two consecutive splits
         await test_config.TestConfig.trigger_split_async(container, 11000)
@@ -179,7 +179,7 @@ class TestQueryFeedRangeAsync:
             print(f"Multi-partition container: increasing from 30000 to {target_throughput}")
 
         # Get feed ranges before split
-        feed_ranges_before_split = [feed_range async for feed_range in await container.read_feed_ranges()]
+        feed_ranges_before_split = [feed_range async for feed_range in container.read_feed_ranges()]
         print(f"BEFORE SPLIT: Number of feed ranges: {len(feed_ranges_before_split)}")
 
         # Get initial counts and sums before split
@@ -276,7 +276,7 @@ class TestQueryFeedRangeAsync:
         expected_pk_values = set(PK_VALUES)
         actual_pk_values = set()
 
-        feed_ranges = [feed_range async for feed_range in await container.read_feed_ranges()]
+        feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
         await test_config.TestConfig.trigger_split_async(container, 11000)
         for feed_range in feed_ranges:
             items = [item async for item in
@@ -297,7 +297,7 @@ class TestQueryFeedRangeAsync:
         expected_pk_values = set(PK_VALUES)
         actual_pk_values = set()
 
-        feed_ranges = [feed_range async for feed_range in await container.read_feed_ranges()]
+        feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
         await test_config.TestConfig.trigger_split_async(container, 11000)
 
         for feed_range in feed_ranges:
@@ -316,7 +316,7 @@ class TestQueryFeedRangeAsync:
     async def test_query_with_count_aggregate_and_feed_range_async_during_partition_split_async(self, container_id):
         container = await get_container(container_id)
         # Get initial counts per feed range before split
-        feed_ranges = [feed_range async for feed_range in await container.read_feed_ranges()]
+        feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
         print(f"BEFORE SPLIT: Number of feed ranges: {len(feed_ranges)}")
         initial_total_count = 0
 
@@ -358,7 +358,7 @@ class TestQueryFeedRangeAsync:
     async def test_query_with_sum_aggregate_and_feed_range_async_during_partition_split_async(self, container_id):
         container = await get_container(container_id)
         # Get initial sums per feed range before split
-        feed_ranges = [feed_range async for feed_range in await container.read_feed_ranges()]
+        feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
         initial_total_sum = 0
         expected_total_sum = len(PK_VALUES) * 100
 
@@ -409,7 +409,7 @@ class TestQueryFeedRangeAsync:
         query = 'SELECT * from c'
 
         # go through all feed ranges using pagination
-        feed_ranges = await container.read_feed_ranges()
+        feed_ranges = container.read_feed_ranges()
         async for feed in feed_ranges:
             query_kwargs = {
                 "query": query,
