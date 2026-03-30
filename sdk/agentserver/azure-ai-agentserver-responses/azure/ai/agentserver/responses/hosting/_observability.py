@@ -5,7 +5,10 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import Any, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
+
+if TYPE_CHECKING:
+    from ._execution_context import _ExecutionContext
 
 
 def build_platform_server_header(sdk_name: str, version: str, runtime: str, extra: str | None = None) -> str:
@@ -131,42 +134,152 @@ def start_create_span(name: str, tags: dict[str, Any], hook: CreateSpanHook | No
 
 
 def build_create_span_tags(
+    ctx: "_ExecutionContext",
     *,
-    response_id: str | None,
-    model: str | None,
-    agent_reference: dict[str, Any] | None,
-    service_name: str,
+    request_id: str | None = None,
 ) -> dict[str, Any]:
-    """Build a baseline GenAI tag set for create spans.
+    """Build a GenAI tag set for create spans from an execution context.
 
-    :keyword response_id: The response ID, or ``None`` if not yet assigned.
-    :keyword type response_id: str | None
-    :keyword model: Model name, or ``None``.
-    :keyword type model: str | None
-    :keyword agent_reference: Agent reference dictionary, or ``None``.
-    :keyword type agent_reference: dict[str, Any] | None
-    :keyword service_name: Logical service name for the span.
-    :keyword type service_name: str
+    :param ctx: Current execution context.
+    :type ctx: _ExecutionContext
+    :keyword request_id: Truncated ``X-Request-Id`` value, or ``None``.
+    :keyword type request_id: str | None
     :return: Dictionary of OpenTelemetry-style GenAI span tags.
     :rtype: dict[str, Any]
     """
-    agent_name = None
-    agent_id = None
-    if agent_reference is not None:
-        agent_name = agent_reference.get("name")
-        agent_version = agent_reference.get("version")
-        if agent_name and agent_version:
-            agent_id = f"{agent_name}:{agent_version}"
-
-    return {
-        "service.name": service_name,
+    agent_name, agent_version, agent_id = _resolve_agent_fields(ctx.agent_reference)
+    tags: dict[str, Any] = {
+        "service.name": _SERVICE_NAME,
+        "gen_ai.provider.name": _SERVICE_NAME,
         "gen_ai.system": "responses",
-        "gen_ai.operation.name": "create_response",
-        "gen_ai.response.id": response_id,
-        "gen_ai.request.model": model,
+        "gen_ai.operation.name": "invoke_agent",
+        "gen_ai.response.id": ctx.response_id,
+        "gen_ai.request.model": ctx.model,
         "gen_ai.agent.name": agent_name,
         "gen_ai.agent.id": agent_id,
     }
+    if agent_version is not None:
+        tags["gen_ai.agent.version"] = agent_version
+    if ctx.conversation_id is not None:
+        tags["gen_ai.conversation.id"] = ctx.conversation_id
+    if request_id is not None:
+        tags["request.id"] = request_id
+    return tags
+
+
+_SERVICE_NAME = "azure.ai.responses"
+_MAX_REQUEST_ID_LEN = 256
+
+
+def _initial_create_span_tags() -> dict[str, Any]:
+    """Placeholder tags for the initial create span (before request context is known).
+
+    Used to initialise :class:`CreateSpan` before :class:`_ExecutionContext` is
+    available.  The real tags are written via :func:`build_create_span_tags`
+    once the execution context has been constructed.
+
+    :return: Minimal tag dict with fixed provider identifiers.
+    :rtype: dict[str, Any]
+    """
+    return {
+        "service.name": _SERVICE_NAME,
+        "gen_ai.provider.name": _SERVICE_NAME,
+        "gen_ai.system": "responses",
+        "gen_ai.operation.name": "invoke_agent",
+    }
+
+
+def extract_request_id(headers: Any) -> str | None:
+    """Extract and truncate the ``X-Request-Id`` header value.
+
+    Returns the value truncated to 256 characters, or ``None`` when the
+    header is absent.
+
+    :param headers: HTTP request headers mapping.
+    :type headers: Any
+    :return: Truncated request ID string, or ``None``.
+    :rtype: str | None
+    """
+    raw = headers.get("x-request-id") or headers.get("X-Request-Id")
+    return raw[:_MAX_REQUEST_ID_LEN] if raw else None
+
+
+def _resolve_agent_fields(
+    agent_reference: dict[str, Any] | None,
+) -> tuple[str | None, str | None, str | None]:
+    """Return ``(agent_name, agent_version, agent_id)`` from *agent_reference*."""
+    if not isinstance(agent_reference, dict):
+        return None, None, None
+    name = agent_reference.get("name") or None
+    version = agent_reference.get("version") or None
+    agent_id = f"{name}:{version}" if name and version else None
+    return name, version, agent_id
+
+
+def build_create_otel_attrs(
+    ctx: "_ExecutionContext",
+    *,
+    request_id: str | None,
+) -> dict[str, str]:
+    """Build the OTel span attribute dict for ``POST /responses``.
+
+    :param ctx: Current execution context.
+    :type ctx: _ExecutionContext
+    :keyword request_id: Truncated ``X-Request-Id`` value, or ``None``.
+    :keyword type request_id: str | None
+    :return: Attribute dict ready to be set on an OTel span.
+    :rtype: dict[str, str]
+    """
+    agent_name, agent_version, agent_id = _resolve_agent_fields(ctx.agent_reference)
+    attrs: dict[str, str] = {
+        "gen_ai.response.id": ctx.response_id,
+        "gen_ai.provider.name": _SERVICE_NAME,
+        "service.name": _SERVICE_NAME,
+        "gen_ai.operation.name": "invoke_agent",
+        "gen_ai.request.model": ctx.model or "",
+    }
+    if ctx.conversation_id:
+        attrs["gen_ai.conversation.id"] = ctx.conversation_id
+    if agent_name:
+        attrs["gen_ai.agent.name"] = agent_name
+    if agent_id:
+        attrs["gen_ai.agent.id"] = agent_id
+    if agent_version:
+        attrs["gen_ai.agent.version"] = agent_version
+    if request_id:
+        attrs["request.id"] = request_id
+    return attrs
+
+
+def build_create_baggage(
+    ctx: "_ExecutionContext",
+    *,
+    request_id: str | None,
+) -> dict[str, str]:
+    """Build the W3C Baggage dict for ``POST /responses``.
+
+    :param ctx: Current execution context.
+    :type ctx: _ExecutionContext
+    :keyword request_id: Truncated ``X-Request-Id`` value, or ``None``.
+    :keyword type request_id: str | None
+    :return: Baggage key/value dict.
+    :rtype: dict[str, str]
+    """
+    agent_name, _, agent_id = _resolve_agent_fields(ctx.agent_reference)
+    baggage: dict[str, str] = {
+        "response.id": ctx.response_id,
+        "streaming": "true" if ctx.stream else "false",
+        "provider.name": _SERVICE_NAME,
+    }
+    if ctx.conversation_id:
+        baggage["conversation.id"] = ctx.conversation_id
+    if agent_name:
+        baggage["agent.name"] = agent_name
+    if agent_id:
+        baggage["agent.id"] = agent_id
+    if request_id:
+        baggage["request.id"] = request_id
+    return baggage
 
 
 class RecordedSpan:

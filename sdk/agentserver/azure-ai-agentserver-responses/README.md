@@ -24,7 +24,7 @@ from typing import Any
 from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.responses import ResponseContext
 from azure.ai.agentserver.responses.models._generated import CreateResponse
-from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
+from azure.ai.agentserver.responses import ResponseEventStream
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 
 
