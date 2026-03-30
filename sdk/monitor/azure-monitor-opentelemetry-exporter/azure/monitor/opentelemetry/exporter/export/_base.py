@@ -160,8 +160,12 @@ class BaseExporter:
             config.logging_policy,
             # Explicitly disabling to avoid infinite loop of Span creation when data is exported
             # DistributedTracingPolicy(**kwargs),
-            config.http_logging_policy or HttpLoggingPolicy(**kwargs),
         ]
+
+        # Exclude HttpLoggingPolicy for the sdkstats exporter so its HTTP
+        # traffic does not appear in the user's logs.
+        if not self._is_stats_exporter():
+            policies.append(config.http_logging_policy or HttpLoggingPolicy(**kwargs))
 
         self.client: AzureMonitorClient = AzureMonitorClient(
             host=self._endpoint, connection_timeout=self._timeout, policies=policies, **kwargs

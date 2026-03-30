@@ -311,3 +311,20 @@ Removal of multiple parameters and addition of parameters `properties` entries f
 **Impact**: Users can only get the property following the actual model structure which matches the REST API documentation.
 
 **Resolution**: Accept these breaking changes.
+
+## 12. Renaming of Properties That Conflict with Base Model Methods
+
+**Changelog Pattern**:
+
+Removal of a property and addition of a corresponding property with `_property` suffix:
+
+```md
+- Model `ExceptionEntry` deleted or renamed its instance variable `values`
+- Model `ExceptionEntry` added property `values_property`
+```
+
+**Reason**: In the base model class of TypeSpec-based SDKs, the following names are native method names: `keys`, `items`, `values`, `popitem`, `clear`, `update`, `setdefault`, `pop`, `get`, `copy`. To avoid name conflicts, properties using any of these names are automatically renamed with a `_property` suffix (e.g., `values` becomes `values_property`, `items` becomes `items_property`).
+
+**Impact**: Users need to update property access to use the `_property` suffix (e.g., `.values` to `.values_property`, `.keys` to `.keys_property`, `.items` to `.items_property`).
+
+**Resolution**: Accept these breaking changes.
