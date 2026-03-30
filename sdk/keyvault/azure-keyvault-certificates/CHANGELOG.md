@@ -2,13 +2,11 @@
 
 ## 4.11.0 (2026-03-27)
 
-skip changelog generation for data-plane package and please add changelog manually.
-
-## 4.10.1 (Unreleased)
-
 ### Features Added
 
-### Breaking Changes
+- Added support for service API version `2025-07-01`
+- Added `san_ip_addresses` and `san_uris` properties to `CertificatePolicy`, enabling Subject Alternative Name
+  IP addresses and URIs when creating or managing certificates
 
 ### Bugs Fixed
 
