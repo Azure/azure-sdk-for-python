@@ -25,7 +25,7 @@ Usage::
     # -> {"greeting": "Hello, Alice!"}
 
     # Health check (provided by AgentHost)
-    curl http://localhost:8088/healthy
+    curl http://localhost:8088/readiness
     # -> {"status": "healthy"}
 """
 import contextlib

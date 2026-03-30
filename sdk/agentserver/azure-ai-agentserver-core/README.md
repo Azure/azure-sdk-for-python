@@ -26,7 +26,7 @@ pip install azure-ai-agentserver-core[tracing]
 
 `AgentHost` is the host process for Azure AI Hosted Agent containers. It provides:
 
-- **Health probe** — `GET /healthy` returns `200 OK` when the server is ready.
+- **Health probe** — `GET /readiness` returns `200 OK` when the server is ready.
 - **Graceful shutdown** — On `SIGTERM` the server drains in-flight requests (default 30 s timeout) before exiting.
 - **OpenTelemetry tracing** — Automatic span creation with Azure Monitor and OTLP export when configured.
 - **Hypercorn ASGI server** — Serves on `0.0.0.0:${PORT:-8088}` with HTTP/1.1.

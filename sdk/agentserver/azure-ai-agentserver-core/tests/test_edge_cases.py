@@ -15,7 +15,7 @@ from azure.ai.agentserver.core._constants import Constants
 
 
 # ------------------------------------------------------------------ #
-# POST /healthy → 405
+# POST /readiness → 405
 # ------------------------------------------------------------------ #
 
 
@@ -29,9 +29,9 @@ def client() -> httpx.AsyncClient:
 
 
 @pytest.mark.asyncio
-async def test_post_healthy_returns_405(client: httpx.AsyncClient) -> None:
-    """POST /healthy is method-not-allowed."""
-    resp = await client.post("/healthy")
+async def test_post_readiness_returns_405(client: httpx.AsyncClient) -> None:
+    """POST /readiness is method-not-allowed."""
+    resp = await client.post("/readiness")
     assert resp.status_code == 405
 
 

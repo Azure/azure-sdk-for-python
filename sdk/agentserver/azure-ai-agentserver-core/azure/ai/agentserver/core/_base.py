@@ -46,7 +46,7 @@ class AgentHost:
     Provides the protocol-agnostic infrastructure required by all Azure AI
     Hosted Agent containers:
 
-    - Health probe (``GET /healthy``)
+    - Health probe (``GET /readiness``)
     - Graceful shutdown handling (SIGTERM, configurable timeout)
     - OpenTelemetry tracing with Azure Monitor and OTLP exporters
     - Hypercorn-based ASGI server with HTTP/1.1
@@ -293,7 +293,7 @@ class AgentHost:
         # All routes: protocol routes + health
         routes: list[Any] = list(self._protocol_routes)
         routes.append(
-            Route("/healthy", self._healthy_endpoint, methods=["GET"], name="healthy"),
+            Route("/readiness", self._readiness_endpoint, methods=["GET"], name="readiness"),
         )
 
         self._app = Starlette(
@@ -306,12 +306,11 @@ class AgentHost:
     # Health endpoint
     # ------------------------------------------------------------------
 
-    async def _healthy_endpoint(self, request: Request) -> Response:  # pylint: disable=unused-argument
-        """GET /healthy — single health check endpoint.
+    async def _readiness_endpoint(self, request: Request) -> Response:  # pylint: disable=unused-argument
+        """GET /readiness — readiness check endpoint.
 
         Return ``200 OK`` when the process is alive and ready to serve traffic.
-        A single endpoint is sufficient — the hosting platform can map it to
-        both liveness and readiness probes.
+        The hosting platform maps this to its readiness probe.
 
         :param request: The incoming Starlette request.
         :type request: Request

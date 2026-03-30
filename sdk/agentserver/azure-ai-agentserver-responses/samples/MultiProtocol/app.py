@@ -14,7 +14,7 @@ Endpoints:
     DELETE /responses/{id}                          - Delete a response
     POST   /responses/{id}/cancel                   - Cancel a response
     GET    /responses/{id}/input_items               - List input items
-    GET    /healthy                                  - Health probe (provided by hosting)
+    GET    /readiness                                 - Health probe (provided by hosting)
 
 Usage::
 
@@ -37,7 +37,7 @@ Usage::
          -d '{"model": "echo", "input": "Hello from responses!", "stream": true, "store": true}'
 
     # --- Health check (provided automatically by AgentHost) ---
-    curl http://localhost:8088/healthy
+    curl http://localhost:8088/readiness
 """
 
 from collections.abc import AsyncIterable

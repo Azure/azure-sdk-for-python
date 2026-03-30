@@ -259,12 +259,12 @@ async def test_large_binary_payload():
 
 
 # ---------------------------------------------------------------------------
-# Health endpoint (updated from /liveness to /healthy)
+# Health endpoint (updated from /healthy to /readiness)
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
 async def test_health_endpoint_returns_200():
-    """GET /healthy returns 200 with healthy status."""
+    """GET /readiness returns 200 with healthy status."""
     server = AgentHost()
     invocations = InvocationHandler(server)
 
@@ -274,6 +274,6 @@ async def test_health_endpoint_returns_200():
 
     transport = ASGITransport(app=server.app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
-        resp = await client.get("/healthy")
+        resp = await client.get("/readiness")
     assert resp.status_code == 200
     assert resp.json() == {"status": "healthy"}
