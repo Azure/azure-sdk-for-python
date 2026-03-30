@@ -41,10 +41,11 @@ def build_evaluation_messages(query: str, response: str) -> list:
     ]
 
 
-def parse_evaluation_result(raw_result: str) -> dict:
+def parse_evaluation_result(raw_result: str, threshold: int = 3) -> dict:
     """Parse the LLM's JSON response into a structured evaluation result.
 
     :param raw_result: The raw string output from the LLM.
+    :param threshold: The minimum score to be considered "Pass".
     :return: A dict with score, label, reason, and explanation.
     """
     import json
@@ -56,16 +57,16 @@ def parse_evaluation_result(raw_result: str) -> dict:
             text = text.split("\n", 1)[1] if "\n" in text else text[3:]
             text = text.rsplit("```", 1)[0]
         result = json.loads(text.strip())
-        score = int(result.get("score", 3))
+        score = int(result.get("score", threshold))
         return {
             "score": max(1, min(5, score)),
-            "label": result.get("label", "Pass" if score >= 3 else "Fail"),
+            "label": result.get("label", "Pass" if score >= threshold else "Fail"),
             "reason": result.get("reason", "No reason provided"),
             "explanation": result.get("explanation", "No explanation provided"),
         }
     except (json.JSONDecodeError, ValueError, KeyError):
         return {
-            "score": 3,
+            "score": threshold,
             "label": "Pass",
             "reason": "Could not parse LLM response",
             "explanation": f"Raw LLM output: {raw_result}",
