@@ -157,11 +157,7 @@ with (
             "name": evaluator_name,
             "evaluator_name": evaluator_name,
             "initialization_parameters": {
-                "model_config": {
-                    "azure_endpoint": azure_openai_endpoint,
-                    "api_key": f"{azure_openai_api_key}",
-                    "api_version": "2024-06-01",
-                },
+                 "deployment_name": f"{model_deployment_name}",
             },
         }
     ]
