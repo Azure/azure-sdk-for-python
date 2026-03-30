@@ -156,7 +156,7 @@ def _build_session_config() -> Dict[str, Any]:
                     type="openai",
                     base_url=base_url,
                     bearer_token=api_key,
-                    wire_api="responses",
+                    wire_api="completions",
                 ),
                 "_foundry_resource_url": foundry_url,
             }
@@ -168,7 +168,7 @@ def _build_session_config() -> Dict[str, Any]:
                 type="openai",
                 base_url=base_url,
                 bearer_token="placeholder",  # refreshed before first use
-                wire_api="responses",
+                wire_api="completions",
             ),
             "_foundry_resource_url": foundry_url,
         }
