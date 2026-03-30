@@ -438,7 +438,7 @@ class Settings:
       ``yes``/``no``, ``1``/``0``, ``on``/``off`` (case-insensitive). Default: auto-detected
       based on whether a tracing implementation is configured.
     * ``AZURE_SDK_TRACING_IMPLEMENTATION`` - Tracing implementation. Accepted values:
-      ``opentelemetry``, ``opencensus``. Default: None.
+      ``opentelemetry``. Default: None.
     * ``AZURE_SDK_CLOUD_CONF`` - Azure cloud environment. Accepted values:
       ``AZURE_PUBLIC_CLOUD``, ``AZURE_CHINA_CLOUD``, ``AZURE_US_GOVERNMENT``.
       Default: ``AZURE_PUBLIC_CLOUD``.
