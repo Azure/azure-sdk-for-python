@@ -215,10 +215,6 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
                     raise ex from HttpResponseError(response=response.http_response)
 
                 if request_authorized:
-                    # if we receive a challenge response, we retrieve a new token
-                    # which matches the new target. In this case, we don't want to remove
-                    # token from the request so clear the 'insecure_domain_change' tag
-                    request.context.options.pop("insecure_domain_change", False)
                     try:
                         response = self.next.send(request)
                         self.on_response(request, response)

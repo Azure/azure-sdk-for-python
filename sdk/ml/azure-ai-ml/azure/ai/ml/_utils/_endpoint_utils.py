@@ -12,7 +12,6 @@ from concurrent.futures import Future
 from pathlib import Path
 from typing import Any, Callable, Dict, Optional, Union
 
-from azure.core.credentials import TokenCredential
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import DataVersion, UriFileJobOutput
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
@@ -23,6 +22,7 @@ from azure.ai.ml.entities._deployment.deployment import Deployment
 from azure.ai.ml.entities._deployment.model_batch_deployment import ModelBatchDeployment
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationErrorType, ValidationException
 from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
+from azure.core.credentials import TokenCredential
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -51,9 +51,10 @@ def check_default_deployment_template(deployment: Deployment, credential: Option
 
     try:
         import re
+
+        from azure.ai.ml._utils._registry_utils import get_registry_client
         from azure.ai.ml.constants._common import REGISTRY_VERSION_PATTERN
         from azure.ai.ml.entities._assets._artifacts.model import Model
-        from azure.ai.ml._utils._registry_utils import get_registry_client
 
         match = re.match(REGISTRY_VERSION_PATTERN, deployment.model, re.IGNORECASE)
         if not match:
@@ -78,7 +79,11 @@ def check_default_deployment_template(deployment: Deployment, credential: Option
 
             model = Model._from_rest_object(model_version_data)
 
-            if hasattr(model, "default_deployment_template") and model.default_deployment_template:
+            if (
+                hasattr(model, "default_deployment_template")
+                and model.default_deployment_template
+                and model.default_deployment_template.asset_id
+            ):
                 module_logger.info(
                     "\nModel '%s' (version %s) from registry '%s' has a "
                     "default deployment template configured.\n"

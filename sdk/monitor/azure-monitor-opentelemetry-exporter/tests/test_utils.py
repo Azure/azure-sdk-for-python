@@ -9,7 +9,10 @@ from unittest.mock import patch
 
 from opentelemetry.sdk.resources import Resource
 from azure.monitor.opentelemetry.exporter import _utils
-from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import TelemetryItem
+from azure.monitor.opentelemetry.exporter._constants import _GEN_AI_ATTRIBUTES
+from opentelemetry.sdk.resources import Resource
+from unittest.mock import patch
 
 
 TEST_AI_DEVICE_ID = "TEST_AI_DEVICE_ID"
@@ -23,8 +26,6 @@ TEST_AZURE_MONITOR_CONTEXT = {
         TEST_SDK_VERSION_PREFIX,
     ),
 }
-TEST_TIMESTAMP = "TEST_TIMESTAMP"
-TEST_TIME = "TEST_TIME"
 TEST_WEBSITE_SITE_NAME = "TEST_WEBSITE_SITE_NAME"
 TEST_KUBERNETES_SERVICE_HOST = "TEST_KUBERNETES_SERVICE_HOST"
 TEST_AKS_ARM_NAMESPACE_ID = "TEST_AKS_ARM_NAMESPACE_ID"
@@ -53,40 +54,63 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(filtered["short"], "ok")
         self.assertNotIn("k" * 151, filtered)
 
-    def test_filter_custom_properties_preserves_large_values_after_disable_limit(self):
-        # Ensure values larger than 64KiB are not truncated when the env variable is set to true
-        enable_values = ["true", "True", "TRUE", "TrUE", "  true  "]
+    def test_custom_properties_gen_ai_attributes_not_truncated_at_64kb(self):
+        # All values in _GEN_AI_ATTRIBUTES should not be truncated at > 64kb but at > 256kb
         large_value = "x" * (64 * 1024 + 1000)
-        properties = {"large_key": large_value}
+        properties = {key: large_value for key in _GEN_AI_ATTRIBUTES}
+        filtered = _utils._filter_custom_properties(properties)
+        for key in _GEN_AI_ATTRIBUTES:
+            with self.subTest(key=key):
+                self.assertIn(key, filtered)
+                self.assertEqual(len(filtered[key]), 64 * 1024 + 1000)
 
-        for env_value in enable_values:
-            with self.subTest(env_value=env_value):
-                with patch.dict(
-                    "azure.monitor.opentelemetry.exporter._utils.environ",
-                    {"AZURE_MONITOR_DISABLE_CUSTOM_DIMENSIONS_LIMIT": env_value},
-                ):
-                    filtered = _utils._filter_custom_properties(properties)
-                    self.assertIn("large_key", filtered)
-                    self.assertEqual(filtered["large_key"], large_value)
-                    self.assertEqual(len(filtered["large_key"]), 64 * 1024 + 1000)
-
-    def test_filter_custom_properties_preserves_large_values_after_enable_limit(self):
-        # Ensure values larger than 64KiB are not truncated when the env variable is set to false/empty/invalid
-        disable_values = ["", "False", "truthy", "89", "fALSE", " "]
-        large_value = "x" * (64 * 1024 + 1000)
+    def test_filter_custom_properties_non_gen_ai_truncated_at_64kb(self):
+        # Regular properties exceeding 64kb should be truncated
         max_length = 64 * 1024
-        properties = {"large_key": large_value}
+        large_value = "y" * (max_length + 2000)
+        properties = {
+            "span_kind": large_value,
+            "gen_ai.agent.version": large_value,
+            "http.method": large_value,
+            "custom.attribute": large_value,
+        }
+        filtered = _utils._filter_custom_properties(properties)
+        for key in properties:
+            with self.subTest(key=key):
+                self.assertIn(key, filtered)
+                self.assertEqual(len(filtered[key]), max_length)
 
-        for env_value in disable_values:
-            with self.subTest(env_value=env_value):
-                with patch.dict(
-                    "azure.monitor.opentelemetry.exporter._utils.environ",
-                    {"AZURE_MONITOR_DISABLE_CUSTOM_DIMENSIONS_LIMIT": env_value},
-                ):
-                    filtered = _utils._filter_custom_properties(properties)
-                    self.assertIn("large_key", filtered)
-                    self.assertEqual(filtered["large_key"], "x" * max_length)
-                    self.assertEqual(len(filtered["large_key"]), max_length)
+    def test_filter_custom_properties_mixed_gen_ai_and_regular(self):
+        # Gen AI attributes truncated at 256kb, regular ones are truncated at 64kb
+        max_length = 64 * 1024
+        max_length_for_gen_ai_attributes = 256 * 1024
+        large_value = "z" * (1024 * 1024 + 3000)
+        properties = {
+            "gen_ai.input.messages": large_value,
+            "gen_ai.output.messages": large_value,
+            "gen_ai.agent.version": large_value,
+            "span_kind": large_value,
+            "db.statement": large_value,
+        }
+        filtered = _utils._filter_custom_properties(properties)
+
+        self.assertEqual(len(filtered["gen_ai.input.messages"]), max_length_for_gen_ai_attributes)
+        self.assertEqual(len(filtered["gen_ai.output.messages"]), max_length_for_gen_ai_attributes)
+
+        self.assertEqual(len(filtered["gen_ai.agent.version"]), max_length)
+        self.assertEqual(len(filtered["span_kind"]), max_length)
+        self.assertEqual(len(filtered["db.statement"]), max_length)
+
+    def test_custom_properties_gen_ai_attributes_truncated_at_256kb(self):
+        # All values in _GEN_AI_ATTRIBUTES should be truncated when > 256kb
+        max_length_for_gen_ai_attributes = 256 * 1024
+        large_value = "x" * (256 * 1024 + 1000)
+        properties = {key: large_value for key in _GEN_AI_ATTRIBUTES}
+        filtered = _utils._filter_custom_properties(properties)
+        for key in _GEN_AI_ATTRIBUTES:
+            with self.subTest(key=key):
+                self.assertIn(key, filtered)
+                self.assertEqual(len(filtered[key]), max_length_for_gen_ai_attributes)
 
     def test_nanoseconds_to_duration(self):
         ns_to_duration = _utils.ns_to_duration
@@ -292,7 +316,47 @@ class TestUtils(unittest.TestCase):
         tags = _utils._populate_part_a_fields(resource)
         self.assertIsNotNone(tags)
         self.assertEqual(tags.get("ai.cloud.role"), "testServiceName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    def test_populate_part_a_fields_uses_service_instance_id_when_pod_name_empty(self):
+        resource = Resource(
+            {
+                "service.name": "testServiceName",
+                "service.instance.id": "testServiceInstanceId",
+                "k8s.deployment.name": "testDeploymentName",
+                "k8s.replicaset.name": "testReplicaSetName",
+                "k8s.statefulset.name": "testStatefulSetName",
+                "k8s.job.name": "testJobName",
+                "k8s.cronjob.name": "testCronJobName",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testServiceName")
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testServiceInstanceId")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    def test_populate_part_a_fields_falls_back_to_hostname_when_pod_and_instance_id_empty(self):
+        resource = Resource(
+            {
+                "service.name": "testServiceName",
+                "service.instance.id": "",
+                "k8s.deployment.name": "testDeploymentName",
+                "k8s.replicaset.name": "testReplicaSetName",
+                "k8s.statefulset.name": "testStatefulSetName",
+                "k8s.job.name": "testJobName",
+                "k8s.cronjob.name": "testCronJobName",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testServiceName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), platform.node())
         self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
     # Default service.name fields should be ignored when kubernetes values are present
@@ -315,22 +379,17 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
         self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
-    @patch(
-        "azure.monitor.opentelemetry.exporter._utils.ns_to_iso_str",
-        return_value=TEST_TIME,
-    )
-    @patch(
-        "azure.monitor.opentelemetry.exporter._utils.azure_monitor_context",
-        TEST_AZURE_MONITOR_CONTEXT,
-    )
-    def test_create_telemetry_item(self, mock_ns_to_iso_str):
-        result = _utils._create_telemetry_item(TEST_TIMESTAMP)
+    @patch("azure.monitor.opentelemetry.exporter._utils.azure_monitor_context", TEST_AZURE_MONITOR_CONTEXT)
+    def test_create_telemetry_item(self):
+        time_ns = time.time_ns()
+        expected_datetime = datetime.datetime.fromtimestamp(time_ns / 1e9, tz=datetime.timezone.utc)
+        result = _utils._create_telemetry_item(time_ns)
         expected_tags = dict(TEST_AZURE_MONITOR_CONTEXT)
         expected = TelemetryItem(
             name="",
             instrumentation_key="",
             tags=expected_tags,
-            time=TEST_TIME,
+            time=expected_datetime,
         )
         self.assertEqual(result, expected)
 

@@ -112,7 +112,26 @@ class ScenarioOrchestrator:
 
         # Run attack - PyRIT handles all execution
         self.logger.info(f"Executing attacks for {self.risk_category}...")
-        self._scenario_result = await self._scenario.run_async()
+        try:
+            self._scenario_result = await self._scenario.run_async()
+        except Exception as e:
+            self.logger.warning(
+                f"Error during attack execution for {self.risk_category}: {str(e)}. "
+                f"Partial results may still be available."
+            )
+            # Intentionally swallow the exception so execute() returns normally.
+            # The FoundryExecutionManager (see PR #45541) provides an additional
+            # outer recovery layer. If _scenario_result remains None,
+            # downstream get_attack_results() returns an empty list safely.
+            try:
+                # Relies on PyRIT FoundryScenario internal `_result` attribute
+                # to retrieve partial results accumulated before the failure.
+                # hasattr guards against future PyRIT versions removing this attribute.
+                # If the attribute type changes, get_attack_results() will fail safely downstream.
+                if hasattr(self._scenario, "_result"):
+                    self._scenario_result = self._scenario._result
+            except Exception as e:
+                self.logger.debug("Failed to retrieve partial scenario result: %s", e, exc_info=True)
 
         self.logger.info(f"Attack execution complete for {self.risk_category}")
 
@@ -122,7 +141,10 @@ class ScenarioOrchestrator:
         """Create attack scoring configuration from RAI scorer.
 
         FoundryScenario uses AttackScoringConfig to configure how attacks are scored.
-        We wrap our RAI scorer in the appropriate configuration.
+        We use the RAI scorer for both objective scoring AND refusal detection.
+        For refusal: a safe response (score=False) means the model refused the attack,
+        triggering crescendo's backtrack logic. A harmful response (score=True) means
+        the model didn't refuse and crescendo should continue escalating.
 
         :return: Attack scoring configuration
         :rtype: Any
@@ -132,6 +154,7 @@ class ScenarioOrchestrator:
 
         return AttackScoringConfig(
             objective_scorer=self.rai_scorer,
+            refusal_scorer=self.rai_scorer,
             use_score_as_feedback=True,
         )
 

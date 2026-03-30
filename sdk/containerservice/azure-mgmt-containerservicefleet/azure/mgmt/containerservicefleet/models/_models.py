@@ -296,30 +296,23 @@ class AutoUpgradeProfileProperties(_Model):
     :vartype node_image_selection:
      ~azure.mgmt.containerservicefleet.models.AutoUpgradeNodeImageSelection
     :ivar disabled: If set to False: the auto upgrade has effect - target managed clusters will be
-     upgraded on schedule.
-     If set to True: the auto upgrade has no effect - no upgrade will be run on the target managed
-     clusters.
-     This is a boolean and not an enum because enabled/disabled are all available states of the auto
-     upgrade profile.
-     By default, this is set to False.
+     upgraded on schedule. If set to True: the auto upgrade has no effect - no upgrade will be run
+     on the target managed clusters. This is a boolean and not an enum because enabled/disabled are
+     all available states of the auto upgrade profile. By default, this is set to False.
     :vartype disabled: bool
     :ivar auto_upgrade_profile_status: The status of the auto upgrade profile.
     :vartype auto_upgrade_profile_status:
      ~azure.mgmt.containerservicefleet.models.AutoUpgradeProfileStatus
     :ivar target_kubernetes_version:   This is the target Kubernetes version for auto-upgrade. The
-     format must be ``{major version}.{minor version}``. For example, "1.30".
-       By default, this is empty.
-       If upgrade channel is set to TargetKubernetesVersion, this field must not be empty.
-       If upgrade channel is Rapid, Stable or NodeImage, this field must be empty.
+     format must be ``{major version}.{minor version}``. For example, "1.30". By default, this is
+     empty. If upgrade channel is set to TargetKubernetesVersion, this field must not be empty. If
+     upgrade channel is Rapid, Stable or NodeImage, this field must be empty.
     :vartype target_kubernetes_version: str
     :ivar long_term_support:   If upgrade channel is not TargetKubernetesVersion, this field must
-     be False.
-       If set to True: Fleet auto upgrade will continue generate update runs for patches of minor
-     versions earlier than N-2
-       (where N is the latest supported minor version) if those minor versions support Long-Term
-     Support (LTS).
-       By default, this is set to False.
-       For more information on AKS LTS, please see
+     be False. If set to True: Fleet auto upgrade will continue generate update runs for patches of
+     minor versions earlier than N-2 (where N is the latest supported minor version) if those minor
+     versions support Long-Term Support (LTS). By default, this is set to False. For more
+     information on AKS LTS, please see
      `https://learn.microsoft.com/en-us/azure/aks/long-term-support
      <https://learn.microsoft.com/en-us/azure/aks/long-term-support>`_.
     :vartype long_term_support: bool
@@ -344,12 +337,9 @@ class AutoUpgradeProfileProperties(_Model):
     """The node image upgrade to be applied to the target clusters in auto upgrade."""
     disabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """If set to False: the auto upgrade has effect - target managed clusters will be upgraded on
-     schedule.
-     If set to True: the auto upgrade has no effect - no upgrade will be run on the target managed
-     clusters.
-     This is a boolean and not an enum because enabled/disabled are all available states of the auto
-     upgrade profile.
-     By default, this is set to False."""
+     schedule. If set to True: the auto upgrade has no effect - no upgrade will be run on the target
+     managed clusters. This is a boolean and not an enum because enabled/disabled are all available
+     states of the auto upgrade profile. By default, this is set to False."""
     auto_upgrade_profile_status: Optional["_models.AutoUpgradeProfileStatus"] = rest_field(
         name="autoUpgradeProfileStatus", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -357,22 +347,18 @@ class AutoUpgradeProfileProperties(_Model):
     target_kubernetes_version: Optional[str] = rest_field(
         name="targetKubernetesVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """  This is the target Kubernetes version for auto-upgrade. The format must be ``{major
-     version}.{minor version}``. For example, \"1.30\".
-       By default, this is empty.
-       If upgrade channel is set to TargetKubernetesVersion, this field must not be empty.
-       If upgrade channel is Rapid, Stable or NodeImage, this field must be empty."""
+    """This is the target Kubernetes version for auto-upgrade. The format must be ``{major
+     version}.{minor version}``. For example, \"1.30\". By default, this is empty. If upgrade
+     channel is set to TargetKubernetesVersion, this field must not be empty. If upgrade channel is
+     Rapid, Stable or NodeImage, this field must be empty."""
     long_term_support: Optional[bool] = rest_field(
         name="longTermSupport", visibility=["read", "create", "update", "delete", "query"]
     )
-    """  If upgrade channel is not TargetKubernetesVersion, this field must be False.
-       If set to True: Fleet auto upgrade will continue generate update runs for patches of minor
-     versions earlier than N-2
-       (where N is the latest supported minor version) if those minor versions support Long-Term
-     Support (LTS).
-       By default, this is set to False.
-       For more information on AKS LTS, please see
-     `https://learn.microsoft.com/en-us/azure/aks/long-term-support
+    """If upgrade channel is not TargetKubernetesVersion, this field must be False. If set to True:
+     Fleet auto upgrade will continue generate update runs for patches of minor versions earlier
+     than N-2 (where N is the latest supported minor version) if those minor versions support
+     Long-Term Support (LTS). By default, this is set to False. For more information on AKS LTS,
+     please see `https://learn.microsoft.com/en-us/azure/aks/long-term-support
      <https://learn.microsoft.com/en-us/azure/aks/long-term-support>`_."""
 
     @overload
@@ -1830,7 +1816,7 @@ class LabelSelectorRequirement(_Model):
      Exists and DoesNotExist. Required. Known values are: \"In\", \"NotIn\", \"Exists\", and
      \"DoesNotExist\"."""
     values_property: Optional[list[str]] = rest_field(
-        name="values", visibility=["read", "create", "update", "delete", "query"]
+        name="values", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="values"
     )
     """values is an array of string values. If the operator is In or NotIn, the values array must be
      non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This
@@ -2232,7 +2218,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -2452,7 +2438,9 @@ class PropertySelectorRequirement(_Model):
     """Operator specifies the relationship between a cluster's observed value of the specified
      property and the values given in the requirement. Required. Known values are: \"Gt\", \"Ge\",
      \"Eq\", \"Ne\", \"Lt\", and \"Le\"."""
-    values_property: list[str] = rest_field(name="values", visibility=["read", "create", "update", "delete", "query"])
+    values_property: list[str] = rest_field(
+        name="values", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="values"
+    )
     """Values are a list of values of the specified property which Fleet will compare against the
      observed values of individual member clusters in accordance with the given operator. At this
      moment, each value should be a Kubernetes quantity. For more information, see
@@ -2580,9 +2568,8 @@ class SkipTarget(_Model):
     :ivar type: The skip target type. Required. Known values are: "Member", "Group", "Stage", and
      "AfterStageWait".
     :vartype type: str or ~azure.mgmt.containerservicefleet.models.TargetType
-    :ivar name: The skip target's name.
-     To skip a member/group/stage, use the member/group/stage's name;
-     Tp skip an after stage wait, use the parent stage's name. Required.
+    :ivar name: The skip target's name. To skip a member/group/stage, use the member/group/stage's
+     name; Tp skip an after stage wait, use the parent stage's name. Required.
     :vartype name: str
     """
 
@@ -2590,9 +2577,8 @@ class SkipTarget(_Model):
     """The skip target type. Required. Known values are: \"Member\", \"Group\", \"Stage\", and
      \"AfterStageWait\"."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The skip target's name.
-     To skip a member/group/stage, use the member/group/stage's name;
-     Tp skip an after stage wait, use the parent stage's name. Required."""
+    """The skip target's name. To skip a member/group/stage, use the member/group/stage's name; Tp
+     skip an after stage wait, use the parent stage's name. Required."""
 
     @overload
     def __init__(
@@ -2744,9 +2730,21 @@ class Toleration(_Model):
 class UpdateGroup(_Model):
     """A group to be updated.
 
-    :ivar name: Name of the group.
-     It must match a group name of an existing fleet member. Required.
+    :ivar name: Name of the group. It must match a group name of an existing fleet member.
+     Required.
     :vartype name: str
+    :ivar max_concurrency: The max number of upgrades that can run concurrently in this specific
+     group. Acts as a ceiling (and not a quota) for the number of concurrent upgrades within the
+     group you want to tolerate at a time. Actual concurrency may be lower depending on stage-level
+     concurrency limits or individual member conditions. Group maxConcurrency has a min value of
+     "1". The max value is min(number of clusters in the group, the stage maxConcurrency). If no
+     value is provided, defaults to 1. Accepts either: • A fixed count, e.g. "3" • A percentage,
+     e.g. "25%" (range 1–100). Percentage is of the number of clusters in the group. Fractional
+     results are rounded down. A minimum of 1 upgrade is enforced. Examples: • "3" --> up to 3
+     members from this group upgrade at once. • "100%" --> “all at once”, up to all members for this
+     group upgrade at the same time. • "25%" --> up to 25% of the members in the group will be
+     upgraded at the same time.
+    :vartype max_concurrency: str
     :ivar before_gates: A list of Gates that will be created before this Group is executed.
     :vartype before_gates: list[~azure.mgmt.containerservicefleet.models.GateConfiguration]
     :ivar after_gates: A list of Gates that will be created after this Group is executed.
@@ -2754,8 +2752,21 @@ class UpdateGroup(_Model):
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the group.
-     It must match a group name of an existing fleet member. Required."""
+    """Name of the group. It must match a group name of an existing fleet member. Required."""
+    max_concurrency: Optional[str] = rest_field(
+        name="maxConcurrency", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The max number of upgrades that can run concurrently in this specific group. Acts as a ceiling
+     (and not a quota) for the number of concurrent upgrades within the group you want to tolerate
+     at a time. Actual concurrency may be lower depending on stage-level concurrency limits or
+     individual member conditions. Group maxConcurrency has a min value of \"1\". The max value is
+     min(number of clusters in the group, the stage maxConcurrency). If no value is provided,
+     defaults to 1. Accepts either: • A fixed count, e.g. \"3\" • A percentage, e.g. \"25%\" (range
+     1–100). Percentage is of the number of clusters in the group. Fractional results are rounded
+     down. A minimum of 1 upgrade is enforced. Examples: • \"3\" --> up to 3 members from this group
+     upgrade at once. • \"100%\" --> “all at once”, up to all members for this group upgrade at the
+     same time. • \"25%\" --> up to 25% of the members in the group will be upgraded at the same
+     time."""
     before_gates: Optional[list["_models.GateConfiguration"]] = rest_field(
         name="beforeGates", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2770,6 +2781,7 @@ class UpdateGroup(_Model):
         self,
         *,
         name: str,
+        max_concurrency: Optional[str] = None,
         before_gates: Optional[list["_models.GateConfiguration"]] = None,
         after_gates: Optional[list["_models.GateConfiguration"]] = None,
     ) -> None: ...
@@ -2792,6 +2804,10 @@ class UpdateGroupStatus(_Model):
     :vartype status: ~azure.mgmt.containerservicefleet.models.UpdateStatus
     :ivar name: The name of the UpdateGroup.
     :vartype name: str
+    :ivar max_concurrency:   The max number of upgrades that can run concurrently in this group,
+     resolved from the UpdateStrategy.UpdateGroup.maxConcurrency value. If no value was provided,
+     this value defaults to "1".
+    :vartype max_concurrency: int
     :ivar members: The list of member this UpdateGroup updates.
     :vartype members: list[~azure.mgmt.containerservicefleet.models.MemberUpdateStatus]
     :ivar before_gates: The list of Gates that will run before this UpdateGroup.
@@ -2804,6 +2820,10 @@ class UpdateGroupStatus(_Model):
     """The status of the UpdateGroup."""
     name: Optional[str] = rest_field(visibility=["read"])
     """The name of the UpdateGroup."""
+    max_concurrency: Optional[int] = rest_field(name="maxConcurrency", visibility=["read"])
+    """The max number of upgrades that can run concurrently in this group, resolved from the
+     UpdateStrategy.UpdateGroup.maxConcurrency value. If no value was provided, this value defaults
+     to \"1\"."""
     members: Optional[list["_models.MemberUpdateStatus"]] = rest_field(visibility=["read"])
     """The list of member this UpdateGroup updates."""
     before_gates: Optional[list["_models.UpdateRunGateStatus"]] = rest_field(name="beforeGates", visibility=["read"])
@@ -2975,10 +2995,10 @@ class UpdateRunProperties(_Model):
      UpdateRunStrategy changes can be made directly on the "strategy" field before launching the
      UpdateRun.
     :vartype update_strategy_id: str
-    :ivar strategy: The strategy defines the order in which the clusters will be updated.
-     If not set, all members will be updated sequentially. The UpdateRun status will show a single
-     UpdateStage and a single UpdateGroup targeting all members.
-     The strategy of the UpdateRun can be modified until the run is started.
+    :ivar strategy: The strategy defines the order in which the clusters will be updated. If not
+     set, all members will be updated sequentially. The UpdateRun status will show a single
+     UpdateStage and a single UpdateGroup targeting all members. The strategy of the UpdateRun can
+     be modified until the run is started.
     :vartype strategy: ~azure.mgmt.containerservicefleet.models.UpdateRunStrategy
     :ivar managed_cluster_update: The update to be applied to all clusters in the UpdateRun. The
      managedClusterUpdate can be modified until the run is started. Required.
@@ -3017,10 +3037,10 @@ class UpdateRunProperties(_Model):
     strategy: Optional["_models.UpdateRunStrategy"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The strategy defines the order in which the clusters will be updated.
-     If not set, all members will be updated sequentially. The UpdateRun status will show a single
-     UpdateStage and a single UpdateGroup targeting all members.
-     The strategy of the UpdateRun can be modified until the run is started."""
+    """The strategy defines the order in which the clusters will be updated. If not set, all members
+     will be updated sequentially. The UpdateRun status will show a single UpdateStage and a single
+     UpdateGroup targeting all members. The strategy of the UpdateRun can be modified until the run
+     is started."""
     managed_cluster_update: "_models.ManagedClusterUpdate" = rest_field(
         name="managedClusterUpdate", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3122,6 +3142,17 @@ class UpdateStage(_Model):
     :ivar after_stage_wait_in_seconds: The time in seconds to wait at the end of this stage before
      starting the next one. Defaults to 0 seconds if unspecified.
     :vartype after_stage_wait_in_seconds: int
+    :ivar max_concurrency: The max number of upgrades that can run concurrently across all groups
+     in this stage. Acts as a ceiling (and not a quota) for the number of concurrent upgrades within
+     the stage you want to tolerate at a time. Actual concurrency may be lower depending on
+     group-level concurrency limits or individual member conditions. Stage maxConcurrency has a min
+     value of "1". Accepts either: • A fixed count, e.g., "3" • A percentage, e.g., "25%" (range
+     1–100). Percentage is of the total number of clusters across all groups in the stage.
+     Fractional results are rounded down. A minimum of 1 upgrade is enforced. Examples: • "3"
+     --> up to 3 clusters from this stage upgrade at once (across all groups). • "100%"  --> “all at
+     once”; up to all clusters in this stage upgrade at the same time. • "25%"   --> up to 25% of
+     the stage’s total clusters upgrade at the same time.
+    :vartype max_concurrency: str
     :ivar before_gates: A list of Gates that will be created before this Stage is executed.
     :vartype before_gates: list[~azure.mgmt.containerservicefleet.models.GateConfiguration]
     :ivar after_gates: A list of Gates that will be created after this Stage is executed.
@@ -3140,6 +3171,19 @@ class UpdateStage(_Model):
     )
     """The time in seconds to wait at the end of this stage before starting the next one. Defaults to
      0 seconds if unspecified."""
+    max_concurrency: Optional[str] = rest_field(
+        name="maxConcurrency", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The max number of upgrades that can run concurrently across all groups in this stage. Acts as a
+     ceiling (and not a quota) for the number of concurrent upgrades within the stage you want to
+     tolerate at a time. Actual concurrency may be lower depending on group-level concurrency limits
+     or individual member conditions. Stage maxConcurrency has a min value of \"1\". Accepts either:
+     • A fixed count, e.g., \"3\" • A percentage, e.g., \"25%\" (range 1–100). Percentage is of the
+     total number of clusters across all groups in the stage. Fractional results are rounded down. A
+     minimum of 1 upgrade is enforced. Examples: • \"3\"     --> up to 3 clusters from this stage
+     upgrade at once (across all groups). • \"100%\"  --> “all at once”; up to all clusters in this
+     stage upgrade at the same time. • \"25%\"   --> up to 25% of the stage’s total clusters upgrade
+     at the same time."""
     before_gates: Optional[list["_models.GateConfiguration"]] = rest_field(
         name="beforeGates", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3156,6 +3200,7 @@ class UpdateStage(_Model):
         name: str,
         groups: Optional[list["_models.UpdateGroup"]] = None,
         after_stage_wait_in_seconds: Optional[int] = None,
+        max_concurrency: Optional[str] = None,
         before_gates: Optional[list["_models.GateConfiguration"]] = None,
         after_gates: Optional[list["_models.GateConfiguration"]] = None,
     ) -> None: ...
@@ -3178,6 +3223,9 @@ class UpdateStageStatus(_Model):
     :vartype status: ~azure.mgmt.containerservicefleet.models.UpdateStatus
     :ivar name: The name of the UpdateStage.
     :vartype name: str
+    :ivar max_concurrency: The max number of upgrades that can run concurrently across all groups
+     in this stage, resolved from the UpdateStrategy.UpdateStage.maxConcurrency value.
+    :vartype max_concurrency: int
     :ivar groups: The list of groups to be updated as part of this UpdateStage.
     :vartype groups: list[~azure.mgmt.containerservicefleet.models.UpdateGroupStatus]
     :ivar before_gates: The list of Gates that will run before this UpdateStage.
@@ -3192,6 +3240,9 @@ class UpdateStageStatus(_Model):
     """The status of the UpdateStage."""
     name: Optional[str] = rest_field(visibility=["read"])
     """The name of the UpdateStage."""
+    max_concurrency: Optional[int] = rest_field(name="maxConcurrency", visibility=["read"])
+    """The max number of upgrades that can run concurrently across all groups in this stage, resolved
+     from the UpdateStrategy.UpdateStage.maxConcurrency value."""
     groups: Optional[list["_models.UpdateGroupStatus"]] = rest_field(visibility=["read"])
     """The list of groups to be updated as part of this UpdateStage."""
     before_gates: Optional[list["_models.UpdateRunGateStatus"]] = rest_field(name="beforeGates", visibility=["read"])
