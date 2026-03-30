@@ -45,7 +45,8 @@ class RetentionPolicy(GeneratedRetentionPolicy):
     """Indicates the number of days that metrics or logging or soft-deleted data should be retained."""
 
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
-        super().__init__(enabled=enabled, days=days)
+        self.enabled = enabled
+        self.days = days
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
@@ -83,13 +84,11 @@ class QueueAnalyticsLogging(GeneratedLogging):
     """The retention policy for the metrics."""
 
     def __init__(self, **kwargs: Any) -> None:
-        super().__init__(
-            version=kwargs.get("version", "1.0"),
-            delete=kwargs.get("delete", False),
-            read=kwargs.get("read", False),
-            write=kwargs.get("write", False),
-            retention_policy=kwargs.get("retention_policy") or RetentionPolicy(),
-        )
+        self.version = kwargs.get("version", "1.0")
+        self.delete = kwargs.get("delete", False)
+        self.read = kwargs.get("read", False)
+        self.write = kwargs.get("write", False)
+        self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:
@@ -128,12 +127,10 @@ class Metrics(GeneratedMetrics):
     """The retention policy for the metrics."""
 
     def __init__(self, **kwargs: Any) -> None:
-        super().__init__(
-            version=kwargs.get("version", "1.0"),
-            enabled=kwargs.get("enabled", False),
-            include_apis=kwargs.get("include_apis"),
-            retention_policy=kwargs.get("retention_policy") or RetentionPolicy(),
-        )
+        self.version = kwargs.get("version", "1.0")
+        self.enabled = kwargs.get("enabled", False)
+        self.include_apis = kwargs.get("include_apis")
+        self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:
@@ -194,13 +191,11 @@ class CorsRule(GeneratedCorsRule):
         request."""
 
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
-        super().__init__(
-            allowed_origins=",".join(allowed_origins),
-            allowed_methods=",".join(allowed_methods),
-            allowed_headers=",".join(kwargs.get("allowed_headers", [])),
-            exposed_headers=",".join(kwargs.get("exposed_headers", [])),
-            max_age_in_seconds=kwargs.get("max_age_in_seconds", 0),
-        )
+        self.allowed_origins = ",".join(allowed_origins)
+        self.allowed_methods = ",".join(allowed_methods)
+        self.allowed_headers = ",".join(kwargs.get("allowed_headers", []))
+        self.exposed_headers = ",".join(kwargs.get("exposed_headers", []))
+        self.max_age_in_seconds = kwargs.get("max_age_in_seconds", 0)
 
     @staticmethod
     def _to_generated(rules: Optional[List["CorsRule"]]) -> Optional[List[GeneratedCorsRule]]:
@@ -348,7 +343,9 @@ class AccessPolicy(GenAccessPolicy):
         expiry: Optional[Union["datetime", str]] = None,
         start: Optional[Union["datetime", str]] = None,
     ) -> None:
-        super().__init__(start=start, expiry=expiry, permission=permission)  # type: ignore [arg-type]
+        self.start = start
+        self.expiry = expiry
+        self.permission = permission
 
 
 class QueueMessage(DictMixin):
@@ -389,9 +386,10 @@ class QueueMessage(DictMixin):
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:
-        # Prefer _decoded_content (set by MessageDecodePolicy) over message_text
-        # because the _RestField descriptor re-serializes bytes to base64 on assignment.
-        content = getattr(generated, "_decoded_content", None)
+        # Prefer _decoded_content if set by MessageDecodePolicy (handles base64 decoding and decryption).
+        # The decode policy stores results in _decoded_content because the generated model's message_text
+        # RestField descriptor may re-serialize bytes back to base64 if set directly.
+        content = getattr(generated, '_decoded_content', None)
         if content is None:
             content = generated.message_text
         message = cls(content=content)
@@ -458,9 +456,7 @@ class MessagesPaged(PageIterator):
             raise StopIteration("End of paging")
         if self._max_messages is not None:
             self._max_messages = self._max_messages - len(messages.items_property)
-        return "TOKEN_IGNORED", [
-            QueueMessage._from_generated(q) for q in messages.items_property  # pylint: disable=protected-access
-        ]
+        return "TOKEN_IGNORED", [QueueMessage._from_generated(q) for q in messages.items_property]  # pylint: disable=protected-access
 
 
 class QueueProperties(DictMixin):
