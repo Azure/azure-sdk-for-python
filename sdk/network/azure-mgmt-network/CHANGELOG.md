@@ -156,7 +156,6 @@
   - Method `VerifierWorkspacesOperations.begin_delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
   - Method `VerifierWorkspacesOperations.create` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
   - Method `VerifierWorkspacesOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
-  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `ConnectionMonitorEndpointFilter` renamed its instance variable `items` to `items_property`
   - Model `ExceptionEntry` renamed its instance variable `values` to `values_property`
   - Model `FilterItems` renamed its instance variable `values` to `values_property`
@@ -305,10 +304,6 @@
   - Model `PacketCapture` moved instance variable `target`, `scope`, `target_type`, `bytes_to_capture_per_packet`, `total_bytes_per_session`, `time_limit_in_seconds`, `storage_location`, `filters`, `continuous_capture` and `capture_settings` under property `properties`
   - Deleted model `ApplicationGatewayAvailableSslPredefinedPolicies`/`ApplicationGatewayWafDynamicManifestResultList`/`AutoApprovedPrivateLinkServicesResult`/`AvailableDelegationsResult`/`AvailablePrivateEndpointTypesResult`/`AvailableServiceAliasesResult`/`BastionSessionDeleteResult`/`ConnectionSharedKeyResultList`/`ExpressRouteCrossConnectionPeeringList`/`GetServiceGatewayAddressLocationsResult`/`GetServiceGatewayServicesResult`/`IpamPoolList`/`ListHubRouteTablesResult`/`ListHubVirtualNetworkConnectionsResult`/`ListP2SVpnGatewaysResult`/`ListRouteMapsResult`/`ListRoutingIntentResult`/`ListVirtualHubBgpConnectionResults`/`ListVirtualHubIpConfigurationResults`/`ListVirtualHubRouteTableV2SResult`/`ListVirtualHubsResult`/`ListVirtualNetworkGatewayNatRulesResult`/`ListVirtualWANsResult`/`ListVpnConnectionsResult`/`ListVpnGatewayNatRulesResult`/`ListVpnGatewaysResult`/`ListVpnServerConfigurationPolicyGroupsResult`/`ListVpnServerConfigurationsResult`/`ListVpnSiteLinkConnectionsResult`/`ListVpnSiteLinksResult`/`ListVpnSitesResult`/`NetworkVirtualApplianceConnectionList`/`PoolAssociationList`/`StaticCidrList`/`VirtualNetworkDdosProtectionStatusResult`/`VirtualNetworkGatewayListConnectionsResult`/`VirtualNetworkListUsageResult`/`AzureAsyncOperationResult`/`ConnectionMonitorQueryResult`/`ConnectionMonitorSourceStatus`/`ConnectionState`/`ConnectionStateSnapshot`/`EvaluationState`/`HubVirtualNetworkConnectionStatus`/`NetworkOperationStatus`/`PatchRouteFilter`/`PatchRouteFilterRule`/`TunnelConnectionStatus`/`VpnSiteId` which actually were not used by SDK users
 
-
-## 30.3.0 (2026-03-25)
-
-skip changelog generation
 
 ## 30.2.0 (2026-02-11)
 
