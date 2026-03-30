@@ -554,19 +554,25 @@ class CopilotAdapter(FoundryCBAgent):
             converted_attachments.cleanup()
 
         # -- Phase 4: Done events AFTER unsubscribe -------------------------
-        # Drain any pending event loop work from the Copilot SDK subprocess
-        # before yielding done events. This gives the event loop a clean
-        # state so uvicorn doesn't flush between done yields.
-        await asyncio.sleep(0)
-        await asyncio.sleep(0)
-
+        # The ADC proxy drops events after response.output_text.done.
+        # Workaround: emit response.completed BEFORE text_done so the
+        # Playground receives the completion signal.  This violates RAPI
+        # event ordering but the Playground handles it — it already has
+        # all text from deltas and just needs the completion signal to
+        # stop the loading spinner.
         if not full_text:
             full_text = "(No response text was produced by the agent.)"
             yield ResponseTextDeltaEvent(
                 sequence_number=next_seq(), item_id=item_id,
                 output_index=0, content_index=0, delta=full_text)
+
         empty_part = _Part(text="", annotations=[])
         empty_item = _Item(id=item_id, status="completed", content=[empty_part])
+
+        # Completed FIRST (so it gets through before proxy closes)
+        yield ResponseCompletedEvent(
+            sequence_number=next_seq(), response=resp_minimal("completed"))
+        # Then the standard done sequence (may be dropped by proxy — that's OK)
         yield ResponseTextDoneEvent(
             sequence_number=next_seq(), item_id=item_id,
             output_index=0, content_index=0, text="")
@@ -575,8 +581,6 @@ class CopilotAdapter(FoundryCBAgent):
             output_index=0, content_index=0, part=empty_part)
         yield ResponseOutputItemDoneEvent(
             sequence_number=next_seq(), output_index=0, item=empty_item)
-        yield ResponseCompletedEvent(
-            sequence_number=next_seq(), response=resp_minimal("completed"))
 
     # ------------------------------------------------------------------
     # Identifiers
