@@ -207,7 +207,7 @@ def process_fetched_ranges(
     # Incremental update -- merge deltas into the existing map.
     range_tuples: List[Tuple[Dict[str, Any], Any]] = []
     for r in ranges:
-        parents = r.get(PartitionKeyRange.Parents)
+        parents = r.get(PartitionKeyRange.Parents) or []
         range_info = None
         for parent_id in parents:
             if parent_id in previous_routing_map._rangeById:  # pylint: disable=protected-access
