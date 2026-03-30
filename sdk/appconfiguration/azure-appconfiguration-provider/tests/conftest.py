@@ -8,10 +8,10 @@ from devtools_testutils import (
     add_remove_header_sanitizer,
     add_uri_string_sanitizer,
     is_live,
+    get_credential,
 )
 import pytest
 from azure.appconfiguration import AzureAppConfigurationClient
-from azure.identity import DefaultAzureCredential
 from testcase import setup_configs, cleanup_test_resources
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
@@ -32,7 +32,7 @@ def setup_app_config_keys():
         yield
         return
 
-    credential = DefaultAzureCredential()
+    credential = get_credential()
     client = AzureAppConfigurationClient(endpoint, credential)
     keyvault_secret_url = os.environ.get("APPCONFIGURATION_KEY_VAULT_REFERENCE")
     keyvault_secret_url2 = os.environ.get("APPCONFIGURATION_KEY_VAULT_REFERENCE2")
