@@ -240,10 +240,17 @@ class CopilotAdapter(FoundryCBAgent):
         # Multi-turn: conversation_id -> live CopilotSession
         self._sessions: Dict[str, Any] = {}
 
-        # Credential for BYOK token refresh
+        # Credential for BYOK token refresh.
+        # Check the session config (not raw env vars) because the resource URL
+        # may have been auto-derived from AZURE_AI_PROJECT_ENDPOINT.
+        _has_byok_provider = (
+            "provider" in self._session_config
+            and not os.getenv("AZURE_AI_FOUNDRY_API_KEY")
+            and not os.getenv("GITHUB_TOKEN")
+        )
         if credential is not None:
             self._credential = credential
-        elif os.getenv("AZURE_AI_FOUNDRY_RESOURCE_URL") and not os.getenv("AZURE_AI_FOUNDRY_API_KEY"):
+        elif _has_byok_provider:
             from azure.identity import DefaultAzureCredential
             self._credential = DefaultAzureCredential()
         else:
