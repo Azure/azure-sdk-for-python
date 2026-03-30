@@ -30,9 +30,8 @@
 ### Breaking Changes
 
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
-  - Method `Operations.list` changed from `asynchronous` to `synchronous`
   - Model `AttestationProvider` moved instance variable `trust_model`, `status`, `attest_uri` and `private_endpoint_connections` under property `properties`
-  - Model `JSONWebKeySet` deleted or renamed its instance variable `keys`
+  - Model `JSONWebKeySet` renamed its instance variable `keys` to `keys_property`
   - Deleted or renamed model `OperationList`
 
 ## 2.0.0b1 (2022-10-28)
