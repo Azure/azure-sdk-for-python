@@ -37,15 +37,6 @@ from .. import models as _models
 from .._configuration import AIProjectClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
-from ..models._enums import _AgentDefinitionOptInKeys, _FoundryFeaturesOptInKeys
-
-_get_agent_definition_opt_in_keys: str = ",".join(
-    [
-        _AgentDefinitionOptInKeys.HOSTED_AGENTS_V1_PREVIEW.value,
-        _AgentDefinitionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW.value,
-        _FoundryFeaturesOptInKeys.AGENT_ENDPOINT_V1_PREVIEW.value,
-    ]
-)
 
 JSON = MutableMapping[str, Any]
 _Unset: Any = object()
@@ -142,14 +133,7 @@ def build_agents_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_create_version_request(
-    agent_name: str,
-    *,
-    foundry_features: Optional[
-        Union[str, _AgentDefinitionOptInKeys, Literal[_FoundryFeaturesOptInKeys.AGENT_ENDPOINT_V1_PREVIEW]]
-    ] = None,
-    **kwargs: Any
-) -> HttpRequest:
+def build_agents_create_version_request(agent_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -169,8 +153,6 @@ def build_agents_create_version_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if foundry_features is not None:
-        _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -340,10 +322,7 @@ def build_evaluation_rules_delete_request(id: str, **kwargs: Any) -> HttpRequest
 
 
 def build_evaluation_rules_create_or_update_request(  # pylint: disable=name-too-long
-    id: str,
-    *,
-    foundry_features: Optional[Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
-    **kwargs: Any
+    id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -364,8 +343,6 @@ def build_evaluation_rules_create_or_update_request(  # pylint: disable=name-too
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if foundry_features is not None:
-        _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -821,7 +798,7 @@ def build_indexes_create_or_update_request(name: str, version: str, **kwargs: An
 
 
 def build_beta_evaluation_taxonomies_get_request(  # pylint: disable=name-too-long
-    name: str, *, foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW], **kwargs: Any
+    name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -841,18 +818,13 @@ def build_beta_evaluation_taxonomies_get_request(  # pylint: disable=name-too-lo
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_beta_evaluation_taxonomies_list_request(  # pylint: disable=name-too-long
-    *,
-    foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-    input_name: Optional[str] = None,
-    input_type: Optional[str] = None,
-    **kwargs: Any
+    *, input_name: Optional[str] = None, input_type: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -871,16 +843,14 @@ def build_beta_evaluation_taxonomies_list_request(  # pylint: disable=name-too-l
         _params["inputType"] = _SERIALIZER.query("input_type", input_type, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_beta_evaluation_taxonomies_delete_request(  # pylint: disable=name-too-long
-    name: str, *, foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW], **kwargs: Any
+    name: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
@@ -895,14 +865,11 @@ def build_beta_evaluation_taxonomies_delete_request(  # pylint: disable=name-too
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_beta_evaluation_taxonomies_create_request(  # pylint: disable=name-too-long
-    name: str, *, foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW], **kwargs: Any
+    name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -923,7 +890,6 @@ def build_beta_evaluation_taxonomies_create_request(  # pylint: disable=name-too
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -932,7 +898,7 @@ def build_beta_evaluation_taxonomies_create_request(  # pylint: disable=name-too
 
 
 def build_beta_evaluation_taxonomies_update_request(  # pylint: disable=name-too-long
-    name: str, *, foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW], **kwargs: Any
+    name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -953,7 +919,6 @@ def build_beta_evaluation_taxonomies_update_request(  # pylint: disable=name-too
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -964,7 +929,6 @@ def build_beta_evaluation_taxonomies_update_request(  # pylint: disable=name-too
 def build_beta_evaluators_list_versions_request(  # pylint: disable=name-too-long
     name: str,
     *,
-    foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
     type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
     limit: Optional[int] = None,
     **kwargs: Any
@@ -991,7 +955,6 @@ def build_beta_evaluators_list_versions_request(  # pylint: disable=name-too-lon
         _params["limit"] = _SERIALIZER.query("limit", limit, "int")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -999,7 +962,6 @@ def build_beta_evaluators_list_versions_request(  # pylint: disable=name-too-lon
 
 def build_beta_evaluators_list_request(
     *,
-    foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
     type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
     limit: Optional[int] = None,
     **kwargs: Any
@@ -1021,18 +983,13 @@ def build_beta_evaluators_list_request(
         _params["limit"] = _SERIALIZER.query("limit", limit, "int")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_beta_evaluators_get_version_request(  # pylint: disable=name-too-long
-    name: str,
-    version: str,
-    *,
-    foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-    **kwargs: Any
+    name: str, version: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1053,20 +1010,14 @@ def build_beta_evaluators_get_version_request(  # pylint: disable=name-too-long
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_beta_evaluators_delete_version_request(  # pylint: disable=name-too-long
-    name: str,
-    version: str,
-    *,
-    foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-    **kwargs: Any
+    name: str, version: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
@@ -1082,14 +1033,11 @@ def build_beta_evaluators_delete_version_request(  # pylint: disable=name-too-lo
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_beta_evaluators_create_version_request(  # pylint: disable=name-too-long
-    name: str, *, foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW], **kwargs: Any
+    name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1110,7 +1058,6 @@ def build_beta_evaluators_create_version_request(  # pylint: disable=name-too-lo
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1119,11 +1066,7 @@ def build_beta_evaluators_create_version_request(  # pylint: disable=name-too-lo
 
 
 def build_beta_evaluators_update_version_request(  # pylint: disable=name-too-long
-    name: str,
-    version: str,
-    *,
-    foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-    **kwargs: Any
+    name: str, version: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1145,7 +1088,6 @@ def build_beta_evaluators_update_version_request(  # pylint: disable=name-too-lo
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1154,11 +1096,7 @@ def build_beta_evaluators_update_version_request(  # pylint: disable=name-too-lo
 
 
 def build_beta_evaluators_pending_upload_request(  # pylint: disable=name-too-long
-    name: str,
-    version: str,
-    *,
-    foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-    **kwargs: Any
+    name: str, version: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1180,7 +1118,6 @@ def build_beta_evaluators_pending_upload_request(  # pylint: disable=name-too-lo
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1189,11 +1126,7 @@ def build_beta_evaluators_pending_upload_request(  # pylint: disable=name-too-lo
 
 
 def build_beta_evaluators_get_credentials_request(  # pylint: disable=name-too-long
-    name: str,
-    version: str,
-    *,
-    foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-    **kwargs: Any
+    name: str, version: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1215,7 +1148,6 @@ def build_beta_evaluators_get_credentials_request(  # pylint: disable=name-too-l
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1223,9 +1155,7 @@ def build_beta_evaluators_get_credentials_request(  # pylint: disable=name-too-l
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_insights_generate_request(
-    *, foundry_features: Literal[_FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
+def build_beta_insights_generate_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1240,7 +1170,6 @@ def build_beta_insights_generate_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if "Repeatability-Request-ID" not in _headers:
         _headers["Repeatability-Request-ID"] = str(uuid.uuid4())
     if "Repeatability-First-Sent" not in _headers:
@@ -1255,11 +1184,7 @@ def build_beta_insights_generate_request(
 
 
 def build_beta_insights_get_request(
-    insight_id: str,
-    *,
-    foundry_features: Literal[_FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW],
-    include_coordinates: Optional[bool] = None,
-    **kwargs: Any
+    insight_id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1276,12 +1201,11 @@ def build_beta_insights_get_request(
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if include_coordinates is not None:
         _params["includeCoordinates"] = _SERIALIZER.query("include_coordinates", include_coordinates, "bool")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1289,7 +1213,6 @@ def build_beta_insights_get_request(
 
 def build_beta_insights_list_request(
     *,
-    foundry_features: Literal[_FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW],
     type: Optional[Union[str, _models.InsightType]] = None,
     eval_id: Optional[str] = None,
     run_id: Optional[str] = None,
@@ -1307,7 +1230,6 @@ def build_beta_insights_list_request(
     _url = "/insights"
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if type is not None:
         _params["type"] = _SERIALIZER.query("type", type, "str")
     if eval_id is not None:
@@ -1318,17 +1240,15 @@ def build_beta_insights_list_request(
         _params["agentName"] = _SERIALIZER.query("agent_name", agent_name, "str")
     if include_coordinates is not None:
         _params["includeCoordinates"] = _SERIALIZER.query("include_coordinates", include_coordinates, "bool")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_memory_stores_create_request(
-    *, foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
+def build_beta_memory_stores_create_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1343,7 +1263,6 @@ def build_beta_memory_stores_create_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1351,9 +1270,7 @@ def build_beta_memory_stores_create_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_memory_stores_update_request(
-    name: str, *, foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
+def build_beta_memory_stores_update_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1373,7 +1290,6 @@ def build_beta_memory_stores_update_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1381,9 +1297,7 @@ def build_beta_memory_stores_update_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_memory_stores_get_request(
-    name: str, *, foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
+def build_beta_memory_stores_get_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1402,7 +1316,6 @@ def build_beta_memory_stores_get_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1410,7 +1323,6 @@ def build_beta_memory_stores_get_request(
 
 def build_beta_memory_stores_list_request(
     *,
-    foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
     limit: Optional[int] = None,
     order: Optional[Union[str, _models.PageOrder]] = None,
     after: Optional[str] = None,
@@ -1438,15 +1350,12 @@ def build_beta_memory_stores_list_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_memory_stores_delete_request(
-    name: str, *, foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
+def build_beta_memory_stores_delete_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1465,14 +1374,13 @@ def build_beta_memory_stores_delete_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_beta_memory_stores_search_memories_request(  # pylint: disable=name-too-long
-    name: str, *, foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
+    name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1493,7 +1401,6 @@ def build_beta_memory_stores_search_memories_request(  # pylint: disable=name-to
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1502,7 +1409,7 @@ def build_beta_memory_stores_search_memories_request(  # pylint: disable=name-to
 
 
 def build_beta_memory_stores_update_memories_request(  # pylint: disable=name-too-long
-    name: str, *, foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
+    name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1523,7 +1430,6 @@ def build_beta_memory_stores_update_memories_request(  # pylint: disable=name-to
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1532,7 +1438,7 @@ def build_beta_memory_stores_update_memories_request(  # pylint: disable=name-to
 
 
 def build_beta_memory_stores_delete_scope_request(  # pylint: disable=name-too-long
-    name: str, *, foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
+    name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1553,7 +1459,6 @@ def build_beta_memory_stores_delete_scope_request(  # pylint: disable=name-too-l
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1561,9 +1466,7 @@ def build_beta_memory_stores_delete_scope_request(  # pylint: disable=name-too-l
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_red_teams_get_request(
-    name: str, *, foundry_features: Literal[_FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
+def build_beta_red_teams_get_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1582,15 +1485,12 @@ def build_beta_red_teams_get_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_red_teams_list_request(
-    *, foundry_features: Literal[_FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
+def build_beta_red_teams_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1604,15 +1504,12 @@ def build_beta_red_teams_list_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_red_teams_create_request(
-    *, foundry_features: Literal[_FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
+def build_beta_red_teams_create_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1627,7 +1524,6 @@ def build_beta_red_teams_create_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1635,10 +1531,7 @@ def build_beta_red_teams_create_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_schedules_delete_request(
-    schedule_id: str, *, foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+def build_beta_schedules_delete_request(schedule_id: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
@@ -1653,15 +1546,10 @@ def build_beta_schedules_delete_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_beta_schedules_get_request(
-    schedule_id: str, *, foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
+def build_beta_schedules_get_request(schedule_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1680,18 +1568,13 @@ def build_beta_schedules_get_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_beta_schedules_list_request(
-    *,
-    foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
-    type: Optional[Union[str, _models.ScheduleTaskType]] = None,
-    enabled: Optional[bool] = None,
-    **kwargs: Any
+    *, type: Optional[Union[str, _models.ScheduleTaskType]] = None, enabled: Optional[bool] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1710,14 +1593,13 @@ def build_beta_schedules_list_request(
         _params["enabled"] = _SERIALIZER.query("enabled", enabled, "bool")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_beta_schedules_create_or_update_request(  # pylint: disable=name-too-long
-    schedule_id: str, *, foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW], **kwargs: Any
+    schedule_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1738,7 +1620,6 @@ def build_beta_schedules_create_or_update_request(  # pylint: disable=name-too-l
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1746,13 +1627,7 @@ def build_beta_schedules_create_or_update_request(  # pylint: disable=name-too-l
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_schedules_get_run_request(
-    schedule_id: str,
-    run_id: str,
-    *,
-    foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
-    **kwargs: Any
-) -> HttpRequest:
+def build_beta_schedules_get_run_request(schedule_id: str, run_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1772,7 +1647,6 @@ def build_beta_schedules_get_run_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1781,7 +1655,6 @@ def build_beta_schedules_get_run_request(
 def build_beta_schedules_list_runs_request(
     schedule_id: str,
     *,
-    foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
     type: Optional[Union[str, _models.ScheduleTaskType]] = None,
     enabled: Optional[bool] = None,
     **kwargs: Any
@@ -1808,15 +1681,12 @@ def build_beta_schedules_list_runs_request(
         _params["enabled"] = _SERIALIZER.query("enabled", enabled, "bool")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_toolsets_create_request(
-    *, foundry_features: Literal[_FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
+def build_beta_toolsets_create_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1831,7 +1701,6 @@ def build_beta_toolsets_create_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1839,9 +1708,7 @@ def build_beta_toolsets_create_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_toolsets_update_request(
-    tool_set_name: str, *, foundry_features: Literal[_FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
+def build_beta_toolsets_update_request(tool_set_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1861,7 +1728,6 @@ def build_beta_toolsets_update_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1869,9 +1735,7 @@ def build_beta_toolsets_update_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_toolsets_get_request(
-    tool_set_name: str, *, foundry_features: Literal[_FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
+def build_beta_toolsets_get_request(tool_set_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1890,7 +1754,6 @@ def build_beta_toolsets_get_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1898,7 +1761,6 @@ def build_beta_toolsets_get_request(
 
 def build_beta_toolsets_list_request(
     *,
-    foundry_features: Literal[_FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW],
     limit: Optional[int] = None,
     order: Optional[Union[str, _models.PageOrder]] = None,
     after: Optional[str] = None,
@@ -1926,15 +1788,12 @@ def build_beta_toolsets_list_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_toolsets_delete_request(
-    tool_set_name: str, *, foundry_features: Literal[_FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
+def build_beta_toolsets_delete_request(tool_set_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1953,7 +1812,6 @@ def build_beta_toolsets_delete_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
@@ -2353,8 +2211,6 @@ class AgentsOperations:
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Optional[str] = _get_agent_definition_opt_in_keys if self._config.allow_preview else None  # type: ignore
-
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -2383,7 +2239,6 @@ class AgentsOperations:
 
         _request = build_agents_create_version_request(
             agent_name=agent_name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3060,7 +2915,6 @@ class EvaluationRulesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Optional[Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW if self._config.allow_preview else None  # type: ignore
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3084,7 +2938,6 @@ class EvaluationRulesOperations:
 
         _request = build_evaluation_rules_create_or_update_request(
             id=id,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4840,9 +4693,6 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4858,7 +4708,6 @@ class BetaEvaluationTaxonomiesOperations:
 
         _request = build_beta_evaluation_taxonomies_get_request(
             name=name,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4909,9 +4758,6 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluationTaxonomy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -4929,7 +4775,6 @@ class BetaEvaluationTaxonomiesOperations:
             if not next_link:
 
                 _request = build_beta_evaluation_taxonomies_list_request(
-                    foundry_features=_foundry_features,
                     input_name=input_name,
                     input_type=input_type,
                     api_version=self._config.api_version,
@@ -4957,7 +4802,7 @@ class BetaEvaluationTaxonomiesOperations:
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
                     params=_next_request_params,
-                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
+                    headers=_headers,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5005,9 +4850,6 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5023,7 +4865,6 @@ class BetaEvaluationTaxonomiesOperations:
 
         _request = build_beta_evaluation_taxonomies_delete_request(
             name=name,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5116,9 +4957,6 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5142,7 +4980,6 @@ class BetaEvaluationTaxonomiesOperations:
 
         _request = build_beta_evaluation_taxonomies_create_request(
             name=name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5250,9 +5087,6 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5276,7 +5110,6 @@ class BetaEvaluationTaxonomiesOperations:
 
         _request = build_beta_evaluation_taxonomies_update_request(
             name=name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5357,9 +5190,6 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluatorVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -5378,7 +5208,6 @@ class BetaEvaluatorsOperations:
 
                 _request = build_beta_evaluators_list_versions_request(
                     name=name,
-                    foundry_features=_foundry_features,
                     type=type,
                     limit=limit,
                     api_version=self._config.api_version,
@@ -5406,7 +5235,7 @@ class BetaEvaluatorsOperations:
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
                     params=_next_request_params,
-                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
+                    headers=_headers,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5465,9 +5294,6 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluatorVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -5485,7 +5311,6 @@ class BetaEvaluatorsOperations:
             if not next_link:
 
                 _request = build_beta_evaluators_list_request(
-                    foundry_features=_foundry_features,
                     type=type,
                     limit=limit,
                     api_version=self._config.api_version,
@@ -5513,7 +5338,7 @@ class BetaEvaluatorsOperations:
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
                     params=_next_request_params,
-                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
+                    headers=_headers,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5564,9 +5389,6 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5583,7 +5405,6 @@ class BetaEvaluatorsOperations:
         _request = build_beta_evaluators_get_version_request(
             name=name,
             version=version,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5635,9 +5456,6 @@ class BetaEvaluatorsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5654,7 +5472,6 @@ class BetaEvaluatorsOperations:
         _request = build_beta_evaluators_delete_version_request(
             name=name,
             version=version,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5752,9 +5569,6 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5778,7 +5592,6 @@ class BetaEvaluatorsOperations:
 
         _request = build_beta_evaluators_create_version_request(
             name=name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5910,9 +5723,6 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5937,7 +5747,6 @@ class BetaEvaluatorsOperations:
         _request = build_beta_evaluators_update_version_request(
             name=name,
             version=version,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6076,9 +5885,6 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6103,7 +5909,6 @@ class BetaEvaluatorsOperations:
         _request = build_beta_evaluators_pending_upload_request(
             name=name,
             version=version,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6242,9 +6047,6 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.DatasetCredential
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6269,7 +6071,6 @@ class BetaEvaluatorsOperations:
         _request = build_beta_evaluators_get_credentials_request(
             name=name,
             version=version,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6384,9 +6185,6 @@ class BetaInsightsOperations:
         :rtype: ~azure.ai.projects.models.Insight
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6409,7 +6207,6 @@ class BetaInsightsOperations:
             _content = json.dumps(insight, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_insights_generate_request(
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6436,7 +6233,11 @@ class BetaInsightsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
@@ -6461,9 +6262,6 @@ class BetaInsightsOperations:
         :rtype: ~azure.ai.projects.models.Insight
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6479,7 +6277,6 @@ class BetaInsightsOperations:
 
         _request = build_beta_insights_get_request(
             insight_id=insight_id,
-            foundry_features=_foundry_features,
             include_coordinates=include_coordinates,
             api_version=self._config.api_version,
             headers=_headers,
@@ -6505,7 +6302,11 @@ class BetaInsightsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
@@ -6546,9 +6347,6 @@ class BetaInsightsOperations:
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Insight]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -6566,7 +6364,6 @@ class BetaInsightsOperations:
             if not next_link:
 
                 _request = build_beta_insights_list_request(
-                    foundry_features=_foundry_features,
                     type=type,
                     eval_id=eval_id,
                     run_id=run_id,
@@ -6597,7 +6394,7 @@ class BetaInsightsOperations:
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
                     params=_next_request_params,
-                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
+                    headers=_headers,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6629,7 +6426,11 @@ class BetaInsightsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -6743,9 +6544,6 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6775,7 +6573,6 @@ class BetaMemoryStoresOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_memory_stores_create_request(
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6906,9 +6703,6 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6935,7 +6729,6 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_update_request(
             name=name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6988,9 +6781,6 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7006,7 +6796,6 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_get_request(
             name=name,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -7076,9 +6865,6 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.MemoryStoreDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -7095,7 +6881,6 @@ class BetaMemoryStoresOperations:
         def prepare_request(_continuation_token=None):
 
             _request = build_beta_memory_stores_list_request(
-                foundry_features=_foundry_features,
                 limit=limit,
                 order=order,
                 after=_continuation_token,
@@ -7151,9 +6936,6 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.DeleteMemoryStoreResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7169,7 +6951,6 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_delete_request(
             name=name,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -7263,9 +7044,6 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7299,7 +7077,6 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_search_memories_request(
             name=name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -7353,9 +7130,6 @@ class BetaMemoryStoresOperations:
         update_delay: Optional[int] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7389,7 +7163,6 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_update_memories_request(
             name=name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -7490,9 +7263,6 @@ class BetaMemoryStoresOperations:
          ~azure.core.polling.LROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
@@ -7505,7 +7275,6 @@ class BetaMemoryStoresOperations:
             raw_result = self._update_memories_initial(
                 name=name,
                 body=body,
-                foundry_features=_foundry_features,
                 scope=scope,
                 items=items,
                 previous_update_id=previous_update_id,
@@ -7630,9 +7399,6 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7661,7 +7427,6 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_delete_scope_request(
             name=name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -7732,9 +7497,6 @@ class BetaRedTeamsOperations:
         :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7750,7 +7512,6 @@ class BetaRedTeamsOperations:
 
         _request = build_beta_red_teams_get_request(
             name=name,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -7795,9 +7556,6 @@ class BetaRedTeamsOperations:
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.RedTeam]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -7815,7 +7573,6 @@ class BetaRedTeamsOperations:
             if not next_link:
 
                 _request = build_beta_red_teams_list_request(
-                    foundry_features=_foundry_features,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -7841,7 +7598,7 @@ class BetaRedTeamsOperations:
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
                     params=_next_request_params,
-                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
+                    headers=_headers,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7934,9 +7691,6 @@ class BetaRedTeamsOperations:
         :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7959,7 +7713,6 @@ class BetaRedTeamsOperations:
             _content = json.dumps(red_team, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_red_teams_create_request(
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -8030,9 +7783,6 @@ class BetaSchedulesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -8048,7 +7798,6 @@ class BetaSchedulesOperations:
 
         _request = build_beta_schedules_delete_request(
             schedule_id=schedule_id,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -8082,9 +7831,6 @@ class BetaSchedulesOperations:
         :rtype: ~azure.ai.projects.models.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -8100,7 +7846,6 @@ class BetaSchedulesOperations:
 
         _request = build_beta_schedules_get_request(
             schedule_id=schedule_id,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -8156,9 +7901,6 @@ class BetaSchedulesOperations:
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Schedule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -8176,7 +7918,6 @@ class BetaSchedulesOperations:
             if not next_link:
 
                 _request = build_beta_schedules_list_request(
-                    foundry_features=_foundry_features,
                     type=type,
                     enabled=enabled,
                     api_version=self._config.api_version,
@@ -8204,7 +7945,7 @@ class BetaSchedulesOperations:
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
                     params=_next_request_params,
-                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
+                    headers=_headers,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8311,9 +8052,6 @@ class BetaSchedulesOperations:
         :rtype: ~azure.ai.projects.models.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -8337,7 +8075,6 @@ class BetaSchedulesOperations:
 
         _request = build_beta_schedules_create_or_update_request(
             schedule_id=schedule_id,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -8388,9 +8125,6 @@ class BetaSchedulesOperations:
         :rtype: ~azure.ai.projects.models.ScheduleRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -8407,7 +8141,6 @@ class BetaSchedulesOperations:
         _request = build_beta_schedules_get_run_request(
             schedule_id=schedule_id,
             run_id=run_id,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -8470,9 +8203,6 @@ class BetaSchedulesOperations:
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.ScheduleRun]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -8491,7 +8221,6 @@ class BetaSchedulesOperations:
 
                 _request = build_beta_schedules_list_runs_request(
                     schedule_id=schedule_id,
-                    foundry_features=_foundry_features,
                     type=type,
                     enabled=enabled,
                     api_version=self._config.api_version,
@@ -8519,7 +8248,7 @@ class BetaSchedulesOperations:
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
                     params=_next_request_params,
-                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
+                    headers=_headers,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8663,9 +8392,6 @@ class BetaToolsetsOperations:
         :rtype: ~azure.ai.projects.models.ToolsetObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -8695,7 +8421,6 @@ class BetaToolsetsOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_toolsets_create_request(
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -8832,9 +8557,6 @@ class BetaToolsetsOperations:
         :rtype: ~azure.ai.projects.models.ToolsetObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -8863,7 +8585,6 @@ class BetaToolsetsOperations:
 
         _request = build_beta_toolsets_update_request(
             tool_set_name=tool_set_name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -8916,9 +8637,6 @@ class BetaToolsetsOperations:
         :rtype: ~azure.ai.projects.models.ToolsetObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -8934,7 +8652,6 @@ class BetaToolsetsOperations:
 
         _request = build_beta_toolsets_get_request(
             tool_set_name=tool_set_name,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -9004,9 +8721,6 @@ class BetaToolsetsOperations:
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.ToolsetObject]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -9023,7 +8737,6 @@ class BetaToolsetsOperations:
         def prepare_request(_continuation_token=None):
 
             _request = build_beta_toolsets_list_request(
-                foundry_features=_foundry_features,
                 limit=limit,
                 order=order,
                 after=_continuation_token,
@@ -9079,9 +8792,6 @@ class BetaToolsetsOperations:
         :rtype: ~azure.ai.projects.models.DeleteToolsetResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -9097,7 +8807,6 @@ class BetaToolsetsOperations:
 
         _request = build_beta_toolsets_delete_request(
             tool_set_name=tool_set_name,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

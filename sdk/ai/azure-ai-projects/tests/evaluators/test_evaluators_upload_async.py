@@ -8,16 +8,22 @@ import tempfile
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.ai.projects.aio.operations._patch_evaluators_async import EvaluatorsOperations
+from azure.ai.projects.aio.operations._patch_evaluators_async import (
+    BetaEvaluatorsOperations,
+    _EVALUATORS_FOUNDRY_FEATURES_VALUE,
+)
 from azure.ai.projects.models import CodeBasedEvaluatorDefinition, EvaluatorVersion
+from azure.ai.projects.models._patch import _FOUNDRY_FEATURES_HEADER_NAME
+
+_EVALUATORS_HEADERS = {_FOUNDRY_FEATURES_HEADER_NAME: _EVALUATORS_FOUNDRY_FEATURES_VALUE}
 
 
 class TestEvaluatorsUploadAsync:
-    """Unit tests for async EvaluatorsOperations.upload() method."""
+    """Unit tests for async BetaEvaluatorsOperations.upload() method."""
 
     def _create_operations(self):
-        """Create a mock async EvaluatorsOperations instance with mocked service calls."""
-        ops = object.__new__(EvaluatorsOperations)
+        """Create a mock async BetaEvaluatorsOperations instance with mocked service calls."""
+        ops = object.__new__(BetaEvaluatorsOperations)
         ops.pending_upload = AsyncMock()
         ops.list_versions = MagicMock()
         ops.create_version = AsyncMock()
@@ -210,6 +216,7 @@ class TestEvaluatorsUploadAsync:
             name="test",
             version="1",
             pending_upload_request={"connectionName": "my-connection"},
+            headers=_EVALUATORS_HEADERS,
         )
 
     # ---------------------------------------------------------------
@@ -403,6 +410,7 @@ class TestEvaluatorsUploadAsync:
             ops.create_version.assert_called_once_with(
                 name="my_eval",
                 evaluator_version=evaluator_version,
+                headers=_EVALUATORS_HEADERS,
             )
             assert result == {"name": "my_eval", "version": "1"}
 
@@ -436,6 +444,7 @@ class TestEvaluatorsUploadAsync:
                 name="my_eval",
                 version="3",
                 pending_upload_request={},
+                headers=_EVALUATORS_HEADERS,
             )
 
     # ---------------------------------------------------------------

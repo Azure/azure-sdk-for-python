@@ -35,9 +35,7 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
-from ...models._enums import _AgentDefinitionOptInKeys, _FoundryFeaturesOptInKeys
 from ...operations._operations import (
-    _get_agent_definition_opt_in_keys,
     build_agents_create_version_from_manifest_request,
     build_agents_create_version_request,
     build_agents_delete_request,
@@ -113,8 +111,6 @@ _Unset: Any = object()
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 List = list
-_SERIALIZER = Serializer()
-_SERIALIZER.client_side_validation = False
 
 
 class BetaOperations:  # pylint: disable=too-many-instance-attributes
@@ -511,8 +507,6 @@ class AgentsOperations:
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Optional[str] = _get_agent_definition_opt_in_keys if self._config.allow_preview else None  # type: ignore
-
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -541,7 +535,6 @@ class AgentsOperations:
 
         _request = build_agents_create_version_request(
             agent_name=agent_name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1220,7 +1213,6 @@ class EvaluationRulesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Optional[Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW if self._config.allow_preview else None  # type: ignore
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1244,7 +1236,6 @@ class EvaluationRulesOperations:
 
         _request = build_evaluation_rules_create_or_update_request(
             id=id,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3000,9 +2991,6 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3018,7 +3006,6 @@ class BetaEvaluationTaxonomiesOperations:
 
         _request = build_beta_evaluation_taxonomies_get_request(
             name=name,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3069,9 +3056,6 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.EvaluationTaxonomy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -3089,7 +3073,6 @@ class BetaEvaluationTaxonomiesOperations:
             if not next_link:
 
                 _request = build_beta_evaluation_taxonomies_list_request(
-                    foundry_features=_foundry_features,
                     input_name=input_name,
                     input_type=input_type,
                     api_version=self._config.api_version,
@@ -3117,7 +3100,7 @@ class BetaEvaluationTaxonomiesOperations:
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
                     params=_next_request_params,
-                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
+                    headers=_headers,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3165,9 +3148,6 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3183,7 +3163,6 @@ class BetaEvaluationTaxonomiesOperations:
 
         _request = build_beta_evaluation_taxonomies_delete_request(
             name=name,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3276,9 +3255,6 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3302,7 +3278,6 @@ class BetaEvaluationTaxonomiesOperations:
 
         _request = build_beta_evaluation_taxonomies_create_request(
             name=name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3410,9 +3385,6 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3436,7 +3408,6 @@ class BetaEvaluationTaxonomiesOperations:
 
         _request = build_beta_evaluation_taxonomies_update_request(
             name=name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3517,9 +3488,6 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.EvaluatorVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -3538,7 +3506,6 @@ class BetaEvaluatorsOperations:
 
                 _request = build_beta_evaluators_list_versions_request(
                     name=name,
-                    foundry_features=_foundry_features,
                     type=type,
                     limit=limit,
                     api_version=self._config.api_version,
@@ -3566,7 +3533,7 @@ class BetaEvaluatorsOperations:
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
                     params=_next_request_params,
-                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
+                    headers=_headers,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3625,9 +3592,6 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.EvaluatorVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -3645,7 +3609,6 @@ class BetaEvaluatorsOperations:
             if not next_link:
 
                 _request = build_beta_evaluators_list_request(
-                    foundry_features=_foundry_features,
                     type=type,
                     limit=limit,
                     api_version=self._config.api_version,
@@ -3673,7 +3636,7 @@ class BetaEvaluatorsOperations:
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
                     params=_next_request_params,
-                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
+                    headers=_headers,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3724,9 +3687,6 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3743,7 +3703,6 @@ class BetaEvaluatorsOperations:
         _request = build_beta_evaluators_get_version_request(
             name=name,
             version=version,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3793,9 +3752,6 @@ class BetaEvaluatorsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3812,7 +3768,6 @@ class BetaEvaluatorsOperations:
         _request = build_beta_evaluators_delete_version_request(
             name=name,
             version=version,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3910,9 +3865,6 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3936,7 +3888,6 @@ class BetaEvaluatorsOperations:
 
         _request = build_beta_evaluators_create_version_request(
             name=name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4068,9 +4019,6 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4095,7 +4043,6 @@ class BetaEvaluatorsOperations:
         _request = build_beta_evaluators_update_version_request(
             name=name,
             version=version,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4234,9 +4181,6 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4261,7 +4205,6 @@ class BetaEvaluatorsOperations:
         _request = build_beta_evaluators_pending_upload_request(
             name=name,
             version=version,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4400,9 +4343,6 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.DatasetCredential
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4427,7 +4367,6 @@ class BetaEvaluatorsOperations:
         _request = build_beta_evaluators_get_credentials_request(
             name=name,
             version=version,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4546,9 +4485,6 @@ class BetaInsightsOperations:
         :rtype: ~azure.ai.projects.models.Insight
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4571,7 +4507,6 @@ class BetaInsightsOperations:
             _content = json.dumps(insight, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_insights_generate_request(
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4598,7 +4533,11 @@ class BetaInsightsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
@@ -4625,9 +4564,6 @@ class BetaInsightsOperations:
         :rtype: ~azure.ai.projects.models.Insight
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4643,7 +4579,6 @@ class BetaInsightsOperations:
 
         _request = build_beta_insights_get_request(
             insight_id=insight_id,
-            foundry_features=_foundry_features,
             include_coordinates=include_coordinates,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4669,7 +4604,11 @@ class BetaInsightsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
@@ -4710,9 +4649,6 @@ class BetaInsightsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.Insight]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -4730,7 +4666,6 @@ class BetaInsightsOperations:
             if not next_link:
 
                 _request = build_beta_insights_list_request(
-                    foundry_features=_foundry_features,
                     type=type,
                     eval_id=eval_id,
                     run_id=run_id,
@@ -4761,7 +4696,7 @@ class BetaInsightsOperations:
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
                     params=_next_request_params,
-                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
+                    headers=_headers,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4793,7 +4728,11 @@ class BetaInsightsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -4907,9 +4846,6 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4939,7 +4875,6 @@ class BetaMemoryStoresOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_memory_stores_create_request(
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5070,9 +5005,6 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5099,7 +5031,6 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_update_request(
             name=name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5152,9 +5083,6 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5170,7 +5098,6 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_get_request(
             name=name,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5240,9 +5167,6 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.MemoryStoreDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -5259,7 +5183,6 @@ class BetaMemoryStoresOperations:
         def prepare_request(_continuation_token=None):
 
             _request = build_beta_memory_stores_list_request(
-                foundry_features=_foundry_features,
                 limit=limit,
                 order=order,
                 after=_continuation_token,
@@ -5315,9 +5238,6 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.DeleteMemoryStoreResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5333,7 +5253,6 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_delete_request(
             name=name,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5427,9 +5346,6 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5463,7 +5379,6 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_search_memories_request(
             name=name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5517,9 +5432,6 @@ class BetaMemoryStoresOperations:
         update_delay: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5553,7 +5465,6 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_update_memories_request(
             name=name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5654,9 +5565,6 @@ class BetaMemoryStoresOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
@@ -5669,7 +5577,6 @@ class BetaMemoryStoresOperations:
             raw_result = await self._update_memories_initial(
                 name=name,
                 body=body,
-                foundry_features=_foundry_features,
                 scope=scope,
                 items=items,
                 previous_update_id=previous_update_id,
@@ -5795,9 +5702,6 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5826,7 +5730,6 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_delete_scope_request(
             name=name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5897,9 +5800,6 @@ class BetaRedTeamsOperations:
         :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5915,7 +5815,6 @@ class BetaRedTeamsOperations:
 
         _request = build_beta_red_teams_get_request(
             name=name,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5960,9 +5859,6 @@ class BetaRedTeamsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.RedTeam]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -5980,7 +5876,6 @@ class BetaRedTeamsOperations:
             if not next_link:
 
                 _request = build_beta_red_teams_list_request(
-                    foundry_features=_foundry_features,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -6006,7 +5901,7 @@ class BetaRedTeamsOperations:
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
                     params=_next_request_params,
-                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
+                    headers=_headers,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6101,9 +5996,6 @@ class BetaRedTeamsOperations:
         :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6126,7 +6018,6 @@ class BetaRedTeamsOperations:
             _content = json.dumps(red_team, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_red_teams_create_request(
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6197,9 +6088,6 @@ class BetaSchedulesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6215,7 +6103,6 @@ class BetaSchedulesOperations:
 
         _request = build_beta_schedules_delete_request(
             schedule_id=schedule_id,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6249,9 +6136,6 @@ class BetaSchedulesOperations:
         :rtype: ~azure.ai.projects.models.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6267,7 +6151,6 @@ class BetaSchedulesOperations:
 
         _request = build_beta_schedules_get_request(
             schedule_id=schedule_id,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6323,9 +6206,6 @@ class BetaSchedulesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.Schedule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -6343,7 +6223,6 @@ class BetaSchedulesOperations:
             if not next_link:
 
                 _request = build_beta_schedules_list_request(
-                    foundry_features=_foundry_features,
                     type=type,
                     enabled=enabled,
                     api_version=self._config.api_version,
@@ -6371,7 +6250,7 @@ class BetaSchedulesOperations:
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
                     params=_next_request_params,
-                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
+                    headers=_headers,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6478,9 +6357,6 @@ class BetaSchedulesOperations:
         :rtype: ~azure.ai.projects.models.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6504,7 +6380,6 @@ class BetaSchedulesOperations:
 
         _request = build_beta_schedules_create_or_update_request(
             schedule_id=schedule_id,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6555,9 +6430,6 @@ class BetaSchedulesOperations:
         :rtype: ~azure.ai.projects.models.ScheduleRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6574,7 +6446,6 @@ class BetaSchedulesOperations:
         _request = build_beta_schedules_get_run_request(
             schedule_id=schedule_id,
             run_id=run_id,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6637,9 +6508,6 @@ class BetaSchedulesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.ScheduleRun]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -6658,7 +6526,6 @@ class BetaSchedulesOperations:
 
                 _request = build_beta_schedules_list_runs_request(
                     schedule_id=schedule_id,
-                    foundry_features=_foundry_features,
                     type=type,
                     enabled=enabled,
                     api_version=self._config.api_version,
@@ -6686,7 +6553,7 @@ class BetaSchedulesOperations:
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
                     params=_next_request_params,
-                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
+                    headers=_headers,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6832,9 +6699,6 @@ class BetaToolsetsOperations:
         :rtype: ~azure.ai.projects.models.ToolsetObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6864,7 +6728,6 @@ class BetaToolsetsOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_toolsets_create_request(
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -7001,9 +6864,6 @@ class BetaToolsetsOperations:
         :rtype: ~azure.ai.projects.models.ToolsetObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7032,7 +6892,6 @@ class BetaToolsetsOperations:
 
         _request = build_beta_toolsets_update_request(
             tool_set_name=tool_set_name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -7085,9 +6944,6 @@ class BetaToolsetsOperations:
         :rtype: ~azure.ai.projects.models.ToolsetObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7103,7 +6959,6 @@ class BetaToolsetsOperations:
 
         _request = build_beta_toolsets_get_request(
             tool_set_name=tool_set_name,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -7173,9 +7028,6 @@ class BetaToolsetsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.ToolsetObject]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -7192,7 +7044,6 @@ class BetaToolsetsOperations:
         def prepare_request(_continuation_token=None):
 
             _request = build_beta_toolsets_list_request(
-                foundry_features=_foundry_features,
                 limit=limit,
                 order=order,
                 after=_continuation_token,
@@ -7248,9 +7099,6 @@ class BetaToolsetsOperations:
         :rtype: ~azure.ai.projects.models.DeleteToolsetResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7266,7 +7114,6 @@ class BetaToolsetsOperations:
 
         _request = build_beta_toolsets_delete_request(
             tool_set_name=tool_set_name,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

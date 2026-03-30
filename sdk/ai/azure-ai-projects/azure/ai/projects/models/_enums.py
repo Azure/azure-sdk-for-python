@@ -11,12 +11,31 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Feature opt-in keys for agent definition operations supporting hosted or workflow agents."""
+    """Opt-in keys for defining preview Hosted or Workflow Agents."""
 
     HOSTED_AGENTS_V1_PREVIEW = "HostedAgents=V1Preview"
     """HOSTED_AGENTS_V1_PREVIEW."""
     WORKFLOW_AGENTS_V1_PREVIEW = "WorkflowAgents=V1Preview"
     """WORKFLOW_AGENTS_V1_PREVIEW."""
+
+
+class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Opt-in keys for enabling preview Foundry features."""
+
+    EVALUATIONS_V1_PREVIEW = "Evaluations=V1Preview"
+    """EVALUATIONS_V1_PREVIEW."""
+    SCHEDULES_V1_PREVIEW = "Schedules=V1Preview"
+    """SCHEDULES_V1_PREVIEW."""
+    RED_TEAMS_V1_PREVIEW = "RedTeams=V1Preview"
+    """RED_TEAMS_V1_PREVIEW."""
+    INSIGHTS_V1_PREVIEW = "Insights=V1Preview"
+    """INSIGHTS_V1_PREVIEW."""
+    MEMORY_STORES_V1_PREVIEW = "MemoryStores=V1Preview"
+    """MEMORY_STORES_V1_PREVIEW."""
+    TOOLSET_V1_PREVIEW = "Toolsets=V1Preview"
+    """TOOLSET_V1_PREVIEW."""
+    AGENT_ENDPOINT_V1_PREVIEW = "AgentEndpoints=V1Preview"
+    """AGENT_ENDPOINT_V1_PREVIEW."""
 
 
 class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -356,25 +375,6 @@ class EvaluatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Built-in evaluator (Microsoft provided)."""
     CUSTOM = "custom"
     """Custom evaluator."""
-
-
-class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of FoundryFeaturesOptInKeys."""
-
-    EVALUATIONS_V1_PREVIEW = "Evaluations=V1Preview"
-    """EVALUATIONS_V1_PREVIEW."""
-    SCHEDULES_V1_PREVIEW = "Schedules=V1Preview"
-    """SCHEDULES_V1_PREVIEW."""
-    RED_TEAMS_V1_PREVIEW = "RedTeams=V1Preview"
-    """RED_TEAMS_V1_PREVIEW."""
-    INSIGHTS_V1_PREVIEW = "Insights=V1Preview"
-    """INSIGHTS_V1_PREVIEW."""
-    MEMORY_STORES_V1_PREVIEW = "MemoryStores=V1Preview"
-    """MEMORY_STORES_V1_PREVIEW."""
-    TOOLSET_V1_PREVIEW = "Toolsets=V1Preview"
-    """TOOLSET_V1_PREVIEW."""
-    AGENT_ENDPOINT_V1_PREVIEW = "AgentEndpoints=V1Preview"
-    """AGENT_ENDPOINT_V1_PREVIEW."""
 
 
 class FunctionShellToolParamEnvironmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

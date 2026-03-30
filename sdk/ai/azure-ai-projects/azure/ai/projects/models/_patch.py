@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import List, Dict, Mapping, Optional, Any, Tuple
+from typing import Final, FrozenSet, List, Dict, Mapping, Optional, Any, Tuple
 from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
 from azure.core.polling.base_polling import (
     LROBasePolling,
@@ -18,6 +18,38 @@ from azure.core.polling.base_polling import (
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from ._models import CustomCredential as CustomCredentialGenerated
 from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
+from ._enums import _FoundryFeaturesOptInKeys
+
+_FOUNDRY_FEATURES_HEADER_NAME: Final[str] = "Foundry-Features"
+"""The HTTP header name used to opt in to Foundry preview features."""
+
+_BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
+    "evaluation_taxonomies": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
+    "evaluators": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
+    "insights": _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW.value,
+    "memory_stores": _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value,
+    "red_teams": _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW.value,
+    "schedules": _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW.value,
+    "toolsets": _FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW.value,
+}
+"""Foundry-Features header values keyed by beta sub-client property name."""
+
+
+def _has_header_case_insensitive(headers: Any, header_name: str) -> bool:
+    """Return True if headers already contains the provided header name.
+
+    :param headers: The headers mapping to search.
+    :type headers: Any
+    :param header_name: The header name to look for (case-insensitive).
+    :type header_name: str
+    :return: True if the header is present, False otherwise.
+    :rtype: bool
+    """
+    try:
+        header_name_lower = header_name.lower()
+        return any(str(key).lower() == header_name_lower for key in headers)
+    except Exception:  # pylint: disable=broad-except
+        return False
 
 
 class CustomCredential(CustomCredentialGenerated, discriminator="CustomKeys"):
@@ -64,8 +96,8 @@ class CustomCredential(CustomCredentialGenerated, discriminator="CustomKeys"):
             self.credential_keys = {}
 
 
-_FINISHED = frozenset(["completed", "superseded", "failed"])
-_FAILED = frozenset(["failed"])
+_FINISHED: Final[FrozenSet[str]] = frozenset(["completed", "superseded", "failed"])
+_FAILED: Final[FrozenSet[str]] = frozenset(["failed"])
 
 
 class _UpdateMemoriesLROPollingMethod(LROBasePolling):

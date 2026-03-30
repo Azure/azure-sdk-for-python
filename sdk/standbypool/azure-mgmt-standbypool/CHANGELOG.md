@@ -1,5 +1,15 @@
 # Release History
 
+## 2.1.0 (2026-03-25)
+
+### Features Added
+
+  - Model `StandbyPoolMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Model `StandbyContainerGroupPoolElasticityProfile` added property `dynamic_sizing`
+  - Model `StandbyVirtualMachinePoolElasticityProfile` added property `post_provisioning_delay`
+  - Model `StandbyVirtualMachinePoolElasticityProfile` added property `dynamic_sizing`
+  - Added model `DynamicSizing`
+
 ## 2.0.0 (2025-04-21)
 
 ### Features Added
