@@ -24,9 +24,9 @@
   - Added model `PolicyUpdate`
   - Added model `PolicyUpdateProperties`
   - Added enum `SupportedKeyType`
-  - Model `NamespaceDevicesOperations` added method `begin_revoke`
-  - Added model `CredentialsOperations`
-  - Added model `PoliciesOperations`
+  - Operation group `NamespaceDevicesOperations` added method `begin_revoke`
+  - Added operation group `CredentialsOperations`
+  - Added operation group `PoliciesOperations`
 
 ## 1.1.0 (2025-10-23)
 

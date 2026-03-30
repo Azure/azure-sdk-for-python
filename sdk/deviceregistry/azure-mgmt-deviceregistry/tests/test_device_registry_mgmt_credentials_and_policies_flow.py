@@ -70,6 +70,7 @@ DEVICE_NAME = f"cms-test-device-{SUFFIX}"
 # in live/record mode to avoid RP 409 race condition.
 PROPAGATION_DELAY_SECONDS = 10
 
+
 def _delay_if_live(test_instance, seconds, reason=""):
     """Sleep only in Live or Record mode (not Playback)."""
     # In playback mode the test proxy replays instantly; no delay needed.
@@ -448,7 +449,9 @@ class TestDeviceRegistryMgmtCredentialsAndPoliciesFlow(AzureMgmtRecordedTestCase
         )
         assert byor_policy.properties.certificate.leaf_certificate_configuration.validity_period_in_days == 45
         # BYOR should still be enabled after update
-        assert byor_policy.properties.certificate.certificate_authority_configuration.bring_your_own_root.enabled is True
+        assert (
+            byor_policy.properties.certificate.certificate_authority_configuration.bring_your_own_root.enabled is True
+        )
 
         # ==================================================================
         # Step 14: Delete BYOR policy
