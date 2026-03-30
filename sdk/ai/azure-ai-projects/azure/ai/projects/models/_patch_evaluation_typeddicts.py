@@ -5,14 +5,105 @@
 # ------------------------------------
 
 import datetime
-from typing import Dict, Any, List, Optional, Union
+from typing import Dict, Any, List, Union
 from typing_extensions import Literal, Required, TypedDict
 from openai.types.evals.create_eval_completions_run_data_source_param import (
     InputMessagesItemReference,
     SourceFileContent,
     SourceFileID,
 )
-from ._models import AzureAIAgentTarget
+
+#**************************************************************************************************
+# BEGIN TODO: These are duplicates of full classes in _models.py... what should we do about these?
+#**************************************************************************************************
+
+class TypedDictModelSamplingParams(TypedDict, total=False):
+    """Represents a set of parameters used to control the sampling behavior of a language model
+    during text generation.
+
+    :ivar temperature: The temperature parameter for sampling. Required.
+    :vartype temperature: float
+    :ivar top_p: The top-p parameter for nucleus sampling. Required.
+    :vartype top_p: float
+    :ivar seed: The random seed for reproducibility. Required.
+    :vartype seed: int
+    :ivar max_completion_tokens: The maximum number of tokens allowed in the completion. Required.
+    :vartype max_completion_tokens: int
+    """
+
+    temperature: Required[float]
+    """The temperature parameter for sampling. Required."""
+    top_p: Required[float]
+    """The top-p parameter for nucleus sampling. Required."""
+    seed: Required[int]
+    """The random seed for reproducibility. Required."""
+    max_completion_tokens: Required[int]
+    """The maximum number of tokens allowed in the completion. Required."""
+
+
+class TypedDictTarget(TypedDict, total=False):
+    """Base class for targets with discriminator support.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    TypedDictAzureAIAgentTarget, TypedDictAzureAIModelTarget
+
+    :ivar type: The type of target. Required. Default value is None.
+    :vartype type: str
+    """
+
+    type: Required[str]
+    """The type of target. Required. Default value is None."""
+
+
+class TypedDictAzureAIAgentTarget(TypedDict, total=False):
+    """Represents a target specifying an Azure AI agent.
+
+    :ivar type: The type of target, always ``azure_ai_agent``. Required. Default value is
+     "azure_ai_agent".
+    :vartype type: str
+    :ivar name: The unique identifier of the Azure AI agent. Required.
+    :vartype name: str
+    :ivar version: The version of the Azure AI agent.
+    :vartype version: str
+    :ivar tool_descriptions: The parameters used to control the sampling behavior of the agent
+     during text generation.
+    :vartype tool_descriptions: list[dict[str, any]]
+    """
+
+    type: Required[Literal["azure_ai_agent"]]
+    """The type of target, always ``azure_ai_agent``. Required. Default value is \"azure_ai_agent\"."""
+    name: Required[str]
+    """The unique identifier of the Azure AI agent. Required."""
+    version: str
+    """The version of the Azure AI agent."""
+    tool_descriptions: List[Dict[str, Any]]
+    """The parameters used to control the sampling behavior of the agent during text generation."""
+
+
+class TypedDictAzureAIModelTarget(TypedDict, total=False):
+    """Represents a target specifying an Azure AI model for operations requiring model selection.
+
+    :ivar type: The type of target, always ``azure_ai_model``. Required. Default value is
+     "azure_ai_model".
+    :vartype type: str
+    :ivar model: The unique identifier of the Azure AI model.
+    :vartype model: str
+    :ivar sampling_params: The parameters used to control the sampling behavior of the model during
+     text generation.
+    :vartype sampling_params: ~azure.ai.projects.models.TypedDictModelSamplingParams
+    """
+
+    type: Required[Literal["azure_ai_model"]]
+    """The type of target, always ``azure_ai_model``. Required. Default value is \"azure_ai_model\"."""
+    model: str
+    """The unique identifier of the Azure AI model."""
+    sampling_params: TypedDictModelSamplingParams
+    """The parameters used to control the sampling behavior of the model during text generation."""
+
+
+#*************************************************************************************************
+# END TODO
+#*************************************************************************************************
 
 
 class ResponseRetrievalItemGenerationParams(TypedDict, total=False):
@@ -113,7 +204,7 @@ class TargetCompletionEvalRunDataSource(TypedDict, total=False):
     :vartype source: ~azure.ai.projects.models.SourceFileContent or
      ~azure.ai.projects.models.SourceFileID
     :ivar target: The target configuration for the evaluation. Required.
-    :vartype target: ~azure.ai.projects.models.Target
+    :vartype target: ~azure.ai.projects.models.TypedDictAzureAIAgentTarget
     """
 
     type: Required[Literal["azure_ai_target_completions"]]
@@ -122,34 +213,10 @@ class TargetCompletionEvalRunDataSource(TypedDict, total=False):
     source: Required[Union[SourceFileContent, SourceFileID]]
     """The source configuration for inline or file data. Required. Is either a
      SourceFileContent type or a SourceFileID type."""
-    target: Required[AzureAIAgentTarget]
+    target: Required[TypedDictAzureAIAgentTarget]
     """The target configuration for the evaluation. Required."""
     input_messages: Required[InputMessagesItemReference]
     """Input messages configuration."""
-
-
-class ModelSamplingParams(TypedDict, total=False):
-    """Represents a set of parameters used to control the sampling behavior of a language model
-    during text generation.
-
-    :ivar temperature: The temperature parameter for sampling. Required.
-    :vartype temperature: float
-    :ivar top_p: The top-p parameter for nucleus sampling. Required.
-    :vartype top_p: float
-    :ivar seed: The random seed for reproducibility. Required.
-    :vartype seed: int
-    :ivar max_completion_tokens: The maximum number of tokens allowed in the completion. Required.
-    :vartype max_completion_tokens: int
-    """
-
-    temperature: Required[float]
-    """The temperature parameter for sampling. Required."""
-    top_p: Required[float]
-    """The top-p parameter for nucleus sampling. Required."""
-    seed: Required[int]
-    """The random seed for reproducibility. Required."""
-    max_completion_tokens: Required[int]
-    """The maximum number of tokens allowed in the completion. Required."""
 
 
 class AzureAIModelTarget(TypedDict, total=False):
@@ -170,7 +237,7 @@ class AzureAIModelTarget(TypedDict, total=False):
      \"azure_ai_model\"."""
     model: str
     """The unique identifier of the Azure AI model."""
-    sampling_params: ModelSamplingParams
+    sampling_params: TypedDictModelSamplingParams
     """The parameters used to control the sampling behavior of the model during text generation."""
 
 
@@ -228,7 +295,7 @@ class AzureAIBenchmarkPreviewEvalRunDataSource(TypedDict, total=False):
     type: Required[Literal["azure_ai_benchmark_preview"]]
     """The type of data source, always ``azure_ai_benchmark_preview``. Required. Default value is
      \"azure_ai_benchmark_preview\"."""
-    target: Required[Union[AzureAIModelTarget, AzureAIAgentTarget]]
+    target: Required[Union[TypedDictAzureAIModelTarget, TypedDictAzureAIAgentTarget]]
     """The target model or agent to evaluate against the benchmark. When using ``azure_ai_model``
      target, ``sampling_params`` must not be provided; inference parameters are auto-filled from the
      benchmark specification stored in eval group properties. Required. Is either a
@@ -276,7 +343,7 @@ class RedTeamEvalRunDataSource(TypedDict, total=False):
     :ivar item_generation_params: The parameters for item generation. Required.
     :vartype item_generation_params: ~azure.ai.projects.models.ItemGenerationParams
     :ivar target: The target configuration for the evaluation. Required.
-    :vartype target: ~azure.ai.projects.models.Target
+    :vartype target: ~azure.ai.projects.models.TypedDictTarget
     """
 
     type: Required[Literal["azure_ai_red_team"]]
@@ -284,7 +351,7 @@ class RedTeamEvalRunDataSource(TypedDict, total=False):
      \"azure_ai_red_team\"."""
     item_generation_params: Required[Any]  # ItemGenerationParams
     """The parameters for item generation. Required."""
-    target: Required["_models.Target"]
+    target: Required[TypedDictTarget]
     """The target configuration for the evaluation. Required."""
 
 

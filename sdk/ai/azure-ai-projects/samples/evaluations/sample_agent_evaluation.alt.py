@@ -35,6 +35,7 @@ from openai.types.evals.create_eval_completions_run_data_source_param import Sou
 from openai.types.eval_create_params import DataSourceConfigCustom
 from openai.types.evals.run_create_response import RunCreateResponse
 from openai.types.evals.run_retrieve_response import RunRetrieveResponse
+from azure.ai.projects.models._patch_evaluation_typeddicts import TypedDictAzureAIAgentTarget
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -111,12 +112,12 @@ with (
             ],
         ),
         input_messages={
-            "type": "template",  # TODO: This is not an option based on our TypeSpec..
+            "type": "template",  # type: ignore  # TODO: This is not an option based on our TypeSpec..
             "template": [
                 {"type": "message", "role": "user", "content": {"type": "input_text", "text": "{{item.query}}"}}
             ],
         },
-        target=AzureAIAgentTarget(
+        target=TypedDictAzureAIAgentTarget(
             type="azure_ai_agent",
             name=agent.name,
             version=agent.version,  # Version is optional. Defaults to latest version if not specified

@@ -8,7 +8,8 @@ Overrides get_openai_client() return type so that evals.create() accepts
 Azure-specific grader types in addition to the standard OpenAI graders.
 """
 
-from typing import Any, Iterable, Union, Optional
+import logging
+from typing import Any, Iterable, List, Union, Optional
 from httpx import Timeout
 from openai import NotGiven, Omit, OpenAI as OpenAIClient
 from openai._types import Body, Query, Headers
@@ -31,6 +32,7 @@ from openai.types.graders.string_check_grader_param import StringCheckGraderPara
 from openai.types.eval_create_response import EvalCreateResponse
 from openai.types.shared_params.metadata import Metadata
 from ._client import AIProjectClient as AIProjectClientGenerated
+from .operations import TelemetryOperations
 from .models import (
     AzureAIBenchmarkPreviewEvalRunDataSource,
     AzureAIDataSourceConfig,
@@ -98,4 +100,10 @@ class OpenAI(OpenAIClient):
     def evals(self) -> _AzureEvals: ...
 
 class AIProjectClient(AIProjectClientGenerated):
-    def get_openai_client(self, **kwargs: Any) -> OpenAI: ...
+    telemetry: TelemetryOperations
+    def get_openai_client(self, **kwargs: Any) -> OpenAI: ...  # pylint: disable=unused-argument
+
+# To make mypy happy... otherwise imports of the below result in mypy "attr-defined" error
+class _AuthSecretsFilter(logging.Filter): ...
+__all__: List[str] = ["AIProjectClient"]
+def patch_sdk() -> None: ...

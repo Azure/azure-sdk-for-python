@@ -9,6 +9,13 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from typing import Final, FrozenSet, List, Dict, Mapping, Optional, Any, Tuple
+from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
+from azure.core.polling.base_polling import (
+    LROBasePolling,
+    OperationFailed,
+    _raise_if_bad_http_status_and_method,
+)
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from ._patch_evaluation_typeddicts import (
     AzureAIBenchmarkPreviewEvalRunDataSource,
     AzureAIDataSourceConfig,
@@ -17,19 +24,15 @@ from ._patch_evaluation_typeddicts import (
     EvalCsvFileIdSource,
     EvalCsvRunDataSource,
     EvalGraderAzureAIEvaluator,
-    ModelSamplingParams,
     RedTeamEvalRunDataSource,
     ResponseRetrievalItemGenerationParams,
     TargetCompletionEvalRunDataSource,
     TracesPreviewEvalRunDataSource,
+    TypedDictAzureAIAgentTarget,
+    TypedDictAzureAIModelTarget,
+    TypedDictModelSamplingParams,
+    TypedDictTarget,
 )
-from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
-from azure.core.polling.base_polling import (
-    LROBasePolling,
-    OperationFailed,
-    _raise_if_bad_http_status_and_method,
-)
-from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from ._models import CustomCredential as CustomCredentialGenerated
 from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
 from ._enums import _FoundryFeaturesOptInKeys
@@ -369,12 +372,15 @@ __all__: List[str] = [
     "EvalCsvFileIdSource",
     "EvalCsvRunDataSource",
     "EvalGraderAzureAIEvaluator",
-    "ModelSamplingParams",
     "RedTeamEvalRunDataSource",
     "ResponseRetrievalItemGenerationParams",
     "TargetCompletionEvalRunDataSource",
     "TracesPreviewEvalRunDataSource",
     "UpdateMemoriesLROPoller",
+    "TypedDictAzureAIAgentTarget",
+    "TypedDictAzureAIModelTarget",
+    "TypedDictModelSamplingParams",
+    "TypedDictTarget",
 ]  # Add all objects you want publicly available to users at this package level
 
 

@@ -102,7 +102,7 @@ def main() -> None:  # pylint: disable=too-many-statements
         eval_run_object = client.evals.runs.create(
             eval_id=eval_object.id,
             name=eval_run_name,
-            data_source={  # type: ignore
+            data_source={
                 "type": "azure_ai_red_team",
                 "item_generation_params": {
                     "type": "red_team_taxonomy",
@@ -110,7 +110,7 @@ def main() -> None:  # pylint: disable=too-many-statements
                     "num_turns": 5,
                     "source": {"type": "file_id", "id": taxonomy.id},
                 },
-                "target": target.as_dict(),
+                "target": target.as_dict(),  # type: ignore
             },
         )
 
