@@ -106,7 +106,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
                 # producers with refreshed partition ranges and retry the fetch.
                 if exceptions._partition_range_is_gone(e):
                     await self._repair_document_producer()
-                    return await self.__anext__()  # Retry fetching the next document
+                    return res
                 raise
             except StopAsyncIteration:
                 pass

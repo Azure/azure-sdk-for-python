@@ -8,11 +8,13 @@ Sync unit tests for partition split (410) retry logic.
 import gc
 import time
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 import pytest
+from azure.core.exceptions import ServiceRequestError
 
 from azure.cosmos import exceptions
+from azure.cosmos._cosmos_client_connection import CosmosClientConnection
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes
 
@@ -444,6 +446,44 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         assert mock_client.last_refresh_collection_link is None, \
             "Should fall back to global refresh when no cached map exists"
         assert result == expected_docs
+
+    @patch('azure.cosmos._cosmos_client_connection.routing_map_provider.SmartRoutingMapProvider')
+    def test_refresh_routing_map_provider_transient_targeted_error_falls_back_to_full(self, mock_provider_ctor):
+        """Targeted refresh should degrade to full refresh on transient transport errors."""
+        conn = object.__new__(CosmosClientConnection)
+        conn._routing_map_provider = MagicMock()
+        conn._routing_map_provider.get_routing_map.side_effect = ServiceRequestError("network down")
+
+        replacement_provider = MagicMock()
+        mock_provider_ctor.return_value = replacement_provider
+
+        conn.refresh_routing_map_provider(
+            collection_link="dbs/db/colls/c1",
+            previous_routing_map=object(),
+            feed_options={}
+        )
+
+        self.assertIs(conn._routing_map_provider, replacement_provider)
+        mock_provider_ctor.assert_called_once_with(conn)
+
+    @patch('azure.cosmos._cosmos_client_connection.routing_map_provider.SmartRoutingMapProvider')
+    def test_refresh_routing_map_provider_non_transient_targeted_error_reraises(self, mock_provider_ctor):
+        """Targeted refresh should surface non-transient errors instead of masking them."""
+        conn = object.__new__(CosmosClientConnection)
+        conn._routing_map_provider = MagicMock()
+        conn._routing_map_provider.get_routing_map.side_effect = exceptions.CosmosHttpResponseError(
+            status_code=StatusCodes.BAD_REQUEST,
+            message="bad request"
+        )
+
+        with self.assertRaises(exceptions.CosmosHttpResponseError):
+            conn.refresh_routing_map_provider(
+                collection_link="dbs/db/colls/c1",
+                previous_routing_map=object(),
+                feed_options={}
+            )
+
+        mock_provider_ctor.assert_not_called()
 
 
 if __name__ == "__main__":

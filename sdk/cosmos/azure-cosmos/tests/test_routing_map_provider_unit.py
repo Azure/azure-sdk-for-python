@@ -32,7 +32,7 @@ def _make_complete_routing_map(collection_id="coll1", etag='"etag-1"'):
     return CollectionRoutingMap.CompleteRoutingMap(ranges, collection_id, etag)
 
 
-def _make_mock_client(ranges, response_etag='"etag-resp"'):
+def _make_mock_client(ranges, response_etag='"etag-resp"', include_etag_header=True):
     """Create a mock client whose _ReadPartitionKeyRanges returns the given ranges
     and whose response_hook receives the given etag."""
     client = MagicMock()
@@ -40,7 +40,8 @@ def _make_mock_client(ranges, response_etag='"etag-resp"'):
     def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
         # Invoke the response_hook with fake headers so the cache captures the ETag
         if response_hook:
-            response_hook({http_constants.HttpHeaders.ETag: response_etag}, None)
+            headers = ({http_constants.HttpHeaders.ETag: response_etag} if include_etag_header else {})
+            response_hook(headers, None)
         return iter(ranges)
 
     client._ReadPartitionKeyRanges = MagicMock(side_effect=fake_read_pk_ranges)
@@ -308,11 +309,10 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
         self.assertIs(result, mock_routing_map,
                       "Should return the cached map when the key matches exactly")
 
-    def test_get_previous_routing_map_trailing_slash_misses_cache(self):
-        """_get_previous_routing_map does NOT normalize the collection_link.
-        A link with trailing slashes will NOT match a cache entry stored under
-        the normalized key (no slashes).  This documents the current contract:
-        callers must pass an already-normalized link."""
+    def test_get_previous_routing_map_normalizes_collection_link(self):
+        """_get_previous_routing_map normalizes collection_link before cache lookup.
+        Equivalent links with leading/trailing slashes should resolve to the
+        same cached routing map entry."""
         mock_client = MagicMock()
         mock_routing_map = _make_complete_routing_map("dbs/db1/colls/coll1", '"etag-1"')
 
@@ -324,20 +324,17 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
 
         policy = _PartitionKeyRangeGoneRetryPolicyBase(mock_client)
 
-        # Trailing slash — should miss
+        # Trailing slash — should hit after normalization
         result = policy._get_previous_routing_map("dbs/db1/colls/coll1/")
-        self.assertIsNone(result,
-                          "Trailing-slash link should NOT find the cache entry (no normalization)")
+        self.assertIs(result, mock_routing_map)
 
-        # Leading slash — should also miss
+        # Leading slash — should also hit after normalization
         result = policy._get_previous_routing_map("/dbs/db1/colls/coll1")
-        self.assertIsNone(result,
-                          "Leading-slash link should NOT find the cache entry (no normalization)")
+        self.assertIs(result, mock_routing_map)
 
-        # Both leading and trailing slashes
+        # Both leading and trailing slashes should still resolve
         result = policy._get_previous_routing_map("/dbs/db1/colls/coll1/")
-        self.assertIsNone(result,
-                          "Leading+trailing-slash link should NOT find the cache entry")
+        self.assertIs(result, mock_routing_map)
 
     def test_get_previous_routing_map_returns_none_for_missing(self):
         """_get_previous_routing_map returns None when the collection is not
@@ -365,6 +362,40 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
         policy = _PartitionKeyRangeGoneRetryPolicyBase(mock_client)
         result = policy._get_previous_routing_map("dbs/db1/colls/coll1")
         self.assertIsNone(result)
+
+    def test_fetch_routing_map_empty_incremental_response_same_etag_returns_same_object(self):
+        """Empty incremental response with unchanged ETag should return the
+        existing map object without rebuilding."""
+        client = _make_mock_client(ranges=[], response_etag='"etag-old"')
+        cache = PartitionKeyRangeCache(client)
+        previous_map = _make_complete_routing_map("dbs/db1/colls/coll1", '"etag-old"')
+
+        result = cache._fetch_routing_map(
+            collection_link="dbs/db1/colls/coll1",
+            collection_id="dbs/db1/colls/coll1",
+            previous_routing_map=previous_map,
+            feed_options={}
+        )
+
+        self.assertIs(result, previous_map, "No-op incremental refresh should reuse existing map instance")
+        self.assertEqual(result.change_feed_etag, '"etag-old"')
+
+    def test_fetch_routing_map_empty_incremental_response_missing_etag_preserves_previous(self):
+        """If service omits ETag on an empty incremental response, preserve
+        the existing ETag and map instance."""
+        client = _make_mock_client(ranges=[], include_etag_header=False)
+        cache = PartitionKeyRangeCache(client)
+        previous_map = _make_complete_routing_map("dbs/db1/colls/coll1", '"etag-old"')
+
+        result = cache._fetch_routing_map(
+            collection_link="dbs/db1/colls/coll1",
+            collection_id="dbs/db1/colls/coll1",
+            previous_routing_map=previous_map,
+            feed_options={}
+        )
+
+        self.assertIs(result, previous_map)
+        self.assertEqual(result.change_feed_etag, '"etag-old"')
 
 
 if __name__ == "__main__":

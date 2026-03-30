@@ -33,6 +33,7 @@ from urllib3.util.retry import Retry
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core import AsyncPipelineClient
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.transport import HttpRequest, AsyncHttpResponse  # pylint: disable=no-legacy-azure-core-http-response-import
 from azure.core.pipeline.policies import (
     AsyncHTTPPolicy,
@@ -3438,16 +3439,33 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict feed_options: The feed options for the request.
         """
         if collection_link and previous_routing_map:
-            # Force a refresh for a specific collection.
-            await self._routing_map_provider.get_routing_map(
-                collection_link,
-                feed_options=feed_options if feed_options is not None else {},
-                force_refresh=True,
-                previous_routing_map=previous_routing_map
-            )
+            try:
+                # Force a refresh for a specific collection.
+                await self._routing_map_provider.get_routing_map(
+                    collection_link,
+                    feed_options=feed_options if feed_options is not None else {},
+                    force_refresh=True,
+                    previous_routing_map=previous_routing_map
+                )
+                return
+            except (ServiceRequestError, ServiceResponseError):
+                # Transport failures during targeted refresh should degrade to full refresh.
+                pass
+            except exceptions.CosmosHttpResponseError as e:
+                is_transient = (
+                    e.status_code in (http_constants.StatusCodes.REQUEST_TIMEOUT,
+                                      http_constants.StatusCodes.TOO_MANY_REQUESTS)
+                    or e.status_code >= http_constants.StatusCodes.INTERNAL_SERVER_ERROR
+                )
+                if not is_transient:
+                    raise
         else:
             # Full refresh - create a new provider instance. This clears all cached routing maps.
             self._routing_map_provider = SmartRoutingMapProvider(self)
+            return
+
+        # Fallback to full refresh when targeted refresh fails transiently.
+        self._routing_map_provider = SmartRoutingMapProvider(self)
 
     async def _refresh_container_properties_cache(self, container_link: str):
         # If container properties cache is stale, refresh it by reading the container.

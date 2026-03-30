@@ -29,7 +29,6 @@ from .. import _base, http_constants
 from .collection_routing_map import CollectionRoutingMap
 from ..exceptions import CosmosHttpResponseError
 from ._routing_map_provider_common import (
-    is_cache_stale,
     build_response_hook,
     prepare_fetch_options_and_headers,
     process_fetched_ranges,
@@ -148,26 +147,6 @@ class PartitionKeyRangeCache(object):
 
             return self._collection_routing_map_by_item.get(collection_id)
 
-    def _is_cache_stale(
-            self,
-            collection_id: str,
-            previous_routing_map: Optional[CollectionRoutingMap]
-    ) -> bool:
-        """Checks if the cached routing map is stale by comparing ETags.
-
-        Delegates to :func:`_routing_map_provider_common.is_cache_stale`.
-
-        :param str collection_id: The unique identifier for the collection.
-        :param previous_routing_map: The routing map that is suspected to be stale.
-        :type previous_routing_map: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap
-        :return: True if a refresh should be forced, otherwise False.
-        :rtype: bool
-        """
-        return is_cache_stale(
-            self._collection_routing_map_by_item,
-            collection_id,
-            previous_routing_map,
-        )
 
     # pylint: disable=too-many-statements
     def _fetch_routing_map(

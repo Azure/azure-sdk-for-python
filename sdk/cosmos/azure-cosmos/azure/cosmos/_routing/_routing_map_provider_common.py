@@ -204,6 +204,18 @@ def process_fetched_ranges(
             ranges, collection_id, new_etag, collection_link, logger
         )
 
+    # Incremental update -- preserve prior ETag if service omitted one.
+    effective_etag = (
+        new_etag
+        if new_etag is not None
+        else previous_routing_map.change_feed_etag
+    )
+
+    # Fast path for 304/empty incremental responses: keep the same map object
+    # when topology and ETag are unchanged.
+    if not ranges and effective_etag == previous_routing_map.change_feed_etag:
+        return previous_routing_map
+
     # Incremental update -- merge deltas into the existing map.
     range_tuples: List[Tuple[Dict[str, Any], Any]] = []
     for r in ranges:
@@ -226,7 +238,7 @@ def process_fetched_ranges(
             )
             raise _NeedFullRefresh()
 
-    result = previous_routing_map.try_combine(range_tuples, new_etag or "")
+    result = previous_routing_map.try_combine(range_tuples, effective_etag)
     if not result:
         logger.warning(
             "Incremental merge resulted in incomplete routing map for "

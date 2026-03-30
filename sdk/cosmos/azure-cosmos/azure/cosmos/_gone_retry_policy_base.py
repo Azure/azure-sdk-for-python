@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from azure.cosmos import http_constants
+from azure.cosmos import _base, http_constants
 
 # pylint: disable=protected-access
 
@@ -65,5 +65,11 @@ class _PartitionKeyRangeGoneRetryPolicyBase:
         """
         if collection_link and hasattr(self.client, '_routing_map_provider'):
             if hasattr(self.client._routing_map_provider, '_collection_routing_map_by_item'):
-                return self.client._routing_map_provider._collection_routing_map_by_item.get(collection_link)
+                lookup_key = collection_link
+                try:
+                    lookup_key = _base.GetResourceIdOrFullNameFromLink(collection_link)
+                except Exception:  # pylint: disable=broad-except
+                    # Keep existing resilient behavior for unexpected link formats.
+                    pass
+                return self.client._routing_map_provider._collection_routing_map_by_item.get(lookup_key)
         return None
