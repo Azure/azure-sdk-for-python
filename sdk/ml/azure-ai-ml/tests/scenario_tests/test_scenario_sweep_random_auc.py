@@ -39,21 +39,13 @@ import pytest
 from azure.ai.ml import MLClient, command
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.entities import AmlCompute, Environment, IdentityConfiguration, Model
-from azure.ai.ml.sweep import (
-    BanditPolicy,
-    Choice,
-    LogUniform,
-    RandomSamplingAlgorithm,
-    Uniform,
-)
+from azure.ai.ml.sweep import BanditPolicy, Choice, LogUniform, RandomSamplingAlgorithm, Uniform
 
 
 class TestScenarioSweepRandomAUC:
     """Hyperparameter sweep with RandomSampling and AUC optimization."""
 
-    def test_sweep_random_sampling_auc_with_bandit(
-        self, ml_client: MLClient, rand_name, wait_for_job
-    ):
+    def test_sweep_random_sampling_auc_with_bandit(self, ml_client: MLClient, rand_name, wait_for_job):
         """RandomSampling sweep targeting AUC, Bandit early termination, model registration."""
 
         compute_name = rand_name("swrnd")
@@ -86,7 +78,7 @@ class TestScenarioSweepRandomAUC:
                         {
                             "pip": [
                                 "scikit-learn==1.3.2",
-                                "mlflow>=2.0",
+                                "mlflow==2.17.0",
                                 "azureml-mlflow",
                                 "numpy>=1.21",
                             ]
@@ -227,9 +219,7 @@ print("Model saved to outputs/model.joblib")
                 sweep_job.properties["seed"] = "42"
 
                 # ── Submit sweep job ──────────────────────────────────
-                submitted = ml_client.jobs.create_or_update(
-                    sweep_job, experiment_name="scenario-sweep-tests"
-                )
+                submitted = ml_client.jobs.create_or_update(sweep_job, experiment_name="scenario-sweep-tests")
                 assert submitted.name is not None
                 assert submitted.type == "sweep"
 
@@ -326,9 +316,7 @@ print("Model saved to outputs/model.joblib")
             except Exception:
                 pass
 
-    def test_sweep_random_with_median_stopping_and_loguniform(
-        self, ml_client: MLClient, rand_name, wait_for_job
-    ):
+    def test_sweep_random_with_median_stopping_and_loguniform(self, ml_client: MLClient, rand_name, wait_for_job):
         """RandomSampling with MedianStoppingPolicy, edge case: all LogUniform search space."""
 
         from azure.ai.ml.sweep import MedianStoppingPolicy
@@ -359,7 +347,7 @@ print("Model saved to outputs/model.joblib")
                     "dependencies": [
                         "python=3.10",
                         "pip",
-                        {"pip": ["scikit-learn==1.3.2", "mlflow>=2.0", "azureml-mlflow"]},
+                        {"pip": ["scikit-learn==1.3.2", "mlflow==2.17.0", "azureml-mlflow"]},
                     ],
                 },
             )
@@ -448,9 +436,7 @@ print(f"AUC: {auc:.4f}")
                 }
 
                 # ── Submit and wait ───────────────────────────────────
-                submitted = ml_client.jobs.create_or_update(
-                    sweep_job, experiment_name="scenario-sweep-tests"
-                )
+                submitted = ml_client.jobs.create_or_update(sweep_job, experiment_name="scenario-sweep-tests")
                 assert submitted.name is not None
 
                 finished = wait_for_job(ml_client, submitted)
@@ -488,12 +474,10 @@ print(f"AUC: {auc:.4f}")
             except Exception:
                 pass
 
-    def test_sweep_random_with_truncation_selection(
-        self, ml_client: MLClient, rand_name, wait_for_job
-    ):
+    def test_sweep_random_with_truncation_selection(self, ml_client: MLClient, rand_name, wait_for_job):
         """RandomSampling with TruncationSelectionPolicy, edge case: aggressive truncation."""
 
-        from azure.ai.ml.sweep import TruncationSelectionPolicy, QUniform
+        from azure.ai.ml.sweep import QUniform, TruncationSelectionPolicy
 
         compute_name = rand_name("swtrc")
         env_name = rand_name("trcenv")
@@ -520,7 +504,7 @@ print(f"AUC: {auc:.4f}")
                     "dependencies": [
                         "python=3.10",
                         "pip",
-                        {"pip": ["scikit-learn==1.3.2", "mlflow>=2.0", "azureml-mlflow"]},
+                        {"pip": ["scikit-learn==1.3.2", "mlflow==2.17.0", "azureml-mlflow"]},
                     ],
                 },
             )
@@ -603,9 +587,7 @@ print(f"AUC: {auc:.4f}")
                     "truncation_pct": "50",
                 }
 
-                submitted = ml_client.jobs.create_or_update(
-                    sweep_job, experiment_name="scenario-sweep-tests"
-                )
+                submitted = ml_client.jobs.create_or_update(sweep_job, experiment_name="scenario-sweep-tests")
                 assert submitted.name is not None
 
                 finished = wait_for_job(ml_client, submitted)

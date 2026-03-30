@@ -149,7 +149,7 @@ class TestScenarioAssetLifecycle:
                             "pip": [
                                 "scikit-learn==1.3.2",
                                 "pandas>=1.5,<3.0",
-                                "mlflow>=2.0",
+                                "mlflow==2.17.0",
                                 "azureml-mlflow",
                                 "matplotlib>=3.7",
                             ]

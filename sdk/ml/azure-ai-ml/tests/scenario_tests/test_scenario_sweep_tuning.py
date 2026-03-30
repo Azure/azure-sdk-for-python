@@ -83,7 +83,7 @@ class TestScenarioSweepTuning:
                         {
                             "pip": [
                                 "scikit-learn==1.3.2",
-                                "mlflow>=2.0",
+                                "mlflow==2.17.0",
                                 "azureml-mlflow",
                             ]
                         },
