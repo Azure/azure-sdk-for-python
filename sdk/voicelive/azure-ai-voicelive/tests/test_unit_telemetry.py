@@ -477,6 +477,7 @@ class TestAudioFormatExtraction:
             "session": {
                 "input_audio_format": "pcm16",
                 "output_audio_format": "pcm16",
+                "input_audio_sampling_rate": 24000,
             },
         }
 
@@ -490,6 +491,53 @@ class TestAudioFormatExtraction:
         conn._telemetry_span.add_attribute.assert_any_call(
             "gen_ai.voice.output_audio_format", "pcm16"
         )
+        conn._telemetry_span.add_attribute.assert_any_call(
+            "gen_ai.voice.input_sample_rate", 24000
+        )
+
+    def test_extract_audio_format_with_g711_ulaw(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        conn._telemetry_span = MagicMock()
+        event = {
+            "type": "session.update",
+            "session": {
+                "input_audio_format": "g711_ulaw",
+                "output_audio_format": "g711_alaw",
+                "input_audio_sampling_rate": 8000,
+            },
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_audio_format_from_send(conn, event)
+
+        assert conn._telemetry_input_audio_format == "g711_ulaw"
+        assert conn._telemetry_output_audio_format == "g711_alaw"
+        conn._telemetry_span.add_attribute.assert_any_call(
+            "gen_ai.voice.input_sample_rate", 8000
+        )
+
+    def test_extract_audio_format_no_sampling_rate(self):
+        """When input_audio_sampling_rate is absent, only formats are set."""
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        conn._telemetry_span = MagicMock()
+        event = {
+            "type": "session.update",
+            "session": {
+                "input_audio_format": "pcm16",
+                "output_audio_format": "pcm16",
+            },
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_audio_format_from_send(conn, event)
+
+        assert conn._telemetry_input_audio_format == "pcm16"
+        # input_sample_rate should NOT be set
+        calls = [c for c in conn._telemetry_span.add_attribute.call_args_list
+                 if c[0][0] == "gen_ai.voice.input_sample_rate"]
+        assert len(calls) == 0
 
     def test_extract_audio_format_no_session(self):
         from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
@@ -501,6 +549,47 @@ class TestAudioFormatExtraction:
         _VoiceLiveInstrumentorPreview._extract_audio_format_from_send(conn, event)
 
         # Should not crash
+        conn._telemetry_span.add_attribute.assert_not_called()
+
+    def test_extract_audio_format_from_recv(self):
+        """Server session.created/session.updated should set audio format and sample rate."""
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        conn._telemetry_span = MagicMock()
+        result = {
+            "type": "session.created",
+            "session": {
+                "input_audio_format": "pcm16",
+                "output_audio_format": "pcm16",
+                "input_audio_sampling_rate": 24000,
+            },
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_audio_format_from_recv(conn, result)
+
+        assert conn._telemetry_input_audio_format == "pcm16"
+        assert conn._telemetry_output_audio_format == "pcm16"
+        conn._telemetry_span.add_attribute.assert_any_call(
+            "gen_ai.voice.input_audio_format", "pcm16"
+        )
+        conn._telemetry_span.add_attribute.assert_any_call(
+            "gen_ai.voice.output_audio_format", "pcm16"
+        )
+        conn._telemetry_span.add_attribute.assert_any_call(
+            "gen_ai.voice.input_sample_rate", 24000
+        )
+
+    def test_extract_audio_format_from_recv_no_session(self):
+        """Recv extraction should not crash when session field is missing."""
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        conn._telemetry_span = MagicMock()
+        result = {"type": "session.created"}
+
+        _VoiceLiveInstrumentorPreview._extract_audio_format_from_recv(conn, result)
+
         conn._telemetry_span.add_attribute.assert_not_called()
 
 
@@ -745,19 +834,230 @@ class TestNewConstants:
         from azure.ai.voicelive.telemetry._utils import (
             GEN_AI_VOICE_INPUT_AUDIO_FORMAT,
             GEN_AI_VOICE_OUTPUT_AUDIO_FORMAT,
+            GEN_AI_VOICE_INPUT_SAMPLE_RATE,
+            GEN_AI_VOICE_OUTPUT_SAMPLE_RATE,
             GEN_AI_VOICE_TURN_COUNT,
             GEN_AI_VOICE_INTERRUPTION_COUNT,
             GEN_AI_VOICE_AUDIO_BYTES_SENT,
             GEN_AI_VOICE_AUDIO_BYTES_RECEIVED,
             GEN_AI_VOICE_MESSAGE_SIZE,
             GEN_AI_VOICE_FIRST_TOKEN_LATENCY_MS,
+            GEN_AI_AGENT_NAME,
+            GEN_AI_CONVERSATION_ID,
+            GEN_AI_RESPONSE_ID,
+            GEN_AI_RESPONSE_FINISH_REASONS,
+            GEN_AI_REQUEST_TEMPERATURE,
+            GEN_AI_REQUEST_MAX_OUTPUT_TOKENS,
+            GEN_AI_REQUEST_TOOLS,
+            GEN_AI_SYSTEM_MESSAGE,
+            GEN_AI_SYSTEM_INSTRUCTION_EVENT,
+            GEN_AI_CLIENT_OPERATION_DURATION,
+            GEN_AI_CLIENT_TOKEN_USAGE,
+            ERROR_MESSAGE,
         )
 
         assert GEN_AI_VOICE_INPUT_AUDIO_FORMAT == "gen_ai.voice.input_audio_format"
         assert GEN_AI_VOICE_OUTPUT_AUDIO_FORMAT == "gen_ai.voice.output_audio_format"
+        assert GEN_AI_VOICE_INPUT_SAMPLE_RATE == "gen_ai.voice.input_sample_rate"
+        assert GEN_AI_VOICE_OUTPUT_SAMPLE_RATE == "gen_ai.voice.output_sample_rate"
         assert GEN_AI_VOICE_TURN_COUNT == "gen_ai.voice.turn_count"
         assert GEN_AI_VOICE_INTERRUPTION_COUNT == "gen_ai.voice.interruption_count"
         assert GEN_AI_VOICE_AUDIO_BYTES_SENT == "gen_ai.voice.audio_bytes_sent"
         assert GEN_AI_VOICE_AUDIO_BYTES_RECEIVED == "gen_ai.voice.audio_bytes_received"
         assert GEN_AI_VOICE_MESSAGE_SIZE == "gen_ai.voice.message_size"
         assert GEN_AI_VOICE_FIRST_TOKEN_LATENCY_MS == "gen_ai.voice.first_token_latency_ms"
+        assert GEN_AI_AGENT_NAME == "gen_ai.agent.name"
+        assert GEN_AI_CONVERSATION_ID == "gen_ai.conversation.id"
+        assert GEN_AI_RESPONSE_ID == "gen_ai.response.id"
+        assert GEN_AI_RESPONSE_FINISH_REASONS == "gen_ai.response.finish_reasons"
+        assert GEN_AI_REQUEST_TEMPERATURE == "gen_ai.request.temperature"
+        assert GEN_AI_REQUEST_MAX_OUTPUT_TOKENS == "gen_ai.request.max_output_tokens"
+        assert GEN_AI_REQUEST_TOOLS == "gen_ai.request.tools"
+        assert GEN_AI_SYSTEM_MESSAGE == "gen_ai.system_instructions"
+        assert GEN_AI_SYSTEM_INSTRUCTION_EVENT == "gen_ai.system.instructions"
+        assert GEN_AI_CLIENT_OPERATION_DURATION == "gen_ai.client.operation.duration"
+        assert GEN_AI_CLIENT_TOKEN_USAGE == "gen_ai.client.token.usage"
+        assert ERROR_MESSAGE == "error.message"
+
+
+# ------------------------------------------------------------------ #
+#  Session config extraction                                          #
+# ------------------------------------------------------------------ #
+
+
+class TestSessionConfigExtraction:
+    """Tests for _extract_session_config_from_send."""
+
+    def test_extract_instructions_and_temperature(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        conn._telemetry_span = MagicMock()
+        event = {
+            "type": "session.update",
+            "session": {
+                "instructions": "You are a helpful assistant.",
+                "temperature": 0.7,
+                "max_response_output_tokens": 4096,
+            },
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_session_config_from_send(conn, event)
+
+        conn._telemetry_span.add_attribute.assert_any_call(
+            "gen_ai.system_instructions", "You are a helpful assistant."
+        )
+        conn._telemetry_span.add_attribute.assert_any_call(
+            "gen_ai.request.temperature", "0.7"
+        )
+        conn._telemetry_span.add_attribute.assert_any_call(
+            "gen_ai.request.max_output_tokens", 4096
+        )
+
+    def test_extract_tools(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        conn._telemetry_span = MagicMock()
+        event = {
+            "type": "session.update",
+            "session": {
+                "tools": [{"type": "function", "name": "get_weather"}],
+            },
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_session_config_from_send(conn, event)
+
+        conn._telemetry_span.add_attribute.assert_any_call(
+            "gen_ai.request.tools",
+            json.dumps([{"type": "function", "name": "get_weather"}]),
+        )
+
+    def test_extract_no_session(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        conn._telemetry_span = MagicMock()
+        event = {"type": "session.update"}
+
+        _VoiceLiveInstrumentorPreview._extract_session_config_from_send(conn, event)
+
+        conn._telemetry_span.add_attribute.assert_not_called()
+
+    def test_system_instruction_event_with_content_recording(self):
+        import azure.ai.voicelive.telemetry._voicelive_instrumentor as mod
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        mod._trace_voicelive_content = True
+        try:
+            conn = MagicMock()
+            conn._telemetry_span = MagicMock()
+            event = {
+                "type": "session.update",
+                "session": {"instructions": "Be concise."},
+            }
+
+            _VoiceLiveInstrumentorPreview._extract_session_config_from_send(conn, event)
+
+            conn._telemetry_span.span_instance.add_event.assert_called_once()
+            call_kwargs = conn._telemetry_span.span_instance.add_event.call_args
+            assert call_kwargs[1]["name"] == "gen_ai.system.instructions"
+        finally:
+            mod._trace_voicelive_content = False
+
+
+# ------------------------------------------------------------------ #
+#  Response done extraction                                           #
+# ------------------------------------------------------------------ #
+
+
+class TestResponseDoneExtraction:
+    """Tests for _extract_response_done."""
+
+    def test_extract_response_metadata(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        conn._telemetry_span = MagicMock()
+        span = MagicMock()
+
+        result = {
+            "type": "response.done",
+            "response": {
+                "id": "resp_abc123",
+                "conversation_id": "conv_xyz",
+                "status": "completed",
+            },
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_response_done(conn, result, span)
+
+        span.add_attribute.assert_any_call("gen_ai.response.id", "resp_abc123")
+        span.add_attribute.assert_any_call("gen_ai.conversation.id", "conv_xyz")
+        span.add_attribute.assert_any_call("gen_ai.response.finish_reasons", ["completed"])
+        assert conn._telemetry_conversation_id == "conv_xyz"
+        # Connect span also gets the attributes
+        conn._telemetry_span.add_attribute.assert_any_call("gen_ai.response.id", "resp_abc123")
+        conn._telemetry_span.add_attribute.assert_any_call("gen_ai.conversation.id", "conv_xyz")
+
+    def test_extract_response_no_response_field(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        conn._telemetry_span = MagicMock()
+        span = MagicMock()
+
+        result = {"type": "response.done"}
+
+        _VoiceLiveInstrumentorPreview._extract_response_done(conn, result, span)
+
+        span.add_attribute.assert_not_called()
+        conn._telemetry_span.add_attribute.assert_not_called()
+
+
+# ------------------------------------------------------------------ #
+#  Agent config extraction in connect                                 #
+# ------------------------------------------------------------------ #
+
+
+class TestAgentConfigExtraction:
+    """Tests for agent config extraction during connect."""
+
+    def test_agent_name_from_config(self):
+        """_trace_connect should set agent_name on the span from agent_config."""
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        instrumentor = _VoiceLiveInstrumentorPreview()
+
+        mock_conn = MagicMock()
+
+        async def fake_aenter(mgr_self, *a, **kw):
+            return mock_conn
+
+        wrapper = instrumentor._trace_connect(fake_aenter)
+
+        # Build a mock manager with agent config
+        mgr = MagicMock()
+        mgr._endpoint = "wss://example.com"
+        mgr._VoiceLiveConnectionManager__model = "gpt-4o-realtime"
+        mgr._VoiceLiveConnectionManager__agent_config = {
+            "agent_name": "TestAgent",
+            "conversation_id": "conv_123",
+        }
+
+        import asyncio
+
+        with patch("azure.ai.voicelive.telemetry._voicelive_instrumentor.settings") as mock_settings, \
+             patch("azure.ai.voicelive.telemetry._voicelive_instrumentor.start_span") as mock_start:
+            mock_span = MagicMock()
+            mock_span.__enter__ = MagicMock(return_value=mock_span)
+            mock_span.__exit__ = MagicMock(return_value=False)
+            mock_start.return_value = mock_span
+            mock_settings.tracing_implementation.return_value = MagicMock
+
+            asyncio.get_event_loop().run_until_complete(wrapper(mgr))
+
+            mock_span.add_attribute.assert_any_call("gen_ai.agent.name", "TestAgent")
+            mock_span.add_attribute.assert_any_call("gen_ai.conversation.id", "conv_123")
+            assert mock_conn._telemetry_agent_name == "TestAgent"
+            assert mock_conn._telemetry_conversation_id == "conv_123"

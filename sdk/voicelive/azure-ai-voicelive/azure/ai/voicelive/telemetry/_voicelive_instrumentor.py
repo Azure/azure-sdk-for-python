@@ -20,20 +20,40 @@ from azure.core.tracing import AbstractSpan
 from ..models._enums import ClientEventType, ServerEventType
 from ._utils import (
     AZ_AI_VOICELIVE_SYSTEM,
+    ERROR_MESSAGE,
     ERROR_TYPE,
+    GEN_AI_AGENT_NAME,
+    GEN_AI_CLIENT_OPERATION_DURATION,
+    GEN_AI_CLIENT_TOKEN_USAGE,
+    GEN_AI_CONVERSATION_ID,
     GEN_AI_EVENT_CONTENT,
+    GEN_AI_OPERATION_NAME,
+    GEN_AI_PROVIDER_NAME,
+    GEN_AI_PROVIDER_VALUE,
+    GEN_AI_REQUEST_MAX_OUTPUT_TOKENS,
+    GEN_AI_REQUEST_MODEL,
+    GEN_AI_REQUEST_TEMPERATURE,
+    GEN_AI_REQUEST_TOOLS,
+    GEN_AI_RESPONSE_FINISH_REASONS,
+    GEN_AI_RESPONSE_ID,
     GEN_AI_SYSTEM,
+    GEN_AI_SYSTEM_INSTRUCTION_EVENT,
+    GEN_AI_SYSTEM_MESSAGE,
     GEN_AI_USAGE_INPUT_TOKENS,
     GEN_AI_USAGE_OUTPUT_TOKENS,
     GEN_AI_VOICE_AUDIO_BYTES_RECEIVED,
     GEN_AI_VOICE_AUDIO_BYTES_SENT,
     GEN_AI_VOICE_FIRST_TOKEN_LATENCY_MS,
     GEN_AI_VOICE_INPUT_AUDIO_FORMAT,
+    GEN_AI_VOICE_INPUT_SAMPLE_RATE,
     GEN_AI_VOICE_INTERRUPTION_COUNT,
     GEN_AI_VOICE_MESSAGE_SIZE,
     GEN_AI_VOICE_OUTPUT_AUDIO_FORMAT,
+    GEN_AI_VOICE_OUTPUT_SAMPLE_RATE,
     GEN_AI_VOICE_SESSION_ID,
     GEN_AI_VOICE_TURN_COUNT,
+    SERVER_ADDRESS,
+    SERVER_PORT,
     OperationName,
     start_span,
 )
@@ -43,6 +63,7 @@ logger = logging.getLogger(__name__)
 try:
     from opentelemetry import context as otel_context
     from opentelemetry.trace import Span, StatusCode, set_span_in_context
+    from opentelemetry.metrics import get_meter
 
     _tracing_library_available = True
 except ModuleNotFoundError:
@@ -50,12 +71,17 @@ except ModuleNotFoundError:
     set_span_in_context = None  # type: ignore[assignment]
     Span = None  # type: ignore[assignment,misc]
     StatusCode = None  # type: ignore[assignment,misc]
+    get_meter = None  # type: ignore[assignment]
     _tracing_library_available = False
 
 __all__ = ["VoiceLiveInstrumentor"]
 
 _voicelive_traces_enabled: bool = False
 _trace_voicelive_content: bool = False
+
+# Metrics instruments
+_operation_duration_histogram = None
+_token_usage_histogram = None
 
 
 class VoiceLiveInstrumentor:
@@ -235,7 +261,7 @@ class _VoiceLiveInstrumentorPreview:
         module = getattr(exc, "__module__", "")
         module = module if module != "builtins" else ""
         error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-        self._set_attributes(span, (ERROR_TYPE, error_type))
+        self._set_attributes(span, (ERROR_TYPE, error_type), (ERROR_MESSAGE, str(exc)))
 
     def _add_send_event(
         self,
@@ -338,6 +364,20 @@ class _VoiceLiveInstrumentorPreview:
                 result._telemetry_audio_bytes_received = 0
                 result._telemetry_response_create_time = None
                 result._telemetry_first_token_latency_recorded = False
+                result._telemetry_connect_start_time = time.monotonic()
+
+                # Extract agent config for agent attributes
+                agent_config = getattr(mgr_self, "_VoiceLiveConnectionManager__agent_config", None)
+                if agent_config:
+                    agent_name = agent_config.get("agent_name")
+                    if agent_name:
+                        result._telemetry_agent_name = agent_name
+                        span.add_attribute(GEN_AI_AGENT_NAME, agent_name)
+                    conv_id = agent_config.get("conversation_id")
+                    if conv_id:
+                        result._telemetry_conversation_id = conv_id
+                        span.add_attribute(GEN_AI_CONVERSATION_ID, conv_id)
+
                 return result
             except Exception as exc:
                 instrumentor.record_error(span, exc)
@@ -378,6 +418,19 @@ class _VoiceLiveInstrumentorPreview:
                     span.add_attribute(GEN_AI_VOICE_AUDIO_BYTES_SENT, audio_bytes_sent)
                 if audio_bytes_received > 0:
                     span.add_attribute(GEN_AI_VOICE_AUDIO_BYTES_RECEIVED, audio_bytes_received)
+
+                # Record duration metric
+                connect_start = getattr(conn, "_telemetry_connect_start_time", None)
+                if connect_start is not None:
+                    duration = time.monotonic() - connect_start
+                    instrumentor._record_operation_duration(
+                        duration,
+                        "connect",
+                        server_address=getattr(conn, "_telemetry_server_address", None),
+                        port=getattr(conn, "_telemetry_port", None),
+                        model=getattr(conn, "_telemetry_model", None),
+                        error_type=type(exc).__name__ if exc else None,
+                    )
 
                 if exc is not None:
                     instrumentor.record_error(span, exc)
@@ -467,6 +520,7 @@ class _VoiceLiveInstrumentorPreview:
             # Extract audio format from session.update
             if ClientEventType.SESSION_UPDATE in event_type_str:
                 instrumentor._extract_audio_format_from_send(conn_self, event)
+                instrumentor._extract_session_config_from_send(conn_self, event)
 
             op_name = OperationName.SEND
             span_name = f"send {event_type}" if event_type else "send"
@@ -496,6 +550,14 @@ class _VoiceLiveInstrumentorPreview:
 
             try:
                 with span:
+                    # Add session_id if available
+                    session_id = getattr(conn_self, "_telemetry_session_id", None)
+                    if session_id:
+                        span.add_attribute(GEN_AI_VOICE_SESSION_ID, session_id)
+                    # Add conversation_id if available
+                    conv_id = getattr(conn_self, "_telemetry_conversation_id", None)
+                    if conv_id:
+                        span.add_attribute(GEN_AI_CONVERSATION_ID, conv_id)
                     if event_type:
                         span.add_attribute("gen_ai.voice.event_type", event_type)
                     if message_size is not None:
@@ -549,6 +611,15 @@ class _VoiceLiveInstrumentorPreview:
 
             try:
                 with span:
+                    # Add session_id if available
+                    session_id = getattr(conn_self, "_telemetry_session_id", None)
+                    if session_id:
+                        span.add_attribute(GEN_AI_VOICE_SESSION_ID, session_id)
+                    # Add conversation_id if available
+                    conv_id = getattr(conn_self, "_telemetry_conversation_id", None)
+                    if conv_id:
+                        span.add_attribute(GEN_AI_CONVERSATION_ID, conv_id)
+
                     result = await original_recv(conn_self, *args, **kwargs)
                     # Extract event type from the result
                     event_type = None
@@ -590,9 +661,10 @@ class _VoiceLiveInstrumentorPreview:
 
                     instrumentor._add_recv_event(span, event_type_str if event_type else None, content_str)
 
-                    # --- Session ID tracking ---
+                    # --- Session ID and audio format tracking ---
                     if event_type_str in (ServerEventType.SESSION_CREATED, ServerEventType.SESSION_UPDATED):
                         instrumentor._extract_session_id(conn_self, result)
+                        instrumentor._extract_audio_format_from_recv(conn_self, result)
 
                     # --- First-token latency ---
                     if event_type_str in (ServerEventType.RESPONSE_AUDIO_DELTA, ServerEventType.RESPONSE_TEXT_DELTA):
@@ -626,6 +698,8 @@ class _VoiceLiveInstrumentorPreview:
                     if event_type_str == ServerEventType.RESPONSE_DONE:
                         current = getattr(conn_self, "_telemetry_turn_count", 0)
                         conn_self._telemetry_turn_count = current + 1
+                        # Extract response metadata
+                        instrumentor._extract_response_done(conn_self, result, span)
 
                     # --- Rate limit / error events ---
                     if event_type_str in (ServerEventType.ERROR, "rate_limits.updated"):
@@ -647,8 +721,18 @@ class _VoiceLiveInstrumentorPreview:
                         )
                         if input_tokens is not None:
                             span.add_attribute(GEN_AI_USAGE_INPUT_TOKENS, input_tokens)
+                            instrumentor._record_token_usage(
+                                input_tokens, "input", "recv",
+                                server_address=getattr(conn_self, "_telemetry_server_address", None),
+                                model=getattr(conn_self, "_telemetry_model", None),
+                            )
                         if output_tokens is not None:
                             span.add_attribute(GEN_AI_USAGE_OUTPUT_TOKENS, output_tokens)
+                            instrumentor._record_token_usage(
+                                output_tokens, "output", "recv",
+                                server_address=getattr(conn_self, "_telemetry_server_address", None),
+                                model=getattr(conn_self, "_telemetry_model", None),
+                            )
 
                     return result
             except Exception as exc:
@@ -697,6 +781,14 @@ class _VoiceLiveInstrumentorPreview:
 
             try:
                 with span:
+                    # Add session_id if available
+                    session_id = getattr(conn_self, "_telemetry_session_id", None)
+                    if session_id:
+                        span.add_attribute(GEN_AI_VOICE_SESSION_ID, session_id)
+                    # Add conversation_id if available
+                    conv_id = getattr(conn_self, "_telemetry_conversation_id", None)
+                    if conv_id:
+                        span.add_attribute(GEN_AI_CONVERSATION_ID, conv_id)
                     return await original_close(conn_self, *args, **kwargs)
             except Exception as exc:
                 instrumentor.record_error(span, exc)
@@ -771,6 +863,15 @@ class _VoiceLiveInstrumentorPreview:
             if connect_span is not None:
                 connect_span.add_attribute(GEN_AI_VOICE_INPUT_AUDIO_FORMAT, input_fmt_str)
 
+        # Input audio sampling rate (explicit field on the session model)
+        input_sampling_rate = None
+        if hasattr(session, "get"):
+            input_sampling_rate = session.get("input_audio_sampling_rate")
+        elif hasattr(session, "input_audio_sampling_rate"):
+            input_sampling_rate = getattr(session, "input_audio_sampling_rate", None)
+        if input_sampling_rate is not None and connect_span is not None:
+            connect_span.add_attribute(GEN_AI_VOICE_INPUT_SAMPLE_RATE, input_sampling_rate)
+
         # Output audio format
         output_audio_format = None
         if hasattr(session, "get"):
@@ -782,6 +883,307 @@ class _VoiceLiveInstrumentorPreview:
             conn_self._telemetry_output_audio_format = output_fmt_str  # pylint: disable=protected-access
             if connect_span is not None:
                 connect_span.add_attribute(GEN_AI_VOICE_OUTPUT_AUDIO_FORMAT, output_fmt_str)
+
+    @staticmethod
+    def _extract_audio_format_from_recv(conn_self: Any, result: Any) -> None:
+        """Extract audio format and sample rate from a session.created or
+        session.updated server event. The server response is authoritative and
+        may include values the client did not explicitly set (e.g. defaults).
+
+        :param conn_self: The ``VoiceLiveConnection`` instance.
+        :type conn_self: ~azure.ai.voicelive.aio.VoiceLiveConnection
+        :param result: The received server event.
+        :type result: any
+        """
+        session = None
+        if hasattr(result, "get"):
+            session = result.get("session")
+        elif hasattr(result, "session"):
+            session = getattr(result, "session", None)
+
+        if session is None:
+            return
+
+        connect_span = getattr(conn_self, "_telemetry_span", None)
+
+        # Input audio format
+        input_audio_format = None
+        if hasattr(session, "get"):
+            input_audio_format = session.get("input_audio_format")
+        elif hasattr(session, "input_audio_format"):
+            input_audio_format = getattr(session, "input_audio_format", None)
+        if input_audio_format:
+            input_fmt_str = str(input_audio_format)
+            conn_self._telemetry_input_audio_format = input_fmt_str  # pylint: disable=protected-access
+            if connect_span is not None:
+                connect_span.add_attribute(GEN_AI_VOICE_INPUT_AUDIO_FORMAT, input_fmt_str)
+
+        # Input audio sampling rate (explicit field on the session model)
+        input_sampling_rate = None
+        if hasattr(session, "get"):
+            input_sampling_rate = session.get("input_audio_sampling_rate")
+        elif hasattr(session, "input_audio_sampling_rate"):
+            input_sampling_rate = getattr(session, "input_audio_sampling_rate", None)
+        if input_sampling_rate is not None and connect_span is not None:
+            connect_span.add_attribute(GEN_AI_VOICE_INPUT_SAMPLE_RATE, input_sampling_rate)
+
+        # Output audio format
+        output_audio_format = None
+        if hasattr(session, "get"):
+            output_audio_format = session.get("output_audio_format")
+        elif hasattr(session, "output_audio_format"):
+            output_audio_format = getattr(session, "output_audio_format", None)
+        if output_audio_format:
+            output_fmt_str = str(output_audio_format)
+            conn_self._telemetry_output_audio_format = output_fmt_str  # pylint: disable=protected-access
+            if connect_span is not None:
+                connect_span.add_attribute(GEN_AI_VOICE_OUTPUT_AUDIO_FORMAT, output_fmt_str)
+
+    @staticmethod
+    def _extract_session_config_from_send(conn_self: Any, event: Any) -> None:  # pylint: disable=too-many-branches
+        """Extract system instructions, tools, temperature, and max_output_tokens
+        from a session.update event and set on the connect span.
+
+        Also emits a ``gen_ai.system.instructions`` span event when content
+        recording is enabled and instructions are present.
+
+        :param conn_self: The ``VoiceLiveConnection`` instance.
+        :type conn_self: ~azure.ai.voicelive.aio.VoiceLiveConnection
+        :param event: The session.update event being sent.
+        :type event: any
+        """
+        session = None
+        if hasattr(event, "get"):
+            session = event.get("session")
+        elif hasattr(event, "session"):
+            session = getattr(event, "session", None)
+
+        if session is None:
+            return
+
+        connect_span = getattr(conn_self, "_telemetry_span", None)
+
+        # System instructions
+        instructions = None
+        if hasattr(session, "get"):
+            instructions = session.get("instructions")
+        elif hasattr(session, "instructions"):
+            instructions = getattr(session, "instructions", None)
+        if instructions and connect_span is not None:
+            connect_span.add_attribute(GEN_AI_SYSTEM_MESSAGE, instructions)
+            # Emit system instructions event when content recording is enabled
+            if _trace_voicelive_content:
+                event_attrs: Dict[str, Any] = {GEN_AI_PROVIDER_NAME: GEN_AI_PROVIDER_VALUE}
+                event_attrs[GEN_AI_EVENT_CONTENT] = json.dumps(
+                    [{"role": "system", "content": instructions}], ensure_ascii=False
+                )
+                connect_span.span_instance.add_event(
+                    name=GEN_AI_SYSTEM_INSTRUCTION_EVENT, attributes=event_attrs
+                )
+
+        # Temperature
+        temperature = None
+        if hasattr(session, "get"):
+            temperature = session.get("temperature")
+        elif hasattr(session, "temperature"):
+            temperature = getattr(session, "temperature", None)
+        if temperature is not None and connect_span is not None:
+            connect_span.add_attribute(GEN_AI_REQUEST_TEMPERATURE, str(temperature))
+
+        # Max output tokens
+        max_output_tokens = None
+        if hasattr(session, "get"):
+            max_output_tokens = session.get("max_response_output_tokens")
+        elif hasattr(session, "max_response_output_tokens"):
+            max_output_tokens = getattr(session, "max_response_output_tokens", None)
+        if max_output_tokens is not None and connect_span is not None:
+            connect_span.add_attribute(GEN_AI_REQUEST_MAX_OUTPUT_TOKENS, max_output_tokens)
+
+        # Tools
+        tools = None
+        if hasattr(session, "get"):
+            tools = session.get("tools")
+        elif hasattr(session, "tools"):
+            tools = getattr(session, "tools", None)
+        if tools and connect_span is not None:
+            try:
+                if isinstance(tools, list):
+                    tools_json = json.dumps(
+                        [t if isinstance(t, dict) else (t.as_dict() if hasattr(t, "as_dict") else str(t))
+                         for t in tools],
+                        default=str, ensure_ascii=False,
+                    )
+                else:
+                    tools_json = str(tools)
+                connect_span.add_attribute(GEN_AI_REQUEST_TOOLS, tools_json)
+            except (TypeError, ValueError):
+                pass
+
+    @staticmethod
+    def _extract_response_done(conn_self: Any, result: Any, span: "AbstractSpan") -> None:
+        """Extract response metadata from a response.done event.
+
+        Sets ``gen_ai.response.id``, ``gen_ai.conversation.id``, and
+        ``gen_ai.response.finish_reasons`` on both the recv span and the
+        parent connect span.
+
+        :param conn_self: The ``VoiceLiveConnection`` instance.
+        :type conn_self: ~azure.ai.voicelive.aio.VoiceLiveConnection
+        :param result: The received response.done event object.
+        :type result: any
+        :param span: The current recv span.
+        :type span: ~azure.core.tracing.AbstractSpan
+        """
+        response = None
+        if hasattr(result, "get"):
+            response = result.get("response")
+        elif hasattr(result, "response"):
+            response = getattr(result, "response", None)
+
+        if response is None:
+            return
+
+        connect_span = getattr(conn_self, "_telemetry_span", None)
+
+        # Response ID
+        response_id = None
+        if hasattr(response, "get"):
+            response_id = response.get("id")
+        elif hasattr(response, "id"):
+            response_id = getattr(response, "id", None)
+        if response_id:
+            span.add_attribute(GEN_AI_RESPONSE_ID, response_id)
+            if connect_span is not None:
+                connect_span.add_attribute(GEN_AI_RESPONSE_ID, response_id)
+
+        # Conversation ID from response
+        conv_id = None
+        if hasattr(response, "get"):
+            conv_id = response.get("conversation_id")
+        elif hasattr(response, "conversation_id"):
+            conv_id = getattr(response, "conversation_id", None)
+        if conv_id:
+            conn_self._telemetry_conversation_id = conv_id  # pylint: disable=protected-access
+            span.add_attribute(GEN_AI_CONVERSATION_ID, conv_id)
+            if connect_span is not None:
+                connect_span.add_attribute(GEN_AI_CONVERSATION_ID, conv_id)
+
+        # Finish reason / status
+        status = None
+        if hasattr(response, "get"):
+            status = response.get("status")
+        elif hasattr(response, "status"):
+            status = getattr(response, "status", None)
+        if status:
+            status_str = str(status)
+            span.add_attribute(GEN_AI_RESPONSE_FINISH_REASONS, [status_str])
+            if connect_span is not None:
+                connect_span.add_attribute(GEN_AI_RESPONSE_FINISH_REASONS, [status_str])
+
+    # ------------------------------------------------------------------ #
+    #  Metrics helpers                                                    #
+    # ------------------------------------------------------------------ #
+
+    @staticmethod
+    def _initialize_metrics() -> None:
+        """Initialize OpenTelemetry metrics instruments."""
+        global _operation_duration_histogram, _token_usage_histogram  # pylint: disable=global-statement
+        if not _tracing_library_available or get_meter is None:
+            return
+        try:
+            meter = get_meter(__name__)
+            _operation_duration_histogram = meter.create_histogram(
+                name=GEN_AI_CLIENT_OPERATION_DURATION,
+                description="Duration of GenAI VoiceLive operations",
+                unit="s",
+            )
+            _token_usage_histogram = meter.create_histogram(
+                name=GEN_AI_CLIENT_TOKEN_USAGE,
+                description="Token usage for GenAI VoiceLive operations",
+                unit="token",
+            )
+        except Exception:  # pylint: disable=broad-except
+            logger.debug("Failed to initialize VoiceLive metrics", exc_info=True)
+
+    @staticmethod
+    def _record_operation_duration(
+        duration: float,
+        operation_name: str,
+        server_address: Optional[str] = None,
+        port: Optional[int] = None,
+        model: Optional[str] = None,
+        error_type: Optional[str] = None,
+    ) -> None:
+        """Record an operation duration metric.
+
+        :param duration: Duration in seconds.
+        :type duration: float
+        :param operation_name: The operation name.
+        :type operation_name: str
+        :keyword server_address: Server hostname.
+        :paramtype server_address: str or None
+        :keyword port: Server port.
+        :paramtype port: int or None
+        :keyword model: Model identifier.
+        :paramtype model: str or None
+        :keyword error_type: Error type if the operation failed.
+        :paramtype error_type: str or None
+        """
+        if not _operation_duration_histogram:
+            return
+        attributes: Dict[str, Any] = {
+            GEN_AI_OPERATION_NAME: operation_name,
+            GEN_AI_PROVIDER_NAME: GEN_AI_PROVIDER_VALUE,
+        }
+        if server_address:
+            attributes[SERVER_ADDRESS] = server_address
+        if port is not None:
+            attributes[SERVER_PORT] = str(port)
+        if model:
+            attributes[GEN_AI_REQUEST_MODEL] = model
+        if error_type:
+            attributes[ERROR_TYPE] = error_type
+        try:
+            _operation_duration_histogram.record(duration, attributes)
+        except Exception:  # pylint: disable=broad-except
+            logger.debug("Failed to record operation duration", exc_info=True)
+
+    @staticmethod
+    def _record_token_usage(
+        token_count: int,
+        token_type: str,
+        operation_name: str,
+        server_address: Optional[str] = None,
+        model: Optional[str] = None,
+    ) -> None:
+        """Record a token usage metric.
+
+        :param token_count: Number of tokens.
+        :type token_count: int
+        :param token_type: Token type (``"input"`` or ``"output"``).
+        :type token_type: str
+        :param operation_name: The operation name.
+        :type operation_name: str
+        :keyword server_address: Server hostname.
+        :paramtype server_address: str or None
+        :keyword model: Model identifier.
+        :paramtype model: str or None
+        """
+        if not _token_usage_histogram:
+            return
+        attributes: Dict[str, Any] = {
+            GEN_AI_OPERATION_NAME: operation_name,
+            GEN_AI_PROVIDER_NAME: GEN_AI_PROVIDER_VALUE,
+            "gen_ai.token.type": token_type,
+        }
+        if server_address:
+            attributes[SERVER_ADDRESS] = server_address
+        if model:
+            attributes[GEN_AI_REQUEST_MODEL] = model
+        try:
+            _token_usage_histogram.record(token_count, attributes)
+        except Exception:  # pylint: disable=broad-except
+            logger.debug("Failed to record token usage", exc_info=True)
 
     @staticmethod
     def _add_rate_limit_event(span: "AbstractSpan", event_type: str, result: Any) -> None:
@@ -906,6 +1308,9 @@ class _VoiceLiveInstrumentorPreview:
         _voicelive_traces_enabled = True
         _trace_voicelive_content = enable_content_recording
 
+        # Initialize metrics instruments
+        self._initialize_metrics()
+
         for module_name, class_name, method_name, wrapper_factory in self._voicelive_apis():
             try:
                 module = importlib.import_module(module_name)
@@ -958,10 +1363,4 @@ class _VoiceLiveInstrumentorPreview:
         global _trace_voicelive_content  # pylint: disable=global-statement
         _trace_voicelive_content = enable_content_recording
 
-    def _is_content_recording_enabled(self) -> bool:
-        """Return ``True`` if content recording is currently enabled.
 
-        :return: Whether content recording is enabled.
-        :rtype: bool
-        """
-        return _trace_voicelive_content

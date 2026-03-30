@@ -25,6 +25,20 @@ GEN_AI_REQUEST_MODEL = "gen_ai.request.model"
 GEN_AI_USAGE_INPUT_TOKENS = "gen_ai.usage.input_tokens"
 GEN_AI_USAGE_OUTPUT_TOKENS = "gen_ai.usage.output_tokens"
 GEN_AI_EVENT_CONTENT = "gen_ai.event.content"
+GEN_AI_RESPONSE_ID = "gen_ai.response.id"
+GEN_AI_RESPONSE_MODEL = "gen_ai.response.model"
+GEN_AI_RESPONSE_FINISH_REASONS = "gen_ai.response.finish_reasons"
+GEN_AI_REQUEST_TEMPERATURE = "gen_ai.request.temperature"
+GEN_AI_REQUEST_MAX_OUTPUT_TOKENS = "gen_ai.request.max_output_tokens"
+GEN_AI_SYSTEM_MESSAGE = "gen_ai.system_instructions"
+
+# --- Agent attributes ---
+GEN_AI_AGENT_NAME = "gen_ai.agent.name"
+GEN_AI_AGENT_ID = "gen_ai.agent.id"
+GEN_AI_REQUEST_TOOLS = "gen_ai.request.tools"
+
+# --- Conversation attributes ---
+GEN_AI_CONVERSATION_ID = "gen_ai.conversation.id"
 
 # --- Server attributes ---
 SERVER_ADDRESS = "server.address"
@@ -34,11 +48,13 @@ SERVER_PORT = "server.port"
 AZ_NAMESPACE = "az.namespace"
 AZ_NAMESPACE_VALUE = "Microsoft.CognitiveServices"
 AZ_AI_VOICELIVE_SYSTEM = "az.ai.voicelive"
+GEN_AI_PROVIDER_NAME = "gen_ai.provider.name"
+GEN_AI_PROVIDER_VALUE = "microsoft.foundry"
 
 # --- VoiceLive-specific attributes ---
 GEN_AI_VOICE_SESSION_ID = "gen_ai.voice.session_id"
-GEN_AI_VOICE_SAMPLE_RATE = "gen_ai.voice.sample_rate"
-GEN_AI_VOICE_CODEC = "gen_ai.voice.codec"
+GEN_AI_VOICE_INPUT_SAMPLE_RATE = "gen_ai.voice.input_sample_rate"
+GEN_AI_VOICE_OUTPUT_SAMPLE_RATE = "gen_ai.voice.output_sample_rate"
 GEN_AI_VOICE_INPUT_AUDIO_FORMAT = "gen_ai.voice.input_audio_format"
 GEN_AI_VOICE_OUTPUT_AUDIO_FORMAT = "gen_ai.voice.output_audio_format"
 
@@ -54,6 +70,14 @@ GEN_AI_VOICE_FIRST_TOKEN_LATENCY_MS = "gen_ai.voice.first_token_latency_ms"
 
 # --- Error attributes ---
 ERROR_TYPE = "error.type"
+ERROR_MESSAGE = "error.message"
+
+# --- Event names ---
+GEN_AI_SYSTEM_INSTRUCTION_EVENT = "gen_ai.system.instructions"
+
+# --- Metric names ---
+GEN_AI_CLIENT_OPERATION_DURATION = "gen_ai.client.operation.duration"
+GEN_AI_CLIENT_TOKEN_USAGE = "gen_ai.client.token.usage"
 
 GEN_AI_SEMANTIC_CONVENTIONS_SCHEMA_VERSION = "1.34.0"
 
@@ -123,6 +147,7 @@ def start_span(  # pylint: disable=R0913,R0917
 
     if span and span.span_instance.is_recording:
         span.add_attribute(AZ_NAMESPACE, AZ_NAMESPACE_VALUE)
+        span.add_attribute(GEN_AI_PROVIDER_NAME, GEN_AI_PROVIDER_VALUE)
         span.add_attribute(GEN_AI_SYSTEM, AZ_AI_VOICELIVE_SYSTEM)
         span.add_attribute(GEN_AI_OPERATION_NAME, operation_name.value)
 
