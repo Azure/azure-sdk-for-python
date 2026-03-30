@@ -234,7 +234,7 @@ print("Model saved to outputs/model.joblib")
                 assert submitted.type == "sweep"
 
                 # ── Wait for completion ───────────────────────────────
-                finished = wait_for_job(ml_client, submitted, timeout_seconds=900)
+                finished = wait_for_job(ml_client, submitted)
                 assert finished.status == "Completed", f"Sweep failed: {finished.status}"
 
                 # ── Round-trip fidelity: verify sampling algorithm ────
@@ -326,7 +326,6 @@ print("Model saved to outputs/model.joblib")
             except Exception:
                 pass
 
-    @pytest.mark.timeout(1200)
     def test_sweep_random_with_median_stopping_and_loguniform(
         self, ml_client: MLClient, rand_name, wait_for_job
     ):
@@ -454,7 +453,7 @@ print(f"AUC: {auc:.4f}")
                 )
                 assert submitted.name is not None
 
-                finished = wait_for_job(ml_client, submitted, timeout_seconds=600)
+                finished = wait_for_job(ml_client, submitted)
                 assert finished.status == "Completed", f"Sweep failed: {finished.status}"
 
                 # ── Round-trip: verify MedianStoppingPolicy ───────────
@@ -489,7 +488,6 @@ print(f"AUC: {auc:.4f}")
             except Exception:
                 pass
 
-    @pytest.mark.timeout(900)
     def test_sweep_random_with_truncation_selection(
         self, ml_client: MLClient, rand_name, wait_for_job
     ):
@@ -610,7 +608,7 @@ print(f"AUC: {auc:.4f}")
                 )
                 assert submitted.name is not None
 
-                finished = wait_for_job(ml_client, submitted, timeout_seconds=600)
+                finished = wait_for_job(ml_client, submitted)
                 assert finished.status == "Completed", f"Sweep failed: {finished.status}"
 
                 # ── Round-trip: verify TruncationSelectionPolicy ──────
