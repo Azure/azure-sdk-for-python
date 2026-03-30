@@ -7,6 +7,8 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Kubernetes pod name takes precedence when populating `cloud_RoleInstance`
+  ([#45884](https://github.com/Azure/azure-sdk-for-python/pull/45884))
 
 ### Other Changes
 
