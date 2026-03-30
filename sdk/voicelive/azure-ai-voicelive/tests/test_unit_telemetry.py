@@ -994,7 +994,7 @@ class TestResponseDoneExtraction:
 
         span.add_attribute.assert_any_call("gen_ai.response.id", "resp_abc123")
         span.add_attribute.assert_any_call("gen_ai.conversation.id", "conv_xyz")
-        span.add_attribute.assert_any_call("gen_ai.response.finish_reasons", ["completed"])
+        span.add_attribute.assert_any_call("gen_ai.response.finish_reasons", '["completed"]')
         assert conn._telemetry_conversation_id == "conv_xyz"
         # Connect span also gets the attributes
         conn._telemetry_span.add_attribute.assert_any_call("gen_ai.response.id", "resp_abc123")

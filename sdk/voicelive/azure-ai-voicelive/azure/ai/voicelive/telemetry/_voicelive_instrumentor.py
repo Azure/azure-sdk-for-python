@@ -49,7 +49,6 @@ from ._utils import (
     GEN_AI_VOICE_INTERRUPTION_COUNT,
     GEN_AI_VOICE_MESSAGE_SIZE,
     GEN_AI_VOICE_OUTPUT_AUDIO_FORMAT,
-    GEN_AI_VOICE_OUTPUT_SAMPLE_RATE,
     GEN_AI_VOICE_SESSION_ID,
     GEN_AI_VOICE_TURN_COUNT,
     SERVER_ADDRESS,
@@ -1076,9 +1075,9 @@ class _VoiceLiveInstrumentorPreview:
             status = getattr(response, "status", None)
         if status:
             status_str = str(status)
-            span.add_attribute(GEN_AI_RESPONSE_FINISH_REASONS, [status_str])
+            span.add_attribute(GEN_AI_RESPONSE_FINISH_REASONS, json.dumps([status_str]))
             if connect_span is not None:
-                connect_span.add_attribute(GEN_AI_RESPONSE_FINISH_REASONS, [status_str])
+                connect_span.add_attribute(GEN_AI_RESPONSE_FINISH_REASONS, json.dumps([status_str]))
 
     # ------------------------------------------------------------------ #
     #  Metrics helpers                                                    #
@@ -1120,14 +1119,14 @@ class _VoiceLiveInstrumentorPreview:
         :type duration: float
         :param operation_name: The operation name.
         :type operation_name: str
-        :keyword server_address: Server hostname.
-        :paramtype server_address: str or None
-        :keyword port: Server port.
-        :paramtype port: int or None
-        :keyword model: Model identifier.
-        :paramtype model: str or None
-        :keyword error_type: Error type if the operation failed.
-        :paramtype error_type: str or None
+        :param server_address: Server hostname.
+        :type server_address: str or None
+        :param port: Server port.
+        :type port: int or None
+        :param model: Model identifier.
+        :type model: str or None
+        :param error_type: Error type if the operation failed.
+        :type error_type: str or None
         """
         if not _operation_duration_histogram:
             return
@@ -1164,10 +1163,10 @@ class _VoiceLiveInstrumentorPreview:
         :type token_type: str
         :param operation_name: The operation name.
         :type operation_name: str
-        :keyword server_address: Server hostname.
-        :paramtype server_address: str or None
-        :keyword model: Model identifier.
-        :paramtype model: str or None
+        :param server_address: Server hostname.
+        :type server_address: str or None
+        :param model: Model identifier.
+        :type model: str or None
         """
         if not _token_usage_histogram:
             return
@@ -1362,5 +1361,4 @@ class _VoiceLiveInstrumentorPreview:
         """
         global _trace_voicelive_content  # pylint: disable=global-statement
         _trace_voicelive_content = enable_content_recording
-
 
