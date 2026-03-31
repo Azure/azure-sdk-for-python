@@ -106,7 +106,7 @@ Controls the HTTP logging format used by `HttpLoggingPolicy`.
 |---|---|
 | **Used by** | `azure.core.pipeline.policies.HttpLoggingPolicy` |
 | **Default** | Disabled (single-record format) |
-| **Accepted values** | Any truthy value to enable |
+| **Accepted values** | Any non-empty value to enable |
 
 When set, HTTP request and response details are logged as separate log records instead of a single combined record. This can make log output easier to parse in structured logging systems.
 
