@@ -184,8 +184,7 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
 
     instrumentation_scope = readable_log_record.instrumentation_scope
     if instrumentation_scope is not None and hasattr(instrumentation_scope, "name"):
-        properties["code.instrumentation_scope_name"] = instrumentation_scope.name
-        pass
+        properties["code.logger_name"] = instrumentation_scope.name
         
 
     # Exception telemetry
