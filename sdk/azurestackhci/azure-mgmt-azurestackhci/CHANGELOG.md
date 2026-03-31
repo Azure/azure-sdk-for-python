@@ -4,7 +4,7 @@
 
 ### Features Added
 
-  - Model `AzureStackHCIClient` added parameter `cloud_setting` in method `__init__`
+  - Client `AzureStackHCIClient` added parameter `cloud_setting` in method `__init__`
   - Client `AzureStackHCIClient` added method `send_request`
   - Client `AzureStackHCIClient` added operation group `edge_device_jobs`
   - Client `AzureStackHCIClient` added operation group `validated_solution_recipes`
@@ -18,26 +18,20 @@
   - Model `DeploymentData` added property `is_management_cluster`
   - Model `DeploymentData` added property `local_availability_zones`
   - Model `DeploymentData` added property `assembly_info`
-  - Model `DeploymentSetting` added property `properties`
   - Model `HciNicDetail` added property `rdma_capability`
   - Model `HciReportedProperties` added property `storage_profile`
   - Model `HciReportedProperties` added property `hardware_profile`
   - Model `InfrastructureNetwork` added property `dns_server_config`
   - Model `InfrastructureNetwork` added property `dns_zones`
-  - Model `SecuritySetting` added property `properties`
-  - Added model `ArcIdentityResponseProperties`
   - Added model `AssemblyInfo`
   - Added model `AssemblyInfoPayload`
-  - Added model `ClusterIdentityResponseProperties`
   - Added enum `ClusterPattern`
-  - Added model `DeploymentSettingsProperties`
   - Added enum `DeviceLogCollectionStatus`
   - Added enum `DnsServerConfig`
   - Added model `DnsZones`
   - Added model `EdgeDeviceJob`
   - Added enum `EdgeDeviceKind`
   - Added model `ExtensionParameters`
-  - Added model `ExtensionPatchProperties`
   - Added model `ExtensionResource`
   - Added enum `HardwareClass`
   - Added model `HciCollectLogJobProperties`
@@ -63,7 +57,6 @@
   - Added model `SecretsLocationDetails`
   - Added model `SecretsLocationsChangeRequest`
   - Added enum `SecretsType`
-  - Added model `SecurityProperties`
   - Added model `UpdateStateProperties`
   - Added model `ValidatedSolutionRecipe`
   - Added model `ValidatedSolutionRecipeCapabilities`
@@ -84,12 +77,11 @@
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Deleted or renamed client operation group `AzureStackHCIClient.publishers`
-  - Method `Operations.list` changed from `asynchronous` to `synchronous`
-  - Model `ArcIdentityResponse` moved instance variables `arc_application_client_id`, `arc_application_tenant_id`, `arc_service_principal_object_id` and `arc_application_object_id` under property `properties`
-  - Model `ClusterIdentityResponse` moved instance variables `aad_client_id`, `aad_tenant_id`, `aad_service_principal_object_id` and `aad_application_object_id` under property `properties`
-  - Model `DeploymentSetting` moved instance variables `provisioning_state`, `arc_node_resource_ids`, `deployment_mode`, `operation_type`, `deployment_configuration` and `reported_properties` under property `properties`
-  - Model `ExtensionPatch` moved instance variable `extension_parameters` under property `properties`
-  - Model `SecuritySetting` moved instance variables `secured_core_compliance_assignment`, `wdac_compliance_assignment`, `smb_encryption_for_intra_cluster_traffic_compliance_assignment`, `security_compliance_status` and `provisioning_state` under property `properties`
+  - Model `ArcIdentityResponse` moved instance variables `arc_application_client_id`, `arc_application_tenant_id`, `arc_service_principal_object_id` and `arc_application_object_id` under property `properties` whose type is `ArcIdentityResponseProperties`
+  - Model `ClusterIdentityResponse` moved instance variables `aad_client_id`, `aad_tenant_id`, `aad_service_principal_object_id` and `aad_application_object_id` under property `properties` whose type is `ClusterIdentityResponseProperties`
+  - Model `DeploymentSetting` moved instance variables `provisioning_state`, `arc_node_resource_ids`, `deployment_mode`, `operation_type`, `deployment_configuration` and `reported_properties` under property `properties` whose type is `DeploymentSettingsProperties`
+  - Model `ExtensionPatch` moved instance variable `extension_parameters` under property `properties` whose type is `ExtensionPatchProperties`
+  - Model `SecuritySetting` moved instance variables `secured_core_compliance_assignment`, `wdac_compliance_assignment`, `smb_encryption_for_intra_cluster_traffic_compliance_assignment`, `security_compliance_status` and `provisioning_state` under property `properties` whose type is `SecurityProperties`
   - Deleted or renamed enum value `Status.FAILED`
   - Deleted or renamed enum value `Status.IN_PROGRESS`
   - Deleted or renamed enum value `Status.SUCCEEDED`
