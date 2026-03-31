@@ -199,9 +199,9 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                     tags_filter=select.tag_filters,
                     **kwargs,
                 )
-            async for _ in configurations.by_page(match_conditions=selector_etags):  # type: ignore[call-arg]
-                # If any page is returned, it means that page has changed
-                return True
+                async for _ in configurations.by_page(match_conditions=selector_etags):  # type: ignore[call-arg]
+                    # If any page is returned, it means that page has changed
+                    return True
         return False
 
     @distributed_trace

@@ -4,8 +4,8 @@
 
 ### Features Added
 
-- Added `refresh_enabled` parameter to the `load` method. When set to `False`, calling `refresh` will be a no-op. Defaults to `True`.
-- Added watch-all support. When `refresh_enabled` is `True` and no `refresh_on` keys are specified, the provider will automatically detect changes to any configuration setting using page etags and refresh all settings.
+- Added `refresh_enabled` parameter to the `load` method. Defaults to `False`, unless `refresh_on` keys are specified resulting in defaulting to `True`. When set to `False`, calling `refresh` will be a no-op. Defaults to `True`.
+- Added the ability to monitor all selected key-values for refresh with the `refresh_enabled` kwarg. When this kwarg is set to `True`, and `refresh_on` is not specified, changes to any selected key-values will trigger configuration reload.
 
 ### Breaking Changes
 

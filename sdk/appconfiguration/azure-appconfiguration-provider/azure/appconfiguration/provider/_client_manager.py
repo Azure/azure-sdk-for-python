@@ -196,9 +196,9 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                     tags_filter=select.tag_filters,
                     **kwargs,
                 )
-            for _ in configurations.by_page(match_conditions=selector_etags):
-                # If any page is returned, it means that page has changed
-                return True
+                for _ in configurations.by_page(match_conditions=selector_etags):
+                    # If any page is returned, it means that page has changed
+                    return True
         return False
 
     @distributed_trace
