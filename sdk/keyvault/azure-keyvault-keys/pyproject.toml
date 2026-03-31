@@ -56,7 +56,6 @@ exclude = [
     "doc*",
     "azure",
     "azure.keyvault",
-    "azure.keyvault.keys",
 ]
 
 [tool.setuptools.package-data]
