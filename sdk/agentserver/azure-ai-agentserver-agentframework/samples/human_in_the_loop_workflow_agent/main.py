@@ -1,0 +1,111 @@
+# Copyright (c) Microsoft. All rights reserved.
+
+import asyncio
+import json
+from dataclasses import dataclass
+from typing import Any, Dict, Optional
+
+from agent_framework import (  # noqa: E402
+    Executor,
+    Workflow,
+    WorkflowBuilder,
+    WorkflowContext,
+    handler,
+    response_handler,
+)
+from agent_framework.azure import AzureOpenAIChatClient
+from azure.identity import AzureCliCredential
+from dotenv import load_dotenv
+from workflow_as_agent_reflection_pattern import (  # noqa: E402
+    ReviewRequest,
+    ReviewResponse,
+    Worker,
+)
+
+from azure.ai.agentserver.agentframework import from_agent_framework
+from azure.ai.agentserver.agentframework.persistence import FileCheckpointRepository
+
+load_dotenv()
+
+@dataclass
+class HumanReviewRequest:
+    """A request message type for escalation to a human reviewer."""
+
+    agent_request: Optional[ReviewRequest] = None
+
+    def convert_to_payload(self) -> str:
+        """Convert the HumanReviewRequest to a payload string."""
+        request = self.agent_request
+        payload: Dict[str, Any] = {"agent_request": None}
+
+        if request:
+            payload["agent_request"] = {
+                "request_id": request.request_id,
+                "user_messages": [msg.to_dict() for msg in request.user_messages],
+                "agent_messages": [msg.to_dict() for msg in request.agent_messages],
+            }
+
+        return json.dumps(payload, indent=2)
+
+
+class ReviewerWithHumanInTheLoop(Executor):
+    """Executor that always escalates reviews to a human manager."""
+
+    def __init__(self, worker_id: str, reviewer_id: Optional[str] = None) -> None:
+        unique_id = reviewer_id or f"{worker_id}-reviewer"
+        super().__init__(id=unique_id)
+        self._worker_id = worker_id
+
+    @handler
+    async def review(self, request: ReviewRequest, ctx: WorkflowContext) -> None:
+        # In this simplified example, we always escalate to a human manager.
+        # See workflow_as_agent_reflection.py for an implementation
+        # using an automated agent to make the review decision.
+        print(f"Reviewer: Evaluating response for request {request.request_id[:8]}...")
+        print("Reviewer: Escalating to human manager...")
+
+        # Forward the request to a human manager by sending a HumanReviewRequest.
+        await ctx.request_info(
+            request_data=HumanReviewRequest(agent_request=request),
+            response_type=ReviewResponse,
+        )
+
+    @response_handler
+    async def accept_human_review(
+        self,
+        original_request: HumanReviewRequest,
+        response: ReviewResponse,
+        ctx: WorkflowContext[ReviewResponse],
+    ) -> None:
+        # Accept the human review response and forward it back to the Worker.
+        print(f"Reviewer: Accepting human review for request {response.request_id[:8]}...")
+        print(f"Reviewer: Human feedback: {response.feedback}")
+        print(f"Reviewer: Human approved: {response.approved}")
+        print("Reviewer: Forwarding human review back to worker...")
+        await ctx.send_message(response, target_id=self._worker_id)
+
+def create_workflow() -> Workflow:
+    # Build a workflow with bidirectional communication between Worker and Reviewer,
+    # and escalation paths for human review.
+    worker = Worker(
+        id="sub-worker",
+        chat_client=AzureOpenAIChatClient(credential=AzureCliCredential()),
+    )
+    reviewer = ReviewerWithHumanInTheLoop(worker_id=worker.id)
+    return (
+        WorkflowBuilder(start_executor=worker, name="workflow_as_agent_hitl")
+            .add_edge(worker, reviewer)
+            .add_edge(reviewer, worker)
+            .build()
+    )
+
+
+async def run_agent() -> None:
+    """Run the workflow inside the agent server adapter."""
+    await from_agent_framework(
+        create_workflow,  # pass workflow factory to adapter
+        checkpoint_repository=FileCheckpointRepository(storage_path="./checkpoints"),  # for checkpoint storage
+    ).run_async()
+
+if __name__ == "__main__":
+    asyncio.run(run_agent())

@@ -4,8 +4,9 @@ import asyncio
 from random import randint
 from typing import Annotated
 
+from agent_framework import Agent
 from agent_framework.azure import AzureOpenAIChatClient
-from azure.identity import DefaultAzureCredential
+from azure.identity import AzureCliCredential
 from dotenv import load_dotenv
 
 from azure.ai.agentserver.agentframework import from_agent_framework
@@ -22,7 +23,8 @@ def get_weather(
 
 
 async def main() -> None:
-    agent = AzureOpenAIChatClient(credential=DefaultAzureCredential()).create_agent(
+    agent = Agent(
+        client=AzureOpenAIChatClient(credential=AzureCliCredential()),
         instructions="You are a helpful weather agent.",
         tools=get_weather,
     )
