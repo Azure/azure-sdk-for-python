@@ -25,10 +25,17 @@ from .._models import AccessPolicy, QueueMessage
 from .._queue_client_helpers import _format_url, _from_queue_url, _parse_url
 from .._serialize import get_api_version
 from .._shared.base_client import StorageAccountHostsMixin
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str
+from .._shared.base_client_async import (
+    AsyncStorageAccountHostsMixin,
+    parse_connection_str,
+)
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers, serialize_iso
-from .._shared.response_handlers import process_storage_error, return_headers_and_deserialized, return_response_headers
+from .._shared.response_handlers import (
+    process_storage_error,
+    return_headers_and_deserialized,
+    return_response_headers,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -107,7 +114,13 @@ class QueueClient(  # type: ignore [misc]
         account_url: str,
         queue_name: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "AsyncTokenCredential",
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -142,7 +155,10 @@ class QueueClient(  # type: ignore [misc]
         return self
 
     async def __aexit__(
-        self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
+        self,
+        typ: Optional[type[BaseException]],
+        exc: Optional[BaseException],
+        tb: Optional[TracebackType],
     ) -> None:
         await self._client.__aexit__(typ, exc, tb)  # pylint: disable=specify-parameter-names-in-call
 
@@ -163,14 +179,25 @@ class QueueClient(  # type: ignore [misc]
         :returns: The formatted endpoint URL according to the specified location mode hostname.
         :rtype: str
         """
-        return _format_url(queue_name=self.queue_name, hostname=hostname, scheme=self.scheme, query_str=self._query_str)
+        return _format_url(
+            queue_name=self.queue_name,
+            hostname=hostname,
+            scheme=self.scheme,
+            query_str=self._query_str,
+        )
 
     @classmethod
     def from_queue_url(
         cls,
         queue_url: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "AsyncTokenCredential",
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -235,7 +262,13 @@ class QueueClient(  # type: ignore [misc]
         conn_str: str,
         queue_name: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "AsyncTokenCredential",
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -606,7 +639,10 @@ class QueueClient(  # type: ignore [misc]
         """
         if self.key_encryption_key:
             modify_user_agent_for_encryption(
-                self._config.user_agent_policy.user_agent, self._sdk_moniker, self.encryption_version, kwargs
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs,
             )
 
         try:
@@ -694,7 +730,10 @@ class QueueClient(  # type: ignore [misc]
         """
         if self.key_encryption_key or self.key_resolver_function:
             modify_user_agent_for_encryption(
-                self._config.user_agent_policy.user_agent, self._sdk_moniker, self.encryption_version, kwargs
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs,
             )
 
         self._message_decode_policy.configure(
@@ -779,7 +818,10 @@ class QueueClient(  # type: ignore [misc]
         """
         if self.key_encryption_key or self.key_resolver_function:
             modify_user_agent_for_encryption(
-                self._config.user_agent_policy.user_agent, self._sdk_moniker, self.encryption_version, kwargs
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs,
             )
 
         self._message_decode_policy.configure(
@@ -870,7 +912,10 @@ class QueueClient(  # type: ignore [misc]
         """
         if self.key_encryption_key or self.key_resolver_function:
             modify_user_agent_for_encryption(
-                self._config.user_agent_policy.user_agent, self._sdk_moniker, self.encryption_version, kwargs
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs,
             )
 
         if isinstance(message, QueueMessage):
@@ -906,7 +951,9 @@ class QueueClient(  # type: ignore [misc]
                     Retrying without encryption_version."
                 )
                 self._message_encode_policy.configure(
-                    self.require_encryption, self.key_encryption_key, self.key_resolver_function
+                    self.require_encryption,
+                    self.key_encryption_key,
+                    self.key_resolver_function,
                 )
             encoded_message_text = self._message_encode_policy(message_text)
             updated = GenQueueMessage(message_text=encoded_message_text)
@@ -986,7 +1033,10 @@ class QueueClient(  # type: ignore [misc]
 
         if self.key_encryption_key or self.key_resolver_function:
             modify_user_agent_for_encryption(
-                self._config.user_agent_policy.user_agent, self._sdk_moniker, self.encryption_version, kwargs
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs,
             )
 
         self._message_decode_policy.configure(

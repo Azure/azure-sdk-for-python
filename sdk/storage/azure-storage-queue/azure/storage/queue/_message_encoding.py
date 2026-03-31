@@ -9,7 +9,12 @@ from typing import Any, Callable, Dict, Iterable, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import DecodeError
 
-from ._encryption import decrypt_queue_message, encrypt_queue_message, KeyEncryptionKey, _ENCRYPTION_PROTOCOL_V1
+from ._encryption import (
+    decrypt_queue_message,
+    encrypt_queue_message,
+    KeyEncryptionKey,
+    _ENCRYPTION_PROTOCOL_V1,
+)
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
@@ -79,7 +84,11 @@ class MessageDecodePolicy(object):
             content = message.message_text
             if (self.key_encryption_key is not None) or (self.resolver is not None):
                 content = decrypt_queue_message(
-                    content, response, self.require_encryption, self.key_encryption_key, self.resolver
+                    content,
+                    response,
+                    self.require_encryption,
+                    self.key_encryption_key,
+                    self.resolver,
                 )
             decoded = self.decode(content, response)
             # Store decoded content on a side attribute to bypass the _RestField

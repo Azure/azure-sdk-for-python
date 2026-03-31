@@ -24,10 +24,18 @@ from ._queue_client_helpers import _format_url, _from_queue_url, _parse_url
 from ._serialize import get_api_version
 from ._shared.base_client import parse_connection_str, StorageAccountHostsMixin
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
-from ._shared.response_handlers import process_storage_error, return_headers_and_deserialized, return_response_headers
+from ._shared.response_handlers import (
+    process_storage_error,
+    return_headers_and_deserialized,
+    return_response_headers,
+)
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials import (
+        AzureNamedKeyCredential,
+        AzureSasCredential,
+        TokenCredential,
+    )
     from ._message_encoding import (
         BinaryBase64DecodePolicy,
         BinaryBase64EncodePolicy,
@@ -97,7 +105,13 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         account_url: str,
         queue_name: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "TokenCredential",
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -128,7 +142,10 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         return self
 
     def __exit__(
-        self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
+        self,
+        typ: Optional[type[BaseException]],
+        exc: Optional[BaseException],
+        tb: Optional[TracebackType],
     ) -> None:
         self._client.__exit__(typ, exc, tb)  # pylint: disable=specify-parameter-names-in-call
 
@@ -149,14 +166,25 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :returns: The formatted endpoint URL according to the specified location mode hostname.
         :rtype: str
         """
-        return _format_url(queue_name=self.queue_name, hostname=hostname, scheme=self.scheme, query_str=self._query_str)
+        return _format_url(
+            queue_name=self.queue_name,
+            hostname=hostname,
+            scheme=self.scheme,
+            query_str=self._query_str,
+        )
 
     @classmethod
     def from_queue_url(
         cls,
         queue_url: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "TokenCredential",
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -221,7 +249,13 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         conn_str: str,
         queue_name: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "TokenCredential",
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -590,7 +624,10 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """
         if self.key_encryption_key:
             modify_user_agent_for_encryption(
-                self._config.user_agent_policy.user_agent, self._sdk_moniker, self.encryption_version, kwargs
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs,
             )
 
         try:
@@ -678,7 +715,10 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """
         if self.key_encryption_key or self.key_resolver_function:
             modify_user_agent_for_encryption(
-                self._config.user_agent_policy.user_agent, self._sdk_moniker, self.encryption_version, kwargs
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs,
             )
 
         self._message_decode_policy.configure(
@@ -773,7 +813,10 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """
         if self.key_encryption_key or self.key_resolver_function:
             modify_user_agent_for_encryption(
-                self._config.user_agent_policy.user_agent, self._sdk_moniker, self.encryption_version, kwargs
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs,
             )
 
         self._message_decode_policy.configure(
@@ -864,7 +907,10 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """
         if self.key_encryption_key or self.key_resolver_function:
             modify_user_agent_for_encryption(
-                self._config.user_agent_policy.user_agent, self._sdk_moniker, self.encryption_version, kwargs
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs,
             )
 
         if isinstance(message, QueueMessage):
@@ -900,7 +946,9 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                     Retrying without encryption_version."
                 )
                 self._message_encode_policy.configure(
-                    self.require_encryption, self.key_encryption_key, self.key_resolver_function
+                    self.require_encryption,
+                    self.key_encryption_key,
+                    self.key_resolver_function,
                 )
             encoded_message_text = self._message_encode_policy(message_text)
             updated = GenQueueMessage(message_text=encoded_message_text)
@@ -980,7 +1028,10 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
         if self.key_encryption_key or self.key_resolver_function:
             modify_user_agent_for_encryption(
-                self._config.user_agent_policy.user_agent, self._sdk_moniker, self.encryption_version, kwargs
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs,
             )
 
         self._message_decode_policy.configure(
