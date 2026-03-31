@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Type stub for _patch.py.
+"""Type stub for _patch.py (async client).
 
 Overrides get_openai_client() return type so that evals.create() accepts
 Azure-specific grader types in addition to the standard OpenAI graders.
@@ -11,10 +11,10 @@ Azure-specific grader types in addition to the standard OpenAI graders.
 import logging
 from typing import Any, Iterable, List, Union, Optional
 from httpx import Timeout
-from openai import NotGiven, Omit, OpenAI as OpenAIClient
+from openai import NotGiven, Omit, AsyncOpenAI as AsyncOpenAIClient
 from openai._types import Body, Query, Headers
-from openai.resources.evals.evals import Evals
-from openai.resources.evals.runs.runs import Runs
+from openai.resources.evals.evals import AsyncEvals
+from openai.resources.evals.runs.runs import AsyncRuns
 from openai.types.evals.create_eval_jsonl_run_data_source_param import CreateEvalJSONLRunDataSourceParam
 from openai.types.evals.create_eval_completions_run_data_source_param import CreateEvalCompletionsRunDataSourceParam
 from openai.types.evals.run_create_params import DataSourceCreateEvalResponsesRunDataSource
@@ -33,7 +33,7 @@ from openai.types.eval_create_response import EvalCreateResponse
 from openai.types.shared_params.metadata import Metadata
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
-from .models import (
+from ..models import (
     AzureAIBenchmarkPreviewEvalRunDataSource,
     AzureAIDataSourceConfig,
     AzureAIResponsesEvalRunDataSource,
@@ -44,8 +44,8 @@ from .models import (
     TracesPreviewEvalRunDataSource,
 )
 
-class _AzureEvalRuns(Runs):
-    def create(
+class _AzureAsyncEvalRuns(AsyncRuns):
+    async def create(
         self,
         eval_id: str,
         *,
@@ -68,8 +68,8 @@ class _AzureEvalRuns(Runs):
         timeout: float | Timeout | None | NotGiven = ...,
     ) -> RunCreateResponse: ...
 
-class _AzureEvals(Evals):
-    def create(
+class _AzureAsyncEvals(AsyncEvals):
+    async def create(
         self,
         *,
         data_source_config: Union[
@@ -93,17 +93,16 @@ class _AzureEvals(Evals):
         timeout: float | Timeout | NotGiven | None = ...,
     ) -> EvalCreateResponse: ...
     @property
-    def runs(self) -> _AzureEvalRuns: ...
+    def runs(self) -> _AzureAsyncEvalRuns: ...
 
-class OpenAI(OpenAIClient):
+class AsyncOpenAI(AsyncOpenAIClient):
     @property
-    def evals(self) -> _AzureEvals: ...
+    def evals(self) -> _AzureAsyncEvals: ...
 
 class AIProjectClient(AIProjectClientGenerated):
     telemetry: TelemetryOperations
-    def get_openai_client(self, **kwargs: Any) -> OpenAI: ...  # pylint: disable=unused-argument
+    def get_openai_client(self, **kwargs: Any) -> AsyncOpenAI: ...  # pylint: disable=unused-argument
 
 # To make mypy happy... otherwise imports of the below result in mypy "attr-defined" error
-class _AuthSecretsFilter(logging.Filter): ...
 __all__: List[str] = ["AIProjectClient"]
 def patch_sdk() -> None: ...

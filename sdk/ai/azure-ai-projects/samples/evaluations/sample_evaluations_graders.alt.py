@@ -24,7 +24,6 @@ USAGE:
 """
 
 import os
-
 import time
 from pprint import pprint
 from typing import List, Union
