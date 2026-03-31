@@ -5,8 +5,9 @@
 # ------------------------------------
 import os
 import re
+import pytest
 from test_base import TestBase, servicePreparer
-from devtools_testutils import recorded_by_proxy, is_live, add_general_regex_sanitizer
+from devtools_testutils import recorded_by_proxy, is_live, is_live_and_not_recording, add_general_regex_sanitizer
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import DatasetVersion, DatasetType
 from azure.ai.projects.models._enums import ConnectionType
@@ -19,6 +20,10 @@ data_file1 = os.path.join(data_folder, "data_file1.txt")
 data_file2 = os.path.join(data_folder, "data_file2.txt")
 
 
+@pytest.mark.skipif(
+    not is_live_and_not_recording(),
+    reason="Skipped when using recordings due to flakiness of recording blob storage calls",
+)
 class TestDatasets(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
