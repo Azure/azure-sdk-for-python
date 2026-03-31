@@ -4,11 +4,16 @@
 
 from __future__ import annotations
 
+import os
+import uuid
 from copy import deepcopy
-from typing import Any
+from typing import Any, Mapping
 
 from .._id_generator import IdGenerator
 from ..models.errors import RequestValidationError
+
+_X_AGENT_RESPONSE_ID_HEADER = "x-agent-response-id"
+_FOUNDRY_AGENT_SESSION_ID_ENV = "FOUNDRY_AGENT_SESSION_ID"
 
 _DEFAULT_AGENT_REFERENCE_NAME = "server-default-agent"
 
@@ -208,23 +213,50 @@ def _prevalidate_identity_payload(payload: Any) -> None:
         )
 
 
-def _resolve_identity_fields(parsed: Any) -> tuple[str, dict[str, Any]]:
+def _resolve_identity_fields(
+    parsed: Any,
+    *,
+    request_headers: Mapping[str, str] | None = None,
+) -> tuple[str, dict[str, Any]]:
     """Resolve the response ID and agent reference from a parsed create request.
 
-    Generates a new response ID if one is not explicitly provided.
+    **S-047 — Response ID Resolution**: If the incoming request includes an
+    ``x-agent-response-id`` HTTP header with a non-empty value, that value is
+    used as the response ID.  Otherwise the library generates one using
+    ``IdGenerator.new_response_id()``, using the ``previous_response_id`` or
+    ``conversation`` ID as partition-key hint when available.
 
     :param parsed: Parsed ``CreateResponse`` model instance.
     :type parsed: Any
+    :keyword request_headers: HTTP request headers mapping.
+    :keyword type request_headers: Mapping[str, str] | None
     :return: A tuple of ``(response_id, agent_reference)``.
     :rtype: tuple[str, dict[str, Any]]
     :raises RequestValidationError: If the resolved response ID is invalid.
     """
+    # S-047: header override takes highest precedence
+    header_response_id: str | None = None
+    if request_headers is not None:
+        raw_header = request_headers.get(_X_AGENT_RESPONSE_ID_HEADER, "")
+        if isinstance(raw_header, str) and raw_header.strip():
+            header_response_id = raw_header.strip()
+
     parsed_mapping = parsed.as_dict() if hasattr(parsed, "as_dict") else {}
-    explicit_response_id = parsed_mapping.get("response_id") or getattr(parsed, "response_id", None)
-    if isinstance(explicit_response_id, str) and explicit_response_id.strip():
-        response_id = explicit_response_id.strip()
+
+    if header_response_id:
+        response_id = header_response_id
     else:
-        response_id = IdGenerator.new_response_id()
+        explicit_response_id = parsed_mapping.get("response_id") or getattr(parsed, "response_id", None)
+        if isinstance(explicit_response_id, str) and explicit_response_id.strip():
+            response_id = explicit_response_id.strip()
+        else:
+            # Use previous_response_id or conversation ID as partition key hint
+            partition_hint = (
+                parsed_mapping.get("previous_response_id")
+                or _resolve_conversation_id(parsed)
+                or ""
+            )
+            response_id = IdGenerator.new_response_id(partition_hint)
 
     _validate_response_id(response_id)
     agent_reference = _normalize_agent_reference(
@@ -252,3 +284,38 @@ def _resolve_conversation_id(parsed: Any) -> str | None:
     if raw is not None and hasattr(raw, "id"):
         return str(raw.id) or None
     return None
+
+
+def _resolve_session_id(parsed: Any, payload: Any) -> str:
+    """Resolve the session ID for a create-response request.
+
+    **S-048 — Session ID Resolution**: The library resolves ``agent_session_id``
+    using the following priority chain:
+
+    1. ``request.agent_session_id`` — payload field (client-supplied session affinity)
+    2. ``FOUNDRY_AGENT_SESSION_ID`` environment variable (platform-supplied)
+    3. Generated UUID (freshly generated as a string)
+
+    :param parsed: Parsed ``CreateResponse`` model instance.
+    :type parsed: Any
+    :param payload: Raw JSON payload dict.
+    :type payload: Any
+    :returns: The resolved session ID string.
+    :rtype: str
+    """
+    # Priority 1: payload field
+    session_id = getattr(parsed, "agent_session_id", None)
+    if not isinstance(session_id, str) or not session_id.strip():
+        # Also check the raw payload for when the field isn't in the model yet
+        if isinstance(payload, dict):
+            session_id = payload.get("agent_session_id")
+    if isinstance(session_id, str) and session_id.strip():
+        return session_id.strip()
+
+    # Priority 2: environment variable
+    env_session_id = os.environ.get(_FOUNDRY_AGENT_SESSION_ID_ENV, "")
+    if env_session_id.strip():
+        return env_session_id.strip()
+
+    # Priority 3: generated UUID
+    return str(uuid.uuid4())

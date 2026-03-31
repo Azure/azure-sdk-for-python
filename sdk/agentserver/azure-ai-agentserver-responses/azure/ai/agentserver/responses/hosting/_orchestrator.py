@@ -168,6 +168,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             agent_reference=ctx.agent_reference,
             model=ctx.model,
             sequence_number=len(state.handler_events),
+            agent_session_id=ctx.agent_session_id,
         )
         state.handler_events.append(normalized)
         if state.bg_record is not None:
@@ -207,6 +208,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             agent_reference=ctx.agent_reference,
             model=ctx.model,
             sequence_number=len(state.handler_events),
+            agent_session_id=ctx.agent_session_id,
         )
         state.handler_events.append(normalized)
         if state.bg_record is not None:
@@ -282,6 +284,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             response_id=ctx.response_id,
             agent_reference=ctx.agent_reference,
             model=ctx.model,
+            agent_session_id=ctx.agent_session_id,
         )
         initial_status = initial_payload.get("status")
         if not isinstance(initial_status, str):
@@ -380,6 +383,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             agent_reference=ctx.agent_reference,
             model=ctx.model,
             sequence_number=len(state.handler_events),
+            agent_session_id=ctx.agent_session_id,
         )
 
         # S-007/S-008/S-009: first-event contract validation.
@@ -459,6 +463,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 response_id=ctx.response_id,
                 agent_reference=ctx.agent_reference,
                 model=ctx.model,
+                agent_session_id=ctx.agent_session_id,
             )
             resolved_status = response_payload.get("status")
             status = resolved_status if isinstance(resolved_status, str) else "completed"
@@ -519,6 +524,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     response_id=ctx.response_id,
                     agent_reference=ctx.agent_reference,
                     model=ctx.model,
+                    agent_session_id=ctx.agent_session_id,
                 )
                 resolved_status = response_payload.get("status")
                 status = resolved_status if isinstance(resolved_status, str) else "in_progress"
@@ -575,6 +581,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             response_id=ctx.response_id,
             agent_reference=ctx.agent_reference,
             model=ctx.model,
+            agent_session_id=ctx.agent_session_id,
         )
         resolved_status = response_payload.get("status")
         status = resolved_status if isinstance(resolved_status, str) else "completed"
@@ -804,6 +811,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             agent_reference=ctx.agent_reference,
             model=ctx.model,
             remove_sequence_number=True,
+            agent_session_id=ctx.agent_session_id,
         )
         resolved_status = response_payload.get("status")
         status = resolved_status if isinstance(resolved_status, str) else "completed"
@@ -896,6 +904,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                         model=ctx.model,
                         provider=self._provider,
                         store=ctx.store,
+                        agent_session_id=ctx.agent_session_id,
                     )
             except asyncio.CancelledError:
                 pass  # event-loop teardown in TestClient; background work already done

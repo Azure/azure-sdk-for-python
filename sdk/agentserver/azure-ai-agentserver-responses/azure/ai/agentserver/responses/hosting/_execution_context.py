@@ -38,6 +38,7 @@ class _ExecutionContext:  # pylint: disable=too-many-instance-attributes
         cancellation_signal: asyncio.Event,
         span: Any,
         parsed: Any,
+        agent_session_id: str | None = None,
         context: ResponseContext | None = None,
     ) -> None:
         self.response_id = response_id
@@ -60,6 +61,8 @@ class _ExecutionContext:  # pylint: disable=too-many-instance-attributes
         """Conversation ID for grouping related responses, or ``None``."""
         self.cancellation_signal = cancellation_signal
         """Event signalling that the client has requested cancellation."""
+        self.agent_session_id = agent_session_id
+        """Resolved session ID for this request (S-048)."""
         self.context: ResponseContext | None = context
         """Runtime response context for this request.  Set after construction
         via :meth:`_ResponseEndpointHandler._create_response_context`."""

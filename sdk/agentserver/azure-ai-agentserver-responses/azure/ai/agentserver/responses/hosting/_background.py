@@ -31,6 +31,7 @@ async def _run_background_non_stream(
     model: str | None,
     provider: Any = None,
     store: bool = True,
+    agent_session_id: str | None = None,
 ) -> None:
     """Execute a non-stream handler in the background and update the execution record.
 
@@ -58,6 +59,8 @@ async def _run_background_non_stream(
     :keyword type provider: Any
     :keyword store: Whether the response should be persisted via the provider.
     :keyword type store: bool
+    :keyword agent_session_id: Resolved session ID (S-048).
+    :keyword type agent_session_id: str | None
     :return: None
     :rtype: None
     """
@@ -79,6 +82,7 @@ async def _run_background_non_stream(
                     agent_reference=agent_reference,
                     model=model,
                     sequence_number=None,
+                    agent_session_id=agent_session_id,
                 )
                 handler_events.append(normalized)
                 if not first_event_processed:
@@ -90,6 +94,7 @@ async def _run_background_non_stream(
                         response_id=response_id,
                         agent_reference=agent_reference,
                         model=model,
+                        agent_session_id=agent_session_id,
                     )
                     record.set_response_snapshot(generated_models.ResponseObject(_initial_snapshot))
                     record.response_created_signal.set()
@@ -127,6 +132,7 @@ async def _run_background_non_stream(
             agent_reference=agent_reference,
             model=model,
             remove_sequence_number=True,
+            agent_session_id=agent_session_id,
         )
 
         resolved_status = response_payload.get("status")
