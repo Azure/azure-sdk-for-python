@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +15,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
     pip install azure-identity
     pip install azure-mgmt-containerservice
 # USAGE
-    python agent_pools_create_crg.py
+    python agent_pools_create_type_virtual_machines_autoscale.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -37,17 +36,21 @@ def main():
         agent_pool_name="agentpool1",
         parameters={
             "properties": {
-                "capacityReservationGroupID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Compute/CapacityReservationGroups/crg1",
-                "count": 3,
-                "orchestratorVersion": "",
+                "nodeLabels": {"key1": "val1"},
+                "nodeTaints": ["Key1=Value1:NoSchedule"],
+                "orchestratorVersion": "1.29.0",
                 "osType": "Linux",
-                "vmSize": "Standard_DS2_v2",
+                "tags": {"name1": "val1"},
+                "type": "VirtualMachines",
+                "virtualMachinesProfile": {
+                    "scale": {"autoscale": {"maxCount": 5, "minCount": 1, "size": "Standard_D2_v2"}}
+                },
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-01-01/AgentPoolsCreate_CRG.json
+# x-ms-original-file: 2026-01-02-preview/AgentPoolsCreate_TypeVirtualMachines_Autoscale.json
 if __name__ == "__main__":
     main()
