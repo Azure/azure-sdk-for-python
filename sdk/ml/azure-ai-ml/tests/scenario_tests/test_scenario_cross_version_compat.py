@@ -250,8 +250,8 @@ class TestScenarioCrossVersionCompat:
             for ver in ["1", "2", "3"]:
                 try:
                     ml_client.data.archive(name=data_name, version=ver)
-                except Exception:
-                    pass
+                except Exception as cleanup_err:
+                    print(f"  [cleanup] archive data {data_name} v{ver}: {cleanup_err}")
 
     # ──────────────────────────────────────────────────────────────
     # Test 3: Multi-version environment chain
@@ -331,8 +331,8 @@ class TestScenarioCrossVersionCompat:
             for ver in ["1", "2"]:
                 try:
                     ml_client.environments.archive(name=env_name, version=ver)
-                except Exception:
-                    pass
+                except Exception as cleanup_err:
+                    print(f"  [cleanup] archive env {env_name} v{ver}: {cleanup_err}")
 
     # ──────────────────────────────────────────────────────────────
     # Test 4: Update-without-clobber on data asset
@@ -390,8 +390,8 @@ class TestScenarioCrossVersionCompat:
             for ver in ["1", "2"]:
                 try:
                     ml_client.data.archive(name=data_name, version=ver)
-                except Exception:
-                    pass
+                except Exception as cleanup_err:
+                    print(f"  [cleanup] archive data {data_name} v{ver}: {cleanup_err}")
 
     # ──────────────────────────────────────────────────────────────
     # Test 5: Historical job deserialization
@@ -644,8 +644,8 @@ class TestScenarioCrossVersionCompat:
             for ver in ["1", "2"]:
                 try:
                     ml_client.models.archive(name=model_name, version=ver)
-                except Exception:
-                    pass
+                except Exception as cleanup_err:
+                    print(f"  [cleanup] archive model {model_name} v{ver}: {cleanup_err}")
 
     # ──────────────────────────────────────────────────────────────
     # Test 9: Job creation → re-fetch with a second client instance
@@ -713,8 +713,8 @@ class TestScenarioCrossVersionCompat:
             # Cancel the job (cleanup) — from the second client
             try:
                 ml_client_2.jobs.begin_cancel(submitted.name).result()
-            except Exception:
-                pass
+            except Exception as cleanup_err:
+                print(f"  [cleanup] cancel job {submitted.name}: {cleanup_err}")
 
     # ──────────────────────────────────────────────────────────────
     # Test 10: Entity dict/YAML round-trip (local serialization compat)
@@ -776,5 +776,5 @@ class TestScenarioCrossVersionCompat:
             for ver in ["1", "2"]:
                 try:
                     ml_client.data.archive(name=data_name, version=ver)
-                except Exception:
-                    pass
+                except Exception as cleanup_err:
+                    print(f"  [cleanup] archive data {data_name} v{ver}: {cleanup_err}")
