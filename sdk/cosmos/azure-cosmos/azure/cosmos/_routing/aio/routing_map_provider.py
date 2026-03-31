@@ -86,7 +86,14 @@ class PartitionKeyRangeCache(object):
             collection_id: str,
             previous_routing_map: Optional[CollectionRoutingMap]
     ) -> bool:
-        """Compatibility shim for legacy call sites and tests."""
+        """Compatibility shim for legacy call sites and tests.
+
+        :param str collection_id: The collection identifier used as the cache key.
+        :param previous_routing_map: The previously observed routing map, if any.
+        :type previous_routing_map: CollectionRoutingMap or None
+        :return: ``True`` when the cached map should be treated as stale.
+        :rtype: bool
+        """
         return is_cache_stale(
             self._collection_routing_map_by_item,
             collection_id,

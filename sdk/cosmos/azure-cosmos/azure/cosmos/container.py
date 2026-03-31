@@ -1863,8 +1863,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if self.container_link in self.__get_client_container_caches():
-            feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        self._get_properties_with_options(feed_options)
+        feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.ReadConflicts(
             collection_link=self.container_link, feed_options=feed_options, **kwargs
@@ -1910,8 +1910,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
         if partition_key is not None:
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
-        if self.container_link in self.__get_client_container_caches():
-            feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        self._get_properties_with_options(feed_options)
+        feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.QueryConflicts(
             collection_link=self.container_link,
@@ -1946,8 +1946,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
-        if self.container_link in self.__get_client_container_caches():
-            request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        self._get_properties_with_options(request_options)
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         return self.client_connection.ReadConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
@@ -1978,8 +1978,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
-        if self.container_link in self.__get_client_container_caches():
-            request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        self._get_properties_with_options(request_options)
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         self.client_connection.DeleteConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs

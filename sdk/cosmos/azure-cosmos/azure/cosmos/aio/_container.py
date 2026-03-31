@@ -1836,8 +1836,8 @@ class ContainerProxy:
         """
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
-        if self.container_link in self.__get_client_container_caches():
-            request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        await self._get_properties_with_options(request_options)
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
         result = await self.client_connection.ReadConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
         )
@@ -1869,6 +1869,8 @@ class ContainerProxy:
         """
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
+        await self._get_properties_with_options(request_options)
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         await self.client_connection.DeleteConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs

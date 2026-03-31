@@ -156,10 +156,17 @@ class TestContainerRIDHeaderUnit(unittest.TestCase):
         client = CapturingMockClient()
         cache = PartitionKeyRangeCache(client)
         feed_options = {"containerRID": CONTAINER_RID}
-        cache.get_routing_map(COLLECTION_LINK, feed_options)
+        previous_map = cache.get_routing_map(COLLECTION_LINK, feed_options)
         assert client.call_count == 1
         assert client.captured_feed_options.get("containerRID") == CONTAINER_RID
-        cache.get_routing_map(COLLECTION_LINK, feed_options, force_refresh=True)
+        cache.get_routing_map(
+            COLLECTION_LINK,
+            feed_options,
+            force_refresh=True,
+            previous_routing_map=previous_map,
+        )
+        # In this mock setup, incremental refresh has no split/merge deltas and
+        # falls back to a full refresh, so force-refresh performs two reads.
         assert client.call_count == 3
         assert client.captured_feed_options.get("containerRID") == CONTAINER_RID
 

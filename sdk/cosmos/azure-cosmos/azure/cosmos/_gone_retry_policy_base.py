@@ -82,14 +82,19 @@ class _PartitionKeyRangeGoneRetryPolicyBase:
 
         This keeps the policy as a state holder while letting retry utilities
         decide if/when to execute I/O.
+
+        :return: A one-time tuple containing the collection link, prior routing
+            map, and optional feed options for refreshing the routing map.
+        :rtype: tuple[str | None, Any | None, dict[str, Any] | None]
         """
         if not self.refresh_partition_key_range_cache:
             return None, None, None
 
         collection_link, container_rid = self._extract_collection_info()
         previous_routing_map = self._get_previous_routing_map(collection_link)
-        feed_options = {Constants.ContainerRID: container_rid} if container_rid else None
+        feed_options: Optional[dict[str, Any]] = (
+            {Constants.ContainerRID: container_rid} if container_rid else None
+        )
 
         self.refresh_partition_key_range_cache = False
         return collection_link, previous_routing_map, feed_options
-

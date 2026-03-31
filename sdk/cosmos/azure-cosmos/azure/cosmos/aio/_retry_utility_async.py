@@ -207,6 +207,9 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 collection_link, previous_routing_map, feed_options = retry_policy.pop_refresh_context()
                 if collection_link and previous_routing_map is not None:
                     await client.refresh_routing_map_provider(collection_link, previous_routing_map, feed_options)
+                else:
+                    # Fall back to a global refresh when context is missing
+                    await client.refresh_routing_map_provider()
             elif exceptions._container_recreate_exception(e):
                 retry_policy = container_recreate_retry_policy
                 # Before we retry if retry policy is container recreate, we need refresh the cache of the

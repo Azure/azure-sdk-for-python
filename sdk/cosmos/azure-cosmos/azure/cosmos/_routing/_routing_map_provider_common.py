@@ -322,7 +322,7 @@ def get_smart_overlapping_ranges(partition_key_ranges):
     if not _is_sorted_and_non_overlapping(partition_key_ranges):
         raise ValueError("the list of ranges is not a non-overlapping sorted ranges")
 
-    target_partition_key_ranges: List[Dict[str, Any]] = []
+    target_partition_key_ranges = []
     it = iter(partition_key_ranges)
     try:
         currentProvidedRange = next(it)
