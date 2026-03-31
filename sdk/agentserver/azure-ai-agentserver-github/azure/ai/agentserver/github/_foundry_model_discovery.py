@@ -5,6 +5,7 @@ Fetches available model deployments from Azure AI Foundry and allows users to se
 
 import json
 import logging
+import re
 from typing import List, Optional
 
 logger = logging.getLogger(__name__)
@@ -104,6 +105,11 @@ async def _discover_via_management_api(resource_name: str, management_token: str
             "Authorization": f"Bearer {management_token}",
             "Content-Type": "application/json"
         }
+
+        # Validate resource_name to prevent Kusto injection
+        if not re.match(r'^[a-zA-Z0-9\-]+$', resource_name):
+            logger.warning(f"Invalid resource name (contains unexpected characters): {resource_name!r}")
+            return []
 
         logger.info(f"Searching for resource: {resource_name} via Resource Graph")
 

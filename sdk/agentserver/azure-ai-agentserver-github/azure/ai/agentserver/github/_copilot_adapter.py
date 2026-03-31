@@ -898,15 +898,27 @@ class GitHubCopilotAdapter(CopilotAdapter):
             if history:
                 client = await self._ensure_client()
                 config = self._refresh_token_if_needed()
-                def _approve_all(req, _ctx):
+                acl = self._acl
+
+                def _perm_result_boot(**kwargs):
                     if PermissionRequestResult is not None:
-                        return PermissionRequestResult(kind="approved")
-                    return {"kind": "approved"}
+                        return PermissionRequestResult(**kwargs)
+                    return kwargs
+
+                def _on_permission_boot(req, _ctx):
+                    kind = getattr(req, "kind", "unknown")
+                    if acl is None:
+                        return _perm_result_boot(kind="approved")
+                    req_dict = vars(req) if not isinstance(req, dict) else req
+                    if acl.is_allowed(req_dict):
+                        return _perm_result_boot(kind="approved")
+                    logger.warning(f"ACL denied tool request during history bootstrap: kind={kind}")
+                    return _perm_result_boot(kind="denied-by-rules", rules=[])
 
                 sdk_config = {k: v for k, v in config.items() if not k.startswith("_")}
                 session = await client.create_session(
                     **sdk_config,
-                    on_permission_request=_approve_all,
+                    on_permission_request=_on_permission_boot,
                     streaming=True,
                 )
                 preamble = (
