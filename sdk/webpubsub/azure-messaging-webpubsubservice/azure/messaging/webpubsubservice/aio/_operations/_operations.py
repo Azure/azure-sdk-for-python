@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -35,17 +35,17 @@ from ..._operations._operations import (
     build_web_pub_sub_service_add_connection_to_group_request,
     build_web_pub_sub_service_add_connections_to_groups_request,
     build_web_pub_sub_service_add_user_to_group_request,
+    build_web_pub_sub_service_check_permission_request,
     build_web_pub_sub_service_close_all_connections_request,
     build_web_pub_sub_service_close_connection_request,
     build_web_pub_sub_service_close_group_connections_request,
     build_web_pub_sub_service_close_user_connections_request,
     build_web_pub_sub_service_connection_exists_request,
-    build_web_pub_sub_service_get_client_access_token_request,
+    build_web_pub_sub_service_generate_client_token_request,
     build_web_pub_sub_service_get_service_status_request,
     build_web_pub_sub_service_grant_permission_request,
     build_web_pub_sub_service_group_exists_request,
-    build_web_pub_sub_service_has_permission_request,
-    build_web_pub_sub_service_list_connections_request,
+    build_web_pub_sub_service_list_connections_in_group_request,
     build_web_pub_sub_service_remove_connection_from_all_groups_request,
     build_web_pub_sub_service_remove_connection_from_group_request,
     build_web_pub_sub_service_remove_connections_from_groups_request,
@@ -60,7 +60,7 @@ from .._configuration import WebPubSubServiceClientConfiguration
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
 class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-instantiated,too-many-public-methods
@@ -118,7 +118,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -237,7 +237,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -246,7 +246,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
     @distributed_trace_async
     async def close_all_connections(
-        self, *, excluded: Optional[List[str]] = None, reason: Optional[str] = None, **kwargs: Any
+        self, *, excluded: Optional[list[str]] = None, reason: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Close the connections in the hub.
 
@@ -302,14 +302,14 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def get_client_access_token(
+    async def generate_client_token(
         self,
         *,
         user_id: Optional[str] = None,
-        roles: Optional[List[str]] = None,
+        role: Optional[list[str]] = None,
         minutes_to_expire: Optional[int] = None,
-        groups: Optional[List[str]] = None,
-        client_protocol: Optional[Union[str, _models.WebPubSubClientType]] = None,
+        group: Optional[list[str]] = None,
+        client_type: Optional[Union[str, _models.WebPubSubClientType]] = None,
         **kwargs: Any
     ) -> _models.ClientTokenResponse:
         """Generate token for the client to connect Azure Web PubSub service.
@@ -318,19 +318,18 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         :keyword user_id: User Id. Default value is None.
         :paramtype user_id: str
-        :keyword roles: Roles that the connection with the generated token will have. Default value is
+        :keyword role: Roles that the connection with the generated token will have. Default value is
          None.
-        :paramtype roles: list[str]
+        :paramtype role: list[str]
         :keyword minutes_to_expire: The expire time of the generated token. Default value is None.
         :paramtype minutes_to_expire: int
-        :keyword groups: Groups that the connection will join when it connects. Default value is None.
-        :paramtype groups: list[str]
-        :keyword client_protocol: The type of client. Case-insensitive. If not set, it's "Default". For
-         Web
+        :keyword group: Groups that the connection will join when it connects. Default value is None.
+        :paramtype group: list[str]
+        :keyword client_type: The type of client. Case-insensitive. If not set, it's "Default". For Web
          PubSub for Socket.IO, only the default value is supported. For Web PubSub, the
-         valid values are 'Default' and 'MQTT'. Known values are: "Default" and "mqtt". Default value
+         valid values are 'Default' and 'MQTT'. Known values are: "Default" and "MQTT". Default value
          is None.
-        :paramtype client_protocol: str or ~azure.messaging.webpubsubservice.models.WebPubSubClientType
+        :paramtype client_type: str or ~azure.messaging.webpubsubservice.models.WebPubSubClientType
         :return: ClientTokenResponse. The ClientTokenResponse is compatible with MutableMapping
         :rtype: ~azure.messaging.webpubsubservice.models.ClientTokenResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -348,13 +347,13 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         cls: ClsType[_models.ClientTokenResponse] = kwargs.pop("cls", None)
 
-        _request = build_web_pub_sub_service_get_client_access_token_request(
+        _request = build_web_pub_sub_service_generate_client_token_request(
             hub=self._config.hub,
             user_id=user_id,
-            roles=roles,
+            role=role,
             minutes_to_expire=minutes_to_expire,
-            groups=groups,
-            client_protocol=client_protocol,
+            group=group,
+            client_type=client_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -364,6 +363,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -384,7 +384,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
         response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ClientTokenResponse, response.json())
 
@@ -508,7 +508,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -727,7 +727,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
     @distributed_trace_async
     async def close_group_connections(
-        self, group: str, *, excluded: Optional[List[str]] = None, reason: Optional[str] = None, **kwargs: Any
+        self, group: str, *, excluded: Optional[list[str]] = None, reason: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Close connections in the specific group.
 
@@ -787,7 +787,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def list_connections(
+    def list_connections_in_group(
         self,
         group: str,
         *,
@@ -822,7 +822,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.GroupMember]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.GroupMember]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -835,7 +835,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_web_pub_sub_service_list_connections_request(
+                _request = build_web_pub_sub_service_list_connections_in_group_request(
                     group=group,
                     hub=self._config.hub,
                     maxpagesize=maxpagesize,
@@ -876,7 +876,10 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.GroupMember], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.GroupMember],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1076,7 +1079,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def has_permission(
+    async def check_permission(
         self,
         permission: Union[str, _models.WebPubSubPermission],
         connection_id: str,
@@ -1114,7 +1117,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_web_pub_sub_service_has_permission_request(
+        _request = build_web_pub_sub_service_check_permission_request(
             permission=permission,
             connection_id=connection_id,
             hub=self._config.hub,
@@ -1264,7 +1267,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
     @distributed_trace_async
     async def close_user_connections(
-        self, user_id: str, *, excluded: Optional[List[str]] = None, reason: Optional[str] = None, **kwargs: Any
+        self, user_id: str, *, excluded: Optional[list[str]] = None, reason: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Close connections for the specific user.
 

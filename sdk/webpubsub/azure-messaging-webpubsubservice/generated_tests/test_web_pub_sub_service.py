@@ -43,9 +43,9 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
 
     @WebPubSubServicePreparer()
     @recorded_by_proxy
-    def test_get_client_access_token(self, webpubsubservice_endpoint):
+    def test_generate_client_token(self, webpubsubservice_endpoint):
         client = self.create_client(endpoint=webpubsubservice_endpoint)
-        response = client.get_client_access_token()
+        response = client.generate_client_token()
 
         # please add some check logic here by yourself
         # ...
@@ -156,9 +156,9 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
 
     @WebPubSubServicePreparer()
     @recorded_by_proxy
-    def test_list_connections(self, webpubsubservice_endpoint):
+    def test_list_connections_in_group(self, webpubsubservice_endpoint):
         client = self.create_client(endpoint=webpubsubservice_endpoint)
-        response = client.list_connections(
+        response = client.list_connections_in_group(
             group="str",
         )
         result = [r for r in response]
@@ -203,9 +203,9 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
 
     @WebPubSubServicePreparer()
     @recorded_by_proxy
-    def test_has_permission(self, webpubsubservice_endpoint):
+    def test_check_permission(self, webpubsubservice_endpoint):
         client = self.create_client(endpoint=webpubsubservice_endpoint)
-        response = client.has_permission(
+        response = client.check_permission(
             permission="str",
             connection_id="str",
         )

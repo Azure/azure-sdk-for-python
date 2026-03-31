@@ -44,9 +44,9 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
 
     @WebPubSubServicePreparer()
     @recorded_by_proxy_async
-    async def test_get_client_access_token(self, webpubsubservice_endpoint):
+    async def test_generate_client_token(self, webpubsubservice_endpoint):
         client = self.create_async_client(endpoint=webpubsubservice_endpoint)
-        response = await client.get_client_access_token()
+        response = await client.generate_client_token()
 
         # please add some check logic here by yourself
         # ...
@@ -157,9 +157,9 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
 
     @WebPubSubServicePreparer()
     @recorded_by_proxy_async
-    async def test_list_connections(self, webpubsubservice_endpoint):
+    async def test_list_connections_in_group(self, webpubsubservice_endpoint):
         client = self.create_async_client(endpoint=webpubsubservice_endpoint)
-        response = client.list_connections(
+        response = client.list_connections_in_group(
             group="str",
         )
         result = [r async for r in response]
@@ -204,9 +204,9 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
 
     @WebPubSubServicePreparer()
     @recorded_by_proxy_async
-    async def test_has_permission(self, webpubsubservice_endpoint):
+    async def test_check_permission(self, webpubsubservice_endpoint):
         client = self.create_async_client(endpoint=webpubsubservice_endpoint)
-        response = await client.has_permission(
+        response = await client.check_permission(
             permission="str",
             connection_id="str",
         )

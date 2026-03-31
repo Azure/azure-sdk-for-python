@@ -6,6 +6,7 @@
 # -------------------------------------------------------------------------
 import pytest
 import json
+import jwt
 from testcase import WebpubsubTest, WebpubsubPowerShellPreparer
 from azure.messaging.webpubsubservice._operations._patch import build_web_pub_sub_service_send_to_all_request
 from azure.core.exceptions import ServiceRequestError, HttpResponseError
@@ -63,11 +64,23 @@ class TestWebpubsubSmoke(WebpubsubTest):
     @recorded_by_proxy
     def test_get_client_access_token(self, webpubsub_endpoint):
         client = self.create_client(endpoint=webpubsub_endpoint, hub="hub")
-        access_token = client.get_client_access_token()
+        access_token = client.get_client_access_token(
+            user_id="user1",
+            roles=["webpubsub.sendToGroup", "webpubsub.joinLeaveGroup"],
+            groups=["group1", "group2"],
+        )
+        print(access_token)
         assert len(access_token) == 3
         assert access_token["baseUrl"][:3] == "wss"
         assert access_token["token"]
         assert access_token["url"][:3] == "wss"
+
+        decoded = jwt.decode(access_token["token"], options={"verify_signature": False})
+        assert decoded["sub"] == "user1"
+        assert "webpubsub.sendToGroup" in decoded["role"]
+        assert "webpubsub.joinLeaveGroup" in decoded["role"]
+        assert "group1" in decoded["webpubsub.group"]
+        assert "group2" in decoded["webpubsub.group"]
 
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy

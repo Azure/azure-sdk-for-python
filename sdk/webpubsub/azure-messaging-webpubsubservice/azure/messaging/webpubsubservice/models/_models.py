@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=useless-super-delegation
 
-from typing import Any, List, Mapping, Optional, overload
+from typing import Any, Mapping, Optional, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -22,7 +22,7 @@ class AddToGroupsRequest(_Model):
     :vartype filter: str
     """
 
-    groups: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    groups: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Target groups."""
     filter: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Following OData filter syntax to filter out the subscribers receiving the messages."""
@@ -31,7 +31,7 @@ class AddToGroupsRequest(_Model):
     def __init__(
         self,
         *,
-        groups: Optional[List[str]] = None,
+        groups: Optional[list[str]] = None,
         filter: Optional[str] = None,  # pylint: disable=redefined-builtin
     ) -> None: ...
 
@@ -117,7 +117,7 @@ class RemoveFromGroupsRequest(_Model):
     :vartype filter: str
     """
 
-    groups: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    groups: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Target groups."""
     filter: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Following OData filter syntax to filter out the subscribers receiving the messages."""
@@ -126,7 +126,7 @@ class RemoveFromGroupsRequest(_Model):
     def __init__(
         self,
         *,
-        groups: Optional[List[str]] = None,
+        groups: Optional[list[str]] = None,
         filter: Optional[str] = None,  # pylint: disable=redefined-builtin
     ) -> None: ...
 
