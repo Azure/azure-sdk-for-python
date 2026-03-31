@@ -45,8 +45,8 @@ _SERIALIZER.client_side_validation = False
 
 def build_batch_list_applications_request(
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     max_results: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -61,21 +61,25 @@ def build_batch_list_applications_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if max_results is not None:
         _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_batch_get_application_request(
-    application_id: str, *, timeout: Optional[int] = None, ocpdate: Optional[datetime.datetime] = None, **kwargs: Any
+    application_id: str,
+    *,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -93,12 +97,12 @@ def build_batch_get_application_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -106,8 +110,8 @@ def build_batch_get_application_request(
 
 def build_batch_list_pool_usage_metrics_request(  # pylint: disable=name-too-long
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     max_results: Optional[int] = None,
     starttime: Optional[datetime.datetime] = None,
     endtime: Optional[datetime.datetime] = None,
@@ -125,8 +129,8 @@ def build_batch_list_pool_usage_metrics_request(  # pylint: disable=name-too-lon
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if max_results is not None:
         _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int")
     if starttime is not None:
@@ -137,15 +141,15 @@ def build_batch_list_pool_usage_metrics_request(  # pylint: disable=name-too-lon
         _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_batch_create_pool_request(
-    *, timeout: Optional[int] = None, ocpdate: Optional[datetime.datetime] = None, **kwargs: Any
+    *, service_timeout: Optional[int] = None, ocp_date: Optional[datetime.datetime] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -157,12 +161,12 @@ def build_batch_create_pool_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -170,8 +174,8 @@ def build_batch_create_pool_request(
 
 def build_batch_list_pools_request(
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     max_results: Optional[int] = None,
     filter: Optional[str] = None,
     select: Optional[list[str]] = None,
@@ -189,8 +193,8 @@ def build_batch_list_pools_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if max_results is not None:
         _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int")
     if filter is not None:
@@ -201,8 +205,8 @@ def build_batch_list_pools_request(
         _params["$expand"] = _SERIALIZER.query("expand", expand, "[str]", div=",")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -211,8 +215,8 @@ def build_batch_list_pools_request(
 def build_batch_delete_pool_internal_request(
     pool_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     etag: Optional[str] = None,
@@ -233,12 +237,12 @@ def build_batch_delete_pool_internal_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
@@ -256,8 +260,8 @@ def build_batch_delete_pool_internal_request(
 def build_batch_pool_exists_request(
     pool_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     etag: Optional[str] = None,
@@ -278,12 +282,12 @@ def build_batch_pool_exists_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
@@ -301,8 +305,8 @@ def build_batch_pool_exists_request(
 def build_batch_get_pool_request(
     pool_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     select: Optional[list[str]] = None,
@@ -327,16 +331,16 @@ def build_batch_get_pool_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if select is not None:
         _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
     if expand is not None:
         _params["$expand"] = _SERIALIZER.query("expand", expand, "[str]", div=",")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
@@ -355,8 +359,8 @@ def build_batch_get_pool_request(
 def build_batch_update_pool_request(
     pool_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     etag: Optional[str] = None,
@@ -378,12 +382,12 @@ def build_batch_update_pool_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
@@ -400,7 +404,7 @@ def build_batch_update_pool_request(
 
 
 def build_batch_disable_pool_auto_scale_request(  # pylint: disable=name-too-long
-    pool_id: str, *, timeout: Optional[int] = None, ocpdate: Optional[datetime.datetime] = None, **kwargs: Any
+    pool_id: str, *, service_timeout: Optional[int] = None, ocp_date: Optional[datetime.datetime] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -416,12 +420,12 @@ def build_batch_disable_pool_auto_scale_request(  # pylint: disable=name-too-lon
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -429,8 +433,8 @@ def build_batch_disable_pool_auto_scale_request(  # pylint: disable=name-too-lon
 def build_batch_enable_pool_auto_scale_request(  # pylint: disable=name-too-long
     pool_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     etag: Optional[str] = None,
@@ -452,12 +456,12 @@ def build_batch_enable_pool_auto_scale_request(  # pylint: disable=name-too-long
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
@@ -474,7 +478,7 @@ def build_batch_enable_pool_auto_scale_request(  # pylint: disable=name-too-long
 
 
 def build_batch_evaluate_pool_auto_scale_request(  # pylint: disable=name-too-long
-    pool_id: str, *, timeout: Optional[int] = None, ocpdate: Optional[datetime.datetime] = None, **kwargs: Any
+    pool_id: str, *, service_timeout: Optional[int] = None, ocp_date: Optional[datetime.datetime] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -493,12 +497,12 @@ def build_batch_evaluate_pool_auto_scale_request(  # pylint: disable=name-too-lo
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
@@ -508,8 +512,8 @@ def build_batch_evaluate_pool_auto_scale_request(  # pylint: disable=name-too-lo
 def build_batch_resize_pool_internal_request(
     pool_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     etag: Optional[str] = None,
@@ -531,12 +535,12 @@ def build_batch_resize_pool_internal_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
@@ -555,8 +559,8 @@ def build_batch_resize_pool_internal_request(
 def build_batch_stop_pool_resize_internal_request(  # pylint: disable=name-too-long
     pool_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     etag: Optional[str] = None,
@@ -577,12 +581,12 @@ def build_batch_stop_pool_resize_internal_request(  # pylint: disable=name-too-l
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
@@ -598,7 +602,7 @@ def build_batch_stop_pool_resize_internal_request(  # pylint: disable=name-too-l
 
 
 def build_batch_replace_pool_properties_request(  # pylint: disable=name-too-long
-    pool_id: str, *, timeout: Optional[int] = None, ocpdate: Optional[datetime.datetime] = None, **kwargs: Any
+    pool_id: str, *, service_timeout: Optional[int] = None, ocp_date: Optional[datetime.datetime] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -615,12 +619,12 @@ def build_batch_replace_pool_properties_request(  # pylint: disable=name-too-lon
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -629,8 +633,8 @@ def build_batch_replace_pool_properties_request(  # pylint: disable=name-too-lon
 def build_batch_remove_nodes_internal_request(  # pylint: disable=name-too-long
     pool_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     etag: Optional[str] = None,
@@ -652,12 +656,12 @@ def build_batch_remove_nodes_internal_request(  # pylint: disable=name-too-long
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
@@ -675,8 +679,8 @@ def build_batch_remove_nodes_internal_request(  # pylint: disable=name-too-long
 
 def build_batch_list_supported_images_request(  # pylint: disable=name-too-long
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     max_results: Optional[int] = None,
     filter: Optional[str] = None,
     **kwargs: Any
@@ -692,16 +696,16 @@ def build_batch_list_supported_images_request(  # pylint: disable=name-too-long
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if max_results is not None:
         _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int")
     if filter is not None:
         _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -709,8 +713,8 @@ def build_batch_list_supported_images_request(  # pylint: disable=name-too-long
 
 def build_batch_list_pool_node_counts_request(  # pylint: disable=name-too-long
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     max_results: Optional[int] = None,
     filter: Optional[str] = None,
     **kwargs: Any
@@ -726,16 +730,16 @@ def build_batch_list_pool_node_counts_request(  # pylint: disable=name-too-long
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if max_results is not None:
         _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int")
     if filter is not None:
         _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -744,8 +748,8 @@ def build_batch_list_pool_node_counts_request(  # pylint: disable=name-too-long
 def build_batch_delete_job_internal_request(
     job_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     force: Optional[bool] = None,
@@ -767,14 +771,14 @@ def build_batch_delete_job_internal_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if force is not None:
         _params["force"] = _SERIALIZER.query("force", force, "bool")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
@@ -792,8 +796,8 @@ def build_batch_delete_job_internal_request(
 def build_batch_get_job_request(
     job_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     select: Optional[list[str]] = None,
@@ -818,16 +822,16 @@ def build_batch_get_job_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if select is not None:
         _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
     if expand is not None:
         _params["$expand"] = _SERIALIZER.query("expand", expand, "[str]", div=",")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
@@ -846,8 +850,8 @@ def build_batch_get_job_request(
 def build_batch_update_job_request(
     job_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     etag: Optional[str] = None,
@@ -869,12 +873,12 @@ def build_batch_update_job_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
@@ -893,8 +897,8 @@ def build_batch_update_job_request(
 def build_batch_replace_job_request(
     job_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     etag: Optional[str] = None,
@@ -916,12 +920,12 @@ def build_batch_replace_job_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
@@ -940,8 +944,8 @@ def build_batch_replace_job_request(
 def build_batch_disable_job_internal_request(
     job_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     etag: Optional[str] = None,
@@ -963,12 +967,12 @@ def build_batch_disable_job_internal_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
@@ -987,8 +991,8 @@ def build_batch_disable_job_internal_request(
 def build_batch_enable_job_internal_request(
     job_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     etag: Optional[str] = None,
@@ -1009,12 +1013,12 @@ def build_batch_enable_job_internal_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
@@ -1032,8 +1036,8 @@ def build_batch_enable_job_internal_request(
 def build_batch_terminate_job_internal_request(  # pylint: disable=name-too-long
     job_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     force: Optional[bool] = None,
@@ -1056,14 +1060,14 @@ def build_batch_terminate_job_internal_request(  # pylint: disable=name-too-long
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if force is not None:
         _params["force"] = _SERIALIZER.query("force", force, "bool")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
@@ -1080,7 +1084,7 @@ def build_batch_terminate_job_internal_request(  # pylint: disable=name-too-long
 
 
 def build_batch_create_job_request(
-    *, timeout: Optional[int] = None, ocpdate: Optional[datetime.datetime] = None, **kwargs: Any
+    *, service_timeout: Optional[int] = None, ocp_date: Optional[datetime.datetime] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1092,12 +1096,12 @@ def build_batch_create_job_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1105,8 +1109,8 @@ def build_batch_create_job_request(
 
 def build_batch_list_jobs_request(
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     max_results: Optional[int] = None,
     filter: Optional[str] = None,
     select: Optional[list[str]] = None,
@@ -1124,8 +1128,8 @@ def build_batch_list_jobs_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if max_results is not None:
         _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int")
     if filter is not None:
@@ -1136,8 +1140,8 @@ def build_batch_list_jobs_request(
         _params["$expand"] = _SERIALIZER.query("expand", expand, "[str]", div=",")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1146,8 +1150,8 @@ def build_batch_list_jobs_request(
 def build_batch_list_jobs_from_schedule_request(  # pylint: disable=name-too-long
     job_schedule_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     max_results: Optional[int] = None,
     filter: Optional[str] = None,
     select: Optional[list[str]] = None,
@@ -1170,8 +1174,8 @@ def build_batch_list_jobs_from_schedule_request(  # pylint: disable=name-too-lon
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if max_results is not None:
         _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int")
     if filter is not None:
@@ -1182,8 +1186,8 @@ def build_batch_list_jobs_from_schedule_request(  # pylint: disable=name-too-lon
         _params["$expand"] = _SERIALIZER.query("expand", expand, "[str]", div=",")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1192,8 +1196,8 @@ def build_batch_list_jobs_from_schedule_request(  # pylint: disable=name-too-lon
 def build_batch_list_job_preparation_and_release_task_status_request(  # pylint: disable=name-too-long
     job_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     max_results: Optional[int] = None,
     filter: Optional[str] = None,
     select: Optional[list[str]] = None,
@@ -1215,8 +1219,8 @@ def build_batch_list_job_preparation_and_release_task_status_request(  # pylint:
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if max_results is not None:
         _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int")
     if filter is not None:
@@ -1225,15 +1229,15 @@ def build_batch_list_job_preparation_and_release_task_status_request(  # pylint:
         _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_batch_get_job_task_counts_request(
-    job_id: str, *, timeout: Optional[int] = None, ocpdate: Optional[datetime.datetime] = None, **kwargs: Any
+    job_id: str, *, service_timeout: Optional[int] = None, ocp_date: Optional[datetime.datetime] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1251,12 +1255,12 @@ def build_batch_get_job_task_counts_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1265,8 +1269,8 @@ def build_batch_get_job_task_counts_request(
 def build_batch_job_schedule_exists_request(
     job_schedule_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     etag: Optional[str] = None,
@@ -1287,12 +1291,12 @@ def build_batch_job_schedule_exists_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
@@ -1310,8 +1314,8 @@ def build_batch_job_schedule_exists_request(
 def build_batch_delete_job_schedule_internal_request(  # pylint: disable=name-too-long
     job_schedule_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     force: Optional[bool] = None,
@@ -1333,14 +1337,14 @@ def build_batch_delete_job_schedule_internal_request(  # pylint: disable=name-to
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if force is not None:
         _params["force"] = _SERIALIZER.query("force", force, "bool")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
@@ -1358,8 +1362,8 @@ def build_batch_delete_job_schedule_internal_request(  # pylint: disable=name-to
 def build_batch_get_job_schedule_request(
     job_schedule_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     select: Optional[list[str]] = None,
@@ -1384,16 +1388,16 @@ def build_batch_get_job_schedule_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if select is not None:
         _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
     if expand is not None:
         _params["$expand"] = _SERIALIZER.query("expand", expand, "[str]", div=",")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
@@ -1412,8 +1416,8 @@ def build_batch_get_job_schedule_request(
 def build_batch_update_job_schedule_request(
     job_schedule_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     etag: Optional[str] = None,
@@ -1435,12 +1439,12 @@ def build_batch_update_job_schedule_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
@@ -1459,8 +1463,8 @@ def build_batch_update_job_schedule_request(
 def build_batch_replace_job_schedule_request(
     job_schedule_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     etag: Optional[str] = None,
@@ -1482,12 +1486,12 @@ def build_batch_replace_job_schedule_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
@@ -1506,8 +1510,8 @@ def build_batch_replace_job_schedule_request(
 def build_batch_disable_job_schedule_request(
     job_schedule_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     etag: Optional[str] = None,
@@ -1528,12 +1532,12 @@ def build_batch_disable_job_schedule_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
@@ -1551,8 +1555,8 @@ def build_batch_disable_job_schedule_request(
 def build_batch_enable_job_schedule_request(
     job_schedule_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     etag: Optional[str] = None,
@@ -1573,12 +1577,12 @@ def build_batch_enable_job_schedule_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
@@ -1596,8 +1600,8 @@ def build_batch_enable_job_schedule_request(
 def build_batch_terminate_job_schedule_internal_request(  # pylint: disable=name-too-long
     job_schedule_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     force: Optional[bool] = None,
@@ -1619,14 +1623,14 @@ def build_batch_terminate_job_schedule_internal_request(  # pylint: disable=name
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if force is not None:
         _params["force"] = _SERIALIZER.query("force", force, "bool")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
@@ -1642,7 +1646,7 @@ def build_batch_terminate_job_schedule_internal_request(  # pylint: disable=name
 
 
 def build_batch_create_job_schedule_request(
-    *, timeout: Optional[int] = None, ocpdate: Optional[datetime.datetime] = None, **kwargs: Any
+    *, service_timeout: Optional[int] = None, ocp_date: Optional[datetime.datetime] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1654,12 +1658,12 @@ def build_batch_create_job_schedule_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1667,8 +1671,8 @@ def build_batch_create_job_schedule_request(
 
 def build_batch_list_job_schedules_request(
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     max_results: Optional[int] = None,
     filter: Optional[str] = None,
     select: Optional[list[str]] = None,
@@ -1686,8 +1690,8 @@ def build_batch_list_job_schedules_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if max_results is not None:
         _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int")
     if filter is not None:
@@ -1698,15 +1702,15 @@ def build_batch_list_job_schedules_request(
         _params["$expand"] = _SERIALIZER.query("expand", expand, "[str]", div=",")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_batch_create_task_request(
-    job_id: str, *, timeout: Optional[int] = None, ocpdate: Optional[datetime.datetime] = None, **kwargs: Any
+    job_id: str, *, service_timeout: Optional[int] = None, ocp_date: Optional[datetime.datetime] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1723,12 +1727,12 @@ def build_batch_create_task_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1737,8 +1741,8 @@ def build_batch_create_task_request(
 def build_batch_list_tasks_request(
     job_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     max_results: Optional[int] = None,
     filter: Optional[str] = None,
     select: Optional[list[str]] = None,
@@ -1761,8 +1765,8 @@ def build_batch_list_tasks_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if max_results is not None:
         _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int")
     if filter is not None:
@@ -1773,15 +1777,15 @@ def build_batch_list_tasks_request(
         _params["$expand"] = _SERIALIZER.query("expand", expand, "[str]", div=",")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_batch_create_task_collection_request(  # pylint: disable=name-too-long
-    job_id: str, *, timeout: Optional[int] = None, ocpdate: Optional[datetime.datetime] = None, **kwargs: Any
+    job_id: str, *, service_timeout: Optional[int] = None, ocp_date: Optional[datetime.datetime] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1800,12 +1804,12 @@ def build_batch_create_task_collection_request(  # pylint: disable=name-too-long
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
@@ -1816,8 +1820,8 @@ def build_batch_delete_task_request(
     job_id: str,
     task_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     etag: Optional[str] = None,
@@ -1839,12 +1843,12 @@ def build_batch_delete_task_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
@@ -1863,8 +1867,8 @@ def build_batch_get_task_request(
     job_id: str,
     task_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     select: Optional[list[str]] = None,
@@ -1890,16 +1894,16 @@ def build_batch_get_task_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if select is not None:
         _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
     if expand is not None:
         _params["$expand"] = _SERIALIZER.query("expand", expand, "[str]", div=",")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
@@ -1919,8 +1923,8 @@ def build_batch_replace_task_request(
     job_id: str,
     task_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     etag: Optional[str] = None,
@@ -1943,12 +1947,12 @@ def build_batch_replace_task_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
@@ -1968,8 +1972,8 @@ def build_batch_list_sub_tasks_request(
     job_id: str,
     task_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     select: Optional[list[str]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -1990,14 +1994,14 @@ def build_batch_list_sub_tasks_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if select is not None:
         _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -2007,8 +2011,8 @@ def build_batch_terminate_task_request(
     job_id: str,
     task_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     etag: Optional[str] = None,
@@ -2030,12 +2034,12 @@ def build_batch_terminate_task_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
@@ -2054,8 +2058,8 @@ def build_batch_reactivate_task_request(
     job_id: str,
     task_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     etag: Optional[str] = None,
@@ -2077,12 +2081,12 @@ def build_batch_reactivate_task_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
@@ -2102,8 +2106,8 @@ def build_batch_delete_task_file_request(
     task_id: str,
     file_path: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     recursive: Optional[bool] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -2123,14 +2127,14 @@ def build_batch_delete_task_file_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if recursive is not None:
         _params["recursive"] = _SERIALIZER.query("recursive", recursive, "bool")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2140,8 +2144,8 @@ def build_batch_get_task_file_request(
     task_id: str,
     file_path: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     ocp_range: Optional[str] = None,
@@ -2165,12 +2169,12 @@ def build_batch_get_task_file_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
@@ -2187,8 +2191,8 @@ def build_batch_get_task_file_properties_internal_request(  # pylint: disable=na
     task_id: str,
     file_path: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     **kwargs: Any
@@ -2209,12 +2213,12 @@ def build_batch_get_task_file_properties_internal_request(  # pylint: disable=na
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
@@ -2227,8 +2231,8 @@ def build_batch_list_task_files_request(
     job_id: str,
     task_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     max_results: Optional[int] = None,
     filter: Optional[str] = None,
     recursive: Optional[bool] = None,
@@ -2251,8 +2255,8 @@ def build_batch_list_task_files_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if max_results is not None:
         _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int")
     if filter is not None:
@@ -2261,8 +2265,8 @@ def build_batch_list_task_files_request(
         _params["recursive"] = _SERIALIZER.query("recursive", recursive, "bool")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -2272,8 +2276,8 @@ def build_batch_create_node_user_request(
     pool_id: str,
     node_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2292,12 +2296,12 @@ def build_batch_create_node_user_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -2308,8 +2312,8 @@ def build_batch_delete_node_user_request(
     node_id: str,
     user_name: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2328,12 +2332,12 @@ def build_batch_delete_node_user_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2343,8 +2347,8 @@ def build_batch_replace_node_user_request(
     node_id: str,
     user_name: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2364,12 +2368,12 @@ def build_batch_replace_node_user_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -2379,8 +2383,8 @@ def build_batch_get_node_request(
     pool_id: str,
     node_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     select: Optional[list[str]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -2401,14 +2405,14 @@ def build_batch_get_node_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if select is not None:
         _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -2418,8 +2422,8 @@ def build_batch_reboot_node_internal_request(
     pool_id: str,
     node_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2438,12 +2442,12 @@ def build_batch_reboot_node_internal_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -2453,8 +2457,8 @@ def build_batch_start_node_internal_request(
     pool_id: str,
     node_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2472,12 +2476,12 @@ def build_batch_start_node_internal_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2486,8 +2490,8 @@ def build_batch_reimage_node_internal_request(  # pylint: disable=name-too-long
     pool_id: str,
     node_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2506,12 +2510,12 @@ def build_batch_reimage_node_internal_request(  # pylint: disable=name-too-long
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -2521,8 +2525,8 @@ def build_batch_deallocate_node_internal_request(  # pylint: disable=name-too-lo
     pool_id: str,
     node_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2541,12 +2545,12 @@ def build_batch_deallocate_node_internal_request(  # pylint: disable=name-too-lo
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -2556,8 +2560,8 @@ def build_batch_disable_node_scheduling_request(  # pylint: disable=name-too-lon
     pool_id: str,
     node_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2576,12 +2580,12 @@ def build_batch_disable_node_scheduling_request(  # pylint: disable=name-too-lon
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -2591,8 +2595,8 @@ def build_batch_enable_node_scheduling_request(  # pylint: disable=name-too-long
     pool_id: str,
     node_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2610,12 +2614,12 @@ def build_batch_enable_node_scheduling_request(  # pylint: disable=name-too-long
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2624,8 +2628,8 @@ def build_batch_get_node_remote_login_settings_request(  # pylint: disable=name-
     pool_id: str,
     node_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2645,12 +2649,12 @@ def build_batch_get_node_remote_login_settings_request(  # pylint: disable=name-
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -2660,8 +2664,8 @@ def build_batch_upload_node_logs_request(
     pool_id: str,
     node_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2682,12 +2686,12 @@ def build_batch_upload_node_logs_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
@@ -2697,8 +2701,8 @@ def build_batch_upload_node_logs_request(
 def build_batch_list_nodes_request(
     pool_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     max_results: Optional[int] = None,
     filter: Optional[str] = None,
     select: Optional[list[str]] = None,
@@ -2720,8 +2724,8 @@ def build_batch_list_nodes_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if max_results is not None:
         _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int")
     if filter is not None:
@@ -2730,8 +2734,8 @@ def build_batch_list_nodes_request(
         _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -2742,8 +2746,8 @@ def build_batch_get_node_extension_request(
     node_id: str,
     extension_name: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     select: Optional[list[str]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -2765,14 +2769,14 @@ def build_batch_get_node_extension_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if select is not None:
         _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -2782,8 +2786,8 @@ def build_batch_list_node_extensions_request(
     pool_id: str,
     node_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     max_results: Optional[int] = None,
     select: Optional[list[str]] = None,
     **kwargs: Any
@@ -2805,16 +2809,16 @@ def build_batch_list_node_extensions_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if max_results is not None:
         _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int")
     if select is not None:
         _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -2825,8 +2829,8 @@ def build_batch_delete_node_file_request(
     node_id: str,
     file_path: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     recursive: Optional[bool] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -2846,14 +2850,14 @@ def build_batch_delete_node_file_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if recursive is not None:
         _params["recursive"] = _SERIALIZER.query("recursive", recursive, "bool")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2863,8 +2867,8 @@ def build_batch_get_node_file_request(
     node_id: str,
     file_path: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     ocp_range: Optional[str] = None,
@@ -2888,12 +2892,12 @@ def build_batch_get_node_file_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
@@ -2910,8 +2914,8 @@ def build_batch_get_node_file_properties_internal_request(  # pylint: disable=na
     node_id: str,
     file_path: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     **kwargs: Any
@@ -2932,12 +2936,12 @@ def build_batch_get_node_file_properties_internal_request(  # pylint: disable=na
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
@@ -2950,8 +2954,8 @@ def build_batch_list_node_files_request(
     pool_id: str,
     node_id: str,
     *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
+    service_timeout: Optional[int] = None,
+    ocp_date: Optional[datetime.datetime] = None,
     max_results: Optional[int] = None,
     filter: Optional[str] = None,
     recursive: Optional[bool] = None,
@@ -2974,8 +2978,8 @@ def build_batch_list_node_files_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if service_timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("service_timeout", service_timeout, "int")
     if max_results is not None:
         _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int")
     if filter is not None:
@@ -2984,8 +2988,8 @@ def build_batch_list_node_files_request(
         _params["recursive"] = _SERIALIZER.query("recursive", recursive, "bool")
 
     # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if ocp_date is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -2999,8 +3003,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
     def list_applications(
         self,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.BatchApplication"]:
@@ -3011,14 +3015,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         applications and versions that are not yet available to Compute Nodes, use the Azure portal or
         the Azure Resource Manager API.
 
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype max_results: int
@@ -3043,8 +3047,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             if not next_link:
 
                 _request = build_batch_list_applications_request(
-                    timeout=timeout,
-                    ocpdate=ocpdate,
+                    service_timeout=service_timeout,
+                    ocp_date=ocp_date,
                     max_results=max_results,
                     api_version=self._config.api_version,
                     headers=_headers,
@@ -3112,8 +3116,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         application_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> _models.BatchApplication:
         """Gets information about the specified Application.
@@ -3125,14 +3129,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param application_id: The ID of the Application. Required.
         :type application_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :return: BatchApplication. The BatchApplication is compatible with MutableMapping
         :rtype: ~azure.batch.models.BatchApplication
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3152,8 +3156,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_get_application_request(
             application_id=application_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3203,8 +3207,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
     def list_pool_usage_metrics(
         self,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         starttime: Optional[datetime.datetime] = None,
         endtime: Optional[datetime.datetime] = None,
@@ -3220,14 +3224,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         and end times of the last aggregation interval currently available; that is, only the last
         aggregation interval is returned.
 
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype max_results: int
@@ -3267,8 +3271,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             if not next_link:
 
                 _request = build_batch_list_pool_usage_metrics_request(
-                    timeout=timeout,
-                    ocpdate=ocpdate,
+                    service_timeout=service_timeout,
+                    ocp_date=ocp_date,
                     max_results=max_results,
                     starttime=starttime,
                     endtime=endtime,
@@ -3339,8 +3343,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         pool: _models.BatchPoolCreateOptions,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """Creates a Pool to the specified Account.
@@ -3350,14 +3354,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param pool: The Pool to be created. Required.
         :type pool: ~azure.batch.models.BatchPoolCreateOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3381,8 +3385,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _content = json.dumps(pool, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_batch_create_pool_request(
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3423,8 +3427,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
     def list_pools(
         self,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
         select: Optional[list[str]] = None,
@@ -3435,14 +3439,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         Lists all of the Pools in the specified Account.
 
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype max_results: int
@@ -3476,8 +3480,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             if not next_link:
 
                 _request = build_batch_list_pools_request(
-                    timeout=timeout,
-                    ocpdate=ocpdate,
+                    service_timeout=service_timeout,
+                    ocp_date=ocp_date,
                     max_results=max_results,
                     filter=filter,
                     select=select,
@@ -3548,8 +3552,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         pool_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -3571,14 +3575,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -3619,8 +3623,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_delete_pool_internal_request(
             pool_id=pool_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             etag=etag,
@@ -3661,8 +3665,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         pool_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -3673,14 +3677,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -3721,8 +3725,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_pool_exists_request(
             pool_id=pool_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             etag=etag,
@@ -3767,8 +3771,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         pool_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         select: Optional[list[str]] = None,
@@ -3781,14 +3785,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -3833,8 +3837,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_get_pool_request(
             pool_id=pool_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             select=select,
@@ -3892,8 +3896,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         pool: _models.BatchPoolUpdateOptions,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -3910,14 +3914,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type pool_id: str
         :param pool: The pool properties to update. Required.
         :type pool: ~azure.batch.models.BatchPoolUpdateOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -3963,8 +3967,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_update_pool_request(
             pool_id=pool_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             etag=etag,
@@ -4007,7 +4011,12 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def disable_pool_auto_scale(  # pylint: disable=inconsistent-return-statements
-        self, pool_id: str, *, timeout: Optional[int] = None, ocpdate: Optional[datetime.datetime] = None, **kwargs: Any
+        self,
+        pool_id: str,
+        *,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
+        **kwargs: Any
     ) -> None:
         """Disables automatic scaling for a Pool.
 
@@ -4015,14 +4024,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param pool_id: The ID of the Pool on which to disable automatic scaling. Required.
         :type pool_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4042,8 +4051,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_disable_pool_auto_scale_request(
             pool_id=pool_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4084,8 +4093,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         enable_auto_scale_options: _models.BatchPoolEnableAutoScaleOptions,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -4104,14 +4113,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type pool_id: str
         :param enable_auto_scale_options: The options to use for enabling automatic scaling. Required.
         :type enable_auto_scale_options: ~azure.batch.models.BatchPoolEnableAutoScaleOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -4157,8 +4166,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_enable_pool_auto_scale_request(
             pool_id=pool_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             etag=etag,
@@ -4205,8 +4214,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         evaluate_auto_scale_options: _models.BatchPoolEvaluateAutoScaleOptions,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> _models.AutoScaleRun:
         """Gets the result of evaluating an automatic scaling formula on the Pool.
@@ -4221,14 +4230,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param evaluate_auto_scale_options: The options to use for evaluating the automatic scaling
          formula. Required.
         :type evaluate_auto_scale_options: ~azure.batch.models.BatchPoolEvaluateAutoScaleOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :return: AutoScaleRun. The AutoScaleRun is compatible with MutableMapping
         :rtype: ~azure.batch.models.AutoScaleRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4253,8 +4262,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_evaluate_pool_auto_scale_request(
             pool_id=pool_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4309,8 +4318,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         resize_options: _models.BatchPoolResizeOptions,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -4330,14 +4339,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type pool_id: str
         :param resize_options: The options to use for resizing the pool. Required.
         :type resize_options: ~azure.batch.models.BatchPoolResizeOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -4383,8 +4392,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_resize_pool_internal_request(
             pool_id=pool_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             etag=etag,
@@ -4430,8 +4439,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         pool_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -4449,14 +4458,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -4497,8 +4506,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_stop_pool_resize_internal_request(
             pool_id=pool_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             etag=etag,
@@ -4543,8 +4552,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         pool: _models.BatchPoolReplaceOptions,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Pool.
@@ -4557,14 +4566,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type pool_id: str
         :param pool: The options to use for replacing properties on the pool. Required.
         :type pool: ~azure.batch.models.BatchPoolReplaceOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4589,8 +4598,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_replace_pool_properties_request(
             pool_id=pool_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4633,8 +4642,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         remove_options: _models.BatchNodeRemoveOptions,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -4651,14 +4660,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type pool_id: str
         :param remove_options: The options to use for removing the node. Required.
         :type remove_options: ~azure.batch.models.BatchNodeRemoveOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -4704,8 +4713,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_remove_nodes_internal_request(
             pool_id=pool_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             etag=etag,
@@ -4750,8 +4759,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
     def list_supported_images(
         self,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
         **kwargs: Any
@@ -4760,14 +4769,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         Lists all Virtual Machine Images supported by the Azure Batch service.
 
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype max_results: int
@@ -4797,8 +4806,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             if not next_link:
 
                 _request = build_batch_list_supported_images_request(
-                    timeout=timeout,
-                    ocpdate=ocpdate,
+                    service_timeout=service_timeout,
+                    ocp_date=ocp_date,
                     max_results=max_results,
                     filter=filter,
                     api_version=self._config.api_version,
@@ -4866,8 +4875,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
     def list_pool_node_counts(
         self,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
         **kwargs: Any
@@ -4875,14 +4884,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         """Gets the number of Compute Nodes in each state, grouped by Pool. Note that the numbers returned
         may not always be up to date. If you need exact node counts, use a list query.
 
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype max_results: int
@@ -4912,8 +4921,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             if not next_link:
 
                 _request = build_batch_list_pool_node_counts_request(
-                    timeout=timeout,
-                    ocpdate=ocpdate,
+                    service_timeout=service_timeout,
+                    ocp_date=ocp_date,
                     max_results=max_results,
                     filter=filter,
                     api_version=self._config.api_version,
@@ -4982,8 +4991,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         force: Optional[bool] = None,
@@ -5003,14 +5012,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param job_id: The ID of the Job to delete. Required.
         :type job_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -5054,8 +5063,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_delete_job_internal_request(
             job_id=job_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             force=force,
@@ -5097,8 +5106,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         select: Optional[list[str]] = None,
@@ -5113,14 +5122,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param job_id: The ID of the Job. Required.
         :type job_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -5165,8 +5174,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_get_job_request(
             job_id=job_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             select=select,
@@ -5224,8 +5233,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_id: str,
         job: _models.BatchJobUpdateOptions,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -5242,14 +5251,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type job_id: str
         :param job: The options to use for updating the Job. Required.
         :type job: ~azure.batch.models.BatchJobUpdateOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -5295,8 +5304,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_update_job_request(
             job_id=job_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             etag=etag,
@@ -5343,8 +5352,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_id: str,
         job: _models.BatchJob,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -5361,14 +5370,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type job_id: str
         :param job: A job with updated properties. Required.
         :type job: ~azure.batch.models.BatchJob
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -5414,8 +5423,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_replace_job_request(
             job_id=job_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             etag=etag,
@@ -5462,8 +5471,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_id: str,
         disable_options: _models.BatchJobDisableOptions,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -5484,14 +5493,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type job_id: str
         :param disable_options: The options to use for disabling the Job. Required.
         :type disable_options: ~azure.batch.models.BatchJobDisableOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -5537,8 +5546,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_disable_job_internal_request(
             job_id=job_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             etag=etag,
@@ -5584,8 +5593,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -5602,14 +5611,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param job_id: The ID of the Job to enable. Required.
         :type job_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -5650,8 +5659,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_enable_job_internal_request(
             job_id=job_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             etag=etag,
@@ -5696,8 +5705,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_id: str,
         options: Optional[_models.BatchJobTerminateOptions] = None,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         force: Optional[bool] = None,
@@ -5717,14 +5726,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type job_id: str
         :param options: The options to use for terminating the Job. Default value is None.
         :type options: ~azure.batch.models.BatchJobTerminateOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -5777,8 +5786,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_terminate_job_internal_request(
             job_id=job_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             force=force,
@@ -5825,8 +5834,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job: _models.BatchJobCreateOptions,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """Creates a Job to the specified Account.
@@ -5841,14 +5850,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param job: The Job to be created. Required.
         :type job: ~azure.batch.models.BatchJobCreateOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5872,8 +5881,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _content = json.dumps(job, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_batch_create_job_request(
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5914,8 +5923,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
     def list_jobs(
         self,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
         select: Optional[list[str]] = None,
@@ -5926,14 +5935,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         Lists all of the Jobs in the specified Account.
 
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype max_results: int
@@ -5967,8 +5976,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             if not next_link:
 
                 _request = build_batch_list_jobs_request(
-                    timeout=timeout,
-                    ocpdate=ocpdate,
+                    service_timeout=service_timeout,
+                    ocp_date=ocp_date,
                     max_results=max_results,
                     filter=filter,
                     select=select,
@@ -6039,8 +6048,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_schedule_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
         select: Optional[list[str]] = None,
@@ -6054,14 +6063,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param job_schedule_id: The ID of the Job Schedule from which you want to get a list of Jobs.
          Required.
         :type job_schedule_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype max_results: int
@@ -6096,8 +6105,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
                 _request = build_batch_list_jobs_from_schedule_request(
                     job_schedule_id=job_schedule_id,
-                    timeout=timeout,
-                    ocpdate=ocpdate,
+                    service_timeout=service_timeout,
+                    ocp_date=ocp_date,
                     max_results=max_results,
                     filter=filter,
                     select=select,
@@ -6168,8 +6177,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
         select: Optional[list[str]] = None,
@@ -6186,14 +6195,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param job_id: The ID of the Job. Required.
         :type job_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype max_results: int
@@ -6227,8 +6236,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
                 _request = build_batch_list_job_preparation_and_release_task_status_request(
                     job_id=job_id,
-                    timeout=timeout,
-                    ocpdate=ocpdate,
+                    service_timeout=service_timeout,
+                    ocp_date=ocp_date,
                     max_results=max_results,
                     filter=filter,
                     select=select,
@@ -6297,7 +6306,12 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def get_job_task_counts(
-        self, job_id: str, *, timeout: Optional[int] = None, ocpdate: Optional[datetime.datetime] = None, **kwargs: Any
+        self,
+        job_id: str,
+        *,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
+        **kwargs: Any
     ) -> _models.BatchTaskCountsResult:
         """Gets the Task counts for the specified Job.
 
@@ -6308,14 +6322,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param job_id: The ID of the Job. Required.
         :type job_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :return: BatchTaskCountsResult. The BatchTaskCountsResult is compatible with MutableMapping
         :rtype: ~azure.batch.models.BatchTaskCountsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6335,8 +6349,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_get_job_task_counts_request(
             job_id=job_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6387,8 +6401,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_schedule_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -6401,14 +6415,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param job_schedule_id: The ID of the Job Schedule which you want to check. Required.
         :type job_schedule_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -6449,8 +6463,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_job_schedule_exists_request(
             job_schedule_id=job_schedule_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             etag=etag,
@@ -6495,8 +6509,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_schedule_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         force: Optional[bool] = None,
@@ -6514,14 +6528,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param job_schedule_id: The ID of the Job Schedule to delete. Required.
         :type job_schedule_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -6565,8 +6579,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_delete_job_schedule_internal_request(
             job_schedule_id=job_schedule_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             force=force,
@@ -6608,8 +6622,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_schedule_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         select: Optional[list[str]] = None,
@@ -6622,14 +6636,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param job_schedule_id: The ID of the Job Schedule to get. Required.
         :type job_schedule_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -6674,8 +6688,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_get_job_schedule_request(
             job_schedule_id=job_schedule_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             select=select,
@@ -6733,8 +6747,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_schedule_id: str,
         job_schedule: _models.BatchJobScheduleUpdateOptions,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -6752,14 +6766,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type job_schedule_id: str
         :param job_schedule: The options to use for updating the Job Schedule. Required.
         :type job_schedule: ~azure.batch.models.BatchJobScheduleUpdateOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -6805,8 +6819,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_update_job_schedule_request(
             job_schedule_id=job_schedule_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             etag=etag,
@@ -6853,8 +6867,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_schedule_id: str,
         job_schedule: _models.BatchJobSchedule,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -6872,14 +6886,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type job_schedule_id: str
         :param job_schedule: A Job Schedule with updated properties. Required.
         :type job_schedule: ~azure.batch.models.BatchJobSchedule
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -6925,8 +6939,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_replace_job_schedule_request(
             job_schedule_id=job_schedule_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             etag=etag,
@@ -6972,8 +6986,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_schedule_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -6986,14 +7000,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param job_schedule_id: The ID of the Job Schedule to disable. Required.
         :type job_schedule_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -7034,8 +7048,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_disable_job_schedule_request(
             job_schedule_id=job_schedule_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             etag=etag,
@@ -7079,8 +7093,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_schedule_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -7093,14 +7107,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param job_schedule_id: The ID of the Job Schedule to enable. Required.
         :type job_schedule_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -7141,8 +7155,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_enable_job_schedule_request(
             job_schedule_id=job_schedule_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             etag=etag,
@@ -7186,8 +7200,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_schedule_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         force: Optional[bool] = None,
@@ -7201,14 +7215,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param job_schedule_id: The ID of the Job Schedule to terminates. Required.
         :type job_schedule_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -7253,8 +7267,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_terminate_job_schedule_internal_request(
             job_schedule_id=job_schedule_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             force=force,
@@ -7299,8 +7313,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_schedule: _models.BatchJobScheduleCreateOptions,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """Creates a Job Schedule to the specified Account.
@@ -7309,14 +7323,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param job_schedule: The Job Schedule to be created. Required.
         :type job_schedule: ~azure.batch.models.BatchJobScheduleCreateOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7340,8 +7354,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _content = json.dumps(job_schedule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_batch_create_job_schedule_request(
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -7382,8 +7396,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
     def list_job_schedules(
         self,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
         select: Optional[list[str]] = None,
@@ -7394,14 +7408,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         Lists all of the Job Schedules in the specified Account.
 
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype max_results: int
@@ -7435,8 +7449,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             if not next_link:
 
                 _request = build_batch_list_job_schedules_request(
-                    timeout=timeout,
-                    ocpdate=ocpdate,
+                    service_timeout=service_timeout,
+                    ocp_date=ocp_date,
                     max_results=max_results,
                     filter=filter,
                     select=select,
@@ -7508,8 +7522,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_id: str,
         task: _models.BatchTaskCreateOptions,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """Creates a Task to the specified Job.
@@ -7522,14 +7536,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type job_id: str
         :param task: The Task to be created. Required.
         :type task: ~azure.batch.models.BatchTaskCreateOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7554,8 +7568,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_create_task_request(
             job_id=job_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -7597,8 +7611,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
         select: Optional[list[str]] = None,
@@ -7612,14 +7626,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param job_id: The ID of the Job. Required.
         :type job_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype max_results: int
@@ -7654,8 +7668,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
                 _request = build_batch_list_tasks_request(
                     job_id=job_id,
-                    timeout=timeout,
-                    ocpdate=ocpdate,
+                    service_timeout=service_timeout,
+                    ocp_date=ocp_date,
                     max_results=max_results,
                     filter=filter,
                     select=select,
@@ -7727,8 +7741,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_id: str,
         task_collection: _models.BatchTaskGroup,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> _models.BatchCreateTaskCollectionResult:
         """Adds a collection of Tasks to the specified Job.
@@ -7750,14 +7764,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type job_id: str
         :param task_collection: The Tasks to be added. Required.
         :type task_collection: ~azure.batch.models.BatchTaskGroup
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :return: BatchCreateTaskCollectionResult. The BatchCreateTaskCollectionResult is compatible
          with MutableMapping
         :rtype: ~azure.batch.models.BatchCreateTaskCollectionResult
@@ -7783,8 +7797,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         _request = build_batch_create_task_collection_request(
             job_id=job_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -7838,8 +7852,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_id: str,
         task_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -7857,14 +7871,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type job_id: str
         :param task_id: The ID of the Task to delete. Required.
         :type task_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -7906,8 +7920,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request = build_batch_delete_task_request(
             job_id=job_id,
             task_id=task_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             etag=etag,
@@ -7949,8 +7963,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_id: str,
         task_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         select: Optional[list[str]] = None,
@@ -7968,14 +7982,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type job_id: str
         :param task_id: The ID of the Task to get information about. Required.
         :type task_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -8021,8 +8035,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request = build_batch_get_task_request(
             job_id=job_id,
             task_id=task_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             select=select,
@@ -8082,8 +8096,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         task_id: str,
         task: _models.BatchTask,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -8098,14 +8112,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type task_id: str
         :param task: The Task to update. Required.
         :type task: ~azure.batch.models.BatchTask
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -8152,8 +8166,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request = build_batch_replace_task_request(
             job_id=job_id,
             task_id=task_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             etag=etag,
@@ -8200,8 +8214,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_id: str,
         task_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         select: Optional[list[str]] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.BatchSubtask"]:
@@ -8213,14 +8227,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type job_id: str
         :param task_id: The ID of the Task. Required.
         :type task_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: list[str]
         :return: An iterator like instance of BatchSubtask
@@ -8246,8 +8260,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 _request = build_batch_list_sub_tasks_request(
                     job_id=job_id,
                     task_id=task_id,
-                    timeout=timeout,
-                    ocpdate=ocpdate,
+                    service_timeout=service_timeout,
+                    ocp_date=ocp_date,
                     select=select,
                     api_version=self._config.api_version,
                     headers=_headers,
@@ -8316,8 +8330,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_id: str,
         task_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -8334,14 +8348,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type job_id: str
         :param task_id: The ID of the Task to terminate. Required.
         :type task_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -8383,8 +8397,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request = build_batch_terminate_task_request(
             job_id=job_id,
             task_id=task_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             etag=etag,
@@ -8429,8 +8443,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_id: str,
         task_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -8450,14 +8464,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type job_id: str
         :param task_id: The ID of the Task to reactivate. Required.
         :type task_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -8499,8 +8513,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request = build_batch_reactivate_task_request(
             job_id=job_id,
             task_id=task_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             etag=etag,
@@ -8546,8 +8560,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         task_id: str,
         file_path: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         recursive: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
@@ -8561,14 +8575,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type task_id: str
         :param file_path: The path to the Task file that you want to get the content of. Required.
         :type file_path: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword recursive: Whether to delete children of a directory. If the filePath parameter
          represents
          a directory instead of a file, you can set recursive to true to delete the
@@ -8596,8 +8610,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             job_id=job_id,
             task_id=task_id,
             file_path=file_path,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             recursive=recursive,
             api_version=self._config.api_version,
             headers=_headers,
@@ -8637,8 +8651,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         task_id: str,
         file_path: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         ocp_range: Optional[str] = None,
@@ -8652,14 +8666,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type task_id: str
         :param file_path: The path to the Task file that you want to get the content of. Required.
         :type file_path: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -8695,8 +8709,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             job_id=job_id,
             task_id=task_id,
             file_path=file_path,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             ocp_range=ocp_range,
@@ -8757,8 +8771,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         task_id: str,
         file_path: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
@@ -8771,14 +8785,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type task_id: str
         :param file_path: The path to the Task file that you want to get the content of. Required.
         :type file_path: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -8810,8 +8824,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             job_id=job_id,
             task_id=task_id,
             file_path=file_path,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
@@ -8861,8 +8875,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_id: str,
         task_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
         recursive: Optional[bool] = None,
@@ -8876,14 +8890,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type job_id: str
         :param task_id: The ID of the Task whose files you want to list. Required.
         :type task_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype max_results: int
@@ -8919,8 +8933,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 _request = build_batch_list_task_files_request(
                     job_id=job_id,
                     task_id=task_id,
-                    timeout=timeout,
-                    ocpdate=ocpdate,
+                    service_timeout=service_timeout,
+                    ocp_date=ocp_date,
                     max_results=max_results,
                     filter=filter,
                     recursive=recursive,
@@ -8992,8 +9006,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         node_id: str,
         user: _models.BatchNodeUserCreateOptions,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """Adds a user Account to the specified Compute Node.
@@ -9010,14 +9024,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type node_id: str
         :param user: The options to use for creating the user. Required.
         :type user: ~azure.batch.models.BatchNodeUserCreateOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9043,8 +9057,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request = build_batch_create_node_user_request(
             pool_id=pool_id,
             node_id=node_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -9088,8 +9102,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         node_id: str,
         user_name: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a user Account from the specified Compute Node.
@@ -9106,14 +9120,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type node_id: str
         :param user_name: The name of the user Account to delete. Required.
         :type user_name: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9135,8 +9149,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             pool_id=pool_id,
             node_id=node_id,
             user_name=user_name,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -9176,8 +9190,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         user_name: str,
         update_options: _models.BatchNodeUserUpdateOptions,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """Updates the password and expiration time of a user Account on the specified Compute Node.
@@ -9195,14 +9209,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type user_name: str
         :param update_options: The options to use for updating the user. Required.
         :type update_options: ~azure.batch.models.BatchNodeUserUpdateOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9229,8 +9243,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             pool_id=pool_id,
             node_id=node_id,
             user_name=user_name,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -9273,8 +9287,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         node_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         select: Optional[list[str]] = None,
         **kwargs: Any
     ) -> _models.BatchNode:
@@ -9286,14 +9300,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to get information about. Required.
         :type node_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: list[str]
         :return: BatchNode. The BatchNode is compatible with MutableMapping
@@ -9316,8 +9330,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request = build_batch_get_node_request(
             pool_id=pool_id,
             node_id=node_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             select=select,
             api_version=self._config.api_version,
             headers=_headers,
@@ -9371,8 +9385,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         node_id: str,
         options: Optional[_models.BatchNodeRebootOptions] = None,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """Restarts the specified Compute Node.
@@ -9385,14 +9399,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type node_id: str
         :param options: The options to use for rebooting the Compute Node. Default value is None.
         :type options: ~azure.batch.models.BatchNodeRebootOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9422,8 +9436,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request = build_batch_reboot_node_internal_request(
             pool_id=pool_id,
             node_id=node_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -9466,8 +9480,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         node_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """Starts the specified Compute Node.
@@ -9478,14 +9492,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9506,8 +9520,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request = build_batch_start_node_internal_request(
             pool_id=pool_id,
             node_id=node_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -9549,8 +9563,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         node_id: str,
         options: Optional[_models.BatchNodeReimageOptions] = None,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """Reinstalls the operating system on the specified Compute Node.
@@ -9565,14 +9579,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type node_id: str
         :param options: The options to use for reimaging the Compute Node. Default value is None.
         :type options: ~azure.batch.models.BatchNodeReimageOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9602,8 +9616,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request = build_batch_reimage_node_internal_request(
             pool_id=pool_id,
             node_id=node_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -9647,8 +9661,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         node_id: str,
         options: Optional[_models.BatchNodeDeallocateOptions] = None,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """Deallocates the specified Compute Node.
@@ -9661,14 +9675,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type node_id: str
         :param options: The options to use for deallocating the Compute Node. Default value is None.
         :type options: ~azure.batch.models.BatchNodeDeallocateOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9698,8 +9712,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request = build_batch_deallocate_node_internal_request(
             pool_id=pool_id,
             node_id=node_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -9743,8 +9757,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         node_id: str,
         options: Optional[_models.BatchNodeDisableSchedulingOptions] = None,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """Disables Task scheduling on the specified Compute Node.
@@ -9760,14 +9774,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param options: The options to use for disabling scheduling on the Compute Node. Default value
          is None.
         :type options: ~azure.batch.models.BatchNodeDisableSchedulingOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9797,8 +9811,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request = build_batch_disable_node_scheduling_request(
             pool_id=pool_id,
             node_id=node_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -9841,8 +9855,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         node_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """Enables Task scheduling on the specified Compute Node.
@@ -9855,14 +9869,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param node_id: The ID of the Compute Node on which you want to enable Task scheduling.
          Required.
         :type node_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9883,8 +9897,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request = build_batch_enable_node_scheduling_request(
             pool_id=pool_id,
             node_id=node_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -9925,8 +9939,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         node_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> _models.BatchNodeRemoteLoginSettings:
         """Gets the settings required for remote login to a Compute Node.
@@ -9941,14 +9955,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param node_id: The ID of the Compute Node for which to obtain the remote login settings.
          Required.
         :type node_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :return: BatchNodeRemoteLoginSettings. The BatchNodeRemoteLoginSettings is compatible with
          MutableMapping
         :rtype: ~azure.batch.models.BatchNodeRemoteLoginSettings
@@ -9970,8 +9984,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request = build_batch_get_node_remote_login_settings_request(
             pool_id=pool_id,
             node_id=node_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -10024,8 +10038,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         node_id: str,
         upload_options: _models.UploadBatchServiceLogsOptions,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> _models.UploadBatchServiceLogsResult:
         """Upload Azure Batch service log files from the specified Compute Node to Azure Blob Storage.
@@ -10042,14 +10056,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type node_id: str
         :param upload_options: The Azure Batch service log files upload options. Required.
         :type upload_options: ~azure.batch.models.UploadBatchServiceLogsOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :return: UploadBatchServiceLogsResult. The UploadBatchServiceLogsResult is compatible with
          MutableMapping
         :rtype: ~azure.batch.models.UploadBatchServiceLogsResult
@@ -10076,8 +10090,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request = build_batch_upload_node_logs_request(
             pool_id=pool_id,
             node_id=node_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -10130,8 +10144,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         pool_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
         select: Optional[list[str]] = None,
@@ -10143,14 +10157,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param pool_id: The ID of the Pool from which you want to list Compute Nodes. Required.
         :type pool_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype max_results: int
@@ -10183,8 +10197,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
                 _request = build_batch_list_nodes_request(
                     pool_id=pool_id,
-                    timeout=timeout,
-                    ocpdate=ocpdate,
+                    service_timeout=service_timeout,
+                    ocp_date=ocp_date,
                     max_results=max_results,
                     filter=filter,
                     select=select,
@@ -10256,8 +10270,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         node_id: str,
         extension_name: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         select: Optional[list[str]] = None,
         **kwargs: Any
     ) -> _models.BatchNodeVMExtension:
@@ -10272,14 +10286,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param extension_name: The name of the Compute Node Extension that you want to get information
          about. Required.
         :type extension_name: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: list[str]
         :return: BatchNodeVMExtension. The BatchNodeVMExtension is compatible with MutableMapping
@@ -10303,8 +10317,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             pool_id=pool_id,
             node_id=node_id,
             extension_name=extension_name,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             select=select,
             api_version=self._config.api_version,
             headers=_headers,
@@ -10357,8 +10371,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         node_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         select: Optional[list[str]] = None,
         **kwargs: Any
@@ -10371,14 +10385,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to list extensions. Required.
         :type node_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype max_results: int
@@ -10407,8 +10421,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 _request = build_batch_list_node_extensions_request(
                     pool_id=pool_id,
                     node_id=node_id,
-                    timeout=timeout,
-                    ocpdate=ocpdate,
+                    service_timeout=service_timeout,
+                    ocp_date=ocp_date,
                     max_results=max_results,
                     select=select,
                     api_version=self._config.api_version,
@@ -10479,8 +10493,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         node_id: str,
         file_path: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         recursive: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
@@ -10494,14 +10508,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type node_id: str
         :param file_path: The path to the file or directory. Required.
         :type file_path: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword recursive: Whether to delete children of a directory. If the filePath parameter
          represents
          a directory instead of a file, you can set recursive to true to delete the
@@ -10529,8 +10543,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             pool_id=pool_id,
             node_id=node_id,
             file_path=file_path,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             recursive=recursive,
             api_version=self._config.api_version,
             headers=_headers,
@@ -10570,8 +10584,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         node_id: str,
         file_path: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         ocp_range: Optional[str] = None,
@@ -10585,14 +10599,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type node_id: str
         :param file_path: The path to the file or directory. Required.
         :type file_path: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -10628,8 +10642,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             pool_id=pool_id,
             node_id=node_id,
             file_path=file_path,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             ocp_range=ocp_range,
@@ -10690,8 +10704,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         node_id: str,
         file_path: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
@@ -10704,14 +10718,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type node_id: str
         :param file_path: The path to the file or directory. Required.
         :type file_path: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -10743,8 +10757,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             pool_id=pool_id,
             node_id=node_id,
             file_path=file_path,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
@@ -10794,8 +10808,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         node_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
         recursive: Optional[bool] = None,
@@ -10809,14 +10823,14 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type pool_id: str
         :param node_id: The ID of the Compute Node whose files you want to list. Required.
         :type node_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
+        :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype max_results: int
@@ -10850,8 +10864,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 _request = build_batch_list_node_files_request(
                     pool_id=pool_id,
                     node_id=node_id,
-                    timeout=timeout,
-                    ocpdate=ocpdate,
+                    service_timeout=service_timeout,
+                    ocp_date=ocp_date,
                     max_results=max_results,
                     filter=filter,
                     recursive=recursive,

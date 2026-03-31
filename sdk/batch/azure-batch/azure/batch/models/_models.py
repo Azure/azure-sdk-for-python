@@ -174,8 +174,8 @@ class AutoScaleRunError(_Model):
     :ivar message: A message describing the autoscale error, intended to be suitable for display in
      a user interface.
     :vartype message: str
-    :ivar values_property: A list of additional error details related to the autoscale error.
-    :vartype values_property: list[~azure.batch.models.NameValuePair]
+    :ivar error_values: A list of additional error details related to the autoscale error.
+    :vartype error_values: list[~azure.batch.models.NameValuePair]
     """
 
     code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -184,8 +184,8 @@ class AutoScaleRunError(_Model):
     message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A message describing the autoscale error, intended to be suitable for display in a user
      interface."""
-    values_property: Optional[list["_models.NameValuePair"]] = rest_field(
-        name="values", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="values"
+    error_values: Optional[list["_models.NameValuePair"]] = rest_field(
+        name="values", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of additional error details related to the autoscale error."""
 
@@ -195,7 +195,7 @@ class AutoScaleRunError(_Model):
         *,
         code: Optional[str] = None,
         message: Optional[str] = None,
-        values_property: Optional[list["_models.NameValuePair"]] = None,
+        error_values: Optional[list["_models.NameValuePair"]] = None,
     ) -> None: ...
 
     @overload
@@ -937,11 +937,11 @@ class BatchJob(_Model):
     :vartype uses_task_dependencies: bool
     :ivar url: The URL of the Job. Required.
     :vartype url: str
-    :ivar e_tag: The ETag of the Job. This is an opaque string. You can use it to detect whether
-     the Job has changed between requests. In particular, you can be pass the ETag when updating a
-     Job to specify that your changes should take effect only if nobody else has modified the Job in
-     the meantime. Required.
-    :vartype e_tag: str
+    :ivar etag: The ETag of the Job. This is an opaque string. You can use it to detect whether the
+     Job has changed between requests. In particular, you can be pass the ETag when updating a Job
+     to specify that your changes should take effect only if nobody else has modified the Job in the
+     meantime. Required.
+    :vartype etag: str
     :ivar last_modified: The last modified time of the Job. This is the last time at which the Job
      level data, such as the Job state or priority, changed. It does not factor in task-level
      changes such as adding new Tasks or Tasks changing state. Required.
@@ -1028,7 +1028,7 @@ class BatchJob(_Model):
     """Whether Tasks in the Job can define dependencies on each other. The default is false."""
     url: str = rest_field(visibility=["read"])
     """The URL of the Job. Required."""
-    e_tag: str = rest_field(name="eTag", visibility=["read"])
+    etag: str = rest_field(name="eTag", visibility=["read"])
     """The ETag of the Job. This is an opaque string. You can use it to detect whether the Job has
      changed between requests. In particular, you can be pass the ETag when updating a Job to
      specify that your changes should take effect only if nobody else has modified the Job in the
@@ -5726,36 +5726,36 @@ class BatchPoolResourceStatistics(_Model):
     :ivar avg_cpu_percentage: The average CPU usage across all Compute Nodes in the Pool
      (percentage per node). Required.
     :vartype avg_cpu_percentage: float
-    :ivar avg_memory_gi_b: The average memory usage in GiB across all Compute Nodes in the Pool.
+    :ivar avg_memory_gib: The average memory usage in GiB across all Compute Nodes in the Pool.
      Required.
-    :vartype avg_memory_gi_b: float
-    :ivar peak_memory_gi_b: The peak memory usage in GiB across all Compute Nodes in the Pool.
+    :vartype avg_memory_gib: float
+    :ivar peak_memory_gib: The peak memory usage in GiB across all Compute Nodes in the Pool.
      Required.
-    :vartype peak_memory_gi_b: float
-    :ivar avg_disk_gi_b: The average used disk space in GiB across all Compute Nodes in the Pool.
+    :vartype peak_memory_gib: float
+    :ivar avg_disk_gib: The average used disk space in GiB across all Compute Nodes in the Pool.
      Required.
-    :vartype avg_disk_gi_b: float
-    :ivar peak_disk_gi_b: The peak used disk space in GiB across all Compute Nodes in the Pool.
+    :vartype avg_disk_gib: float
+    :ivar peak_disk_gib: The peak used disk space in GiB across all Compute Nodes in the Pool.
      Required.
-    :vartype peak_disk_gi_b: float
+    :vartype peak_disk_gib: float
     :ivar disk_read_iops: The total number of disk read operations across all Compute Nodes in the
      Pool. Required.
     :vartype disk_read_iops: int
     :ivar disk_write_iops: The total number of disk write operations across all Compute Nodes in
      the Pool. Required.
     :vartype disk_write_iops: int
-    :ivar disk_read_gi_b: The total amount of data in GiB of disk reads across all Compute Nodes in
+    :ivar disk_read_gib: The total amount of data in GiB of disk reads across all Compute Nodes in
      the Pool. Required.
-    :vartype disk_read_gi_b: float
-    :ivar disk_write_gi_b: The total amount of data in GiB of disk writes across all Compute Nodes
+    :vartype disk_read_gib: float
+    :ivar disk_write_gib: The total amount of data in GiB of disk writes across all Compute Nodes
      in the Pool. Required.
-    :vartype disk_write_gi_b: float
-    :ivar network_read_gi_b: The total amount of data in GiB of network reads across all Compute
+    :vartype disk_write_gib: float
+    :ivar network_read_gib: The total amount of data in GiB of network reads across all Compute
      Nodes in the Pool. Required.
-    :vartype network_read_gi_b: float
-    :ivar network_write_gi_b: The total amount of data in GiB of network writes across all Compute
+    :vartype network_read_gib: float
+    :ivar network_write_gib: The total amount of data in GiB of network writes across all Compute
      Nodes in the Pool. Required.
-    :vartype network_write_gi_b: float
+    :vartype network_write_gib: float
     """
 
     start_time: datetime.datetime = rest_field(
@@ -5771,15 +5771,15 @@ class BatchPoolResourceStatistics(_Model):
         name="avgCPUPercentage", visibility=["read", "create", "update", "delete", "query"]
     )
     """The average CPU usage across all Compute Nodes in the Pool (percentage per node). Required."""
-    avg_memory_gi_b: float = rest_field(name="avgMemoryGiB", visibility=["read", "create", "update", "delete", "query"])
+    avg_memory_gib: float = rest_field(name="avgMemoryGiB", visibility=["read", "create", "update", "delete", "query"])
     """The average memory usage in GiB across all Compute Nodes in the Pool. Required."""
-    peak_memory_gi_b: float = rest_field(
+    peak_memory_gib: float = rest_field(
         name="peakMemoryGiB", visibility=["read", "create", "update", "delete", "query"]
     )
     """The peak memory usage in GiB across all Compute Nodes in the Pool. Required."""
-    avg_disk_gi_b: float = rest_field(name="avgDiskGiB", visibility=["read", "create", "update", "delete", "query"])
+    avg_disk_gib: float = rest_field(name="avgDiskGiB", visibility=["read", "create", "update", "delete", "query"])
     """The average used disk space in GiB across all Compute Nodes in the Pool. Required."""
-    peak_disk_gi_b: float = rest_field(name="peakDiskGiB", visibility=["read", "create", "update", "delete", "query"])
+    peak_disk_gib: float = rest_field(name="peakDiskGiB", visibility=["read", "create", "update", "delete", "query"])
     """The peak used disk space in GiB across all Compute Nodes in the Pool. Required."""
     disk_read_iops: int = rest_field(
         name="diskReadIOps", visibility=["read", "create", "update", "delete", "query"], format="str"
@@ -5789,16 +5789,16 @@ class BatchPoolResourceStatistics(_Model):
         name="diskWriteIOps", visibility=["read", "create", "update", "delete", "query"], format="str"
     )
     """The total number of disk write operations across all Compute Nodes in the Pool. Required."""
-    disk_read_gi_b: float = rest_field(name="diskReadGiB", visibility=["read", "create", "update", "delete", "query"])
+    disk_read_gib: float = rest_field(name="diskReadGiB", visibility=["read", "create", "update", "delete", "query"])
     """The total amount of data in GiB of disk reads across all Compute Nodes in the Pool. Required."""
-    disk_write_gi_b: float = rest_field(name="diskWriteGiB", visibility=["read", "create", "update", "delete", "query"])
+    disk_write_gib: float = rest_field(name="diskWriteGiB", visibility=["read", "create", "update", "delete", "query"])
     """The total amount of data in GiB of disk writes across all Compute Nodes in the Pool. Required."""
-    network_read_gi_b: float = rest_field(
+    network_read_gib: float = rest_field(
         name="networkReadGiB", visibility=["read", "create", "update", "delete", "query"]
     )
     """The total amount of data in GiB of network reads across all Compute Nodes in the Pool.
      Required."""
-    network_write_gi_b: float = rest_field(
+    network_write_gib: float = rest_field(
         name="networkWriteGiB", visibility=["read", "create", "update", "delete", "query"]
     )
     """The total amount of data in GiB of network writes across all Compute Nodes in the Pool.
@@ -5811,16 +5811,16 @@ class BatchPoolResourceStatistics(_Model):
         start_time: datetime.datetime,
         last_update_time: datetime.datetime,
         avg_cpu_percentage: float,
-        avg_memory_gi_b: float,
-        peak_memory_gi_b: float,
-        avg_disk_gi_b: float,
-        peak_disk_gi_b: float,
+        avg_memory_gib: float,
+        peak_memory_gib: float,
+        avg_disk_gib: float,
+        peak_disk_gib: float,
         disk_read_iops: int,
         disk_write_iops: int,
-        disk_read_gi_b: float,
-        disk_write_gi_b: float,
-        network_read_gi_b: float,
-        network_write_gi_b: float,
+        disk_read_gib: float,
+        disk_write_gib: float,
+        network_read_gib: float,
+        network_write_gib: float,
     ) -> None: ...
 
     @overload

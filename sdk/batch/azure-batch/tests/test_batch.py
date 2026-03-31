@@ -1270,7 +1270,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             client.create_tasks,
             batch_job.id,
             tasks_to_add,
-            concurrencies=3,
+            max_concurrency=3,
         )
 
         # Test Bulk Add Task Success
