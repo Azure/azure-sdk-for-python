@@ -2,7 +2,16 @@
 
 ## General issues
 
-* All TypeSpec model names need to be reviewed, as those get emitted as SDK class names. In particular, we need to decide on a common patter to identify Azure-specific sub models, when we extend existing OpenAI-defined base model.
+* All TypeSpec model names need to be reviewed, as those get emitted as SDK class names. In particular, we need to decide on a common pattern to identify Azure-specific sub models, when we extend existing OpenAI-defined base model.
+Also avoid one-word generic model names, like this one:
+```
+/** Base class for targets with discriminator support. */
+@discriminator("type")
+model Target {
+  /** The type of target. */
+  type: string;
+}
+```
 
 * Decide if and how we enumerate the many evaluators (around 40?). Should we have a TypeSpec for them, and TypedDicts in emitted Python code? Or do we only have one for the base class?
 

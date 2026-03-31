@@ -23,7 +23,7 @@ data_file2 = os.path.join(data_folder, "data_file2.txt")
 class TestDatasetsAsync(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
-    # cls & pytest tests\test_datasets_async.py::TestDatasetsAsync::test_datasets_upload_file_async -s
+    # cls & pytest tests\datasets\test_datasets_async.py::TestDatasetsAsync::test_datasets_upload_file_async -s
     @servicePreparer()
     @recorded_by_proxy_async
     async def test_datasets_upload_file(self, **kwargs):
@@ -133,7 +133,7 @@ class TestDatasetsAsync(TestBase):
             assert exception_thrown
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
-    # cls & pytest tests\test_datasets_async.py::TestDatasetsAsync::test_datasets_upload_folder_async -s
+    # cls & pytest tests\datasets\test_datasets_async.py::TestDatasetsAsync::test_datasets_upload_folder_async -s
     @servicePreparer()
     @recorded_by_proxy_async
     async def test_datasets_upload_folder_async(self, **kwargs):
