@@ -62,11 +62,7 @@ class SecretClient(KeyVaultClientBase):
                 :caption: Get a secret
                 :dedent: 8
         """
-        bundle = self._client.get_secret(
-            secret_name=name,
-            secret_version=version or "",
-            **kwargs
-        )
+        bundle = self._client.get_secret(secret_name=name, secret_version=version or "", **kwargs)
         return KeyVaultSecret._from_secret_bundle(bundle)
 
     @distributed_trace
@@ -111,24 +107,15 @@ class SecretClient(KeyVaultClientBase):
 
         """
         if enabled is not None or not_before is not None or expires_on is not None:
-            attributes = self._models.SecretAttributes(
-                enabled=enabled, not_before=not_before, expires=expires_on
-            )
+            attributes = self._models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
             attributes = None
 
         parameters = self._models.SecretSetParameters(
-            value=value,
-            tags=tags,
-            content_type=content_type,
-            secret_attributes=attributes
+            value=value, tags=tags, content_type=content_type, secret_attributes=attributes
         )
 
-        bundle = self._client.set_secret(
-            secret_name=name,
-            parameters=parameters,
-            **kwargs
-        )
+        bundle = self._client.set_secret(secret_name=name, parameters=parameters, **kwargs)
         return KeyVaultSecret._from_secret_bundle(bundle)
 
     @distributed_trace
@@ -175,9 +162,7 @@ class SecretClient(KeyVaultClientBase):
 
         """
         if enabled is not None or not_before is not None or expires_on is not None:
-            attributes = self._models.SecretAttributes(
-                enabled=enabled, not_before=not_before, expires=expires_on
-            )
+            attributes = self._models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
             attributes = None
 
@@ -187,12 +172,7 @@ class SecretClient(KeyVaultClientBase):
             tags=tags,
         )
 
-        bundle = self._client.update_secret(
-            name,
-            secret_version=version or "",
-            parameters=parameters,
-            **kwargs
-        )
+        bundle = self._client.update_secret(name, secret_version=version or "", parameters=parameters, **kwargs)
         return SecretProperties._from_secret_bundle(bundle)  # pylint: disable=protected-access
 
     @distributed_trace
@@ -216,7 +196,7 @@ class SecretClient(KeyVaultClientBase):
         return self._client.get_secrets(
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
@@ -243,7 +223,7 @@ class SecretClient(KeyVaultClientBase):
             name,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
@@ -292,13 +272,14 @@ class SecretClient(KeyVaultClientBase):
 
         """
         bundle = self._client.restore_secret(
-            parameters=self._models.SecretRestoreParameters(secret_bundle_backup=backup),
-            **kwargs
+            parameters=self._models.SecretRestoreParameters(secret_bundle_backup=backup), **kwargs
         )
         return SecretProperties._from_secret_bundle(bundle)
 
     @distributed_trace
-    def begin_delete_secret(self, name: str, **kwargs: Any) -> LROPoller[DeletedSecret]:  # pylint:disable=bad-option-value,delete-operation-wrong-return-type
+    def begin_delete_secret(
+        self, name: str, **kwargs: Any
+    ) -> LROPoller[DeletedSecret]:  # pylint:disable=bad-option-value,delete-operation-wrong-return-type
         """Delete all versions of a secret. Requires secrets/delete permission.
 
         When this method returns Key Vault has begun deleting the secret. Deletion may take several seconds in a vault
@@ -392,7 +373,7 @@ class SecretClient(KeyVaultClientBase):
         return self._client.get_deleted_secrets(
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [DeletedSecret._from_deleted_secret_item(x) for x in objs],
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
