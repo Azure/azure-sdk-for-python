@@ -510,14 +510,19 @@ class BlobProperties(_Model):
     :ivar remaining_retention_days: The remaining retention days of the blob.
     :vartype remaining_retention_days: int
     :ivar access_tier: The access tier of the blob. Known values are: "P4", "P6", "P10", "P15",
-     "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", and
-     "Cold".
+     "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
+     and "Smart".
     :vartype access_tier: str or ~azure.storage.blob._generated.models.AccessTier
     :ivar access_tier_inferred: Whether the access tier is inferred.
     :vartype access_tier_inferred: bool
     :ivar archive_status: The archive status of the blob. Known values are:
-     "rehydrate-pending-to-hot", "rehydrate-pending-to-cool", and "rehydrate-pending-to-cold".
+     "rehydrate-pending-to-hot", "rehydrate-pending-to-cool", "rehydrate-pending-to-cold", and
+     "rehydrate-pending-to-smart".
     :vartype archive_status: str or ~azure.storage.blob._generated.models.ArchiveStatus
+    :ivar smart_access_tier: The smart access tier of the blob. Known values are: "P4", "P6",
+     "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive",
+     "Premium", "Cold", and "Smart".
+    :vartype smart_access_tier: str or ~azure.storage.blob._generated.models.AccessTier
     :ivar customer_provided_key_sha256: Customer provided key sha256.
     :vartype customer_provided_key_sha256: str
     :ivar encryption_scope: The encryption scope of the blob.
@@ -715,7 +720,7 @@ class BlobProperties(_Model):
     )
     """The access tier of the blob. Known values are: \"P4\", \"P6\", \"P10\", \"P15\", \"P20\",
      \"P30\", \"P40\", \"P50\", \"P60\", \"P70\", \"P80\", \"Hot\", \"Cool\", \"Archive\",
-     \"Premium\", and \"Cold\"."""
+     \"Premium\", \"Cold\", and \"Smart\"."""
     access_tier_inferred: Optional[bool] = rest_field(
         name="accessTierInferred",
         visibility=["read", "create", "update", "delete", "query"],
@@ -728,7 +733,16 @@ class BlobProperties(_Model):
         xml={"attribute": False, "name": "ArchiveStatus", "text": False, "unwrapped": False},
     )
     """The archive status of the blob. Known values are: \"rehydrate-pending-to-hot\",
-     \"rehydrate-pending-to-cool\", and \"rehydrate-pending-to-cold\"."""
+     \"rehydrate-pending-to-cool\", \"rehydrate-pending-to-cold\", and
+     \"rehydrate-pending-to-smart\"."""
+    smart_access_tier: Optional[Union[str, "_models.AccessTier"]] = rest_field(
+        name="smartAccessTier",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "SmartAccessTier", "text": False, "unwrapped": False},
+    )
+    """The smart access tier of the blob. Known values are: \"P4\", \"P6\", \"P10\", \"P15\", \"P20\",
+     \"P30\", \"P40\", \"P50\", \"P60\", \"P70\", \"P80\", \"Hot\", \"Cool\", \"Archive\",
+     \"Premium\", \"Cold\", and \"Smart\"."""
     customer_provided_key_sha256: Optional[str] = rest_field(
         name="customerProvidedKeySha256",
         visibility=["read", "create", "update", "delete", "query"],
@@ -836,6 +850,7 @@ class BlobProperties(_Model):
         access_tier: Optional[Union[str, "_models.AccessTier"]] = None,
         access_tier_inferred: Optional[bool] = None,
         archive_status: Optional[Union[str, "_models.ArchiveStatus"]] = None,
+        smart_access_tier: Optional[Union[str, "_models.AccessTier"]] = None,
         customer_provided_key_sha256: Optional[str] = None,
         encryption_scope: Optional[str] = None,
         access_tier_change_time: Optional[datetime.datetime] = None,

@@ -2181,7 +2181,7 @@ class ContainerOperations:
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2026-02-06": ["start_from"]},
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
     )
     async def list_blob_flat_segment(
         self,
@@ -2297,7 +2297,7 @@ class ContainerOperations:
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2026-02-06": ["start_from"]},
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
     )
     async def list_blob_hierarchy_segment(
         self,
@@ -3026,6 +3026,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers["x-ms-access-tier-change-time"] = self._deserialize(
             "rfc-1123", response.headers.get("x-ms-access-tier-change-time")
         )
+        response_headers["x-ms-smart-access-tier"] = self._deserialize(
+            "str", response.headers.get("x-ms-smart-access-tier")
+        )
         response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
         response_headers["x-ms-is-current-version"] = self._deserialize(
             "bool", response.headers.get("x-ms-is-current-version")
@@ -3060,7 +3063,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2026-04-06": ["access_tier_if_modified_since", "access_tier_if_unmodified_since"]},
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
     )
     async def delete(  # pylint: disable=too-many-locals
         self,
@@ -4638,8 +4641,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :keyword metadata: The metadata headers. Default value is None.
         :paramtype metadata: dict[str, str]
         :keyword tier: The tier to be set on the blob. Known values are: "P4", "P6", "P10", "P15",
-         "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", and
-         "Cold". Default value is None.
+         "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
+         and "Smart". Default value is None.
         :paramtype tier: str or ~azure.storage.blob._generated.models.AccessTier
         :keyword rehydrate_priority: If an object is in rehydrate pending state then this header is
          returned with priority of rehydrate. Valid values are High and Standard. Known values are:
@@ -4822,8 +4825,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :keyword metadata: The metadata headers. Default value is None.
         :paramtype metadata: dict[str, str]
         :keyword tier: The tier to be set on the blob. Known values are: "P4", "P6", "P10", "P15",
-         "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", and
-         "Cold". Default value is None.
+         "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
+         and "Smart". Default value is None.
         :paramtype tier: str or ~azure.storage.blob._generated.models.AccessTier
         :keyword source_if_modified_since: Specify this header value to operate only on a blob if it
          has been modified since the specified date/time. Default value is None.
@@ -5076,7 +5079,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         :keyword tier: Indicates the tier to be set on the blob. Known values are: "P4", "P6", "P10",
          "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium",
-         and "Cold". Required.
+         "Cold", and "Smart". Required.
         :paramtype tier: str or ~azure.storage.blob._generated.models.AccessTier
         :keyword snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
@@ -5230,7 +5233,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2026-02-06": ["if_modified_since", "if_unmodified_since", "if_match", "if_none_match"]},
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
     )
     async def get_tags(
         self,
@@ -5359,7 +5362,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2026-02-06": ["if_modified_since", "if_unmodified_since", "if_match", "if_none_match"]},
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
     )
     async def set_tags(  # pylint: disable=too-many-locals
         self,
@@ -5910,7 +5913,7 @@ class AppendBlobOperations:
         params_added_on={
             "2026-04-06": ["source_encryption_key", "source_encryption_key_sha256", "source_encryption_algorithm"]
         },
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
     )
     async def append_block_from_url(  # pylint: disable=too-many-locals
         self,
@@ -6377,8 +6380,8 @@ class BlockBlobOperations:
          encrypted with the root account key. Default value is None.
         :paramtype encryption_scope: str
         :keyword tier: The tier to be set on the blob. Known values are: "P4", "P6", "P10", "P15",
-         "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", and
-         "Cold". Default value is None.
+         "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
+         and "Smart". Default value is None.
         :paramtype tier: str or ~azure.storage.blob._generated.models.AccessTier
         :keyword if_modified_since: A date-time value. A request is made under the condition that the
          resource has been modified since the specified date-time. Default value is None.
@@ -6535,7 +6538,7 @@ class BlockBlobOperations:
         params_added_on={
             "2026-04-06": ["source_encryption_key", "source_encryption_key_sha256", "source_encryption_algorithm"]
         },
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
     )
     async def put_blob_from_url(  # pylint: disable=too-many-locals
         self,
@@ -6640,8 +6643,8 @@ class BlockBlobOperations:
          encrypted with the root account key. Default value is None.
         :paramtype encryption_scope: str
         :keyword tier: The tier to be set on the blob. Known values are: "P4", "P6", "P10", "P15",
-         "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", and
-         "Cold". Default value is None.
+         "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
+         and "Smart". Default value is None.
         :paramtype tier: str or ~azure.storage.blob._generated.models.AccessTier
         :keyword if_modified_since: A date-time value. A request is made under the condition that the
          resource has been modified since the specified date-time. Default value is None.
@@ -6973,7 +6976,7 @@ class BlockBlobOperations:
         params_added_on={
             "2026-04-06": ["source_encryption_key", "source_encryption_key_sha256", "source_encryption_algorithm"]
         },
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
     )
     async def stage_block_from_url(  # pylint: disable=too-many-locals
         self,
@@ -7259,8 +7262,8 @@ class BlockBlobOperations:
          encrypted with the root account key. Default value is None.
         :paramtype encryption_scope: str
         :keyword tier: The tier to be set on the blob. Known values are: "P4", "P6", "P10", "P15",
-         "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", and
-         "Cold". Default value is None.
+         "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
+         and "Smart". Default value is None.
         :paramtype tier: str or ~azure.storage.blob._generated.models.AccessTier
         :keyword if_modified_since: A date-time value. A request is made under the condition that the
          resource has been modified since the specified date-time. Default value is None.
@@ -8309,7 +8312,7 @@ class PageBlobOperations:
         params_added_on={
             "2026-04-06": ["source_encryption_key", "source_encryption_key_sha256", "source_encryption_algorithm"]
         },
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
     )
     async def upload_pages_from_url(  # pylint: disable=too-many-locals
         self,

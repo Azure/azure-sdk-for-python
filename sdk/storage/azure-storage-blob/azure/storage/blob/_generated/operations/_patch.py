@@ -19,6 +19,7 @@ _generated_utils.quote_etag = lambda etag: etag
 
 # Parameter group extraction helpers
 
+
 def _flatten_group(group: object, fields: list[str], kwargs: dict[str, Any]) -> None:
     """Copy each *field* from *group* into *kwargs* (if non-None and not already set)."""
     for field in fields:
@@ -132,6 +133,7 @@ _PARAMETER_GROUPS: list[tuple[str, list[str], bool]] = [
         False,
     ),
 ]
+
 
 def extract_parameter_groups(kwargs: dict[str, Any]) -> None:
     """Pop all parameter-group objects from *kwargs* and flatten their fields."""

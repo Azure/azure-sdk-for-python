@@ -46,7 +46,7 @@ def build_service_set_properties_request(*, timeout: Optional[int] = None, **kwa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?restype=service&comp=properties"
 
@@ -65,7 +65,7 @@ def build_service_get_properties_request(*, timeout: Optional[int] = None, **kwa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -86,7 +86,7 @@ def build_service_get_statistics_request(*, timeout: Optional[int] = None, **kwa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -115,7 +115,7 @@ def build_service_list_containers_segment_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -147,7 +147,7 @@ def build_service_get_user_delegation_key_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -169,7 +169,7 @@ def build_service_get_account_info_request(*, timeout: Optional[int] = None, **k
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?restype=account&comp=properties"
 
@@ -190,7 +190,7 @@ def build_service_submit_batch_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     accept = _headers.pop("Accept", "multipart/mixed")
 
     # Construct URL
@@ -220,7 +220,7 @@ def build_service_filter_blobs_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -256,7 +256,7 @@ def build_container_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?restype=container"
 
@@ -288,7 +288,7 @@ def build_container_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?restype=container"
 
@@ -315,7 +315,7 @@ def build_container_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?restype=container"
 
@@ -346,7 +346,7 @@ def build_container_set_metadata_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?restype=container&comp=metadata"
 
@@ -372,7 +372,7 @@ def build_container_get_access_policy_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -404,7 +404,7 @@ def build_container_set_access_policy_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?restype=container&comp=acl"
 
@@ -438,7 +438,7 @@ def build_container_restore_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?restype=container&comp=undelete"
 
@@ -466,7 +466,7 @@ def build_container_rename_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?restype=container&comp=rename"
 
@@ -490,7 +490,7 @@ def build_container_submit_batch_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     accept = _headers.pop("Accept", "multipart/mixed")
 
     # Construct URL
@@ -520,7 +520,7 @@ def build_container_filter_blobs_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -557,7 +557,7 @@ def build_container_acquire_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=lease&restype=container"
 
@@ -591,7 +591,7 @@ def build_container_release_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=lease&restype=container"
 
@@ -623,7 +623,7 @@ def build_container_renew_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=lease&restype=container"
 
@@ -655,7 +655,7 @@ def build_container_break_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=lease&restype=container"
 
@@ -689,7 +689,7 @@ def build_container_change_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=lease&restype=container"
 
@@ -723,7 +723,7 @@ def build_container_list_blob_flat_segment_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -764,7 +764,7 @@ def build_container_list_blob_hierarchy_segment_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -796,7 +796,7 @@ def build_container_get_account_info_request(*, timeout: Optional[int] = None, *
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?restype=account&comp=properties"
 
@@ -833,7 +833,7 @@ def build_blob_download_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/octet-stream")
 
     # Construct URL
@@ -907,7 +907,7 @@ def build_blob_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = ""
 
@@ -967,7 +967,7 @@ def build_blob_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = ""
 
@@ -1015,7 +1015,7 @@ def build_blob_undelete_request(*, timeout: Optional[int] = None, **kwargs: Any)
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=undelete"
 
@@ -1039,7 +1039,7 @@ def build_blob_set_expiry_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=expiry"
 
@@ -1076,7 +1076,7 @@ def build_blob_set_http_headers_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=properties"
 
@@ -1135,7 +1135,7 @@ def build_blob_set_immutability_policy_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=immutabilityPolicies"
 
@@ -1168,7 +1168,7 @@ def build_blob_delete_immutability_policy_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=immutabilityPolicies"
 
@@ -1197,7 +1197,7 @@ def build_blob_set_legal_hold_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=legalhold"
 
@@ -1235,7 +1235,7 @@ def build_blob_set_metadata_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=metadata"
 
@@ -1291,7 +1291,7 @@ def build_blob_acquire_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=lease"
 
@@ -1336,7 +1336,7 @@ def build_blob_release_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=lease"
 
@@ -1379,7 +1379,7 @@ def build_blob_renew_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=lease"
 
@@ -1423,7 +1423,7 @@ def build_blob_change_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=lease"
 
@@ -1467,7 +1467,7 @@ def build_blob_break_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=lease"
 
@@ -1515,7 +1515,7 @@ def build_blob_create_snapshot_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=snapshot"
 
@@ -1583,7 +1583,7 @@ def build_blob_start_copy_from_url_request(  # pylint: disable=too-many-locals
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = ""
 
@@ -1677,7 +1677,7 @@ def build_blob_copy_from_url_request(  # pylint: disable=too-many-locals
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     requires_sync: Literal["true"] = kwargs.pop("requires_sync", _headers.pop("x-ms-requires-sync", "true"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = ""
 
@@ -1756,7 +1756,7 @@ def build_blob_abort_copy_from_url_request(
     copy_action_abort_constant: Literal["abort"] = kwargs.pop(
         "copy_action_abort_constant", _headers.pop("x-ms-copy-action", "abort")
     )
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=copy"
 
@@ -1788,7 +1788,7 @@ def build_blob_set_tier_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=tier"
 
@@ -1817,7 +1817,7 @@ def build_blob_get_account_info_request(*, timeout: Optional[int] = None, **kwar
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?restype=account&comp=properties"
 
@@ -1847,7 +1847,7 @@ def build_blob_get_tags_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1900,7 +1900,7 @@ def build_blob_set_tags_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=tags"
 
@@ -1970,7 +1970,7 @@ def build_append_blob_create_request(  # pylint: disable=too-many-locals
 
     content_length: Literal[0] = kwargs.pop("content_length", _headers.pop("Content-Length", 0))
     blob_type: Literal["AppendBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "AppendBlob"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = ""
 
@@ -2068,7 +2068,7 @@ def build_append_blob_append_block_request(  # pylint: disable=too-many-locals
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=appendblock"
 
@@ -2161,7 +2161,7 @@ def build_append_blob_append_block_from_url_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=appendblock"
 
@@ -2261,7 +2261,7 @@ def build_append_blob_seal_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=seal"
 
@@ -2326,7 +2326,7 @@ def build_block_blob_upload_request(  # pylint: disable=too-many-locals,too-many
 
     content_type: str = kwargs.pop("content_type")
     blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = ""
 
@@ -2459,7 +2459,7 @@ def build_block_blob_put_blob_from_url_request(  # pylint: disable=name-too-long
 
     content_length: Literal[0] = kwargs.pop("content_length", _headers.pop("Content-Length", 0))
     blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = ""
 
@@ -2588,7 +2588,7 @@ def build_block_blob_stage_block_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=block"
 
@@ -2659,7 +2659,7 @@ def build_block_blob_stage_block_from_url_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=block"
 
@@ -2759,7 +2759,7 @@ def build_block_blob_commit_block_list_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=blocklist"
 
@@ -2852,7 +2852,7 @@ def build_block_blob_get_block_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -2895,7 +2895,7 @@ def build_block_blob_query_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/octet-stream")
 
     # Construct URL
@@ -2971,7 +2971,7 @@ def build_page_blob_create_request(  # pylint: disable=too-many-locals
 
     content_length: Literal[0] = kwargs.pop("content_length", _headers.pop("Content-Length", 0))
     blob_type: Literal["PageBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "PageBlob"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = ""
 
@@ -3077,7 +3077,7 @@ def build_page_blob_upload_pages_request(  # pylint: disable=too-many-locals
 
     content_type: str = kwargs.pop("content_type")
     page_write: Literal["update"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=page"
 
@@ -3169,7 +3169,7 @@ def build_page_blob_clear_pages_request(
 
     content_length: Literal[0] = kwargs.pop("content_length", _headers.pop("Content-Length", 0))
     page_write: Literal["clear"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "clear"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=page"
 
@@ -3259,7 +3259,7 @@ def build_page_blob_upload_pages_from_url_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     page_write: Literal["update"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=page"
 
@@ -3368,7 +3368,7 @@ def build_page_blob_get_page_ranges_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -3427,7 +3427,7 @@ def build_page_blob_get_page_ranges_diff_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -3489,7 +3489,7 @@ def build_page_blob_resize_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=properties"
 
@@ -3544,7 +3544,7 @@ def build_page_blob_update_sequence_number_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=properties"
 
@@ -3591,7 +3591,7 @@ def build_page_blob_copy_incremental_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=incrementalcopy"
 
@@ -5686,7 +5686,7 @@ class ContainerOperations:
     @distributed_trace
     @api_version_validation(
         params_added_on={"2026-02-06": ["start_from"]},
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
     )
     def list_blob_flat_segment(
         self,
@@ -5802,7 +5802,7 @@ class ContainerOperations:
     @distributed_trace
     @api_version_validation(
         params_added_on={"2026-02-06": ["start_from"]},
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
     )
     def list_blob_hierarchy_segment(
         self,
@@ -6533,6 +6533,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers["x-ms-access-tier-change-time"] = self._deserialize(
             "rfc-1123", response.headers.get("x-ms-access-tier-change-time")
         )
+        response_headers["x-ms-smart-access-tier"] = self._deserialize(
+            "str", response.headers.get("x-ms-smart-access-tier")
+        )
         response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
         response_headers["x-ms-is-current-version"] = self._deserialize(
             "bool", response.headers.get("x-ms-is-current-version")
@@ -6567,7 +6570,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     @api_version_validation(
         params_added_on={"2026-04-06": ["access_tier_if_modified_since", "access_tier_if_unmodified_since"]},
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
     )
     def delete(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
@@ -8147,8 +8150,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :keyword metadata: The metadata headers. Default value is None.
         :paramtype metadata: dict[str, str]
         :keyword tier: The tier to be set on the blob. Known values are: "P4", "P6", "P10", "P15",
-         "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", and
-         "Cold". Default value is None.
+         "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
+         and "Smart". Default value is None.
         :paramtype tier: str or ~azure.storage.blob._generated.models.AccessTier
         :keyword rehydrate_priority: If an object is in rehydrate pending state then this header is
          returned with priority of rehydrate. Valid values are High and Standard. Known values are:
@@ -8331,8 +8334,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :keyword metadata: The metadata headers. Default value is None.
         :paramtype metadata: dict[str, str]
         :keyword tier: The tier to be set on the blob. Known values are: "P4", "P6", "P10", "P15",
-         "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", and
-         "Cold". Default value is None.
+         "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
+         and "Smart". Default value is None.
         :paramtype tier: str or ~azure.storage.blob._generated.models.AccessTier
         :keyword source_if_modified_since: Specify this header value to operate only on a blob if it
          has been modified since the specified date/time. Default value is None.
@@ -8585,7 +8588,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         :keyword tier: Indicates the tier to be set on the blob. Known values are: "P4", "P6", "P10",
          "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium",
-         and "Cold". Required.
+         "Cold", and "Smart". Required.
         :paramtype tier: str or ~azure.storage.blob._generated.models.AccessTier
         :keyword snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
@@ -8741,7 +8744,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     @api_version_validation(
         params_added_on={"2026-02-06": ["if_modified_since", "if_unmodified_since", "if_match", "if_none_match"]},
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
     )
     def get_tags(
         self,
@@ -8870,7 +8873,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     @api_version_validation(
         params_added_on={"2026-02-06": ["if_modified_since", "if_unmodified_since", "if_match", "if_none_match"]},
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
     )
     def set_tags(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
@@ -9421,7 +9424,7 @@ class AppendBlobOperations:
         params_added_on={
             "2026-04-06": ["source_encryption_key", "source_encryption_key_sha256", "source_encryption_algorithm"]
         },
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
     )
     def append_block_from_url(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
@@ -9888,8 +9891,8 @@ class BlockBlobOperations:
          encrypted with the root account key. Default value is None.
         :paramtype encryption_scope: str
         :keyword tier: The tier to be set on the blob. Known values are: "P4", "P6", "P10", "P15",
-         "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", and
-         "Cold". Default value is None.
+         "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
+         and "Smart". Default value is None.
         :paramtype tier: str or ~azure.storage.blob._generated.models.AccessTier
         :keyword if_modified_since: A date-time value. A request is made under the condition that the
          resource has been modified since the specified date-time. Default value is None.
@@ -10046,7 +10049,7 @@ class BlockBlobOperations:
         params_added_on={
             "2026-04-06": ["source_encryption_key", "source_encryption_key_sha256", "source_encryption_algorithm"]
         },
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
     )
     def put_blob_from_url(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
@@ -10151,8 +10154,8 @@ class BlockBlobOperations:
          encrypted with the root account key. Default value is None.
         :paramtype encryption_scope: str
         :keyword tier: The tier to be set on the blob. Known values are: "P4", "P6", "P10", "P15",
-         "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", and
-         "Cold". Default value is None.
+         "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
+         and "Smart". Default value is None.
         :paramtype tier: str or ~azure.storage.blob._generated.models.AccessTier
         :keyword if_modified_since: A date-time value. A request is made under the condition that the
          resource has been modified since the specified date-time. Default value is None.
@@ -10484,7 +10487,7 @@ class BlockBlobOperations:
         params_added_on={
             "2026-04-06": ["source_encryption_key", "source_encryption_key_sha256", "source_encryption_algorithm"]
         },
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
     )
     def stage_block_from_url(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
@@ -10770,8 +10773,8 @@ class BlockBlobOperations:
          encrypted with the root account key. Default value is None.
         :paramtype encryption_scope: str
         :keyword tier: The tier to be set on the blob. Known values are: "P4", "P6", "P10", "P15",
-         "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", and
-         "Cold". Default value is None.
+         "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
+         and "Smart". Default value is None.
         :paramtype tier: str or ~azure.storage.blob._generated.models.AccessTier
         :keyword if_modified_since: A date-time value. A request is made under the condition that the
          resource has been modified since the specified date-time. Default value is None.
@@ -11820,7 +11823,7 @@ class PageBlobOperations:
         params_added_on={
             "2026-04-06": ["source_encryption_key", "source_encryption_key_sha256", "source_encryption_algorithm"]
         },
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06"],
     )
     def upload_pages_from_url(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
