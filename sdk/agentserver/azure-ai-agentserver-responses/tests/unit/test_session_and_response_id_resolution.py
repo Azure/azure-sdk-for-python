@@ -104,6 +104,15 @@ class TestResponseIdResolution:
         )
         assert response_id == payload_id
 
+    def test_invalid_header_format_raises(self):
+        """S-047: malformed header value is rejected by response ID validation."""
+        parsed = _FakeParsed()
+        with pytest.raises(Exception):
+            # "bad-id" doesn't conform to the caresp_ prefix + partition key + entropy format
+            _resolve_identity_fields(
+                parsed, request_headers={"x-agent-response-id": "bad-id"},
+            )
+
 
 # ===================================================================
 # S-048: Session ID Resolution
@@ -135,8 +144,6 @@ class TestSessionIdResolution:
         """S-048 P3: generated UUID when no payload field or env var."""
         parsed = _FakeParsed()
         with patch.dict(os.environ, {}, clear=True):
-            # Remove FOUNDRY_AGENT_SESSION_ID if set
-            os.environ.pop("FOUNDRY_AGENT_SESSION_ID", None)
             result = _resolve_session_id(parsed, {})
         # Should be a valid UUID
         uuid.UUID(result)  # raises ValueError if invalid

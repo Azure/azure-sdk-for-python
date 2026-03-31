@@ -251,6 +251,9 @@ def _resolve_identity_fields(
             response_id = explicit_response_id.strip()
         else:
             # Use previous_response_id or conversation ID as partition key hint
+            # for co-locating related response IDs in the same partition.
+            # previous_response_id takes priority because it directly chains
+            # responses, while conversation ID groups them more loosely.
             partition_hint = (
                 parsed_mapping.get("previous_response_id")
                 or _resolve_conversation_id(parsed)
