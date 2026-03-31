@@ -31,6 +31,7 @@ from azure.ai.evaluation.red_team._foundry._foundry_result_processor import (
     FoundryResultProcessor,
     _get_attack_type_name,
 )
+from azure.ai.evaluation.red_team._result_processor import ResultProcessor
 from azure.ai.evaluation.red_team._foundry._execution_manager import (
     FoundryExecutionManager,
 )
@@ -2591,8 +2592,124 @@ class TestFoundryResultProcessorExtended:
 
 
 # =============================================================================
-# Additional Tests for FoundryExecutionManager
+# Tests for ResultProcessor._compute_per_model_usage
 # =============================================================================
+@pytest.mark.unittest
+class TestComputePerModelUsage:
+    """Tests for _compute_per_model_usage with both camelCase and snake_case keys."""
+
+    def test_camelcase_evaluator_metrics(self):
+        """Evaluator metrics with camelCase keys (raw JSON) are correctly aggregated."""
+        output_items = [
+            {
+                "results": [
+                    {
+                        "properties": {
+                            "metrics": {
+                                "promptTokens": 200,
+                                "completionTokens": 80,
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+        usage = ResultProcessor._compute_per_model_usage(output_items)
+        assert len(usage) == 1
+        entry = usage[0]
+        assert entry["model_name"] == "azure_ai_system_model"
+        assert entry["prompt_tokens"] == 200
+        assert entry["completion_tokens"] == 80
+        assert entry["invocation_count"] == 1
+
+    def test_snake_case_evaluator_metrics(self):
+        """Evaluator metrics with snake_case keys are correctly aggregated."""
+        output_items = [
+            {
+                "results": [
+                    {
+                        "properties": {
+                            "metrics": {
+                                "prompt_tokens": 150,
+                                "completion_tokens": 60,
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+        usage = ResultProcessor._compute_per_model_usage(output_items)
+        assert len(usage) == 1
+        entry = usage[0]
+        assert entry["prompt_tokens"] == 150
+        assert entry["completion_tokens"] == 60
+
+    def test_camelcase_takes_precedence_when_both_present(self):
+        """When both camelCase and snake_case keys exist, camelCase is preferred (checked first)."""
+        output_items = [
+            {
+                "results": [
+                    {
+                        "properties": {
+                            "metrics": {
+                                "promptTokens": 300,
+                                "completionTokens": 100,
+                                "prompt_tokens": 999,
+                                "completion_tokens": 999,
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+        usage = ResultProcessor._compute_per_model_usage(output_items)
+        assert len(usage) == 1
+        entry = usage[0]
+        assert entry["prompt_tokens"] == 300
+        assert entry["completion_tokens"] == 100
+
+    def test_multiple_items_aggregate(self):
+        """Token counts aggregate across multiple output items with mixed key styles."""
+        output_items = [
+            {
+                "results": [
+                    {
+                        "properties": {
+                            "metrics": {
+                                "promptTokens": 100,
+                                "completionTokens": 40,
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "results": [
+                    {
+                        "properties": {
+                            "metrics": {
+                                "prompt_tokens": 200,
+                                "completion_tokens": 60,
+                            }
+                        }
+                    }
+                ]
+            },
+        ]
+        usage = ResultProcessor._compute_per_model_usage(output_items)
+        assert len(usage) == 1
+        entry = usage[0]
+        assert entry["prompt_tokens"] == 300
+        assert entry["completion_tokens"] == 100
+        assert entry["invocation_count"] == 2
+
+    def test_empty_metrics_returns_empty(self):
+        """No metrics at all returns an empty list."""
+        output_items = [{"results": [{"properties": {"metrics": {}}}]}]
+        usage = ResultProcessor._compute_per_model_usage(output_items)
+        assert usage == []
+
+
 @pytest.mark.unittest
 class TestFoundryExecutionManagerExtended:
     """Extended tests for FoundryExecutionManager."""

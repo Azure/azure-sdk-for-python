@@ -31,6 +31,18 @@ from .._utils.metric_mapping import (
 )
 from ._foundry_result_processor import _read_seed_content
 
+# Mapping tables for normalizing token-usage keys returned by the sync eval
+# API.  Raw JSON responses use camelCase; SDK model objects use snake_case.
+# We normalize to snake_case so downstream consumers always see a consistent
+# format.
+_CAMEL_TO_SNAKE: Dict[str, str] = {
+    "promptTokens": "prompt_tokens",
+    "completionTokens": "completion_tokens",
+    "totalTokens": "total_tokens",
+    "cachedTokens": "cached_tokens",
+}
+_SNAKE_KEYS = ("prompt_tokens", "completion_tokens", "total_tokens", "cached_tokens")
+
 
 class RAIServiceScorer(TrueFalseScorer):
     """Custom scorer using Azure RAI Service for Foundry scenarios.
@@ -371,18 +383,6 @@ class RAIServiceScorer(TrueFalseScorer):
         :rtype: Dict[str, Any]
         """
         token_usage: Dict[str, Any] = {}
-
-        # The sync eval API may return token keys in either snake_case (SDK model
-        # objects) or camelCase (raw JSON from non-OneDP HTTP responses).  We
-        # normalize to snake_case so downstream consumers always see a consistent
-        # format.
-        _CAMEL_TO_SNAKE: Dict[str, str] = {
-            "promptTokens": "prompt_tokens",
-            "completionTokens": "completion_tokens",
-            "totalTokens": "total_tokens",
-            "cachedTokens": "cached_tokens",
-        }
-        _SNAKE_KEYS = ("prompt_tokens", "completion_tokens", "total_tokens", "cached_tokens")
 
         def _extract_from_dict(src: Dict[str, Any]) -> None:
             """Copy token values from *src* into *token_usage*, accepting both key styles."""
