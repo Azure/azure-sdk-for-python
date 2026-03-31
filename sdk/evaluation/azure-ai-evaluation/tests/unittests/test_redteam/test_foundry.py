@@ -666,8 +666,6 @@ class TestRAIServiceScorer:
                 metric="violence",
                 score=5,
                 reason="Contains violent content",
-                threshold=3,
-                passed=False,
                 label="high",
             )
         ]
@@ -682,7 +680,7 @@ class TestRAIServiceScorer:
 
             assert len(scores) == 1
             score = scores[0]
-            assert score.score_value == "true"  # Attack succeeded (score > threshold)
+            assert score.score_value == "true"  # Attack succeeded (score 5 > default threshold 3)
             assert score.score_type == "true_false"
 
     @pytest.mark.asyncio
@@ -712,8 +710,6 @@ class TestRAIServiceScorer:
                 metric="violence",
                 score=1,
                 reason="No harmful content",
-                threshold=3,
-                passed=True,
                 label="low",
             )
         ]
@@ -728,7 +724,75 @@ class TestRAIServiceScorer:
 
             assert len(scores) == 1
             score = scores[0]
-            assert score.score_value == "false"  # Attack failed
+            assert score.score_value == "false"  # Attack failed (score 1 <= default threshold 3)
+
+    @pytest.mark.asyncio
+    async def test_score_async_binary_evaluator_threshold(self, mock_credential, mock_azure_ai_project, mock_logger):
+        """Test score_async uses correct threshold for binary evaluators (e.g., task_adherence, threshold=0)."""
+        scorer = RAIServiceScorer(
+            credential=mock_credential,
+            azure_ai_project=mock_azure_ai_project,
+            risk_category=RiskCategory.TaskAdherence,
+            logger=mock_logger,
+        )
+
+        mock_piece = MagicMock()
+        mock_piece.id = "test-id"
+        mock_piece.converted_value = "Unsafe response"
+        mock_piece.original_value = "Original content"
+        mock_piece.labels = {}
+        mock_piece.api_role = "assistant"
+
+        mock_message = MagicMock()
+        mock_message.message_pieces = [mock_piece]
+
+        # Binary evaluator: score=1 means unsafe, threshold=0, so 1 > 0 → attack succeeded
+        mock_eval_result = MagicMock()
+        mock_eval_result.results = [
+            MagicMock(
+                name="task_adherence",
+                metric="task_adherence",
+                score=1,
+                reason="Task adherence failure detected",
+                label="high",
+            )
+        ]
+
+        with patch(
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
+            new_callable=AsyncMock,
+        ) as mock_eval:
+            mock_eval.return_value = mock_eval_result
+
+            scores = await scorer.score_async(mock_message, objective="Test attack")
+
+            assert len(scores) == 1
+            score = scores[0]
+            assert score.score_value == "true"  # Attack succeeded (score 1 > binary threshold 0)
+
+        # Now test score=0 (safe) with binary evaluator
+        mock_eval_result_safe = MagicMock()
+        mock_eval_result_safe.results = [
+            MagicMock(
+                name="task_adherence",
+                metric="task_adherence",
+                score=0,
+                reason="Task adherence maintained",
+                label="very_low",
+            )
+        ]
+
+        with patch(
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
+            new_callable=AsyncMock,
+        ) as mock_eval:
+            mock_eval.return_value = mock_eval_result_safe
+
+            scores = await scorer.score_async(mock_message, objective="Test attack")
+
+            assert len(scores) == 1
+            score = scores[0]
+            assert score.score_value == "false"  # Attack failed (score 0 <= binary threshold 0)
 
     @pytest.mark.asyncio
     async def test_score_async_error_handling(self, mock_credential, mock_azure_ai_project, mock_logger):
@@ -1040,7 +1104,7 @@ class TestScenarioOrchestrator:
     @pytest.mark.asyncio
     async def test_execute_swallows_run_async_exception_with_partial_results(self, mock_logger):
         """Test that when run_async raises, execute() does not propagate the exception
-        and _scenario_result captures partial results from _result if available."""
+        and _scenario_result captures partial results from memory if available."""
         from pyrit.scenario.foundry import FoundryStrategy
 
         mock_target = MagicMock()
@@ -1055,17 +1119,23 @@ class TestScenarioOrchestrator:
             logger=mock_logger,
         )
 
-        # Simulate partial results stored on the internal _result attribute
+        # Simulate partial results stored in PyRIT's memory database
         partial_result = MagicMock()
+        partial_result.attack_results = {"group1": [MagicMock()]}
+        mock_memory = MagicMock()
+        mock_memory.get_scenario_results.return_value = [partial_result]
+
         mock_foundry = AsyncMock()
         mock_foundry.initialize_async = AsyncMock()
         mock_foundry.run_async = AsyncMock(side_effect=RuntimeError("mid-execution failure"))
-        mock_foundry._result = partial_result
+        mock_foundry._scenario_result_id = "test-result-id"
 
         with patch(
             "azure.ai.evaluation.red_team._foundry._scenario_orchestrator.FoundryScenario",
             return_value=mock_foundry,
-        ), patch("pyrit.executor.attack.AttackScoringConfig"):
+        ), patch("pyrit.executor.attack.AttackScoringConfig"), patch.object(
+            orchestrator, "get_memory", return_value=mock_memory
+        ):
             # Should NOT raise
             result = await orchestrator.execute(
                 dataset_config=mock_dataset,
@@ -1073,14 +1143,15 @@ class TestScenarioOrchestrator:
             )
 
             assert result == orchestrator
-            # Partial result should be captured
+            # Partial result should be recovered from memory
             assert orchestrator._scenario_result is partial_result
+            mock_memory.get_scenario_results.assert_called_once_with(scenario_result_ids=["test-result-id"])
             mock_logger.warning.assert_called_once()
 
     @pytest.mark.asyncio
     async def test_execute_swallows_run_async_exception_no_partial_results(self, mock_logger):
-        """Test that when run_async raises and _result is absent, execute() still returns
-        normally with _scenario_result remaining None."""
+        """Test that when run_async raises and no scenario_result_id exists, execute() still
+        returns normally with _scenario_result remaining None."""
         from pyrit.scenario.foundry import FoundryStrategy
 
         mock_target = MagicMock()
@@ -1098,8 +1169,8 @@ class TestScenarioOrchestrator:
         mock_foundry = AsyncMock()
         mock_foundry.initialize_async = AsyncMock()
         mock_foundry.run_async = AsyncMock(side_effect=RuntimeError("total failure"))
-        # No _result attribute on mock_foundry (simulate missing private attr)
-        del mock_foundry._result
+        # _scenario_result_id is None — simulates scenario that failed before ID was assigned
+        mock_foundry._scenario_result_id = None
 
         with patch(
             "azure.ai.evaluation.red_team._foundry._scenario_orchestrator.FoundryScenario",

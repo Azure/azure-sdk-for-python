@@ -19,15 +19,27 @@ from ._queue_client_async import QueueClient
 from .._encryption import StorageEncryptionMixin
 from .._generated.aio import AzureQueueStorage
 from .._generated.models import KeyInfo, StorageServiceProperties
-from .._models import CorsRule, QueueProperties, service_properties_deserialize, service_stats_deserialize
+from .._models import (
+    CorsRule,
+    QueueProperties,
+    service_properties_deserialize,
+    service_stats_deserialize,
+)
 from .._queue_service_client_helpers import _parse_url
 from .._serialize import get_api_version
 from .._shared.base_client import StorageAccountHostsMixin
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
+from .._shared.base_client_async import (
+    AsyncStorageAccountHostsMixin,
+    AsyncTransportWrapper,
+    parse_connection_str,
+)
 from .._shared.models import LocationMode
 from .._shared.parser import _to_utc_datetime
 from .._shared.policies_async import ExponentialRetry
-from .._shared.response_handlers import parse_to_internal_user_delegation_key, process_storage_error
+from .._shared.response_handlers import (
+    parse_to_internal_user_delegation_key,
+    process_storage_error,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -95,7 +107,13 @@ class QueueServiceClient(  # type: ignore [misc]
         self,
         account_url: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "AsyncTokenCredential",
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -116,7 +134,11 @@ class QueueServiceClient(  # type: ignore [misc]
             **kwargs,
         )
         self._client = AzureQueueStorage(
-            self.url, get_api_version(api_version), base_url=self.url, pipeline=self._pipeline, loop=loop
+            self.url,
+            get_api_version(api_version),
+            base_url=self.url,
+            pipeline=self._pipeline,
+            loop=loop,
         )
         self._loop = loop
         self._configure_encryption(kwargs)
@@ -126,7 +148,10 @@ class QueueServiceClient(  # type: ignore [misc]
         return self
 
     async def __aexit__(
-        self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
+        self,
+        typ: Optional[type[BaseException]],
+        exc: Optional[BaseException],
+        tb: Optional[TracebackType],
     ) -> None:
         await self._client.__aexit__(typ, exc, tb)  # pylint: disable=specify-parameter-names-in-call
 
@@ -154,7 +179,13 @@ class QueueServiceClient(  # type: ignore [misc]
         cls,
         conn_str: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "AsyncTokenCredential",
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -425,7 +456,12 @@ class QueueServiceClient(  # type: ignore [misc]
 
     @distributed_trace_async
     async def create_queue(
-        self, name: str, metadata: Optional[Dict[str, str]] = None, *, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        name: str,
+        metadata: Optional[Dict[str, str]] = None,
+        *,
+        timeout: Optional[int] = None,
+        **kwargs: Any,
     ) -> QueueClient:
         """Creates a new queue under the specified account.
 
@@ -458,7 +494,11 @@ class QueueServiceClient(  # type: ignore [misc]
 
     @distributed_trace_async
     async def delete_queue(
-        self, queue: Union["QueueProperties", str], *, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        queue: Union["QueueProperties", str],
+        *,
+        timeout: Optional[int] = None,
+        **kwargs: Any,
     ) -> None:
         """Deletes the specified queue and any messages it contains.
 
