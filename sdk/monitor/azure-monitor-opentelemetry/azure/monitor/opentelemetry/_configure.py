@@ -124,8 +124,8 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     :keyword dict browser_sdk_loader_config: Configuration dictionary for browser SDK loader behavior.
      Supports keys like 'connection_string' (separate connection string for browser SDK), 'enabled' (boolean),
      and framework-specific options. Defaults to `{}`.
-    :keyword bool enable_code_attributes: Boolean value to determine whether to show code attributes in custom dimensions.
-     Defaults to `False`.
+    :keyword bool enable_code_attributes: Boolean value to determine whether to show code attributes in 
+     custom dimensions. Defaults to `False`.
     :rtype: None
     """
 
@@ -259,7 +259,7 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
         # Only add OpenTelemetry LoggingHandler if logger does not already have the handler
         # This is to prevent most duplicate logging telemetry
         if not any(isinstance(handler, LoggingHandler) for handler in logger.handlers):
-            enable_code_attributes = configurations.get(ENABLE_CODE_ATTRIBUTES_ARG)
+            enable_code_attributes = configurations[ENABLE_CODE_ATTRIBUTES_ARG]
             handler = LoggingHandler(logger_provider=logger_provider, log_code_attributes=enable_code_attributes)
             if logging_formatter:
                 try:

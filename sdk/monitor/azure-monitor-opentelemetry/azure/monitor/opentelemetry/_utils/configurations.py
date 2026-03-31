@@ -123,6 +123,7 @@ def _default_disable_logging(configurations):
             default = True
     configurations[DISABLE_LOGGING_ARG] = default
 
+
 def _default_enable_code_attributes(configurations):
     configurations.setdefault(ENABLE_CODE_ATTRIBUTES_ARG, False)
 

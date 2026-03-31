@@ -569,7 +569,6 @@ class TestConfigure(unittest.TestCase):
             "logging_formatter": formatter_init_mock,
             "enable_trace_based_sampling_for_logs": False,
             "enable_code_attributes": True,
-
         }
 
         # Patch all the necessary modules and imports
