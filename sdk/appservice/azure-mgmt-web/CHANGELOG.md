@@ -575,9 +575,9 @@
   - Deleted or renamed model `DomainRegistrationProviderOperations`
   - Deleted or renamed model `DomainsOperations`
   - Deleted or renamed model `TopLevelDomainsOperations`
-  - Method `RecommendationsOperations.reset_all_filters_for_hosting_environment` re-ordered its parameters from `['self', 'resource_group_name', 'environment_name', 'hosting_environment_name', 'kwargs']` to `['self', 'resource_group_name', 'hosting_environment_name', 'environment_name', 'kwargs']`
-  - Method `RecommendationsOperations.disable_recommendation_for_hosting_environment` re-ordered its parameters from `['self', 'resource_group_name', 'environment_name', 'name', 'hosting_environment_name', 'kwargs']` to `['self', 'resource_group_name', 'name', 'hosting_environment_name', 'environment_name', 'kwargs']`
   - Method `RecommendationsOperations.disable_all_for_hosting_environment` re-ordered its parameters from `['self', 'resource_group_name', 'environment_name', 'hosting_environment_name', 'kwargs']` to `['self', 'resource_group_name', 'hosting_environment_name', 'environment_name', 'kwargs']`
+  - Method `RecommendationsOperations.disable_recommendation_for_hosting_environment` re-ordered its parameters from `['self', 'resource_group_name', 'environment_name', 'name', 'hosting_environment_name', 'kwargs']` to `['self', 'resource_group_name', 'name', 'hosting_environment_name', 'environment_name', 'kwargs']`
+  - Method `RecommendationsOperations.reset_all_filters_for_hosting_environment` re-ordered its parameters from `['self', 'resource_group_name', 'environment_name', 'hosting_environment_name', 'kwargs']` to `['self', 'resource_group_name', 'hosting_environment_name', 'environment_name', 'kwargs']`
   - Method `WebAppsOperations.begin_migrate_storage` re-ordered its parameters from `['self', 'subscription_name', 'resource_group_name', 'name', 'migration_options', 'kwargs']` to `['self', 'resource_group_name', 'name', 'migration_options', 'subscription_name', 'kwargs']`
 
 ## 10.1.0 (2025-11-17)
