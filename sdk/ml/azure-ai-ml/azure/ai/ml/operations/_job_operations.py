@@ -23,9 +23,9 @@ from azure.ai.ml._azure_environments import (
     _resource_to_scopes,
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.dataset_dataplane import AzureMachineLearningWorkspaces as ServiceClientDatasetDataplane
-from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataplane
-from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
+from azure.ai.ml._restclient.dataset_dataplane import DatasetDataplaneClient as ServiceClientDatasetDataplane
+from azure.ai.ml._restclient.model_dataplane import ModelDataplaneClient as ServiceClientModelDataplane
+from azure.ai.ml._restclient.runhistory import RunHistoryClient as ServiceClientRunHistory
 from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, ListViewType, UserIdentity
