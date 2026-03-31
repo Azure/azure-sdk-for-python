@@ -32,7 +32,7 @@
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Model `SearchServiceUpdate` moved instance variable `replica_count`, `partition_count`, `endpoint`, `hosting_mode`, `compute_type`, `public_network_access`, `status`, `status_details`, `provisioning_state`, `network_rule_set`, `data_exfiltration_protections`, `encryption_with_cmk`, `disable_local_auth`, `auth_options`, `semantic_search`, `private_endpoint_connections`, `shared_private_link_resources`, `e_tag`, `upgrade_available` and `service_upgraded_at` under property `properties`
   - Method `ServicesOperations.check_name_availability` moved parameter `name` under parameter `check_name_availability_input`
-  - `SearchManagementRequestOptions` was used to set `client_request_id` but now you could pass `request_id="..."` directly in any operation
+  - `SearchManagementRequestOptions.client_request_id` was previously used to set http header `x-ms-client-request-id` but now you can pass `request_id="..."` directly in any operation instead
   - Method `SearchManagementClient.usage_by_subscription_sku` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
   - Method `AdminKeysOperations.get` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
   - Method `AdminKeysOperations.regenerate` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
