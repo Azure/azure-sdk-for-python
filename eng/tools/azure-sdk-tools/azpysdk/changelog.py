@@ -12,9 +12,9 @@ class changelog(Check):
     """Manage changelogs with Chronus.
 
     Wraps Chronus CLI commands (add, verify, create, status) so they can be
-    invoked through the ``azpysdk`` CLI.  Unlike most checks that operate on
-    individual packages, changelog commands run at the **repository root**
-    level via ``npx chronus``.
+    invoked through the ``azpysdk`` CLI.  Commands can be run from the
+    repository root **or** from within a package directory — the tool will
+    detect the package path automatically when possible.
     """
 
     def __init__(self) -> None:
@@ -44,7 +44,8 @@ class changelog(Check):
             default=None,
             help=(
                 "Package path (e.g. sdk/storage/azure-storage-blob) to add an entry for. "
-                "If omitted, chronus detects modified packages interactively."
+                "If omitted and CWD is inside a package directory, the package is detected "
+                "automatically. Otherwise chronus detects modified packages interactively."
             ),
         )
         add_p.set_defaults(func=self._run_add)
@@ -88,6 +89,29 @@ class changelog(Check):
             raise FileNotFoundError("npx not found on PATH")
         return npx
 
+    def _detect_package_from_cwd(self) -> Optional[str]:
+        """If CWD is inside a package directory (``sdk/<service>/<package>``),
+        return the relative path from the repository root.  Otherwise return
+        ``None``.
+
+        The chronus config uses the pattern ``sdk/*/*`` for packages, so we
+        look for CWD being at or below ``<REPO_ROOT>/sdk/<service>/<pkg>``.
+        """
+        try:
+            cwd = os.path.abspath(os.getcwd())
+            repo = os.path.abspath(REPO_ROOT)
+            rel = os.path.relpath(cwd, repo)
+        except ValueError:
+            # On Windows, relpath raises ValueError when paths are on different drives
+            return None
+
+        # rel should start with "sdk/<service>/<package>" (at least 3 components)
+        parts = rel.replace("\\", "/").split("/")
+        if len(parts) >= 3 and parts[0] == "sdk":
+            # Return the first 3 components: sdk/<service>/<package>
+            return "/".join(parts[:3])
+        return None
+
     def _run_chronus(self, chronus_args: List[str]) -> int:
         """Run a chronus command via ``npx`` from the repository root.
 
@@ -104,9 +128,18 @@ class changelog(Check):
     # ------------------------------------------------------------------
 
     def _run_add(self, args: argparse.Namespace) -> int:
-        """Run ``chronus add`` to interactively add a change entry."""
+        """Run ``chronus add`` to interactively add a change entry.
+
+        When no *package* argument is given but CWD is inside a package
+        directory (``sdk/<service>/<package>``), the package path is detected
+        automatically so the developer doesn't have to specify it.
+        """
         chronus_args = ["add"]
         package = getattr(args, "package", None)
+        if not package:
+            package = self._detect_package_from_cwd()
+            if package:
+                logger.info(f"Detected package from current directory: {package}")
         if package:
             chronus_args.append(package)
         return self._run_chronus(chronus_args)

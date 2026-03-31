@@ -1,11 +1,12 @@
 """Tests for the ``azpysdk changelog`` command group."""
 
 import argparse
+import os
 from unittest.mock import patch, MagicMock
 
 import pytest
 
-from azpysdk.changelog import changelog
+from azpysdk.changelog import changelog, REPO_ROOT
 
 
 # ---------------------------------------------------------------------------
@@ -78,7 +79,9 @@ class TestChangelogExecution:
     def test_add_calls_chronus_add(self, mock_which, mock_call):
         parser = _build_parser()
         args = parser.parse_args(["changelog", "add"])
-        result = args.func(args)
+        # Run from repo root so CWD detection does NOT inject a package
+        with patch("os.getcwd", return_value=REPO_ROOT):
+            result = args.func(args)
         assert result == 0
         mock_call.assert_called_once()
         cmd = mock_call.call_args[0][0]
@@ -90,6 +93,45 @@ class TestChangelogExecution:
         parser = _build_parser()
         args = parser.parse_args(["changelog", "add", "sdk/core/azure-core"])
         result = args.func(args)
+        assert result == 0
+        cmd = mock_call.call_args[0][0]
+        assert cmd == ["/usr/bin/npx", "chronus", "add", "sdk/core/azure-core"]
+
+    @patch("azpysdk.changelog.subprocess.call", return_value=0)
+    @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npx")
+    def test_add_detects_package_from_cwd(self, mock_which, mock_call):
+        """When CWD is inside a package dir and no package arg is given, detect it."""
+        parser = _build_parser()
+        args = parser.parse_args(["changelog", "add"])
+        pkg_dir = os.path.join(REPO_ROOT, "sdk", "storage", "azure-storage-blob")
+        with patch("os.getcwd", return_value=pkg_dir):
+            result = args.func(args)
+        assert result == 0
+        cmd = mock_call.call_args[0][0]
+        assert cmd == ["/usr/bin/npx", "chronus", "add", "sdk/storage/azure-storage-blob"]
+
+    @patch("azpysdk.changelog.subprocess.call", return_value=0)
+    @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npx")
+    def test_add_detects_package_from_subdirectory(self, mock_which, mock_call):
+        """When CWD is a subdirectory of a package, detect the package root."""
+        parser = _build_parser()
+        args = parser.parse_args(["changelog", "add"])
+        sub_dir = os.path.join(REPO_ROOT, "sdk", "storage", "azure-storage-blob", "azure", "storage", "blob")
+        with patch("os.getcwd", return_value=sub_dir):
+            result = args.func(args)
+        assert result == 0
+        cmd = mock_call.call_args[0][0]
+        assert cmd == ["/usr/bin/npx", "chronus", "add", "sdk/storage/azure-storage-blob"]
+
+    @patch("azpysdk.changelog.subprocess.call", return_value=0)
+    @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npx")
+    def test_add_explicit_package_overrides_cwd(self, mock_which, mock_call):
+        """An explicit package argument takes precedence over CWD detection."""
+        parser = _build_parser()
+        args = parser.parse_args(["changelog", "add", "sdk/core/azure-core"])
+        pkg_dir = os.path.join(REPO_ROOT, "sdk", "storage", "azure-storage-blob")
+        with patch("os.getcwd", return_value=pkg_dir):
+            result = args.func(args)
         assert result == 0
         cmd = mock_call.call_args[0][0]
         assert cmd == ["/usr/bin/npx", "chronus", "add", "sdk/core/azure-core"]
@@ -132,7 +174,6 @@ class TestChangelogExecution:
         args = parser.parse_args(["changelog", "verify"])
         args.func(args)
         _, kwargs = mock_call.call_args
-        from azpysdk.changelog import REPO_ROOT
         assert kwargs["cwd"] == REPO_ROOT
 
     @patch("azpysdk.changelog.subprocess.call", return_value=1)
@@ -142,6 +183,45 @@ class TestChangelogExecution:
         args = parser.parse_args(["changelog", "verify"])
         result = args.func(args)
         assert result == 1
+
+
+# ---------------------------------------------------------------------------
+# CWD detection unit tests
+# ---------------------------------------------------------------------------
+
+
+class TestDetectPackageFromCwd:
+    """Test the _detect_package_from_cwd helper directly."""
+
+    def test_at_package_root(self):
+        c = changelog()
+        with patch("os.getcwd", return_value=os.path.join(REPO_ROOT, "sdk", "core", "azure-core")):
+            assert c._detect_package_from_cwd() == "sdk/core/azure-core"
+
+    def test_inside_package_subdir(self):
+        c = changelog()
+        with patch("os.getcwd", return_value=os.path.join(REPO_ROOT, "sdk", "core", "azure-core", "azure", "core")):
+            assert c._detect_package_from_cwd() == "sdk/core/azure-core"
+
+    def test_at_repo_root(self):
+        c = changelog()
+        with patch("os.getcwd", return_value=REPO_ROOT):
+            assert c._detect_package_from_cwd() is None
+
+    def test_at_sdk_dir(self):
+        c = changelog()
+        with patch("os.getcwd", return_value=os.path.join(REPO_ROOT, "sdk")):
+            assert c._detect_package_from_cwd() is None
+
+    def test_at_service_dir(self):
+        c = changelog()
+        with patch("os.getcwd", return_value=os.path.join(REPO_ROOT, "sdk", "storage")):
+            assert c._detect_package_from_cwd() is None
+
+    def test_outside_repo(self):
+        c = changelog()
+        with patch("os.getcwd", return_value="/tmp"):
+            assert c._detect_package_from_cwd() is None
 
 
 # ---------------------------------------------------------------------------
