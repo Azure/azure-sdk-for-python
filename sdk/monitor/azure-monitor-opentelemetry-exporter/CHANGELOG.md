@@ -7,6 +7,8 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Suppress internal sdkstats HTTP pipeline logs from appearing in user's logs
+  ([#45966](https://github.com/Azure/azure-sdk-for-python/pull/45966))
 - Kubernetes pod name takes precedence when populating `cloud_RoleInstance`
   ([#45884](https://github.com/Azure/azure-sdk-for-python/pull/45884))
 
