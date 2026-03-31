@@ -97,4 +97,5 @@ opentelemetry-exporter-otlp-proto-grpc
 agent-framework-core
 langchain
 langchain-openai
-azure-ai-language-questionansweringgithub-copilot-sdk
+azure-ai-language-questionanswering
+github-copilot-sdk
