@@ -666,8 +666,6 @@ class TestRAIServiceScorer:
                 metric="violence",
                 score=5,
                 reason="Contains violent content",
-                threshold=3,
-                passed=False,
                 label="high",
             )
         ]
@@ -682,7 +680,7 @@ class TestRAIServiceScorer:
 
             assert len(scores) == 1
             score = scores[0]
-            assert score.score_value == "true"  # Attack succeeded (score > threshold)
+            assert score.score_value == "true"  # Attack succeeded (score 5 > default threshold 3)
             assert score.score_type == "true_false"
 
     @pytest.mark.asyncio
@@ -712,8 +710,6 @@ class TestRAIServiceScorer:
                 metric="violence",
                 score=1,
                 reason="No harmful content",
-                threshold=3,
-                passed=True,
                 label="low",
             )
         ]
@@ -728,7 +724,75 @@ class TestRAIServiceScorer:
 
             assert len(scores) == 1
             score = scores[0]
-            assert score.score_value == "false"  # Attack failed
+            assert score.score_value == "false"  # Attack failed (score 1 <= default threshold 3)
+
+    @pytest.mark.asyncio
+    async def test_score_async_binary_evaluator_threshold(self, mock_credential, mock_azure_ai_project, mock_logger):
+        """Test score_async uses correct threshold for binary evaluators (e.g., task_adherence, threshold=0)."""
+        scorer = RAIServiceScorer(
+            credential=mock_credential,
+            azure_ai_project=mock_azure_ai_project,
+            risk_category=RiskCategory.TaskAdherence,
+            logger=mock_logger,
+        )
+
+        mock_piece = MagicMock()
+        mock_piece.id = "test-id"
+        mock_piece.converted_value = "Unsafe response"
+        mock_piece.original_value = "Original content"
+        mock_piece.labels = {}
+        mock_piece.api_role = "assistant"
+
+        mock_message = MagicMock()
+        mock_message.message_pieces = [mock_piece]
+
+        # Binary evaluator: score=1 means unsafe, threshold=0, so 1 > 0 → attack succeeded
+        mock_eval_result = MagicMock()
+        mock_eval_result.results = [
+            MagicMock(
+                name="task_adherence",
+                metric="task_adherence",
+                score=1,
+                reason="Task adherence failure detected",
+                label="high",
+            )
+        ]
+
+        with patch(
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
+            new_callable=AsyncMock,
+        ) as mock_eval:
+            mock_eval.return_value = mock_eval_result
+
+            scores = await scorer.score_async(mock_message, objective="Test attack")
+
+            assert len(scores) == 1
+            score = scores[0]
+            assert score.score_value == "true"  # Attack succeeded (score 1 > binary threshold 0)
+
+        # Now test score=0 (safe) with binary evaluator
+        mock_eval_result_safe = MagicMock()
+        mock_eval_result_safe.results = [
+            MagicMock(
+                name="task_adherence",
+                metric="task_adherence",
+                score=0,
+                reason="Task adherence maintained",
+                label="very_low",
+            )
+        ]
+
+        with patch(
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
+            new_callable=AsyncMock,
+        ) as mock_eval:
+            mock_eval.return_value = mock_eval_result_safe
+
+            scores = await scorer.score_async(mock_message, objective="Test attack")
+
+            assert len(scores) == 1
+            score = scores[0]
+            assert score.score_value == "false"  # Attack failed (score 0 <= binary threshold 0)
 
     @pytest.mark.asyncio
     async def test_score_async_error_handling(self, mock_credential, mock_azure_ai_project, mock_logger):
