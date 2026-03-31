@@ -1,5 +1,9 @@
 # Release History
 
+## 37.3.0b1 (2026-03-31)
+
+change log generation failed!!! You need to write it manually!!!
+
 ## 37.2.0 (2026-01-27)
 
 ### Features Added
