@@ -23,7 +23,7 @@ trial:
   environment_variables:
     test_var1: "set"
     AZUREML_COMPUTE_USE_COMMON_RUNTIME: "false"
-compute: azureml:int-compute
+compute: azureml:testCompute
 limits:
   max_total_trials: 1
   max_concurrent_trials: 10

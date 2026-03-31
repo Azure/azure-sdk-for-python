@@ -45,6 +45,49 @@ class AccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Premium access tier."""
     COLD = "Cold"
     """The Cold access tier."""
+    SMART = "Smart"
+
+
+class AccessTierOptional(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AccessTierOptional."""
+
+    P4 = "P4"
+    P6 = "P6"
+    P10 = "P10"
+    P15 = "P15"
+    P20 = "P20"
+    P30 = "P30"
+    P40 = "P40"
+    P50 = "P50"
+    P60 = "P60"
+    P70 = "P70"
+    P80 = "P80"
+    HOT = "Hot"
+    COOL = "Cool"
+    ARCHIVE = "Archive"
+    COLD = "Cold"
+    SMART = "Smart"
+
+
+class AccessTierRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AccessTierRequired."""
+
+    P4 = "P4"
+    P6 = "P6"
+    P10 = "P10"
+    P15 = "P15"
+    P20 = "P20"
+    P30 = "P30"
+    P40 = "P40"
+    P50 = "P50"
+    P60 = "P60"
+    P70 = "P70"
+    P80 = "P80"
+    HOT = "Hot"
+    COOL = "Cool"
+    ARCHIVE = "Archive"
+    COLD = "Cold"
+    SMART = "Smart"
 
 
 class AccountKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -71,6 +114,7 @@ class ArchiveStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The archive status is rehydrating pending to cool."""
     REHYDRATE_PENDING_TO_COLD = "rehydrate-pending-to-cold"
     """The archive status is rehydrating pending to archive."""
+    REHYDRATE_PENDING_TO_SMART = "rehydrate-pending-to-smart"
 
 
 class BlobCopySourceTags(str, Enum, metaclass=CaseInsensitiveEnumMeta):

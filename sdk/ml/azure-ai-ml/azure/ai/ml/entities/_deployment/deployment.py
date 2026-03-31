@@ -10,7 +10,7 @@ from os import PathLike
 from typing import IO, TYPE_CHECKING, Any, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import BatchDeploymentData
-from azure.ai.ml._restclient.v2022_05_01.models import OnlineDeploymentData
+from azure.ai.ml._restclient.arm_ml_service.models import OnlineDeployment as OnlineDeploymentData
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
