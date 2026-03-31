@@ -1,11 +1,10 @@
 {
-  "commit": "220cb11d47089e323cf2272382ad0613f1863d7a",
+  "apiVersion": "2026-03-01-preview",
+  "apiVersions": {
+    "Microsoft.AzureArcData": "2026-03-01-preview"
+  },
+  "commit": "acc119306111364ddc995a468da35e0ddc59ecb1",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.10.2",
-  "use": [
-    "@autorest/python@6.50.0",
-    "@autorest/modelerfour@4.27.0"
-  ],
-  "autorest_command": "autorest specification/azurearcdata/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=/home/v-chenjiang/spec/worktrees/sdk-azure-mgmt-azurearcdata/sdk --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/azurearcdata/resource-manager/readme.md"
+  "typespec_src": "specification/azurearcdata/AzureArcData.Management",
+  "emitterVersion": "0.61.2"
 }
