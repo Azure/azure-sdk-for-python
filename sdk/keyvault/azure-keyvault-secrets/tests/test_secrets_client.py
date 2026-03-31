@@ -11,7 +11,7 @@ from unittest.mock import Mock, patch
 import pytest
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.secrets import KeyVaultSecret, SecretClient
+from azure.keyvault.secrets import ContentType, KeyVaultSecret, SecretClient
 from azure.keyvault.secrets._generated import models as _generated_models
 from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
 from dateutil import parser as date_parse
@@ -394,7 +394,7 @@ class TestSecretClient(KeyVaultTestCase):
         created = client.set_secret(secret_name, "secret-value")
 
         try:
-            result = client.get_secret(created.name, out_content_type="application/x-pem-file")
+            result = client.get_secret(created.name, out_content_type=ContentType.PEM)
             assert result.name == created.name
         except HttpResponseError as error:
             assert error.status_code in (400, 404)
@@ -451,10 +451,10 @@ def test_get_secret_forwards_out_content_type_to_generated_client():
         generated_models=_generated_models,
     )
 
-    client.get_secret("name", out_content_type="application/x-pem-file")
+    client.get_secret("name", out_content_type=ContentType.PEM)
 
     generated_client.get_secret.assert_called_once_with(
         secret_name="name",
         secret_version="",
-        out_content_type="application/x-pem-file",
+        out_content_type=ContentType.PEM,
     )
