@@ -56,11 +56,10 @@
   - Method `SharedPrivateLinkResourcesOperations.list_by_service` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
   - Method `UsagesOperations.list_by_subscription` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
   - Deleted or renamed model `SearchManagementRequestOptions`
-  - Deleted or renamed operation group `SearchManagementClientOperationsMixin`
 
 ### Other Changes
 
-  - Deleted model `AsyncOperationResult`/`ListQueryKeysResult`/`PrivateLinkResourcesResult`/`SharedPrivateLinkResourceAsyncOperationResult` which actually were not used by SDK users
+  - Deleted model `AsyncOperationResult`/`ListQueryKeysResult`/`PrivateLinkResourcesResult`/`SharedPrivateLinkResourceAsyncOperationResult`/`SearchManagementClientOperationsMixin` which actually were not used by SDK users
 
 ## 9.2.0 (2025-07-21)
 
