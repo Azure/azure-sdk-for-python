@@ -1,17 +1,22 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from typing import Optional
+
+from .id_generator._foundry_id_generator import FoundryIdGenerator
+from .id_generator._id_generator import IdGenerator
 from ...logger import get_logger
 from ...models import CreateResponse
-from ...models.projects import AgentId, AgentReference, ResponseConversation1
-from .id_generator.foundry_id_generator import FoundryIdGenerator
-from .id_generator.id_generator import IdGenerator
+from ...models._projects import AgentId, AgentReference, ResponseConversation1
 
 logger = get_logger()
 
 
 class AgentRunContext:
-    def __init__(self, payload: dict):
+    """
+    :meta private:
+    """
+    def __init__(self, payload: dict) -> None:
         self._raw_payload = payload
         self._request = _deserialize_create_response(payload)
         self._id_generator = FoundryIdGenerator.from_request(payload)
@@ -36,17 +41,17 @@ class AgentRunContext:
         return self._response_id
 
     @property
-    def conversation_id(self) -> str:
+    def conversation_id(self) -> Optional[str]:
         return self._conversation_id
 
     @property
     def stream(self) -> bool:
         return self._stream
 
-    def get_agent_id_object(self) -> AgentId:
+    def get_agent_id_object(self) -> Optional[AgentId]:
         agent = self.request.get("agent")
         if not agent:
-            return None   # type: ignore
+            return None
         return AgentId(
             {
                 "type": agent.type,
@@ -55,9 +60,9 @@ class AgentRunContext:
             }
         )
 
-    def get_conversation_object(self) -> ResponseConversation1:
+    def get_conversation_object(self) -> Optional[ResponseConversation1]:
         if not self._conversation_id:
-            return None   # type: ignore
+            return None
         return ResponseConversation1(id=self._conversation_id)
 
 
@@ -67,10 +72,14 @@ def _deserialize_create_response(payload: dict) -> CreateResponse:
     raw_agent_reference = payload.get("agent")
     if raw_agent_reference:
         _deserialized["agent"] = _deserialize_agent_reference(raw_agent_reference)
+
+    tools = payload.get("tools")
+    if tools:
+        _deserialized["tools"] = list(tools)
     return _deserialized
 
 
-def _deserialize_agent_reference(payload: dict) -> AgentReference:
+def _deserialize_agent_reference(payload: dict) -> Optional[AgentReference]:
     if not payload:
-        return None   # type: ignore
+        return None
     return AgentReference(**payload)
