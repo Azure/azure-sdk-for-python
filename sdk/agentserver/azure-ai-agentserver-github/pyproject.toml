@@ -32,12 +32,13 @@ requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
+include = [
+    "azure.ai.agentserver.github",
+]
 exclude = [
     "tests*",
     "samples*",
     "doc*",
-    "azure",
-    "azure.ai",
 ]
 
 [tool.setuptools.dynamic]
