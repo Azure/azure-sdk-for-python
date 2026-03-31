@@ -1,3 +1,47 @@
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-core-tracing-opentelemetry"
+authors = [
+    {name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com"},
+]
+description = "Microsoft Azure Core OpenTelemetry plugin Library for Python"
+keywords = ["azure", "azure sdk"]
+requires-python = ">=3.8"
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "opentelemetry-api>=1.12.0",
+    "azure-core>=1.24.0",
+]
+dynamic = ["version", "readme"]
+
+[project.urls]
+Repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry"
+
+[tool.setuptools.dynamic]
+version = {attr = "azure.core.tracing.ext.opentelemetry_span._version.VERSION"}
+readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
+
+[tool.setuptools.packages.find]
+include = ["azure.core.tracing.ext.opentelemetry_span*"]
+
+[tool.setuptools.package-data]
+pytyped = ["py.typed"]
+
 [tool.azure-sdk-build]
 pyright = false
 black = true

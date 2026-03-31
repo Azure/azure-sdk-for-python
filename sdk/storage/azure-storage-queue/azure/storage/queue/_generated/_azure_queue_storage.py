@@ -17,7 +17,12 @@ from azure.core.rest import HttpRequest, HttpResponse
 from . import models as _models
 from ._configuration import AzureQueueStorageConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import MessageIdOperations, MessagesOperations, QueueOperations, ServiceOperations
+from .operations import (
+    MessageIdOperations,
+    MessagesOperations,
+    QueueOperations,
+    ServiceOperations,
+)
 
 
 class AzureQueueStorage:  # pylint: disable=client-accepts-api-version-keyword
@@ -59,7 +64,7 @@ class AzureQueueStorage:  # pylint: disable=client-accepts-api-version-keyword
                 self._config.custom_hook_policy,
                 self._config.logging_policy,
                 policies.DistributedTracingPolicy(**kwargs),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                (policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None),
                 self._config.http_logging_policy,
             ]
         self._client: PipelineClient = PipelineClient(base_url=base_url, policies=_policies, **kwargs)

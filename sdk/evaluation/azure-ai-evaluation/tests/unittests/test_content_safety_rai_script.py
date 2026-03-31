@@ -4,7 +4,7 @@ import os
 import pathlib
 import json, html, re
 from typing import Any, Iterator, MutableMapping, Optional
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
@@ -14,6 +14,7 @@ from azure.ai.evaluation._common.rai_service import (
     ensure_service_availability,
     evaluate_with_rai_service,
     evaluate_with_rai_service_sync,
+    evaluate_with_rai_service_sync_multimodal,
     fetch_or_reuse_token,
     fetch_result,
     get_rai_svc_url,
@@ -485,6 +486,167 @@ class TestContentSafetyEvaluator:
             }
             formatted_payload = get_formatted_template(input_kwargs, "DEFAULT")
             assert html.unescape(re.match("\<Human\>{(.*?)}\<", formatted_payload)[1]) == text
+
+    @pytest.mark.asyncio
+    @patch("azure.ai.evaluation._common.rai_service.evaluate_with_rai_service", new_callable=AsyncMock)
+    async def test_evaluate_with_rai_service_sync_legacy_routes_to_legacy(self, legacy_mock):
+        """Verify that use_legacy_endpoint=True delegates to evaluate_with_rai_service."""
+        legacy_mock.return_value = {"violence": "Very low", "violence_score": 0}
+
+        result = await evaluate_with_rai_service_sync(
+            data={"query": "test", "response": "test"},
+            metric_name=EvaluationMetrics.VIOLENCE,
+            project_scope={
+                "subscription_id": "fake-id",
+                "project_name": "fake-name",
+                "resource_group_name": "fake-group",
+            },
+            credential=DefaultAzureCredential(),
+            use_legacy_endpoint=True,
+        )
+
+        legacy_mock.assert_called_once()
+        assert result == {"violence": "Very low", "violence_score": 0}
+
+    @pytest.mark.asyncio
+    @patch("azure.ai.evaluation._common.rai_service.evaluate_with_rai_service", new_callable=AsyncMock)
+    async def test_evaluate_with_rai_service_sync_legacy_maps_hate_unfairness_to_hate_fairness(self, legacy_mock):
+        """When use_legacy_endpoint=True and metric is hate_unfairness, it should be mapped to hate_fairness."""
+        legacy_mock.return_value = {}
+
+        # Test with enum value
+        await evaluate_with_rai_service_sync(
+            data={"query": "test", "response": "test"},
+            metric_name=EvaluationMetrics.HATE_UNFAIRNESS,
+            project_scope={
+                "subscription_id": "fake-id",
+                "project_name": "fake-name",
+                "resource_group_name": "fake-group",
+            },
+            credential=DefaultAzureCredential(),
+            use_legacy_endpoint=True,
+        )
+
+        _, kwargs = legacy_mock.call_args
+        assert kwargs["metric_name"] == "hate_fairness"
+
+        legacy_mock.reset_mock()
+
+        # Test with string value
+        await evaluate_with_rai_service_sync(
+            data={"query": "test", "response": "test"},
+            metric_name="hate_unfairness",
+            project_scope={
+                "subscription_id": "fake-id",
+                "project_name": "fake-name",
+                "resource_group_name": "fake-group",
+            },
+            credential=DefaultAzureCredential(),
+            use_legacy_endpoint=True,
+        )
+
+        _, kwargs = legacy_mock.call_args
+        assert kwargs["metric_name"] == "hate_fairness"
+
+    @pytest.mark.asyncio
+    @patch("azure.ai.evaluation._common.rai_service.fetch_or_reuse_token")
+    @patch("azure.ai.evaluation._common.rai_service.get_rai_svc_url")
+    @patch("azure.ai.evaluation._common.rai_service.ensure_service_availability")
+    @patch("azure.ai.evaluation._common.rai_service.get_sync_http_client_with_retry")
+    async def test_evaluate_with_rai_service_sync_maps_hate_fairness_to_hate_unfairness(
+        self, http_client_mock, ensure_avail_mock, get_url_mock, fetch_token_mock
+    ):
+        """When use_legacy_endpoint=False and metric is hate_fairness, payload should use hate_unfairness."""
+        fetch_token_mock.return_value = "fake-token"
+        get_url_mock.return_value = "https://fake-rai-url.com"
+        ensure_avail_mock.return_value = None
+
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"results": []}
+        mock_client = MagicMock()
+        mock_client.post.return_value = mock_response
+        mock_client.__enter__ = MagicMock(return_value=mock_client)
+        mock_client.__exit__ = MagicMock(return_value=False)
+        http_client_mock.return_value = mock_client
+
+        # Test with enum value
+        await evaluate_with_rai_service_sync(
+            data={"query": "test", "response": "test"},
+            metric_name=EvaluationMetrics.HATE_FAIRNESS,
+            project_scope={
+                "subscription_id": "fake-id",
+                "project_name": "fake-name",
+                "resource_group_name": "fake-group",
+            },
+            credential=DefaultAzureCredential(),
+            use_legacy_endpoint=False,
+        )
+
+        # Verify the POST payload uses hate_unfairness
+        post_call_args = mock_client.post.call_args
+        payload = json.loads(post_call_args[1]["data"] if "data" in post_call_args[1] else post_call_args[0][1])
+        evaluator_name = payload["testing_criteria"][0]["evaluator_name"]
+        assert evaluator_name == "builtin.hate_unfairness"
+
+        mock_client.post.reset_mock()
+
+        # Test with string value
+        await evaluate_with_rai_service_sync(
+            data={"query": "test", "response": "test"},
+            metric_name="hate_fairness",
+            project_scope={
+                "subscription_id": "fake-id",
+                "project_name": "fake-name",
+                "resource_group_name": "fake-group",
+            },
+            credential=DefaultAzureCredential(),
+            use_legacy_endpoint=False,
+        )
+
+        post_call_args = mock_client.post.call_args
+        payload = json.loads(post_call_args[1]["data"] if "data" in post_call_args[1] else post_call_args[0][1])
+        evaluator_name = payload["testing_criteria"][0]["evaluator_name"]
+        assert evaluator_name == "builtin.hate_unfairness"
+
+    @pytest.mark.asyncio
+    @patch("azure.ai.evaluation._common.rai_service.evaluate_with_rai_service_multimodal", new_callable=AsyncMock)
+    async def test_evaluate_with_rai_service_sync_multimodal_legacy_maps_metric(self, legacy_mm_mock):
+        """When use_legacy_endpoint=True and metric is hate_unfairness, multimodal should map to hate_fairness."""
+        legacy_mm_mock.return_value = {}
+
+        await evaluate_with_rai_service_sync_multimodal(
+            messages=[{"role": "user", "content": "test"}],
+            metric_name=EvaluationMetrics.HATE_UNFAIRNESS,
+            project_scope={
+                "subscription_id": "fake-id",
+                "project_name": "fake-name",
+                "resource_group_name": "fake-group",
+            },
+            credential=DefaultAzureCredential(),
+            use_legacy_endpoint=True,
+        )
+
+        _, kwargs = legacy_mm_mock.call_args
+        assert kwargs["metric_name"] == "hate_fairness"
+
+        legacy_mm_mock.reset_mock()
+
+        # Also test with string input
+        await evaluate_with_rai_service_sync_multimodal(
+            messages=[{"role": "user", "content": "test"}],
+            metric_name="hate_unfairness",
+            project_scope={
+                "subscription_id": "fake-id",
+                "project_name": "fake-name",
+                "resource_group_name": "fake-group",
+            },
+            credential=DefaultAzureCredential(),
+            use_legacy_endpoint=True,
+        )
+
+        _, kwargs = legacy_mm_mock.call_args
+        assert kwargs["metric_name"] == "hate_fairness"
 
 
 class TestParseEvalResult:

@@ -45,7 +45,33 @@ class TestDurableTaskMgmtSchedulersOperationsAsync(AzureMgmtRecordedTestCase):
                         "ipAllowlist": ["str"],
                         "sku": {"name": "str", "capacity": 0, "redundancyState": "str"},
                         "endpoint": "str",
+                        "privateEndpointConnections": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "properties": {
+                                    "privateLinkServiceConnectionState": {
+                                        "actionsRequired": "str",
+                                        "description": "str",
+                                        "status": "str",
+                                    },
+                                    "groupIds": ["str"],
+                                    "privateEndpoint": {"id": "str"},
+                                    "provisioningState": "str",
+                                },
+                                "systemData": {
+                                    "createdAt": "2020-02-20 00:00:00",
+                                    "createdBy": "str",
+                                    "createdByType": "str",
+                                    "lastModifiedAt": "2020-02-20 00:00:00",
+                                    "lastModifiedBy": "str",
+                                    "lastModifiedByType": "str",
+                                },
+                                "type": "str",
+                            }
+                        ],
                         "provisioningState": "str",
+                        "publicNetworkAccess": "str",
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -76,6 +102,7 @@ class TestDurableTaskMgmtSchedulersOperationsAsync(AzureMgmtRecordedTestCase):
                         "endpoint": "str",
                         "ipAllowlist": ["str"],
                         "provisioningState": "str",
+                        "publicNetworkAccess": "str",
                         "sku": {"capacity": 0, "name": "str", "redundancyState": "str"},
                     },
                     "tags": {"str": "str"},
@@ -113,6 +140,127 @@ class TestDurableTaskMgmtSchedulersOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_schedulers_list_by_subscription(self, resource_group):
         response = self.client.schedulers.list_by_subscription()
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_schedulers_get_private_link(self, resource_group):
+        response = await self.client.schedulers.get_private_link(
+            resource_group_name=resource_group.name,
+            scheduler_name="str",
+            private_link_resource_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_schedulers_list_private_links(self, resource_group):
+        response = self.client.schedulers.list_private_links(
+            resource_group_name=resource_group.name,
+            scheduler_name="str",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_schedulers_get_private_endpoint_connection(self, resource_group):
+        response = await self.client.schedulers.get_private_endpoint_connection(
+            resource_group_name=resource_group.name,
+            scheduler_name="str",
+            private_endpoint_connection_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_schedulers_begin_create_or_update_private_endpoint_connection(self, resource_group):
+        response = await (
+            await self.client.schedulers.begin_create_or_update_private_endpoint_connection(
+                resource_group_name=resource_group.name,
+                scheduler_name="str",
+                private_endpoint_connection_name="str",
+                resource={
+                    "id": "str",
+                    "name": "str",
+                    "properties": {
+                        "privateLinkServiceConnectionState": {
+                            "actionsRequired": "str",
+                            "description": "str",
+                            "status": "str",
+                        },
+                        "groupIds": ["str"],
+                        "privateEndpoint": {"id": "str"},
+                        "provisioningState": "str",
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
+                    "type": "str",
+                },
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_schedulers_begin_update_private_endpoint_connection(self, resource_group):
+        response = await (
+            await self.client.schedulers.begin_update_private_endpoint_connection(
+                resource_group_name=resource_group.name,
+                scheduler_name="str",
+                private_endpoint_connection_name="str",
+                properties={
+                    "properties": {
+                        "privateEndpoint": {"id": "str"},
+                        "privateLinkServiceConnectionState": {
+                            "actionsRequired": "str",
+                            "description": "str",
+                            "status": "str",
+                        },
+                    }
+                },
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_schedulers_begin_delete_private_endpoint_connection(self, resource_group):
+        response = await (
+            await self.client.schedulers.begin_delete_private_endpoint_connection(
+                resource_group_name=resource_group.name,
+                scheduler_name="str",
+                private_endpoint_connection_name="str",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_schedulers_list_private_endpoint_connections(self, resource_group):
+        response = self.client.schedulers.list_private_endpoint_connections(
+            resource_group_name=resource_group.name,
+            scheduler_name="str",
+        )
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

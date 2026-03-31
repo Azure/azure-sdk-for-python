@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2024-11-01",
+  "apiVersions": {
+    "Microsoft.KubernetesConfiguration": "2024-11-01"
+  },
+  "commit": "bf2f971b4319da9f5624da7f3c13d487be477897",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/kubernetesconfiguration/resource-manager/Microsoft.KubernetesConfiguration/extensions",
+  "emitterVersion": "0.61.0"
+}

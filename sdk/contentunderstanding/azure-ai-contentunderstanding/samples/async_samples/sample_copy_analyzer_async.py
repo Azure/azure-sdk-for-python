@@ -53,7 +53,9 @@ async def main() -> None:
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client:
         base_id = f"my_analyzer_{int(time.time())}"
         source_analyzer_id = f"{base_id}_source"
         target_analyzer_id = f"{base_id}_target"
@@ -102,10 +104,14 @@ async def main() -> None:
         source_analyzer_info = await client.get_analyzer(analyzer_id=source_analyzer_id)
         print(f"Source analyzer description: {source_analyzer_info.description}")
         if source_analyzer_info.tags:
-            print(f"Source analyzer tags: {', '.join(f'{k}={v}' for k, v in source_analyzer_info.tags.items())}")
+            print(
+                f"Source analyzer tags: {', '.join(f'{k}={v}' for k, v in source_analyzer_info.tags.items())}"
+            )
 
         # [START copy_analyzer]
-        print(f"\nCopying analyzer from '{source_analyzer_id}' to '{target_analyzer_id}'...")
+        print(
+            f"\nCopying analyzer from '{source_analyzer_id}' to '{target_analyzer_id}'..."
+        )
 
         poller = await client.begin_copy_analyzer(
             analyzer_id=target_analyzer_id,
@@ -128,13 +134,17 @@ async def main() -> None:
         )
 
         print(f"Updating target analyzer with production tag...")
-        await client.update_analyzer(analyzer_id=target_analyzer_id, resource=updated_analyzer)
+        await client.update_analyzer(
+            analyzer_id=target_analyzer_id, resource=updated_analyzer
+        )
 
         # Verify the update
         updated_target = await client.get_analyzer(analyzer_id=target_analyzer_id)
         print(f"Updated target analyzer description: {updated_target.description}")
         if updated_target.tags:
-            print(f"Updated target analyzer tag: {updated_target.tags.get('modelType', 'N/A')}")
+            print(
+                f"Updated target analyzer tag: {updated_target.tags.get('modelType', 'N/A')}"
+            )
         # [END update_and_verify_analyzer]
 
         # [START delete_copied_analyzers]

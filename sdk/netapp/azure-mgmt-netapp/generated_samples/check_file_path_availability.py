@@ -34,13 +34,13 @@ def main():
     response = client.net_app_resource.check_file_path_availability(
         location="eastus",
         body={
-            "name": "my-exact-filepth",
-            "subnetId": "/subscriptions/9760acf5-4638-11e7-9bdb-020073ca7778/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
+            "name": "my-exact-filepath",
+            "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-12-01/CheckFilePathAvailability.json
+# x-ms-original-file: 2025-12-15-preview/CheckFilePathAvailability.json
 if __name__ == "__main__":
     main()

@@ -527,7 +527,7 @@ class Settings:
 
     azure_cloud: PrioritizedSetting[Union[str, AzureClouds], AzureClouds] = PrioritizedSetting(
         "azure_cloud",
-        env_var="AZURE_CLOUD",
+        env_var="AZURE_SDK_CLOUD_CONF",
         convert=convert_azure_cloud,
         default=AzureClouds.AZURE_PUBLIC_CLOUD,
     )

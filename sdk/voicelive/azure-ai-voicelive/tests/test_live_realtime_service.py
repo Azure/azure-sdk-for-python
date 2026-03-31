@@ -807,17 +807,25 @@ class TestRealtimeService(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @VoiceLivePreparer()
-    @pytest.mark.flaky(reruns=1, reruns_delay=2)
-    @pytest.mark.parametrize("model", ["gpt-4o-realtime-preview"])
+    @pytest.mark.flaky(reruns=3, reruns_delay=2)
+    @pytest.mark.parametrize("model", ["gpt-realtime-mini"])
     @pytest.mark.parametrize(
-        "transcription_model", ["gpt-4o-transcribe", "gpt-4o-mini-transcribe", "gpt-4o-transcribe-diarize"]
+        "transcription_model",
+        [
+            "whisper-1",
+            "gpt-4o-transcribe",
+            "gpt-4o-mini-transcribe",
+            "gpt-4o-transcribe-diarize",
+            "azure-speech",
+            "mai-transcribe-1",
+        ],
     )
     @pytest.mark.parametrize("api_version", ["2025-05-01-preview", "2026-01-01-preview"])
     async def test_realtime_service_input_audio_transcription(
         self,
         test_data_dir: Path,
         model: str,
-        transcription_model: Literal["gpt-4o-transcribe", "gpt-4o-mini-transcribe", "gpt-4o-transcribe-diarize"],
+        transcription_model: Literal["whisper-1", "gpt-4o-transcribe", "gpt-4o-mini-transcribe", "gpt-4o-transcribe-diarize", "azure-speech", "mai-transcribe-1"],
         api_version: str,
         **kwargs,
     ):
@@ -832,12 +840,10 @@ class TestRealtimeService(AzureRecordedTestCase):
         ) as conn:
             input_audio_transcription = AudioInputTranscriptionOptions(
                 model=transcription_model,
-                language="en"
             )
             session = RequestSession(
                 input_audio_transcription=input_audio_transcription,
-                instructions="You are a helpful assistant. Please respond briefly.",
-                turn_detection=ServerVad(),
+                instructions="You are a helpful assistant.",
             )
 
             await conn.session.update(session=session)
@@ -1240,7 +1246,7 @@ class TestRealtimeService(AzureRecordedTestCase):
     @pytest.mark.parametrize(
         ("model", "sampling_rate"),
         [
-            pytest.param("gpt-4o-realtime-preview", 16000, id="gpt4o_realtime_16kHz_no_resample"),
+            pytest.param("gpt-4o-realtime", 16000, id="gpt4o_realtime_16kHz_no_resample"),
             pytest.param("gpt-4o-realtime", 44100, id="gpt4o_realtime_44kHz_no_resample"),
             pytest.param("gpt-4o-realtime", 8000, id="gpt4o_realtime_8kHz_no_resample"),
             pytest.param("gpt-4o", 16000, id="gpt4o_16kHz_no_resample"),
@@ -1279,7 +1285,7 @@ class TestRealtimeService(AzureRecordedTestCase):
                 input_audio_sampling_rate=sampling_rate,
                 input_audio_transcription=_get_speech_recognition_setting(model),
                 instructions="You are a helpful assistant. Please respond briefly to the user's question about lakes.",
-                turn_detection=ServerVad(),
+                turn_detection=ServerVad(silence_duration_ms=200),
             )
 
             await conn.session.update(session=session)
@@ -1291,7 +1297,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             speech_started = await _wait_for_event(conn, {ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED}, 10)
             assert speech_started.audio_start_ms == 0
             speech_stopped = await _wait_for_event(conn, {ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED}, 10)
-            assert speech_stopped.audio_end_ms == pytest.approx(1664, rel=2e-2)
+            assert speech_stopped.audio_end_ms == pytest.approx(1680, abs=50)
 
             _, audio_bytes = await _collect_event(conn, event_type=ServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DELTA)
             assert audio_bytes > 50 * 1000, f"Output audio too short for {audio_file}: {audio_bytes} bytes"
