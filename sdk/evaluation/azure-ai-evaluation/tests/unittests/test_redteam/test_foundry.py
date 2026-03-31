@@ -1104,7 +1104,7 @@ class TestScenarioOrchestrator:
     @pytest.mark.asyncio
     async def test_execute_swallows_run_async_exception_with_partial_results(self, mock_logger):
         """Test that when run_async raises, execute() does not propagate the exception
-        and _scenario_result captures partial results from _result if available."""
+        and _scenario_result captures partial results from memory if available."""
         from pyrit.scenario.foundry import FoundryStrategy
 
         mock_target = MagicMock()
@@ -1119,17 +1119,23 @@ class TestScenarioOrchestrator:
             logger=mock_logger,
         )
 
-        # Simulate partial results stored on the internal _result attribute
+        # Simulate partial results stored in PyRIT's memory database
         partial_result = MagicMock()
+        partial_result.attack_results = {"group1": [MagicMock()]}
+        mock_memory = MagicMock()
+        mock_memory.get_scenario_results.return_value = [partial_result]
+
         mock_foundry = AsyncMock()
         mock_foundry.initialize_async = AsyncMock()
         mock_foundry.run_async = AsyncMock(side_effect=RuntimeError("mid-execution failure"))
-        mock_foundry._result = partial_result
+        mock_foundry._scenario_result_id = "test-result-id"
 
         with patch(
             "azure.ai.evaluation.red_team._foundry._scenario_orchestrator.FoundryScenario",
             return_value=mock_foundry,
-        ), patch("pyrit.executor.attack.AttackScoringConfig"):
+        ), patch("pyrit.executor.attack.AttackScoringConfig"), patch.object(
+            orchestrator, "get_memory", return_value=mock_memory
+        ):
             # Should NOT raise
             result = await orchestrator.execute(
                 dataset_config=mock_dataset,
@@ -1137,14 +1143,15 @@ class TestScenarioOrchestrator:
             )
 
             assert result == orchestrator
-            # Partial result should be captured
+            # Partial result should be recovered from memory
             assert orchestrator._scenario_result is partial_result
+            mock_memory.get_scenario_results.assert_called_once_with(scenario_result_ids=["test-result-id"])
             mock_logger.warning.assert_called_once()
 
     @pytest.mark.asyncio
     async def test_execute_swallows_run_async_exception_no_partial_results(self, mock_logger):
-        """Test that when run_async raises and _result is absent, execute() still returns
-        normally with _scenario_result remaining None."""
+        """Test that when run_async raises and no scenario_result_id exists, execute() still
+        returns normally with _scenario_result remaining None."""
         from pyrit.scenario.foundry import FoundryStrategy
 
         mock_target = MagicMock()
@@ -1162,8 +1169,8 @@ class TestScenarioOrchestrator:
         mock_foundry = AsyncMock()
         mock_foundry.initialize_async = AsyncMock()
         mock_foundry.run_async = AsyncMock(side_effect=RuntimeError("total failure"))
-        # No _result attribute on mock_foundry (simulate missing private attr)
-        del mock_foundry._result
+        # _scenario_result_id is None — simulates scenario that failed before ID was assigned
+        mock_foundry._scenario_result_id = None
 
         with patch(
             "azure.ai.evaluation.red_team._foundry._scenario_orchestrator.FoundryScenario",
