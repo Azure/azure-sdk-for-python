@@ -109,3 +109,87 @@ def test_generation_is_deterministic_for_same_input(tmp_path: Path) -> None:
     second_output = out_path.read_text(encoding="utf-8")
 
     assert first_output == second_output
+
+
+def test_overlay_removes_required_field(tmp_path: Path) -> None:
+    """--overlay required:[] removes all required checks from the named schema."""
+    spec_path = tmp_path / "spec.json"
+    out_path = tmp_path / "_validators.py"
+    overlay_path = tmp_path / "overlay.yaml"
+
+    spec_path.write_text(_minimal_spec(), encoding="utf-8")
+    # overlay removes model from required
+    overlay_path.write_text("schemas:\n  CreateResponse:\n    required: []\n", encoding="utf-8")
+
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(_script_path()),
+            "--input",
+            str(spec_path),
+            "--output",
+            str(out_path),
+            "--root-schemas",
+            "CreateResponse",
+            "--overlay",
+            str(overlay_path),
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert proc.returncode == 0, proc.stderr
+    content = out_path.read_text(encoding="utf-8")
+    # "Required property 'model'" must not appear when required is cleared
+    assert "Required property 'model'" not in content
+
+
+def test_overlay_not_required_marks_field_nullable(tmp_path: Path) -> None:
+    """--overlay not_required removes a field from required and adds a None guard."""
+    spec_path = tmp_path / "spec.json"
+    out_path = tmp_path / "_validators.py"
+    overlay_path = tmp_path / "overlay.yaml"
+
+    spec_path.write_text(
+        """{
+  "paths": {},
+  "components": {
+    "schemas": {
+      "Item": {
+        "type": "object",
+        "required": ["type", "role"],
+        "properties": {
+          "type": {"type": "string"},
+          "role": {"type": "string"}
+        }
+      }
+    }
+  }
+}""",
+        encoding="utf-8",
+    )
+    overlay_path.write_text("schemas:\n  Item:\n    not_required:\n      - type\n", encoding="utf-8")
+
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(_script_path()),
+            "--input",
+            str(spec_path),
+            "--output",
+            str(out_path),
+            "--root-schemas",
+            "Item",
+            "--overlay",
+            str(overlay_path),
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert proc.returncode == 0, proc.stderr
+    content = out_path.read_text(encoding="utf-8")
+    # 'type' must NOT appear as a required property check
+    assert "Required property 'type'" not in content
+    # 'role' must still be required
+    assert "Required property 'role'" in content

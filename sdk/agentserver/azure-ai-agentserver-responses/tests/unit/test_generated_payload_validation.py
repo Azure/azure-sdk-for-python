@@ -50,7 +50,9 @@ def test_generated_create_response_validator_accepts_string_input() -> None:
 
 
 def test_generated_create_response_validator_accepts_array_input_items() -> None:
-    errors = validate_CreateResponse({"input": [{"type": "message"}]})
+    # ItemMessage requires role + content in addition to type (GAP-01: type is
+    # optional on input, but role/content remain required by the spec).
+    errors = validate_CreateResponse({"input": [{"type": "message", "role": "user", "content": "hello"}]})
     assert errors == []
 
 
@@ -74,23 +76,34 @@ def test_generated_create_response_validator_rejects_input_item_type_with_wrong_
     assert any(e["path"] == "$.input" and "Expected one of: string, array" in e["message"] for e in errors)
 
 
-@pytest.mark.parametrize(
-    "item_type",
-    [
-        "message",
-        "item_reference",
-        "function_call_output",
-        "computer_call_output",
-        "apply_patch_call_output",
-    ],
-)
+# Minimal valid payloads per item type, satisfying each schema's required fields.
+_VALID_INPUT_ITEMS: dict[str, dict] = {
+    "message": {"type": "message", "role": "user", "content": "hello"},
+    "item_reference": {"type": "item_reference", "id": "ref_123"},
+    "function_call_output": {"type": "function_call_output", "call_id": "call_123", "output": "result"},
+    "computer_call_output": {
+        "type": "computer_call_output",
+        "call_id": "call_123",
+        "output": {"type": "computer_screenshot"},
+    },
+    "apply_patch_call_output": {"type": "apply_patch_call_output", "call_id": "call_123", "status": "completed"},
+}
+
+
+@pytest.mark.parametrize("item_type", list(_VALID_INPUT_ITEMS))
 def test_generated_create_response_validator_accepts_multiple_input_item_types(item_type: str) -> None:
-    errors = validate_CreateResponse({"input": [{"type": item_type}]})
+    errors = validate_CreateResponse({"input": [_VALID_INPUT_ITEMS[item_type]]})
     assert errors == []
 
 
 def test_generated_create_response_validator_accepts_mixed_input_item_types() -> None:
     errors = validate_CreateResponse(
-        {"input": [{"type": "message"}, {"type": "item_reference"}, {"type": "function_call_output"}]}
+        {
+            "input": [
+                _VALID_INPUT_ITEMS["message"],
+                _VALID_INPUT_ITEMS["item_reference"],
+                _VALID_INPUT_ITEMS["function_call_output"],
+            ]
+        }
     )
     assert errors == []

@@ -33,14 +33,30 @@ def _iter_subschemas(schema: dict[str, Any]) -> list[dict[str, Any]]:
     if isinstance(additional, dict):
         nested.append(additional)
 
+    # Walk discriminator mapping refs so schemas like ItemMessage / FunctionTool
+    # that are only reachable via a discriminator are included in the reachable set
+    # (and therefore have the overlay applied before the emitter sees them).
+    disc = schema.get("discriminator")
+    if isinstance(disc, dict):
+        mapping = disc.get("mapping", {})
+        if isinstance(mapping, dict):
+            for ref_str in mapping.values():
+                if isinstance(ref_str, str):
+                    nested.append({"$ref": ref_str})
+
     return nested
 
 
 class SchemaWalker:
     """Collect schemas reachable from one or more roots."""
 
-    def __init__(self, schemas: dict[str, dict[str, Any]]) -> None:
+    def __init__(
+        self,
+        schemas: dict[str, dict[str, Any]],
+        overlay: dict[str, Any] | None = None,
+    ) -> None:
         self.schemas = schemas
+        self.overlay: dict[str, Any] = overlay or {}
         self.reachable: dict[str, dict[str, Any]] = {}
         self._visited: set[str] = set()
 
@@ -54,8 +70,60 @@ class SchemaWalker:
         if schema is None:
             return
 
+        schema = self._apply_overlay(name, dict(schema))
         self.reachable[name] = schema
         self._walk_schema(schema)
+
+    def _apply_overlay(self, name: str, schema: dict[str, Any]) -> dict[str, Any]:
+        """Apply overlay fixes to a schema.
+
+        Supports three overlay keys per schema entry:
+        - ``required``: replace the required list entirely.
+        - ``not_required``: remove individual fields from required and mark their
+          property schemas as ``nullable`` so ``None`` is accepted.
+        - ``properties``: merge per-property constraint overrides (e.g. minimum/maximum).
+        """
+        overlay_schemas = self.overlay.get("schemas", {})
+        # Try exact name first, then fall back to the name with any "Vendor." prefix stripped
+        # (e.g. "OpenAI.ItemMessage" -> "ItemMessage") to stay compatible with the overlay
+        # format shared with the C# generator, where TypeSpec uses bare names.
+        overlay_entry = overlay_schemas.get(name)
+        if not overlay_entry:
+            bare = name.rsplit(".", 1)[-1] if "." in name else None
+            if bare:
+                overlay_entry = overlay_schemas.get(bare)
+        if not overlay_entry:
+            return schema
+
+        # Replace required list entirely
+        if "required" in overlay_entry:
+            schema["required"] = list(overlay_entry["required"])
+
+        # Remove individual fields from required; mark those properties nullable
+        if "not_required" in overlay_entry:
+            current_required = list(schema.get("required", []))
+            for field in overlay_entry["not_required"]:
+                if field in current_required:
+                    current_required.remove(field)
+                # Mark property nullable so the emitter accepts None/absent values
+                props = schema.get("properties")
+                if isinstance(props, dict) and field in props:
+                    props[field] = dict(props[field])
+                    props[field]["nullable"] = True
+            schema["required"] = current_required
+
+        # Merge property-level constraint overrides
+        if "properties" in overlay_entry:
+            if "properties" not in schema:
+                schema["properties"] = {}
+            for prop_name, constraints in overlay_entry["properties"].items():
+                if prop_name not in schema["properties"]:
+                    schema["properties"][prop_name] = {}
+                else:
+                    schema["properties"][prop_name] = dict(schema["properties"][prop_name])
+                schema["properties"][prop_name].update(constraints)
+
+        return schema
 
     def _walk_schema(self, schema: dict[str, Any]) -> None:
         """Walk nested schema branches."""

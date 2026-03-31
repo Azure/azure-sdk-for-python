@@ -37,7 +37,24 @@ def _load_spec(input_path: Path) -> dict[str, Any]:
     return loaded_yaml
 
 
-def _build_output(spec: dict[str, Any], roots: list[str]) -> str:
+def _load_overlay(overlay_path: Path | None) -> dict[str, Any]:
+    """Load an optional validation overlay YAML file."""
+    if overlay_path is None:
+        return {}
+    text = overlay_path.read_text(encoding="utf-8")
+    try:
+        import yaml  # type: ignore[import-not-found]
+    except ModuleNotFoundError as exc:
+        raise ValueError(
+            "PyYAML is required to load the overlay file. Run: pip install pyyaml"
+        ) from exc
+    loaded = yaml.safe_load(text)
+    if not isinstance(loaded, dict):
+        raise ValueError(f"Overlay file '{overlay_path}' must contain a top-level object")
+    return loaded
+
+
+def _build_output(spec: dict[str, Any], roots: list[str], overlay: dict[str, Any] | None = None) -> str:
     """Create deterministic validator module source text."""
     schemas = spec.get("components", {}).get("schemas", {})
     if not isinstance(schemas, dict):
@@ -87,7 +104,7 @@ def _build_output(spec: dict[str, Any], roots: list[str]) -> str:
             seen.add(root)
             merged_roots.append(root)
 
-    walker = SchemaWalker(schemas)
+    walker = SchemaWalker(schemas, overlay=overlay)
     for root in merged_roots:
         walker.walk(root)
 
@@ -102,14 +119,17 @@ def main() -> int:
     parser.add_argument("--input", required=True, help="Path to OpenAPI JSON file")
     parser.add_argument("--output", required=True, help="Output Python module path")
     parser.add_argument("--root-schemas", default="", help="Comma-separated root schema names")
+    parser.add_argument("--overlay", default=None, help="Path to validation overlay YAML (optional)")
     args = parser.parse_args()
 
     input_path = Path(args.input)
     output_path = Path(args.output)
+    overlay_path = Path(args.overlay) if args.overlay else None
     roots = [part.strip() for part in args.root_schemas.split(",") if part.strip()]
 
     spec = _load_spec(input_path)
-    output = _build_output(spec, roots)
+    overlay = _load_overlay(overlay_path)
+    output = _build_output(spec, roots, overlay=overlay)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(output, encoding="utf-8")
