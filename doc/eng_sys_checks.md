@@ -5,6 +5,7 @@
   - [Skipping a check at build queue time](#skipping-a-check-at-build-queue-time)
   - [Skipping entire sections of builds](#skipping-entire-sections-of-builds)
   - [The pyproject.toml](#the-pyprojecttoml)
+    - [Required Metadata](#required-metadata)
     - [Coverage Enforcement](#coverage-enforcement)
   - [Environment variables important to CI](#environment-variables-important-to-ci)
     - [Atomic Overrides](#atomic-overrides)
@@ -139,6 +140,28 @@ black = false
 ```
 
 If a package does not yet have a `pyproject.toml`, creating one with just the section `[tool.azure-sdk-build]` will do no harm to the release of the package in question.
+
+### Required Metadata
+
+Packages with a stable GA release must have a `[tool.azure-sdk-conda]` section in their `pyproject.toml`.
+- This section defines if the package is released individually to Conda, or grouped with other packages in one release bundle (see [conda-release.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/conda-release.md)).
+- The `[tool.azure-sdk-conda]` table **must** include an `in_bundle` key (boolean) indicating whether the package is part of a bundle. When `in_bundle = true`, a `bundle_name` key is also **required** so the conda tooling can map the package into the correct bundle.
+- The presence and correctness of these keys is enforced by the `verifywhl` CI check. Service teams are responsible for updating this metadata.
+
+Here are examples:
+
+```toml
+# Package is released to Conda individually
+[tool.azure-sdk-conda]
+in_bundle = false
+```
+
+```toml
+# Package is released within the `azure-communication` bundle
+[tool.azure-sdk-conda]
+in_bundle = true
+bundle_name = "azure-communication"
+```
 
 ### Coverage Enforcement
 

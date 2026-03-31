@@ -1,5 +1,28 @@
 # Release History
 
+## 6.1.0b2 (2026-03-10)
+
+### Features Added
+
+  - Model `UsageManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `UsageManagementClient` added method `send_request`
+  - Model `UsageAggregation` added property `properties`
+  - Added model `ErrorObjectResponse`
+  - Added model `UsageSample`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Deleted or renamed model `InfoField`
+  - Renamed enum `OfferTermInfoEnum` to `OfferTermInfoName`
+  - Model `UsageAggregation` moved instance variable `subscription_id`, `meter_id`, `usage_start_time`, `usage_end_time`, `quantity`, `unit`, `meter_name`, `meter_category`, `meter_sub_category`, `meter_region`, `info_fields` and `instance_data` under property `properties`
+  - Method `UsageAggregatesOperations.list` changed its parameter `reported_start_time`/`reported_end_time`/`show_details`/`aggregation_granularity`/`continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `RateCardQueryParameters` which actually were not used by SDK users
+
 ## 6.1.0b1 (2023-02-10)
 
 ### Other Changes

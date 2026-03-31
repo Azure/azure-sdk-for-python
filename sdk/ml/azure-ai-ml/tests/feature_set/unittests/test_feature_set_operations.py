@@ -6,13 +6,11 @@ import pytest
 from pytest_mock import MockFixture
 from test_utilities.constants import Test_Resource_Group, Test_Workspace_Name
 
-from azure.ai.ml._restclient.v2023_10_01.models._models_py3 import (
-    FeatureResourceArmPaginatedResult,
+from azure.ai.ml._restclient.arm_ml_service.models import (
     FeaturesetContainer,
     FeaturesetContainerProperties,
     FeaturesetVersion,
     FeaturesetVersionProperties,
-    JobBaseResourceArmPaginatedResult,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities import FeatureSet, FeatureSetSpecification
@@ -111,17 +109,13 @@ class TestFeatureSetOperations:
         mock_feature_set_operations._operation.begin_backfill.assert_called_once()
 
     def test_list_materialization_operation(self, mock_feature_set_operations: FeatureSetOperations) -> None:
-        mock_feature_set_operations._jobs_operation.list.return_value = [
-            Mock(JobBaseResourceArmPaginatedResult) for _ in range(10)
-        ]
+        mock_feature_set_operations._jobs_operation.list.return_value = [Mock() for _ in range(10)]
         result = mock_feature_set_operations.list_materialization_operations(name="random_name", version="1")
         assert isinstance(result, Iterable)
         mock_feature_set_operations._jobs_operation.list.assert_called_once()
 
     def test_list_features(self, mock_feature_set_operations: FeatureSetOperations) -> None:
-        mock_feature_set_operations._feature_operation.list.return_value = [
-            Mock(FeatureResourceArmPaginatedResult) for _ in range(10)
-        ]
+        mock_feature_set_operations._feature_operation.list.return_value = [Mock() for _ in range(10)]
         result = mock_feature_set_operations.list_features(feature_set_name="random_name", version="1")
         assert isinstance(result, Iterable)
         mock_feature_set_operations._feature_operation.list.assert_called_once()

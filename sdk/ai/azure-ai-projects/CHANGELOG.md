@@ -1,5 +1,12 @@
 # Release History
 
+## 2.0.1 (2026-03-12)
+
+### Bugs Fixed
+
+* Fix custom Memory Stores LRO poller operation to add the missing
+  required `"Foundry-Features": "MemoryStores=V1Preview"` HTTP request header.
+
 ## 2.0.0 (2026-03-06)
 
 First stable release of the client library that uses the Generally Available (GA) version "v1" of the Foundry REST APIs.

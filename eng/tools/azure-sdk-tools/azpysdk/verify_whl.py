@@ -127,13 +127,14 @@ def verify_conda_section(
     config = parsed_pkg.get_conda_config()
     if not config:
         logger.error(
-            f"Package {package_name} has a stable version on PyPI but is missing "
-            "[tool.azure-sdk-conda] section in pyproject.toml. This section is required to "
-            "specify if the package should be released individually or bundled to Conda."
+            f"Package {package_name} has a stable version on PyPI but is missing required"
+            "[tool.azure-sdk-conda] section in pyproject.toml. See https://aka.ms/azsdk/python/conda/pyproject for instructions."
         )
         return False
     elif "in_bundle" not in config:
-        logger.error(f"[tool.azure-sdk-conda] section in pyproject.toml is missing required field `in_bundle`.")
+        logger.error(
+            f"[tool.azure-sdk-conda] section in pyproject.toml is missing required field `in_bundle`. See https://aka.ms/azsdk/python/conda/pyproject for instructions."
+        )
         return False
     logger.info(f"Verified conda section for package {package_name}")
     return True

@@ -50,3 +50,6 @@ pylint = true
 black = true
 generate = false
 apistub = false
+
+[tool.azure-sdk-conda]
+in_bundle = false

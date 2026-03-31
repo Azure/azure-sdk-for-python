@@ -375,6 +375,11 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
             )
+
+        # If response is a string, we can skip the context extraction and just return the eval input
+        if response and isinstance(response, str):
+            return super()._convert_kwargs_to_eval_input(query=query, response=response, context=response)
+
         context = self._get_context_from_agent_response(response, tool_definitions)
 
         if not self._validate_context(context) and self._is_single_entry(response) and self._is_single_entry(query):
