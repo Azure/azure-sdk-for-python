@@ -15,6 +15,7 @@ from ._generated.models import (
     RoleAssignmentPropertiesWithScope,
     RoleDefinition,
     Setting,
+    EkmConnection,
 )
 
 
@@ -234,3 +235,46 @@ class KeyVaultSetting(object):
     def _from_generated(cls, setting: Setting) -> "KeyVaultSetting":
         setting_type = KeyVaultSettingType.BOOLEAN if setting.type == "boolean" else setting.type
         return cls(name=setting.name, value=setting.value, setting_type=setting_type)
+
+
+class KeyVaultEkmConnection(object):    
+    """A EkmConnection model object.
+
+    :ivar str host: EKM proxy FQDN (Fully Qualified Domain Name). Only allowed characters are a-z, A-Z,
+     0-9, hyphen (-), dot (.), and colon (:). Required.
+    :ivar str path_prefix: Optional path prefix for the EKM proxy (if any).
+    :ivar list[bytes] server_ca_certificates: The root CA certificate chain that issued the proxy server's
+     certificate. An array of certificates in the certificate chain, each in DER format and base64
+     encoded. Required.
+    :ivar str server_subject_common_name: The subject common name of the server certificate of EKM
+     Proxy.
+
+    :param str host: EKM proxy FQDN (Fully Qualified Domain Name). Only allowed characters are a-z, A-Z,
+     0-9, hyphen (-), dot (.), and colon (:). Required.
+    :param str path_prefix: Optional path prefix for the EKM proxy (if any).
+    :param list[bytes] server_ca_certificates: The root CA certificate chain that issued the proxy server's
+     certificate. An array of certificates in the certificate chain, each in DER format and base64
+     encoded. Required.
+    :param str server_subject_common_name: The subject common name of the server certificate of EKM
+     Proxy.
+    """
+
+    host: str
+    path_prefix: Optional[str]
+    server_ca_certificates: list[bytes]
+    server_subject_common_name: Optional[str]
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.host = kwargs.get("host", "")
+        self.path_prefix = kwargs.get("path_prefix")
+        self.server_ca_certificates = kwargs.get("server_ca_certificates", [])
+        self.server_subject_common_name = kwargs.get("server_subject_common_name")
+
+    @classmethod
+    def _from_generated(cls, ekm_connection: EkmConnection) -> "KeyVaultEkmConnection":
+        return cls(
+            host=ekm_connection.host,
+            path_prefix=ekm_connection.path_prefix,
+            server_ca_certificates=ekm_connection.server_ca_certificates,
+            server_subject_common_name=ekm_connection.server_subject_common_name,
+        )
