@@ -5,8 +5,7 @@
 ### Features Added
 
 - Added support for service API version `2025-07-01`
-- Added `san_ip_addresses` and `san_uris` properties to `CertificatePolicy`, enabling Subject Alternative Name
-  IP addresses and URIs when creating or managing certificates
+- Added `uris` and `ip_addresses` properties to `SubjectAlternativeNames`
 
 ### Bugs Fixed
 
