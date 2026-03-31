@@ -25,14 +25,34 @@ steps:
       artifactFeeds: $(DevFeedName)
       onlyAddExtraIndex: false
 
-  # Disabled UV authentication step - for future enablement when UV fully supports Azure Artifacts
-  # To enable: uncomment this step and ensure UV_INDEX_URL is properly configured
-  # The PipAuthenticate task above creates a .pypirc file in the home directory that UV can use
+  # UV doesn't read .pypirc for credentials like pip does.
+  # Convert the .pypirc credentials into a .netrc file that UV reads natively.
   - pwsh: |
-      # This step configures UV to use the same authentication as pip
-      # UV will read credentials from ~/.pypirc created by PipAuthenticate task
+      $pypircPath = Join-Path $HOME ".pypirc"
+      if (-not (Test-Path $pypircPath)) {
+        Write-Host "No .pypirc found, skipping UV auth configuration"
+        return
+      }
+
+      $content = Get-Content $pypircPath -Raw
+      # Extract username and password from the pypirc
+      $username = $null
+      $password = $null
+      if ($content -match '(?m)^\s*username\s*=\s*(.+?)\s*$') { $username = $Matches[1] }
+      if ($content -match '(?m)^\s*password\s*=\s*(.+?)\s*$') { $password = $Matches[1] }
+
+      if ($username -and $password) {
+        $netrcPath = Join-Path $HOME ".netrc"
+        $entry = "machine pkgs.dev.azure.com`nlogin $username`npassword $password"
+        Add-Content -Path $netrcPath -Value $entry
+        Write-Host "Wrote .netrc entry for pkgs.dev.azure.com (UV auth)"
+      } else {
+        Write-Host "##vso[task.logissue type=warning]Could not extract credentials from .pypirc for UV"
+      }
+
+      # Also forward PIP_INDEX_URL so UV knows which index to use
       if ($env:PIP_INDEX_URL) {
-        Write-Host "PIP Index URL detected: $env:PIP_INDEX_URL"
         Write-Host "##vso[task.setvariable variable=UV_INDEX_URL]$($env:PIP_INDEX_URL)"
+        Write-Host "UV_INDEX_URL set to: $($env:PIP_INDEX_URL)"
       }
     displayName: 'Configure UV Authentication'
