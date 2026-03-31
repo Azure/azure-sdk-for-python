@@ -84,3 +84,125 @@ def test_schema_walker_handles_oneof_anyof_ref_branches() -> None:
     assert "InputText" in walker.reachable
     assert "InputImage" in walker.reachable
     assert "ToolChoiceParam" in walker.reachable
+
+
+def test_schema_walker_follows_discriminator_mapping_refs() -> None:
+    """Discriminator mapping targets must be walked so overlay can be applied to them."""
+    schemas = {
+        "Item": {
+            "type": "object",
+            "discriminator": {
+                "propertyName": "type",
+                "mapping": {
+                    "message": "#/components/schemas/ItemMessage",
+                    "tool_call": "#/components/schemas/ToolCall",
+                },
+            },
+        },
+        "ItemMessage": {
+            "type": "object",
+            "required": ["type", "role", "content"],
+            "properties": {
+                "type": {"type": "string"},
+                "role": {"type": "string"},
+                "content": {"type": "string"},
+            },
+        },
+        "ToolCall": {
+            "type": "object",
+            "required": ["type", "name"],
+            "properties": {
+                "type": {"type": "string"},
+                "name": {"type": "string"},
+            },
+        },
+    }
+
+    walker = SchemaWalker(schemas)
+    walker.walk("Item")
+
+    assert "ItemMessage" in walker.reachable
+    assert "ToolCall" in walker.reachable
+
+
+def test_schema_walker_applies_overlay_required_replacement() -> None:
+    """overlay required: [] removes all required fields from a schema."""
+    schemas = {
+        "CreateResponse": {
+            "type": "object",
+            "required": ["model"],
+            "properties": {"model": {"type": "string"}},
+        }
+    }
+    overlay = {"schemas": {"CreateResponse": {"required": []}}}
+
+    walker = SchemaWalker(schemas, overlay=overlay)
+    walker.walk("CreateResponse")
+
+    assert walker.reachable["CreateResponse"].get("required") == []
+
+
+def test_schema_walker_applies_overlay_not_required() -> None:
+    """overlay not_required removes a field from required and marks it nullable."""
+    schemas = {
+        "ItemMessage": {
+            "type": "object",
+            "required": ["type", "role", "content"],
+            "properties": {
+                "type": {"type": "string"},
+                "role": {"type": "string"},
+                "content": {"type": "string"},
+            },
+        }
+    }
+    overlay = {"schemas": {"ItemMessage": {"not_required": ["type"]}}}
+
+    walker = SchemaWalker(schemas, overlay=overlay)
+    walker.walk("ItemMessage")
+
+    schema = walker.reachable["ItemMessage"]
+    assert "type" not in schema["required"]
+    assert schema["properties"]["type"].get("nullable") is True
+    # role and content remain required
+    assert "role" in schema["required"]
+    assert "content" in schema["required"]
+
+
+def test_schema_walker_applies_overlay_property_constraints() -> None:
+    """overlay properties: merges per-property constraint overrides."""
+    schemas = {
+        "Config": {
+            "type": "object",
+            "properties": {"temperature": {"type": "number"}},
+        }
+    }
+    overlay = {"schemas": {"Config": {"properties": {"temperature": {"minimum": 0, "maximum": 2}}}}}
+
+    walker = SchemaWalker(schemas, overlay=overlay)
+    walker.walk("Config")
+
+    prop = walker.reachable["Config"]["properties"]["temperature"]
+    assert prop["minimum"] == 0
+    assert prop["maximum"] == 2
+
+
+def test_schema_walker_overlay_matches_vendor_prefixed_schema_by_bare_name() -> None:
+    """Overlay keys like 'ItemMessage' must match 'OpenAI.ItemMessage' in the spec."""
+    schemas = {
+        "OpenAI.ItemMessage": {
+            "type": "object",
+            "required": ["type", "role"],
+            "properties": {
+                "type": {"type": "string"},
+                "role": {"type": "string"},
+            },
+        }
+    }
+    overlay = {"schemas": {"ItemMessage": {"not_required": ["type"]}}}
+
+    walker = SchemaWalker(schemas, overlay=overlay)
+    walker.walk("OpenAI.ItemMessage")
+
+    schema = walker.reachable["OpenAI.ItemMessage"]
+    assert "type" not in schema["required"]
+    assert schema["properties"]["type"].get("nullable") is True

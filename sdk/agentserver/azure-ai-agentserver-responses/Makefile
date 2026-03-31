@@ -6,6 +6,7 @@ TYPESPEC_DIR ?= type_spec
 OPENAPI_SPEC ?= type_spec/TempTypeSpecFiles/Foundry/openapi.v1.yaml
 VALIDATORS_OUTPUT ?= $(OUTPUT_DIR)/_validators.py
 ROOT_SCHEMAS ?= CreateResponse
+OVERLAY ?= scripts/validation-overlay.yaml
 LOCAL_TYPESPEC_PACKAGES := @typespec/compiler @typespec/http @typespec/openapi @typespec/openapi3 @typespec/versioning @typespec/events @typespec/sse @azure-tools/typespec-python @azure-tools/typespec-azure-core @azure-tools/typespec-client-generator-core @azure-tools/openai-typespec
 TEMP_OUTPUT_DIR := $(OUTPUT_DIR)/.tmp_codegen
 MODEL_PACKAGE_DIR := $(TEMP_OUTPUT_DIR)/azure/ai/agentserver/responses/models
@@ -26,7 +27,7 @@ generate-validators:
 	@where python >NUL 2>NUL || (echo Error: python is required and was not found on PATH. 1>&2 && exit /b 1)
 	@if not exist "$(OPENAPI_SPEC)" (echo Error: OpenAPI spec not found at $(OPENAPI_SPEC). 1>&2 && exit /b 1)
 	@echo Generating payload validators from $(OPENAPI_SPEC)...
-	python scripts/generate_validators.py --input "$(OPENAPI_SPEC)" --output "$(VALIDATORS_OUTPUT)" --root-schemas "$(ROOT_SCHEMAS)"
+	python scripts/generate_validators.py --input "$(OPENAPI_SPEC)" --output "$(VALIDATORS_OUTPUT)" --root-schemas "$(ROOT_SCHEMAS)" --overlay "$(OVERLAY)"
 	@echo Generated validators at $(VALIDATORS_OUTPUT)
 else
 generate-validators:
@@ -39,7 +40,7 @@ generate-validators:
 		exit 1; \
 	}
 	@echo "Generating payload validators from $(OPENAPI_SPEC)..."
-	python scripts/generate_validators.py --input "$(OPENAPI_SPEC)" --output "$(VALIDATORS_OUTPUT)" --root-schemas "$(ROOT_SCHEMAS)"
+	python scripts/generate_validators.py --input "$(OPENAPI_SPEC)" --output "$(VALIDATORS_OUTPUT)" --root-schemas "$(ROOT_SCHEMAS)" --overlay "$(OVERLAY)"
 	@echo "Generated validators at $(VALIDATORS_OUTPUT)"
 endif
 
