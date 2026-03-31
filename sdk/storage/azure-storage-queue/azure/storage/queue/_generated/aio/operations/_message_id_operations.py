@@ -25,7 +25,10 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._utils.serialization import Deserializer, Serializer
-from ...operations._message_id_operations import build_delete_request, build_update_request
+from ...operations._message_id_operations import (
+    build_delete_request,
+    build_update_request,
+)
 from .._configuration import AzureQueueStorageConfiguration
 
 T = TypeVar("T")
