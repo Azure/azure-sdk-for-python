@@ -32,4 +32,4 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
     def test_list(self, resource_group):
         response = self.client.accounts.list()
         result = [r for r in response]
-        assert response
+        assert len(result)

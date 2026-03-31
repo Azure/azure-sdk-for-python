@@ -662,7 +662,10 @@ class QueueOperations:
         serialization_ctxt = {"xml": {"name": "SignedIdentifiers", "wrapped": True}}
         if queue_acl is not None:
             _content = self._serialize.body(
-                queue_acl, "[SignedIdentifier]", is_xml=True, serialization_ctxt=serialization_ctxt
+                queue_acl,
+                "[SignedIdentifier]",
+                is_xml=True,
+                serialization_ctxt=serialization_ctxt,
             )
         else:
             _content = None

@@ -12,7 +12,11 @@ from unittest import mock
 
 import pytest
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
-from azure.storage.queue import BinaryBase64DecodePolicy, BinaryBase64EncodePolicy, VERSION
+from azure.storage.queue import (
+    BinaryBase64DecodePolicy,
+    BinaryBase64EncodePolicy,
+    VERSION,
+)
 from azure.storage.queue.aio import QueueServiceClient
 from azure.storage.queue._encryption import (
     _dict_to_encryption_data,
@@ -206,7 +210,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         # Arrange
         queue = await self._create_queue(
-            qsc, message_encode_policy=BinaryBase64EncodePolicy(), message_decode_policy=BinaryBase64DecodePolicy()
+            qsc,
+            message_encode_policy=BinaryBase64EncodePolicy(),
+            message_decode_policy=BinaryBase64DecodePolicy(),
         )
         queue.key_encryption_key = KeyWrapper("key1")
 
@@ -446,7 +452,8 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
 
         message = message["EncryptedMessageContents"]
         content_encryption_key = kek.unwrap_key(
-            encryption_data.wrapped_content_key.encrypted_key, encryption_data.wrapped_content_key.algorithm
+            encryption_data.wrapped_content_key.encrypted_key,
+            encryption_data.wrapped_content_key.algorithm,
         )
 
         # Create decryption cipher
@@ -676,7 +683,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
             key_encryption_key=KeyWrapper("key1"),
         )
         queue = await self._create_queue(
-            qsc, message_encode_policy=BinaryBase64EncodePolicy(), message_decode_policy=BinaryBase64DecodePolicy()
+            qsc,
+            message_encode_policy=BinaryBase64EncodePolicy(),
+            message_decode_policy=BinaryBase64DecodePolicy(),
         )
         queue.key_encryption_key = KeyWrapper("key1")
 
