@@ -36,6 +36,7 @@ from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 from devtools_testutils import is_live
 from devtools_testutils import add_general_string_sanitizer
 from azure.ai.projects import AIProjectClient
+from llm_instructions import get_instructions_for_sample_path
 
 # Fixed timestamp for playback mode (Nov 2023).
 # Must match the timestamp sanitizers in conftest.py (e.g., `Evaluation -\d{10}`).
@@ -465,6 +466,18 @@ class BaseSampleExecutor:
             validation_log_text = ""
         return f"print/log contents from sample execution = {validation_log_text}".encode("utf-8")
 
+    def _resolve_validation_instructions(self, instructions: Optional[str] = None) -> str:
+        """Resolve validation instructions from an override or the sample folder."""
+        if instructions is not None:
+            if not instructions.strip():
+                raise ValueError("instructions must be a non-empty string")
+            return instructions
+
+        resolved_instructions = get_instructions_for_sample_path(self.sample_path)
+        if not resolved_instructions.strip():
+            raise ValueError(f"Could not resolve validation instructions for sample_path={self.sample_path!r}")
+        return resolved_instructions
+
     def _assert_validation_result(self, test_report: dict) -> None:
         """Assert validation result and print reason."""
         sample_filename = os.path.basename(self.sample_path)
@@ -685,10 +698,9 @@ class SyncSampleExecutor(BaseSampleExecutor):
                         print(f"\nSample execution failed! Print statements logged to: {log_file}")
                     raise
 
-    def validate_print_calls_by_llm(self, *, instructions: str):
+    def validate_print_calls_by_llm(self, *, instructions: Optional[str] = None):
         """Validate captured print output using synchronous OpenAI client."""
-        if not instructions or not instructions.strip():
-            raise ValueError("instructions must be a non-empty string")
+        instructions = self._resolve_validation_instructions(instructions)
         if is_live():
             endpoint = os.environ["LLM_VALIDATION_PROJECT_ENDPOINT"]
             model = "gpt-5.2"
@@ -888,11 +900,10 @@ class AsyncSampleExecutor(BaseSampleExecutor):
     async def validate_print_calls_by_llm_async(
         self,
         *,
-        instructions: str,
+        instructions: Optional[str] = None,
     ):
         """Validate captured print output using asynchronous OpenAI client."""
-        if not instructions or not instructions.strip():
-            raise ValueError("instructions must be a non-empty string")
+        instructions = self._resolve_validation_instructions(instructions)
         if is_live():
             endpoint = os.environ["LLM_VALIDATION_PROJECT_ENDPOINT"]
             model = "gpt-5.2"
