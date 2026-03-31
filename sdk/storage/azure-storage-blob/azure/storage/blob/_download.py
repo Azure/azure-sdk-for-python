@@ -873,7 +873,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         This method is deprecated, use func:`readall` instead.
 
-        :param int max_concurrency:
+        :param Optional[int] max_concurrency:
             The number of parallel connections with which to download.
         :return: The contents of the file as bytes.
         :rtype: bytes
@@ -896,7 +896,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         This method is deprecated, use func:`readall` instead.
 
-        :param int max_concurrency:
+        :param Optional[int] max_concurrency:
             The number of parallel connections with which to download.
         :param str encoding:
             Test encoding to decode the downloaded bytes. Default is UTF-8.
@@ -924,7 +924,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             The stream to download to. This can be an open file-handle,
             or any writable stream. The stream must be seekable if the download
             uses more than one parallel connection.
-        :param int max_concurrency:
+        :param Optional[int] max_concurrency:
             The number of parallel connections with which to download.
         :return: The properties of the downloaded blob.
         :rtype: Any

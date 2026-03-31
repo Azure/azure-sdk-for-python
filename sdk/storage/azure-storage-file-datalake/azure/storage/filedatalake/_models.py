@@ -250,6 +250,8 @@ class FileSystemSasPermissions:
         Append data to a file in the directory.
     :keyword bool create:
         Write a new file, snapshot a file, or copy a file to a new file.
+    :keyword bool tags:
+        Indicates that reading and writing Tags are permitted.
     :keyword bool move:
         Move any file in the directory to a new location. Note the move operation can optionally be restricted to the
         child file or directory owner or the parent directory owner if the said parameter is included in the token
@@ -276,6 +278,8 @@ class FileSystemSasPermissions:
     """Append data to a file in the directory."""
     create: Optional[bool] = None
     """Write a new file, snapshot a file, or copy a file to a new file."""
+    tags: Optional[bool] = None
+    """Indicates that reading and writing Tags are permitted."""
     move: Optional[bool] = None
     """Move any file in the directory to a new location. Note the move operation can optionally be restricted to the
         child file or directory owner or the parent directory owner if the said parameter is included in the token
@@ -378,6 +382,8 @@ class DirectorySasPermissions:
         Append data to a file in the directory.
     :keyword bool list:
         List any files in the directory. Implies Execute.
+    :keyword bool tags:
+        Indicates that reading and writing Tags are permitted.
     :keyword bool move:
         Move any file in the directory to a new location. Note the move operation can optionally be restricted to the
         child file or directory owner or the parent directory owner if the said parameter is included in the token
@@ -404,6 +410,8 @@ class DirectorySasPermissions:
     """Append data to a file in the directory."""
     list: Optional[bool] = False
     """List any files in the directory. Implies Execute."""
+    tags: Optional[bool] = None
+    """Indicates that reading and writing Tags are permitted."""
     move: Optional[bool] = False
     """Move any file in the directory to a new location. Note the move operation can optionally be restricted to the
         child file or directory owner or the parent directory owner if the said parameter is included in the token
@@ -499,6 +507,8 @@ class FileSasPermissions:
         Delete the file.
     :keyword bool add:
         Append data to the file.
+    :keyword bool tags:
+        Indicates that reading and writing Tags are permitted.
     :keyword bool move:
         Move any file in the directory to a new location. Note the move operation can optionally be restricted to the
         child file or directory owner or the parent directory owner if the said parameter is included in the token
@@ -523,6 +533,8 @@ class FileSasPermissions:
     """Delete the file."""
     add: Optional[bool] = None
     """Append data to the file."""
+    tags: Optional[bool] = None
+    """Indicates that reading and writing Tags are permitted."""
     move: Optional[bool] = None
     """Move any file in the directory to a new location. Note the move operation can optionally be restricted to the
         child file or directory owner or the parent directory owner if the said parameter is included in the token
