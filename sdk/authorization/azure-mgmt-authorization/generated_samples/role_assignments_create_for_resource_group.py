@@ -45,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/authorization/resource-manager/Microsoft.Authorization/stable/2022-04-01/examples/RoleAssignments_CreateForResourceGroup.json
+# x-ms-original-file: specification/authorization/resource-manager/Microsoft.Authorization/Authorization/stable/2022-04-01/examples/RoleAssignments_CreateForResourceGroup.json
 if __name__ == "__main__":
     main()

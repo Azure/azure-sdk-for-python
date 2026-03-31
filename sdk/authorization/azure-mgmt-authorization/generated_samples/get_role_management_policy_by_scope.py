@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/authorization/resource-manager/Microsoft.Authorization/preview/2024-09-01-preview/examples/GetRoleManagementPolicyByScope.json
+# x-ms-original-file: specification/authorization/resource-manager/Microsoft.Authorization/Authorization/preview/2024-09-01-preview/examples/GetRoleManagementPolicyByScope.json
 if __name__ == "__main__":
     main()

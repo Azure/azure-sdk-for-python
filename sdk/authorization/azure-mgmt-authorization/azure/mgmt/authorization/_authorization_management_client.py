@@ -39,6 +39,7 @@ from .operations import (
     AlertIncidentsOperations,
     AlertOperationOperations,
     AlertsOperations,
+    AttributeNamespacesOperations,
     ClassicAdministratorsOperations,
     DenyAssignmentsOperations,
     EligibleChildResourcesOperations,
@@ -70,6 +71,7 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
@@ -223,26 +225,42 @@ class AuthorizationManagementClient:  # pylint: disable=client-accepts-api-versi
     :vartype alert_incidents: azure.mgmt.authorization.operations.AlertIncidentsOperations
     :ivar alert_operation: AlertOperationOperations operations
     :vartype alert_operation: azure.mgmt.authorization.operations.AlertOperationOperations
+    :ivar attribute_namespaces: AttributeNamespacesOperations operations
+    :vartype attribute_namespaces:
+     azure.mgmt.authorization.operations.AttributeNamespacesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is None.
     :type base_url: str
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
     def __init__(
-        self, credential: "TokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
+        self,
+        credential: "TokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
     ) -> None:
-        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
         _endpoints = get_arm_endpoints(_cloud)
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = AuthorizationManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, credential_scopes=credential_scopes, **kwargs
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
         )
 
         _policies = kwargs.pop("policies", None)
@@ -401,6 +419,9 @@ class AuthorizationManagementClient:  # pylint: disable=client-accepts-api-versi
         )
         self.alert_incidents = AlertIncidentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.alert_operation = AlertOperationOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.attribute_namespaces = AttributeNamespacesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/authorization/resource-manager/Microsoft.Authorization/preview/2022-05-01-preview/examples/DeleteRoleDefinition.json
+# x-ms-original-file: specification/authorization/resource-manager/Microsoft.Authorization/Authorization/preview/2022-05-01-preview/examples/DeleteRoleDefinition.json
 if __name__ == "__main__":
     main()

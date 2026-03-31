@@ -28,7 +28,7 @@ from azure.mgmt.authorization import AuthorizationManagementClient
 def main():
     client = AuthorizationManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subId",
+        subscription_id="a925f2f7-5c63-4b7b-8799-25a5f97bc3b2",
     )
 
     response = client.deny_assignments.list()
@@ -36,6 +36,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/authorization/resource-manager/Microsoft.Authorization/stable/2022-04-01/examples/GetAllDenyAssignments.json
+# x-ms-original-file: specification/authorization/resource-manager/Microsoft.Authorization/Authorization/preview/2024-07-01-preview/examples/GetAllDenyAssignments.json
 if __name__ == "__main__":
     main()

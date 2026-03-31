@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -30,7 +30,8 @@ from .._configuration import AuthorizationManagementClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -225,7 +226,10 @@ class AccessReviewHistoryDefinitionOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorDefinition, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorDefinition,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("AccessReviewHistoryDefinition", pipeline_response.http_response)
@@ -279,7 +283,10 @@ class AccessReviewHistoryDefinitionOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorDefinition, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorDefinition,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

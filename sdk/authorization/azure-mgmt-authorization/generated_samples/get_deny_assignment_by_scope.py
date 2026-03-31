@@ -32,12 +32,12 @@ def main():
     )
 
     response = client.deny_assignments.list_for_scope(
-        scope="subscriptions/subId",
+        scope="subscriptions/a925f2f7-5c63-4b7b-8799-25a5f97bc3b2/resourceGroups/rgname",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/authorization/resource-manager/Microsoft.Authorization/stable/2022-04-01/examples/GetDenyAssignmentByScope.json
+# x-ms-original-file: specification/authorization/resource-manager/Microsoft.Authorization/Authorization/preview/2024-07-01-preview/examples/GetDenyAssignmentByScope.json
 if __name__ == "__main__":
     main()

@@ -28,7 +28,7 @@ class TestAuthorizationManagementDenyAssignmentsOperationsAsync(AzureMgmtRecorde
             parent_resource_path="str",
             resource_type="str",
             resource_name="str",
-            api_version="2022-04-01",
+            api_version="2024-07-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestAuthorizationManagementDenyAssignmentsOperationsAsync(AzureMgmtRecorde
     async def test_deny_assignments_list_for_resource_group(self, resource_group):
         response = self.client.deny_assignments.list_for_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2022-04-01",
+            api_version="2024-07-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -49,7 +49,7 @@ class TestAuthorizationManagementDenyAssignmentsOperationsAsync(AzureMgmtRecorde
     @recorded_by_proxy_async
     async def test_deny_assignments_list(self, resource_group):
         response = self.client.deny_assignments.list(
-            api_version="2022-04-01",
+            api_version="2024-07-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -61,7 +61,68 @@ class TestAuthorizationManagementDenyAssignmentsOperationsAsync(AzureMgmtRecorde
         response = await self.client.deny_assignments.get(
             scope="str",
             deny_assignment_id="str",
-            api_version="2022-04-01",
+            api_version="2024-07-01-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_deny_assignments_create_or_update(self, resource_group):
+        response = await self.client.deny_assignments.create_or_update(
+            scope="str",
+            deny_assignment_id="str",
+            parameters={
+                "condition": "str",
+                "conditionVersion": "str",
+                "createdBy": "str",
+                "createdOn": "2020-02-20 00:00:00",
+                "denyAssignmentEffect": "str",
+                "denyAssignmentName": "str",
+                "description": "str",
+                "doNotApplyToChildScopes": bool,
+                "excludePrincipals": [{"id": "str", "type": "str"}],
+                "id": "str",
+                "isSystemProtected": bool,
+                "name": "str",
+                "permissions": [
+                    {
+                        "actions": ["str"],
+                        "condition": "str",
+                        "conditionVersion": "str",
+                        "dataActions": ["str"],
+                        "notActions": ["str"],
+                        "notDataActions": ["str"],
+                    }
+                ],
+                "principals": [{"id": "str", "type": "str"}],
+                "scope": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "type": "str",
+                "updatedBy": "str",
+                "updatedOn": "2020-02-20 00:00:00",
+            },
+            api_version="2024-07-01-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_deny_assignments_delete(self, resource_group):
+        response = await self.client.deny_assignments.delete(
+            scope="str",
+            deny_assignment_id="str",
+            api_version="2024-07-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -72,7 +133,7 @@ class TestAuthorizationManagementDenyAssignmentsOperationsAsync(AzureMgmtRecorde
     async def test_deny_assignments_get_by_id(self, resource_group):
         response = await self.client.deny_assignments.get_by_id(
             deny_assignment_id="str",
-            api_version="2022-04-01",
+            api_version="2024-07-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -83,7 +144,7 @@ class TestAuthorizationManagementDenyAssignmentsOperationsAsync(AzureMgmtRecorde
     async def test_deny_assignments_list_for_scope(self, resource_group):
         response = self.client.deny_assignments.list_for_scope(
             scope="str",
-            api_version="2022-04-01",
+            api_version="2024-07-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
