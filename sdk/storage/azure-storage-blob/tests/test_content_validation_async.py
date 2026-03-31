@@ -447,10 +447,10 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         await blob.upload_blob(data, overwrite=True, max_concurrency=5)
 
         # Act
-        downloader = await blob.download_blob(validate_content='crc64', max_concurrency=3)
+        downloader = await blob.download_blob(validate_content='crc64', max_concurrency=5)
         content = await downloader.read()
 
-        downloader = await blob.download_blob(offset=5 * 1024 * 1024, length=25 * 1024 * 1024)
+        downloader = await blob.download_blob(offset=5 * 1024 * 1024, length=25 * 1024 * 1024, validate_content='crc64')
         partial = await downloader.read()
 
         # Assert
