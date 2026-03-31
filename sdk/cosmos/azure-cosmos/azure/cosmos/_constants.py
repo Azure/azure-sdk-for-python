@@ -152,7 +152,6 @@ class _Constants:
         CREATE: Literal["create"] = "create"
         DELETE: Literal["delete"] = "delete"
         EXECUTE: Literal["execute"] = "execute"
-        EXECUTE_JAVASCRIPT: Literal["execute_javascript"] = "execute_javascript"
         HEAD: Literal["head"] = "head"
         HEAD_FEED: Literal["head_feed"] = "head_feed"
         INVALID: Literal["invalid"] = "invalid"

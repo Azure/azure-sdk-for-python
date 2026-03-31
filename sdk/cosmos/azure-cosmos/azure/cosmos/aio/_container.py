@@ -468,7 +468,7 @@ class ContainerProxy:
         return items
 
     @distributed_trace_async
-    @cosmos_span_attributes_async(operation_type=Constants.OpenTelemetryOperationTypes.BATCH)
+    @cosmos_span_attributes_async(operation_type=Constants.OpenTelemetryOperationTypes.QUERY)
     async def read_items(
             self,
             items: Sequence[Tuple[str, PartitionKeyType]],

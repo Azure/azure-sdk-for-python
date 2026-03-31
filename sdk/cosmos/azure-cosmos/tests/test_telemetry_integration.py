@@ -17,35 +17,8 @@ from azure.cosmos import CosmosClient, PartitionKey, exceptions
 from azure.cosmos._constants import _Constants
 import test_config
 
-# OpenTelemetry setup for testing
-from azure.core.settings import settings
-from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
-
-from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult, SimpleSpanProcessor
-
-
-class InMemorySpanExporter(SpanExporter):
-    """Captures spans in memory for testing."""
-
-    def __init__(self):
-        self.spans = []
-
-    def export(self, span_data):
-        for span in span_data:
-            span_dict = {
-                "name": span.name,
-                "attributes": dict(span.attributes) if span.attributes else {}
-            }
-            self.spans.append(span_dict)
-        return SpanExportResult.SUCCESS
-
-    def shutdown(self):
-        pass
-
-    def clear(self):
-        self.spans = []
+# Use Azure Core tracing abstractions
+from tracing_common import setup_tracing, cleanup_tracing
 
 
 class TestTelemetryIntegration(unittest.TestCase):
@@ -53,14 +26,9 @@ class TestTelemetryIntegration(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        """Set up OpenTelemetry and Cosmos client."""
-        # Enable OpenTelemetry tracing
-        settings.tracing_implementation = OpenTelemetrySpan
-
-        # Set up in-memory exporter
-        cls.exporter = InMemorySpanExporter()
-        trace.set_tracer_provider(TracerProvider())
-        trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(cls.exporter))
+        """Set up tracing and Cosmos client."""
+        # Enable tracing using Azure Core abstractions
+        cls.tracing_helper = setup_tracing()
 
         # Use test config like other cosmos tests
         cls.client = CosmosClient(test_config.TestConfig.host, test_config.TestConfig.masterKey)
@@ -84,16 +52,17 @@ class TestTelemetryIntegration(unittest.TestCase):
             cls.client.delete_database(cls.test_db_name)
         except:
             pass
+        cleanup_tracing()
 
     def setUp(self):
         """Clear captured spans before each test."""
-        self.exporter.clear()
+        self.tracing_helper.clear()
 
     def test_parameterized_query_not_sanitized(self):
         """Verify parameterized queries are NOT sanitized in telemetry."""
         # Create test item
         self.container.create_item({"id": "test1", "pk": "pk1", "value": 100})
-        self.exporter.clear()  # Clear the create span
+        self.tracing_helper.clear()  # Clear the create span
 
         # Query with parameters
         query = "SELECT * FROM c WHERE c.value > @minValue"
@@ -102,7 +71,8 @@ class TestTelemetryIntegration(unittest.TestCase):
         list(self.container.query_items(query=query, parameters=parameters, enable_cross_partition_query=True))
 
         # Find the query span
-        query_spans = [s for s in self.exporter.spans if "query" in s.get("name", "").lower()]
+        all_spans = self.tracing_helper.get_spans()
+        query_spans = [s for s in all_spans if "query" in s.get("name", "").lower()]
 
         self.assertGreater(len(query_spans), 0, "Should have at least one query span")
         attrs = query_spans[0]["attributes"]
@@ -124,7 +94,7 @@ class TestTelemetryIntegration(unittest.TestCase):
 
     def test_literal_query_is_sanitized(self):
         """Verify queries with literal values ARE sanitized in telemetry."""
-        self.exporter.clear()
+        self.tracing_helper.clear()
 
         # Query with literal values
         query = "SELECT * FROM c WHERE c.value = 100 AND c.name = 'test'"
@@ -132,7 +102,8 @@ class TestTelemetryIntegration(unittest.TestCase):
         list(self.container.query_items(query=query, enable_cross_partition_query=True))
 
         # Find the query span
-        query_spans = [s for s in self.exporter.spans if "query" in s.get("name", "").lower()]
+        all_spans = self.tracing_helper.get_spans()
+        query_spans = [s for s in all_spans if "query" in s.get("name", "").lower()]
 
         self.assertGreater(len(query_spans), 0)
         attrs = query_spans[0]["attributes"]
@@ -145,13 +116,14 @@ class TestTelemetryIntegration(unittest.TestCase):
 
     def test_cosmos_attributes_present(self):
         """Verify Cosmos-specific attributes are added to spans."""
-        self.exporter.clear()
+        self.tracing_helper.clear()
 
         # Create an item
         self.container.create_item({"id": f"attr_test_{uuid.uuid4().hex[:4]}", "pk": "pk1", "value": 200})
 
         # Find the create span
-        create_spans = [s for s in self.exporter.spans if "create" in s.get("name", "").lower()]
+        all_spans = self.tracing_helper.get_spans()
+        create_spans = [s for s in all_spans if "create" in s.get("name", "").lower()]
 
         self.assertGreater(len(create_spans), 0)
         attrs = create_spans[0]["attributes"]
@@ -168,7 +140,7 @@ class TestTelemetryIntegration(unittest.TestCase):
 
     def test_error_has_db_system_attribute(self):
         """Verify db.system attribute is added even when operations fail."""
-        self.exporter.clear()
+        self.tracing_helper.clear()
 
         try:
             # Try to read non-existent item (will fail)
@@ -177,7 +149,8 @@ class TestTelemetryIntegration(unittest.TestCase):
             pass  # Expected
 
         # Find spans
-        spans = [s for s in self.exporter.spans if s.get("attributes")]
+        all_spans = self.tracing_helper.get_spans()
+        spans = [s for s in all_spans if s.get("attributes")]
 
         self.assertGreater(len(spans), 0, "Should have captured error span")
 
