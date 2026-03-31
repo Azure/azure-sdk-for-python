@@ -4061,6 +4061,123 @@ class TestRAIServiceScorerTokenMetrics:
             assert metadata["metric_name"] == "violence"
 
     @pytest.mark.asyncio
+    async def test_score_metadata_includes_token_usage_from_sample_camelcase(
+        self, mock_credential, mock_azure_ai_project, mock_logger
+    ):
+        """Token usage from eval_result.sample.usage with camelCase keys (raw JSON) is normalised to snake_case."""
+        scorer = RAIServiceScorer(
+            credential=mock_credential,
+            azure_ai_project=mock_azure_ai_project,
+            risk_category=RiskCategory.Violence,
+            logger=mock_logger,
+        )
+
+        mock_piece = MagicMock()
+        mock_piece.id = "test-id"
+        mock_piece.converted_value = "Harmful content"
+        mock_piece.original_value = "Original"
+        mock_piece.labels = {}
+        mock_piece.api_role = "assistant"
+
+        mock_message = MagicMock()
+        mock_message.message_pieces = [mock_piece]
+
+        # Simulate raw JSON response (non-OneDP) with camelCase keys
+        mock_eval_result = {
+            "results": [
+                {
+                    "name": "violence",
+                    "metric": "violence",
+                    "score": 5,
+                    "reason": "Violent content",
+                    "threshold": 3,
+                    "passed": False,
+                    "label": "high",
+                }
+            ],
+            "sample": {
+                "usage": {
+                    "promptTokens": 100,
+                    "completionTokens": 50,
+                    "totalTokens": 150,
+                }
+            },
+        }
+
+        with patch(
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
+            new_callable=AsyncMock,
+        ) as mock_eval, patch("azure.ai.evaluation.red_team._foundry._rai_scorer.CentralMemory") as mock_memory_cls:
+            mock_memory_instance = MagicMock()
+            mock_memory_cls.get_memory_instance.return_value = mock_memory_instance
+            mock_eval.return_value = mock_eval_result
+
+            scores = await scorer.score_async(mock_message, objective="Test")
+
+            assert len(scores) == 1
+            metadata = scores[0].score_metadata
+            assert "token_usage" in metadata
+            assert metadata["token_usage"]["prompt_tokens"] == 100
+            assert metadata["token_usage"]["completion_tokens"] == 50
+            assert metadata["token_usage"]["total_tokens"] == 150
+
+    @pytest.mark.asyncio
+    async def test_score_metadata_includes_token_usage_from_result_properties_camelcase(
+        self, mock_credential, mock_azure_ai_project, mock_logger
+    ):
+        """Token usage from result properties.metrics with camelCase keys (raw JSON) is normalised to snake_case."""
+        scorer = RAIServiceScorer(
+            credential=mock_credential,
+            azure_ai_project=mock_azure_ai_project,
+            risk_category=RiskCategory.Violence,
+            logger=mock_logger,
+        )
+
+        mock_piece = MagicMock()
+        mock_piece.id = "test-id"
+        mock_piece.converted_value = "Harmful content"
+        mock_piece.original_value = "Original"
+        mock_piece.labels = {}
+        mock_piece.api_role = "assistant"
+
+        mock_message = MagicMock()
+        mock_message.message_pieces = [mock_piece]
+
+        # No sample.usage, result has camelCase properties.metrics (raw JSON)
+        mock_result_item = {
+            "name": "violence",
+            "metric": "violence",
+            "score": 5,
+            "reason": "Violent",
+            "threshold": 3,
+            "passed": False,
+            "label": "high",
+            "properties": {
+                "metrics": {
+                    "promptTokens": 3002,
+                    "completionTokens": 51,
+                }
+            },
+        }
+        mock_eval_result = {"results": [mock_result_item]}
+
+        with patch(
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
+            new_callable=AsyncMock,
+        ) as mock_eval, patch("azure.ai.evaluation.red_team._foundry._rai_scorer.CentralMemory") as mock_memory_cls:
+            mock_memory_instance = MagicMock()
+            mock_memory_cls.get_memory_instance.return_value = mock_memory_instance
+            mock_eval.return_value = mock_eval_result
+
+            scores = await scorer.score_async(mock_message, objective="Test")
+
+            assert len(scores) == 1
+            metadata = scores[0].score_metadata
+            assert "token_usage" in metadata
+            assert metadata["token_usage"]["prompt_tokens"] == 3002
+            assert metadata["token_usage"]["completion_tokens"] == 51
+
+    @pytest.mark.asyncio
     async def test_scores_saved_to_memory(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Scores are saved to PyRIT CentralMemory after creation."""
         scorer = RAIServiceScorer(
