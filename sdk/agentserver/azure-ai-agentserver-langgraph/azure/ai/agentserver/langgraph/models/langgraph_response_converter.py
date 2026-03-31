@@ -66,7 +66,7 @@ class LangGraphResponseConverter:
                         + "Only the first one will be processed."
                     )
                 tool_call = output_message.tool_calls[0]
-                name, call_id, argument = extract_function_call(tool_call)
+                name, call_id, argument = extract_function_call(tool_call)  # type: ignore
                 return project_models.FunctionToolCallItemResource(
                     call_id=call_id,
                     name=name,
