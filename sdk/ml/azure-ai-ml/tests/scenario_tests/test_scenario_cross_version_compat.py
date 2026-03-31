@@ -59,8 +59,7 @@ import pytest
 from azure.ai.ml import MLClient
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.entities import Data, Environment, Model, Workspace
-from azure.ai.ml.exceptions import MlException, ValidationException
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError
 
 
 class TestScenarioCrossVersionCompat:
@@ -120,38 +119,28 @@ class TestScenarioCrossVersionCompat:
 
         # ── Data assets ───────────────────────────────────────────
         data_assets = list(ml_client.data.list())
-        data_get_ok = 0
-        for d in data_assets[:10]:  # cap at 10 to keep test fast
+        # Only GET assets that have a concrete version — auto-created ephemeral
+        # assets may list with version=None and are not fetchable by design.
+        versioned_data = [d for d in data_assets[:10] if d.version]
+        for d in versioned_data:
             assert d.name is not None
-            try:
-                if d.version:
-                    fetched_d = ml_client.data.get(d.name, version=d.version)
-                else:
-                    fetched_d = ml_client.data.get(d.name, label="latest")
-                assert fetched_d.name == d.name
-                data_get_ok += 1
-            except (ValidationException, ResourceNotFoundError):
-                pass  # version=None or ephemeral asset not found — known edge case
-        # At least some data assets should be fetchable
-        if len(data_assets) > 0:
-            assert data_get_ok >= 1, "Could not GET any data asset from the workspace"
+            fetched_d = ml_client.data.get(d.name, version=d.version)
+            assert fetched_d.name == d.name
+        # Listing already exercises deserialization.  GET is a bonus — no hard
+        # requirement if the workspace only has version-less ephemeral assets.
 
         # ── Models ────────────────────────────────────────────────
         models = list(ml_client.models.list())
-        model_get_ok = 0
-        for m in models[:10]:
+        # Only GET models that have a concrete version — auto-created MLflow
+        # models (e.g. from AutoML) often list with version=None and are not
+        # individually fetchable.
+        versioned_models = [m for m in models[:10] if m.version]
+        for m in versioned_models:
             assert m.name is not None
-            try:
-                if m.version:
-                    fetched_m = ml_client.models.get(m.name, version=m.version)
-                else:
-                    fetched_m = ml_client.models.get(m.name, label="latest")
-                assert fetched_m.name == m.name
-                model_get_ok += 1
-            except (ValidationException, ResourceNotFoundError):
-                pass  # auto-created MLflow models with no version — known edge case
-        # Listing exercises deserialization; GET is a bonus but at least 1 should work
-        # (skip assertion if workspace only has unresolvable auto-generated models)
+            fetched_m = ml_client.models.get(m.name, version=m.version)
+            assert fetched_m.name == m.name
+        # Listing already exercises deserialization; GET is a bonus.
+        # Don't assert count — workspace may only have unresolvable auto-models.
 
         # ── Jobs (most recent) ────────────────────────────────────
         recent_jobs = list(ml_client.jobs.list(max_results=10))
@@ -160,16 +149,18 @@ class TestScenarioCrossVersionCompat:
             assert j.status is not None
 
         # ── Connections ───────────────────────────────────────────
+        # Some workspaces restrict connection listing via RBAC.  This is an
+        # infrastructure constraint, not an SDK bug, so we skip gracefully.
         try:
             connections = list(ml_client.connections.list())
-            for conn in connections[:5]:
-                assert conn.name is not None
-                fetched_conn = ml_client.connections.get(conn.name)
-                assert fetched_conn.name == conn.name
         except HttpResponseError as e:
-            # Some workspaces restrict connection listing via RBAC — skip if 403
-            if e.status_code not in (401, 403):
-                raise
+            if e.status_code in (401, 403):
+                pytest.skip(f"Connection listing blocked by RBAC ({e.status_code})")
+            raise
+        for conn in connections[:5]:
+            assert conn.name is not None
+            fetched_conn = ml_client.connections.get(conn.name)
+            assert fetched_conn.name == conn.name
 
     # ──────────────────────────────────────────────────────────────
     # Test 2: Multi-version data asset chain
@@ -318,8 +309,11 @@ class TestScenarioCrossVersionCompat:
             # v1 should have no conda_file (or it should be None/empty)
             if fetched_v1.conda_file is not None:
                 # Some SDK versions return an empty dict instead of None
-                assert fetched_v1.conda_file == {} or fetched_v1.conda_file is None or \
-                    isinstance(fetched_v1.conda_file, (dict, str))
+                assert (
+                    fetched_v1.conda_file == {}
+                    or fetched_v1.conda_file is None
+                    or isinstance(fetched_v1.conda_file, (dict, str))
+                )
 
             # ── Verify v2 has the full conda spec ─────────────────
             fetched_v2 = ml_client.environments.get(env_name, "2")
@@ -438,25 +432,22 @@ class TestScenarioCrossVersionCompat:
                 # If Studio key exists, its value should have a URL
                 if "Studio" in full_job.services:
                     studio = full_job.services["Studio"]
-                    assert hasattr(studio, "endpoint") or hasattr(studio, "url") or \
-                        isinstance(studio, dict)
+                    assert hasattr(studio, "endpoint") or hasattr(studio, "url") or isinstance(studio, dict)
 
             # Type-specific checks
             if full_job.type == "sweep":
                 # Sweep jobs must have search_space
-                assert full_job.search_space is not None or \
-                    hasattr(full_job, "search_space")
+                assert full_job.search_space is not None or hasattr(full_job, "search_space")
                 if hasattr(full_job, "early_termination") and full_job.early_termination:
                     _ = full_job.early_termination.evaluation_interval
 
             elif full_job.type == "pipeline":
-                # Pipeline jobs should allow listing children
-                try:
+                # Only list children for pipelines that actually ran long enough
+                # to have children.  Early-Canceled pipelines return 404.
+                if full_job.status in ("Completed", "Failed"):
                     children = list(ml_client.jobs.list(parent_job_name=full_job.name))
                     for child in children[:3]:
                         assert child.name is not None
-                except HttpResponseError:
-                    pass  # Some pipeline states (Canceled early) return 404 for children
 
             # Command / component jobs should have compute info
             if hasattr(full_job, "compute"):
@@ -489,13 +480,9 @@ class TestScenarioCrossVersionCompat:
         for env_summary in curated[:5]:  # cap at 5 for speed
             # Full GET with version — version may be None for curated envs
             if env_summary.version:
-                full_env = ml_client.environments.get(
-                    env_summary.name, version=env_summary.version
-                )
+                full_env = ml_client.environments.get(env_summary.name, version=env_summary.version)
             else:
-                full_env = ml_client.environments.get(
-                    env_summary.name, label="latest"
-                )
+                full_env = ml_client.environments.get(env_summary.name, label="latest")
             assert full_env.name == env_summary.name
 
             # Image must be present on curated envs
@@ -534,8 +521,13 @@ class TestScenarioCrossVersionCompat:
             # provisioning_state should be populated
             if hasattr(full_compute, "provisioning_state"):
                 assert full_compute.provisioning_state in {
-                    "Succeeded", "Failed", "Creating", "Updating",
-                    "Deleting", "Canceled", None,
+                    "Succeeded",
+                    "Failed",
+                    "Creating",
+                    "Updating",
+                    "Deleting",
+                    "Canceled",
+                    None,
                 }
 
             # For AmlCompute, verify scale settings and identity
@@ -674,10 +666,10 @@ class TestScenarioCrossVersionCompat:
             script = os.path.join(code_dir, "noop.py")
             with open(script, "w") as f:
                 f.write(
-                    'import time, os\n'
+                    "import time, os\n"
                     'print(f"Python {os.sys.version}")\n'
                     'print("Cross-version compat noop job")\n'
-                    'time.sleep(5)\n'
+                    "time.sleep(5)\n"
                     'print("Done")\n'
                 )
 
