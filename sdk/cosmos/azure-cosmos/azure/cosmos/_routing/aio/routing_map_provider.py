@@ -32,6 +32,7 @@ from .._routing_map_provider_common import (
     build_response_hook,
     prepare_fetch_options_and_headers,
     process_fetched_ranges,
+    is_cache_stale,
     determine_refresh_action,
     get_smart_overlapping_ranges,
     _NeedFullRefresh,
@@ -79,6 +80,18 @@ class PartitionKeyRangeCache(object):
             if collection_id not in self._collection_locks:
                 self._collection_locks[collection_id] = asyncio.Lock()
             return self._collection_locks[collection_id]
+
+    def _is_cache_stale(
+            self,
+            collection_id: str,
+            previous_routing_map: Optional[CollectionRoutingMap]
+    ) -> bool:
+        """Compatibility shim for legacy call sites and tests."""
+        return is_cache_stale(
+            self._collection_routing_map_by_item,
+            collection_id,
+            previous_routing_map,
+        )
 
     async def get_overlapping_ranges(
             self, collection_link, partition_key_ranges,
@@ -188,12 +201,16 @@ class PartitionKeyRangeCache(object):
         :rtype: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap or None
         :raises CosmosHttpResponseError: If the underlying request to fetch ranges fails.
         """
+        request_kwargs = dict(kwargs)
+
         # Build the response hook (chains with any upstream hook in kwargs).
-        capture_response_hook, response_headers = build_response_hook(kwargs)
+        capture_response_hook, response_headers = build_response_hook(request_kwargs)
+        # response_hook is passed explicitly below; avoid duplicate kwargs.
+        request_kwargs.pop('response_hook', None)
 
         # Prepare sanitised options and headers for the PK-range fetch.
         change_feed_options = prepare_fetch_options_and_headers(
-            previous_routing_map, feed_options, kwargs
+            previous_routing_map, feed_options, request_kwargs
         )
 
         ranges: List[Dict[str, Any]] = []
@@ -202,7 +219,7 @@ class PartitionKeyRangeCache(object):
                 collection_link,
                 change_feed_options,
                 response_hook=capture_response_hook,
-                **kwargs
+                **request_kwargs
             )
             async for item in pk_range_generator:
                 ranges.append(item)

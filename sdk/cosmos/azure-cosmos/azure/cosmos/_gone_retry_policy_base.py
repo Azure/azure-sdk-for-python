@@ -19,7 +19,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from typing import Any, Optional, Tuple
+
 from azure.cosmos import _base, http_constants
+from azure.cosmos._constants import _Constants as Constants
 
 # pylint: disable=protected-access
 
@@ -73,3 +76,20 @@ class _PartitionKeyRangeGoneRetryPolicyBase:
                     pass
                 return self.client._routing_map_provider._collection_routing_map_by_item.get(lookup_key)
         return None
+
+    def pop_refresh_context(self) -> Tuple[Optional[str], Optional[Any], Optional[dict[str, Any]]]:
+        """Return one-time routing-map refresh context for 410 handling.
+
+        This keeps the policy as a state holder while letting retry utilities
+        decide if/when to execute I/O.
+        """
+        if not self.refresh_partition_key_range_cache:
+            return None, None, None
+
+        collection_link, container_rid = self._extract_collection_info()
+        previous_routing_map = self._get_previous_routing_map(collection_link)
+        feed_options = {Constants.ContainerRID: container_rid} if container_rid else None
+
+        self.refresh_partition_key_range_cache = False
+        return collection_link, previous_routing_map, feed_options
+

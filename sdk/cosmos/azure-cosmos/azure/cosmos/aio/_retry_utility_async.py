@@ -204,6 +204,9 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 retry_policy = sessionRetry_policy
             elif exceptions._partition_range_is_gone(e):
                 retry_policy = partition_key_range_gone_retry_policy
+                collection_link, previous_routing_map, feed_options = retry_policy.pop_refresh_context()
+                if collection_link and previous_routing_map is not None:
+                    await client.refresh_routing_map_provider(collection_link, previous_routing_map, feed_options)
             elif exceptions._container_recreate_exception(e):
                 retry_policy = container_recreate_retry_policy
                 # Before we retry if retry policy is container recreate, we need refresh the cache of the
@@ -249,7 +252,11 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             # is the request. It needs to be modified for write forbidden exception
             # Support both sync and async ShouldRetry implementations.
             should_retry_result = retry_policy.ShouldRetry(e)
-            should_retry = await should_retry_result if asyncio.iscoroutine(should_retry_result) else should_retry_result
+            should_retry = (
+                await should_retry_result
+                if asyncio.iscoroutine(should_retry_result)
+                else should_retry_result
+            )
             if not should_retry:
                 if not client.last_response_headers:
                     client.last_response_headers = {}

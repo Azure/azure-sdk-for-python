@@ -91,8 +91,7 @@ def build_response_hook(kwargs: Dict[str, Any]):
     header lookups (e.g. for ``ETag``) are always case-insensitive,
     regardless of the casing used by the service or test mocks.
 
-    :param dict kwargs: The keyword arguments dict (mutated in-place --
-        ``response_hook`` is popped if present).
+    :param dict kwargs: The keyword arguments dict.
     :return: A 2-tuple ``(hook_callable, captured_headers_dict)``.  The
         *captured_headers_dict* is populated by the hook when it fires.
     :rtype: tuple[Callable, CaseInsensitiveDict]
@@ -103,7 +102,7 @@ def build_response_hook(kwargs: Dict[str, Any]):
         response_headers.clear()
         response_headers.update(hook_headers)
 
-    upstream_hook = kwargs.pop('response_hook', None)
+    upstream_hook = kwargs.get('response_hook', None)
     if upstream_hook:
         original_capture = capture_response_hook
 

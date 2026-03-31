@@ -332,6 +332,50 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
         self.assertIs(result, previous_map)
         self.assertEqual(result.change_feed_etag, '"etag-old"')
 
+    async def test_fetch_routing_map_fallback_rechains_upstream_response_hook_async(self):
+        """Upstream response_hook should be invoked for both incremental and
+        full-refresh attempts when incremental merge falls back (async)."""
+        client = MagicMock()
+        upstream_calls = []
+        call_count = {'n': 0}
+
+        def upstream_hook(headers, _):
+            upstream_calls.append(dict(headers))
+
+        def read_pk_ranges_with_fallback(collection_link, options, response_hook=None, **kwargs):
+            call_count['n'] += 1
+            if response_hook:
+                response_hook({http_constants.HttpHeaders.ETag: f'"etag-{call_count["n"]}"'}, None)
+
+            async def async_gen():
+                if call_count['n'] == 1:
+                    yield {
+                        'id': '1',
+                        'minInclusive': '',
+                        'maxExclusive': 'AA',
+                        'parents': ['missing-parent']
+                    }
+                else:
+                    yield {'id': '0', 'minInclusive': '', 'maxExclusive': 'FF'}
+
+            return async_gen()
+
+        client._ReadPartitionKeyRanges = MagicMock(side_effect=read_pk_ranges_with_fallback)
+        cache = PartitionKeyRangeCache(client)
+        previous_map = _make_complete_routing_map("dbs/db1/colls/coll1", '"etag-old"')
+
+        result = await cache._fetch_routing_map(
+            collection_link="dbs/db1/colls/coll1",
+            collection_id="dbs/db1/colls/coll1",
+            previous_routing_map=previous_map,
+            feed_options={},
+            response_hook=upstream_hook
+        )
+
+        self.assertIsNotNone(result)
+        self.assertEqual(call_count['n'], 2, "Expected incremental attempt and full-refresh fallback")
+        self.assertEqual(len(upstream_calls), 2, "Upstream response_hook should run for both attempts")
+
 
 if __name__ == "__main__":
     unittest.main()

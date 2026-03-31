@@ -3585,10 +3585,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 # Transport failures during targeted refresh should degrade to full refresh.
                 pass
             except exceptions.CosmosHttpResponseError as e:
+                status_code = e.status_code
                 is_transient = (
-                    e.status_code in (http_constants.StatusCodes.REQUEST_TIMEOUT,
-                                      http_constants.StatusCodes.TOO_MANY_REQUESTS)
-                    or e.status_code >= http_constants.StatusCodes.INTERNAL_SERVER_ERROR
+                    status_code in (http_constants.StatusCodes.REQUEST_TIMEOUT,
+                                    http_constants.StatusCodes.TOO_MANY_REQUESTS)
+                    or (
+                        status_code is not None
+                        and status_code >= http_constants.StatusCodes.INTERNAL_SERVER_ERROR
+                    )
                 )
                 if not is_transient:
                     raise

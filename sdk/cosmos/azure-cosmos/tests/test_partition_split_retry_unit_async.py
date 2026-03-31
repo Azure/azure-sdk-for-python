@@ -458,7 +458,7 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         mock_provider_ctor.assert_called_once_with(conn)
 
     @patch('azure.cosmos.aio._cosmos_client_connection_async.SmartRoutingMapProvider')
-    async def test_refresh_routing_map_provider_non_transient_targeted_error_reraises_async(self, mock_provider_ctor):
+    async def test_refresh_routing_map_provider_non_transient_targeted_error_re_raises_async(self, mock_provider_ctor):
         """Async targeted refresh should surface non-transient errors instead of masking them."""
         conn = object.__new__(CosmosClientConnection)
         conn._routing_map_provider = MagicMock()

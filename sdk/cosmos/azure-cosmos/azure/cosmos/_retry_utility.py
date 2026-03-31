@@ -205,6 +205,9 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                 retry_policy = sessionRetry_policy
             elif exceptions._partition_range_is_gone(e):
                 retry_policy = partition_key_range_gone_retry_policy
+                collection_link, previous_routing_map, feed_options = retry_policy.pop_refresh_context()
+                if collection_link and previous_routing_map is not None:
+                    client.refresh_routing_map_provider(collection_link, previous_routing_map, feed_options)
             elif exceptions._container_recreate_exception(e):
                 retry_policy = container_recreate_retry_policy
                 # Before we retry if retry policy is container recreate, we need refresh the cache of the

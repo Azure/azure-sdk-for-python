@@ -467,7 +467,7 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         mock_provider_ctor.assert_called_once_with(conn)
 
     @patch('azure.cosmos._cosmos_client_connection.routing_map_provider.SmartRoutingMapProvider')
-    def test_refresh_routing_map_provider_non_transient_targeted_error_reraises(self, mock_provider_ctor):
+    def test_refresh_routing_map_provider_non_transient_targeted_error_re_raises(self, mock_provider_ctor):
         """Targeted refresh should surface non-transient errors instead of masking them."""
         conn = object.__new__(CosmosClientConnection)
         conn._routing_map_provider = MagicMock()
