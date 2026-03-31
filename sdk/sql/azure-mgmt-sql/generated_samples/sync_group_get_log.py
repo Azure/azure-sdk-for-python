@@ -44,6 +44,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/SyncGroupGetLog.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/SQL/stable/2025-01-01/examples/SyncGroupGetLog.json
 if __name__ == "__main__":
     main()

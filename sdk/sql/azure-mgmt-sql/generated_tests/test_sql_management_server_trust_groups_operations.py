@@ -20,12 +20,24 @@ class TestSqlManagementServerTrustGroupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_server_trust_groups_list_by_location(self, resource_group):
+        response = self.client.server_trust_groups.list_by_location(
+            resource_group_name=resource_group.name,
+            location_name="str",
+            api_version="2025-01-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_server_trust_groups_get(self, resource_group):
         response = self.client.server_trust_groups.get(
             resource_group_name=resource_group.name,
             location_name="str",
             server_trust_group_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +57,7 @@ class TestSqlManagementServerTrustGroupsOperations(AzureMgmtRecordedTestCase):
                 "trustScopes": ["str"],
                 "type": "str",
             },
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -58,21 +70,9 @@ class TestSqlManagementServerTrustGroupsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             location_name="str",
             server_trust_group_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_server_trust_groups_list_by_location(self, resource_group):
-        response = self.client.server_trust_groups.list_by_location(
-            resource_group_name=resource_group.name,
-            location_name="str",
-            api_version="2020-11-01-preview",
-        )
-        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -82,7 +82,7 @@ class TestSqlManagementServerTrustGroupsOperations(AzureMgmtRecordedTestCase):
         response = self.client.server_trust_groups.list_by_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

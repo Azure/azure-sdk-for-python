@@ -26,7 +26,7 @@ class TestSqlManagementSensitivityLabelsOperationsAsync(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -48,6 +48,7 @@ class TestSqlManagementSensitivityLabelsOperationsAsync(AzureMgmtRecordedTestCas
                         "op": "str",
                         "schema": "str",
                         "sensitivityLabel": {
+                            "clientClassificationSource": "str",
                             "columnName": "str",
                             "id": "str",
                             "informationType": "str",
@@ -67,7 +68,7 @@ class TestSqlManagementSensitivityLabelsOperationsAsync(AzureMgmtRecordedTestCas
                     }
                 ]
             },
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -80,43 +81,9 @@ class TestSqlManagementSensitivityLabelsOperationsAsync(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_sensitivity_labels_enable_recommendation(self, resource_group):
-        response = await self.client.sensitivity_labels.enable_recommendation(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            database_name="str",
-            schema_name="str",
-            table_name="str",
-            column_name="str",
-            sensitivity_label_source="recommended",
-            api_version="2020-11-01-preview",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_sensitivity_labels_disable_recommendation(self, resource_group):
-        response = await self.client.sensitivity_labels.disable_recommendation(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            database_name="str",
-            schema_name="str",
-            table_name="str",
-            column_name="str",
-            sensitivity_label_source="recommended",
-            api_version="2020-11-01-preview",
-        )
-
         # please add some check logic here by yourself
         # ...
 
@@ -131,7 +98,7 @@ class TestSqlManagementSensitivityLabelsOperationsAsync(AzureMgmtRecordedTestCas
             table_name="str",
             column_name="str",
             sensitivity_label_source="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -148,6 +115,7 @@ class TestSqlManagementSensitivityLabelsOperationsAsync(AzureMgmtRecordedTestCas
             table_name="str",
             column_name="str",
             parameters={
+                "clientClassificationSource": "str",
                 "columnName": "str",
                 "id": "str",
                 "informationType": "str",
@@ -163,7 +131,7 @@ class TestSqlManagementSensitivityLabelsOperationsAsync(AzureMgmtRecordedTestCas
                 "type": "str",
             },
             sensitivity_label_source="current",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -180,8 +148,55 @@ class TestSqlManagementSensitivityLabelsOperationsAsync(AzureMgmtRecordedTestCas
             table_name="str",
             column_name="str",
             sensitivity_label_source="current",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_sensitivity_labels_disable_recommendation(self, resource_group):
+        response = await self.client.sensitivity_labels.disable_recommendation(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            database_name="str",
+            schema_name="str",
+            table_name="str",
+            column_name="str",
+            sensitivity_label_source="recommended",
+            api_version="2025-01-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_sensitivity_labels_enable_recommendation(self, resource_group):
+        response = await self.client.sensitivity_labels.enable_recommendation(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            database_name="str",
+            schema_name="str",
+            table_name="str",
+            column_name="str",
+            sensitivity_label_source="recommended",
+            api_version="2025-01-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_sensitivity_labels_list_by_database(self, resource_group):
+        response = self.client.sensitivity_labels.list_by_database(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            database_name="str",
+            api_version="2025-01-01",
+        )
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

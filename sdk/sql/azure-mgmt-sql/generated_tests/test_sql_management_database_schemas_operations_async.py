@@ -26,7 +26,7 @@ class TestSqlManagementDatabaseSchemasOperationsAsync(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestSqlManagementDatabaseSchemasOperationsAsync(AzureMgmtRecordedTestCase)
             server_name="str",
             database_name="str",
             schema_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself

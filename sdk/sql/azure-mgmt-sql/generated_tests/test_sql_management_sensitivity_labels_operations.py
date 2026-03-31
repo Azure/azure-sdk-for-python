@@ -25,7 +25,7 @@ class TestSqlManagementSensitivityLabelsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -47,6 +47,7 @@ class TestSqlManagementSensitivityLabelsOperations(AzureMgmtRecordedTestCase):
                         "op": "str",
                         "schema": "str",
                         "sensitivityLabel": {
+                            "clientClassificationSource": "str",
                             "columnName": "str",
                             "id": "str",
                             "informationType": "str",
@@ -66,7 +67,7 @@ class TestSqlManagementSensitivityLabelsOperations(AzureMgmtRecordedTestCase):
                     }
                 ]
             },
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -79,43 +80,9 @@ class TestSqlManagementSensitivityLabelsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
         result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_sensitivity_labels_enable_recommendation(self, resource_group):
-        response = self.client.sensitivity_labels.enable_recommendation(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            database_name="str",
-            schema_name="str",
-            table_name="str",
-            column_name="str",
-            sensitivity_label_source="recommended",
-            api_version="2020-11-01-preview",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_sensitivity_labels_disable_recommendation(self, resource_group):
-        response = self.client.sensitivity_labels.disable_recommendation(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            database_name="str",
-            schema_name="str",
-            table_name="str",
-            column_name="str",
-            sensitivity_label_source="recommended",
-            api_version="2020-11-01-preview",
-        )
-
         # please add some check logic here by yourself
         # ...
 
@@ -130,7 +97,7 @@ class TestSqlManagementSensitivityLabelsOperations(AzureMgmtRecordedTestCase):
             table_name="str",
             column_name="str",
             sensitivity_label_source="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -147,6 +114,7 @@ class TestSqlManagementSensitivityLabelsOperations(AzureMgmtRecordedTestCase):
             table_name="str",
             column_name="str",
             parameters={
+                "clientClassificationSource": "str",
                 "columnName": "str",
                 "id": "str",
                 "informationType": "str",
@@ -162,7 +130,7 @@ class TestSqlManagementSensitivityLabelsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
             },
             sensitivity_label_source="current",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -179,8 +147,55 @@ class TestSqlManagementSensitivityLabelsOperations(AzureMgmtRecordedTestCase):
             table_name="str",
             column_name="str",
             sensitivity_label_source="current",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_sensitivity_labels_disable_recommendation(self, resource_group):
+        response = self.client.sensitivity_labels.disable_recommendation(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            database_name="str",
+            schema_name="str",
+            table_name="str",
+            column_name="str",
+            sensitivity_label_source="recommended",
+            api_version="2025-01-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_sensitivity_labels_enable_recommendation(self, resource_group):
+        response = self.client.sensitivity_labels.enable_recommendation(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            database_name="str",
+            schema_name="str",
+            table_name="str",
+            column_name="str",
+            sensitivity_label_source="recommended",
+            api_version="2025-01-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_sensitivity_labels_list_by_database(self, resource_group):
+        response = self.client.sensitivity_labels.list_by_database(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            database_name="str",
+            api_version="2025-01-01",
+        )
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

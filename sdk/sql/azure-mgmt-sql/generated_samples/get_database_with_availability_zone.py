@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2023-02-01-preview/examples/GetDatabaseWithAvailabilityZone.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/SQL/stable/2025-01-01/examples/GetDatabaseWithAvailabilityZone.json
 if __name__ == "__main__":
     main()

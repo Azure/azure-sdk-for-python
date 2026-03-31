@@ -26,7 +26,7 @@ class TestSqlManagementLongTermRetentionPoliciesOperationsAsync(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestSqlManagementLongTermRetentionPoliciesOperationsAsync(AzureMgmtRecorde
             server_name="str",
             database_name="str",
             policy_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -66,7 +66,7 @@ class TestSqlManagementLongTermRetentionPoliciesOperationsAsync(AzureMgmtRecorde
                     "weeklyRetention": "str",
                     "yearlyRetention": "str",
                 },
-                api_version="2024-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

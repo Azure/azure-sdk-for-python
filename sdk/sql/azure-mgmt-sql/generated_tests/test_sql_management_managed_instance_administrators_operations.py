@@ -24,7 +24,7 @@ class TestSqlManagementManagedInstanceAdministratorsOperations(AzureMgmtRecorded
         response = self.client.managed_instance_administrators.list_by_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestSqlManagementManagedInstanceAdministratorsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             administrator_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -59,7 +59,7 @@ class TestSqlManagementManagedInstanceAdministratorsOperations(AzureMgmtRecorded
                 "tenantId": "str",
                 "type": "str",
             },
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -72,7 +72,7 @@ class TestSqlManagementManagedInstanceAdministratorsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             administrator_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

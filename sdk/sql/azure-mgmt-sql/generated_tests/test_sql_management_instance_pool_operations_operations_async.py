@@ -25,7 +25,7 @@ class TestSqlManagementInstancePoolOperationsOperationsAsync(AzureMgmtRecordedTe
         response = self.client.instance_pool_operations.list_by_instance_pool(
             resource_group_name=resource_group.name,
             instance_pool_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestSqlManagementInstancePoolOperationsOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             instance_pool_name="str",
             operation_id="str",
-            api_version="2024-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself

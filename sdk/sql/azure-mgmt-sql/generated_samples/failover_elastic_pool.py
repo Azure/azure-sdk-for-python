@@ -38,6 +38,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-08-01-preview/examples/FailoverElasticPool.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/SQL/stable/2025-01-01/examples/FailoverElasticPool.json
 if __name__ == "__main__":
     main()

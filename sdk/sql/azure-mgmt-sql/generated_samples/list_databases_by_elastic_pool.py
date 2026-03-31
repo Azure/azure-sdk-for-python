@@ -32,7 +32,7 @@ def main():
     )
 
     response = client.databases.list_by_elastic_pool(
-        resource_group_name="Default-SQL-SouthEastAsia",
+        resource_group_name="sqlcrudtestgroup",
         server_name="testsvr",
         elastic_pool_name="pool1",
     )
@@ -40,6 +40,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2023-02-01-preview/examples/ListDatabasesByElasticPool.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/SQL/stable/2025-01-01/examples/ListDatabasesByElasticPool.json
 if __name__ == "__main__":
     main()

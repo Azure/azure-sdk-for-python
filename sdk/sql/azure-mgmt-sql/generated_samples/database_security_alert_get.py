@@ -35,11 +35,11 @@ def main():
         resource_group_name="securityalert-6852",
         server_name="securityalert-2080",
         database_name="testdb",
-        security_alert_policy_name="Default",
+        security_alert_policy_name="default",
     )
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/DatabaseSecurityAlertGet.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/SQL/stable/2025-01-01/examples/DatabaseSecurityAlertGet.json
 if __name__ == "__main__":
     main()

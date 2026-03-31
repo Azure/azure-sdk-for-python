@@ -21,12 +21,24 @@ class TestSqlManagementSyncAgentsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_sync_agents_list_by_server(self, resource_group):
+        response = self.client.sync_agents.list_by_server(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            api_version="2025-01-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_sync_agents_get(self, resource_group):
         response = await self.client.sync_agents.get(
             resource_group_name=resource_group.name,
             server_name="str",
             sync_agent_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -51,7 +63,7 @@ class TestSqlManagementSyncAgentsOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "version": "str",
                 },
-                api_version="2020-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -66,22 +78,10 @@ class TestSqlManagementSyncAgentsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 server_name="str",
                 sync_agent_name="str",
-                api_version="2020-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_sync_agents_list_by_server(self, resource_group):
-        response = self.client.sync_agents.list_by_server(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            api_version="2020-11-01-preview",
-        )
-        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -92,7 +92,7 @@ class TestSqlManagementSyncAgentsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             sync_agent_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -105,7 +105,7 @@ class TestSqlManagementSyncAgentsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             sync_agent_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -21,21 +21,6 @@ class TestSqlManagementJobTargetExecutionsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_job_target_executions_list_by_job_execution(self, resource_group):
-        response = self.client.job_target_executions.list_by_job_execution(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            job_agent_name="str",
-            job_name="str",
-            job_execution_id="str",
-            api_version="2020-11-01-preview",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
     async def test_job_target_executions_list_by_step(self, resource_group):
         response = self.client.job_target_executions.list_by_step(
             resource_group_name=resource_group.name,
@@ -44,7 +29,7 @@ class TestSqlManagementJobTargetExecutionsOperationsAsync(AzureMgmtRecordedTestC
             job_name="str",
             job_execution_id="str",
             step_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -61,8 +46,23 @@ class TestSqlManagementJobTargetExecutionsOperationsAsync(AzureMgmtRecordedTestC
             job_execution_id="str",
             step_name="str",
             target_id="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_job_target_executions_list_by_job_execution(self, resource_group):
+        response = self.client.job_target_executions.list_by_job_execution(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            job_agent_name="str",
+            job_name="str",
+            job_execution_id="str",
+            api_version="2025-01-01",
+        )
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
