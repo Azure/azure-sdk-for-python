@@ -173,15 +173,20 @@ def apply_common_defaults(
     response_id: str,
     agent_reference: dict[str, Any] | None,
     model: str | None,
+    agent_session_id: str | None = None,
 ) -> None:
     """Stamp lifecycle event payloads with response-level defaults.
 
     Only events whose payload is a ``Response`` snapshot
     (``response.queued``, ``response.created``, ``response.in_progress``,
     ``response.completed``, ``response.failed``, ``response.incomplete``)
-    receive ``id``, ``response_id``, ``object``, ``agent_reference``, and
-    ``model`` defaults.  Other event types carry different schemas per the
-    contract and are left untouched.
+    receive ``id``, ``response_id``, ``object``, ``agent_reference``,
+    ``model``, and ``agent_session_id`` defaults.  Other event types carry
+    different schemas per the contract and are left untouched.
+
+    **S-048**: ``agent_session_id`` is forcibly stamped (not ``setdefault``)
+    on every ``response.*`` event so the resolved session ID is always
+    present regardless of what the handler emits.
 
     :param events: The list of event dicts to mutate.
     :type events: list[dict[str, Any]]
@@ -191,6 +196,8 @@ def apply_common_defaults(
     :keyword type agent_reference: dict[str, Any] | None
     :keyword model: Optional model identifier.
     :keyword type model: str | None
+    :keyword agent_session_id: Resolved session ID (S-048).
+    :keyword type agent_session_id: str | None
     :rtype: None
     """
     for event in events:
@@ -208,6 +215,9 @@ def apply_common_defaults(
             payload.setdefault("agent_reference", deepcopy(agent_reference))
         if model is not None:
             payload.setdefault("model", model)
+        # S-048: forcibly stamp session ID on every response.* event
+        if agent_session_id is not None:
+            payload["agent_session_id"] = agent_session_id
 
 
 def assign_sequence_numbers(events: list[dict[str, Any]]) -> None:

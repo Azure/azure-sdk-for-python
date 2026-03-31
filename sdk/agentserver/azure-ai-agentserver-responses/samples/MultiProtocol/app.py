@@ -14,7 +14,7 @@ Endpoints:
     DELETE /responses/{id}                          - Delete a response
     POST   /responses/{id}/cancel                   - Cancel a response
     GET    /responses/{id}/input_items               - List input items
-    GET    /healthy                                  - Health probe (provided by hosting)
+    GET    /readiness                                 - Health probe (provided by hosting)
 
 Usage::
 
@@ -37,7 +37,7 @@ Usage::
          -d '{"model": "echo", "input": "Hello from responses!", "stream": true, "store": true}'
 
     # --- Health check (provided automatically by AgentHost) ---
-    curl http://localhost:8088/healthy
+    curl http://localhost:8088/readiness
 """
 
 from collections.abc import AsyncIterable
@@ -49,8 +49,7 @@ from starlette.responses import JSONResponse, Response
 from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.invocations import InvocationHandler
 from azure.ai.agentserver.responses.hosting import ResponseHandler
-from azure.ai.agentserver.responses.models import get_input_text
-from azure.ai.agentserver.responses import ResponseEventStream
+from azure.ai.agentserver.responses import ResponseEventStream, get_input_text
 
 
 # =====================================================================
@@ -113,7 +112,7 @@ def echo_response_handler(
     # Build the event stream helper
     stream = ResponseEventStream(
         response_id=context.response_id,
-        model=getattr(request, "model", None),
+        model=request.model,
     )
 
     # Lifecycle: created -> in_progress

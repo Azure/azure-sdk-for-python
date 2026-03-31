@@ -179,11 +179,11 @@ def test_zero_graceful_shutdown_timeout():
 
 @pytest.mark.asyncio
 async def test_health_endpoint_during_operation():
-    """GET /healthy returns 200 during normal operation."""
+    """GET /readiness returns 200 during normal operation."""
     server, _ = _make_server_with_shutdown()
     transport = ASGITransport(app=server.app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
-        resp = await client.get("/healthy")
+        resp = await client.get("/readiness")
     assert resp.status_code == 200
     assert resp.json() == {"status": "healthy"}
 

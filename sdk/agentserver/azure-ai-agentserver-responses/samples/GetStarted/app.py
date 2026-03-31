@@ -22,7 +22,7 @@ responses = ResponseHandler(server)
 
 @responses.create_handler
 def my_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
+    stream = ResponseEventStream(response_id=context.response_id, model=request.model)
 
     yield stream.emit_created()
     yield stream.emit_in_progress()

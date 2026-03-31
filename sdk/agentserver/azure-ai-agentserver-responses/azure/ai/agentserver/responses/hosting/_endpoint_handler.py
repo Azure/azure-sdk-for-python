@@ -51,6 +51,7 @@ from ._request_parsing import (
     _prevalidate_identity_payload,
     _resolve_conversation_id,
     _resolve_identity_fields,
+    _resolve_session_id,
 )
 from ._runtime_state import _RuntimeState
 from ._validation import parse_and_validate_create_response
@@ -211,6 +212,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         parsed: CreateResponse,
         response_id: str,
         agent_reference: Any,
+        agent_session_id: str | None = None,
         span: Any,
         request: Request,
     ) -> _ExecutionContext:
@@ -230,6 +232,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :type response_id: str
         :param agent_reference: Normalised agent reference dictionary.
         :type agent_reference: Any
+        :keyword agent_session_id: Resolved session ID (S-048), or ``None``.
+        :keyword type agent_session_id: str | None
         :param span: Active observability span for this request.
         :type span: Any
         :param request: Starlette HTTP request (for headers / query params).
@@ -265,6 +269,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             previous_response_id=previous_response_id,
             conversation_id=conversation_id,
             cancellation_signal=cancellation_signal,
+            agent_session_id=agent_session_id,
             span=span,
             parsed=parsed,
         )
@@ -360,7 +365,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             return _error_response(exc, {})
 
         try:
-            response_id, agent_reference = _resolve_identity_fields(parsed)
+            response_id, agent_reference = _resolve_identity_fields(
+                parsed, request_headers=request.headers,
+            )
         except Exception as exc:  # pylint: disable=broad-exception-caught
             logger.error("Failed to resolve identity fields", exc_info=exc)
             captured_error = exc
@@ -369,11 +376,15 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 self._tracing.end_span(otel_span, exc=exc)
             return _error_response(exc, {})
 
+        # S-048: Resolve session ID
+        agent_session_id = _resolve_session_id(parsed, payload)
+
         ctx = self._build_execution_context(
             payload=payload,
             parsed=parsed,
             response_id=response_id,
             agent_reference=agent_reference,
+            agent_session_id=agent_session_id,
             span=span,
             request=request,
         )

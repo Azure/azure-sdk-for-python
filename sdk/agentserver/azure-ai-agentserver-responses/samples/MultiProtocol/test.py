@@ -41,8 +41,8 @@ def _assert_ok(response: requests.Response) -> None:
 
 
 def _health_check() -> None:
-    _print_header("Health check (GET /healthy)")
-    response = requests.get(f"{BASE_URL}/healthy", timeout=10)
+    _print_header("Health check (GET /readiness)")
+    response = requests.get(f"{BASE_URL}/readiness", timeout=10)
     _assert_ok(response)
     print(f"Status: {response.status_code}")
     print(response.text)

@@ -22,7 +22,7 @@ responses = ResponseHandler(server)
 @responses.create_handler
 def multi_output_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event) -> AsyncIterable[dict[str, Any]]:
     """Produces reasoning plus final message output in one response."""
-    stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
+    stream = ResponseEventStream(response_id=context.response_id, model=request.model)
 
     yield stream.emit_created()
     yield stream.emit_in_progress()

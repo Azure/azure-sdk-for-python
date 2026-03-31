@@ -12,8 +12,8 @@ from collections.abc import AsyncIterable
 from typing import Any
 
 from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.responses import ResponseContext, ResponseEventStream
-from azure.ai.agentserver.responses.models import get_input_expanded, CreateResponse, ItemType
+from azure.ai.agentserver.responses import ResponseContext, ResponseEventStream, get_input_expanded
+from azure.ai.agentserver.responses.models import CreateResponse, ItemType
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 
 
@@ -38,7 +38,7 @@ def weather_handler(request: CreateResponse, context: ResponseContext, cancellat
     """Two-turn function-calling sample handler."""
     tool_output = _extract_function_call_output(request)
 
-    stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
+    stream = ResponseEventStream(response_id=context.response_id, model=request.model)
 
     yield stream.emit_created()
     yield stream.emit_in_progress()

@@ -246,7 +246,7 @@ def test_hosting__health_endpoint_is_available() -> None:
     responses.create_handler(_noop_response_handler)
     client = TestClient(server.app)
 
-    response = client.get("/healthy")
+    response = client.get("/readiness")
     assert response.status_code == 200
     assert response.json()["status"] == "healthy"
 

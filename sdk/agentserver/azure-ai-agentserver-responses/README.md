@@ -148,7 +148,9 @@ The SDK automatically handles all combinations of `stream` and `background` flag
 ### Configuration
 
 ```python
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.responses import ResponsesServerOptions
+from azure.ai.agentserver.responses.hosting import ResponseHandler
 
 options = ResponsesServerOptions(
     default_model="gpt-4o",
@@ -171,7 +173,7 @@ options = ResponsesServerOptions.from_env()
 
 ```python
 # Mount at a custom prefix
-map_responses_server(app, handler, prefix="/openai/v1")
+responses = ResponseHandler(server, prefix="/openai/v1")
 # Routes become: /openai/v1/responses, /openai/v1/responses/{response_id}, etc.
 ```
 
@@ -212,7 +214,7 @@ class MyDurableProvider:
 ### Function call response
 
 ```python
-stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
+stream = ResponseEventStream(response_id=context.response_id, model=request.model)
 yield stream.emit_created()
 yield stream.emit_in_progress()
 
@@ -231,7 +233,7 @@ yield stream.emit_completed()
 Output indices auto-increment across `add_output_item_*()` calls:
 
 ```python
-stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
+stream = ResponseEventStream(response_id=context.response_id, model=request.model)
 yield stream.emit_created()
 yield stream.emit_in_progress()
 

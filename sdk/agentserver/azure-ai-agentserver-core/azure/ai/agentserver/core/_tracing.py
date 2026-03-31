@@ -637,6 +637,9 @@ class _FoundryEnrichmentSpanProcessor:
         if self.project_id:
             span.set_attribute(_ATTR_FOUNDRY_PROJECT_ID, self.project_id)
 
+    def _on_ending(self, span: Any) -> None:  # pylint: disable=unused-argument
+        """No-op on span ending (called before on_end with mutable span)."""
+
     def on_end(self, span: Any) -> None:  # pylint: disable=unused-argument
         """No-op on span end."""
 
