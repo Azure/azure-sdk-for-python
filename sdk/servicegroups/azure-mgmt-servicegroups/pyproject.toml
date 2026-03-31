@@ -75,7 +75,7 @@ mypy = false
 [packaging]
 package_name = "azure-mgmt-servicegroups"
 package_nspkg = "azure-mgmt-nspkg"
-package_pprint_name = "Servicegroups Management"
+package_pprint_name = "Service Groups Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
