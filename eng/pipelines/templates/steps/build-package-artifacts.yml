@@ -99,7 +99,7 @@ steps:
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
       which python
-      $(PIP_EXE) install -r eng/ci_tools.txt
+      $(PIP_EXE) install -r eng/ci_tools.txt -vv
 
       if ($env:AGENT_OS -eq "Linux") {
         Write-Host "Installing release reqs"

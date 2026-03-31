@@ -25,17 +25,11 @@ steps:
       artifactFeeds: $(DevFeedName)
       onlyAddExtraIndex: false
 
-  # PipAuthenticate embeds credentials directly into PIP_INDEX_URL as https://build:<token>@host/...
-  # UV doesn't read PIP_INDEX_URL or PIP_EXTRA_INDEX_URL, so we mirror the pip two-index setup:
-  #   UV_INDEX_URL     = dev feed (primary, for azure-* dev builds)
-  #   UV_EXTRA_INDEX_URL = PyPI (fallback, for everything else)
-  # Without the PyPI fallback, packages absent from the dev feed get a 401/404 with no fallback.
   - pwsh: |
+      Write-Host "$(PIP_INDEX_URL)"
       if ($env:PIP_INDEX_URL) {
+        Write-Host "PIP Index URL detected: $env:PIP_INDEX_URL"
         Write-Host "##vso[task.setvariable variable=UV_INDEX_URL]$($env:PIP_INDEX_URL)"
-        Write-Host "##vso[task.setvariable variable=UV_EXTRA_INDEX_URL]https://pypi.org/simple"
-        Write-Host "UV_INDEX_URL configured from PIP_INDEX_URL with PyPI fallback"
-      } else {
-        Write-Host "##vso[task.logissue type=warning]PIP_INDEX_URL not set - UV will use default index"
       }
-    displayName: 'Configure UV Authentication'
+    displayName: 'Configure UV Authentication (Disabled)'
+    condition: false  # Explicitly disabled - change to 'true' or remove to enable
