@@ -27,7 +27,7 @@ TRANSFER_KEY_PATH = f"{PATH_PREFIX}/transfer-key.json"
 class ModMath:
     @staticmethod
     def reduce(x):
-        t = (x & 0xff) - (x >> 8)
+        t = (x & 0xFF) - (x >> 8)
         t += (t >> 31) & 257
         return t
 
@@ -64,7 +64,7 @@ class Share:
     @staticmethod
     def from_uint16(w):
         x = w >> 9
-        v = w & 0x1ff
+        v = w & 0x1FF
         return Share(x, v)
 
     def to_uint16(self):
@@ -77,7 +77,7 @@ class ByteShares:
 
     @staticmethod
     def init_coefficients(required, secret_byte):
-        coefficients = array.array('H')
+        coefficients = array.array("H")
         for _ in range(required - 1):
             coefficients.append(ModMath.get_random())
         coefficients.append(secret_byte)
@@ -125,7 +125,7 @@ class SharedSecret:
             shares = 0
         else:
             if shares > SharedSecret.max_shares or required > shares:
-                raise ValueError('Incorrect share or required count.')
+                raise ValueError("Incorrect share or required count.")
 
         self.shares = shares
         self.required = required
@@ -147,7 +147,7 @@ class SharedSecret:
             share_array = self.make_byte_shares(p)
             for sa in share_array:
                 if i == 0:
-                    share_arrays.append(array.array('H'))
+                    share_arrays.append(array.array("H"))
                 current_share_array = sa
                 current_share_array.append(sa)
         return share_arrays
@@ -162,7 +162,7 @@ class SharedSecret:
         plaintext_len = len(share_arrays[0])
 
         for j in range(plaintext_len):
-            sv = array.array('H')
+            sv = array.array("H")
             for i in range(required):
                 sa = share_arrays[i]
                 sv.append(sa[j])
@@ -179,10 +179,7 @@ class Key:
         self.x5t_256 = x5t_256
 
     def to_json(self):
-        return {
-            'enc_key': self.enc_key if self.enc_key else '',
-            'x5t_256': self.x5t_256 if self.x5t_256 else ''
-        }
+        return {"enc_key": self.enc_key if self.enc_key else "", "x5t_256": self.x5t_256 if self.x5t_256 else ""}
 
 
 class EncData:
@@ -191,10 +188,7 @@ class EncData:
         self.kdf = None
 
     def to_json(self):
-        return {
-            'data': [x.to_json() for x in self.data],
-            'kdf': self.kdf if self.kdf else ''
-        }
+        return {"data": [x.to_json() for x in self.data], "kdf": self.kdf if self.kdf else ""}
 
 
 class Datum:
@@ -203,10 +197,7 @@ class Datum:
         self.tag = tag
 
     def to_json(self):
-        return {
-            'compact_jwe': self.compact_jwe if self.compact_jwe else '',
-            'tag': self.tag if self.tag else ''
-        }
+        return {"compact_jwe": self.compact_jwe if self.compact_jwe else "", "tag": self.tag if self.tag else ""}
 
 
 class SecurityDomainRestoreData:
@@ -215,10 +206,7 @@ class SecurityDomainRestoreData:
         self.wrapped_key = Key()
 
     def to_json(self):
-        return {
-            'EncData': self.enc_data.to_json(),
-            'WrappedKey': self.wrapped_key.to_json()
-        }
+        return {"EncData": self.enc_data.to_json(), "WrappedKey": self.wrapped_key.to_json()}
 
 
 def _security_domain_gen_share_arrays(sd_wrapping_keys, shared_keys, required):
@@ -230,21 +218,21 @@ def _security_domain_gen_share_arrays(sd_wrapping_keys, shared_keys, required):
         if ok:
             break
 
-        prefix = '.'.join(private_key_path.split('.')[:-1])
-        cert_path = prefix + '.cer'
+        prefix = ".".join(private_key_path.split(".")[:-1])
+        cert_path = prefix + ".cer"
 
-        with open(private_key_path, 'rb') as f:
+        with open(private_key_path, "rb") as f:
             pem_data = f.read()
             private_key = load_pem_private_key(pem_data, password=None, backend=default_backend())
 
-        with open(cert_path, 'rb') as f:
+        with open(cert_path, "rb") as f:
             pem_data = f.read()
             cert = load_pem_x509_certificate(pem_data, backend=default_backend())
             public_bytes = cert.public_bytes(Encoding.DER)
             x5tS256 = Utils.security_domain_b64_url_encode(hashlib.sha256(public_bytes).digest())
-            for item in shared_keys['enc_shares']:
-                if x5tS256 == item['x5t_256']:
-                    jwe = JWE(compact_jwe=item['enc_key'])
+            for item in shared_keys["enc_shares"]:
+                if x5tS256 == item["x5t_256"]:
+                    jwe = JWE(compact_jwe=item["enc_key"])
                     share = jwe.decrypt_using_private_key(private_key)
                     if not share:
                         continue
@@ -262,27 +250,27 @@ def _security_domain_gen_blob(transfer_key, share_arrays, enc_data, required):
     master_key = SharedSecret.get_plaintext(share_arrays, required=required)
 
     plaintext_list = []
-    for item in enc_data['data']:
-        compact_jwe = item['compact_jwe']
-        tag = item['tag']
-        enc_key = KDF.sp800_108(master_key, label=tag, context='', bit_length=512)
+    for item in enc_data["data"]:
+        compact_jwe = item["compact_jwe"]
+        tag = item["tag"]
+        enc_key = KDF.sp800_108(master_key, label=tag, context="", bit_length=512)
         jwe_data = JWE(compact_jwe)
         plaintext = jwe_data.decrypt_using_bytes(enc_key)
         plaintext_list.append((plaintext, tag))
 
     # encrypt
     security_domain_restore_data = SecurityDomainRestoreData()
-    security_domain_restore_data.enc_data.kdf = 'sp108_kdf'  # type: ignore
+    security_domain_restore_data.enc_data.kdf = "sp108_kdf"  # type: ignore
     master_key = Utils.get_random(32)
 
     for plaintext, tag in plaintext_list:
-        enc_key = KDF.sp800_108(master_key, label=tag, context='', bit_length=512)
+        enc_key = KDF.sp800_108(master_key, label=tag, context="", bit_length=512)
         jwe = JWE()
-        jwe.encrypt_using_bytes(enc_key, plaintext, alg_id='A256CBC-HS512', kid=tag)
+        jwe.encrypt_using_bytes(enc_key, plaintext, alg_id="A256CBC-HS512", kid=tag)
         datum = Datum(compact_jwe=jwe.encode_compact(), tag=tag)
         security_domain_restore_data.enc_data.data.append(datum)
 
-    with open(transfer_key, 'rb') as f:
+    with open(transfer_key, "rb") as f:
         pem_data = f.read()
         exchange_cert = load_pem_x509_certificate(pem_data, backend=default_backend())
 
@@ -304,22 +292,23 @@ def _security_domain_restore_blob(sd_file, transfer_key, sd_wrapping_keys):
     """Using the wrapping keys, prepare the security domain for upload."""
     with open(sd_file) as f:
         sd_data = json.load(f)
-        if not sd_data or 'EncData' not in sd_data or 'SharedKeys' not in sd_data:
-            raise ValueError('Invalid SD file.')
-        enc_data = sd_data['EncData']
-        shared_keys = sd_data['SharedKeys']
-    required = shared_keys['required']
+        if not sd_data or "EncData" not in sd_data or "SharedKeys" not in sd_data:
+            raise ValueError("Invalid SD file.")
+        enc_data = sd_data["EncData"]
+        shared_keys = sd_data["SharedKeys"]
+    required = shared_keys["required"]
 
     restore_blob_value = _security_domain_make_restore_blob(
         sd_wrapping_keys=sd_wrapping_keys,
         transfer_key=transfer_key,
         enc_data=enc_data,
         shared_keys=shared_keys,
-        required=required
+        required=required,
     )
     return restore_blob_value
+
 
 def use_wrapping_keys() -> dict:
     key_paths = [f"{CERT_PATH_PREFIX}0.pem", f"{CERT_PATH_PREFIX}1.pem"]
     blob_value = _security_domain_restore_blob(SECURITY_DOMAIN_PATH, TRANSFER_KEY_PATH, key_paths)
-    return {'value': blob_value}
+    return {"value": blob_value}
