@@ -1,5 +1,72 @@
 # Release History
 
+## 3.0.0b1 (2026-03-31)
+
+### Features Added
+
+  - Model `AzureMapsManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `AzureMapsManagementClient` added method `send_request`
+  - Client `AzureMapsManagementClient` added operation group `private_link_resources`
+  - Client `AzureMapsManagementClient` added operation group `private_endpoint_connections`
+  - Client `AzureMapsManagementClient` added operation group `operation_result`
+  - Client `AzureMapsManagementClient` added operation group `operation_status`
+  - Model `CreatorProperties` added property `total_storage_unit_size_in_bytes`
+  - Model `CreatorProperties` added property `consumed_storage_unit_size_in_bytes`
+  - Model `CreatorUpdateParameters` added property `properties`
+  - Model `MapsAccountProperties` added property `locations`
+  - Model `MapsAccountProperties` added property `private_endpoint_connections`
+  - Model `MapsAccountProperties` added property `public_network_access`
+  - Model `MapsAccountUpdateParameters` added property `properties`
+  - Model `Resource` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Added enum `ActionType`
+  - Added model `EncryptionCustomerManagedKeyEncryption`
+  - Added model `EncryptionCustomerManagedKeyEncryptionKeyIdentity`
+  - Added enum `EncryptionCustomerManagedKeyEncryptionKeyIdentityType`
+  - Added model `LocationsItem`
+  - Added model `Operation`
+  - Added model `OperationStatusResult`
+  - Added enum `Origin`
+  - Added model `PrivateEndpoint`
+  - Added model `PrivateEndpointConnection`
+  - Added model `PrivateEndpointConnectionProperties`
+  - Added enum `PrivateEndpointConnectionProvisioningState`
+  - Added enum `PrivateEndpointServiceConnectionStatus`
+  - Added model `PrivateLinkResource`
+  - Added model `PrivateLinkResourceProperties`
+  - Added model `PrivateLinkServiceConnectionState`
+  - Added model `ProxyResource`
+  - Added enum `PublicNetworkAccess`
+  - Added model `OperationResultOperations`
+  - Added model `OperationStatusOperations`
+  - Added model `PrivateEndpointConnectionsOperations`
+  - Added model `PrivateLinkResourcesOperations`
+
+### Breaking Changes
+
+  - Model `CreatorUpdateParameters` deleted or renamed its instance variable `provisioning_state`
+  - Model `CreatorUpdateParameters` deleted or renamed its instance variable `storage_units`
+  - Deleted or renamed enum value `Kind.GEN1`
+  - Model `MapsAccountUpdateParameters` deleted or renamed its instance variable `unique_id`
+  - Model `MapsAccountUpdateParameters` deleted or renamed its instance variable `disable_local_auth`
+  - Model `MapsAccountUpdateParameters` deleted or renamed its instance variable `provisioning_state`
+  - Model `MapsAccountUpdateParameters` deleted or renamed its instance variable `linked_resources`
+  - Model `MapsAccountUpdateParameters` deleted or renamed its instance variable `cors`
+  - Model `MapsAccountUpdateParameters` deleted or renamed its instance variable `encryption`
+  - Deleted or renamed enum value `Name.S0`
+  - Deleted or renamed enum value `Name.S1`
+  - Deleted or renamed model `CreatorList`
+  - Deleted or renamed model `CustomerManagedKeyEncryption`
+  - Deleted or renamed model `CustomerManagedKeyEncryptionKeyIdentity`
+  - Deleted or renamed model `Dimension`
+  - Deleted or renamed model `IdentityType`
+  - Deleted or renamed model `MapsAccounts`
+  - Deleted or renamed model `MapsOperations`
+  - Deleted or renamed model `MetricSpecification`
+  - Deleted or renamed model `OperationDetail`
+  - Deleted or renamed model `ServiceSpecification`
+  - Deleted or renamed method `MapsOperations.list_subscription_operations`
+
 ## 2.1.0 (2023-09-11)
 
 ### Features Added

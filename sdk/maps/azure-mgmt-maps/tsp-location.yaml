@@ -1,0 +1,4 @@
+directory: specification/maps/resource-manager/Microsoft.Maps/Maps
+commit: 94db7d273945296435e15719fd0ade793fdcf7d2
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 
