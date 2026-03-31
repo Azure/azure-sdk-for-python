@@ -22,9 +22,8 @@ from collections.abc import AsyncIterable
 from typing import Any
 
 from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.responses import ResponseContext
-from azure.ai.agentserver.responses.models._generated import CreateResponse
-from azure.ai.agentserver.responses import ResponseEventStream
+from azure.ai.agentserver.responses import ResponseContext, ResponseEventStream
+from azure.ai.agentserver.responses.models import CreateResponse
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 
 
@@ -39,7 +38,7 @@ def my_handler(
     async def _events() -> AsyncIterable[dict[str, Any]]:
         stream = ResponseEventStream(
             response_id=context.response_id,
-            model=getattr(request, "model", None),
+            model=request.model,
         )
 
         yield stream.emit_created()
@@ -158,7 +157,9 @@ The SDK automatically handles all combinations of `stream` and `background` flag
 ### Configuration
 
 ```python
+from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.responses import ResponsesServerOptions
+from azure.ai.agentserver.responses.hosting import ResponseHandler
 
 options = ResponsesServerOptions(
     default_model="gpt-4o",
@@ -167,7 +168,8 @@ options = ResponsesServerOptions(
     additional_server_identity="my-server/1.0",
 )
 
-map_responses_server(app, handler, options=options)
+server = AgentHost()
+responses = ResponseHandler(server, options=options)
 ```
 
 Options can also be loaded from environment variables:
@@ -180,7 +182,7 @@ options = ResponsesServerOptions.from_env()
 
 ```python
 # Mount at a custom prefix
-map_responses_server(app, handler, prefix="/openai/v1")
+responses = ResponseHandler(server, prefix="/openai/v1")
 # Routes become: /openai/v1/responses, /openai/v1/responses/{response_id}, etc.
 ```
 
@@ -221,7 +223,7 @@ class MyDurableProvider:
 ### Function call response
 
 ```python
-stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
+stream = ResponseEventStream(response_id=context.response_id, model=request.model)
 yield stream.emit_created()
 yield stream.emit_in_progress()
 
@@ -240,7 +242,7 @@ yield stream.emit_completed()
 Output indices auto-increment across `add_output_item_*()` calls:
 
 ```python
-stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
+stream = ResponseEventStream(response_id=context.response_id, model=request.model)
 yield stream.emit_created()
 yield stream.emit_in_progress()
 
@@ -275,7 +277,7 @@ class ConversationHandler:
     async def create_async(self, request, context, cancellation_signal):
         stream = ResponseEventStream(
             response_id=context.response_id,
-            model=getattr(request, "model", None),
+            model=request.model,
         )
         yield stream.emit_created()
         yield stream.emit_in_progress()

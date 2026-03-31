@@ -49,8 +49,7 @@ from starlette.responses import JSONResponse, Response
 from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.invocations import InvocationHandler
 from azure.ai.agentserver.responses.hosting import ResponseHandler
-from azure.ai.agentserver.responses.models import get_input_text
-from azure.ai.agentserver.responses import ResponseEventStream
+from azure.ai.agentserver.responses import ResponseEventStream, get_input_text
 
 
 # =====================================================================
@@ -113,7 +112,7 @@ def echo_response_handler(
     # Build the event stream helper
     stream = ResponseEventStream(
         response_id=context.response_id,
-        model=getattr(request, "model", None),
+        model=request.model,
     )
 
     # Lifecycle: created -> in_progress
