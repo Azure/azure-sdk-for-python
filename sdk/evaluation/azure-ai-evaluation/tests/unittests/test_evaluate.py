@@ -1,4 +1,4 @@
-from typing import List, Dict, Union
+from typing import List, Dict, Union, cast
 import json
 import logging
 import math
@@ -26,6 +26,7 @@ from azure.ai.evaluation import (
     SelfHarmEvaluator,
     HateUnfairnessEvaluator,
     AzureOpenAIModelConfiguration,
+    EvaluationResult,
 )
 from azure.ai.evaluation._aoai.label_grader import AzureOpenAILabelGrader
 from azure.ai.evaluation._constants import (
@@ -1209,7 +1210,10 @@ class TestEvaluate:
         eval_id = "test_eval_group_123"
         eval_run_id = "test_run_456"
         # Create EvaluationResult structure
-        test_results = {"metrics": {"overall_score": 0.75}, "rows": test_rows, "studio_url": "https://test-studio.com"}
+        test_results = cast(
+            EvaluationResult,
+            {"metrics": {"overall_score": 0.75}, "rows": test_rows, "studio_url": "https://test-studio.com"},
+        )
 
         # Test the conversion function
         def run_test():
@@ -1343,7 +1347,7 @@ class TestEvaluate:
             assert "cached_tokens" in usage_item
 
         # Test with empty results
-        empty_results = {"metrics": {}, "rows": [], "studio_url": None}
+        empty_results = cast(EvaluationResult, {"metrics": {}, "rows": [], "studio_url": None})
         _convert_results_to_aoai_evaluation_results(
             results=empty_results, logger=logger, eval_run_id=eval_run_id, eval_id=eval_id, evaluators=evaluators
         )
@@ -1352,6 +1356,46 @@ class TestEvaluate:
         assert len(empty_converted["rows"]) == 0
         assert len(empty_converted["_evaluation_results_list"]) == 0
         assert empty_converted["_evaluation_summary"]["result_counts"]["total"] == 0
+
+        property_results = cast(
+            EvaluationResult,
+            {
+                "metrics": {},
+                "rows": [
+                    {
+                        "inputs.query": "test query",
+                        "outputs.friendly_evaluator_gh4y.custom_score": 4.5,
+                        "outputs.friendly_evaluator_gh4y.custom_reason": "Detailed attack reasoning",
+                        "outputs.friendly_evaluator_gh4y.custom_threshold": 3,
+                        "outputs.friendly_evaluator_gh4y.custom_label": False,
+                        "outputs.friendly_evaluator_gh4y.custom_observation_flag": False,
+                    }
+                ],
+                "studio_url": None,
+            },
+        )
+
+        _convert_results_to_aoai_evaluation_results(
+            results=property_results,
+            logger=logger,
+            eval_run_id=eval_run_id,
+            eval_id=eval_id,
+            evaluators={"friendly_evaluator_gh4y": lambda **kwargs: {"score": 1}},
+            eval_meta_data={
+                "testing_criteria": [
+                    {"name": "friendly_evaluator_gh4y", "type": "quality", "metrics": ["score"]}
+                ]
+            },
+        )
+
+        property_result = property_results["_evaluation_results_list"][0]["results"][0]
+        assert property_result["properties"] == {
+            "observation_flag": False,
+        }
+        assert property_result["score"] == 4.5
+        assert property_result["reason"] == "Detailed attack reasoning"
+        assert property_result["threshold"] == 3
+        assert property_result["label"] is False
 
     @patch(
         "azure.ai.evaluation._evaluate._evaluate._map_names_to_builtins",

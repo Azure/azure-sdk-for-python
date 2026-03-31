@@ -65,6 +65,21 @@ from ._evaluate_aoai import (
 
 LOGGER = logging.getLogger(__name__)
 
+_RESULT_PROPERTY_SUFFIXES = (
+    "_result",
+    "_reason",
+    "_threshold",
+    "_label",
+    "_score",
+    "_model",
+    "_finish_reason",
+    "_sample_input",
+    "_sample_output",
+    "_total_tokens",
+    "_prompt_tokens",
+    "_completion_tokens",
+)
+
 # For metrics (aggregates) whose metric names intentionally differ from their
 # originating column name, usually because the aggregation of the original value
 # means something sufficiently different.
@@ -2601,14 +2616,15 @@ def _extract_metric_values(
         result_name, result_name_child_level, result_name_nested_child_level, derived_passed = _update_metric_value(
             criteria_type, result_per_metric[metric], metric_key, metric, metric_value, logger
         )
-        _append_indirect_attachments_to_results(
-            result_per_metric,
-            result_name,
-            metric,
-            metric_value,
-            result_name_child_level,
-            result_name_nested_child_level,
-        )
+        if result_name is not None:
+            _append_indirect_attachments_to_results(
+                result_per_metric,
+                result_name,
+                metric,
+                metric_value,
+                result_name_child_level,
+                result_name_nested_child_level,
+            )
         if result_name == "label" and criteria_type == "azure_ai_evaluator" and derived_passed is not None:
             _append_indirect_attachments_to_results(result_per_metric, "passed", metric, derived_passed, None, None)
 
@@ -2673,6 +2689,13 @@ def _update_metric_value(
     result_name_child_level = None
     result_name_nested_child_level = None
     derived_passed = None
+
+    property_name = _get_result_property_name(metric_key)
+    if property_name:
+        _ensure_properties_dict(metric_dict)
+        metric_dict["properties"][property_name] = metric_value
+        result_name = "properties"
+        result_name_child_level = property_name
 
     if metric_key.endswith("_score") or metric_key == "score":
         metric_dict["score"] = metric_value
@@ -2746,23 +2769,7 @@ def _update_metric_value(
         result_name = "sample"
         result_name_child_level = "usage"
         result_name_nested_child_level = "completion_tokens"
-    elif not any(
-        metric_key.endswith(suffix)
-        for suffix in [
-            "_result",
-            "_reason",
-            "_threshold",
-            "_label",
-            "_score",
-            "_model",
-            "_finish_reason",
-            "_sample_input",
-            "_sample_output",
-            "_total_tokens",
-            "_prompt_tokens",
-            "_completion_tokens",
-        ]
-    ):
+    elif not any(metric_key.endswith(suffix) for suffix in _RESULT_PROPERTY_SUFFIXES):
         # If no score found yet and this doesn't match other patterns, use as score
         if metric_key == metric and metric_dict.get("score", None) is None:
             metric_dict["score"] = metric_value
@@ -2812,6 +2819,29 @@ def _ensure_usage_dict(metric_dict: Dict[str, Any]) -> None:
     _ensure_sample_dict(metric_dict)
     if "usage" not in metric_dict["sample"]:
         metric_dict["sample"]["usage"] = {}
+
+
+def _ensure_properties_dict(metric_dict: Dict[str, Any]) -> None:
+    """Ensure properties dictionary exists in metric_dict.
+
+    :param metric_dict: Metric dictionary to modify
+    :type metric_dict: Dict[str, Any]
+    :return: None (modifies metric_dict in place)
+    :rtype: None
+    """
+    if "properties" not in metric_dict:
+        metric_dict["properties"] = {}
+
+
+def _get_result_property_name(metric_key: str) -> Optional[str]:
+    """Return the result property name for custom-prefixed keys."""
+    result_property_prefix = "custom_"
+
+    if metric_key.startswith(result_property_prefix) and len(metric_key) > len(result_property_prefix):
+        if any(metric_key.endswith(suffix) for suffix in _RESULT_PROPERTY_SUFFIXES):
+            return None
+        return metric_key[len(result_property_prefix) :]
+    return None
 
 
 def _create_result_object(
@@ -2879,6 +2909,7 @@ def _create_result_object(
     threshold = metric_values.get("threshold")
     passed = metric_values.get("passed")
     sample = metric_values.get("sample")
+    properties = metric_values.get("properties")
 
     # Handle decrease boolean metrics
     if is_inverse:
@@ -2898,6 +2929,8 @@ def _create_result_object(
 
     if sample is not None:
         result_obj["sample"] = sample
+    if properties is not None:
+        result_obj["properties"] = properties
 
     return result_obj
 
@@ -3277,6 +3310,7 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
     :return: The metric name if found, otherwise the testing criteria name
     :rtype: str
     """
+    result_property_prefix = "custom_"
     metric = None
 
     if metric_key == "xpia_manipulated_content":
@@ -3290,6 +3324,9 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
         return metric
     elif metric_key == "f1_result" or metric_key == "f1_threshold" or metric_key == "f1_score":
         metric = "f1_score"
+        return metric
+    elif metric_key.startswith(result_property_prefix) and len(metric_list) == 1:
+        metric = metric_list[0]
         return metric
     for expected_metric in metric_list:
         if metric_key.startswith(expected_metric):
