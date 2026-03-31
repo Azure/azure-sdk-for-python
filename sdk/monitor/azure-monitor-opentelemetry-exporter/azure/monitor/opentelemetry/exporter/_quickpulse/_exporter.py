@@ -34,10 +34,18 @@ from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._configuration import (
     LiveMetricsClientConfiguration,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._client import LiveMetricsClient
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics.models import MonitoringDataPoint
-from azure.monitor.opentelemetry.exporter._quickpulse._filter import _update_filter_configuration
-from azure.monitor.opentelemetry.exporter._quickpulse._policy import _QuickpulseRedirectPolicy
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._client import (
+    LiveMetricsClient,
+)
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics.models import (
+    MonitoringDataPoint,
+)
+from azure.monitor.opentelemetry.exporter._quickpulse._filter import (
+    _update_filter_configuration,
+)
+from azure.monitor.opentelemetry.exporter._quickpulse._policy import (
+    _QuickpulseRedirectPolicy,
+)
 from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _get_and_clear_quickpulse_documents,
     _get_global_quickpulse_state,
@@ -50,7 +58,9 @@ from azure.monitor.opentelemetry.exporter._quickpulse._state import (
 from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
     _metric_to_quick_pulse_data_points,
 )
-from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
+from azure.monitor.opentelemetry.exporter._connection_string_parser import (
+    ConnectionStringParser,
+)
 from azure.monitor.opentelemetry.exporter._utils import (
     _get_auth_policy,
     _ticks_since_dot_net_epoch,
@@ -92,13 +102,16 @@ class _QuickpulseExporter(MetricExporter):
             ClientSecretCredential, used for Azure Active Directory (AAD) authentication. Defaults to None.
         :rtype: None
         """
-        parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
+        parsed_connection_string = ConnectionStringParser(
+            kwargs.get("connection_string")
+        )
 
         self._live_endpoint = parsed_connection_string.live_endpoint
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         self._credential = kwargs.get("credential")
         self.aad_audience = parsed_connection_string.aad_audience
-        config = LiveMetricsClientConfiguration(credential=self._credential)  # type: ignore
+        # Do not pass credential to config; auth is handled explicitly via _get_auth_policy
+        config = LiveMetricsClientConfiguration()
         qp_redirect_policy = _QuickpulseRedirectPolicy(permit_redirects=False)
         policies = [
             # Custom redirect policy for QP
@@ -107,7 +120,9 @@ class _QuickpulseExporter(MetricExporter):
             ContentDecodePolicy(),
             # Logging for client calls
             config.http_logging_policy,
-            _get_auth_policy(self._credential, config.authentication_policy, self.aad_audience),
+            _get_auth_policy(
+                self._credential, config.authentication_policy, self.aad_audience
+            ),
             # Explicitly disabling to avoid tracing live metrics calls
             # DistributedTracingPolicy(),
         ]
@@ -188,7 +203,9 @@ class _QuickpulseExporter(MetricExporter):
                                 )  # pylint: disable=C4769
                                 result = MetricExportResult.FAILURE
         except Exception:  # pylint: disable=broad-except
-            _logger.exception("Exception occurred while publishing live metrics.")  # pylint: disable=C4769
+            _logger.exception(
+                "Exception occurred while publishing live metrics."
+            )  # pylint: disable=C4769
             result = MetricExportResult.FAILURE
         finally:
             detach(token)
@@ -241,7 +258,9 @@ class _QuickpulseExporter(MetricExporter):
             )
             return ping_response  # type: ignore
         except Exception:  # pylint: disable=broad-except
-            _logger.exception("Exception occurred while pinging live metrics.")  # pylint: disable=C4769
+            _logger.exception(
+                "Exception occurred while pinging live metrics."
+            )  # pylint: disable=C4769
         detach(token)
         return ping_response
 
@@ -278,13 +297,17 @@ class _QuickpulseMetricReader(MetricReader):
                 )
                 if ping_response:
                     try:
-                        subscribed = ping_response._response_headers.get(_QUICKPULSE_SUBSCRIBED_HEADER_NAME)
+                        subscribed = ping_response._response_headers.get(
+                            _QUICKPULSE_SUBSCRIBED_HEADER_NAME
+                        )
                         if subscribed and subscribed == "true":
                             # Switch state to post if subscribed
                             _set_global_quickpulse_state(_QuickpulseState.POST_SHORT)
                             self._elapsed_num_seconds = 0
                             # Update config etag
-                            etag = ping_response._response_headers.get(_QUICKPULSE_ETAG_HEADER_NAME)
+                            etag = ping_response._response_headers.get(
+                                _QUICKPULSE_ETAG_HEADER_NAME
+                            )
                             if etag is None:
                                 etag = ""
                             if _get_quickpulse_etag() != etag:
@@ -294,8 +317,10 @@ class _QuickpulseMetricReader(MetricReader):
                         else:
                             # Backoff after _LONG_PING_INTERVAL_SECONDS (60s) of no successful requests
                             if (
-                                _get_global_quickpulse_state() is _QuickpulseState.PING_SHORT
-                                and self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS
+                                _get_global_quickpulse_state()
+                                is _QuickpulseState.PING_SHORT
+                                and self._elapsed_num_seconds
+                                >= _LONG_PING_INTERVAL_SECONDS
                             ):
                                 _set_global_quickpulse_state(_QuickpulseState.PING_LONG)
                             # Reset etag to default if not subscribed
