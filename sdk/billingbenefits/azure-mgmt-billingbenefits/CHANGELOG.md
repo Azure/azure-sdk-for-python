@@ -126,7 +126,7 @@
 
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
-  - Deleted or renamed model `BillingBenefitsRP`
+  - Renamed client `BillingBenefitsRP` to `BillingBenefitsMgmtClient`
   - Model `SavingsPlanOrderAliasModel` moved instance variable `display_name`, `savings_plan_order_id`, `provisioning_state`, `billing_scope_id`, `term`, `billing_plan`, `applied_scope_type`, `applied_scope_properties` and `commitment` under property `properties`
   - Deleted or renamed model `BillingInformation`
   - Deleted or renamed model `OperationResultError`
@@ -134,12 +134,11 @@
   - Deleted or renamed model `PricingCurrencyTotal`
   - Deleted or renamed model `SavingsPlanPurchaseValidateRequest`
   - Method `SavingsPlanOperations.list_all` changed its parameter `orderby`/`refresh_summary`/`skiptoken`/`selected_state`/`take` from `positional_or_keyword` to `keyword_only`
-  - Deleted or renamed method `SavingsPlanOperations.update`
-  - Deleted or renamed client mixin `BillingBenefitsRPOperationsMixin`
+  - Renamed method `SavingsPlanOperations.update` to `SavingsPlanOperations.begin_update`
 
 ### Other Changes
 
-  - Deleted model `SavingsPlanModelList`/`SavingsPlanOrderModelList` which actually were not used by SDK users
+  - Deleted model `SavingsPlanModelList`/`SavingsPlanOrderModelList`/`BillingBenefitsRPOperationsMixin` which actually were not used by SDK users
 
 ## 1.0.0b1 (2022-12-14)
 
