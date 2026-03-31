@@ -23,6 +23,6 @@ class PlaywrightClientTestBase(AzureRecordedTestCase):
 PlaywrightPreparer = functools.partial(
     PowerShellPreparer,
     "playwright",
-    playwright_endpoint="https://fake_playwright_endpoint.com",
+    playwright_endpoint="https://fake.api.playwright.microsoft.com",
     playwright_workspace_id="00000000-0000-0000-0000-000000000000",
 )

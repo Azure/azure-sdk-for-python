@@ -14,11 +14,14 @@ from testpreparer import PlaywrightClientTestBase, PlaywrightPreparer
 class TestPlaywrightTestRunsOperations(PlaywrightClientTestBase):
     @PlaywrightPreparer()
     @recorded_by_proxy
-    def test_test_runs_create_or_update(self, playwright_endpoint, playwright_workspace_id):
+    def test_test_runs_create_or_update(self, playwright_endpoint, playwright_workspace_id, **kwargs):
+        variables = kwargs.pop("variables", {})
+        run_id = variables.setdefault("run_id", str(uuid.uuid4()))
+
         client = self.create_client(endpoint=playwright_endpoint)
         response = client.test_runs.create_or_update(
             workspace_id=playwright_workspace_id,
-            run_id=str(uuid.uuid4()),
+            run_id=run_id,
             resource={
                 "displayName": "test-run",
             },
@@ -28,6 +31,7 @@ class TestPlaywrightTestRunsOperations(PlaywrightClientTestBase):
         assert response["displayName"] == "test-run"
         assert "runId" in response
         assert "creatorId" in response
+        return variables
 
     @PlaywrightPreparer()
     @recorded_by_proxy

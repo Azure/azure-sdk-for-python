@@ -11,6 +11,7 @@ from testpreparer_async import PlaywrightClientTestBaseAsync
 
 
 class TestPlaywrightWorkspacesOperationsAsync(PlaywrightClientTestBaseAsync):
+    @pytest.mark.live_test_only
     @PlaywrightPreparer()
     @recorded_by_proxy_async
     async def test_workspaces_get_browsers(self, playwright_endpoint, playwright_workspace_id):

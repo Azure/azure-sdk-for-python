@@ -10,6 +10,7 @@ from testpreparer import PlaywrightClientTestBase, PlaywrightPreparer
 
 
 class TestPlaywrightWorkspacesOperations(PlaywrightClientTestBase):
+    @pytest.mark.live_test_only
     @PlaywrightPreparer()
     @recorded_by_proxy
     def test_workspaces_get_browsers(self, playwright_endpoint, playwright_workspace_id):

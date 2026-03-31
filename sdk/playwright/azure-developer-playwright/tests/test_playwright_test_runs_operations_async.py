@@ -15,11 +15,14 @@ from testpreparer_async import PlaywrightClientTestBaseAsync
 class TestPlaywrightTestRunsOperationsAsync(PlaywrightClientTestBaseAsync):
     @PlaywrightPreparer()
     @recorded_by_proxy_async
-    async def test_test_runs_create_or_update(self, playwright_endpoint, playwright_workspace_id):
+    async def test_test_runs_create_or_update(self, playwright_endpoint, playwright_workspace_id, **kwargs):
+        variables = kwargs.pop("variables", {})
+        run_id = variables.setdefault("run_id", str(uuid.uuid4()))
+
         client = self.create_async_client(endpoint=playwright_endpoint)
         response = await client.test_runs.create_or_update(
             workspace_id=playwright_workspace_id,
-            run_id=str(uuid.uuid4()),
+            run_id=run_id,
             resource={
                 "displayName": "test-run",
             },
@@ -29,6 +32,7 @@ class TestPlaywrightTestRunsOperationsAsync(PlaywrightClientTestBaseAsync):
         assert response["displayName"] == "test-run"
         assert "runId" in response
         assert "creatorId" in response
+        return variables
 
     @PlaywrightPreparer()
     @recorded_by_proxy_async

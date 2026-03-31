@@ -15,11 +15,14 @@ from devtools_testutils import (
     add_general_string_sanitizer,
     add_body_key_sanitizer,
     add_header_regex_sanitizer,
+    remove_batch_sanitizers,
+    set_custom_default_matcher,
 )
 
 
 @pytest.fixture(scope="session", autouse=True)
 def start_proxy(test_proxy, patch_sleep, patch_async_sleep):
+    set_custom_default_matcher(excluded_headers="Cookie")
     return
 
 
@@ -33,19 +36,20 @@ def add_sanitizers(test_proxy):
         regex=playwright_subscription_id, value="00000000-0000-0000-0000-000000000000"
     )
 
-    # Sanitize endpoint
+    # Sanitize endpoint (both https:// and http:// variants for @odata.context)
     playwright_endpoint = os.environ.get("PLAYWRIGHT_ENDPOINT", "")
     if playwright_endpoint:
+        # Extract hostname for protocol-agnostic sanitization
+        hostname = playwright_endpoint.replace("https://", "").replace("http://", "")
+        reporting_hostname = hostname.replace(".api.playwright.", ".reporting.api.playwright.")
+
+        # Sanitize reporting subdomain first (longer match) to avoid partial matches
         add_general_string_sanitizer(
-            target=playwright_endpoint, value="https://fake_playwright_endpoint.com"
-        )
-        # Also sanitize the reporting subdomain variant
-        reporting_endpoint = playwright_endpoint.replace(
-            ".api.playwright.", ".reporting.api.playwright."
+            target=reporting_hostname,
+            value="fake.reporting.api.playwright.microsoft.com",
         )
         add_general_string_sanitizer(
-            target=reporting_endpoint,
-            value="https://fake_playwright_endpoint.com",
+            target=hostname, value="fake.api.playwright.microsoft.com"
         )
 
     # Sanitize workspace ID
@@ -60,3 +64,9 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
+    add_body_key_sanitizer(json_path="$..jwtToken", value="sanitized")
+    add_body_key_sanitizer(json_path="$..creatorId", value="00000000-0000-0000-0000-000000000000")
+    add_body_key_sanitizer(json_path="$..creatorName", value="Sanitized")
+
+    # Remove overly aggressive default sanitizers for $..id and $..name
+    remove_batch_sanitizers(["AZSDK3430", "AZSDK3493"])
