@@ -31,6 +31,10 @@ from .store._foundry_errors import FoundryApiError, FoundryBadRequestError, Foun
 from .store._foundry_provider import FoundryStorageProvider
 from .store._foundry_settings import FoundryStorageSettings
 from .store._memory import InMemoryResponseProvider
+from .models import (
+    CreateResponse,
+    ResponseObject
+)
 from .models._helpers import (
     get_conversation_id,
     get_input_expanded,
@@ -66,6 +70,8 @@ __all__ = [
     "OutputItemMcpListToolsBuilder",
     "OutputItemCustomToolCallBuilder",
     "ResponseEventStream",
+    "CreateResponse",
+    "ResponseObject",
     "get_conversation_id",
     "get_input_expanded",
     "get_input_text",
