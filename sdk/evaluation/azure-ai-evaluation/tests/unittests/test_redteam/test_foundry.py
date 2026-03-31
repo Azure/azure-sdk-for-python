@@ -4064,7 +4064,7 @@ class TestRAIServiceScorerTokenMetrics:
     async def test_score_metadata_includes_token_usage_from_sample_camelcase(
         self, mock_credential, mock_azure_ai_project, mock_logger
     ):
-        """Token usage from eval_result.sample.usage with camelCase keys (raw JSON) is normalised to snake_case."""
+        """Token usage from eval_result.sample.usage with camelCase keys (raw JSON) is normalized to snake_case."""
         scorer = RAIServiceScorer(
             credential=mock_credential,
             azure_ai_project=mock_azure_ai_project,
@@ -4125,7 +4125,7 @@ class TestRAIServiceScorerTokenMetrics:
     async def test_score_metadata_includes_token_usage_from_result_properties_camelcase(
         self, mock_credential, mock_azure_ai_project, mock_logger
     ):
-        """Token usage from result properties.metrics with camelCase keys (raw JSON) is normalised to snake_case."""
+        """Token usage from result properties.metrics with camelCase keys (raw JSON) is normalized to snake_case."""
         scorer = RAIServiceScorer(
             credential=mock_credential,
             azure_ai_project=mock_azure_ai_project,

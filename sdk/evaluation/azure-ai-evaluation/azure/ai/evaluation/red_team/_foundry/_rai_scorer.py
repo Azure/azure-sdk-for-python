@@ -374,7 +374,7 @@ class RAIServiceScorer(TrueFalseScorer):
 
         # The sync eval API may return token keys in either snake_case (SDK model
         # objects) or camelCase (raw JSON from non-OneDP HTTP responses).  We
-        # normalise to snake_case so downstream consumers always see a consistent
+        # normalize to snake_case so downstream consumers always see a consistent
         # format.
         _CAMEL_TO_SNAKE: Dict[str, str] = {
             "promptTokens": "prompt_tokens",
