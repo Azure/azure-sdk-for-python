@@ -32,30 +32,31 @@
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Model `SearchServiceUpdate` moved instance variable `replica_count`, `partition_count`, `endpoint`, `hosting_mode`, `compute_type`, `public_network_access`, `status`, `status_details`, `provisioning_state`, `network_rule_set`, `data_exfiltration_protections`, `encryption_with_cmk`, `disable_local_auth`, `auth_options`, `semantic_search`, `private_endpoint_connections`, `shared_private_link_resources`, `e_tag`, `upgrade_available` and `service_upgraded_at` under property `properties`
   - Method `ServicesOperations.check_name_availability` moved parameter `name` under parameter `check_name_availability_input`
-  - Method `SearchManagementClient.usage_by_subscription_sku` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
-  - Method `AdminKeysOperations.get` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
-  - Method `AdminKeysOperations.regenerate` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
-  - Method `PrivateEndpointConnectionsOperations.delete` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
-  - Method `PrivateEndpointConnectionsOperations.get` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
-  - Method `PrivateEndpointConnectionsOperations.list_by_service` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
-  - Method `PrivateEndpointConnectionsOperations.update` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
-  - Method `PrivateLinkResourcesOperations.list_supported` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
-  - Method `QueryKeysOperations.create` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
-  - Method `QueryKeysOperations.delete` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
-  - Method `QueryKeysOperations.list_by_search_service` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
-  - Method `ServicesOperations.begin_create_or_update` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
-  - Method `ServicesOperations.check_name_availability` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
-  - Method `ServicesOperations.delete` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
-  - Method `ServicesOperations.get` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
-  - Method `ServicesOperations.list_by_resource_group` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
-  - Method `ServicesOperations.list_by_subscription` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
-  - Method `ServicesOperations.update` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
-  - Method `SharedPrivateLinkResourcesOperations.begin_create_or_update` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
-  - Method `SharedPrivateLinkResourcesOperations.begin_delete` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
-  - Method `SharedPrivateLinkResourcesOperations.get` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
-  - Method `SharedPrivateLinkResourcesOperations.list_by_service` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
-  - Method `UsagesOperations.list_by_subscription` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
-  - Deleted or renamed model `SearchManagementRequestOptions`
+  - `SearchManagementRequestOptions` was used to set `client_request_id` but now you could pass `request_id="..."` directly in any operation
+  - Method `SearchManagementClient.usage_by_subscription_sku` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `AdminKeysOperations.get` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `AdminKeysOperations.regenerate` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `PrivateEndpointConnectionsOperations.delete` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `PrivateEndpointConnectionsOperations.get` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `PrivateEndpointConnectionsOperations.list_by_service` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `PrivateEndpointConnectionsOperations.update` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `PrivateLinkResourcesOperations.list_supported` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `QueryKeysOperations.create` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `QueryKeysOperations.delete` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `QueryKeysOperations.list_by_search_service` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `ServicesOperations.begin_create_or_update` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `ServicesOperations.check_name_availability` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `ServicesOperations.delete` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `ServicesOperations.get` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `ServicesOperations.list_by_resource_group` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `ServicesOperations.list_by_subscription` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `ServicesOperations.update` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `SharedPrivateLinkResourcesOperations.begin_create_or_update` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `SharedPrivateLinkResourcesOperations.begin_delete` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `SharedPrivateLinkResourcesOperations.get` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `SharedPrivateLinkResourcesOperations.list_by_service` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `UsagesOperations.list_by_subscription` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Deleted model `SearchManagementRequestOptions`
 
 ### Other Changes
 
