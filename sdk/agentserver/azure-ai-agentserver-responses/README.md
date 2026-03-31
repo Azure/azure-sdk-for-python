@@ -22,9 +22,7 @@ from collections.abc import AsyncIterable
 from typing import Any
 
 from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.responses import ResponseContext
-from azure.ai.agentserver.responses.models._generated import CreateResponse
-from azure.ai.agentserver.responses import ResponseEventStream
+from azure.ai.agentserver.responses import ResponseContext, CreateResponse, ResponseEventStream
 from azure.ai.agentserver.responses.hosting import ResponseHandler
 
 
@@ -36,29 +34,27 @@ responses = ResponseHandler(server)
 def my_handler(
     request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
 ) -> AsyncIterable[dict[str, Any]]:
-    async def _events() -> AsyncIterable[dict[str, Any]]:
-        stream = ResponseEventStream(
-            response_id=context.response_id,
-            model=getattr(request, "model", None),
-        )
+    stream = ResponseEventStream(
+        response_id=context.response_id,
+        model=getattr(request, "model", None),
+    )
 
-        yield stream.emit_created()
-        yield stream.emit_in_progress()
+    yield stream.emit_created()
+    yield stream.emit_in_progress()
 
-        message = stream.add_output_item_message()
-        yield message.emit_added()
+    message = stream.add_output_item_message()
+    yield message.emit_added()
 
-        text = message.add_text_content()
-        yield text.emit_added()
-        yield text.emit_delta("Hello from the Python GettingStarted sample!")
-        yield text.emit_done("Hello from the Python GettingStarted sample!")
-        yield message.emit_content_done(text)
+    text = message.add_text_content()
+    yield text.emit_added()
+    yield text.emit_delta("Hello from the Python GettingStarted sample!")
+    yield text.emit_done("Hello from the Python GettingStarted sample!")
+    yield message.emit_content_done(text)
 
-        yield message.emit_done()
+    yield message.emit_done()
 
-        yield stream.emit_completed()
+    yield stream.emit_completed()
 
-    return _events()
 
 
 server.run(host="127.0.0.1", port=5100)
@@ -110,19 +106,13 @@ ResponseEventStream                          → response.created / in_progress 
 
 ### Handler contract
 
-Your handler must implement `create_async` with this signature:
+Your handler must implement with this signature:
 
 ```python
-from typing import AsyncIterable
-import asyncio
-
-class ResponseHandler(Protocol):
-    async def create_async(
-        self,
-        request: CreateResponse,
-        context: ResponseContext,
-        cancellation_signal: asyncio.Event,
-    ) -> AsyncIterable[dict]: ...
+@responses.create_handler
+def my_handler(
+    request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
+) -> AsyncIterable[dict[str, Any]]:
 ```
 
 The `ResponseContext` provides:
@@ -167,7 +157,8 @@ options = ResponsesServerOptions(
     additional_server_identity="my-server/1.0",
 )
 
-map_responses_server(app, handler, options=options)
+responses = ResponseHandler(server, options=options)
+
 ```
 
 Options can also be loaded from environment variables:
@@ -268,35 +259,6 @@ yield message.emit_done()
 yield stream.emit_completed()
 ```
 
-### Conversation history (multi-turn)
-
-```python
-class ConversationHandler:
-    async def create_async(self, request, context, cancellation_signal):
-        stream = ResponseEventStream(
-            response_id=context.response_id,
-            model=getattr(request, "model", None),
-        )
-        yield stream.emit_created()
-        yield stream.emit_in_progress()
-
-        # Retrieve history and input from context
-        history = await context.get_history_async()
-        input_items = await context.get_input_items_async()
-        current_input = extract_text(request)
-        reply = build_reply(current_input, history, input_items)
-
-        message = stream.add_output_item_message()
-        yield message.emit_added()
-        text = message.add_text_content()
-        yield text.emit_added()
-        yield text.emit_delta(reply)
-        yield text.emit_done(reply)
-        yield message.emit_content_done(text)
-        yield message.emit_done()
-
-        yield stream.emit_completed()
-```
 
 ### More samples
 
@@ -321,15 +283,6 @@ Run your server locally first to verify handler behaviour before deploying.
 
 If the server works locally but fails in the cloud, check your logs in the Application Insights instance connected to your Azure AI Foundry Project.
 
-### Logging
-
-Enable SDK-level logging by configuring Python's `logging` module:
-
-```python
-import logging
-
-logging.basicConfig(level=logging.DEBUG)
-```
 
 ### Reporting issues
 
@@ -355,16 +308,6 @@ azure/ai/agentserver/responses/
 samples/                   Runnable Starlette sample servers
 tests/                     Test suite (contract, unit, integration)
 type_spec/                 TypeSpec definitions and pipeline
-```
-
-### Development
-
-```bash
-make install    # pip install -e .[dev]
-make test       # pytest
-make lint       # ruff check + mypy
-make format     # ruff format
-make all        # install → test → lint
 ```
 
 ## Contributing
