@@ -15,10 +15,12 @@ class FriendlyEvaluator:
         - azure_deployment: The deployment/model name.
         - api_version: The API version (default: "2024-06-01").
         - api_key: (Optional) The API key. If not provided, DefaultAzureCredential is used.
+    :param threshold: The minimum score (1-5) to be considered "Pass" (default: 3).
     """
 
-    def __init__(self, *, model_config: dict):
+    def __init__(self, *, model_config: dict, threshold: int = 3, **kwargs):
         self.model_config = model_config
+        self.threshold = threshold
         api_key = model_config.get("api_key")
 
         if api_key:
@@ -61,4 +63,4 @@ class FriendlyEvaluator:
         raw_result = completion.choices[0].message.content
         if raw_result is None:
             raise ValueError("No content in completion response")
-        return parse_evaluation_result(raw_result)
+        return parse_evaluation_result(raw_result, self.threshold)
