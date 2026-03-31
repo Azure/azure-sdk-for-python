@@ -16,8 +16,6 @@
   serialized instead of raising an exception
   ([Azure/azure-cli #31764](https://github.com/Azure/azure-cli/issues/31764))
 
-### Other Changes
-
 ## 4.10.0 (2025-06-16)
 
 ### Features Added
