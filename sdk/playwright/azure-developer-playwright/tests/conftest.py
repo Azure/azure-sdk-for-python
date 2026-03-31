@@ -29,12 +29,8 @@ def start_proxy(test_proxy, patch_sleep, patch_async_sleep):
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     # Sanitize subscription ID
-    playwright_subscription_id = os.environ.get(
-        "PLAYWRIGHT_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000"
-    )
-    add_general_regex_sanitizer(
-        regex=playwright_subscription_id, value="00000000-0000-0000-0000-000000000000"
-    )
+    playwright_subscription_id = os.environ.get("PLAYWRIGHT_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=playwright_subscription_id, value="00000000-0000-0000-0000-000000000000")
 
     # Sanitize endpoint (both https:// and http:// variants for @odata.context)
     playwright_endpoint = os.environ.get("PLAYWRIGHT_ENDPOINT", "")
@@ -48,17 +44,11 @@ def add_sanitizers(test_proxy):
             target=reporting_hostname,
             value="fake.reporting.api.playwright.microsoft.com",
         )
-        add_general_string_sanitizer(
-            target=hostname, value="fake.api.playwright.microsoft.com"
-        )
+        add_general_string_sanitizer(target=hostname, value="fake.api.playwright.microsoft.com")
 
     # Sanitize workspace ID
-    playwright_workspace_id = os.environ.get(
-        "PLAYWRIGHT_WORKSPACE_ID", "00000000-0000-0000-0000-000000000000"
-    )
-    add_general_regex_sanitizer(
-        regex=playwright_workspace_id, value="00000000-0000-0000-0000-000000000000"
-    )
+    playwright_workspace_id = os.environ.get("PLAYWRIGHT_WORKSPACE_ID", "00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=playwright_workspace_id, value="00000000-0000-0000-0000-000000000000")
 
     # Sanitize cookies and tokens
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")

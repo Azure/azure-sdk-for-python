@@ -35,9 +35,7 @@ class WorkspacesOperations(_GeneratedWorkspacesOperations):
         **kwargs: Any,
     ) -> None:
         kwargs.setdefault("permit_redirects", False)
-        return await super().get_browsers(
-            workspace_id, os=os, run_id=run_id, x_ms_useragent=x_ms_useragent, **kwargs
-        )
+        return await super().get_browsers(workspace_id, os=os, run_id=run_id, x_ms_useragent=x_ms_useragent, **kwargs)
 
 
 class TestRunsOperations(_GeneratedTestRunsOperations):

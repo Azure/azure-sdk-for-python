@@ -1,4 +1,4 @@
 directory: specification/loadtestservice/data-plane/playwright
-commit: 4b6de1e430a101688f6244e2638ed3f34ca4c003
-repo: Himanshu49/azure-rest-api-specs
+commit: a83147fe12aece4ded0bd96be212e5242e087cb9
+repo: Azure/azure-rest-api-specs
 additionalDirectories: 

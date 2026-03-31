@@ -34,9 +34,7 @@ class _ReportingEndpointConfig:
 
     def __init__(self, config):
         object.__setattr__(self, "_inner", config)
-        object.__setattr__(
-            self, "_reporting_endpoint", _to_reporting_endpoint(config.endpoint)
-        )
+        object.__setattr__(self, "_reporting_endpoint", _to_reporting_endpoint(config.endpoint))
 
     @property
     def endpoint(self) -> str:  # type: ignore[override]
@@ -66,9 +64,7 @@ class WorkspacesOperations(_GeneratedWorkspacesOperations):
         **kwargs: Any,
     ) -> None:
         kwargs.setdefault("permit_redirects", False)
-        return super().get_browsers(
-            workspace_id, os=os, run_id=run_id, x_ms_useragent=x_ms_useragent, **kwargs
-        )
+        return super().get_browsers(workspace_id, os=os, run_id=run_id, x_ms_useragent=x_ms_useragent, **kwargs)
 
 
 class TestRunsOperations(_GeneratedTestRunsOperations):
