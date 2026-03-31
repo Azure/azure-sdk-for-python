@@ -108,7 +108,6 @@ class _QuickpulseExporter(MetricExporter):
             # Logging for client calls
             config.http_logging_policy,
             _get_auth_policy(self._credential, config.authentication_policy, self.aad_audience),
-            config.authentication_policy,
             # Explicitly disabling to avoid tracing live metrics calls
             # DistributedTracingPolicy(),
         ]
