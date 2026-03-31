@@ -9,13 +9,12 @@ from typing import List
 from langchain_core import messages as langgraph_messages
 
 from azure.ai.agentserver.core.models import projects as project_models
-from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
-
 from .response_event_generator import (
     ResponseEventGenerator,
     StreamEventState,
 )
 from .response_output_item_event_generator import ResponseOutputItemEventGenerator
+from ..._context import LanggraphRunContext
 
 
 class ResponseStreamEventGenerator(ResponseEventGenerator):
@@ -24,25 +23,27 @@ class ResponseStreamEventGenerator(ResponseEventGenerator):
     Response stream event generator.
     """
 
-    def __init__(self, logger, parent):
+    def __init__(self, logger, parent, *, hitl_helper=None):
         super().__init__(logger, parent)
+        self.hitl_helper = hitl_helper
         self.aggregated_contents: List[project_models.ItemResource] = []
 
     def on_start(
-        self, context: AgentRunContext, stream_state: StreamEventState
+        self, context: LanggraphRunContext, stream_state: StreamEventState
     ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
         if self.started:
             return True, []
-        agent_id = context.get_agent_id_object()
-        conversation = context.get_conversation_object()
+        agent_id = context.agent_run.get_agent_id_object()
+        conversation = context.agent_run.get_conversation_object()
         # response create event
         response_dict = {
             "object": "response",
             "agent_id": agent_id,
             "conversation": conversation,
-            "id": context.response_id,
+            "id": context.agent_run.response_id,
             "status": "in_progress",
             "created_at": int(time.time()),
+            "output": self.aggregated_contents
         }
         created_event = project_models.ResponseCreatedEvent(
             response=project_models.Response(response_dict),
@@ -55,9 +56,10 @@ class ResponseStreamEventGenerator(ResponseEventGenerator):
             "object": "response",
             "agent_id": agent_id,
             "conversation": conversation,
-            "id": context.response_id,
+            "id": context.agent_run.response_id,
             "status": "in_progress",
             "created_at": int(time.time()),
+            "output": self.aggregated_contents
         }
         in_progress_event = project_models.ResponseInProgressEvent(
             response=project_models.Response(response_dict),
@@ -74,7 +76,7 @@ class ResponseStreamEventGenerator(ResponseEventGenerator):
         return False
 
     def try_process_message(
-        self, message: langgraph_messages.AnyMessage, context: AgentRunContext, stream_state: StreamEventState
+        self, message: langgraph_messages.AnyMessage, context: LanggraphRunContext, stream_state: StreamEventState
     ) -> tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]:
         is_processed = False
         next_processor = self
@@ -87,7 +89,7 @@ class ResponseStreamEventGenerator(ResponseEventGenerator):
         if message:
             # create a child processor
             next_processor = ResponseOutputItemEventGenerator(
-                self.logger, self, len(self.aggregated_contents), message.id
+                self.logger, self, len(self.aggregated_contents), message.id, hitl_helper=self.hitl_helper
             )
             return is_processed, next_processor, events
 
@@ -106,14 +108,15 @@ class ResponseStreamEventGenerator(ResponseEventGenerator):
             return True
         return False
 
-    def on_end(self, message: langgraph_messages.AnyMessage, context: AgentRunContext, stream_state: StreamEventState):
-        agent_id = context.get_agent_id_object()
-        conversation = context.get_conversation_object()
+    def on_end(self, message: langgraph_messages.AnyMessage, context: LanggraphRunContext,
+               stream_state: StreamEventState):
+        agent_id = context.agent_run.get_agent_id_object()
+        conversation = context.agent_run.get_conversation_object()
         response_dict = {
             "object": "response",
             "agent_id": agent_id,
             "conversation": conversation,
-            "id": context.response_id,
+            "id": context.agent_run.response_id,
             "status": "completed",
             "created_at": int(time.time()),
             "output": self.aggregated_contents,

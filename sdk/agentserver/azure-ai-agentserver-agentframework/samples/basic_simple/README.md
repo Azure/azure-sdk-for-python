@@ -5,14 +5,14 @@ This sample demonstrates how to use the agents hosting adapter with Microsoft Ag
 
 ## Prerequisites
 
-> **Azure sign-in:** Run `az login` before starting the sample so `DefaultAzureCredential` can acquire a CLI token.
+> **Azure sign-in:** Run `az login` before starting the sample so `AzureCliCredential` can acquire a CLI token.
 
 ### Environment Variables
 
 Copy `.envtemplate` to `.env` and supply:
 
 ```
-AZURE_OPENAI_ENDPOINT=https://<endpoint-name>.cognitiveservices.azure.com/
+AZURE_OPENAI_ENDPOINT=https://<account-name>.openai.azure.com
 OPENAI_API_VERSION=2025-03-01-preview
 AZURE_OPENAI_CHAT_DEPLOYMENT_NAME=<deployment-name>
 ```
@@ -36,6 +36,17 @@ curl -sS \
   -d "{\"input\":\"What's the weather like in Seattle?\",\"stream\":false}"
 ```
 
+or
+```http
+POST localhost:8088/responses HTTP/1.1
+content-type: application/json
+
+{
+  "input": "What's the weather like in Seattle?",
+  "stream": false
+}
+```
+
 3) Send a streaming request (server-sent events). Use -N to disable curl buffering:
 
 ```bash
@@ -43,4 +54,14 @@ curl -N \
   -H "Content-Type: application/json" \
   -X POST http://localhost:8088/responses \
   -d "{\"input\":\"What's the weather like in New York?\",\"stream\":true}"
+```
+or
+```http
+POST localhost:8088/responses HTTP/1.1
+content-type: application/json
+
+{
+  "input": "What's the weather like in New York?",
+  "stream": true
+}
 ```

@@ -10,3 +10,4 @@ from . import projects as _azure_ai_projects_models
 class CreateResponse(response_create_params.ResponseCreateParamsBase, total=False): # type: ignore
     agent: Optional[_azure_ai_projects_models.AgentReference]
     stream: Optional[bool]
+    tools: Optional[list[_azure_ai_projects_models.Tool]]
