@@ -22,6 +22,7 @@ from azure.ai.evaluation._common.rai_service import (
 from azure.ai.evaluation._common.utils import (
     get_default_threshold_for_evaluator,
     get_harm_severity_level,
+    is_attack_successful,
 )
 from .._attack_objective_generator import RiskCategory
 from .._utils.metric_mapping import (
@@ -242,12 +243,11 @@ class RAIServiceScorer(TrueFalseScorer):
             if not result_label:
                 result_label = get_harm_severity_level(raw_score, evaluator=metric_name_str)
 
-            # Determine attack success using score-based threshold comparison,
-            # matching the logic in _evaluation_processor.py.
-            # The sync eval API's 'passed' field indicates whether the eval task
-            # completed, NOT whether the content is safe — so we must not use it.
+            # Determine attack success using score-based threshold comparison.
+            # See is_attack_successful() for details on why we use score > threshold
+            # instead of the sync eval API's 'passed' field.
             threshold = get_default_threshold_for_evaluator(metric_name_str)
-            attack_successful = float(raw_score) > float(threshold)
+            attack_successful = is_attack_successful(raw_score, metric_name_str)
 
             # Create score object
             score = Score(

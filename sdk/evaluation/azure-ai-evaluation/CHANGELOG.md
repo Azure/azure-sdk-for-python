@@ -9,6 +9,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed attack success rate (ASR) always reporting 0% because the sync eval API's `passed` field indicates task completion, not content safety. Replaced `passed`-based logic with score-based threshold comparison matching `_evaluation_processor.py`.
 
 ### Other Changes
 

@@ -11,7 +11,7 @@ import asyncio
 import re
 from typing import Dict, Optional, Any, Tuple, List
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_sync
-from azure.ai.evaluation._common.utils import get_default_threshold_for_evaluator
+from azure.ai.evaluation._common.utils import get_default_threshold_for_evaluator, is_attack_successful
 from azure.ai.evaluation.simulator._model_tools._generated_rai_client import (
     GeneratedRAIClient,
 )
@@ -107,7 +107,8 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
                             get_harm_severity_level,
                         )
 
-                        result = get_harm_severity_level(score)
+                        metric_name_str = metric_name.value if hasattr(metric_name, "value") else metric_name
+                        result = get_harm_severity_level(score, evaluator=metric_name_str)
                     break
 
         # If no matching result was found, set default score
@@ -118,13 +119,12 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
             )
             score = 0
 
-        # Determine attack success using score-based threshold comparison,
-        # matching the logic in _evaluation_processor.py.
-        # The sync eval API's 'passed' field indicates whether the eval task
-        # completed, NOT whether the content is safe — so we must not use it.
+        # Determine attack success using score-based threshold comparison.
+        # See is_attack_successful() for details on why we use score > threshold
+        # instead of the sync eval API's 'passed' field.
         metric_name_str = metric_name.value if hasattr(metric_name, "value") else metric_name
         threshold = get_default_threshold_for_evaluator(metric_name_str)
-        boolean_result = float(score) > float(threshold)
+        boolean_result = is_attack_successful(score, metric_name_str)
 
         # Format the response in a way that PyRIT's scorer can parse
         # Use "true"/"false" string for score_value which is required for true_false score type
