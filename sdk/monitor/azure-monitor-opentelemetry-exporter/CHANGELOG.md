@@ -9,7 +9,7 @@
 ### Bugs Fixed
 - Fix duplicate authentication policy in live metrics exporter causing Unauthorized errors
   for authenticated Application Insights resources
-  ([#46013](https://github.com/Azure/azure-sdk-for-python/issues/46013))
+  ([#46013](https://github.com/Azure/azure-sdk-for-python/pull/46013))
 - Suppress internal sdkstats HTTP pipeline logs from appearing in user's logs
   ([#45966](https://github.com/Azure/azure-sdk-for-python/pull/45966))
 - Kubernetes pod name takes precedence when populating `cloud_RoleInstance`
