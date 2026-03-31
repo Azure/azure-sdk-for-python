@@ -84,5 +84,5 @@ is_arm = true
 need_msrestazure = false
 need_azuremgmtcore = true
 sample_link = ""
-title = "BillingBenefitsRP"
+title = "BillingBenefitsMgmtClient"
 exclude_folders = ""
