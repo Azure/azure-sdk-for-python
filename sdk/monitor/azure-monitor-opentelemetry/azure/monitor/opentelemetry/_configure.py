@@ -124,7 +124,7 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     :keyword dict browser_sdk_loader_config: Configuration dictionary for browser SDK loader behavior.
      Supports keys like 'connection_string' (separate connection string for browser SDK), 'enabled' (boolean),
      and framework-specific options. Defaults to `{}`.
-    :keyword bool enable_code_attributes: Boolean value to determine whether to show code attributes in 
+    :keyword bool enable_code_attributes: Boolean value to determine whether to show code attributes in
      custom dimensions. Defaults to `False`.
     :rtype: None
     """
