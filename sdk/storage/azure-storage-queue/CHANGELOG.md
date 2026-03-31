@@ -1,8 +1,11 @@
 # Release History
 
-## 12.17.0b1 (Unreleased)
+## 12.17.0b1 (2026-03-31)
 
 ### Features Added
+- Added support for service version 2026-06-06.
+- Added support for connection strings and `account_url`s to accept URLs with `-ipv6` and `-dualstack` suffixes 
+for `QueueServiceClient` and `QueueClient`.
 
 ## 12.16.0b1 (2026-01-27)
 
