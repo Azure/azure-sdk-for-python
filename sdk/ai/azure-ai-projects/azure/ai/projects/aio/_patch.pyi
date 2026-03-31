@@ -8,7 +8,6 @@ Overrides get_openai_client() return type so that evals.create() accepts
 Azure-specific grader types in addition to the standard OpenAI graders.
 """
 
-import logging
 from typing import Any, Iterable, List, Union, Optional
 from httpx import Timeout
 from openai import NotGiven, Omit, AsyncOpenAI as AsyncOpenAIClient
@@ -105,4 +104,5 @@ class AIProjectClient(AIProjectClientGenerated):
 
 # To make mypy happy... otherwise imports of the below result in mypy "attr-defined" error
 __all__: List[str] = ["AIProjectClient"]
+
 def patch_sdk() -> None: ...

@@ -105,5 +105,7 @@ class AIProjectClient(AIProjectClientGenerated):
 
 # To make mypy happy... otherwise imports of the below result in mypy "attr-defined" error
 class _AuthSecretsFilter(logging.Filter): ...
+
 __all__: List[str] = ["AIProjectClient"]
+
 def patch_sdk() -> None: ...

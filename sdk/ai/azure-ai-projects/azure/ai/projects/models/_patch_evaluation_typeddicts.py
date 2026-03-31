@@ -13,9 +13,10 @@ from openai.types.evals.create_eval_completions_run_data_source_param import (
     SourceFileID,
 )
 
-#**************************************************************************************************
+# **************************************************************************************************
 # BEGIN TODO: These are duplicates of full classes in _models.py... what should we do about these?
-#**************************************************************************************************
+# **************************************************************************************************
+
 
 class TypedDictModelSamplingParams(TypedDict, total=False):
     """Represents a set of parameters used to control the sampling behavior of a language model
@@ -101,9 +102,9 @@ class TypedDictAzureAIModelTarget(TypedDict, total=False):
     """The parameters used to control the sampling behavior of the model during text generation."""
 
 
-#*************************************************************************************************
+# *************************************************************************************************
 # END TODO
-#*************************************************************************************************
+# *************************************************************************************************
 
 
 class ResponseRetrievalItemGenerationParams(TypedDict, total=False):
