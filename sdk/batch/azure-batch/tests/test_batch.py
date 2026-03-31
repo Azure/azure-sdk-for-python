@@ -173,7 +173,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             "InvalidPropertyValue",
             client.create_pool,
             pool=test_network_pool,
-            timeout=45,
+            service_timeout=45,
         )
 
         test_image_pool = models.BatchPoolCreateOptions(
@@ -191,7 +191,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 node_agent_sku_id="batch.node.ubuntu 22.04",
             ),
         )
-        await self.assertBatchError("InvalidPropertyValue", client.create_pool, pool=test_image_pool, timeout=45)
+        await self.assertBatchError("InvalidPropertyValue", client.create_pool, pool=test_image_pool, service_timeout=45)
 
         # Test Create Pool with Data Disk
         data_disk = models.DataDisk(logical_unit_number=1, disk_size_gb=50)
@@ -1330,7 +1330,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         now = datetime.datetime.now(datetime.timezone.utc)
 
-        response = await wrap_result(client.create_job(job=job_param, ocpdate=now))
+        response = await wrap_result(client.create_job(job=job_param, ocp_date=now))
         assert response is None
 
         # Test Update Job
