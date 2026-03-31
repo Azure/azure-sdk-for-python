@@ -1,5 +1,15 @@
 # Release History
 
+## 1.16.3 (2026-04-01)
+
+### Features Added
+
+- Added `extra_headers` support to `OpenAIModelConfiguration` to allow passing custom HTTP headers.
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.16.2 (2026-03-24)
 
 ### Bugs Fixed
