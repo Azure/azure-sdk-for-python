@@ -10,6 +10,8 @@
 
 ### Bugs Fixed
 
+- Fixed partial red team results being discarded when some objectives fail. Previously, if PyRIT raised due to incomplete objectives (e.g., evaluator model refuses to score), all completed results were lost. Now recovers partial results from PyRIT's memory database.
+
 ### Other Changes
 
 ## 1.16.2 (2026-03-24)
