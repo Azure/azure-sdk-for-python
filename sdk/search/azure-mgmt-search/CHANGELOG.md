@@ -10,7 +10,6 @@
   - Model `CheckNameAvailabilityInput` added property `type`
   - Model `EncryptionWithCmk` added property `service_level_encryption_key`
   - Enum `SearchBypass` added member `AZURE_PORTAL`
-  - Model `SearchServiceUpdate` added property `properties`
   - Enum `SkuName` added member `SERVERLESS`
   - Added model `AzureActiveDirectoryApplicationCredentials`
   - Added model `CloudError`
