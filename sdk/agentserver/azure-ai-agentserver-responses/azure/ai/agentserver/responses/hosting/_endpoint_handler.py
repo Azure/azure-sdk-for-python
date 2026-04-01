@@ -405,12 +405,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 span_operation="invoke_agent",
                 operation_name="invoke_agent",
             )
-            _span_name = f"invoke_agent {ctx.model}".strip() if ctx.model else "invoke_agent"
-            if otel_span is not None:
-                try:
-                    otel_span.update_name(_span_name)
-                except Exception:  # pylint: disable=broad-exception-caught
-                    pass
             self._safe_set_attrs(otel_span, build_create_otel_attrs(ctx, request_id=request_id))
             baggage_token = self._tracing.set_baggage(build_create_baggage(ctx, request_id=request_id))
             # Set the OTel span as the current context so that child spans
