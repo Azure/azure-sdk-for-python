@@ -8,7 +8,7 @@ from io import BytesIO
 
 import pytest
 from azure.core.exceptions import ResourceExistsError
-from azure.storage.blob import BlobBlock, BlobType
+from azure.storage.blob import BlobBlock, BlobType, ContainerClient as SyncContainerClient
 from azure.storage.blob.aio import (
     BlobClient,
     BlobServiceClient,
@@ -46,11 +46,16 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         except ResourceExistsError:
             pass
 
-    # TODO: Figure out how to get this to run automatically
-    async def _teardown(self):
+    def teardown_method(self, _):
+        # Use sync client as teardown_method must be sync
         if self.container:
+            sync_credential = self.get_credential(SyncContainerClient, is_async=False)
+            sync_container = SyncContainerClient.from_container_url(
+                self.container.url,
+                credential=sync_credential)
+
             try:
-                await self.container.delete_container()
+                sync_container.delete_container()
             except:
                 pass
 
@@ -73,6 +78,9 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
 
         with pytest.raises(ValueError):
             await blob.upload_blob(b'123', validate_content='crc64')
+
+        # Needed for teardown
+        self.container = None
 
     @BlobPreparer()
     @pytest.mark.parametrize('a', [BlobType.BLOCKBLOB, BlobType.PAGEBLOB, BlobType.APPENDBLOB])  # a: blob_type
@@ -105,8 +113,6 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         assert await (await blob.download_blob()).read() == byte_data
         await blob.upload_blob(str_iter, blob_type=a, length=len(str_data_encoded), encoding='utf-8', validate_content=b, overwrite=True, raw_request_hook=assert_method)
         assert await (await blob.download_blob()).read() == str_data_encoded
-
-        await self._teardown()
 
     @BlobPreparer()
     @pytest.mark.parametrize('a', [BlobType.BLOCKBLOB, BlobType.PAGEBLOB, BlobType.APPENDBLOB])  # a: blob_type
@@ -143,8 +149,6 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         await blob.upload_blob(str_iter, blob_type=a, length=len(str_data_encoded), encoding='utf-8', validate_content=b, overwrite=True, raw_request_hook=assert_method)
         assert await (await blob.download_blob()).read() == str_data_encoded
 
-        await self._teardown()
-
     @BlobPreparer()
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
     @GenericTestProxyParametrize1()
@@ -169,7 +173,6 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         content = await blob.download_blob()
         assert await content.read() == data
-        await self._teardown()
 
     @BlobPreparer()
     @pytest.mark.parametrize('a', [True, 'auto', 'md5', 'crc64'])  # a: validate_content
@@ -200,7 +203,6 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         content = await blob.download_blob()
         assert await content.read() == data1 + data2.encode('utf-8-sig') + data1
-        await self._teardown()
 
     @BlobPreparer()
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
@@ -221,7 +223,6 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         result = await blob.download_blob()
         assert await result.read() == content
-        await self._teardown()
 
     @BlobPreparer()
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
@@ -274,7 +275,6 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         content = await blob.download_blob()
         assert await content.readall() == data1 + data2.encode('utf-16') + data1
-        await self._teardown()
 
     @BlobPreparer()
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
@@ -294,7 +294,6 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
 
         result = await blob.download_blob()
         assert await result.read() == content
-        await self._teardown()
 
     @BlobPreparer()
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
@@ -317,7 +316,6 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
 
         result = await blob.download_blob()
         assert await result.read() == data1 + data2 + data3
-        await self._teardown()
 
     @BlobPreparer()
     @pytest.mark.parametrize('a', [True, 'auto', 'md5', 'crc64'])  # a: validate_content
@@ -341,7 +339,6 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         content = await blob.download_blob(offset=0, length=len(data1) + len(data2_encoded))
         assert await content.read() == data1 + data2_encoded
-        await self._teardown()
 
     @BlobPreparer()
     @pytest.mark.parametrize('a', [True, 'auto', 'md5', 'crc64'])  # a: validate_content
@@ -368,7 +365,6 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert content == data
         assert stream.read() == data
-        await self._teardown()
 
     @BlobPreparer()
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
@@ -403,7 +399,6 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         assert content == data
         assert stream.read() == data
         assert read_content == data
-        await self._teardown()
 
     @BlobPreparer()
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
@@ -432,7 +427,6 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert content == data[10:1010]
         assert stream.read() == data[10:1010]
-        await self._teardown()
 
     @BlobPreparer()
     @pytest.mark.live_test_only
@@ -456,7 +450,6 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert content == data
         assert partial == data[5 * 1024 * 1024: 30 * 1024 * 1024]
-        await self._teardown()
 
     @BlobPreparer()
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
@@ -488,4 +481,3 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
 
         result += await stream.readall()
         assert result == data
-        await self._teardown()
