@@ -13,8 +13,6 @@
 
 - Fixed evaluator token metrics (`promptTokens`, `completionTokens`) not persisted in red teaming output items. The sync eval API returns camelCase keys but the extraction code only checked for snake_case, silently dropping all evaluator token usage data.
 
-### Other Changes
-
 ## 1.16.2 (2026-03-24)
 
 ### Bugs Fixed
