@@ -14,11 +14,11 @@ from openai.types.evals.create_eval_completions_run_data_source_param import (
 )
 
 # **************************************************************************************************
-# BEGIN TODO: These are duplicates of full classes in _models.py... what should we do about these?
+# BEGIN - These are duplicates of full classes implementation in _models.py. Redefined here as TypedDicts
+# with "Typed" suffix, so they can be used in type annotations for "openai_client.evals" operations
 # **************************************************************************************************
 
-
-class TypedDictModelSamplingParams(TypedDict, total=False):
+class ModelSamplingParamsTyped(TypedDict, total=False):
     """Represents a set of parameters used to control the sampling behavior of a language model
     during text generation.
     """
@@ -33,7 +33,7 @@ class TypedDictModelSamplingParams(TypedDict, total=False):
     """The maximum number of tokens allowed in the completion. Required."""
 
 
-class TypedDictToolDescription(TypedDict, total=False):
+class ToolDescriptionTyped(TypedDict, total=False):
     """Description of a tool that can be used by an agent."""
 
     name: str
@@ -42,18 +42,7 @@ class TypedDictToolDescription(TypedDict, total=False):
     """A brief description of the tool's purpose."""
 
 
-class TypedDictTarget(TypedDict, total=False):
-    """Base class for targets with discriminator support.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    TypedDictAzureAIAgentTarget, TypedDictAzureAIModelTarget
-    """
-
-    type: Required[str]
-    """The type of target. Required. Default value is None."""
-
-
-class TypedDictAzureAIAgentTarget(TypedDict, total=False):
+class AzureAIAgentTargetTyped(TypedDict, total=False):
     """Represents a target specifying an Azure AI agent."""
 
     type: Required[Literal["azure_ai_agent"]]
@@ -62,23 +51,23 @@ class TypedDictAzureAIAgentTarget(TypedDict, total=False):
     """The unique identifier of the Azure AI agent. Required."""
     version: str
     """The version of the Azure AI agent."""
-    tool_descriptions: List[TypedDictToolDescription]
+    tool_descriptions: List[ToolDescriptionTyped]
     """The parameters used to control the sampling behavior of the agent during text generation."""
 
 
-class TypedDictAzureAIModelTarget(TypedDict, total=False):
+class AzureAIModelTargetTyped(TypedDict, total=False):
     """Represents a target specifying an Azure AI model for operations requiring model selection."""
 
     type: Required[Literal["azure_ai_model"]]
     """The type of target, always ``azure_ai_model``. Required. Default value is \"azure_ai_model\"."""
     model: str
     """The unique identifier of the Azure AI model."""
-    sampling_params: TypedDictModelSamplingParams
+    sampling_params: ModelSamplingParamsTyped
     """The parameters used to control the sampling behavior of the model during text generation."""
 
 
 # *************************************************************************************************
-# END TODO
+# END - Typed re-definitions
 # *************************************************************************************************
 
 
@@ -135,22 +124,10 @@ class TargetCompletionEvalRunDataSource(TypedDict, total=False):
     source: Required[Union[SourceFileContent, SourceFileID]]
     """The source configuration for inline or file data. Required. Is either a
      SourceFileContent type or a SourceFileID type."""
-    target: Required[TypedDictAzureAIAgentTarget]
+    target: Required[Union[AzureAIAgentTargetTyped, AzureAIModelTargetTyped]]
     """The target configuration for the evaluation. Required."""
     input_messages: Required[InputMessagesItemReference]
     """Input messages configuration."""
-
-
-class AzureAIModelTarget(TypedDict, total=False):
-    """Represents a target specifying an Azure AI model for operations requiring model selection."""
-
-    type: Required[Literal["azure_ai_model"]]
-    """The type of target, always ``azure_ai_model``. Required. Default value is
-     \"azure_ai_model\"."""
-    model: str
-    """The unique identifier of the Azure AI model."""
-    sampling_params: TypedDictModelSamplingParams
-    """The parameters used to control the sampling behavior of the model during text generation."""
 
 
 class EvalGraderAzureAIEvaluator(TypedDict, total=False):
@@ -177,11 +154,11 @@ class AzureAIBenchmarkPreviewEvalRunDataSource(TypedDict, total=False):
     type: Required[Literal["azure_ai_benchmark_preview"]]
     """The type of data source, always ``azure_ai_benchmark_preview``. Required. Default value is
      \"azure_ai_benchmark_preview\"."""
-    target: Required[Union[TypedDictAzureAIModelTarget, TypedDictAzureAIAgentTarget]]
+    target: Required[Union[AzureAIModelTargetTyped, AzureAIAgentTargetTyped]]
     """The target model or agent to evaluate against the benchmark. When using ``azure_ai_model``
      target, ``sampling_params`` must not be provided; inference parameters are auto-filled from the
      benchmark specification stored in eval group properties. Required. Is either a
-     AzureAIModelTarget type or a AzureAIAgentTarget type."""
+     AzureAIModelTargetTyped type or a AzureAIAgentTargetTyped type."""
     input_messages: InputMessagesItemReference
     """Input messages configuration."""
 
@@ -212,7 +189,7 @@ class RedTeamEvalRunDataSource(TypedDict, total=False):
      \"azure_ai_red_team\"."""
     item_generation_params: Required[Any]  # ItemGenerationParams
     """The parameters for item generation. Required."""
-    target: Required[TypedDictTarget]
+    target: Required[Union[AzureAIModelTargetTyped, AzureAIAgentTargetTyped]]
     """The target configuration for the evaluation. Required."""
 
 
