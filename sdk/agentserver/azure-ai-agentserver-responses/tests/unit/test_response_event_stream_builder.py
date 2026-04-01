@@ -1,0 +1,247 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+"""Unit tests for .NET-aligned response event stream APIs."""
+
+from __future__ import annotations
+
+import pytest
+
+from azure.ai.agentserver.responses._id_generator import IdGenerator
+from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
+from azure.ai.agentserver.responses.streaming._state_machine import LifecycleStateMachineError
+from azure.ai.agentserver.responses.models import _generated as generated_models
+
+
+def test_event_stream_builder__builds_lifecycle_events() -> None:
+    stream = ResponseEventStream(
+        response_id="resp_builder_12345",
+        agent_reference={"type": "agent_reference", "name": "unit-agent"},
+        model="gpt-4o-mini",
+    )
+
+    events = [
+        stream.emit_created(status="queued"),
+        stream.emit_in_progress(),
+        stream.emit_completed(),
+    ]
+
+    assert [event["type"] for event in events] == [
+        "response.created",
+        "response.in_progress",
+        "response.completed",
+    ]
+    assert [event["payload"]["sequence_number"] for event in events] == [0, 1, 2]
+    assert all(event["payload"]["response_id"] == "resp_builder_12345" for event in events)
+    assert all(event["payload"]["agent_reference"]["name"] == "unit-agent" for event in events)
+
+
+def test_event_stream_builder__builds_output_item_events() -> None:
+    stream = ResponseEventStream(response_id="resp_builder_output_12345")
+    message = stream.add_output_item_message()
+    text = message.add_text_content()
+
+    events = [
+        stream.emit_created(status="queued"),
+        stream.emit_in_progress(),
+        message.emit_added(),
+        text.emit_added(),
+        text.emit_delta("hello"),
+        text.emit_done(),
+        message.emit_content_done(text),
+        message.emit_done(),
+        stream.emit_completed(),
+    ]
+
+    event_types = [event["type"] for event in events]
+    assert "response.output_item.added" in event_types
+    assert "response.output_text.delta" in event_types
+    assert "response.output_item.done" in event_types
+
+
+def test_event_stream_builder__output_item_added_returns_event_immediately() -> None:
+    stream = ResponseEventStream(
+        response_id="resp_builder_incremental_12345",
+        agent_reference={"type": "agent_reference", "name": "unit-agent"},
+        model="gpt-4o-mini",
+    )
+    stream.emit_created(status="queued")
+    stream.emit_in_progress()
+    message = stream.add_output_item_message()
+
+    emitted = message.emit_added()
+
+    assert emitted["type"] == "response.output_item.added"
+    assert emitted["payload"]["output_index"] == 0
+    assert emitted["payload"]["item"]["id"] == message.item_id
+    assert emitted["payload"]["item"]["type"] == "message"
+    # response_id and agent_reference belong on the Response, not on the item
+    assert "response_id" not in emitted["payload"]["item"]
+    assert "agent_reference" not in emitted["payload"]["item"]
+    assert emitted["payload"]["sequence_number"] == 2
+
+
+def test_event_stream_builder__rejects_illegal_output_item_sequence() -> None:
+    stream = ResponseEventStream(response_id="resp_builder_bad_12345")
+    stream.emit_created(status="queued")
+    stream.emit_in_progress()
+    message = stream.add_output_item_message()
+
+    with pytest.raises(ValueError):
+        message.emit_done()
+
+
+def test_event_stream_builder__rejects_invalid_global_stream_order() -> None:
+    with pytest.raises(LifecycleStateMachineError):
+        stream = ResponseEventStream(response_id="resp_builder_bad_order_12345")
+        stream.emit_created(status="queued")
+        stream.emit_in_progress()
+        message = stream.add_output_item_message()
+        text = message.add_text_content()
+        message.emit_added()
+        stream.emit_completed()
+        text.emit_added()
+        text.emit_done()
+        message.emit_content_done(text)
+        message.emit_done()
+
+
+def test_event_stream_builder__emit_completed_accepts_usage_and_sets_terminal_fields() -> None:
+    stream = ResponseEventStream(response_id="resp_builder_completed_params")
+    stream.emit_created(status="in_progress")
+
+    message = stream.add_output_item_message()
+    message.emit_added()
+    text = message.add_text_content()
+    text.emit_added()
+    text.emit_delta("hello")
+    text.emit_done()
+    message.emit_content_done(text)
+    message.emit_done()
+
+    usage = {
+        "input_tokens": 1,
+        "input_tokens_details": {"cached_tokens": 0},
+        "output_tokens": 2,
+        "output_tokens_details": {"reasoning_tokens": 0},
+        "total_tokens": 3,
+    }
+
+    completed = stream.emit_completed(usage=usage)
+
+    assert completed["type"] == "response.completed"
+    assert completed["payload"]["status"] == "completed"
+    assert completed["payload"]["usage"]["total_tokens"] == 3
+    assert completed["payload"]["output_text"] == "hello"
+    assert isinstance(completed["payload"]["completed_at"], int)
+
+
+def test_event_stream_builder__emit_failed_accepts_error_and_usage() -> None:
+    stream = ResponseEventStream(response_id="resp_builder_failed_params")
+    stream.emit_created(status="in_progress")
+
+    usage = {
+        "input_tokens": 4,
+        "input_tokens_details": {"cached_tokens": 0},
+        "output_tokens": 5,
+        "output_tokens_details": {"reasoning_tokens": 0},
+        "total_tokens": 9,
+    }
+
+    failed = stream.emit_failed(code="server_error", message="boom", usage=usage)
+
+    assert failed["type"] == "response.failed"
+    assert failed["payload"]["status"] == "failed"
+    assert failed["payload"]["error"]["code"] == "server_error"
+    assert failed["payload"]["error"]["message"] == "boom"
+    assert failed["payload"]["usage"]["total_tokens"] == 9
+    assert failed["payload"].get("completed_at") is None
+
+
+def test_event_stream_builder__emit_incomplete_accepts_reason_and_usage() -> None:
+    stream = ResponseEventStream(response_id="resp_builder_incomplete_params")
+    stream.emit_created(status="in_progress")
+
+    usage = {
+        "input_tokens": 2,
+        "input_tokens_details": {"cached_tokens": 0},
+        "output_tokens": 3,
+        "output_tokens_details": {"reasoning_tokens": 0},
+        "total_tokens": 5,
+    }
+
+    incomplete = stream.emit_incomplete(reason="max_output_tokens", usage=usage)
+
+    assert incomplete["type"] == "response.incomplete"
+    assert incomplete["payload"]["status"] == "incomplete"
+    assert incomplete["payload"]["incomplete_details"]["reason"] == "max_output_tokens"
+    assert incomplete["payload"]["usage"]["total_tokens"] == 5
+    assert incomplete["payload"].get("completed_at") is None
+
+
+def test_event_stream_builder__add_output_item_generic_emits_added_and_done() -> None:
+    stream = ResponseEventStream(response_id="resp_builder_generic_item")
+    stream.emit_created(status="in_progress")
+
+    item_id = IdGenerator.new_computer_call_output_item_id("resp_builder_generic_item")
+    builder = stream.add_output_item(item_id)
+    added_item = {
+        "id": item_id,
+        "type": "computer_call_output",
+        "call_id": "call_1",
+        "output": {"type": "computer_screenshot", "image_url": "https://example.com/1.png"},
+        "status": "in_progress",
+    }
+    done_item = {
+        "id": item_id,
+        "type": "computer_call_output",
+        "call_id": "call_1",
+        "output": {"type": "computer_screenshot", "image_url": "https://example.com/2.png"},
+        "status": "completed",
+    }
+
+    added = builder.emit_added(added_item)
+    done = builder.emit_done(done_item)
+
+    assert added["type"] == "response.output_item.added"
+    assert added["payload"]["output_index"] == 0
+    assert done["type"] == "response.output_item.done"
+    assert done["payload"]["item"]["status"] == "completed"
+
+
+def test_event_stream_builder__constructor_accepts_seed_response() -> None:
+    seed_response = generated_models.ResponseObject(
+        {
+            "id": "resp_builder_seed_response",
+            "object": "response",
+            "output": [],
+            "model": "gpt-4o-mini",
+            "metadata": {"source": "seed"},
+        }
+    )
+
+    stream = ResponseEventStream(response=seed_response)
+    created = stream.emit_created()
+
+    assert created["payload"]["id"] == "resp_builder_seed_response"
+    assert created["payload"]["model"] == "gpt-4o-mini"
+    assert created["payload"]["metadata"] == {"source": "seed"}
+
+
+def test_event_stream_builder__constructor_accepts_request_seed_fields() -> None:
+    request = generated_models.CreateResponse(
+        {
+            "model": "gpt-4o-mini",
+            "background": True,
+            "metadata": {"tag": "seeded"},
+            "previous_response_id": "resp_prev_seed",
+        }
+    )
+
+    stream = ResponseEventStream(response_id="resp_builder_seed_request", request=request)
+    created = stream.emit_created()
+
+    assert created["payload"]["id"] == "resp_builder_seed_request"
+    assert created["payload"]["model"] == "gpt-4o-mini"
+    assert created["payload"]["background"] is True
+    assert created["payload"]["previous_response_id"] == "resp_prev_seed"
+    assert created["payload"]["metadata"] == {"tag": "seeded"}
