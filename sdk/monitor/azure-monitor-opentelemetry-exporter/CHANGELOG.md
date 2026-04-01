@@ -3,7 +3,8 @@
 ## 1.0.0b49 (Unreleased)
 
 ### Features Added
-
+- Added a 256kb custom properties truncation limit on specific GenAI attributes
+  ([#45749](https://github.com/Azure/azure-sdk-for-python/pull/45749))
 - Add Browser SDK loader SDK Stats feature bit ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/44162))
 
 ### Breaking Changes
@@ -23,6 +24,9 @@
   ([#45252](https://github.com/Azure/azure-sdk-for-python/pull/45252))
 
 ### Other Changes
+- Change import path for `LoggingHandler` to accommodate upstream breaking changes -
+[core](https://github.com/open-telemetry/opentelemetry-python/pull/4919) and [contrib](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4210)
+  ([#45516](https://github.com/Azure/azure-sdk-for-python/pull/45516))
 
 ## 1.0.0b48 (2026-02-05)
 

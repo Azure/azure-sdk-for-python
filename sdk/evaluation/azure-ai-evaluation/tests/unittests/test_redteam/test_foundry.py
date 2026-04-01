@@ -2365,6 +2365,101 @@ class TestFoundryResultProcessorExtended:
         assert "context" in messages[0]
         assert len(messages[0]["context"]) == 2
 
+    def test_build_messages_with_token_usage_in_labels(self):
+        """Test that token_usage from labels is included in assistant messages."""
+        mock_scenario = MagicMock()
+        mock_dataset = MagicMock()
+        mock_dataset.get_all_seed_groups.return_value = []
+
+        processor = FoundryResultProcessor(
+            scenario=mock_scenario,
+            dataset_config=mock_dataset,
+            risk_category="violence",
+        )
+
+        token_usage_data = {
+            "model_name": "gpt-4",
+            "prompt_tokens": 100,
+            "completion_tokens": 50,
+            "total_tokens": 150,
+            "cached_tokens": 0,
+        }
+
+        # User piece — should NOT get token_usage
+        user_piece = MagicMock()
+        user_piece.api_role = "user"
+        user_piece.converted_value = "User message"
+        user_piece.sequence = 0
+        user_piece.labels = {}
+
+        # Assistant piece — should get token_usage
+        assistant_piece = MagicMock()
+        assistant_piece.api_role = "assistant"
+        assistant_piece.converted_value = "Assistant response"
+        assistant_piece.sequence = 1
+        assistant_piece.labels = {"token_usage": token_usage_data}
+
+        messages = processor._build_messages_from_pieces([user_piece, assistant_piece])
+
+        assert len(messages) == 2
+        assert "token_usage" not in messages[0]
+        assert "token_usage" in messages[1]
+        assert messages[1]["token_usage"] == token_usage_data
+        assert messages[1]["token_usage"]["model_name"] == "gpt-4"
+        assert messages[1]["token_usage"]["prompt_tokens"] == 100
+        assert messages[1]["token_usage"]["completion_tokens"] == 50
+        assert messages[1]["token_usage"]["total_tokens"] == 150
+
+    def test_build_messages_token_usage_not_added_when_absent(self):
+        """Test that token_usage is not added when not in labels."""
+        mock_scenario = MagicMock()
+        mock_dataset = MagicMock()
+        mock_dataset.get_all_seed_groups.return_value = []
+
+        processor = FoundryResultProcessor(
+            scenario=mock_scenario,
+            dataset_config=mock_dataset,
+            risk_category="violence",
+        )
+
+        assistant_piece = MagicMock()
+        assistant_piece.api_role = "assistant"
+        assistant_piece.converted_value = "Response"
+        assistant_piece.sequence = 0
+        assistant_piece.labels = {}
+
+        messages = processor._build_messages_from_pieces([assistant_piece])
+
+        assert len(messages) == 1
+        assert "token_usage" not in messages[0]
+
+    def test_build_messages_token_usage_extracted_for_all_roles(self):
+        """Test that token_usage is extracted from labels regardless of role."""
+        mock_scenario = MagicMock()
+        mock_dataset = MagicMock()
+        mock_dataset.get_all_seed_groups.return_value = []
+
+        processor = FoundryResultProcessor(
+            scenario=mock_scenario,
+            dataset_config=mock_dataset,
+            risk_category="violence",
+        )
+
+        token_usage_data = {"model_name": "gpt-4", "prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15}
+
+        # User piece with token_usage in labels — should be extracted (matches formatting_utils.py behavior)
+        user_piece = MagicMock()
+        user_piece.api_role = "user"
+        user_piece.converted_value = "User message"
+        user_piece.sequence = 0
+        user_piece.labels = {"token_usage": token_usage_data}
+
+        messages = processor._build_messages_from_pieces([user_piece])
+
+        assert len(messages) == 1
+        assert "token_usage" in messages[0]
+        assert messages[0]["token_usage"] == token_usage_data
+
     def test_build_context_lookup_with_attack_vehicles(self):
         """Test context lookup building with XPIA attack vehicles."""
         mock_scenario = MagicMock()

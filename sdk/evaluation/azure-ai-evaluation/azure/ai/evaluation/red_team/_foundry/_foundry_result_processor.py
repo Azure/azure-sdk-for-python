@@ -325,6 +325,10 @@ class FoundryResultProcessor:
                     except (json.JSONDecodeError, TypeError):
                         pass
 
+                token_usage = piece.labels.get("token_usage")
+                if token_usage:
+                    message["token_usage"] = token_usage
+
             messages.append(message)
 
         return messages
