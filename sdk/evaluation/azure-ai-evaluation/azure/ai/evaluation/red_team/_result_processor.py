@@ -1540,8 +1540,8 @@ class ResultProcessor:
                             "cached_tokens": 0,
                         }
 
-                    prompt_tokens = metrics.get("promptTokens", 0)
-                    completion_tokens = metrics.get("completionTokens", 0)
+                    prompt_tokens = metrics.get("promptTokens") or metrics.get("prompt_tokens", 0)
+                    completion_tokens = metrics.get("completionTokens") or metrics.get("completion_tokens", 0)
 
                     if prompt_tokens or completion_tokens:
                         model_usage[model_name]["invocation_count"] += 1
