@@ -1,0 +1,14 @@
+"""Minimal test agent — proves the azure-ai-agentserver-github package works end-to-end."""
+
+import logging
+import os
+
+from dotenv import load_dotenv
+load_dotenv(override=False)
+
+logging.basicConfig(level=getattr(logging, os.environ.get("LOG_LEVEL", "INFO").upper(), logging.INFO))
+
+from azure.ai.agentserver.github import GitHubCopilotAdapter
+
+adapter = GitHubCopilotAdapter.from_project(".")
+adapter.run()
