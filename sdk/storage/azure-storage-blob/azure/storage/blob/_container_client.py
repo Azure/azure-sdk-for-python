@@ -327,9 +327,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             return self._client.container.create( # type: ignore
                 timeout=timeout,
                 access=public_access,
-                container_cpk_scope_info=container_cpk_scope_info,
                 cls=return_response_headers,
                 headers=headers,
+                **container_cpk_scope_info,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -421,12 +421,17 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         lease = kwargs.pop('lease', None)
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modify_conditions(kwargs)
+        # Container delete doesn't support etag/match_condition/if_tags at the REST level;
+        # pop to prevent leaking to the transport.
+        mod_conditions.pop('etag', None)
+        mod_conditions.pop('match_condition', None)
+        mod_conditions.pop('if_tags', None)
         timeout = kwargs.pop('timeout', None)
         try:
             self._client.container.delete(
                 timeout=timeout,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
+                **access_conditions,
+                **mod_conditions,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -539,8 +544,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         try:
             response = self._client.container.get_properties(
                 timeout=timeout,
-                lease_access_conditions=access_conditions,
                 cls=deserialize_container_properties,
+                **access_conditions,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -630,10 +635,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         try:
             return self._client.container.set_metadata( # type: ignore
                 timeout=timeout,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 headers=headers,
+                **access_conditions,
+                **mod_conditions,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -704,8 +709,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         try:
             response, identifiers = self._client.container.get_access_policy(
                 timeout=timeout,
-                lease_access_conditions=access_conditions,
                 cls=return_headers_and_deserialized,
+                **access_conditions,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -785,9 +790,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 container_acl=SignedIdentifiers(items_property=signed_identifiers) if signed_identifiers else None,
                 timeout=timeout,
                 access=public_access,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
+                **access_conditions,
+                **mod_conditions,
                 **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)

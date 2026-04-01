@@ -51,11 +51,13 @@ def upload_data_chunks(
     progress_hook=None,
     **kwargs,
 ):
-
+    # Back compat for filedatalake
     parallel = max_concurrency > 1
-    if parallel and "modified_access_conditions" in kwargs:
+    if parallel:
         # Access conditions do not work with parallelism
-        kwargs["modified_access_conditions"] = None
+        kwargs.pop("modified_access_conditions", None)
+        kwargs.pop("etag", None)
+        kwargs.pop("match_condition", None)
 
     uploader = uploader_class(
         service=service,
@@ -93,9 +95,11 @@ def upload_substream_blocks(
     **kwargs,
 ):
     parallel = max_concurrency > 1
-    if parallel and "modified_access_conditions" in kwargs:
+    if parallel:
         # Access conditions do not work with parallelism
-        kwargs["modified_access_conditions"] = None
+        kwargs.pop("modified_access_conditions", None)
+        kwargs.pop("etag", None)
+        kwargs.pop("match_condition", None)
     uploader = uploader_class(
         service=service,
         total_size=total_size,
@@ -252,8 +256,16 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
 
 class BlockBlobChunkUploader(_ChunkUploader):
 
+    # Fields that are only relevant for upload/commit_block_list, not stage_block
+    _STRIP_KWARGS = (
+        "modified_access_conditions", "etag", "match_condition",
+        "blob_cache_control", "blob_content_type", "blob_content_md5",
+        "blob_content_encoding", "blob_content_language", "blob_content_disposition",
+    )
+
     def __init__(self, *args, **kwargs):
-        kwargs.pop("modified_access_conditions", None)
+        for key in self._STRIP_KWARGS:
+            kwargs.pop(key, None)
         super(BlockBlobChunkUploader, self).__init__(*args, **kwargs)
         self.current_length = None
 
@@ -311,8 +323,8 @@ class PageBlobChunkUploader(_ChunkUploader):
                 **self.request_options,
             )
 
-            if not self.parallel and self.request_options.get("modified_access_conditions"):
-                self.request_options["modified_access_conditions"].if_match = self.response_headers["etag"]
+            if not self.parallel and self.request_options.get("etag"):
+                self.request_options["etag"] = self.response_headers["etag"]
 
     def _upload_substream_block(self, index, block_stream):
         pass
@@ -336,7 +348,7 @@ class AppendBlobChunkUploader(_ChunkUploader):
             )
             self.current_length = int(self.response_headers["blob_append_offset"])
         else:
-            self.request_options["append_position_access_conditions"].append_position = (
+            self.request_options["append_position"] = (
                 self.current_length + chunk_offset
             )
             self.response_headers = self.service.append_block(

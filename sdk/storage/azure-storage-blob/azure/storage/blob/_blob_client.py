@@ -59,7 +59,6 @@ from ._deserialize import (
 from ._download import StorageStreamDownloader
 from ._encryption import StorageEncryptionMixin, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 from ._generated import AzureBlobStorage
-from ._generated.models import CpkInfo
 from ._lease import BlobLeaseClient
 from ._models import BlobBlock, BlobProperties, BlobQueryError, BlobType, PageRange, PageRangePaged
 from ._quick_query_helper import BlobQueryReader
@@ -1129,12 +1128,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         mod_conditions = get_modify_conditions(kwargs)
         version_id = get_version_id(self.version_id, kwargs)
         cpk = kwargs.pop('cpk', None)
-        cpk_info = None
+        cpk_kwargs = {}
         if cpk:
             if self.scheme.lower() != 'https':
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
+            cpk_kwargs['encryption_key'] = cpk.key_value
+            cpk_kwargs['encryption_key_sha256'] = cpk.key_hash
+            cpk_kwargs['encryption_algorithm'] = cpk.algorithm
         try:
             cls_method = kwargs.pop('cls', None)
             if cls_method:
@@ -1143,10 +1143,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 timeout=kwargs.pop('timeout', None),
                 version_id=version_id,
                 snapshot=self.snapshot,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
                 cls=kwargs.pop('cls', None) or deserialize_blob_properties,
-                cpk_info=cpk_info,
+                **access_conditions,
+                **mod_conditions,
+                **cpk_kwargs,
                 **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
@@ -2007,9 +2007,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 tier=standard_blob_tier,
                 snapshot=self.snapshot,
                 timeout=kwargs.pop('timeout', None),
-                modified_access_conditions=mod_conditions,
-                lease_access_conditions=access_conditions,
                 version_id=version_id,
+                **mod_conditions,
+                **access_conditions,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -2200,8 +2200,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 list_type=block_list_type,
                 snapshot=self.snapshot,
                 timeout=kwargs.pop('timeout', None),
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
+                **access_conditions,
+                **mod_conditions,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -2356,8 +2356,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 tier=premium_page_blob_tier,
                 timeout=kwargs.pop('timeout', None),
                 snapshot=self.snapshot,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
+                **access_conditions,
+                **mod_conditions,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)

@@ -64,6 +64,7 @@ class BlobClientConfiguration(GeneratedBlobClientConfiguration):
         self.url = url
         self.credential = credential
         self.version = version
+        self.api_version = version  # alias for _validation.py compatibility
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://storage.azure.com/.default"])
 
         kwargs.setdefault("sdk_moniker", "storage-blob/{}".format(VERSION))
