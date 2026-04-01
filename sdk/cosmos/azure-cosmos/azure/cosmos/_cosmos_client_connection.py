@@ -23,6 +23,7 @@
 
 """Document client class for the Azure Cosmos database service.
 """
+import logging
 import os
 import urllib.parse
 import uuid
@@ -83,6 +84,8 @@ from .partition_key import (
     _SequentialPartitionKeyType,
     _return_undefined_or_empty_partition_key,
 )
+
+_LOGGER = logging.getLogger(__name__)
 
 class CredentialDict(TypedDict, total=False):
     masterKey: str
@@ -3575,14 +3578,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             feed_options: Optional[dict[str, Any]] = None) -> None:
         """Refreshes routing map provider.
 
-        If collection_link and previous_routing_map are provided, refreshes only that collection incrementally.
-        Otherwise, it creates a new provider instance for a full refresh.
+        If collection_link is provided, refreshes only that collection.
+        When previous_routing_map is provided this is incremental; otherwise this is a collection-scoped repopulation.
+        Without collection_link, it creates a new provider instance for a full refresh.
 
         :param str collection_link: The collection link.
         :param object previous_routing_map: The routing map that is considered stale.
         :param dict feed_options: The feed options for the request.
         """
-        if collection_link and previous_routing_map:
+        if collection_link:
             try:
                 # Force a refresh for a specific collection.
                 self._routing_map_provider.get_routing_map(
@@ -3594,12 +3598,18 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 return
             except (ServiceRequestError, ServiceResponseError):
                 # Transport failures during targeted refresh should degrade to full refresh.
+                _LOGGER.warning(
+                    "Targeted routing-map refresh failed for collection '%s' due to transport error. "
+                    "Falling back to full refresh.",
+                    collection_link,
+                )
                 pass
             except exceptions.CosmosHttpResponseError as e:
                 status_code = e.status_code
                 is_transient = (
                     status_code in (http_constants.StatusCodes.REQUEST_TIMEOUT,
-                                    http_constants.StatusCodes.TOO_MANY_REQUESTS)
+                                    http_constants.StatusCodes.TOO_MANY_REQUESTS,
+                                    http_constants.StatusCodes.GONE)
                     or (
                         status_code is not None
                         and status_code >= http_constants.StatusCodes.INTERNAL_SERVER_ERROR
@@ -3607,6 +3617,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 )
                 if not is_transient:
                     raise
+                _LOGGER.warning(
+                    "Targeted routing-map refresh failed for collection '%s' with transient status code %s. "
+                    "Falling back to full refresh.",
+                    collection_link,
+                    status_code,
+                )
         else:
             # Full refresh - create a new provider instance. This clears all cached routing maps.
             self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)

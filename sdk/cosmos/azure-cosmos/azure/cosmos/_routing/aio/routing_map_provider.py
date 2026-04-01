@@ -32,7 +32,7 @@ from ...exceptions import CosmosHttpResponseError
 from .._routing_map_provider_common import (
     prepare_fetch_options_and_headers,
     process_fetched_ranges,
-    is_cache_stale,
+    is_cache_unchanged_since_previous,
     determine_refresh_action,
     get_smart_overlapping_ranges,
     _NeedFullRefresh,
@@ -44,6 +44,9 @@ if TYPE_CHECKING:
 # pylint: disable=protected-access
 
 logger = logging.getLogger(__name__)
+# Number of extra incremental attempts after an incomplete incremental merge
+# before falling back to a full routing-map refresh.
+_INCOMPLETE_ROUTING_MAP_MAX_RETRIES = 1
 class PartitionKeyRangeCache(object):
     """
     PartitionKeyRangeCache provides list of effective partition key ranges for a
@@ -91,10 +94,10 @@ class PartitionKeyRangeCache(object):
         :param str collection_id: The collection identifier used as the cache key.
         :param previous_routing_map: The previously observed routing map, if any.
         :type previous_routing_map: CollectionRoutingMap or None
-        :return: ``True`` when the cached map should be treated as stale.
+        :return: ``True`` when cached and previous maps have the same generation ETag.
         :rtype: bool
         """
-        return is_cache_stale(
+        return is_cache_unchanged_since_previous(
             self._collection_routing_map_by_item,
             collection_id,
             previous_routing_map,
@@ -208,39 +211,62 @@ class PartitionKeyRangeCache(object):
         :rtype: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap or None
         :raises CosmosHttpResponseError: If the underlying request to fetch ranges fails.
         """
-        request_kwargs = dict(kwargs)
-        response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
-        request_kwargs['_internal_response_headers_capture'] = response_headers
+        current_previous_map = previous_routing_map
+        incomplete_attempt_count = 0
 
-        # Prepare sanitised options and headers for the PK-range fetch.
-        change_feed_options = prepare_fetch_options_and_headers(
-            previous_routing_map, feed_options, request_kwargs
-        )
+        while True:
+            request_kwargs = dict(kwargs)
+            response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
+            request_kwargs['_internal_response_headers_capture'] = response_headers
 
-        ranges: List[Dict[str, Any]] = []
-        try:
-            pk_range_generator = self._document_client._ReadPartitionKeyRanges(
-                collection_link,
-                change_feed_options,
-                **request_kwargs
+            # Prepare sanitised options and headers for the PK-range fetch.
+            change_feed_options = prepare_fetch_options_and_headers(
+                current_previous_map, feed_options, request_kwargs
             )
-            async for item in pk_range_generator:
-                ranges.append(item)
 
-        except CosmosHttpResponseError as e:
-            logger.error("Failed to read partition key ranges for collection '%s': %s", collection_link, e)
-            raise
+            ranges: List[Dict[str, Any]] = []
+            try:
+                pk_range_generator = self._document_client._ReadPartitionKeyRanges(
+                    collection_link,
+                    change_feed_options,
+                    **request_kwargs
+                )
+                async for item in pk_range_generator:
+                    ranges.append(item)
 
-        new_etag = response_headers.get(http_constants.HttpHeaders.ETag)
+            except CosmosHttpResponseError as e:
+                logger.error("Failed to read partition key ranges for collection '%s': %s", collection_link, e)
+                raise
 
-        try:
-            return process_fetched_ranges(
-                ranges, previous_routing_map, collection_id, collection_link, new_etag
-            )
-        except _NeedFullRefresh:
-            return await self._fetch_routing_map(
-                collection_link, collection_id, None, feed_options, **kwargs
-            )
+            new_etag = response_headers.get(http_constants.HttpHeaders.ETag)
+
+            try:
+                return process_fetched_ranges(
+                    ranges, current_previous_map, collection_id, collection_link, new_etag
+                )
+            except _NeedFullRefresh:
+                if current_previous_map is not None and incomplete_attempt_count < _INCOMPLETE_ROUTING_MAP_MAX_RETRIES:
+                    incomplete_attempt_count += 1
+                    logger.warning(
+                        "Incremental routing-map refresh incomplete for collection '%s'. "
+                        "Retrying incremental fetch (attempt %d/%d).",
+                        collection_link,
+                        incomplete_attempt_count,
+                        _INCOMPLETE_ROUTING_MAP_MAX_RETRIES,
+                    )
+                    continue
+
+                if current_previous_map is not None:
+                    logger.error(
+                        "Incremental routing-map refresh remained incomplete for collection '%s' "
+                        "after %d retry attempt(s). Falling back to full refresh.",
+                        collection_link,
+                        incomplete_attempt_count,
+                    )
+                    current_previous_map = None
+                    continue
+
+                raise
 
     async def get_range_by_partition_key_range_id(
             self,

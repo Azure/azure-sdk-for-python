@@ -40,7 +40,7 @@ class CollectionRoutingMap(object):
 
     def __init__(
         self, range_by_id, range_by_info, ordered_partition_key_ranges, ordered_partition_info, collection_unique_id,
-            change_feed_etag=None
+            change_feed_etag=None, gone_range_ids=None
     ):
         self._rangeById = range_by_id
         self._rangeByInfo = range_by_info
@@ -54,6 +54,8 @@ class CollectionRoutingMap(object):
         self._collectionUniqueId = collection_unique_id
         # Add ETag support for change feed
         self._changeFeedEtag = change_feed_etag
+        # Persist all known gone range ids across incremental combines.
+        self._goneRangeIds = set(gone_range_ids or [])
 
     @property
     def change_feed_etag(self):
@@ -66,10 +68,13 @@ class CollectionRoutingMap(object):
         rangeByInfo = {}
 
         sortedRanges = []
+        gone_range_ids = set()
         for r in partition_key_range_info_tuple_list:
             rangeById[r[0][PartitionKeyRange.Id]] = r
             rangeByInfo[r[1]] = r[0]
             sortedRanges.append(r)
+            if PartitionKeyRange.Parents in r[0] and r[0][PartitionKeyRange.Parents]:
+                gone_range_ids.update(r[0][PartitionKeyRange.Parents])
 
         sortedRanges.sort(key=lambda r: r[0][PartitionKeyRange.MinInclusive])
         partitionKeyOrderedRange = [r[0] for r in sortedRanges]
@@ -77,7 +82,15 @@ class CollectionRoutingMap(object):
 
         if not CollectionRoutingMap.is_complete_set_of_range(partitionKeyOrderedRange):
             return None
-        return cls(rangeById, rangeByInfo, partitionKeyOrderedRange, orderedPartitionInfo, collection_unique_id, change_feed_etag)
+        return cls(
+            rangeById,
+            rangeByInfo,
+            partitionKeyOrderedRange,
+            orderedPartitionInfo,
+            collection_unique_id,
+            change_feed_etag,
+            gone_range_ids,
+        )
 
     def get_ordered_partition_key_ranges(self):
         """Gets the ordered partition key ranges
@@ -200,7 +213,7 @@ class CollectionRoutingMap(object):
         combined_range_by_id = self._rangeById.copy()
         combined_range_by_info = self._rangeByInfo.copy()
 
-        gone_range_ids = set()
+        gone_range_ids = set(self._goneRangeIds)
 
         # Process new ranges from change feed
         for range_tuple in new_partition_key_range_info_tuples:
@@ -241,7 +254,8 @@ class CollectionRoutingMap(object):
             partition_key_ordered_range,
             ordered_partition_info,
             self._collectionUniqueId,
-            new_change_feed_etag
+            new_change_feed_etag,
+            gone_range_ids,
         )
 
 

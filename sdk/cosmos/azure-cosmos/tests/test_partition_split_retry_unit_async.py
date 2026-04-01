@@ -8,12 +8,14 @@ Async unit tests for partition split (410) retry logic.
 import gc
 import time
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, AsyncMock
 
 import pytest
 from azure.core.exceptions import ServiceRequestError
 
 from azure.cosmos import exceptions
+from azure.cosmos.aio import _retry_utility_async
+from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes
 from azure.cosmos.aio import CosmosClient  # noqa: F401 - needed to resolve circular imports
 from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
@@ -33,8 +35,28 @@ except ImportError:
 
 class MockGlobalEndpointManager:
     """Mock global endpoint manager for testing."""
+    def is_per_partition_automatic_failover_applicable(self, request):
+        return False
+
     def is_circuit_breaker_applicable(self, request):
         return False
+
+
+class _NoRetryPolicy:
+    """Simple retry policy stub used to isolate ExecuteAsync() 410 behavior in tests."""
+
+    def __init__(self, *args, **kwargs):
+        self.retry_after_in_milliseconds = 0
+
+    def ShouldRetry(self, exception):
+        return False
+
+
+class _NoRetryResourceThrottlePolicy(_NoRetryPolicy):
+    def __init__(self, *args, **kwargs):
+        super(_NoRetryResourceThrottlePolicy, self).__init__(*args, **kwargs)
+        self.current_retry_attempt_count = 0
+        self.cumulative_wait_time_in_milliseconds = 0
 
 
 class MockRoutingMapProvider:
@@ -51,17 +73,20 @@ class MockClient:
         self.refresh_routing_map_provider_call_count = 0
         self.last_refresh_collection_link = None
         self.last_refresh_previous_map = None
+        self.last_refresh_feed_options = None
 
     async def refresh_routing_map_provider(self, collection_link=None, previous_routing_map=None, feed_options=None):
         self.refresh_routing_map_provider_call_count += 1
         self.last_refresh_collection_link = collection_link
         self.last_refresh_previous_map = previous_routing_map
+        self.last_refresh_feed_options = feed_options
 
     def reset_counts(self):
         """Reset call counts for reuse in tests."""
         self.refresh_routing_map_provider_call_count = 0
         self.last_refresh_collection_link = None
         self.last_refresh_previous_map = None
+        self.last_refresh_feed_options = None
 
 
 def create_410_partition_split_error():
@@ -355,8 +380,12 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
             return (expected_docs, {})
 
         resource_link = "dbs/testdb/colls/testcoll"
+        options = {
+            Constants.ContainerRID: "rid123",
+            "excludedLocations": ["West US", "North Europe"],
+        }
         context = _DefaultQueryExecutionContext(
-            mock_client, {}, mock_fetch_function, resource_link=resource_link
+            mock_client, options, mock_fetch_function, resource_link=resource_link
         )
         result = await context._fetch_items_helper_with_retries(mock_fetch_function)
 
@@ -367,6 +396,7 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
             "Should pass collection_link for targeted refresh"
         assert mock_client.last_refresh_previous_map == fake_routing_map, \
             "Should pass previous routing map for targeted refresh"
+        assert mock_client.last_refresh_feed_options == options
         assert result == expected_docs
 
     @patch('azure.cosmos.aio._retry_utility_async.ExecuteAsync')
@@ -402,10 +432,10 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         assert result == expected_docs
 
     @patch('azure.cosmos.aio._retry_utility_async.ExecuteAsync')
-    async def test_global_refresh_fallback_when_no_cached_map_async(self, mock_execute):
+    async def test_targeted_repopulation_when_no_cached_map_async(self, mock_execute):
         """
         Test that when resource_link is provided but there's no cached routing map
-        for that collection, the 410 retry falls back to the global refresh.
+        for that collection, the 410 retry still refreshes only that collection.
         """
         mock_client = MockClient()
         expected_docs = [{"id": "success"}]
@@ -430,10 +460,79 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         result = await context._fetch_items_helper_with_retries(mock_fetch_function)
 
         assert mock_client.refresh_routing_map_provider_call_count == 1
-        # Falls back to global refresh because no cached map exists
-        assert mock_client.last_refresh_collection_link is None, \
-            "Should fall back to global refresh when no cached map exists"
+        assert mock_client.last_refresh_collection_link == resource_link, \
+            "Should target collection repopulation when no cached map exists"
+        assert mock_client.last_refresh_previous_map is None, \
+            "No cached map should pass previous_map=None"
         assert result == expected_docs
+
+    @patch('azure.cosmos.aio._retry_utility_async.ContainerRecreateRetryPolicy', _NoRetryPolicy)
+    @patch('azure.cosmos.aio._retry_utility_async._service_unavailable_retry_policy._ServiceUnavailableRetryPolicy', _NoRetryPolicy)
+    @patch('azure.cosmos.aio._retry_utility_async._service_request_retry_policy.ServiceRequestRetryPolicy', _NoRetryPolicy)
+    @patch('azure.cosmos.aio._retry_utility_async._service_response_retry_policy.ServiceResponseRetryPolicy', _NoRetryPolicy)
+    @patch('azure.cosmos.aio._retry_utility_async._timeout_failover_retry_policy._TimeoutFailoverRetryPolicy', _NoRetryPolicy)
+    @patch('azure.cosmos.aio._retry_utility_async._session_retry_policy._SessionRetryPolicy', _NoRetryPolicy)
+    @patch('azure.cosmos.aio._retry_utility_async._default_retry_policy.DefaultRetryPolicy', _NoRetryPolicy)
+    @patch('azure.cosmos.aio._retry_utility_async._resource_throttle_retry_policy.ResourceThrottleRetryPolicy', _NoRetryResourceThrottlePolicy)
+    @patch('azure.cosmos.aio._retry_utility_async._health_check_retry_policy.HealthCheckRetryPolicy', _NoRetryPolicy)
+    @patch('azure.cosmos.aio._retry_utility_async._endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy', _NoRetryPolicy)
+    @patch('azure.cosmos.aio._retry_utility_async.PartitionKeyRangeGoneRetryPolicyAsync')
+    async def test_execute_async_410_path_skips_refresh_when_context_missing_and_no_request_args(self, mock_gone_policy):
+        """ExecuteAsync() should skip refresh when 410 context is missing in callback/no-request path."""
+        mock_client = MagicMock()
+        mock_client.connection_policy = MagicMock()
+        mock_client.connection_policy.RetryOptions = MagicMock(
+            MaxRetryAttemptCount=0,
+            FixedRetryIntervalInMilliseconds=0,
+            MaxWaitTimeInSeconds=0,
+        )
+        mock_client.connection_policy.EnableEndpointDiscovery = False
+        mock_client.last_response_headers = {}
+        mock_client._container_properties_cache = {}
+        mock_client._enable_diagnostics_logging = False
+        mock_client.session = None
+        mock_client._UpdateSessionIfRequired = MagicMock()
+        mock_client.refresh_routing_map_provider = MagicMock()
+
+        gone_policy = mock_gone_policy.return_value
+        gone_policy.pop_refresh_context.return_value = (None, None, None)
+        gone_policy.ShouldRetry.return_value = False
+        gone_policy.retry_after_in_milliseconds = 0
+
+        async def always_410(*args, **kwargs):
+            raise create_410_partition_split_error()
+
+        with pytest.raises(exceptions.CosmosHttpResponseError) as exc_info:
+            await _retry_utility_async.ExecuteAsync(
+                mock_client,
+                MockGlobalEndpointManager(),
+                always_410,
+            )
+
+        assert exc_info.value.status_code == StatusCodes.GONE
+        mock_client.refresh_routing_map_provider.assert_not_called()
+        gone_policy.pop_refresh_context.assert_called_once()
+
+    @patch('azure.cosmos.aio._cosmos_client_connection_async.SmartRoutingMapProvider')
+    async def test_refresh_routing_map_provider_collection_scoped_repopulation_without_previous_map_async(self, mock_provider_ctor):
+        """Collection link without previous map should still trigger targeted repopulation."""
+        conn = object.__new__(CosmosClientConnection)
+        conn._routing_map_provider = MagicMock()
+        conn._routing_map_provider.get_routing_map = AsyncMock(return_value=None)
+
+        await conn.refresh_routing_map_provider(
+            collection_link="dbs/db/colls/c1",
+            previous_routing_map=None,
+            feed_options={}
+        )
+
+        conn._routing_map_provider.get_routing_map.assert_awaited_once_with(
+            "dbs/db/colls/c1",
+            feed_options={},
+            force_refresh=True,
+            previous_routing_map=None,
+        )
+        mock_provider_ctor.assert_not_called()
 
     @patch('azure.cosmos.aio._cosmos_client_connection_async.SmartRoutingMapProvider')
     async def test_refresh_routing_map_provider_transient_targeted_error_falls_back_to_full_async(self, mock_provider_ctor):
@@ -456,6 +555,33 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
 
         self.assertIs(conn._routing_map_provider, replacement_provider)
         mock_provider_ctor.assert_called_once_with(conn)
+
+    @patch('azure.cosmos.aio._cosmos_client_connection_async.SmartRoutingMapProvider')
+    async def test_refresh_routing_map_provider_410_targeted_error_falls_back_to_full_async(self, mock_provider_ctor):
+        """Async targeted refresh should treat 410 as transient and fall back to full refresh with warning."""
+        conn = object.__new__(CosmosClientConnection)
+        conn._routing_map_provider = MagicMock()
+
+        async def _raise_410(*args, **kwargs):
+            raise exceptions.CosmosHttpResponseError(
+                status_code=StatusCodes.GONE,
+                message="partition split while refreshing routing map"
+            )
+
+        conn._routing_map_provider.get_routing_map = _raise_410
+        replacement_provider = MagicMock()
+        mock_provider_ctor.return_value = replacement_provider
+
+        with self.assertLogs("azure.cosmos.aio._cosmos_client_connection_async", level="WARNING") as logs:
+            await conn.refresh_routing_map_provider(
+                collection_link="dbs/db/colls/c1",
+                previous_routing_map=object(),
+                feed_options={}
+            )
+
+        self.assertIs(conn._routing_map_provider, replacement_provider)
+        mock_provider_ctor.assert_called_once_with(conn)
+        self.assertTrue(any("transient status code 410" in message for message in logs.output))
 
     @patch('azure.cosmos.aio._cosmos_client_connection_async.SmartRoutingMapProvider')
     async def test_refresh_routing_map_provider_non_transient_targeted_error_re_raises_async(self, mock_provider_ctor):

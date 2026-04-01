@@ -38,10 +38,13 @@ def _make_mock_client(ranges, response_etag='"etag-resp"', include_etag_header=T
     client = MagicMock()
 
     def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
-        # Invoke the response_hook with fake headers so the cache captures the ETag
+        headers = ({http_constants.HttpHeaders.ETag: response_etag} if include_etag_header else {})
+        # Older call sites pass response_hook; current provider passes internal header capture.
         if response_hook:
-            headers = ({http_constants.HttpHeaders.ETag: response_etag} if include_etag_header else {})
             response_hook(headers, None)
+        capture_headers = kwargs.get('_internal_response_headers_capture')
+        if capture_headers is not None:
+            capture_headers.update(headers)
         return iter(ranges)
 
     client._ReadPartitionKeyRanges = MagicMock(side_effect=fake_read_pk_ranges)
@@ -55,6 +58,20 @@ def _make_mock_client(ranges, response_etag='"etag-resp"', include_etag_header=T
 @pytest.mark.cosmosEmulator
 class TestRoutingMapProviderUnit(unittest.TestCase):
     """Sync unit tests for PartitionKeyRangeCache."""
+
+    def test_get_overlapping_ranges_returns_empty_when_routing_map_is_none(self):
+        """Sync parity: return [] when routing map is unavailable instead of crashing."""
+        cache = PartitionKeyRangeCache(MagicMock())
+        cache.get_routing_map = MagicMock(return_value=None)
+
+        result = cache.get_overlapping_ranges(
+            "dbs/db1/colls/coll1",
+            [MagicMock()],
+            feed_options={}
+        )
+
+        self.assertEqual(result, [])
+        cache.get_routing_map.assert_called_once()
 
     def test_concurrent_initial_load_only_fetches_once(self):
         """When multiple threads concurrently call get_routing_map on an empty
@@ -245,8 +262,12 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
         client = MagicMock()
 
         def read_pk_ranges_empty(collection_link, options, response_hook=None, **kwargs):
+            headers = {http_constants.HttpHeaders.ETag: '"etag-new"'}
             if response_hook:
-                response_hook({http_constants.HttpHeaders.ETag: '"etag-new"'}, None)
+                response_hook(headers, None)
+            capture_headers = kwargs.get('_internal_response_headers_capture')
+            if capture_headers is not None:
+                capture_headers.update(headers)
             return iter([])  # Empty — no changes
 
         client._ReadPartitionKeyRanges = MagicMock(side_effect=read_pk_ranges_empty)
@@ -363,6 +384,53 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
         result = policy._get_previous_routing_map("dbs/db1/colls/coll1")
         self.assertIsNone(result)
 
+    def test_extract_collection_info_returns_link_and_rid_from_request_headers(self):
+        """_extract_collection_info should return collection link + RID when
+        intended collection RID header is present and cache lookup succeeds."""
+        mock_client = MagicMock()
+        rid = "rid-123"
+        collection_link = "dbs/db1/colls/coll1"
+        mock_client._container_properties_cache = {
+            rid: {"container_link": collection_link}
+        }
+
+        request = MagicMock()
+        request.headers = {http_constants.HttpHeaders.IntendedCollectionRID: rid}
+
+        policy = _PartitionKeyRangeGoneRetryPolicyBase(mock_client, None, None, None, request)
+        extracted_link, extracted_rid = policy._extract_collection_info()
+
+        self.assertEqual(extracted_link, collection_link)
+        self.assertEqual(extracted_rid, rid)
+
+    def test_extract_collection_info_returns_none_when_request_args_missing(self):
+        """_extract_collection_info should return (None, None) when no request
+        argument is present in policy args."""
+        mock_client = MagicMock()
+        mock_client._container_properties_cache = {}
+
+        policy = _PartitionKeyRangeGoneRetryPolicyBase(mock_client)
+        extracted_link, extracted_rid = policy._extract_collection_info()
+
+        self.assertIsNone(extracted_link)
+        self.assertIsNone(extracted_rid)
+
+    def test_extract_collection_info_returns_rid_even_when_cache_miss(self):
+        """_extract_collection_info should still return RID from headers even
+        when cache has no matching container entry."""
+        mock_client = MagicMock()
+        mock_client._container_properties_cache = {}
+        rid = "rid-missing"
+
+        request = MagicMock()
+        request.headers = {http_constants.HttpHeaders.IntendedCollectionRID: rid}
+
+        policy = _PartitionKeyRangeGoneRetryPolicyBase(mock_client, None, None, None, request)
+        extracted_link, extracted_rid = policy._extract_collection_info()
+
+        self.assertIsNone(extracted_link)
+        self.assertEqual(extracted_rid, rid)
+
     def test_fetch_routing_map_empty_incremental_response_same_etag_returns_same_object(self):
         """Empty incremental response with unchanged ETag should return the
         existing map object without rebuilding."""
@@ -387,15 +455,17 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
         cache = PartitionKeyRangeCache(client)
         previous_map = _make_complete_routing_map("dbs/db1/colls/coll1", '"etag-old"')
 
-        result = cache._fetch_routing_map(
-            collection_link="dbs/db1/colls/coll1",
-            collection_id="dbs/db1/colls/coll1",
-            previous_routing_map=previous_map,
-            feed_options={}
-        )
+        with self.assertLogs("azure.cosmos._routing._routing_map_provider_common", level="WARNING") as logs:
+            result = cache._fetch_routing_map(
+                collection_link="dbs/db1/colls/coll1",
+                collection_id="dbs/db1/colls/coll1",
+                previous_routing_map=previous_map,
+                feed_options={}
+            )
 
         self.assertIs(result, previous_map)
         self.assertEqual(result.change_feed_etag, '"etag-old"')
+        self.assertTrue(any("returned no ETag" in message for message in logs.output))
 
     def test_fetch_routing_map_fallback_rechains_upstream_response_hook(self):
         """Upstream response_hook should be invoked for both incremental and
@@ -412,7 +482,7 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
             if response_hook:
                 response_hook({http_constants.HttpHeaders.ETag: f'"etag-{call_count["n"]}"'}, None)
 
-            if call_count['n'] == 1:
+            if call_count['n'] <= 2:
                 return iter([
                     {
                         'id': '1',
@@ -436,8 +506,117 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
         )
 
         self.assertIsNotNone(result)
-        self.assertEqual(call_count['n'], 2, "Expected incremental attempt and full-refresh fallback")
-        self.assertEqual(len(upstream_calls), 2, "Upstream response_hook should run for both attempts")
+        self.assertEqual(call_count['n'], 3, "Expected incremental attempt, one retry, then full-refresh fallback")
+        self.assertEqual(len(upstream_calls), 3, "Upstream response_hook should run for retry and fallback attempts")
+
+    def test_fetch_routing_map_incomplete_retry_succeeds_without_full_refresh(self):
+        """Incomplete incremental update should retry once with the same ETag and succeed without full refresh."""
+        client = MagicMock()
+        call_count = {'n': 0}
+        seen_if_none_match = []
+
+        def read_pk_ranges_retry_then_success(collection_link, options, response_hook=None, **kwargs):
+            call_count['n'] += 1
+            headers = kwargs.get('headers', {})
+            seen_if_none_match.append(headers.get(http_constants.HttpHeaders.IfNoneMatch))
+
+            if response_hook:
+                response_hook({http_constants.HttpHeaders.ETag: '"etag-inc"'}, None)
+            capture_headers = kwargs.get('_internal_response_headers_capture')
+            if capture_headers is not None:
+                capture_headers.update({http_constants.HttpHeaders.ETag: '"etag-inc"'})
+
+            # First incremental attempt is incomplete (missing parent), second resolves.
+            if call_count['n'] == 1:
+                return iter([
+                    {'id': '9', 'minInclusive': '', 'maxExclusive': 'AA', 'parents': ['missing-parent']}
+                ])
+
+            return iter([
+                {'id': '2', 'minInclusive': '', 'maxExclusive': '03', 'parents': ['0']},
+                {'id': '3', 'minInclusive': '03', 'maxExclusive': '05', 'parents': ['0']},
+                {'id': '4', 'minInclusive': '', 'maxExclusive': '02', 'parents': ['2']},
+                {'id': '5', 'minInclusive': '02', 'maxExclusive': '03', 'parents': ['2']},
+            ])
+
+        client._ReadPartitionKeyRanges = MagicMock(side_effect=read_pk_ranges_retry_then_success)
+        cache = PartitionKeyRangeCache(client)
+        previous_map = CollectionRoutingMap.CompleteRoutingMap(
+            [
+                ({'id': '0', 'minInclusive': '', 'maxExclusive': '05'}, True),
+                ({'id': '1', 'minInclusive': '05', 'maxExclusive': 'FF'}, True),
+            ],
+            "dbs/db1/colls/coll1",
+            '"etag-old"'
+        )
+
+        result = cache._fetch_routing_map(
+            collection_link="dbs/db1/colls/coll1",
+            collection_id="dbs/db1/colls/coll1",
+            previous_routing_map=previous_map,
+            feed_options={},
+        )
+
+        self.assertIsNotNone(result)
+        self.assertEqual(call_count['n'], 2, "Expected one incremental retry and no full refresh")
+        self.assertEqual(seen_if_none_match, ['"etag-old"', '"etag-old"'])
+        ids = [r['id'] for r in result._orderedPartitionKeyRanges]
+        self.assertEqual(ids, ['4', '5', '3', '1'])
+
+    def test_fetch_routing_map_cascading_single_delta_split_merges_incrementally(self):
+        """Cascading split deltas should merge incrementally without full refresh.
+
+        Scenario (single incremental delta):
+        - Previous map has ranges: 0 (""-"05"), 1 ("05"-"FF")
+        - Delta includes: 2/3 split 0, and 4/5 split 2 in the same payload.
+
+        Parent links are resolved transitively within the same delta, so
+        parent "2" is resolvable after "2" is introduced from parent "0".
+        """
+        client = MagicMock()
+        call_count = {'n': 0}
+
+        def read_pk_ranges_cascading(collection_link, options, response_hook=None, **kwargs):
+            call_count['n'] += 1
+            if response_hook:
+                response_hook({http_constants.HttpHeaders.ETag: f'"etag-{call_count["n"]}"'}, None)
+
+            # 1st call: incremental payload with a cascading parent chain in one delta.
+            if call_count['n'] == 1:
+                return iter([
+                    {'id': '2', 'minInclusive': '', 'maxExclusive': '03', 'parents': ['0']},
+                    {'id': '3', 'minInclusive': '03', 'maxExclusive': '05', 'parents': ['0']},
+                    {'id': '4', 'minInclusive': '', 'maxExclusive': '02', 'parents': ['2']},
+                    {'id': '5', 'minInclusive': '02', 'maxExclusive': '03', 'parents': ['2']},
+                ])
+
+            return iter([])
+
+        client._ReadPartitionKeyRanges = MagicMock(side_effect=read_pk_ranges_cascading)
+        cache = PartitionKeyRangeCache(client)
+
+        previous_map = CollectionRoutingMap.CompleteRoutingMap(
+            [
+                ({'id': '0', 'minInclusive': '', 'maxExclusive': '05'}, True),
+                ({'id': '1', 'minInclusive': '05', 'maxExclusive': 'FF'}, True),
+            ],
+            "dbs/db1/colls/coll1",
+            '"etag-old"'
+        )
+
+        result = cache._fetch_routing_map(
+            collection_link="dbs/db1/colls/coll1",
+            collection_id="dbs/db1/colls/coll1",
+            previous_routing_map=previous_map,
+            feed_options={}
+        )
+
+        self.assertIsNotNone(result)
+        self.assertEqual(call_count['n'], 1, "Expected single incremental fetch for cascading split")
+
+        ids = [r['id'] for r in result._orderedPartitionKeyRanges]
+        self.assertEqual(ids, ['4', '5', '3', '1'])
+        self.assertEqual(result.change_feed_etag, '"etag-old"')
 
 
 if __name__ == "__main__":

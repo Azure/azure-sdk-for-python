@@ -44,12 +44,12 @@ logger = logging.getLogger(__name__)
 PAGE_SIZE_CHANGE_FEED = "-1"  # Return all available changes
 
 
-def is_cache_stale(
+def is_cache_unchanged_since_previous(
     collection_routing_map_by_item: Dict[str, CollectionRoutingMap],
     collection_id: str,
     previous_routing_map: Optional[CollectionRoutingMap],
 ) -> bool:
-    """Check whether the cached routing map is stale by comparing ETags.
+    """Check whether cached and previous maps belong to the same generation.
 
     This function only concerns itself with ETag comparison.  It returns
     ``False`` when there is no *previous_routing_map* or when the cache is
@@ -65,7 +65,7 @@ def is_cache_stale(
     :type previous_routing_map:
         ~azure.cosmos._routing.collection_routing_map.CollectionRoutingMap
         or None
-    :return: ``True`` if a refresh should be forced, ``False`` otherwise.
+    :return: ``True`` when both maps exist and have equal change-feed ETags.
     :rtype: bool
     """
     if not previous_routing_map:
@@ -163,6 +163,14 @@ def process_fetched_ranges(
             ranges, collection_id, new_etag, collection_link, logger
         )
 
+    if new_etag is None:
+        logger.warning(
+            "Incremental routing-map refresh for collection '%s' returned no ETag; "
+            "preserving previous ETag '%s'.",
+            collection_link,
+            previous_routing_map.change_feed_etag,
+        )
+
     # Incremental update -- preserve prior ETag if service omitted one.
     effective_etag = (
         new_etag
@@ -176,26 +184,50 @@ def process_fetched_ranges(
         return previous_routing_map
 
     # Incremental update -- merge deltas into the existing map.
+    # Resolve parent chains transitively within this single delta so cascading
+    # splits (A->B+C and B->D+E in one payload) can be merged incrementally.
     range_tuples: List[Tuple[Dict[str, Any], Any]] = []
-    for r in ranges:
-        parents = r.get(PartitionKeyRange.Parents) or []
-        range_info = None
-        for parent_id in parents:
-            if parent_id in previous_routing_map._rangeById:  # pylint: disable=protected-access
-                parent_range_tuple = previous_routing_map._rangeById[parent_id]  # pylint: disable=protected-access
-                range_info = parent_range_tuple[1]
-                break
-        if range_info is not None:
+    known_range_info_by_id = {
+        pkr_id: pkr_tuple[1]
+        for pkr_id, pkr_tuple in previous_routing_map._rangeById.items()  # pylint: disable=protected-access
+    }
+    unresolved = list(ranges)
+    while unresolved:
+        progress_made = False
+        next_unresolved: List[Dict[str, Any]] = []
+        for r in unresolved:
+            parents = r.get(PartitionKeyRange.Parents) or []
+            range_info = None
+            if not parents:
+                range_info = known_range_info_by_id.get(r.get(PartitionKeyRange.Id))
+            for parent_id in parents:
+                if parent_id in known_range_info_by_id:
+                    range_info = known_range_info_by_id[parent_id]
+                    break
+
+            if range_info is None:
+                next_unresolved.append(r)
+                continue
+
             range_tuples.append((r, range_info))
-        else:
+            known_range_info_by_id[r[PartitionKeyRange.Id]] = range_info
+            progress_made = True
+
+        if not next_unresolved:
+            break
+
+        if not progress_made:
+            first_unresolved = next_unresolved[0]
             logger.warning(
-                "Incremental update failed: None of the parent ranges %s "
-                "found in routing map for collection '%s'. "
-                "Falling back to full refresh.",
-                parents,
+                "Incremental update failed: None of the parent ranges %s found in routing map "
+                "for collection '%s' (range id '%s'). Falling back to full refresh.",
+                first_unresolved.get(PartitionKeyRange.Parents) or [],
                 collection_link,
+                first_unresolved.get(PartitionKeyRange.Id),
             )
             raise _NeedFullRefresh()
+
+        unresolved = next_unresolved
 
     result = previous_routing_map.try_combine(range_tuples, effective_etag)
     if not result:
@@ -235,14 +267,14 @@ def determine_refresh_action(
     existing_routing_map = collection_routing_map_by_item.get(collection_id)
 
     is_initial_load = not existing_routing_map
-    needs_refresh = force_refresh and is_cache_stale(
+    should_refresh_unchanged_cache = force_refresh and is_cache_unchanged_since_previous(
         collection_routing_map_by_item, collection_id, previous_routing_map
     )
 
-    if not (is_initial_load or needs_refresh):
+    if not (is_initial_load or should_refresh_unchanged_cache):
         return False, None
 
-    if needs_refresh and previous_routing_map:
+    if should_refresh_unchanged_cache and previous_routing_map:
         base_routing_map: Optional[CollectionRoutingMap] = previous_routing_map
     else:
         base_routing_map = existing_routing_map

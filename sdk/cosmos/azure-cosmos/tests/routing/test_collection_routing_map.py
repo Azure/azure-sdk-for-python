@@ -300,6 +300,60 @@ class TestCollectionRoutingMap(unittest.TestCase):
         ids = [r['id'] for r in result._orderedPartitionKeyRanges]
         self.assertEqual(ids, ['0', '3', '2'])
 
+    def test_try_combine_accumulates_gone_ranges_across_updates(self):
+        """Gone range ids should persist across combines, not just within one delta."""
+        initial_ranges = [
+            ({'id': '0', 'minInclusive': '', 'maxExclusive': '80'}, True),
+            ({'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'}, True),
+        ]
+        crm = CollectionRoutingMap.CompleteRoutingMap(initial_ranges, 'coll1', '"etag-1"')
+
+        first_delta = [
+            ({'id': '2', 'minInclusive': '', 'maxExclusive': '40', 'parents': ['0']}, True),
+            ({'id': '3', 'minInclusive': '40', 'maxExclusive': '80', 'parents': ['0']}, True),
+        ]
+        after_first = crm.try_combine(first_delta, '"etag-2"')
+
+        self.assertIsNotNone(after_first)
+        self.assertIn('0', after_first._goneRangeIds)
+
+        second_delta = [
+            ({'id': '4', 'minInclusive': '80', 'maxExclusive': 'C0', 'parents': ['1']}, True),
+            ({'id': '5', 'minInclusive': 'C0', 'maxExclusive': 'FF', 'parents': ['1']}, True),
+        ]
+        after_second = after_first.try_combine(second_delta, '"etag-3"')
+
+        self.assertIsNotNone(after_second)
+        self.assertIn('0', after_second._goneRangeIds)
+        self.assertIn('1', after_second._goneRangeIds)
+
+    def test_try_combine_ignores_stale_previously_gone_range_in_later_delta(self):
+        """A stale previously-gone range in a later delta should be removed by accumulated tombstones."""
+        initial_ranges = [
+            ({'id': '0', 'minInclusive': '', 'maxExclusive': '80'}, True),
+            ({'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'}, True),
+        ]
+        crm = CollectionRoutingMap.CompleteRoutingMap(initial_ranges, 'coll1', '"etag-1"')
+
+        split_left = [
+            ({'id': '2', 'minInclusive': '', 'maxExclusive': '40', 'parents': ['0']}, True),
+            ({'id': '3', 'minInclusive': '40', 'maxExclusive': '80', 'parents': ['0']}, True),
+        ]
+        after_left_split = crm.try_combine(split_left, '"etag-2"')
+        self.assertIsNotNone(after_left_split)
+
+        # Later delta contains a stale copy of previously-gone range '0' plus a valid split of '1'.
+        later_delta = [
+            ({'id': '0', 'minInclusive': '', 'maxExclusive': '80'}, True),
+            ({'id': '4', 'minInclusive': '80', 'maxExclusive': 'C0', 'parents': ['1']}, True),
+            ({'id': '5', 'minInclusive': 'C0', 'maxExclusive': 'FF', 'parents': ['1']}, True),
+        ]
+        result = after_left_split.try_combine(later_delta, '"etag-3"')
+
+        self.assertIsNotNone(result)
+        ids = [r['id'] for r in result._orderedPartitionKeyRanges]
+        self.assertEqual(ids, ['2', '3', '4', '5'])
+
     # =========================================================
     # Tests for _build_routing_map_from_ranges parent filtering
     # =========================================================

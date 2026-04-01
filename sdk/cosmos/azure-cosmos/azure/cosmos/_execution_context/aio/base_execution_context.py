@@ -191,22 +191,21 @@ class _QueryExecutionContextBase(object):
                         collection_id = _base.GetResourceIdOrFullNameFromLink(self._resource_link)
                         previous_map = self._client._routing_map_provider._collection_routing_map_by_item.get(
                             collection_id)
-                        if previous_map:
-                            _LOGGER.debug(
-                                "Partition split retry (async): Targeted refresh for collection: %s",
-                                self._resource_link
-                            )
-                            refresh_feed_options = {Constants.ContainerRID: self._options[Constants.ContainerRID]} \
-                                if Constants.ContainerRID in self._options else None
-                            await self._client.refresh_routing_map_provider(
-                                self._resource_link, previous_map, refresh_feed_options)
-                        else:
-                            _LOGGER.debug(
-                                "Partition split retry (async): No cached map for collection %s, "
-                                "falling back to global refresh",
-                                self._resource_link
-                            )
-                            await self._client.refresh_routing_map_provider()
+                        _LOGGER.debug(
+                            "Partition split retry (async): Targeted refresh for collection %s (has_previous_map=%s)",
+                            self._resource_link,
+                            previous_map is not None,
+                        )
+                        refresh_feed_options = {}
+                        if Constants.ContainerRID in self._options:
+                            refresh_feed_options[Constants.ContainerRID] = self._options[Constants.ContainerRID]
+                        if "excludedLocations" in self._options:
+                            refresh_feed_options["excludedLocations"] = self._options["excludedLocations"]
+                        await self._client.refresh_routing_map_provider(
+                            self._resource_link,
+                            previous_map,
+                            refresh_feed_options if refresh_feed_options else None,
+                        )
                     else:
                         # No resource_link available — defensive fallback to global refresh.
                         # This branch should not be reached in practice since all callers now pass resource_link.

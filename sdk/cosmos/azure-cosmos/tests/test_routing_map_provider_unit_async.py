@@ -35,9 +35,12 @@ def _make_mock_async_client(ranges, response_etag='"etag-resp"', include_etag_he
     client = MagicMock()
 
     def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+        headers = ({http_constants.HttpHeaders.ETag: response_etag} if include_etag_header else {})
         if response_hook:
-            headers = ({http_constants.HttpHeaders.ETag: response_etag} if include_etag_header else {})
             response_hook(headers, None)
+        capture_headers = kwargs.get('_internal_response_headers_capture')
+        if capture_headers is not None:
+            capture_headers.update(headers)
 
         async def async_gen():
             for r in ranges:
@@ -322,15 +325,17 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
         cache = PartitionKeyRangeCache(client)
         previous_map = _make_complete_routing_map("dbs/db1/colls/coll1", '"etag-old"')
 
-        result = await cache._fetch_routing_map(
-            collection_link="dbs/db1/colls/coll1",
-            collection_id="dbs/db1/colls/coll1",
-            previous_routing_map=previous_map,
-            feed_options={}
-        )
+        with self.assertLogs("azure.cosmos._routing._routing_map_provider_common", level="WARNING") as logs:
+            result = await cache._fetch_routing_map(
+                collection_link="dbs/db1/colls/coll1",
+                collection_id="dbs/db1/colls/coll1",
+                previous_routing_map=previous_map,
+                feed_options={}
+            )
 
         self.assertIs(result, previous_map)
         self.assertEqual(result.change_feed_etag, '"etag-old"')
+        self.assertTrue(any("returned no ETag" in message for message in logs.output))
 
     async def test_fetch_routing_map_fallback_rechains_upstream_response_hook_async(self):
         """Upstream response_hook should be invoked for both incremental and
@@ -348,7 +353,7 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
                 response_hook({http_constants.HttpHeaders.ETag: f'"etag-{call_count["n"]}"'}, None)
 
             async def async_gen():
-                if call_count['n'] == 1:
+                if call_count['n'] <= 2:
                     yield {
                         'id': '1',
                         'minInclusive': '',
@@ -373,8 +378,116 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
         )
 
         self.assertIsNotNone(result)
-        self.assertEqual(call_count['n'], 2, "Expected incremental attempt and full-refresh fallback")
-        self.assertEqual(len(upstream_calls), 2, "Upstream response_hook should run for both attempts")
+        self.assertEqual(call_count['n'], 3, "Expected incremental attempt, one retry, then full-refresh fallback")
+        self.assertEqual(len(upstream_calls), 3, "Upstream response_hook should run for retry and fallback attempts")
+
+    async def test_fetch_routing_map_incomplete_retry_succeeds_without_full_refresh_async(self):
+        """Incomplete incremental update should retry once with same ETag and succeed without full refresh (async)."""
+        client = MagicMock()
+        call_count = {'n': 0}
+        seen_if_none_match = []
+
+        def read_pk_ranges_retry_then_success(collection_link, options, response_hook=None, **kwargs):
+            call_count['n'] += 1
+            headers = kwargs.get('headers', {})
+            seen_if_none_match.append(headers.get(http_constants.HttpHeaders.IfNoneMatch))
+
+            if response_hook:
+                response_hook({http_constants.HttpHeaders.ETag: '"etag-inc"'}, None)
+            capture_headers = kwargs.get('_internal_response_headers_capture')
+            if capture_headers is not None:
+                capture_headers.update({http_constants.HttpHeaders.ETag: '"etag-inc"'})
+
+            async def async_gen():
+                if call_count['n'] == 1:
+                    yield {'id': '9', 'minInclusive': '', 'maxExclusive': 'AA', 'parents': ['missing-parent']}
+                else:
+                    yield {'id': '2', 'minInclusive': '', 'maxExclusive': '03', 'parents': ['0']}
+                    yield {'id': '3', 'minInclusive': '03', 'maxExclusive': '05', 'parents': ['0']}
+                    yield {'id': '4', 'minInclusive': '', 'maxExclusive': '02', 'parents': ['2']}
+                    yield {'id': '5', 'minInclusive': '02', 'maxExclusive': '03', 'parents': ['2']}
+
+            return async_gen()
+
+        client._ReadPartitionKeyRanges = MagicMock(side_effect=read_pk_ranges_retry_then_success)
+        cache = PartitionKeyRangeCache(client)
+        previous_map = CollectionRoutingMap.CompleteRoutingMap(
+            [
+                ({'id': '0', 'minInclusive': '', 'maxExclusive': '05'}, True),
+                ({'id': '1', 'minInclusive': '05', 'maxExclusive': 'FF'}, True),
+            ],
+            "dbs/db1/colls/coll1",
+            '"etag-old"'
+        )
+
+        result = await cache._fetch_routing_map(
+            collection_link="dbs/db1/colls/coll1",
+            collection_id="dbs/db1/colls/coll1",
+            previous_routing_map=previous_map,
+            feed_options={},
+        )
+
+        self.assertIsNotNone(result)
+        self.assertEqual(call_count['n'], 2, "Expected one incremental retry and no full refresh")
+        self.assertEqual(seen_if_none_match, ['"etag-old"', '"etag-old"'])
+        ids = [r['id'] for r in result._orderedPartitionKeyRanges]
+        self.assertEqual(ids, ['4', '5', '3', '1'])
+
+    async def test_fetch_routing_map_cascading_single_delta_split_merges_incrementally_async(self):
+        """Cascading split deltas should merge incrementally without full refresh (async).
+
+        Scenario (single incremental delta):
+        - Previous map has ranges: 0 (""-"05"), 1 ("05"-"FF")
+        - Delta includes: 2/3 split 0, and 4/5 split 2 in the same payload.
+
+        Parent links are resolved transitively within the same delta, so
+        parent "2" is resolvable after "2" is introduced from parent "0".
+        """
+        client = MagicMock()
+        call_count = {'n': 0}
+
+        def read_pk_ranges_cascading(collection_link, options, response_hook=None, **kwargs):
+            call_count['n'] += 1
+            if response_hook:
+                response_hook({http_constants.HttpHeaders.ETag: f'"etag-{call_count["n"]}"'}, None)
+
+            async def async_gen():
+                if call_count['n'] == 1:
+                    # 1st call: incremental payload with a cascading parent chain in one delta.
+                    yield {'id': '2', 'minInclusive': '', 'maxExclusive': '03', 'parents': ['0']}
+                    yield {'id': '3', 'minInclusive': '03', 'maxExclusive': '05', 'parents': ['0']}
+                    yield {'id': '4', 'minInclusive': '', 'maxExclusive': '02', 'parents': ['2']}
+                    yield {'id': '5', 'minInclusive': '02', 'maxExclusive': '03', 'parents': ['2']}
+                else:
+                    return
+
+            return async_gen()
+
+        client._ReadPartitionKeyRanges = MagicMock(side_effect=read_pk_ranges_cascading)
+        cache = PartitionKeyRangeCache(client)
+
+        previous_map = CollectionRoutingMap.CompleteRoutingMap(
+            [
+                ({'id': '0', 'minInclusive': '', 'maxExclusive': '05'}, True),
+                ({'id': '1', 'minInclusive': '05', 'maxExclusive': 'FF'}, True),
+            ],
+            "dbs/db1/colls/coll1",
+            '"etag-old"'
+        )
+
+        result = await cache._fetch_routing_map(
+            collection_link="dbs/db1/colls/coll1",
+            collection_id="dbs/db1/colls/coll1",
+            previous_routing_map=previous_map,
+            feed_options={}
+        )
+
+        self.assertIsNotNone(result)
+        self.assertEqual(call_count['n'], 1, "Expected single incremental fetch for cascading split")
+
+        ids = [r['id'] for r in result._orderedPartitionKeyRanges]
+        self.assertEqual(ids, ['4', '5', '3', '1'])
+        self.assertEqual(result.change_feed_etag, '"etag-old"')
 
 
 if __name__ == "__main__":

@@ -105,7 +105,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
                 # range has been split, it raises a Gone (410) error. We repair the document
                 # producers with refreshed partition ranges and retry the fetch.
                 if exceptions._partition_range_is_gone(e):
-                    await self._repair_document_producer()
+                    await self._repair_document_producer(targetRangeExContext)
                     return res
                 raise
             except StopAsyncIteration:
@@ -118,30 +118,52 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
 
         raise NotImplementedError("You should use pipeline's fetch_next_block.")
 
-    async def _repair_document_producer(self):
+    async def _repair_document_producer(self, failed_query_ex_context=None):
         """Repairs the document producer context by using the re-initialized routing map provider in the client,
         which loads in a refreshed partition key range cache to re-create the partition key ranges.
         After loading this new cache, the document producers get re-created with the new valid ranges.
         """
         # refresh the routing provider to get the newly initialized one post-refresh
         self._routing_provider = self._client._routing_map_provider
-        # will be a list of (partition_min, partition_max) tuples
-        targetPartitionRanges = await self._get_target_partition_key_range()
+        existing_contexts = []
+        if failed_query_ex_context is not None and hasattr(self._orderByPQ, "_heap"):
+            existing_contexts = list(self._orderByPQ._heap)
 
-        targetPartitionQueryExecutionContextList = []
-        for partitionTargetRange in targetPartitionRanges:
-            # create and add the child execution context for the target range
-            targetPartitionQueryExecutionContextList.append(
+        # Default to full rebuild when no failed context is provided.
+        if failed_query_ex_context is None:
+            targetPartitionRanges = await self._get_target_partition_key_range()
+            rebuilt_contexts = [
                 self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
-            )
+                for partitionTargetRange in targetPartitionRanges
+            ]
+            await self._rebuild_priority_queue(rebuilt_contexts)
+            return
 
+        # Iteration-time split: only rebuild producers for the failed range and preserve unaffected producers.
+        failed_target_range = failed_query_ex_context.get_target_range()
+        failed_range = routing_range.Range(
+            failed_target_range["minInclusive"],
+            failed_target_range["maxExclusive"],
+            True,
+            False,
+        )
+        repaired_ranges = await self._routing_provider.get_overlapping_ranges(
+            self._resource_link,
+            [failed_range],
+            self._options,
+        )
+        rebuilt_failed_contexts = [
+            self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
+            for partitionTargetRange in repaired_ranges
+        ]
+        await self._rebuild_priority_queue(existing_contexts + rebuilt_failed_contexts)
+
+    async def _rebuild_priority_queue(self, query_contexts):
         self._orderByPQ = self.PriorityQueue()
-
-        for targetQueryExContext in targetPartitionQueryExecutionContextList:
+        for targetQueryExContext in query_contexts:
             try:
                 # TODO: we can also use more_itertools.peekable to be more python friendly
                 await targetQueryExContext.peek()
-                # if there are matching results in the target ex range add it to the priority queue
                 await self._orderByPQ.push_async(targetQueryExContext, self._document_producer_comparator)
 
             except StopAsyncIteration:
