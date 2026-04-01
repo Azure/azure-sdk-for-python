@@ -9,11 +9,21 @@ import math
 import os
 from pathlib import Path
 import random
+import sys
 import time
 import uuid
 from datetime import datetime
 from typing import Callable, Dict, List, Optional, Union, cast, Any
 from tqdm import tqdm
+
+
+def _safe_tqdm_write(msg: str) -> None:
+    """Write a message via tqdm, falling back gracefully on encoding errors (e.g. Windows cp1252)."""
+    try:
+        tqdm.write(msg)
+    except UnicodeEncodeError:
+        tqdm.write(msg.encode(sys.stdout.encoding or "utf-8", errors="replace").decode(sys.stdout.encoding or "utf-8"))
+
 
 # Azure AI Evaluation imports
 from azure.ai.evaluation._constants import TokenScope
@@ -672,7 +682,6 @@ class RedTeam:
                         target="model",
                         client_id=client_id,
                     )
-
                     if isinstance(objectives_response, list):
                         self.logger.debug(f"Fallback API returned {len(objectives_response)} model-type objectives")
 
@@ -746,7 +755,16 @@ class RedTeam:
                     target=target_type_str,
                 )
 
-            xpia_prompts = await get_xpia_prompts_with_retry()
+            xpia_prompts = None
+            try:
+                xpia_prompts = await get_xpia_prompts_with_retry()
+            except Exception as agent_error:
+                if target_type_str == "agent":
+                    self.logger.warning(
+                        f"Agent-type XPIA prompt fetch failed ({agent_error}), falling back to model-type"
+                    )
+                else:
+                    raise
 
             # If no agent XPIA prompts and we're trying agent, fallback to model
             if (not xpia_prompts or len(xpia_prompts) == 0) and target_type_str == "agent":
@@ -977,7 +995,7 @@ class RedTeam:
                 f"(available: {len(objectives_response)})"
             )
             self.logger.info(selection_msg)
-            tqdm.write(f"[INFO] {selection_msg}")
+            _safe_tqdm_write(f"[INFO] {selection_msg}")
 
         if len(selected_cat_objectives) < num_objectives:
             self.logger.warning(
@@ -1151,7 +1169,7 @@ class RedTeam:
 
         try:
             start_time = time.time()
-            tqdm.write(f"▶️ Starting task: {strategy_name} strategy for {risk_category.value} risk category")
+            _safe_tqdm_write(f"▶️ Starting task: {strategy_name} strategy for {risk_category.value} risk category")
 
             # Get converter and orchestrator function
             converter = get_converter_for_strategy(
@@ -1212,7 +1230,7 @@ class RedTeam:
                     f"Error during evaluation for {strategy_name}/{risk_category.value}",
                     e,
                 )
-                tqdm.write(f"⚠️ Evaluation error for {strategy_name}/{risk_category.value}: {str(e)}")
+                _safe_tqdm_write(f"⚠️ Evaluation error for {strategy_name}/{risk_category.value}: {str(e)}")
                 self.red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS["FAILED"]
 
             # Update progress
@@ -1228,12 +1246,12 @@ class RedTeam:
                     remaining_tasks = self.total_tasks - self.completed_tasks
                     est_remaining_time = avg_time_per_task * remaining_tasks if avg_time_per_task > 0 else 0
 
-                    tqdm.write(
+                    _safe_tqdm_write(
                         f"✅ Completed task {self.completed_tasks}/{self.total_tasks} ({completion_pct:.1f}%) - {strategy_name}/{risk_category.value} in {elapsed_time:.1f}s"
                     )
-                    tqdm.write(f"   Est. remaining: {est_remaining_time/60:.1f} minutes")
+                    _safe_tqdm_write(f"   Est. remaining: {est_remaining_time/60:.1f} minutes")
                 else:
-                    tqdm.write(
+                    _safe_tqdm_write(
                         f"✅ Completed task {self.completed_tasks}/{self.total_tasks} ({completion_pct:.1f}%) - {strategy_name}/{risk_category.value} in {elapsed_time:.1f}s"
                     )
 
@@ -1369,7 +1387,7 @@ class RedTeam:
                         )
 
             # Show risk categories to user
-            tqdm.write(f"📊 Risk categories: {[rc.value for rc in self.risk_categories]}")
+            _safe_tqdm_write(f"📊 Risk categories: {[rc.value for rc in self.risk_categories]}")
             self.logger.info(f"Risk categories to process: {[rc.value for rc in self.risk_categories]}")
 
             # Setup attack strategies
@@ -1381,7 +1399,7 @@ class RedTeam:
                 eval_run = {}
             else:
                 eval_run = self.mlflow_integration.start_redteam_mlflow_run(self.azure_ai_project, scan_name)
-                tqdm.write(f"🔗 Track your red team scan in AI Foundry: {self.mlflow_integration.ai_studio_url}")
+                _safe_tqdm_write(f"🔗 Track your red team scan in AI Foundry: {self.mlflow_integration.ai_studio_url}")
 
                 # Update result processor with the AI studio URL now that it's available
                 self.result_processor.ai_studio_url = self.mlflow_integration.ai_studio_url
@@ -1393,7 +1411,7 @@ class RedTeam:
 
                 # Calculate total tasks and initialize tracking
                 self.total_tasks = len(self.risk_categories) * len(flattened_attack_strategies)
-                tqdm.write(f"📋 Planning {self.total_tasks} total tasks")
+                _safe_tqdm_write(f"📋 Planning {self.total_tasks} total tasks")
                 self._initialize_tracking_dict(flattened_attack_strategies)
 
                 # Fetch attack objectives
@@ -1473,8 +1491,8 @@ class RedTeam:
         self._setup_logging_filters()
 
         log_section_header(self.logger, "Starting red team scan")
-        tqdm.write(f"🚀 STARTING RED TEAM SCAN")
-        tqdm.write(f"📂 Output directory: {self.scan_output_dir}")
+        _safe_tqdm_write(f"🚀 STARTING RED TEAM SCAN")
+        _safe_tqdm_write(f"📂 Output directory: {self.scan_output_dir}")
 
     def _setup_logging_filters(self):
         """Setup logging filters to suppress unwanted logs."""
@@ -1553,7 +1571,7 @@ class RedTeam:
                 f"to ensure adequate coverage of {max_num_subtypes} subtypes"
             )
             self.logger.warning(warning_msg)
-            tqdm.write(f"[WARNING] {warning_msg}")
+            _safe_tqdm_write(f"[WARNING] {warning_msg}")
 
         # First fetch baseline objectives for all risk categories
         self.logger.info("Fetching baseline objectives for all risk categories")
@@ -1571,7 +1589,7 @@ class RedTeam:
             status_msg = f"📝 Fetched baseline objectives for {risk_category.value}: {len(baseline_objectives)}/{num_objectives_with_subtypes} objectives"
             if len(baseline_objectives) < num_objectives_with_subtypes:
                 status_msg += f" (⚠️ fewer than expected)"
-            tqdm.write(status_msg)
+            _safe_tqdm_write(status_msg)
 
         # Then fetch objectives for other strategies
         strategy_count = len(flattened_attack_strategies)
@@ -1580,7 +1598,7 @@ class RedTeam:
             if strategy_name == "baseline":
                 continue
 
-            tqdm.write(f"🔄 Fetching objectives for strategy {i+1}/{strategy_count}: {strategy_name}")
+            _safe_tqdm_write(f"🔄 Fetching objectives for strategy {i+1}/{strategy_count}: {strategy_name}")
             all_objectives[strategy_name] = {}
 
             for risk_category in self.risk_categories:
@@ -1631,7 +1649,7 @@ class RedTeam:
 
             if not objectives:
                 self.logger.warning(f"No objectives found for {strategy_name}+{risk_category.value}, skipping")
-                tqdm.write(f"⚠️ No objectives found for {strategy_name}/{risk_category.value}, skipping")
+                _safe_tqdm_write(f"⚠️ No objectives found for {strategy_name}/{risk_category.value}, skipping")
                 self.red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS["COMPLETED"]
                 async with progress_bar_lock:
                     progress_bar.update(1)
@@ -1665,7 +1683,9 @@ class RedTeam:
     ):
         """Process orchestrator tasks either in parallel or sequentially."""
         if parallel_execution and orchestrator_tasks:
-            tqdm.write(f"⚙️ Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)")
+            _safe_tqdm_write(
+                f"⚙️ Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)"
+            )
 
             # Process tasks in batches
             for i in range(0, len(orchestrator_tasks), max_parallel_tasks):
@@ -1676,20 +1696,20 @@ class RedTeam:
                     await asyncio.wait_for(asyncio.gather(*batch), timeout=timeout * 2)
                 except asyncio.TimeoutError:
                     self.logger.warning(f"Batch {i//max_parallel_tasks+1} timed out")
-                    tqdm.write(f"⚠️ Batch {i//max_parallel_tasks+1} timed out, continuing with next batch")
+                    _safe_tqdm_write(f"⚠️ Batch {i//max_parallel_tasks+1} timed out, continuing with next batch")
                     continue
                 except Exception as e:
                     self.logger.error(f"Error processing batch {i//max_parallel_tasks+1}: {str(e)}")
                     continue
         else:
             # Sequential execution
-            tqdm.write("⚙️ Processing tasks sequentially")
+            _safe_tqdm_write("⚙️ Processing tasks sequentially")
             for i, task in enumerate(orchestrator_tasks):
                 try:
                     await asyncio.wait_for(task, timeout=timeout)
                 except asyncio.TimeoutError:
                     self.logger.warning(f"Task {i+1} timed out")
-                    tqdm.write(f"⚠️ Task {i+1} timed out, continuing with next task")
+                    _safe_tqdm_write(f"⚠️ Task {i+1} timed out, continuing with next task")
                     continue
                 except Exception as e:
                     self.logger.error(f"Error processing task {i+1}: {str(e)}")
@@ -2061,18 +2081,18 @@ class RedTeam:
         # Display final scorecard and results
         if red_team_result.scan_result:
             scorecard = format_scorecard(red_team_result.scan_result)
-            tqdm.write(scorecard)
+            _safe_tqdm_write(scorecard)
 
             # Print URL for detailed results
             studio_url = red_team_result.scan_result.get("studio_url", "")
             if studio_url:
-                tqdm.write(f"\nDetailed results available at:\n{studio_url}")
+                _safe_tqdm_write(f"\nDetailed results available at:\n{studio_url}")
 
             # Print the output directory path
             if self.scan_output_dir:
-                tqdm.write(f"\n📂 All scan files saved to: {self.scan_output_dir}")
+                _safe_tqdm_write(f"\n📂 All scan files saved to: {self.scan_output_dir}")
 
-        tqdm.write(f"✅ Scan completed successfully!")
+        _safe_tqdm_write(f"✅ Scan completed successfully!")
         self.logger.info("Scan completed successfully")
 
         # Close file handlers
