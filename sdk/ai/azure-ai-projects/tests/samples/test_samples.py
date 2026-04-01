@@ -13,15 +13,8 @@ from sample_executor import (
     get_sample_paths,
     SamplePathPasser,
 )
-from test_samples_helpers import (
-    agent_tools_instructions,
-    agents_instructions,
-    chat_completions_instructions,
-    memories_instructions,
-    resource_management_instructions,
-    get_sample_env_vars,
-)
-from test_fine_tuning_samples_helpers import fine_tuning_instructions, get_fine_tuning_sample_env_vars
+from test_samples_helpers import get_sample_env_vars
+from test_fine_tuning_samples_helpers import get_fine_tuning_sample_env_vars
 
 
 class TestSamples(AzureRecordedTestCase):
@@ -63,9 +56,7 @@ class TestSamples(AzureRecordedTestCase):
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
-        executor.validate_print_calls_by_llm(
-            instructions=resource_management_instructions,
-        )
+        executor.validate_print_calls_by_llm()
 
     @pytest.mark.parametrize(
         "sample_path",
@@ -86,9 +77,7 @@ class TestSamples(AzureRecordedTestCase):
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
-        executor.validate_print_calls_by_llm(
-            instructions=memories_instructions,
-        )
+        executor.validate_print_calls_by_llm()
 
     @pytest.mark.parametrize(
         "sample_path",
@@ -107,9 +96,7 @@ class TestSamples(AzureRecordedTestCase):
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
-        executor.validate_print_calls_by_llm(
-            instructions=agents_instructions,
-        )
+        executor.validate_print_calls_by_llm()
 
     @pytest.mark.parametrize(
         "sample_path",
@@ -127,9 +114,7 @@ class TestSamples(AzureRecordedTestCase):
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
-        executor.validate_print_calls_by_llm(
-            instructions=resource_management_instructions,
-        )
+        executor.validate_print_calls_by_llm()
 
     @pytest.mark.parametrize(
         "sample_path",
@@ -145,9 +130,7 @@ class TestSamples(AzureRecordedTestCase):
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
-        executor.validate_print_calls_by_llm(
-            instructions=resource_management_instructions,
-        )
+        executor.validate_print_calls_by_llm()
 
     @pytest.mark.parametrize(
         "sample_path",
@@ -163,9 +146,7 @@ class TestSamples(AzureRecordedTestCase):
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
-        executor.validate_print_calls_by_llm(
-            instructions=resource_management_instructions,
-        )
+        executor.validate_print_calls_by_llm()
 
     @pytest.mark.parametrize(
         "sample_path",
@@ -181,9 +162,7 @@ class TestSamples(AzureRecordedTestCase):
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
-        executor.validate_print_calls_by_llm(
-            instructions=resource_management_instructions,
-        )
+        executor.validate_print_calls_by_llm()
 
     @pytest.mark.parametrize(
         "sample_path",
@@ -199,9 +178,7 @@ class TestSamples(AzureRecordedTestCase):
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
-        executor.validate_print_calls_by_llm(
-            instructions=chat_completions_instructions,
-        )
+        executor.validate_print_calls_by_llm()
 
     @pytest.mark.parametrize(
         "sample_path",
@@ -220,6 +197,4 @@ class TestSamples(AzureRecordedTestCase):
         env_vars = get_fine_tuning_sample_env_vars(sample_path, kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
-        executor.validate_print_calls_by_llm(
-            instructions=fine_tuning_instructions,
-        )
+        executor.validate_print_calls_by_llm()
