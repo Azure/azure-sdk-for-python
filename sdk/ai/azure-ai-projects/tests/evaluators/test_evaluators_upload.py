@@ -267,6 +267,7 @@ class TestEvaluatorsUpload:
                 "__pycache__/evaluator.cpython-312.pyc": b"compiled",
                 "other.pyc": b"compiled",
                 "other.pyo": b"optimized",
+                ".gitignore": b"__pycache__/\n*.pyc\n*.pyo\n",
             }
         )
 
@@ -282,12 +283,152 @@ class TestEvaluatorsUpload:
                 folder=folder,
             )
 
-            # Only evaluator.py should be uploaded
-            assert mock_container.upload_blob.call_count == 1
-            blob_name = mock_container.upload_blob.call_args.kwargs.get("name") or mock_container.upload_blob.call_args[
-                1
-            ].get("name")
-            assert blob_name == "evaluator.py"
+            # evaluator.py and .gitignore should be uploaded; pycache and pyc/pyo files skipped
+            uploaded_names = sorted(
+                c.kwargs.get("name") or c[1].get("name") for c in mock_container.upload_blob.call_args_list
+            )
+            assert ".gitignore" in uploaded_names
+            assert "evaluator.py" in uploaded_names
+            assert not any(n.endswith(".pyc") or n.endswith(".pyo") or "__pycache__" in n for n in uploaded_names)
+
+    # ---------------------------------------------------------------
+    # upload() - gitignore-based filtering tests
+    # ---------------------------------------------------------------
+
+    def test_upload_respects_gitignore_ignored_directory(self):
+        """Directories listed in .gitignore should not be traversed."""
+        ops = self._create_operations()
+        ops.list_versions.side_effect = ResourceNotFoundError("Not found")
+        ops.pending_upload.return_value = self._mock_pending_upload_response()
+        ops.create_version.return_value = {"name": "test", "version": "1"}
+
+        folder = self._create_temp_folder(
+            {
+                "evaluator.py": b"class Eval: pass",
+                ".gitignore": b".venv/\nnode_modules/\n",
+                ".venv/lib/site-packages/some_lib.py": b"ignored",
+                "node_modules/pkg/index.js": b"ignored",
+            }
+        )
+
+        with patch("azure.ai.projects.operations._patch_evaluators.ContainerClient") as MockContainerClient:
+            mock_container = MagicMock()
+            MockContainerClient.from_container_url.return_value = mock_container
+            mock_container.__enter__ = MagicMock(return_value=mock_container)
+            mock_container.__exit__ = MagicMock(return_value=False)
+
+            ops.upload(
+                name="test",
+                evaluator_version={"definition": {}},
+                folder=folder,
+            )
+
+            uploaded_names = [
+                c.kwargs.get("name") or c[1].get("name") for c in mock_container.upload_blob.call_args_list
+            ]
+            # Ignored directory contents must not be uploaded
+            assert not any(".venv" in n or "node_modules" in n for n in uploaded_names)
+            assert "evaluator.py" in uploaded_names
+
+    def test_upload_respects_gitignore_ignored_file(self):
+        """Files matching .gitignore patterns should not be uploaded."""
+        ops = self._create_operations()
+        ops.list_versions.side_effect = ResourceNotFoundError("Not found")
+        ops.pending_upload.return_value = self._mock_pending_upload_response()
+        ops.create_version.return_value = {"name": "test", "version": "1"}
+
+        folder = self._create_temp_folder(
+            {
+                "evaluator.py": b"class Eval: pass",
+                ".gitignore": b"*.log\nsecrets.env\n",
+                "debug.log": b"log content",
+                "secrets.env": b"SECRET=abc",
+            }
+        )
+
+        with patch("azure.ai.projects.operations._patch_evaluators.ContainerClient") as MockContainerClient:
+            mock_container = MagicMock()
+            MockContainerClient.from_container_url.return_value = mock_container
+            mock_container.__enter__ = MagicMock(return_value=mock_container)
+            mock_container.__exit__ = MagicMock(return_value=False)
+
+            ops.upload(
+                name="test",
+                evaluator_version={"definition": {}},
+                folder=folder,
+            )
+
+            uploaded_names = [
+                c.kwargs.get("name") or c[1].get("name") for c in mock_container.upload_blob.call_args_list
+            ]
+            assert "evaluator.py" in uploaded_names
+            assert "debug.log" not in uploaded_names
+            assert "secrets.env" not in uploaded_names
+
+    def test_upload_uploads_all_files_when_no_gitignore(self):
+        """When .gitignore is absent all files (except inside .git) should be uploaded."""
+        ops = self._create_operations()
+        ops.list_versions.side_effect = ResourceNotFoundError("Not found")
+        ops.pending_upload.return_value = self._mock_pending_upload_response()
+        ops.create_version.return_value = {"name": "test", "version": "1"}
+
+        folder = self._create_temp_folder(
+            {
+                "evaluator.py": b"class Eval: pass",
+                "requirements.txt": b"azure-ai-projects\n",
+                "utils/helper.py": b"def helper(): pass",
+            }
+        )
+
+        with patch("azure.ai.projects.operations._patch_evaluators.ContainerClient") as MockContainerClient:
+            mock_container = MagicMock()
+            MockContainerClient.from_container_url.return_value = mock_container
+            mock_container.__enter__ = MagicMock(return_value=mock_container)
+            mock_container.__exit__ = MagicMock(return_value=False)
+
+            ops.upload(
+                name="test",
+                evaluator_version={"definition": {}},
+                folder=folder,
+            )
+
+            uploaded_names = sorted(
+                c.kwargs.get("name") or c[1].get("name") for c in mock_container.upload_blob.call_args_list
+            )
+            assert uploaded_names == sorted(["evaluator.py", "requirements.txt", "utils/helper.py"])
+
+    def test_upload_always_skips_git_dir(self):
+        """.git directory must never be uploaded, even without a .gitignore."""
+        ops = self._create_operations()
+        ops.list_versions.side_effect = ResourceNotFoundError("Not found")
+        ops.pending_upload.return_value = self._mock_pending_upload_response()
+        ops.create_version.return_value = {"name": "test", "version": "1"}
+
+        folder = self._create_temp_folder(
+            {
+                "evaluator.py": b"class Eval: pass",
+                ".git/config": b"[core]\n    bare = false\n",
+                ".git/HEAD": b"ref: refs/heads/main\n",
+            }
+        )
+
+        with patch("azure.ai.projects.operations._patch_evaluators.ContainerClient") as MockContainerClient:
+            mock_container = MagicMock()
+            MockContainerClient.from_container_url.return_value = mock_container
+            mock_container.__enter__ = MagicMock(return_value=mock_container)
+            mock_container.__exit__ = MagicMock(return_value=False)
+
+            ops.upload(
+                name="test",
+                evaluator_version={"definition": {}},
+                folder=folder,
+            )
+
+            uploaded_names = [
+                c.kwargs.get("name") or c[1].get("name") for c in mock_container.upload_blob.call_args_list
+            ]
+            assert not any(".git" in n for n in uploaded_names)
+            assert "evaluator.py" in uploaded_names
 
     # ---------------------------------------------------------------
     # upload() - blob_uri set on evaluator version tests

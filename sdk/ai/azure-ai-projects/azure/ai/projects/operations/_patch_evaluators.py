@@ -13,6 +13,7 @@ import logging
 from typing import Any, Final, IO, Tuple, Optional, Union
 from pathlib import Path
 from urllib.parse import urlsplit
+import pathspec
 from azure.storage.blob import ContainerClient
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
@@ -27,6 +28,47 @@ from ..models._models import (
 logger = logging.getLogger(__name__)
 
 _EVALUATORS_FOUNDRY_FEATURES_VALUE: Final[str] = _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value
+
+# The .git directory is always excluded from uploads regardless of .gitignore contents.
+_GIT_DIR: Final[str] = ".git"
+
+
+def _load_gitignore_spec(root: Path) -> pathspec.PathSpec:
+    """Load gitignore patterns from *root/.gitignore* (and *root/.git/info/exclude* if present).
+
+    Returns a :class:`pathspec.PathSpec` that can be used to test whether a relative
+    path should be ignored.  When neither file exists an empty spec is returned so that
+    nothing is filtered (except the hard-coded ``.git`` safety exclusion).
+
+    :param root: The root folder whose ``.gitignore`` should be loaded.
+    :type root: pathlib.Path
+    :return: A compiled PathSpec for the discovered patterns.
+    :rtype: pathspec.PathSpec
+    """
+    patterns: list = []
+    gitignore = root / ".gitignore"
+    if gitignore.is_file():
+        patterns.extend(gitignore.read_text(encoding="utf-8").splitlines())
+    git_exclude = root / _GIT_DIR / "info" / "exclude"
+    if git_exclude.is_file():
+        patterns.extend(git_exclude.read_text(encoding="utf-8").splitlines())
+    return pathspec.PathSpec.from_lines("gitwildmatch", patterns)
+
+
+def _is_ignored(spec: pathspec.PathSpec, root: Path, path: Path) -> bool:
+    """Return ``True`` if *path* matches any pattern in *spec* relative to *root*.
+
+    :param spec: The compiled gitignore PathSpec.
+    :type spec: pathspec.PathSpec
+    :param root: The root folder used as the base for relative-path matching.
+    :type root: pathlib.Path
+    :param path: The absolute (or root-relative) path to test.
+    :type path: pathlib.Path
+    :return: ``True`` if the path is ignored, ``False`` otherwise.
+    :rtype: bool
+    """
+    rel = path.relative_to(root).as_posix()
+    return spec.match_file(rel)
 
 
 class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
@@ -47,8 +89,11 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
     ) -> None:
         """Walk *folder* and upload every eligible file to the blob container.
 
-        Skips ``__pycache__``, ``.git``, ``.venv``, ``venv``, ``node_modules``
-        directories and ``.pyc`` / ``.pyo`` files.
+        Files and directories matching patterns in *folder/.gitignore* (or
+        *folder/.git/info/exclude*) are skipped.  The ``.git`` directory is
+        always excluded as a safety measure regardless of ``.gitignore`` contents.
+        When no ``.gitignore`` is present, all files (except those inside
+        ``.git``) are uploaded.
 
         :param container_client: The blob container client to upload files to.
         :type container_client: ~azure.storage.blob.ContainerClient
@@ -58,19 +103,25 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         :raises HttpResponseError: Re-raised with a friendlier message on
             ``AuthorizationPermissionMismatch``.
         """
-        skip_dirs = {"__pycache__", ".git", ".venv", "venv", "node_modules"}
-        skip_extensions = {".pyc", ".pyo"}
+        root_path = Path(folder)
+        spec = _load_gitignore_spec(root_path)
         files_uploaded = False
 
         for root, dirs, files in os.walk(folder):
-            dirs[:] = [d for d in dirs if d not in skip_dirs]
+            # Always skip .git; also skip any directory that matches .gitignore patterns.
+            dirs[:] = [
+                d
+                for d in dirs
+                if d != _GIT_DIR and not _is_ignored(spec, root_path, Path(root) / d)
+            ]
             for file_name in files:
-                if any(file_name.endswith(ext) for ext in skip_extensions):
+                file_path = Path(root) / file_name
+                if _is_ignored(spec, root_path, file_path):
                     continue
-                file_path = os.path.join(root, file_name)
-                blob_name = os.path.relpath(file_path, folder).replace("\\", "/")
-                logger.debug("[upload] Start uploading file `%s` as blob `%s`.", file_path, blob_name)
-                with open(file=file_path, mode="rb") as data:
+                file_path_str = str(file_path)
+                blob_name = os.path.relpath(file_path_str, folder).replace("\\", "/")
+                logger.debug("[upload] Start uploading file `%s` as blob `%s`.", file_path_str, blob_name)
+                with open(file=file_path_str, mode="rb") as data:
                     try:
                         container_client.upload_blob(name=str(blob_name), data=data, **kwargs)
                     except HttpResponseError as e:
