@@ -6,12 +6,12 @@
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio import document_producer
 from azure.cosmos._execution_context.hybrid_search_aggregator import _retrieve_component_scores, _rewrite_query_infos, \
-    _compute_rrf_scores, _compute_ranks, _coalesce_duplicate_rids, _attach_parameters
+    _compute_rrf_scores, _compute_ranks, _coalesce_duplicate_rids, _attach_parameters, \
+    _FULL_TEXT_SCORE_SCOPE_KEY, _FULL_TEXT_SCORE_SCOPE_LOCAL, _FULL_TEXT_SCORE_SCOPE_DEFAULT
 from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
 
 # pylint: disable=protected-access
-RRF_CONSTANT = 60
 
 
 class _Placeholders:
@@ -71,7 +71,11 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
     async def _run_hybrid_search(self):  # pylint: disable=too-many-branches, too-many-statements
         # Check if we need to run global statistics queries, and if so do for every partition in the container
         if self._hybrid_search_query_info['requiresGlobalStatistics']:
-            target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=True)
+            # When FullTextScoreScope is "Local", use only target ranges for statistics.
+            # When "Global" (default), use all ranges.
+            full_text_score_scope = self._options.get(_FULL_TEXT_SCORE_SCOPE_KEY, _FULL_TEXT_SCORE_SCOPE_DEFAULT)
+            use_all_ranges = full_text_score_scope != _FULL_TEXT_SCORE_SCOPE_LOCAL
+            target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=use_all_ranges)
             global_statistics_doc_producers = []
             global_statistics_query = self._attach_parameters(self._hybrid_search_query_info['globalStatisticsQuery'])
 
@@ -99,8 +103,10 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                 except exceptions.CosmosHttpResponseError as e:
                     if exceptions._partition_range_is_gone(e):
                         # repairing document producer context on partition split
-                        global_statistics_doc_producers = await self._repair_document_producer(global_statistics_query,
-                                                                                               target_all_ranges=True)
+                        global_statistics_doc_producers = await self._repair_document_producer(
+                            global_statistics_query,
+                            target_all_ranges=use_all_ranges
+                        )
                     else:
                         raise
                 except StopAsyncIteration:

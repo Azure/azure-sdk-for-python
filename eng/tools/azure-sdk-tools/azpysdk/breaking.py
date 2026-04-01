@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+import tempfile
 
 from typing import Optional, List
 from subprocess import CalledProcessError, check_call
@@ -89,6 +90,12 @@ class breaking(Check):
         logger.info("Running breaking check...")
 
         set_envvar_defaults()
+
+        # Fast path: if two pre-built code reports are provided, compare them directly
+        # without needing a package directory, build, or install step.
+        if getattr(args, "source_report", None) and getattr(args, "target_report", None):
+            return self._run_from_reports(args)
+
         targeted = self.get_targeted_directories(args)
 
         results: List[int] = []
@@ -159,3 +166,37 @@ class breaking(Check):
                 continue
 
         return max(results) if results else 0
+
+    def _run_from_reports(self, args: argparse.Namespace) -> int:
+        """Compare two pre-built code reports directly, skipping package build and install."""
+        source = os.path.abspath(args.source_report)
+        target = os.path.abspath(args.target_report)
+
+        # Use a temporary root directory, but create a subdirectory whose basename is derived
+        # from the source report path so detect_breaking_changes.py can infer the package name
+        # correctly from os.path.basename(pkg_dir).
+        with tempfile.TemporaryDirectory() as tmp_root:
+            # Heuristic: use the parent directory name of the source report as the package name.
+            pkg_name = os.path.basename(os.path.dirname(source))
+            tmp_pkg_dir = os.path.join(tmp_root, pkg_name)
+            os.makedirs(tmp_pkg_dir, exist_ok=True)
+
+            cmd = [
+                sys.executable,
+                os.path.join(BREAKING_CHECKER_PATH, "detect_breaking_changes.py"),
+                "--target",
+                tmp_pkg_dir,
+                "--source-report",
+                source,
+                "--target-report",
+                target,
+            ]
+            if getattr(args, "changelog", False):
+                cmd.append("--changelog")
+
+            try:
+                check_call(cmd)
+            except CalledProcessError as e:
+                logger.error(f"Breaking change report generation failed: {e}")
+                return 1
+        return 0

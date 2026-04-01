@@ -49,7 +49,7 @@ from azure.ai.ml.entities._job.sweep.search_space import (
 from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationErrorType, ValidationException
 from azure.ai.ml.sweep import SweepJob
 
-from ..._restclient.v2022_10_01.models import ComponentVersion
+from ..._restclient.arm_ml_service.models import ComponentVersion
 from ..._schema import PathAwareSchema
 from ..._schema._utils.data_binding_expression import support_data_binding_expression_for_fields
 from ..._utils.utils import camel_to_snake

@@ -15,6 +15,7 @@ from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     generate_account_sas,
+    LocationMode,
     ResourceTypes,
     VERSION,
 )
@@ -37,13 +38,22 @@ _CONNECTION_ENDPOINTS_SECONDARY = {'blob': 'BlobSecondaryEndpoint'}
 class TestStorageClient(StorageRecordedTestCase):
 
     # --Helpers-----------------------------------------------------------------
-    def validate_standard_account_endpoints(self, service, url_type, name, storage_account_key):
+    def validate_standard_account_endpoints(self, service, url_type, account_name, storage_account_key):
         assert service is not None
-        assert service.account_name == name
-        assert service.credential.account_name == name
+        assert service.account_name == account_name
+        assert service.credential.account_name == account_name
         assert service.credential.account_key == storage_account_key.secret
-        assert '{}.{}.core.windows.net'.format(name, url_type) in service.url
-        assert '{}-secondary.{}.core.windows.net'.format(name, url_type) in service.secondary_endpoint
+        assert f"{account_name}.{url_type}.core.windows.net" in service.url
+        assert f"{account_name}-secondary.{url_type}.core.windows.net" in service.secondary_endpoint
+
+    def validate_ipv6_account_endpoints(self, service, account_name, account_key, primary_endpoint, secondary_endpoint):
+        assert service is not None
+        assert service.scheme == "https"
+        assert service.account_name == account_name
+        assert service.credential.account_name == account_name
+        assert service.credential.account_key == account_key
+        assert service._hosts[LocationMode.PRIMARY] == primary_endpoint
+        assert service._hosts[LocationMode.SECONDARY] == secondary_endpoint
 
     def generate_fake_sas_token(self):
         fake_key = "a" * 30 + "b" * 30
@@ -298,6 +308,102 @@ class TestStorageClient(StorageRecordedTestCase):
             self.validate_standard_account_endpoints(service, service_type[1], storage_account_name, storage_account_key)
             assert service._client._client._pipeline._transport.connection_config.timeout == 22
             assert default_service._client._client._pipeline._transport.connection_config.timeout in [20, (20, 2000)]
+
+    @pytest.mark.parametrize(
+        "account_url, expected_primary, expected_secondary", [
+            (
+                "https://myaccount.blob.core.windows.net/",
+                "myaccount.blob.core.windows.net",
+                "myaccount-secondary.blob.core.windows.net",
+            ),
+            (
+                "https://myaccount-secondary.blob.core.windows.net/",
+                "myaccount-secondary.blob.core.windows.net",
+                "myaccount-secondary.blob.core.windows.net",
+            ),
+            (
+                "https://myaccount-dualstack.blob.core.windows.net/",
+                "myaccount-dualstack.blob.core.windows.net",
+                "myaccount-secondary-dualstack.blob.core.windows.net",
+            ),
+            (
+                "https://myaccount-ipv6.blob.core.windows.net/",
+                "myaccount-ipv6.blob.core.windows.net",
+                "myaccount-secondary-ipv6.blob.core.windows.net",
+            ),
+            (
+                "https://myaccount-secondary-dualstack.blob.core.windows.net/",
+                "myaccount-secondary-dualstack.blob.core.windows.net",
+                "myaccount-secondary-dualstack.blob.core.windows.net",
+            ),
+            (
+                "https://myaccount-secondary-ipv6.blob.core.windows.net/",
+                "myaccount-secondary-ipv6.blob.core.windows.net",
+                "myaccount-secondary-ipv6.blob.core.windows.net",
+            ),
+        ]
+    )
+    @BlobPreparer()
+    def test_create_service_ipv6(self, account_url, expected_primary, expected_secondary, **kwargs):
+        storage_account_name = "myaccount"
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        container_name, blob_name = "foo", "bar"
+
+        for service_type in SERVICES.keys():
+            service = service_type(
+                account_url,
+                credential=storage_account_key.secret,
+                container_name=container_name,
+                blob_name=blob_name
+            )
+            self.validate_ipv6_account_endpoints(
+                service, storage_account_name, storage_account_key.secret, expected_primary, expected_secondary
+            )
+
+            conn_str = (
+                "DefaultEndpointsProtocol=https;"
+                f"AccountName={storage_account_name};"
+                f"AccountKey={storage_account_key.secret};"
+                f"BlobEndpoint={account_url};"
+            )
+            service = service_type.from_connection_string(
+                conn_str,
+                credential=storage_account_key.secret,
+                container_name=container_name,
+                blob_name=blob_name
+            )
+            self.validate_ipv6_account_endpoints(
+                service, storage_account_name, storage_account_key.secret, expected_primary, expected_secondary
+            )
+
+        service = BlobClient.from_blob_url(
+            blob_url=f"{account_url}/{container_name}/{blob_name}-secondary",
+            credential=storage_account_key.secret
+        )
+        self.validate_ipv6_account_endpoints(
+            service, storage_account_name, storage_account_key.secret, expected_primary, expected_secondary
+        )
+
+    @BlobPreparer()
+    def test_create_service_ipv6_custom_domain(self):
+        token_credential = self.get_credential(BlobServiceClient)
+
+        hostname= "github.com"
+        account_url = f"https://{hostname}"
+        for service_type in SERVICES.keys():
+            service = service_type(
+                account_url,
+                credential=token_credential,
+                container_name="foo",
+                blob_name="bar"
+            )
+            assert service is not None
+            assert service.scheme == "https"
+            assert service.account_name is None
+            assert service.credential is not None
+            assert service._hosts[LocationMode.PRIMARY] == hostname
+            assert service._hosts[LocationMode.SECONDARY] == ""
 
     # --Connection String Test Cases --------------------------------------------
 

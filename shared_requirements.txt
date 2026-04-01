@@ -52,6 +52,7 @@ opentelemetry-instrumentation
 opentelemetry-instrumentation-django
 opentelemetry-instrumentation-fastapi
 opentelemetry-instrumentation-flask
+opentelemetry-instrumentation-logging
 opentelemetry-instrumentation-psycopg2
 opentelemetry-instrumentation-requests
 opentelemetry-instrumentation-urllib
@@ -97,3 +98,4 @@ agent-framework-core
 langchain
 langchain-openai
 azure-ai-language-questionanswering
+github-copilot-sdk
