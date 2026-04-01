@@ -68,7 +68,7 @@ class TestStorageLogging(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, logging_enable=True)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, logging_enable=True)
         self._setup(bsc)
         container = bsc.get_container_client(self.container_name)
         request_body = 'testloggingbody'
@@ -94,7 +94,7 @@ class TestStorageLogging(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         self._setup(bsc)
         container = bsc.get_container_client(self.container_name)
         # Act
@@ -114,7 +114,7 @@ class TestStorageLogging(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # SAS URL is calculated from storage key, so this test runs live only
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         self._setup(bsc)
         # Arrange
         container = bsc.get_container_client(self.container_name)
@@ -149,7 +149,7 @@ class TestStorageLogging(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # SAS URL is calculated from storage key, so this test runs live only
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         self._setup(bsc)
         # Arrange
         dest_blob_name = self.get_resource_name('destblob')

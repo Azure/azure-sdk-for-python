@@ -902,7 +902,7 @@ class _ConversationAuthoringClientOperationsMixin(
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace_async
-    async def get_export_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models.ExportProjectState:
+    async def _get_export_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models.ExportProjectState:
         """Gets the status of an export job. Once job completes, returns the project metadata, and assets.
 
         :param project_name: The new project name. Required.
@@ -965,7 +965,7 @@ class _ConversationAuthoringClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_import_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models.ImportProjectState:
+    async def _get_import_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models.ImportProjectState:
         """Gets the status for an import.
 
         :param project_name: The new project name. Required.

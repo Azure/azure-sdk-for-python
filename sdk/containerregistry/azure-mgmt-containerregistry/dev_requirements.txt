@@ -1,4 +1,4 @@
 -e ../../../eng/tools/azure-sdk-tools
--e ../../storage/azure-mgmt-storage
+../../storage/azure-mgmt-storage
 azure-identity
 aiohttp

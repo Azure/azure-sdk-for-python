@@ -31,7 +31,7 @@ class TestDeploymentTemplate:
             instance_type="Standard_DS3_v2",
             type="deployment_template",
             deployment_template_type="model_deployment",
-            allowed_instance_type="Standard_DS2_v2,Standard_DS3_v2",
+            allowed_instance_types="Standard_DS2_v2,Standard_DS3_v2",
         )
 
         assert template.name == "test-template"
@@ -44,7 +44,7 @@ class TestDeploymentTemplate:
         assert template.instance_type == "Standard_DS3_v2"
         assert template.type == "deployment_template"
         assert template.deployment_template_type == "model_deployment"
-        assert template.allowed_instance_type == "Standard_DS2_v2,Standard_DS3_v2"
+        assert template.allowed_instance_types == "Standard_DS2_v2,Standard_DS3_v2"
 
     def test_deployment_template_type_fields(self):
         """Test handling of 'type' and 'deployment_template_type' fields."""

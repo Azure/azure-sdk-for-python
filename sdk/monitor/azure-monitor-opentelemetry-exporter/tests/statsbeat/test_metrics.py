@@ -1,12 +1,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+import sys
 import json
 import os
 import platform
-import requests
-import sys
 import unittest
 from unittest import mock
+import requests
 
 from opentelemetry.sdk.metrics import Meter, MeterProvider, ObservableGauge
 
@@ -55,7 +55,8 @@ _StatsbeatMetrics_NETWORK_ATTRS = dict(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
 _StatsbeatMetrics_FEATURE_ATTRIBUTES = dict(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
 _StatsbeatMetrics_INSTRUMENTATION_ATTRIBUTES = dict(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES)
 
-# pylint: disable=protected-access
+
+# pylint: disable=protected-access, unused-argument, line-too-long, too-many-public-methods
 class TestStatsbeatMetrics(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -86,7 +87,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = False
             _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = False
             _STATSBEAT_STATE["CUSTOMER_SDKSTATS_FEATURE_SET"] = False
-        
+
         _StatsbeatMetrics._COMMON_ATTRIBUTES = dict(_StatsbeatMetrics_COMMON_ATTRS)
         _StatsbeatMetrics._NETWORK_ATTRIBUTES = dict(_StatsbeatMetrics_NETWORK_ATTRS)
         _StatsbeatMetrics._FEATURE_ATTRIBUTES = dict(_StatsbeatMetrics_FEATURE_ATTRIBUTES)
@@ -949,5 +950,6 @@ class TestStatsbeatMetrics(unittest.TestCase):
         self.assertEqual(_shorten_host(url), "fakehost")
         url = "http://fakehost-5/"
         self.assertEqual(_shorten_host(url), "fakehost-5")
+
 
 # cSpell:enable

@@ -21,7 +21,7 @@ class TestStorageHandle(StorageRecordedTestCase):
     def _setup(self, storage_account_name, storage_account_key):
         file_url = self.account_url(storage_account_name, "file")
         credentials = storage_account_key
-        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials)
+        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials.secret)
 
     # --Helpers-----------------------------------------------------------------
 

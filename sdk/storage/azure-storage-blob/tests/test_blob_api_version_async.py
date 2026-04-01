@@ -146,7 +146,7 @@ class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
         self._setup()
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             connection_data_block_size=4 * 1024,
             max_page_size=4 * 1024,
             api_version=self.api_version_1)
@@ -196,7 +196,7 @@ class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
         with mock.patch("azure.storage.blob._serialize._SUPPORTED_API_VERSIONS", [INVALID_X_MS_VERSION]):
             bsc = BlobServiceClient(
                 self.account_url(storage_account_name, "blob"),
-                credential=storage_account_key,
+                credential=storage_account_key.secret,
                 api_version=INVALID_X_MS_VERSION
             )
 

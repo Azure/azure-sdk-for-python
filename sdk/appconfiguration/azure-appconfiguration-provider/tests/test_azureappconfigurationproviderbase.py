@@ -417,7 +417,7 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
         if result is not None:
             try:
                 base64.urlsafe_b64decode(result.encode() + b"==")  # Add padding if needed
-            except Exception:
+            except Exception:  # pylint: disable=broad-except
                 self.fail("Result should be valid base64")
 
     def test_generate_allocation_id_no_variants_no_seed(self):

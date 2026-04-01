@@ -6,6 +6,7 @@
 import asyncio
 import functools
 import pytest
+from typing import NamedTuple
 from unittest import mock
 
 from aiohttp.client_exceptions import ServerTimeoutError
@@ -16,7 +17,8 @@ from azure.core.exceptions import (
     IncompleteReadError,
     HttpResponseError,
     ResourceExistsError,
-    ServiceResponseError
+    ServiceResponseError,
+    ServiceResponseTimeoutError
 )
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.storage.blob import LocationMode
@@ -50,7 +52,7 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
         if connection_string:
             service = service_class.from_connection_string(connection_string, **kwargs)
         else:
-            service = service_class(self.account_url(account, "blob"), credential=key, **kwargs)
+            service = service_class(self.account_url(account, "blob"), credential=key.secret, **kwargs)
         return service
 
     # --Test Cases --------------------------------------------
@@ -535,7 +537,8 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
     @BlobPreparer()
     async def test_invalid_storage_account_key(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = "a"
+        # secret attribute necessary for credential parameter because of hidden environment variables from loader
+        storage_account_key = NamedTuple("StorageAccountKey", [("secret", str)])("a")
 
         # Arrange
         blob_client = self._create_storage_service(
@@ -615,5 +618,52 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
             )
 
         assert retry_counter.count == 3
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_retry_on_service_response_error(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        container_name = self.get_resource_name('utcontainer')
+        blob_name = self.get_resource_name('blob')
+        service = self._create_storage_service(
+            BlobServiceClient, storage_account_name, storage_account_key, max_block_size=4)
+        container = await service.create_container(container_name)
+        data = b'abcd' * 4
+        await container.upload_blob(blob_name, data, overwrite=True)
+
+        retry = LinearRetry(backoff=1, random_jitter_range=1)
+        retry_counter = RetryCounter()
+        retry_service = self._create_storage_service(
+            BlobServiceClient,
+            storage_account_name,
+            storage_account_key,
+            retry_policy=retry,
+            max_block_size=4
+        )
+        blob = retry_service.get_blob_client(container_name, blob_name)
+
+        # Mock the internal response to raise ServiceResponseError on first chunk processing
+        from azure.storage.blob.aio._download_async import process_content as real_process_content
+
+        async def mock_process_content_with_error(response, start_offset, end_offset, encryption):
+            retry_counter.simple_count(retry)
+            conn_error = AzureError("Connection reset by peer")
+            if retry_counter.count == 1:
+                raise ServiceResponseError(conn_error, error=conn_error)
+            elif retry_counter.count == 2:
+                raise ServiceResponseTimeoutError(conn_error, error=conn_error)
+            return await real_process_content(response, start_offset, end_offset, encryption)
+
+        # Act
+        try:
+            with mock.patch('azure.storage.blob.aio._download_async.process_content', side_effect=mock_process_content_with_error):
+                downloaded_data = await (await blob.download_blob()).readall()
+            assert downloaded_data == data
+            assert retry_counter.count >= 3
+        finally:
+            await service.delete_container(container_name)
 
 # ------------------------------------------------------------------------------

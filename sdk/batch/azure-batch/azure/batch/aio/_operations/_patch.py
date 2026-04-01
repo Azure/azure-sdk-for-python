@@ -25,7 +25,6 @@ from azure.core.pipeline import PipelineResponse
 
 from ._polling_async import (
     DeallocateNodePollingMethodAsync,
-    DeleteCertificatePollingMethodAsync,
     DeleteJobPollingMethodAsync,
     DeleteJobSchedulePollingMethodAsync,
     DeletePoolPollingMethodAsync,
@@ -52,11 +51,11 @@ MAX_TASKS_PER_REQUEST = 100
 _LOGGER = logging.getLogger(__name__)
 
 __all__: List[str] = [
-    "BatchClientOperationsMixin",
+    "_BatchClientOperationsMixin",
 ]  # Add all objects you want publicly available to users at this package level
 
 
-class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
+class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     """Customize generated code"""
 
     @distributed_trace
@@ -455,69 +454,6 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = DeletePoolPollingMethodAsync(self, pipeline_response, None, pool_id, polling_interval)
-        return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
-
-    @distributed_trace
-    async def begin_delete_certificate(
-        self,
-        thumbprint_algorithm: str,
-        thumbprint: str,
-        *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
-        polling_interval: int = 5,
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Deletes a Certificate from the specified Account with Long Running Operation support.
-
-        You cannot delete a Certificate if a resource (Pool or Compute Node) is using
-        it. Before you can delete a Certificate, you must therefore make sure that the
-        Certificate is not associated with any existing Pools, the Certificate is not
-        installed on any Nodes (even if you remove a Certificate from a Pool, it is not
-        removed from existing Compute Nodes in that Pool until they restart), and no
-        running Tasks depend on the Certificate. If you try to delete a Certificate
-        that is in use, the deletion fails. The Certificate status changes to
-        deleteFailed. You can use Cancel Delete Certificate to set the status back to
-        active if you decide that you want to continue using the Certificate.
-
-        :param thumbprint_algorithm: The algorithm used to derive the thumbprint parameter. This must
-         be sha1. Required.
-        :type thumbprint_algorithm: str
-        :param thumbprint: The thumbprint of the Certificate to be deleted. Required.
-        :type thumbprint: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
-        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
-        :paramtype polling_interval: int
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
-            return pipeline_response
-
-        pipeline_response = cast(
-            PipelineResponse,
-            await self._delete_certificate_internal(
-                thumbprint_algorithm,
-                thumbprint,
-                timeout=timeout,
-                ocpdate=ocpdate,
-                cls=capture_pipeline_response,
-                **kwargs,
-            ),
-        )
-
-        polling_method = DeleteCertificatePollingMethodAsync(
-            self, pipeline_response, None, thumbprint_algorithm, thumbprint, polling_interval
-        )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -1513,7 +1449,7 @@ class _TaskWorkflowManager:
 
     def __init__(
         self,
-        batch_client: BatchClientOperationsMixin,
+        batch_client: _BatchClientOperationsMixin,
         job_id: str,
         task_collection: Iterable[_models.BatchTaskCreateOptions],
         **kwargs

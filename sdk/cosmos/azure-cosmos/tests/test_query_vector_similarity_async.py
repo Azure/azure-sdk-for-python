@@ -140,8 +140,6 @@ class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
                                  "Please ensure you are using a limit smaller than the max, or change the max.")
 
         os.environ["AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH"] = "50000"
-
-        os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "False"
         [item async for item in self.created_large_container.query_items(query=query)]
 
     async def test_ordering_distances_async(self):

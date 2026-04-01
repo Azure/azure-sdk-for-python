@@ -3,11 +3,10 @@ import os
 import sys
 
 from typing import Optional, List
-import subprocess
 from subprocess import CalledProcessError, check_call
 
 from .Check import Check
-from ci_tools.functions import install_into_venv, get_pip_command
+from ci_tools.functions import install_into_venv
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults
 from ci_tools.environment_exclusions import is_check_enabled
@@ -15,7 +14,6 @@ from ci_tools.logging import logger, run_logged
 
 REPO_ROOT = discover_repo_root()
 PYLINT_VERSION = "3.2.7"
-PYGITHUB_VERSION = "1.59.0"
 
 
 class pylint(Check):
@@ -42,15 +40,19 @@ class pylint(Check):
         logger.info("Running pylint check...")
 
         set_envvar_defaults()
+
         targeted = self.get_targeted_directories(args)
 
         results: List[int] = []
 
         for parsed in targeted:
+            if os.getcwd() != parsed.folder:
+                os.chdir(parsed.folder)
             package_dir = parsed.folder
             package_name = parsed.name
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for pylint check")
+            package_failed = False
 
             # install dependencies
             self.install_dev_reqs(executable, args, package_dir)
@@ -58,7 +60,7 @@ class pylint(Check):
                 install_into_venv(
                     executable,
                     [
-                        "azure-pylint-guidelines-checker==0.5.6",
+                        "azure-pylint-guidelines-checker==0.5.7",
                         "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
                     ],
                     package_dir,
@@ -83,7 +85,7 @@ class pylint(Check):
             try:
                 if args.next:
                     # use latest version of pylint
-                    install_into_venv(executable, ["pylint", f"PyGithub=={PYGITHUB_VERSION}"], package_dir)
+                    install_into_venv(executable, ["pylint"], package_dir)
                 else:
                     install_into_venv(executable, [f"pylint=={PYLINT_VERSION}"], package_dir)
             except CalledProcessError as e:
@@ -103,7 +105,10 @@ class pylint(Check):
                 os.path.join(REPO_ROOT, "eng/pylintrc") if args.next else os.path.join(REPO_ROOT, "pylintrc")
             )
 
+            # Run pylint on main package
             try:
+                main_pylint_targets = [os.path.join(package_dir, top_level_module)]
+
                 logger.info(
                     [
                         executable,
@@ -111,8 +116,8 @@ class pylint(Check):
                         "pylint",
                         "--rcfile={}".format(rcFileLocation),
                         "--output-format=parseable",
-                        os.path.join(package_dir, top_level_module),
                     ]
+                    + main_pylint_targets
                 )
 
                 results.append(
@@ -123,26 +128,103 @@ class pylint(Check):
                             "pylint",
                             "--rcfile={}".format(rcFileLocation),
                             "--output-format=parseable",
-                            os.path.join(package_dir, top_level_module),
                         ]
+                        + main_pylint_targets
                     )
                 )
             except CalledProcessError as e:
                 logger.error(
-                    "{} exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(
+                    "{} main package exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(
                         package_name, e.returncode
                     )
                 )
-                if args.next and in_ci():
-                    from gh_tools.vnext_issue_creator import create_vnext_issue
-
-                    create_vnext_issue(package_dir, "pylint")
-
                 results.append(e.returncode)
+                package_failed = True
+
+            # Run pylint on tests and samples with appropriate pylintrc if they exist and next pylint is being used
+            if args.next:
+                tests_dir = os.path.join(package_dir, "tests")
+                samples_dir = os.path.join(package_dir, "samples")
+
+                # Run tests with test_pylintrc
+                if os.path.exists(tests_dir):
+                    try:
+                        test_rcfile = os.path.join(REPO_ROOT, "eng/test_pylintrc")
+                        logger.info(
+                            [
+                                executable,
+                                "-m",
+                                "pylint",
+                                "--rcfile={}".format(test_rcfile),
+                                "--output-format=parseable",
+                                tests_dir,
+                            ]
+                        )
+                        results.append(
+                            check_call(
+                                [
+                                    executable,
+                                    "-m",
+                                    "pylint",
+                                    "--rcfile={}".format(test_rcfile),
+                                    "--output-format=parseable",
+                                    tests_dir,
+                                ]
+                            )
+                        )
+                    except CalledProcessError as e:
+                        logger.error(
+                            "{} tests exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(
+                                package_name, e.returncode
+                            )
+                        )
+                        results.append(e.returncode)
+                        package_failed = True
+
+                # Run samples with samples_pylintrc
+                if os.path.exists(samples_dir):
+                    try:
+                        samples_rcfile = os.path.join(REPO_ROOT, "eng/samples_pylintrc")
+                        logger.info(
+                            [
+                                executable,
+                                "-m",
+                                "pylint",
+                                "--rcfile={}".format(samples_rcfile),
+                                "--output-format=parseable",
+                                samples_dir,
+                            ]
+                        )
+                        results.append(
+                            check_call(
+                                [
+                                    executable,
+                                    "-m",
+                                    "pylint",
+                                    "--rcfile={}".format(samples_rcfile),
+                                    "--output-format=parseable",
+                                    samples_dir,
+                                ]
+                            )
+                        )
+                    except CalledProcessError as e:
+                        logger.error(
+                            "{} samples exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(
+                                package_name, e.returncode
+                            )
+                        )
+                        results.append(e.returncode)
+                        package_failed = True
 
             if args.next and in_ci():
-                from gh_tools.vnext_issue_creator import close_vnext_issue
+                if package_failed:
+                    from gh_tools.vnext_issue_creator import create_vnext_issue
 
-                close_vnext_issue(package_name, "pylint")
+                    check_version = self.get_check_version(executable, "pylint")
+                    create_vnext_issue(package_dir, "pylint", check_version)
+                else:
+                    from gh_tools.vnext_issue_creator import close_vnext_issue
+
+                    close_vnext_issue(package_name, "pylint")
 
         return max(results) if results else 0

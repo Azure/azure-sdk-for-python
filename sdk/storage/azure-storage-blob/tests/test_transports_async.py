@@ -18,7 +18,7 @@ from test_helpers_async import AsyncStream, MockLegacyTransport
 
 class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
     async def _setup(self, storage_account_name, key):
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key)
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key.secret)
         self.container_name = self.get_resource_name('utcontainer')
         self.byte_data = self.get_random_bytes(1024)
         if self.is_live:
@@ -37,7 +37,7 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "blob"),
             container_name='container',
             blob_name='blob',
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             transport=transport,
             retry_total=0
         )
@@ -63,7 +63,7 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "blob"),
             container_name='container',
             blob_name='blob',
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             transport=transport,
             retry_total=0
         )
@@ -92,7 +92,7 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "blob"),
             container_name=self.container_name,
             blob_name=self.get_resource_name('blob'),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             transport=transport
         )
 
@@ -120,7 +120,7 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "blob"),
             container_name=self.container_name,
             blob_name=self.get_resource_name('blob'),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             transport=transport
         )
 
@@ -148,7 +148,7 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "blob"),
             container_name=self.container_name,
             blob_name=self.get_resource_name('blob'),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             transport=transport
         )
 
@@ -176,7 +176,7 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "blob"),
             container_name=self.container_name,
             blob_name=self.get_resource_name('blob'),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             transport=transport
         )
 

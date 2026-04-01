@@ -80,10 +80,8 @@ def _handle_non_stream_rest_response(response: HttpResponse) -> None:
     """
     try:
         response.read()
+    finally:
         response.close()
-    except Exception as exc:
-        response.close()
-        raise exc
 
 
 class HttpTransport(ContextManager["HttpTransport"], abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):

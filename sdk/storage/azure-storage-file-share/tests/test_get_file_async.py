@@ -38,7 +38,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
         credential = storage_account_key
 
         self.fsc = ShareServiceClient(
-            url, credential=credential,
+            url, credential=credential.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE
         )
@@ -58,7 +58,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
                 self.account_url(storage_account_name, "file"),
                 share_name=self.share_name,
                 file_path=byte_file,
-                credential=storage_account_key
+                credential=storage_account_key.secret
             )
             try:
                 await file_client.upload_file(self.byte_data)
@@ -94,7 +94,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
                 self.account_url(storage_account_name, "file"),
                 share_name=self.share_name,
                 file_path=self.directory_name + '/' + file_name,
-                credential=storage_account_key,
+                credential=storage_account_key.secret,
                 max_single_get_size=self.MAX_SINGLE_GET_SIZE,
                 max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(file_data)
@@ -122,7 +122,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
                 self.account_url(storage_account_name, "file"),
                 share_name=self.share_name,
                 file_path=self.directory_name + '/' + file_name,
-                credential=storage_account_key,
+                credential=storage_account_key.secret,
                 max_single_get_size=self.MAX_SINGLE_GET_SIZE,
                 max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(binary_data)
@@ -148,7 +148,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
                 self.account_url(storage_account_name, "file"),
                 share_name=self.share_name,
                 file_path=self.directory_name + '/' + file_name,
-                credential=storage_account_key,
+                credential=storage_account_key.secret,
                 max_single_get_size=self.MAX_SINGLE_GET_SIZE,
                 max_chunk_get_size=self.MAX_CHUNK_GET_SIZE
         )
@@ -176,7 +176,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -201,7 +201,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -236,7 +236,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -273,7 +273,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(file_data)
@@ -309,7 +309,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=38,
             max_chunk_get_size=38)
         data = b'hello world python storage test chunks' * 5
@@ -338,7 +338,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -368,7 +368,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -401,7 +401,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -436,7 +436,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -473,7 +473,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(file_data)
@@ -514,7 +514,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         await file_client.delete_file()
 
         snapshot_client = ShareFileClient(
@@ -522,7 +522,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -554,7 +554,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         await file_client.delete_file()
 
         snapshot_client = ShareFileClient(
@@ -562,7 +562,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -600,7 +600,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         await file_client.delete_file()
 
         snapshot_client = ShareFileClient(
@@ -608,7 +608,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -645,7 +645,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         await file_client.upload_file(file_data)
 
         # Create a snapshot of the share and delete the file
@@ -658,7 +658,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             snapshot=share_snapshot,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -695,7 +695,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -726,7 +726,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -757,7 +757,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE
         )
@@ -787,7 +787,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -828,7 +828,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -855,7 +855,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -887,7 +887,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(file_data)
@@ -920,7 +920,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(file_data)
@@ -954,7 +954,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + text_file,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(text_data)
@@ -982,7 +982,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + text_file,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(text_data)
@@ -1021,7 +1021,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + text_file,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(text_data)
@@ -1060,7 +1060,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(file_data)
@@ -1099,7 +1099,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(data)
@@ -1126,7 +1126,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(data)
@@ -1162,7 +1162,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -1192,7 +1192,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -1220,7 +1220,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         await file_client.delete_file()
 
         snapshot_client = ShareFileClient(
@@ -1228,7 +1228,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -1261,7 +1261,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         await file_client.delete_file()
 
         snapshot_client = ShareFileClient(
@@ -1269,7 +1269,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -1296,7 +1296,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(byte_data)
@@ -1336,7 +1336,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
         await file_client.upload_file(byte_data)
@@ -1374,7 +1374,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -1398,7 +1398,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -1431,7 +1431,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -1454,7 +1454,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
@@ -1478,7 +1478,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
 
         data = b'a' * 512
         await file.upload_file(data)
@@ -1505,7 +1505,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=1024,
             max_chunk_get_size=1024)
 
@@ -1535,7 +1535,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=1024,
             max_chunk_get_size=1024)
 
@@ -1565,7 +1565,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_get_size=1024,
             max_chunk_get_size=1024)
 

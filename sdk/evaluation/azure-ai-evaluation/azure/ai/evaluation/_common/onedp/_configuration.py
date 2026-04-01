@@ -12,6 +12,9 @@ from azure.core.pipeline import policies
 
 from ._version import VERSION
 
+# Import the evaluation SDK version instead of using the onedp version for user agent
+from azure.ai.evaluation._version import VERSION as EVALUATION_VERSION
+
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
@@ -52,7 +55,8 @@ class ProjectsClientConfiguration:  # pylint: disable=too-many-instance-attribut
         self.credential = credential
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://ai.azure.com/.default"])
-        kwargs.setdefault("sdk_moniker", "ai-projects/{}".format(VERSION))
+        # Use the evaluation SDK version for the user agent to properly identify the SDK
+        kwargs.setdefault("sdk_moniker", "azure-ai-evaluation/{}".format(EVALUATION_VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 

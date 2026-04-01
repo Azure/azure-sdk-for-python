@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_machine_learning_workspaces import AzureMachineLearningWorkspaces
-__all__ = ['AzureMachineLearningWorkspaces']
+# This package contains versioned API clients in subfolders.
+# Import from specific version subfolders like v2022_05_01, v2023_04_01, etc.
 
 try:
     from ._patch import patch_sdk  # type: ignore

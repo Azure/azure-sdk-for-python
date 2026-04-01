@@ -19,15 +19,27 @@ from ._queue_client_async import QueueClient
 from .._encryption import StorageEncryptionMixin
 from .._generated.aio import AzureQueueStorage
 from .._generated.models import KeyInfo, StorageServiceProperties
-from .._models import CorsRule, QueueProperties, service_properties_deserialize, service_stats_deserialize
+from .._models import (
+    CorsRule,
+    QueueProperties,
+    service_properties_deserialize,
+    service_stats_deserialize,
+)
 from .._queue_service_client_helpers import _parse_url
 from .._serialize import get_api_version
 from .._shared.base_client import StorageAccountHostsMixin
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
+from .._shared.base_client_async import (
+    AsyncStorageAccountHostsMixin,
+    AsyncTransportWrapper,
+    parse_connection_str,
+)
 from .._shared.models import LocationMode
 from .._shared.parser import _to_utc_datetime
 from .._shared.policies_async import ExponentialRetry
-from .._shared.response_handlers import parse_to_internal_user_delegation_key, process_storage_error
+from .._shared.response_handlers import (
+    parse_to_internal_user_delegation_key,
+    process_storage_error,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -95,7 +107,13 @@ class QueueServiceClient(  # type: ignore [misc]
         self,
         account_url: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "AsyncTokenCredential",
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -115,8 +133,13 @@ class QueueServiceClient(  # type: ignore [misc]
             audience=audience,
             **kwargs,
         )
-        self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
-        self._client._config.version = get_api_version(api_version)  # type: ignore [assignment]
+        self._client = AzureQueueStorage(
+            self.url,
+            get_api_version(api_version),
+            base_url=self.url,
+            pipeline=self._pipeline,
+            loop=loop,
+        )
         self._loop = loop
         self._configure_encryption(kwargs)
 
@@ -125,7 +148,10 @@ class QueueServiceClient(  # type: ignore [misc]
         return self
 
     async def __aexit__(
-        self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
+        self,
+        typ: Optional[type[BaseException]],
+        exc: Optional[BaseException],
+        tb: Optional[TracebackType],
     ) -> None:
         await self._client.__aexit__(typ, exc, tb)  # pylint: disable=specify-parameter-names-in-call
 
@@ -153,7 +179,13 @@ class QueueServiceClient(  # type: ignore [misc]
         cls,
         conn_str: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "AsyncTokenCredential",
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -208,7 +240,13 @@ class QueueServiceClient(  # type: ignore [misc]
 
     @distributed_trace_async
     async def get_user_delegation_key(
-        self, *, expiry: "datetime", start: Optional["datetime"] = None, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        *,
+        expiry: "datetime",
+        start: Optional["datetime"] = None,
+        delegated_user_tid: Optional[str] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any,
     ) -> "UserDelegationKey":
         """
         Obtain a user delegation key for the purpose of signing SAS tokens.
@@ -220,6 +258,7 @@ class QueueServiceClient(  # type: ignore [misc]
         :keyword start:
             A DateTime value. Indicates when the key becomes valid.
         :paramtype start: Optional[~datetime.datetime]
+        :keyword str delegated_user_tid: The delegated user tenant id in Entra ID.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -229,7 +268,11 @@ class QueueServiceClient(  # type: ignore [misc]
         :return: The user delegation key.
         :rtype: ~azure.storage.queue.UserDelegationKey
         """
-        key_info = KeyInfo(start=_to_utc_datetime(start), expiry=_to_utc_datetime(expiry))  # type: ignore
+        key_info = KeyInfo(
+            start=_to_utc_datetime(start),  # type: ignore [arg-type]
+            expiry=_to_utc_datetime(expiry),
+            delegated_user_tid=delegated_user_tid,
+        )
         try:
             user_delegation_key = await self._client.service.get_user_delegation_key(
                 key_info=key_info, timeout=timeout, **kwargs
@@ -413,7 +456,12 @@ class QueueServiceClient(  # type: ignore [misc]
 
     @distributed_trace_async
     async def create_queue(
-        self, name: str, metadata: Optional[Dict[str, str]] = None, *, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        name: str,
+        metadata: Optional[Dict[str, str]] = None,
+        *,
+        timeout: Optional[int] = None,
+        **kwargs: Any,
     ) -> QueueClient:
         """Creates a new queue under the specified account.
 
@@ -446,7 +494,11 @@ class QueueServiceClient(  # type: ignore [misc]
 
     @distributed_trace_async
     async def delete_queue(
-        self, queue: Union["QueueProperties", str], *, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        queue: Union["QueueProperties", str],
+        *,
+        timeout: Optional[int] = None,
+        **kwargs: Any,
     ) -> None:
         """Deletes the specified queue and any messages it contains.
 

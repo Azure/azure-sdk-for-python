@@ -38,8 +38,6 @@ class TestQuery(unittest.TestCase):
             use_multiple_write_locations = True
         cls.client = cosmos_client.CosmosClient(cls.host, cls.credential, multiple_write_locations=use_multiple_write_locations)
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
-        if cls.host == "https://localhost:8081/":
-            os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"
 
     def test_first_and_last_slashes_trimmed_for_query_string(self):
         created_collection = self.created_db.create_container(
@@ -111,6 +109,92 @@ class TestQuery(unittest.TestCase):
                                   'PotentialSingleIndexes': [], 'UtilizedCompositeIndexes': [],
                                   'PotentialCompositeIndexes': []}
         self.assertDictEqual(expected_index_metrics, index_metrics)
+        self.created_db.delete_container(created_collection.id)
+
+    @pytest.mark.skip(reason="Emulator does not support query advisor yet")
+    def test_populate_query_advice(self):
+        created_collection = self.created_db.create_container("query_advice_test",
+                                                              PartitionKey(path="/pk"))
+
+        doc_id = 'MyId' + str(uuid.uuid4())
+        document_definition = {
+            'pk': 'pk', 'id': doc_id, 'name': 'test document',
+            'tags': [{'name': 'python'}, {'name': 'cosmos'}],
+            'timestamp': '2099-01-01T00:00:00Z', 'ticks': 0, 'ts': 0
+        }
+        created_collection.create_item(body=document_definition)
+
+        QUERY_ADVICE_HEADER = http_constants.HttpHeaders.QueryAdvice
+
+        # QA1000 - PartialArrayContains: ARRAY_CONTAINS with partial match
+        query_iterable = created_collection.query_items(
+            query='SELECT * FROM c WHERE ARRAY_CONTAINS(c.tags, {"name": "python"}, true)',
+            partition_key='pk', populate_query_advice=True
+        )
+        list(query_iterable)
+        query_advice = created_collection.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
+        self.assertIsNotNone(query_advice)
+        self.assertIn("QA1000", query_advice)
+
+        # QA1002 - Contains: CONTAINS usage
+        query_iterable = created_collection.query_items(
+            query='SELECT * FROM c WHERE CONTAINS(c.name, "test")',
+            partition_key='pk', populate_query_advice=True
+        )
+        list(query_iterable)
+        query_advice = created_collection.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
+        self.assertIsNotNone(query_advice)
+        self.assertIn("QA1002", query_advice)
+
+        # QA1003 - CaseInsensitiveStartsWithOrStringEquals: case-insensitive STARTSWITH
+        query_iterable = created_collection.query_items(
+            query='SELECT * FROM c WHERE STARTSWITH(c.name, "test", true)',
+            partition_key='pk', populate_query_advice=True
+        )
+        list(query_iterable)
+        query_advice = created_collection.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
+        self.assertIsNotNone(query_advice)
+        self.assertIn("QA1003", query_advice)
+
+        # QA1004 - CaseInsensitiveEndsWith: case-insensitive ENDSWITH
+        query_iterable = created_collection.query_items(
+            query='SELECT * FROM c WHERE ENDSWITH(c.name, "document", true)',
+            partition_key='pk', populate_query_advice=True
+        )
+        list(query_iterable)
+        query_advice = created_collection.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
+        self.assertIsNotNone(query_advice)
+        self.assertIn("QA1004", query_advice)
+
+        # QA1007 - GetCurrentDateTime: usage of GetCurrentDateTime
+        query_iterable = created_collection.query_items(
+            query='SELECT * FROM c WHERE c.timestamp < GetCurrentDateTime()',
+            partition_key='pk', populate_query_advice=True
+        )
+        list(query_iterable)
+        query_advice = created_collection.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
+        self.assertIsNotNone(query_advice)
+        self.assertIn("QA1007", query_advice)
+
+        # QA1008 - GetCurrentTicks: usage of GetCurrentTicks
+        query_iterable = created_collection.query_items(
+            query='SELECT * FROM c WHERE c.ticks < GetCurrentTicks()',
+            partition_key='pk', populate_query_advice=True
+        )
+        list(query_iterable)
+        query_advice = created_collection.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
+        self.assertIsNotNone(query_advice)
+        self.assertIn("QA1008", query_advice)
+
+        # QA1009 - GetCurrentTimestamp: usage of GetCurrentTimestamp
+        query_iterable = created_collection.query_items(
+            query='SELECT * FROM c WHERE c.ts < GetCurrentTimestamp()',
+            partition_key='pk', populate_query_advice=True
+        )
+        list(query_iterable)
+        query_advice = created_collection.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
+        self.assertIsNotNone(query_advice)
+        self.assertIn("QA1009", query_advice)
         self.created_db.delete_container(created_collection.id)
 
     # TODO: Need to validate the query request count logic

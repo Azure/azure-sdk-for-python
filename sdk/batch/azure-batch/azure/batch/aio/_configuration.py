@@ -28,13 +28,13 @@ class BatchClientConfiguration:  # pylint: disable=too-many-instance-attributes
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2024-07-01.20.0". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Default value is "2025-06-01".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-07-01.20.0")
+        api_version: str = kwargs.pop("api_version", "2025-06-01")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

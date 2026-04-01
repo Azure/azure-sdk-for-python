@@ -32,15 +32,17 @@ from azure.monitor.opentelemetry.exporter._utils import (
     get_compute_type,
 )
 
+from azure.monitor.opentelemetry.exporter.statsbeat._state import set_statsbeat_customer_sdkstats_feature_set
 from ._utils import get_customer_sdkstats_export_interval, categorize_status_code, is_customer_sdkstats_enabled
 
 
 class CustomerSdkStatsStatus(Enum):
     """Status enumeration for Customer SDK Stats Manager."""
-    DISABLED = "disabled"           # Feature is disabled via environment variable
-    UNINITIALIZED = "uninitialized" # Manager created but not initialized
-    ACTIVE = "active"              # Fully initialized and operational
-    SHUTDOWN = "shutdown"          # Has been shut down
+
+    DISABLED = "disabled"  # Feature is disabled via environment variable
+    UNINITIALIZED = "uninitialized"  # Manager created but not initialized
+    ACTIVE = "active"  # Fully initialized and operational
+    SHUTDOWN = "shutdown"  # Has been shut down
 
 
 class _CustomerSdkStatsTelemetryCounters:
@@ -50,17 +52,18 @@ class _CustomerSdkStatsTelemetryCounters:
         self.total_item_retry_count: Dict[str, Dict[RetryCodeType, Dict[str, int]]] = {}  # type: ignore
 
 
-class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-instance-attributes
+class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-instance-attributes
     def __init__(self):
         # Initialize instance attributes that remain constant. Called only once due to Singleton metaclass.
         self._initialization_lock = threading.Lock()  # For initialization/shutdown operations
-        self._counters_lock = threading.Lock()        # For counter operations and callbacks
+        self._counters_lock = threading.Lock()  # For counter operations and callbacks
 
         # Determine initial status based on environment
         if is_customer_sdkstats_enabled():
             self._status = CustomerSdkStatsStatus.UNINITIALIZED
         else:
             self._status = CustomerSdkStatsStatus.DISABLED
+            set_statsbeat_customer_sdkstats_feature_set()
 
         self._counters = _CustomerSdkStatsTelemetryCounters()
         self._language = _CUSTOMER_SDKSTATS_LANGUAGE
@@ -74,6 +77,7 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
         # Initialize customer properties if enabled
         if self._status != CustomerSdkStatsStatus.DISABLED:
             from azure.monitor.opentelemetry.exporter import VERSION
+
             # Pre-build base attributes for all metrics to avoid recreation on each callback
             self._base_attributes: Optional[Dict[str, Any]] = {  # type: ignore
                 "language": self._language,
@@ -163,7 +167,7 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
             )
             metric_reader_options = {
                 "exporter": self._customer_sdkstats_exporter,
-                "export_interval_millis": get_customer_sdkstats_export_interval() * 1000  # Default 15m
+                "export_interval_millis": get_customer_sdkstats_export_interval() * 1000,  # Default 15m
             }
             self._customer_sdkstats_metric_reader = PeriodicExportingMetricReader(**metric_reader_options)
             self._customer_sdkstats_meter_provider = MeterProvider(
@@ -174,17 +178,17 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
             self._success_gauge = self._customer_sdkstats_meter.create_observable_gauge(
                 name=CustomerSdkStatsMetricName.ITEM_SUCCESS_COUNT.value,
                 description="Tracks successful telemetry items sent to Azure Monitor",
-                callbacks=[self._item_success_callback]
+                callbacks=[self._item_success_callback],
             )
             self._dropped_gauge = self._customer_sdkstats_meter.create_observable_gauge(
                 name=CustomerSdkStatsMetricName.ITEM_DROP_COUNT.value,
                 description="Tracks dropped telemetry items sent to Azure Monitor",
-                callbacks=[self._item_drop_callback]
+                callbacks=[self._item_drop_callback],
             )
             self._retry_gauge = self._customer_sdkstats_meter.create_observable_gauge(
                 name=CustomerSdkStatsMetricName.ITEM_RETRY_COUNT.value,
                 description="Tracks retry attempts for telemetry items sent to Azure Monitor",
-                callbacks=[self._item_retry_callback]
+                callbacks=[self._item_retry_callback],
             )
 
             # Set status to active after successful initialization
@@ -245,8 +249,12 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
                 self._counters.total_item_success_count[telemetry_type] = count
 
     def count_dropped_items(
-        self, count: int, telemetry_type: str, drop_code: DropCodeType, telemetry_success: Union[bool, None],
-        exception_message: Optional[str] = None
+        self,
+        count: int,
+        telemetry_type: str,
+        drop_code: DropCodeType,
+        telemetry_success: Union[bool, None],
+        exception_message: Optional[str] = None,
     ) -> None:
         if not self.is_initialized or count <= 0 or telemetry_success is None:
             return
@@ -271,8 +279,7 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
             success_map[success_key] = current_count + count
 
     def count_retry_items(
-        self, count: int, telemetry_type: str, retry_code: RetryCodeType,
-        exception_message: Optional[str] = None
+        self, count: int, telemetry_type: str, retry_code: RetryCodeType, exception_message: Optional[str] = None
     ) -> None:
         if not self.is_initialized or count <= 0:
             return
@@ -291,7 +298,7 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
             current_count = reason_map.get(reason, 0)
             reason_map[reason] = current_count + count
 
-    def _item_success_callback(self, options: CallbackOptions) -> Iterable[Observation]: # pylint: disable=unused-argument
+    def _item_success_callback(self, _options: CallbackOptions) -> Iterable[Observation]:
         if not self.is_initialized or not self._base_attributes:
             return []
 
@@ -310,7 +317,7 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
 
         return observations
 
-    def _item_drop_callback(self, options: CallbackOptions) -> Iterable[Observation]: # pylint: disable=unused-argument
+    def _item_drop_callback(self, _options: CallbackOptions) -> Iterable[Observation]:
         if not self.is_initialized or not self._base_attributes:
             return []
         observations: List[Observation] = []
@@ -324,7 +331,7 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
                             if count > 0:
                                 # Create attributes by copying base and adding drop-specific data
                                 attributes = self._base_attributes.copy()
-                                attributes["drop.code"] = drop_code
+                                attributes["drop.code"] = drop_code if isinstance(drop_code, int) else drop_code.value
                                 attributes["drop.reason"] = reason
                                 attributes["telemetry_type"] = telemetry_type
                                 if telemetry_type in (_REQUEST, _DEPENDENCY):
@@ -336,7 +343,7 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
 
         return observations
 
-    def _item_retry_callback(self, options: CallbackOptions) -> Iterable[Observation]: # pylint: disable=unused-argument
+    def _item_retry_callback(self, _options: CallbackOptions) -> Iterable[Observation]:
         if not self.is_initialized or not self._base_attributes:
             return []
         observations: List[Observation] = []
@@ -348,7 +355,7 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
                         if count > 0:
                             # Create attributes by copying base and adding retry-specific data
                             attributes = self._base_attributes.copy()
-                            attributes["retry.code"] = retry_code
+                            attributes["retry.code"] = retry_code if isinstance(retry_code, int) else retry_code.value
                             attributes["retry.reason"] = reason
                             attributes["telemetry_type"] = telemetry_type
                             observations.append(Observation(count, attributes))
@@ -369,7 +376,7 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
             DropCode.CLIENT_READONLY: "Client readonly",
             DropCode.CLIENT_STORAGE_DISABLED: "Client local storage disabled",
             DropCode.CLIENT_PERSISTENCE_CAPACITY: "Client persistence capacity",
-            DropCode.UNKNOWN: "Unknown reason"
+            DropCode.UNKNOWN: "Unknown reason",
         }
 
         return drop_code_reasons.get(drop_code, DropCode.UNKNOWN)

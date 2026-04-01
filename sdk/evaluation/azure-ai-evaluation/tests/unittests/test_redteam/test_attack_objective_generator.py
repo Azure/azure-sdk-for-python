@@ -7,7 +7,10 @@ from pathlib import Path
 import pytest
 from unittest.mock import MagicMock, patch, mock_open, ANY as mock_ANY
 
-from azure.ai.evaluation.red_team._attack_objective_generator import _AttackObjectiveGenerator, RiskCategory
+from azure.ai.evaluation.red_team._attack_objective_generator import (
+    _AttackObjectiveGenerator,
+    RiskCategory,
+)
 
 
 @pytest.mark.unittest
@@ -37,7 +40,10 @@ class TestObjectiveGeneratorInitialization:
     def test_objective_generator_init_default(self):
         """Test _AttackObjectiveGenerator initialization with default parameters."""
         generator = _AttackObjectiveGenerator(risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness])
-        assert generator.risk_categories == [RiskCategory.Violence, RiskCategory.HateUnfairness]
+        assert generator.risk_categories == [
+            RiskCategory.Violence,
+            RiskCategory.HateUnfairness,
+        ]
         assert generator.num_objectives == 10  # Default value
 
     def test_objective_generator_init_custom(self):

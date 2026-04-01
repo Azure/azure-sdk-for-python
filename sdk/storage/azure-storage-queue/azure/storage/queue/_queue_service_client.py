@@ -26,13 +26,24 @@ from ._models import (
 from ._queue_client import QueueClient
 from ._queue_service_client_helpers import _parse_url
 from ._serialize import get_api_version
-from ._shared.base_client import parse_connection_str, StorageAccountHostsMixin, TransportWrapper
+from ._shared.base_client import (
+    parse_connection_str,
+    StorageAccountHostsMixin,
+    TransportWrapper,
+)
 from ._shared.models import LocationMode
 from ._shared.parser import _to_utc_datetime
-from ._shared.response_handlers import parse_to_internal_user_delegation_key, process_storage_error
+from ._shared.response_handlers import (
+    parse_to_internal_user_delegation_key,
+    process_storage_error,
+)
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials import (
+        AzureNamedKeyCredential,
+        AzureSasCredential,
+        TokenCredential,
+    )
     from datetime import datetime
     from ._models import Metrics, QueueAnalyticsLogging
     from ._shared.models import UserDelegationKey
@@ -98,7 +109,13 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         self,
         account_url: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "TokenCredential",
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -116,8 +133,12 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             audience=audience,
             **kwargs,
         )
-        self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(api_version)  # type: ignore [assignment]
+        self._client = AzureQueueStorage(
+            self.url,
+            get_api_version(api_version),
+            base_url=self.url,
+            pipeline=self._pipeline,
+        )
         self._configure_encryption(kwargs)
 
     def __enter__(self) -> Self:
@@ -125,7 +146,10 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         return self
 
     def __exit__(
-        self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
+        self,
+        typ: Optional[type[BaseException]],
+        exc: Optional[BaseException],
+        tb: Optional[TracebackType],
     ) -> None:
         self._client.__exit__(typ, exc, tb)  # pylint: disable=specify-parameter-names-in-call
 
@@ -153,7 +177,13 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         cls,
         conn_str: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "TokenCredential",
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -211,7 +241,13 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def get_user_delegation_key(
-        self, *, expiry: "datetime", start: Optional["datetime"] = None, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        *,
+        expiry: "datetime",
+        start: Optional["datetime"] = None,
+        delegated_user_tid: Optional[str] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any,
     ) -> "UserDelegationKey":
         """
         Obtain a user delegation key for the purpose of signing SAS tokens.
@@ -223,6 +259,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :keyword start:
             A DateTime value. Indicates when the key becomes valid.
         :paramtype start: Optional[~datetime.datetime]
+        :keyword str delegated_user_tid: The delegated user tenant id in Entra ID.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -232,7 +269,11 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :return: The user delegation key.
         :rtype: ~azure.storage.queue.UserDelegationKey
         """
-        key_info = KeyInfo(start=_to_utc_datetime(start), expiry=_to_utc_datetime(expiry))  # type: ignore
+        key_info = KeyInfo(
+            start=_to_utc_datetime(start),  # type: ignore [arg-type]
+            expiry=_to_utc_datetime(expiry),
+            delegated_user_tid=delegated_user_tid,
+        )
         try:
             user_delegation_key = self._client.service.get_user_delegation_key(
                 key_info=key_info, timeout=timeout, **kwargs
@@ -414,7 +455,12 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def create_queue(
-        self, name: str, metadata: Optional[Dict[str, str]] = None, *, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        name: str,
+        metadata: Optional[Dict[str, str]] = None,
+        *,
+        timeout: Optional[int] = None,
+        **kwargs: Any,
     ) -> QueueClient:
         """Creates a new queue under the specified account.
 
@@ -447,7 +493,11 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def delete_queue(
-        self, queue: Union["QueueProperties", str], *, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        queue: Union["QueueProperties", str],
+        *,
+        timeout: Optional[int] = None,
+        **kwargs: Any,
     ) -> None:
         """Deletes the specified queue and any messages it contains.
 

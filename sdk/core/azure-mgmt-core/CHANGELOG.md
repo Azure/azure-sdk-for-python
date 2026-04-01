@@ -1,5 +1,11 @@
 # Release History
 
+## 1.6.1 (Unreleased)
+
+### Bugs Fixed
+
+- `ARMPolling` now includes the `azure-asyncoperation` header in the continuation token to ensure proper LRO rehydration.
+
 ## 1.6.0 (2025-07-02)
 
 ### Other Changes

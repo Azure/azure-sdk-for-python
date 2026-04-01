@@ -53,7 +53,7 @@ def build_batch_list_applications_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -80,7 +80,7 @@ def build_batch_get_application_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -117,7 +117,7 @@ def build_batch_list_pool_usage_metrics_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -151,7 +151,7 @@ def build_batch_create_pool_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/pools"
 
@@ -181,7 +181,7 @@ def build_batch_list_pools_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -222,7 +222,7 @@ def build_batch_delete_pool_internal_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/pools/{poolId}"
     path_format_arguments = {
@@ -267,7 +267,7 @@ def build_batch_pool_exists_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/pools/{poolId}"
     path_format_arguments = {
@@ -314,7 +314,7 @@ def build_batch_get_pool_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -367,7 +367,7 @@ def build_batch_update_pool_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/pools/{poolId}"
     path_format_arguments = {
@@ -405,7 +405,7 @@ def build_batch_disable_pool_auto_scale_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/pools/{poolId}/disableautoscale"
     path_format_arguments = {
@@ -441,7 +441,7 @@ def build_batch_enable_pool_auto_scale_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/pools/{poolId}/enableautoscale"
     path_format_arguments = {
@@ -480,7 +480,7 @@ def build_batch_evaluate_pool_auto_scale_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -520,7 +520,7 @@ def build_batch_resize_pool_internal_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/pools/{poolId}/resize"
     path_format_arguments = {
@@ -566,7 +566,7 @@ def build_batch_stop_pool_resize_internal_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/pools/{poolId}/stopresize"
     path_format_arguments = {
@@ -604,7 +604,7 @@ def build_batch_replace_pool_properties_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/pools/{poolId}/updateproperties"
     path_format_arguments = {
@@ -641,7 +641,7 @@ def build_batch_remove_nodes_internal_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/pools/{poolId}/removenodes"
     path_format_arguments = {
@@ -684,7 +684,7 @@ def build_batch_list_supported_images_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -718,7 +718,7 @@ def build_batch_list_pool_node_counts_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -756,7 +756,7 @@ def build_batch_delete_job_internal_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/jobs/{jobId}"
     path_format_arguments = {
@@ -805,7 +805,7 @@ def build_batch_get_job_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -858,7 +858,7 @@ def build_batch_update_job_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/jobs/{jobId}"
     path_format_arguments = {
@@ -905,7 +905,7 @@ def build_batch_replace_job_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/jobs/{jobId}"
     path_format_arguments = {
@@ -952,7 +952,7 @@ def build_batch_disable_job_internal_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/jobs/{jobId}/disable"
     path_format_arguments = {
@@ -998,7 +998,7 @@ def build_batch_enable_job_internal_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/jobs/{jobId}/enable"
     path_format_arguments = {
@@ -1045,7 +1045,7 @@ def build_batch_terminate_job_internal_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/jobs/{jobId}/terminate"
     path_format_arguments = {
@@ -1086,7 +1086,7 @@ def build_batch_create_job_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/jobs"
 
@@ -1116,7 +1116,7 @@ def build_batch_list_jobs_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1157,7 +1157,7 @@ def build_batch_list_jobs_from_schedule_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1202,7 +1202,7 @@ def build_batch_list_job_preparation_and_release_task_status_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1238,7 +1238,7 @@ def build_batch_get_job_task_counts_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1262,172 +1262,6 @@ def build_batch_get_job_task_counts_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_batch_create_certificate_request(
-    *, timeout: Optional[int] = None, ocpdate: Optional[datetime.datetime] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    # Construct URL
-    _url = "/certificates"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
-
-    # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
-    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_batch_list_certificates_request(
-    *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
-    max_results: Optional[int] = None,
-    filter: Optional[str] = None,
-    select: Optional[list[str]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/certificates"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
-    if max_results is not None:
-        _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int")
-    if filter is not None:
-        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
-    if select is not None:
-        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
-
-    # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_batch_cancel_certificate_deletion_request(  # pylint: disable=name-too-long
-    thumbprint_algorithm: str,
-    thumbprint: str,
-    *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    # Construct URL
-    _url = "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})/canceldelete"
-    path_format_arguments = {
-        "thumbprintAlgorithm": _SERIALIZER.url("thumbprint_algorithm", thumbprint_algorithm, "str"),
-        "thumbprint": _SERIALIZER.url("thumbprint", thumbprint, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
-
-    # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_batch_delete_certificate_internal_request(  # pylint: disable=name-too-long
-    thumbprint_algorithm: str,
-    thumbprint: str,
-    *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    # Construct URL
-    _url = "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})"
-    path_format_arguments = {
-        "thumbprintAlgorithm": _SERIALIZER.url("thumbprint_algorithm", thumbprint_algorithm, "str"),
-        "thumbprint": _SERIALIZER.url("thumbprint", thumbprint, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
-
-    # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_batch_get_certificate_request(
-    thumbprint_algorithm: str,
-    thumbprint: str,
-    *,
-    timeout: Optional[int] = None,
-    ocpdate: Optional[datetime.datetime] = None,
-    select: Optional[list[str]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})"
-    path_format_arguments = {
-        "thumbprintAlgorithm": _SERIALIZER.url("thumbprint_algorithm", thumbprint_algorithm, "str"),
-        "thumbprint": _SERIALIZER.url("thumbprint", thumbprint, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if timeout is not None:
-        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
-    if select is not None:
-        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
-
-    # Construct headers
-    if ocpdate is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_batch_job_schedule_exists_request(
     job_schedule_id: str,
     *,
@@ -1442,7 +1276,7 @@ def build_batch_job_schedule_exists_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}"
     path_format_arguments = {
@@ -1488,7 +1322,7 @@ def build_batch_delete_job_schedule_internal_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}"
     path_format_arguments = {
@@ -1537,7 +1371,7 @@ def build_batch_get_job_schedule_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1590,7 +1424,7 @@ def build_batch_update_job_schedule_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}"
     path_format_arguments = {
@@ -1637,7 +1471,7 @@ def build_batch_replace_job_schedule_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}"
     path_format_arguments = {
@@ -1683,7 +1517,7 @@ def build_batch_disable_job_schedule_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}/disable"
     path_format_arguments = {
@@ -1728,7 +1562,7 @@ def build_batch_enable_job_schedule_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}/enable"
     path_format_arguments = {
@@ -1774,7 +1608,7 @@ def build_batch_terminate_job_schedule_internal_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}/terminate"
     path_format_arguments = {
@@ -1814,7 +1648,7 @@ def build_batch_create_job_schedule_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/jobschedules"
 
@@ -1844,7 +1678,7 @@ def build_batch_list_job_schedules_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1878,7 +1712,7 @@ def build_batch_create_task_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/jobs/{jobId}/tasks"
     path_format_arguments = {
@@ -1914,7 +1748,7 @@ def build_batch_list_tasks_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1953,7 +1787,7 @@ def build_batch_create_task_collection_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1993,7 +1827,7 @@ def build_batch_delete_task_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}"
     path_format_arguments = {
@@ -2042,7 +1876,7 @@ def build_batch_get_task_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2097,7 +1931,7 @@ def build_batch_replace_task_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}"
     path_format_arguments = {
@@ -2142,7 +1976,7 @@ def build_batch_list_sub_tasks_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2184,7 +2018,7 @@ def build_batch_terminate_task_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}/terminate"
     path_format_arguments = {
@@ -2231,7 +2065,7 @@ def build_batch_reactivate_task_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}/reactivate"
     path_format_arguments = {
@@ -2276,7 +2110,7 @@ def build_batch_delete_task_file_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"
     path_format_arguments = {
@@ -2316,7 +2150,7 @@ def build_batch_get_task_file_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/octet-stream")
 
     # Construct URL
@@ -2362,7 +2196,7 @@ def build_batch_get_task_file_properties_internal_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"
     path_format_arguments = {
@@ -2403,7 +2237,7 @@ def build_batch_list_task_files_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2446,7 +2280,7 @@ def build_batch_create_node_user_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/users"
     path_format_arguments = {
@@ -2481,7 +2315,7 @@ def build_batch_delete_node_user_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/users/{userName}"
     path_format_arguments = {
@@ -2517,7 +2351,7 @@ def build_batch_replace_node_user_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/users/{userName}"
     path_format_arguments = {
@@ -2553,7 +2387,7 @@ def build_batch_get_node_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2592,7 +2426,7 @@ def build_batch_reboot_node_internal_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/reboot"
     path_format_arguments = {
@@ -2626,7 +2460,7 @@ def build_batch_start_node_internal_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/start"
     path_format_arguments = {
@@ -2660,7 +2494,7 @@ def build_batch_reimage_node_internal_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/reimage"
     path_format_arguments = {
@@ -2695,7 +2529,7 @@ def build_batch_deallocate_node_internal_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/deallocate"
     path_format_arguments = {
@@ -2730,7 +2564,7 @@ def build_batch_disable_node_scheduling_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/disablescheduling"
     path_format_arguments = {
@@ -2764,7 +2598,7 @@ def build_batch_enable_node_scheduling_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/enablescheduling"
     path_format_arguments = {
@@ -2797,7 +2631,7 @@ def build_batch_get_node_remote_login_settings_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2834,7 +2668,7 @@ def build_batch_upload_node_logs_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2873,7 +2707,7 @@ def build_batch_list_nodes_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2916,7 +2750,7 @@ def build_batch_get_node_extension_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2957,7 +2791,7 @@ def build_batch_list_node_extensions_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2999,7 +2833,7 @@ def build_batch_delete_node_file_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"
     path_format_arguments = {
@@ -3039,7 +2873,7 @@ def build_batch_get_node_file_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/octet-stream")
 
     # Construct URL
@@ -3085,7 +2919,7 @@ def build_batch_get_node_file_properties_internal_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"
     path_format_arguments = {
@@ -3126,7 +2960,7 @@ def build_batch_list_node_files_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3264,7 +3098,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3342,7 +3179,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3487,7 +3327,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3564,7 +3407,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3589,9 +3435,9 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         expand: Optional[list[str]] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.BatchPool"]:
-        """Lists all of the Pools which be mounted.
+        """Lists all of the Pools in the specified Account.
 
-        Lists all of the Pools which be mounted.
+        Lists all of the Pools in the specified Account.
 
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
@@ -3691,7 +3537,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3800,7 +3649,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3899,7 +3751,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4015,7 +3870,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4137,7 +3995,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4207,7 +4068,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4326,7 +4190,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4420,7 +4287,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4547,7 +4417,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4657,7 +4530,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4744,7 +4620,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4860,7 +4739,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4979,7 +4861,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -5092,7 +4977,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -5202,7 +5090,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5316,7 +5207,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5438,7 +5332,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5554,7 +5451,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5675,7 +5575,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5784,7 +5687,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5912,7 +5818,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6001,7 +5910,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6128,7 +6040,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -6254,7 +6169,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -6384,7 +6302,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -6456,7 +6377,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6469,470 +6393,6 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(_models.BatchTaskCountsResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def create_certificate(  # pylint: disable=inconsistent-return-statements
-        self,
-        certificate: _models.BatchCertificate,
-        *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
-        **kwargs: Any
-    ) -> None:
-        """Creates a Certificate to the specified Account.
-
-        Creates a Certificate to the specified Account.
-
-        :param certificate: The Certificate to be created. Required.
-        :type certificate: ~azure.batch.models.BatchCertificate
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: str = kwargs.pop(
-            "content_type", _headers.pop("content-type", "application/json; odata=minimalmetadata")
-        )
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _content = json.dumps(certificate, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_batch_create_certificate_request(
-            timeout=timeout,
-            ocpdate=ocpdate,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace
-    def list_certificates(
-        self,
-        *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
-        max_results: Optional[int] = None,
-        filter: Optional[str] = None,
-        select: Optional[list[str]] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_models.BatchCertificate"]:
-        """Lists all of the Certificates that have been added to the specified Account.
-
-        Lists all of the Certificates that have been added to the specified Account.
-
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
-        :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype max_results: int
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-         `https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-certificates
-         <https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-certificates>`_.
-         Default value is None.
-        :paramtype filter: str
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: list[str]
-        :return: An iterator like instance of BatchCertificate
-        :rtype: ~azure.core.paging.ItemPaged[~azure.batch.models.BatchCertificate]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[list[_models.BatchCertificate]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_batch_list_certificates_request(
-                    timeout=timeout,
-                    ocpdate=ocpdate,
-                    max_results=max_results,
-                    filter=filter,
-                    select=select,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.BatchCertificate], deserialized.get("value", []))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def cancel_certificate_deletion(  # pylint: disable=inconsistent-return-statements
-        self,
-        thumbprint_algorithm: str,
-        thumbprint: str,
-        *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
-        **kwargs: Any
-    ) -> None:
-        """Cancels a failed deletion of a Certificate from the specified Account.
-
-        If you try to delete a Certificate that is being used by a Pool or Compute
-        Node, the status of the Certificate changes to deleteFailed. If you decide that
-        you want to continue using the Certificate, you can use this operation to set
-        the status of the Certificate back to active. If you intend to delete the
-        Certificate, you do not need to run this operation after the deletion failed.
-        You must make sure that the Certificate is not being used by any resources, and
-        then you can try again to delete the Certificate.
-
-        :param thumbprint_algorithm: The algorithm used to derive the thumbprint parameter. This must
-         be sha1. Required.
-        :type thumbprint_algorithm: str
-        :param thumbprint: The thumbprint of the Certificate being deleted. Required.
-        :type thumbprint: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_batch_cancel_certificate_deletion_request(
-            thumbprint_algorithm=thumbprint_algorithm,
-            thumbprint=thumbprint,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace
-    def _delete_certificate_internal(  # pylint: disable=inconsistent-return-statements
-        self,
-        thumbprint_algorithm: str,
-        thumbprint: str,
-        *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
-        **kwargs: Any
-    ) -> None:
-        """Deletes a Certificate from the specified Account.
-
-        You cannot delete a Certificate if a resource (Pool or Compute Node) is using
-        it. Before you can delete a Certificate, you must therefore make sure that the
-        Certificate is not associated with any existing Pools, the Certificate is not
-        installed on any Nodes (even if you remove a Certificate from a Pool, it is not
-        removed from existing Compute Nodes in that Pool until they restart), and no
-        running Tasks depend on the Certificate. If you try to delete a Certificate
-        that is in use, the deletion fails. The Certificate status changes to
-        deleteFailed. You can use Cancel Delete Certificate to set the status back to
-        active if you decide that you want to continue using the Certificate.
-
-        :param thumbprint_algorithm: The algorithm used to derive the thumbprint parameter. This must
-         be sha1. Required.
-        :type thumbprint_algorithm: str
-        :param thumbprint: The thumbprint of the Certificate to be deleted. Required.
-        :type thumbprint: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_batch_delete_certificate_internal_request(
-            thumbprint_algorithm=thumbprint_algorithm,
-            thumbprint=thumbprint,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace
-    def get_certificate(
-        self,
-        thumbprint_algorithm: str,
-        thumbprint: str,
-        *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
-        select: Optional[list[str]] = None,
-        **kwargs: Any
-    ) -> _models.BatchCertificate:
-        """Gets information about the specified Certificate.
-
-        :param thumbprint_algorithm: The algorithm used to derive the thumbprint parameter. This must
-         be sha1. Required.
-        :type thumbprint_algorithm: str
-        :param thumbprint: The thumbprint of the Certificate to get. Required.
-        :type thumbprint: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: list[str]
-        :return: BatchCertificate. The BatchCertificate is compatible with MutableMapping
-        :rtype: ~azure.batch.models.BatchCertificate
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.BatchCertificate] = kwargs.pop("cls", None)
-
-        _request = build_batch_get_certificate_request(
-            thumbprint_algorithm=thumbprint_algorithm,
-            thumbprint=thumbprint,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            select=select,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.BatchCertificate, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7030,7 +6490,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7144,7 +6607,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7256,7 +6722,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7380,7 +6849,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7498,7 +6970,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7602,7 +7077,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7706,7 +7184,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7816,7 +7297,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7897,7 +7381,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -8024,7 +7511,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -8105,7 +7595,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -8238,7 +7731,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -8336,7 +7832,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -8454,7 +7953,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -8574,7 +8076,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -8697,7 +8202,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -8817,7 +8325,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -8921,7 +8432,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -9036,7 +8550,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -9127,7 +8644,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -9230,7 +8750,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -9336,7 +8859,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -9476,7 +9002,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -9560,7 +9089,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -9644,7 +9176,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -9737,7 +9272,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -9825,7 +9363,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -9924,7 +9465,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -10003,7 +9547,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -10098,7 +9645,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -10191,7 +9741,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -10287,7 +9840,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -10368,7 +9924,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -10455,7 +10014,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -10561,7 +10123,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -10694,7 +10259,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -10781,7 +10349,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -10911,7 +10482,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -10996,7 +10570,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -11099,7 +10676,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -11205,7 +10785,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -11343,7 +10926,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response

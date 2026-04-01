@@ -1,5 +1,30 @@
 # Release History
 
+## 13.1.1 (2026-01-05)
+
+### Bugs Fixed
+
+  - Made the destination_table field writable in RuleDefinition.
+
+## 13.1.0 (2025-12-08)
+
+### Features Added
+
+  - Added operation WorkspacesOperations.begin_failback
+  - Added operation WorkspacesOperations.begin_failover
+  - Added operation WorkspacesOperations.begin_reconcile_nsp
+  - Added operation WorkspacesOperations.get_nsp
+  - Added operation WorkspacesOperations.list_nsp
+  - Added operation group SummaryLogsOperations
+  - Model Cluster has a new parameter replication
+  - Model LogAnalyticsQueryPack has a new parameter system_data
+  - Model Workspace has a new parameter failover
+  - Model Workspace has a new parameter replication
+  - Model WorkspaceFeatures has a new parameter associations
+  - Model WorkspaceFeatures has a new parameter unified_sentinel_billing_only
+  - Model WorkspacePatch has a new parameter failover
+  - Model WorkspacePatch has a new parameter replication
+
 ## 13.0.0b7 (2024-11-05)
 
 ### Other Changes

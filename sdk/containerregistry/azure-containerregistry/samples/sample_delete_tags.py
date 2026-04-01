@@ -26,6 +26,7 @@ USAGE:
     3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
     4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
 """
+
 import os
 from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ContainerRegistryClient, ArtifactTagOrder
@@ -51,7 +52,8 @@ class DeleteTags(object):
                 # Keep the three most recent tags, delete everything else
                 tag_count = 0
                 for tag in client.list_tag_properties(
-                    repository_name, order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING
+                    repository_name,
+                    order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING,
                 ):
                     tag_count += 1
                     if tag_count > 3:

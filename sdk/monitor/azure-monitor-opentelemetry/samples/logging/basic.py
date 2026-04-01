@@ -16,7 +16,7 @@ configure_azure_monitor(
     # This is imperative so you do not collect logging telemetry from the SDK itself.
     logger_name="my_app_logger",
     # You can specify the logging format of your collected logs by passing in a logging.Formatter
-    logging_formatter=Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    logging_formatter=Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"),
 )
 
 # Logging telemetry will be collected from logging calls made with this logger and all of it's children loggers.

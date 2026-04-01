@@ -48,7 +48,7 @@ def build_list_by_artifact_name_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -61,7 +61,7 @@ def build_list_by_artifact_name_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "galleryName": _SERIALIZER.url("gallery_name", gallery_name, "str"),
+        "galleryName": _SERIALIZER.url("gallery_name", gallery_name, "str", pattern=r"^[^_\W][\w-._]{0,79}(?<![-.])$"),
         "artifactType": _SERIALIZER.url(
             "artifact_type", artifact_type, "str", pattern=r"^[a-zA-Z0-9]+([_]?[a-zA-Z0-9]+)*$"
         ),
@@ -126,7 +126,7 @@ class SoftDeletedResourceOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[_models.GallerySoftDeletedResourceList] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {

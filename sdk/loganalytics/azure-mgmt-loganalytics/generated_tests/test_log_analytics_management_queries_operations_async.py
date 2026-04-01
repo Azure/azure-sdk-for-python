@@ -21,11 +21,11 @@ class TestLogAnalyticsManagementQueriesOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_queries_list(self, resource_group):
         response = self.client.queries.list(
             resource_group_name=resource_group.name,
             query_pack_name="str",
-            api_version="2019-09-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestLogAnalyticsManagementQueriesOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_search(self, resource_group):
+    async def test_queries_search(self, resource_group):
         response = self.client.queries.search(
             resource_group_name=resource_group.name,
             query_pack_name="str",
@@ -41,7 +41,7 @@ class TestLogAnalyticsManagementQueriesOperationsAsync(AzureMgmtRecordedTestCase
                 "related": {"categories": ["str"], "resourceTypes": ["str"], "solutions": ["str"]},
                 "tags": {"str": ["str"]},
             },
-            api_version="2019-09-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -49,12 +49,12 @@ class TestLogAnalyticsManagementQueriesOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_queries_get(self, resource_group):
         response = await self.client.queries.get(
             resource_group_name=resource_group.name,
             query_pack_name="str",
             id="str",
-            api_version="2019-09-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -62,7 +62,7 @@ class TestLogAnalyticsManagementQueriesOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_put(self, resource_group):
+    async def test_queries_put(self, resource_group):
         response = await self.client.queries.put(
             resource_group_name=resource_group.name,
             query_pack_name="str",
@@ -89,7 +89,7 @@ class TestLogAnalyticsManagementQueriesOperationsAsync(AzureMgmtRecordedTestCase
                 "timeModified": "2020-02-20 00:00:00",
                 "type": "str",
             },
-            api_version="2019-09-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -97,7 +97,7 @@ class TestLogAnalyticsManagementQueriesOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_queries_update(self, resource_group):
         response = await self.client.queries.update(
             resource_group_name=resource_group.name,
             query_pack_name="str",
@@ -124,7 +124,7 @@ class TestLogAnalyticsManagementQueriesOperationsAsync(AzureMgmtRecordedTestCase
                 "timeModified": "2020-02-20 00:00:00",
                 "type": "str",
             },
-            api_version="2019-09-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -132,12 +132,12 @@ class TestLogAnalyticsManagementQueriesOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_queries_delete(self, resource_group):
         response = await self.client.queries.delete(
             resource_group_name=resource_group.name,
             query_pack_name="str",
             id="str",
-            api_version="2019-09-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself

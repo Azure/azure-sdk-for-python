@@ -19,6 +19,7 @@ from ._serialize import (
     get_mod_conditions,
     get_path_http_headers
 )
+from ._shared.constants import DEFAULT_MAX_CONCURRENCY
 from ._shared.request_handlers import get_length, read_length
 from ._shared.response_handlers import return_response_headers
 from ._shared.uploads import IterStreamer
@@ -94,7 +95,7 @@ def _flush_data_options(
 
 
 def _upload_options(
-    data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+    data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[bytes]],
     scheme: str,
     config: "StorageConfiguration",
     path: "PathOperations",
@@ -124,7 +125,9 @@ def _upload_options(
     validate_content = kwargs.pop('validate_content', False)
     content_settings = kwargs.pop('content_settings', None)
     metadata = kwargs.pop('metadata', None)
-    max_concurrency = kwargs.pop('max_concurrency', 1)
+    max_concurrency = kwargs.pop('max_concurrency', None)
+    if max_concurrency is None:
+        max_concurrency = DEFAULT_MAX_CONCURRENCY
 
     kwargs['properties'] = add_metadata_headers(metadata)
     kwargs['lease_access_conditions'] = get_access_conditions(kwargs.pop('lease', None))

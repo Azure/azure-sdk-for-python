@@ -13,7 +13,7 @@ from datetime import datetime
 from io import BytesIO
 from typing import (
     Any, AnyStr, AsyncGenerator, AsyncIterable, Callable, cast,
-    Dict, IO, Iterable, List, Optional, Tuple, Union,
+    Dict, IO, Iterable, List, Literal, Optional, Tuple, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
@@ -43,6 +43,7 @@ from .._serialize import (
 )
 from .._shared.base_client import StorageAccountHostsMixin, parse_query
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str
+from .._shared.constants import DEFAULT_MAX_CONCURRENCY
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers, get_length
 from .._shared.response_handlers import process_storage_error, return_response_headers
@@ -50,11 +51,6 @@ from .._shared.uploads_async import AsyncIterStreamer, FileChunkUploader, IterSt
 from ._download_async import StorageStreamDownloader
 from ._lease_async import ShareLeaseClient
 from ._models import FileProperties, Handle, HandlesPaged
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -201,11 +197,15 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
         self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
         self.file_request_intent = token_intent
-        self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline,
-                                        allow_trailing_dot=self.allow_trailing_dot,
-                                        allow_source_trailing_dot=self.allow_source_trailing_dot,
-                                        file_request_intent=self.file_request_intent)
-        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
+        self._client = AzureFileStorage(
+            version=get_api_version(kwargs),
+            url=self.url,
+            base_url=self.url,
+            pipeline=self._pipeline,
+            allow_trailing_dot=self.allow_trailing_dot,
+            allow_source_trailing_dot=self.allow_source_trailing_dot,
+            file_request_intent=self.file_request_intent
+        )
 
     async def __aenter__(self) -> Self:
         await self._client.__aenter__()
@@ -432,6 +432,18 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             NFS only. The owning group of the file.
         :keyword str file_mode:
             NFS only. The file mode of the file.
+        :keyword file_property_semantics:
+            SMB only. Specifies permissions to be configured. Default value is None.
+            If not specified or None is passed, New will be the default. Possible values are:
+
+                New - forcefully add the ARCHIVE attribute flag and alter the permissions specified in
+                x-ms-file-permission to inherit missing permissions from the parent.
+
+                Restore - apply changes without further modification.
+
+        :paramtype file_property_semantics: Optional[Literal["New", "Restore"]]
+        :keyword data: Optional initial data to upload, up to 4MB.
+        :paramtype data: bytes
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -493,7 +505,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
     @distributed_trace_async
     async def upload_file(
-        self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+        self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[bytes]],
         length: Optional[int] = None,
         file_attributes: Optional[Union[str, "NTFSAttributes"]] = None,
         file_creation_time: Optional[Union[str, datetime]] = None,
@@ -506,9 +518,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
         :param data:
             Content of the file.
-        :type data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]]
+        :type data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[bytes]]
         :param int length:
-            Length of the file in bytes. Specify its maximum size, up to 1 TiB.
+            Length of the file in bytes.
         :param file_attributes:
             The file system attributes for files and directories.
             If not set, the default value would be "None" and the attributes will be set to "Archive".
@@ -589,7 +601,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         """
         metadata = kwargs.pop('metadata', None)
         content_settings = kwargs.pop('content_settings', None)
-        max_concurrency = kwargs.pop('max_concurrency', 1)
+        max_concurrency = kwargs.pop('max_concurrency', None)
+        if max_concurrency is None:
+            max_concurrency = DEFAULT_MAX_CONCURRENCY
         validate_content = kwargs.pop('validate_content', False)
         progress_hook = kwargs.pop('progress_hook', None)
         timeout = kwargs.pop('timeout', None)

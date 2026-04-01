@@ -1,7 +1,7 @@
--e ../../core/azure-core
--e ../azure-appconfiguration
--e ../../identity/azure-identity
--e ../../keyvault/azure-keyvault-secrets
+../../core/azure-core
+../azure-appconfiguration
+../../identity/azure-identity
+../../keyvault/azure-keyvault-secrets
 aiohttp>=3.0
 -e ../../../eng/tools/azure-sdk-tools
 dnspython

@@ -33,8 +33,6 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._operations._operations import (
-    build_batch_cancel_certificate_deletion_request,
-    build_batch_create_certificate_request,
     build_batch_create_job_request,
     build_batch_create_job_schedule_request,
     build_batch_create_node_user_request,
@@ -42,7 +40,6 @@ from ..._operations._operations import (
     build_batch_create_task_collection_request,
     build_batch_create_task_request,
     build_batch_deallocate_node_internal_request,
-    build_batch_delete_certificate_internal_request,
     build_batch_delete_job_internal_request,
     build_batch_delete_job_schedule_internal_request,
     build_batch_delete_node_file_request,
@@ -60,7 +57,6 @@ from ..._operations._operations import (
     build_batch_enable_pool_auto_scale_request,
     build_batch_evaluate_pool_auto_scale_request,
     build_batch_get_application_request,
-    build_batch_get_certificate_request,
     build_batch_get_job_request,
     build_batch_get_job_schedule_request,
     build_batch_get_job_task_counts_request,
@@ -75,7 +71,6 @@ from ..._operations._operations import (
     build_batch_get_task_request,
     build_batch_job_schedule_exists_request,
     build_batch_list_applications_request,
-    build_batch_list_certificates_request,
     build_batch_list_job_preparation_and_release_task_status_request,
     build_batch_list_job_schedules_request,
     build_batch_list_jobs_from_schedule_request,
@@ -226,7 +221,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -304,7 +302,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -449,7 +450,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -526,7 +530,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -551,9 +558,9 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         expand: Optional[list[str]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.BatchPool"]:
-        """Lists all of the Pools which be mounted.
+        """Lists all of the Pools in the specified Account.
 
-        Lists all of the Pools which be mounted.
+        Lists all of the Pools in the specified Account.
 
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
@@ -653,7 +660,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -762,7 +772,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -861,7 +874,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -977,7 +993,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1099,7 +1118,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1169,7 +1191,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1288,7 +1313,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1382,7 +1410,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1509,7 +1540,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1619,7 +1653,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1706,7 +1743,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1822,7 +1862,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1941,7 +1984,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -2054,7 +2100,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -2164,7 +2213,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2278,7 +2330,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2400,7 +2455,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2516,7 +2574,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2637,7 +2698,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2746,7 +2810,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2874,7 +2941,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2963,7 +3033,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3090,7 +3163,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3216,7 +3292,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3346,7 +3425,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3418,7 +3500,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3431,470 +3516,6 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(_models.BatchTaskCountsResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def create_certificate(
-        self,
-        certificate: _models.BatchCertificate,
-        *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
-        **kwargs: Any
-    ) -> None:
-        """Creates a Certificate to the specified Account.
-
-        Creates a Certificate to the specified Account.
-
-        :param certificate: The Certificate to be created. Required.
-        :type certificate: ~azure.batch.models.BatchCertificate
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: str = kwargs.pop(
-            "content_type", _headers.pop("content-type", "application/json; odata=minimalmetadata")
-        )
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _content = json.dumps(certificate, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_batch_create_certificate_request(
-            timeout=timeout,
-            ocpdate=ocpdate,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace
-    def list_certificates(
-        self,
-        *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
-        max_results: Optional[int] = None,
-        filter: Optional[str] = None,
-        select: Optional[list[str]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged["_models.BatchCertificate"]:
-        """Lists all of the Certificates that have been added to the specified Account.
-
-        Lists all of the Certificates that have been added to the specified Account.
-
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
-        :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype max_results: int
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-         `https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-certificates
-         <https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-certificates>`_.
-         Default value is None.
-        :paramtype filter: str
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: list[str]
-        :return: An iterator like instance of BatchCertificate
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchCertificate]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[list[_models.BatchCertificate]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_batch_list_certificates_request(
-                    timeout=timeout,
-                    ocpdate=ocpdate,
-                    max_results=max_results,
-                    filter=filter,
-                    select=select,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.BatchCertificate], deserialized.get("value", []))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace_async
-    async def cancel_certificate_deletion(
-        self,
-        thumbprint_algorithm: str,
-        thumbprint: str,
-        *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
-        **kwargs: Any
-    ) -> None:
-        """Cancels a failed deletion of a Certificate from the specified Account.
-
-        If you try to delete a Certificate that is being used by a Pool or Compute
-        Node, the status of the Certificate changes to deleteFailed. If you decide that
-        you want to continue using the Certificate, you can use this operation to set
-        the status of the Certificate back to active. If you intend to delete the
-        Certificate, you do not need to run this operation after the deletion failed.
-        You must make sure that the Certificate is not being used by any resources, and
-        then you can try again to delete the Certificate.
-
-        :param thumbprint_algorithm: The algorithm used to derive the thumbprint parameter. This must
-         be sha1. Required.
-        :type thumbprint_algorithm: str
-        :param thumbprint: The thumbprint of the Certificate being deleted. Required.
-        :type thumbprint: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_batch_cancel_certificate_deletion_request(
-            thumbprint_algorithm=thumbprint_algorithm,
-            thumbprint=thumbprint,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def _delete_certificate_internal(
-        self,
-        thumbprint_algorithm: str,
-        thumbprint: str,
-        *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
-        **kwargs: Any
-    ) -> None:
-        """Deletes a Certificate from the specified Account.
-
-        You cannot delete a Certificate if a resource (Pool or Compute Node) is using
-        it. Before you can delete a Certificate, you must therefore make sure that the
-        Certificate is not associated with any existing Pools, the Certificate is not
-        installed on any Nodes (even if you remove a Certificate from a Pool, it is not
-        removed from existing Compute Nodes in that Pool until they restart), and no
-        running Tasks depend on the Certificate. If you try to delete a Certificate
-        that is in use, the deletion fails. The Certificate status changes to
-        deleteFailed. You can use Cancel Delete Certificate to set the status back to
-        active if you decide that you want to continue using the Certificate.
-
-        :param thumbprint_algorithm: The algorithm used to derive the thumbprint parameter. This must
-         be sha1. Required.
-        :type thumbprint_algorithm: str
-        :param thumbprint: The thumbprint of the Certificate to be deleted. Required.
-        :type thumbprint: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_batch_delete_certificate_internal_request(
-            thumbprint_algorithm=thumbprint_algorithm,
-            thumbprint=thumbprint,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def get_certificate(
-        self,
-        thumbprint_algorithm: str,
-        thumbprint: str,
-        *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
-        select: Optional[list[str]] = None,
-        **kwargs: Any
-    ) -> _models.BatchCertificate:
-        """Gets information about the specified Certificate.
-
-        :param thumbprint_algorithm: The algorithm used to derive the thumbprint parameter. This must
-         be sha1. Required.
-        :type thumbprint_algorithm: str
-        :param thumbprint: The thumbprint of the Certificate to get. Required.
-        :type thumbprint: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: list[str]
-        :return: BatchCertificate. The BatchCertificate is compatible with MutableMapping
-        :rtype: ~azure.batch.models.BatchCertificate
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.BatchCertificate] = kwargs.pop("cls", None)
-
-        _request = build_batch_get_certificate_request(
-            thumbprint_algorithm=thumbprint_algorithm,
-            thumbprint=thumbprint,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            select=select,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.BatchCertificate, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3992,7 +3613,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4106,7 +3730,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4218,7 +3845,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4342,7 +3972,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4460,7 +4093,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4564,7 +4200,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4668,7 +4307,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4778,7 +4420,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4859,7 +4504,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4986,7 +4634,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -5067,7 +4718,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5200,7 +4854,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -5298,7 +4955,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5416,7 +5076,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5536,7 +5199,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5659,7 +5325,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5779,7 +5448,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -5883,7 +5555,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5998,7 +5673,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6089,7 +5767,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6192,7 +5873,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6298,7 +5982,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6438,7 +6125,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -6522,7 +6212,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6606,7 +6299,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6699,7 +6395,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6787,7 +6486,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6886,7 +6588,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6965,7 +6670,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7060,7 +6768,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7153,7 +6864,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7249,7 +6963,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7330,7 +7047,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7417,7 +7137,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7523,7 +7246,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7656,7 +7382,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -7743,7 +7472,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7873,7 +7605,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -7958,7 +7693,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -8061,7 +7799,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -8167,7 +7908,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response)
+            error = _failsafe_deserialize(
+                _models.BatchError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -8305,7 +8049,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response)
+                error = _failsafe_deserialize(
+                    _models.BatchError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response

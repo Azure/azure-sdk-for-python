@@ -6,6 +6,7 @@
 
 import pytest
 import sys
+from typing import NamedTuple
 
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
@@ -40,7 +41,7 @@ TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
     def _setup(self, account_name, account_key):
         url = self.account_url(account_name, 'dfs')
-        self.dsc = DataLakeServiceClient(url, credential=account_key, logging_enable=True)
+        self.dsc = DataLakeServiceClient(url, credential=account_key.secret, logging_enable=True)
         self.config = self.dsc._config
 
     # --Helpers-----------------------------------------------------------------
@@ -432,7 +433,7 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
-        named_key = AzureNamedKeyCredential(datalake_storage_account_name, datalake_storage_account_key)
+        named_key = AzureNamedKeyCredential(datalake_storage_account_name, datalake_storage_account_key.secret)
         dsc = DataLakeServiceClient(self.account_url(datalake_storage_account_name, "blob"), named_key)
 
         # Act
@@ -445,7 +446,8 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
     @DataLakePreparer()
     async def test_datalake_clients_properly_close(self, **kwargs):
         account_name = "adlsstorage"
-        account_key = "adlskey"
+        # secret attribute necessary for credential parameter because of hidden environment variables from loader
+        account_key = NamedTuple("StorageAccountKey", [("secret", str)])("adlskey")
 
         self._setup(account_name, account_key)
         file_system_client = self.dsc.get_file_system_client(file_system='testfs')

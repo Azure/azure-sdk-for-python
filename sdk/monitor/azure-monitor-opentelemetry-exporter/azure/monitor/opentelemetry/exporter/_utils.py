@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import datetime
+from importlib.metadata import version
 import locale
 from os import environ
 from os.path import isdir
@@ -14,12 +15,12 @@ from typing import Callable, Dict, Any, Optional
 
 from opentelemetry.semconv.resource import ResourceAttributes
 from opentelemetry.sdk.resources import Resource
-from opentelemetry.sdk.util import ns_to_iso_str
 from opentelemetry.util.types import Attributes
 
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
-from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys, TelemetryItem
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import ContextTagKeys, TelemetryItem
 from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
+from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._constants import (
     _AKS_ARM_NAMESPACE_ID,
     _DEFAULT_AAD_SCOPE,
@@ -28,6 +29,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _KUBERNETES_SERVICE_HOST,
     _PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY,
     _WEBSITE_SITE_NAME,
+    _GEN_AI_ATTRIBUTES,
 )
 from azure.monitor.opentelemetry.exporter._constants import (
     _TYPE_MAP,
@@ -35,19 +37,8 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _RP_Names,
 )
 
-opentelemetry_version = ""
-
 # Workaround for missing version file
-try:
-    from importlib.metadata import version
-
-    opentelemetry_version = version("opentelemetry-sdk")
-except ImportError:
-    # Temporary workaround for <Py3.8
-    # importlib-metadata causing issues in CI
-    import pkg_resources  # type: ignore
-
-    opentelemetry_version = pkg_resources.get_distribution("opentelemetry-sdk").version
+opentelemetry_version = version("opentelemetry-sdk")
 
 
 # Azure App Service
@@ -107,11 +98,13 @@ def _get_os():
         os = "w"
     return os
 
+
 def _get_attach_type():
     attach_type = "m"
     if _is_attach_enabled():
         attach_type = "i"
     return attach_type
+
 
 def _get_sdk_version_prefix():
     sdk_version_prefix = ""
@@ -125,7 +118,10 @@ def _get_sdk_version_prefix():
 
 def _get_sdk_version():
     return "{}py{}:otel{}:ext{}".format(
-        _get_sdk_version_prefix(), platform.python_version(), opentelemetry_version, ext_version
+        _get_sdk_version_prefix(),
+        platform.python_version(),
+        opentelemetry_version,
+        ext_version,
     )
 
 
@@ -234,11 +230,12 @@ class PeriodicTask(threading.Thread):
 
 
 def _create_telemetry_item(timestamp: int) -> TelemetryItem:
+    ts = datetime.datetime.fromtimestamp(timestamp / 1e9, tz=datetime.timezone.utc)
     return TelemetryItem(
         name="",
         instrumentation_key="",
         tags=dict(azure_monitor_context),  # type: ignore
-        time=ns_to_iso_str(timestamp),  # type: ignore
+        time=ts,
     )
 
 
@@ -300,12 +297,12 @@ def _get_cloud_role(resource: Resource) -> str:
 
 
 def _get_cloud_role_instance(resource: Resource) -> str:
-    service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
-    if service_instance_id:
-        return service_instance_id  # type: ignore
     k8s_pod_name = resource.attributes.get(ResourceAttributes.K8S_POD_NAME)
     if k8s_pod_name:
         return k8s_pod_name  # type: ignore
+    service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
+    if service_instance_id:
+        return service_instance_id  # type: ignore
     return platform.node()  # hostname default
 
 
@@ -330,10 +327,9 @@ def _is_synthetic_load(properties: Optional[Any]) -> bool:
         return False
 
     # Check both old and new semantic convention attributes for HTTP user agent
-    user_agent = (
-        properties.get("user_agent.original") or  # type: ignore  # New semantic convention
-        properties.get("http.user_agent")  # type: ignore  # Legacy semantic convention
-    )
+    user_agent = properties.get("user_agent.original") or properties.get(  # type: ignore  # New semantic convention
+        "http.user_agent"
+    )  # type: ignore  # Legacy semantic convention
 
     if user_agent and isinstance(user_agent, str):
         return "AlwaysOn" in user_agent
@@ -355,20 +351,25 @@ def _is_any_synthetic_source(properties: Optional[Any]) -> bool:
 
 # pylint: disable=W0622
 def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, str]:
-    truncated_properties: Dict[str, str] = {}
+    max_length = 64 * 1024
+    max_length_for_gen_ai_attributes = 256 * 1024
+    processed_properties: Dict[str, str] = {}
     if not properties:
-        return truncated_properties
+        return processed_properties
     for key, val in properties.items():
         # Apply filter function
         if filter is not None:
             if not filter(key, val):
                 continue
         # Apply truncation rules
-        # Max key length is 150, value is 8192
+        # Max key length is 150, value is 64 * 1024
         if not key or len(key) > 150 or val is None:
             continue
-        truncated_properties[key] = str(val)[:8192]
-    return truncated_properties
+        if key in _GEN_AI_ATTRIBUTES:
+            processed_properties[key] = str(val)[:max_length_for_gen_ai_attributes]
+        else:
+            processed_properties[key] = str(val)[:max_length]
+    return processed_properties
 
 
 def _get_auth_policy(credential, default_auth_policy, aad_audience=None):
@@ -392,10 +393,11 @@ def _get_scope(aad_audience=None):
 
 class Singleton(type):
     """Metaclass for creating thread-safe singleton instances.
-    
+
     Supports multiple singleton classes by maintaining a separate instance
     for each class that uses this metaclass.
     """
+
     _instances = {}  # type: ignore
     _lock = threading.Lock()
 
@@ -408,12 +410,14 @@ class Singleton(type):
                     cls._instances[cls] = instance  # type: ignore
         return cls._instances[cls]
 
+
 def _get_telemetry_type(item: TelemetryItem):
     if hasattr(item, "data") and item.data is not None:
         base_type = getattr(item.data, "base_type", None)
         if base_type:
             return _TYPE_MAP.get(base_type, _UNKNOWN)
     return _UNKNOWN
+
 
 def get_compute_type():
     if _is_on_functions():
@@ -424,5 +428,11 @@ def get_compute_type():
         return _RP_Names.AKS.value
     return _RP_Names.UNKNOWN.value
 
+
 def _get_sha256_hash(input_str: str) -> str:
     return hashlib.sha256(input_str.encode("utf-8")).hexdigest()
+
+
+def _get_application_id(connection_string: Optional[str]) -> Optional[str]:
+    parsed_connection_string = ConnectionStringParser(connection_string)
+    return parsed_connection_string.application_id

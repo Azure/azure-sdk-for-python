@@ -7,7 +7,7 @@ import os
 import platform
 
 import pytest
-from azure.storage.fileshare import VERSION
+from azure.storage.fileshare import LocationMode, VERSION
 from azure.storage.fileshare.aio import ShareClient, ShareDirectoryClient, ShareFileClient, ShareServiceClient
 
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -47,9 +47,18 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
         assert service is not None
         assert service.account_name == self.account_name
         assert service.credential.account_name == self.account_name
-        assert service.credential.account_key == self.account_key
+        assert service.credential.account_key == self.account_key.secret
         assert service.primary_endpoint.startswith('{}://{}.{}.core.windows.net/'.format(protocol, self.account_name, service_type)) is True
         assert service.secondary_endpoint.startswith('{}://{}-secondary.{}.core.windows.net/'.format(protocol, self.account_name, service_type)) is True
+
+    def validate_ipv6_account_endpoints(self, service, account_name, account_key, primary_endpoint, secondary_endpoint):
+        assert service is not None
+        assert service.scheme == "https"
+        assert service.account_name == account_name
+        assert service.credential.account_name == account_name
+        assert service.credential.account_key == account_key
+        assert service._hosts[LocationMode.PRIMARY] == primary_endpoint
+        assert service._hosts[LocationMode.SECONDARY] == secondary_endpoint
 
     # --Direct Parameters Test Cases --------------------------------------------
     @FileSharePreparer()
@@ -62,7 +71,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.account_url(storage_account_name, "file"), credential=self.account_key,
+                self.account_url(storage_account_name, "file"), credential=self.account_key.secret,
                 share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
@@ -113,14 +122,14 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
         for service_type in SERVICES.items():
             # Act
             service = service_type[0](
-                url, credential=self.account_key,
+                url, credential=self.account_key.secret,
                 share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
             assert service is not None
             assert service.account_name == self.account_name
             assert service.credential.account_name == self.account_name
-            assert service.credential.account_key == self.account_key
+            assert service.credential.account_key == self.account_key.secret
             assert service.primary_hostname == '{}.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])
             assert service.secondary_hostname == '{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])
 
@@ -134,7 +143,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
         for service_type in SERVICES.items():
             # Act
             service = service_type[0](
-                url, credential=self.account_key, share_name='foo', directory_path='bar', file_path='baz')
+                url, credential=self.account_key.secret, share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
             self.validate_standard_account_endpoints(service, service_type[1], protocol='http')
@@ -165,16 +174,116 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
         for service_type in SERVICES.items():
             # Act
             default_service = service_type[0](
-                self.account_url(storage_account_name, "file"), credential=self.account_key,
+                self.account_url(storage_account_name, "file"), credential=self.account_key.secret,
                 share_name='foo', directory_path='bar', file_path='baz')
             service = service_type[0](
-                self.account_url(storage_account_name, "file"), credential=self.account_key, connection_timeout=22,
+                self.account_url(storage_account_name, "file"), credential=self.account_key.secret, connection_timeout=22,
                 share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
             self.validate_standard_account_endpoints(service, service_type[1])
             assert service._client._client._pipeline._transport.connection_config.timeout == 22
             assert default_service._client._client._pipeline._transport.connection_config.timeout in [20, (20, 2000)]
+
+    @pytest.mark.parametrize(
+        "account_url, expected_primary, expected_secondary", [
+            (
+                "https://myaccount.file.core.windows.net/",
+                "myaccount.file.core.windows.net",
+                "myaccount-secondary.file.core.windows.net",
+            ),
+            (
+                "https://myaccount-secondary.file.core.windows.net/",
+                "myaccount-secondary.file.core.windows.net",
+                "myaccount-secondary.file.core.windows.net",
+            ),
+            (
+                "https://myaccount-dualstack.file.core.windows.net/",
+                "myaccount-dualstack.file.core.windows.net",
+                "myaccount-secondary-dualstack.file.core.windows.net",
+            ),
+            (
+                "https://myaccount-ipv6.file.core.windows.net/",
+                "myaccount-ipv6.file.core.windows.net",
+                "myaccount-secondary-ipv6.file.core.windows.net",
+            ),
+            (
+                "https://myaccount-secondary-dualstack.file.core.windows.net/",
+                "myaccount-secondary-dualstack.file.core.windows.net",
+                "myaccount-secondary-dualstack.file.core.windows.net",
+            ),
+            (
+                "https://myaccount-secondary-ipv6.file.core.windows.net/",
+                "myaccount-secondary-ipv6.file.core.windows.net",
+                "myaccount-secondary-ipv6.file.core.windows.net",
+            ),
+        ]
+    )
+    @FileSharePreparer()
+    def test_create_service_ipv6(self, account_url, expected_primary, expected_secondary, **kwargs):
+        storage_account_name = "myaccount"
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        share_name, directory_path, file_path = "foo", "bar", "baz"
+
+        for service_type in SERVICES.keys():
+            service = service_type(
+                account_url,
+                credential=storage_account_key.secret,
+                share_name=share_name,
+                directory_path=directory_path,
+                file_path=file_path
+            )
+            self.validate_ipv6_account_endpoints(
+                service, storage_account_name, storage_account_key.secret, expected_primary, expected_secondary
+            )
+
+            conn_str = (
+                "DefaultEndpointsProtocol=https;"
+                f"AccountName={storage_account_name};"
+                f"AccountKey={storage_account_key.secret};"
+                f"FileEndpoint={account_url};"
+            )
+            service = service_type.from_connection_string(
+                conn_str,
+                credential=storage_account_key.secret,
+                share_name=share_name,
+                directory_path=directory_path,
+                file_path=file_path
+            )
+            self.validate_ipv6_account_endpoints(
+                service, storage_account_name, storage_account_key.secret, expected_primary, expected_secondary
+            )
+
+        service = ShareFileClient.from_file_url(
+            file_url=f"{account_url}/{share_name}/{directory_path}/{file_path}-secondary",
+            credential=storage_account_key.secret
+        )
+        self.validate_ipv6_account_endpoints(
+            service, storage_account_name, storage_account_key.secret, expected_primary, expected_secondary
+        )
+
+    @FileSharePreparer()
+    def test_create_service_ipv6_custom_domain(self):
+        token_credential = self.get_credential(ShareServiceClient, is_async=True)
+
+        hostname = "github.com"
+        account_url = f"https://{hostname}"
+        for service_type in SERVICES.keys():
+            service = service_type(
+                account_url,
+                credential=token_credential,
+                share_name="foo",
+                directory_path="bar",
+                file_path="baz",
+                token_intent="backup"
+            )
+            assert service is not None
+            assert service.scheme == "https"
+            assert service.account_name is None
+            assert service.credential is not None
+            assert service._hosts[LocationMode.PRIMARY] == hostname
+            assert service._hosts[LocationMode.SECONDARY] == ""
 
     # --Connection String Test Cases --------------------------------------------
 
@@ -184,7 +293,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        conn_string = 'AccountName={};AccountKey={};'.format(self.account_name, self.account_key)
+        conn_string = 'AccountName={};AccountKey={};'.format(self.account_name, self.account_key.secret)
 
         for service_type in SERVICES.items():
             # Act
@@ -221,7 +330,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         conn_string = 'AccountName={};AccountKey={};DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;'.format(
-            self.account_name, self.account_key)
+            self.account_name, self.account_key.secret)
 
         for service_type in SERVICES.items():
             # Act
@@ -231,7 +340,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
             assert service is not None
             assert service.account_name == self.account_name
             assert service.credential.account_name == self.account_name
-            assert service.credential.account_key == self.account_key
+            assert service.credential.account_key == self.account_key.secret
             assert service.primary_hostname == '{}.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])
             assert service.secondary_hostname == '{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])
             assert service.scheme == 'http'
@@ -257,7 +366,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
         for service_type in SERVICES.items():
             self._setup(storage_account_name, storage_account_key)
             conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;'.format(
-                self.account_name, self.account_key, _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
+                self.account_name, self.account_key.secret, _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
 
             # Act
 
@@ -274,7 +383,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
         for service_type in SERVICES.items():
             self._setup(storage_account_name, storage_account_key)
             conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;{}=www-sec.mydomain.com;'.format(
-                self.account_name, self.account_key,
+                self.account_name, self.account_key.secret,
                 _CONNECTION_ENDPOINTS.get(service_type[1]),
                 _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
 
@@ -286,7 +395,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
             assert service is not None
             assert service.account_name == self.account_name
             assert service.credential.account_name == self.account_name
-            assert service.credential.account_key == self.account_key
+            assert service.credential.account_key == self.account_key.secret
             assert service.primary_hostname == 'www.mydomain.com'
             assert service.secondary_hostname == 'www-sec.mydomain.com'
 
@@ -299,7 +408,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
         custom_account_url = "http://local-machine:11002/custom/account/path/" + self.sas_token
         for service_type in SERVICES.items():
             conn_string = 'DefaultEndpointsProtocol=http;AccountName={};AccountKey={};FileEndpoint={};'.format(
-                self.account_name, self.account_key, custom_account_url)
+                self.account_name, self.account_key.secret, custom_account_url)
 
             # Act
             service = service_type[0].from_connection_string(
@@ -308,7 +417,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
             # Assert
             assert service.account_name == self.account_name
             assert service.credential.account_name == self.account_name
-            assert service.credential.account_key == self.account_key
+            assert service.credential.account_key == self.account_key.secret
             assert service.primary_hostname == 'local-machine:11002/custom/account/path'
         
         service = ShareServiceClient(account_url=custom_account_url)
@@ -372,7 +481,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        service = ShareServiceClient(self.account_url(storage_account_name, "file"), credential=self.account_key)
+        service = ShareServiceClient(self.account_url(storage_account_name, "file"), credential=self.account_key.secret)
 
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
@@ -389,7 +498,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         custom_app = "TestApp/v1.0"
         service = ShareServiceClient(
-            self.account_url(storage_account_name, "file"), credential=self.account_key, user_agent=custom_app)
+            self.account_url(storage_account_name, "file"), credential=self.account_key.secret, user_agent=custom_app)
 
         def callback1(response):
             assert 'User-Agent' in response.http_request.headers
@@ -416,7 +525,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        service = ShareServiceClient(self.account_url(storage_account_name, "file"), credential=self.account_key)
+        service = ShareServiceClient(self.account_url(storage_account_name, "file"), credential=self.account_key.secret)
 
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
@@ -437,7 +546,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.account_url(storage_account_name, "file"), credential=self.account_key, share_name='foo', directory_path='bar', file_path='baz')
+                self.account_url(storage_account_name, "file"), credential=self.account_key.secret, share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
             async with service:
@@ -454,7 +563,5 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.account_url(storage_account_name, "file"), credential=self.account_key, share_name='foo', directory_path='bar', file_path='baz')
+                self.account_url(storage_account_name, "file"), credential=self.account_key.secret, share_name='foo', directory_path='bar', file_path='baz')
             await service.close()
-
-

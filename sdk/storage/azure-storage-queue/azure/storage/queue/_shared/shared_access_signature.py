@@ -42,6 +42,8 @@ class QueryStringConstants(object):
     SIGNED_KEY_SERVICE = "sks"
     SIGNED_KEY_VERSION = "skv"
     SIGNED_ENCRYPTION_SCOPE = "ses"
+    SIGNED_REQUEST_HEADERS = "srh"
+    SIGNED_REQUEST_QUERY_PARAMS = "srq"
     SIGNED_KEY_DELEGATED_USER_TID = "skdutid"
     SIGNED_DELEGATED_USER_OID = "sduoid"
 
@@ -81,6 +83,8 @@ class QueryStringConstants(object):
             QueryStringConstants.SIGNED_KEY_SERVICE,
             QueryStringConstants.SIGNED_KEY_VERSION,
             QueryStringConstants.SIGNED_ENCRYPTION_SCOPE,
+            QueryStringConstants.SIGNED_REQUEST_HEADERS,
+            QueryStringConstants.SIGNED_REQUEST_QUERY_PARAMS,
             QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID,
             QueryStringConstants.SIGNED_DELEGATED_USER_OID,
             # for ADLS
@@ -186,6 +190,10 @@ class _SharedAccessHelper(object):
         self.query_dict = {}
         self.string_to_sign = ""
 
+        # STS-only values for dynamic user delegation SAS
+        self._sts_srh = ""  # newline-delimited "k:v" + trailing newline (or empty)
+        self._sts_srq = ""  # newline-delimited "k:v" + leading newline (or empty)
+
     def _add_query(self, name, val):
         if val:
             self.query_dict[name] = str(val) if val is not None else None
@@ -218,13 +226,40 @@ class _SharedAccessHelper(object):
         self._add_query(QueryStringConstants.SIGNED_RESOURCE_TYPES, resource_types)
 
     def add_override_response_headers(
-        self, cache_control, content_disposition, content_encoding, content_language, content_type
+        self,
+        cache_control,
+        content_disposition,
+        content_encoding,
+        content_language,
+        content_type,
     ):
         self._add_query(QueryStringConstants.SIGNED_CACHE_CONTROL, cache_control)
         self._add_query(QueryStringConstants.SIGNED_CONTENT_DISPOSITION, content_disposition)
         self._add_query(QueryStringConstants.SIGNED_CONTENT_ENCODING, content_encoding)
         self._add_query(QueryStringConstants.SIGNED_CONTENT_LANGUAGE, content_language)
         self._add_query(QueryStringConstants.SIGNED_CONTENT_TYPE, content_type)
+
+    def add_request_headers(self, request_headers):
+        if not request_headers:
+            return
+
+        # String-to-Sign (not encoded): "k1:v1\nk2:v2\n...kn:vn\n"
+        self._sts_srh = "\n".join([f"{k}:{v}" for k, v in request_headers.items()]) + "\n"
+
+        # SAS query param: comma-separated list of encoded header keys only
+        srh_keys = ",".join([url_quote(k) for k in request_headers.keys()])
+        self._add_query(QueryStringConstants.SIGNED_REQUEST_HEADERS, srh_keys)
+
+    def add_request_query_params(self, request_query_params):
+        if not request_query_params:
+            return
+
+        # String-to-Sign (not encoded): "k1:v1\nk2:v2\n...kn:vn\n"
+        self._sts_srq = "\n" + "\n".join([f"{k}:{v}" for k, v in request_query_params.items()])
+
+        # SAS query param: comma-separated list of encoded query-param keys only
+        srq_keys = ",".join([url_quote(k) for k in request_query_params.keys()])
+        self._add_query(QueryStringConstants.SIGNED_REQUEST_QUERY_PARAMS, srq_keys)
 
     def add_account_signature(self, account_name, account_key):
         def get_value_to_append(query):
@@ -245,7 +280,10 @@ class _SharedAccessHelper(object):
             + "\n"  # Signed Encryption Scope - always empty for queue
         )
 
-        self._add_query(QueryStringConstants.SIGNED_SIGNATURE, sign_string(account_key, string_to_sign))
+        self._add_query(
+            QueryStringConstants.SIGNED_SIGNATURE,
+            sign_string(account_key, string_to_sign),
+        )
         self.string_to_sign = string_to_sign
 
     def get_token(self) -> str:

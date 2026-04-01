@@ -1,6 +1,56 @@
 # Release History
 
-## 12.28.0b1 (Unreleased)
+## 12.30.0b1 (2026-04-01)
+
+### Features Added
+- Added support for service version 2026-06-06.
+- Added support for connection strings and `account_url`s to accept URLs with `-ipv6` and `-dualstack` suffixes 
+for `BlobServiceClient`, `ContainerClient`, and `BlobClient`.
+- Added support for `create` permission in `BlobSasPermissions` for `stage_block`, 
+`stage_block_from_url`, and `commit_block_list`.
+- Added support for a new `Smart` access tier to `StandardBlobTier` used in `BlobClient.set_standard_blob_tier`, 
+which is optimized to automatically determine the most cost-effective access with no performance impact. 
+When set, `BlobProperties.smart_access_tier` will reveal the service's current access
+tier choice between `Hot`, `Cool`, and `Archive`.
+- Added support for `is_directory` keyword in `generate_blob_sas` that generates directory-level SAS for blobs.
+
+### Other Changes
+- Consolidated the behavior of `max_concurrency=None` by defaulting to the shared `DEFAULT_MAX_CONCURRENCY` constant.
+
+## 12.29.0b1 (2026-01-27)
+
+### Features Added
+- Added support for service version 2026-04-06.
+- Added support for error code `INCREMENTAL_COPY_OF_EARLIER_SNAPSHOT_NOT_ALLOWED`. 
+This replaces `INCREMENTAL_COPY_OF_EARLIER_VERSION_SNAPSHOT_NOT_ALLOWED` which has been deprecated.
+- Added support for the keywords `access_tier_if_modified_since` and `access_tier_if_unmodified_since` to
+conditionally perform `BlobClient.delete_blob` operation.
+- Added support for the keyword `source_cpk` for `BlobClient`'s `upload_blob_from_url`, 
+`stage_block_from_url`, `upload_pages_from_url`, and `append_block_from_url` APIs
+to re-encrypt data automatically by the service through a `CustomerProvidedEncryptionKey`.
+- Added support for the keyword `user_delegation_tid` to `BlobServiceClient.get_user_delegation_key` API, which
+can be used in `generate_blob_sas` and `generate_container_sas` to specify the Tenant ID that is authorized
+to use the generated SAS URL. Note that `user_delegation_tid` must be used together with `user_delegation_oid`.
+- Added support for the keyword `request_headers` to `generate_blob_sas` and `generate_container_sas`, 
+which specifies a set of headers and their corresponding values that must be 
+present in the request header when using the generated SAS.
+- Added support for the keyword `request_query_params` to `generate_blob_sas` and `generate_container_sas`, 
+which specifies a set of query parameters and their corresponding values that must be 
+present in the request URL when using the generated SAS.
+
+### Other Changes
+- Bumped minimum `azure-core` dependency to 1.37.0.
+
+## 12.28.0 (2026-01-06)
+
+### Features Added
+- Stable release of features from 12.28.0b1
+
+### Other Changes
+- Changed the default `connection_data_block_size` for all clients from 4 KiB to 256 KiB. This should result in
+significantly better throughput on large file downloads for most environments.
+
+## 12.28.0b1 (2025-12-04)
 
 ### Features Added
 - Added support for service version 2026-02-06.

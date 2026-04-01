@@ -2,13 +2,15 @@
 # Licensed under the MIT License.
 
 import datetime
-import os
 import platform
 import time
 import unittest
+from unittest.mock import patch
 
+from opentelemetry.sdk.resources import Resource
 from azure.monitor.opentelemetry.exporter import _utils
-from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import TelemetryItem
+from azure.monitor.opentelemetry.exporter._constants import _GEN_AI_ATTRIBUTES
 from opentelemetry.sdk.resources import Resource
 from unittest.mock import patch
 
@@ -24,16 +26,91 @@ TEST_AZURE_MONITOR_CONTEXT = {
         TEST_SDK_VERSION_PREFIX,
     ),
 }
-TEST_TIMESTAMP = "TEST_TIMESTAMP"
-TEST_TIME = "TEST_TIME"
 TEST_WEBSITE_SITE_NAME = "TEST_WEBSITE_SITE_NAME"
 TEST_KUBERNETES_SERVICE_HOST = "TEST_KUBERNETES_SERVICE_HOST"
 TEST_AKS_ARM_NAMESPACE_ID = "TEST_AKS_ARM_NAMESPACE_ID"
 
 
+# pylint: disable=unused-argument, too-many-public-methods
 class TestUtils(unittest.TestCase):
     def setUp(self):
         self._valid_instrumentation_key = "1234abcd-5678-4efa-8abc-1234567890ab"
+
+    def test_filter_custom_properties_drops_invalid_entries(self):
+        oversized_value = "v" * 9000
+        properties = {
+            "valid_key": oversized_value,
+            "k" * 151: "should_be_dropped",
+            "": "missing_key",
+            "short": "ok",
+            "none_value": None,
+        }
+
+        filtered = _utils._filter_custom_properties(properties)
+
+        self.assertEqual(len(filtered), 2)
+        self.assertIn("valid_key", filtered)
+        self.assertEqual(len(filtered["valid_key"]), 9000)
+        self.assertEqual(filtered["short"], "ok")
+        self.assertNotIn("k" * 151, filtered)
+
+    def test_custom_properties_gen_ai_attributes_not_truncated_at_64kb(self):
+        # All values in _GEN_AI_ATTRIBUTES should not be truncated at > 64kb but at > 256kb
+        large_value = "x" * (64 * 1024 + 1000)
+        properties = {key: large_value for key in _GEN_AI_ATTRIBUTES}
+        filtered = _utils._filter_custom_properties(properties)
+        for key in _GEN_AI_ATTRIBUTES:
+            with self.subTest(key=key):
+                self.assertIn(key, filtered)
+                self.assertEqual(len(filtered[key]), 64 * 1024 + 1000)
+
+    def test_filter_custom_properties_non_gen_ai_truncated_at_64kb(self):
+        # Regular properties exceeding 64kb should be truncated
+        max_length = 64 * 1024
+        large_value = "y" * (max_length + 2000)
+        properties = {
+            "span_kind": large_value,
+            "gen_ai.agent.version": large_value,
+            "http.method": large_value,
+            "custom.attribute": large_value,
+        }
+        filtered = _utils._filter_custom_properties(properties)
+        for key in properties:
+            with self.subTest(key=key):
+                self.assertIn(key, filtered)
+                self.assertEqual(len(filtered[key]), max_length)
+
+    def test_filter_custom_properties_mixed_gen_ai_and_regular(self):
+        # Gen AI attributes truncated at 256kb, regular ones are truncated at 64kb
+        max_length = 64 * 1024
+        max_length_for_gen_ai_attributes = 256 * 1024
+        large_value = "z" * (1024 * 1024 + 3000)
+        properties = {
+            "gen_ai.input.messages": large_value,
+            "gen_ai.output.messages": large_value,
+            "gen_ai.agent.version": large_value,
+            "span_kind": large_value,
+            "db.statement": large_value,
+        }
+        filtered = _utils._filter_custom_properties(properties)
+
+        self.assertEqual(len(filtered["gen_ai.input.messages"]), max_length_for_gen_ai_attributes)
+        self.assertEqual(len(filtered["gen_ai.output.messages"]), max_length_for_gen_ai_attributes)
+
+        self.assertEqual(len(filtered["gen_ai.agent.version"]), max_length)
+        self.assertEqual(len(filtered["span_kind"]), max_length)
+        self.assertEqual(len(filtered["db.statement"]), max_length)
+
+    def test_custom_properties_gen_ai_attributes_truncated_at_256kb(self):
+        # All values in _GEN_AI_ATTRIBUTES should be truncated when > 256kb
+        max_length_for_gen_ai_attributes = 256 * 1024
+        large_value = "x" * (256 * 1024 + 1000)
+        properties = {key: large_value for key in _GEN_AI_ATTRIBUTES}
+        filtered = _utils._filter_custom_properties(properties)
+        for key in _GEN_AI_ATTRIBUTES:
+            with self.subTest(key=key):
+                self.assertIn(key, filtered)
+                self.assertEqual(len(filtered[key]), max_length_for_gen_ai_attributes)
 
     def test_nanoseconds_to_duration(self):
         ns_to_duration = _utils.ns_to_duration
@@ -222,7 +299,6 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
         self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
-
     def test_populate_part_a_fields_aks_with_service(self):
         resource = Resource(
             {
@@ -240,7 +316,47 @@ class TestUtils(unittest.TestCase):
         tags = _utils._populate_part_a_fields(resource)
         self.assertIsNotNone(tags)
         self.assertEqual(tags.get("ai.cloud.role"), "testServiceName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    def test_populate_part_a_fields_uses_service_instance_id_when_pod_name_empty(self):
+        resource = Resource(
+            {
+                "service.name": "testServiceName",
+                "service.instance.id": "testServiceInstanceId",
+                "k8s.deployment.name": "testDeploymentName",
+                "k8s.replicaset.name": "testReplicaSetName",
+                "k8s.statefulset.name": "testStatefulSetName",
+                "k8s.job.name": "testJobName",
+                "k8s.cronjob.name": "testCronJobName",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testServiceName")
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testServiceInstanceId")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    def test_populate_part_a_fields_falls_back_to_hostname_when_pod_and_instance_id_empty(self):
+        resource = Resource(
+            {
+                "service.name": "testServiceName",
+                "service.instance.id": "",
+                "k8s.deployment.name": "testDeploymentName",
+                "k8s.replicaset.name": "testReplicaSetName",
+                "k8s.statefulset.name": "testStatefulSetName",
+                "k8s.job.name": "testJobName",
+                "k8s.cronjob.name": "testCronJobName",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testServiceName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), platform.node())
         self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
     # Default service.name fields should be ignored when kubernetes values are present
@@ -263,53 +379,84 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
         self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
-    @patch("azure.monitor.opentelemetry.exporter._utils.ns_to_iso_str", return_value=TEST_TIME)
     @patch("azure.monitor.opentelemetry.exporter._utils.azure_monitor_context", TEST_AZURE_MONITOR_CONTEXT)
-    def test_create_telemetry_item(self, mock_ns_to_iso_str):
-        result = _utils._create_telemetry_item(TEST_TIMESTAMP)
+    def test_create_telemetry_item(self):
+        time_ns = time.time_ns()
+        expected_datetime = datetime.datetime.fromtimestamp(time_ns / 1e9, tz=datetime.timezone.utc)
+        result = _utils._create_telemetry_item(time_ns)
         expected_tags = dict(TEST_AZURE_MONITOR_CONTEXT)
         expected = TelemetryItem(
             name="",
             instrumentation_key="",
             tags=expected_tags,
-            time=TEST_TIME,
+            time=expected_datetime,
         )
         self.assertEqual(result, expected)
 
     # Unknown SDK Version Prefix
 
-    @patch("azure.monitor.opentelemetry.exporter._utils._is_attach_enabled", return_value=False)
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_attach_enabled",
+        return_value=False,
+    )
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
     def test_get_sdk_version_prefix(self, mock_system, mock_isdir):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "uum_")
 
-    @patch("azure.monitor.opentelemetry.exporter._utils._is_attach_enabled", return_value=False)
-    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_attach_enabled",
+        return_value=False,
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.system",
+        return_value="Linux",
+    )
     def test_get_sdk_version_prefix_linux(self, mock_system, mock_isdir):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "ulm_")
 
-    @patch("azure.monitor.opentelemetry.exporter._utils._is_attach_enabled", return_value=False)
-    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Windows")
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_attach_enabled",
+        return_value=False,
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.system",
+        return_value="Windows",
+    )
     def test_get_sdk_version_prefix_windows(self, mock_system, mock_isdir):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "uwm_")
 
-    @patch("azure.monitor.opentelemetry.exporter._utils._is_attach_enabled", return_value=True)
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_attach_enabled",
+        return_value=True,
+    )
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
     def test_get_sdk_version_prefix_attach(self, mock_system, mock_isdir):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "uui_")
 
-    @patch("azure.monitor.opentelemetry.exporter._utils._is_attach_enabled", return_value=True)
-    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_attach_enabled",
+        return_value=True,
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.system",
+        return_value="Linux",
+    )
     def test_get_sdk_version_prefix_attach_linux(self, mock_system, mock_isdir):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "uli_")
 
-    @patch("azure.monitor.opentelemetry.exporter._utils._is_attach_enabled", return_value=True)
-    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Windows")
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_attach_enabled",
+        return_value=True,
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.system",
+        return_value="Windows",
+    )
     def test_get_sdk_version_prefix_attach_windows(self, mock_system, mock_isdir):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "uwi_")
@@ -317,7 +464,9 @@ class TestUtils(unittest.TestCase):
     # App Service SDK Version Prefix
 
     @patch.dict(
-        "azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME}, clear=True
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME},
+        clear=True,
     )
     @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=False)
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
@@ -326,25 +475,37 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(result, "aum_")
 
     @patch.dict(
-        "azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME}, clear=True
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME},
+        clear=True,
     )
     @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=False)
-    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.system",
+        return_value="Linux",
+    )
     def test_get_sdk_version_prefix_app_service_linux(self, mock_system, mock_isdir):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "alm_")
 
     @patch.dict(
-        "azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME}, clear=True
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME},
+        clear=True,
     )
     @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=False)
-    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Windows")
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.system",
+        return_value="Windows",
+    )
     def test_get_sdk_version_prefix_app_service_windows(self, mock_system, mock_isdir):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "awm_")
 
     @patch.dict(
-        "azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME}, clear=True
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME},
+        clear=True,
     )
     @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=True)
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
@@ -353,19 +514,29 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(result, "aui_")
 
     @patch.dict(
-        "azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME}, clear=True
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME},
+        clear=True,
     )
     @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=True)
-    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.system",
+        return_value="Linux",
+    )
     def test_get_sdk_version_prefix_app_service_linux_attach(self, mock_system, mock_isdir):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "ali_")
 
     @patch.dict(
-        "azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME}, clear=True
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME},
+        clear=True,
     )
     @patch("azure.monitor.opentelemetry.exporter._utils.isdir", return_value=True)
-    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Windows")
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.system",
+        return_value="Windows",
+    )
     def test_get_sdk_version_prefix_app_service_windows_attach(self, mock_system, mock_isdir):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "awi_")
@@ -393,7 +564,10 @@ class TestUtils(unittest.TestCase):
         },
         clear=True,
     )
-    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.system",
+        return_value="Linux",
+    )
     def test_get_sdk_version_prefix_function_linux(self, mock_system):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "flm_")
@@ -406,7 +580,10 @@ class TestUtils(unittest.TestCase):
         },
         clear=True,
     )
-    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Windows")
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.system",
+        return_value="Windows",
+    )
     def test_get_sdk_version_prefix_function_windows(self, mock_system):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "fwm_")
@@ -434,7 +611,10 @@ class TestUtils(unittest.TestCase):
         },
         clear=True,
     )
-    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.system",
+        return_value="Linux",
+    )
     def test_get_sdk_version_prefix_function_linux_attach(self, mock_system):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "fli_")
@@ -448,7 +628,10 @@ class TestUtils(unittest.TestCase):
         },
         clear=True,
     )
-    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Windows")
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.system",
+        return_value="Windows",
+    )
     def test_get_sdk_version_prefix_function_windows_attach(self, mock_system):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "fwi_")
@@ -474,7 +657,10 @@ class TestUtils(unittest.TestCase):
         },
         clear=True,
     )
-    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.system",
+        return_value="Linux",
+    )
     def test_get_sdk_version_prefix_aks_linux(self, mock_system):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "klm_")
@@ -486,7 +672,10 @@ class TestUtils(unittest.TestCase):
         },
         clear=True,
     )
-    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Windows")
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.system",
+        return_value="Windows",
+    )
     def test_get_sdk_version_prefix_aks_windows(self, mock_system):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "kwm_")
@@ -510,7 +699,10 @@ class TestUtils(unittest.TestCase):
         },
         clear=True,
     )
-    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.system",
+        return_value="Linux",
+    )
     def test_get_sdk_version_prefix_aks_linux_attach(self, mock_system):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "kli_")
@@ -522,7 +714,10 @@ class TestUtils(unittest.TestCase):
         },
         clear=True,
     )
-    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Windows")
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.system",
+        return_value="Windows",
+    )
     def test_get_sdk_version_prefix_aks_windows_attach(self, mock_system):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "kwi_")
@@ -533,7 +728,10 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.isdir",
         return_value=True,
     )
-    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME})
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME},
+    )
     def test_attach_enabled(self, mock_isdir):
         self.assertEqual(_utils._is_attach_enabled(), True)
 
@@ -541,7 +739,10 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.isdir",
         return_value=False,
     )
-    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME})
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME},
+    )
     def test_attach_app_service_disabled(self, mock_isdir):
         self.assertEqual(_utils._is_attach_enabled(), False)
 
@@ -554,17 +755,25 @@ class TestUtils(unittest.TestCase):
         # This is not an expected scenario and just tests the default
         self.assertFalse(_utils._is_attach_enabled())
 
-    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {
-        "KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST,
-        "AKS_ARM_NAMESPACE_ID": TEST_AKS_ARM_NAMESPACE_ID,
-    }, clear=True)
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST,
+            "AKS_ARM_NAMESPACE_ID": TEST_AKS_ARM_NAMESPACE_ID,
+        },
+        clear=True,
+    )
     def test_attach_aks(self):
         # This is not an expected scenario and just tests the default
         self.assertTrue(_utils._is_attach_enabled())
 
-    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {
-        "KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST,
-    }, clear=True)
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST,
+        },
+        clear=True,
+    )
     def test_aks_no_attach(self):
         # This is not an expected scenario and just tests the default
         self.assertFalse(_utils._is_attach_enabled())
@@ -618,7 +827,7 @@ class TestUtils(unittest.TestCase):
     def test_is_any_synthetic_source_both(self):
         properties = {
             "user_agent.synthetic.type": "bot",
-            "http.user_agent": "Azure-Load-Testing/1.0 AlwaysOn"
+            "http.user_agent": "Azure-Load-Testing/1.0 AlwaysOn",
         }
         self.assertTrue(_utils._is_any_synthetic_source(properties))
 

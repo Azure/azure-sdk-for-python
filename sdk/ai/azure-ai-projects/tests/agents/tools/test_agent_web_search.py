@@ -7,17 +7,14 @@
 
 import pytest
 from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, WebSearchPreviewTool, ApproximateLocation
 
 
 class TestAgentWebSearch(TestBase):
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_web_search(self, **kwargs):
         """
         Test agent with Web Search tool for real-time information.
@@ -41,15 +38,17 @@ class TestAgentWebSearch(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
+            agent_name = "web-search-agent"
+
             # Create agent with web search tool
             agent = project_client.agents.create_version(
-                agent_name="web-search-agent",
+                agent_name=agent_name,
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful assistant that can search the web for current information.",
@@ -61,30 +60,24 @@ class TestAgentWebSearch(TestBase):
                 ),
                 description="Agent for testing web search capabilities.",
             )
-            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-            assert agent.id is not None
-            assert agent.name == "web-search-agent"
-            assert agent.version is not None
+            self._validate_agent_version(agent, expected_name=agent_name)
 
             # Ask a question that requires web search for current information
             print("\nAsking agent about current weather...")
 
             response = openai_client.responses.create(
                 input="What is the current weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
-            print(f"Response completed (id: {response.id})")
-            assert response.id is not None
-            assert response.output is not None
-            assert len(response.output) > 0
+            self.validate_response(response)
 
             # Get the response text
             response_text = response.output_text
             print(f"\nAgent's response: {response_text[:300]}...")
 
             # Verify we got a meaningful response
-            assert len(response_text) > 30, "Expected a substantial response from the agent"
+            assert len(response_text) > 30, f"Expected a substantial response from the agent. Got '{response_text}'"
 
             # The response should mention weather-related terms or Seattle
             response_lower = response_text.lower()

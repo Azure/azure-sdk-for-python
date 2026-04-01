@@ -12,6 +12,8 @@ from opentelemetry.semconv.metrics.http_metrics import (
 from azure.core import CaseInsensitiveEnumMeta
 
 
+_EXPORTER_DOMAIN_SCHEMA_VERSION = 2
+
 # Environment variables
 
 _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL = "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"
@@ -158,9 +160,10 @@ _UNKNOWN = "UNKNOWN"
 
 # Customer Facing SDKStats
 
-_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW = "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW"
+_APPLICATIONINSIGHTS_SDKSTATS_DISABLED = "APPLICATIONINSIGHTS_SDKSTATS_DISABLED"
 _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL = "APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL"
 _CUSTOMER_SDKSTATS_LANGUAGE = "python"
+
 
 class DropCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLIENT_READONLY = "CLIENT_READONLY"
@@ -169,19 +172,38 @@ class DropCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLIENT_STORAGE_DISABLED = "CLIENT_STORAGE_DISABLED"
     UNKNOWN = "UNKNOWN"
 
+
 DropCodeType = Union[DropCode, int]
+
 
 class RetryCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLIENT_EXCEPTION = "CLIENT_EXCEPTION"
     CLIENT_TIMEOUT = "CLIENT_TIMEOUT"
     UNKNOWN = "UNKNOWN"
 
+
 RetryCodeType = Union[RetryCode, int]
 
+
+# Customer SDK Stats metric names: (lowercase_otel_name, pascal_case_display_name)
+_ITEM_SUCCESS_COUNT_NAME = ("item_success_count", "Item_Success_Count")
+_ITEM_DROP_COUNT_NAME = ("item_dropped_count", "Item_Dropped_Count")
+_ITEM_RETRY_COUNT_NAME = ("item_retry_count", "Item_Retry_Count")
+
+_CUSTOMER_SDKSTATS_METRIC_NAME_MAPPINGS = dict(
+    [
+        _ITEM_SUCCESS_COUNT_NAME,
+        _ITEM_DROP_COUNT_NAME,
+        _ITEM_RETRY_COUNT_NAME,
+    ]
+)
+
+
 class CustomerSdkStatsMetricName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    ITEM_SUCCESS_COUNT = "preview.item.success.count"
-    ITEM_DROP_COUNT = "preview.item.dropped.count"
-    ITEM_RETRY_COUNT = "preview.item.retry.count"
+    ITEM_SUCCESS_COUNT = _ITEM_SUCCESS_COUNT_NAME[0]
+    ITEM_DROP_COUNT = _ITEM_DROP_COUNT_NAME[0]
+    ITEM_RETRY_COUNT = _ITEM_RETRY_COUNT_NAME[0]
+
 
 ## Map from Azure Monitor envelope base_types to TelemetryType
 _TYPE_MAP = {
@@ -196,12 +218,14 @@ _TYPE_MAP = {
     "AvailabilityData": _AVAILABILITY,
 }
 
+
 # Exception categories
 class _exception_categories(Enum):
     CLIENT_EXCEPTION = "Client exception"
     STORAGE_EXCEPTION = "Storage exception"
     NETWORK_EXCEPTION = "Network exception"
     TIMEOUT_EXCEPTION = "Timeout exception"
+
 
 # Map RP names
 class _RP_Names(Enum):
@@ -210,6 +234,7 @@ class _RP_Names(Enum):
     AKS = "aks"
     VM = "vm"
     UNKNOWN = "unknown"
+
 
 # Instrumentations
 
@@ -276,7 +301,7 @@ _INSTRUMENTATIONS_LIST = [
     "openai_v2",
     "vertexai",
     # Instrumentations below this line have not been added to statsbeat report yet
-    _AZURE_AI_SDK_NAME
+    _AZURE_AI_SDK_NAME,
 ]
 
 _INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(len(_INSTRUMENTATIONS_LIST))}
@@ -317,8 +342,8 @@ _INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
 
 _SAMPLE_RATE_KEY = "_MS.sampleRate"
 _SAMPLING_HASH = 5381
-_INT32_MAX: int = 2**31 - 1   # 2147483647
-_INT32_MIN: int = -2**31      # -2147483648
+_INT32_MAX: int = 2**31 - 1  # 2147483647
+_INT32_MIN: int = -(2**31)  # -2147483648
 
 # AAD Auth
 
@@ -326,5 +351,19 @@ _DEFAULT_AAD_SCOPE = "https://monitor.azure.com//.default"
 
 # Default message for messages(MessageData) with empty body
 _DEFAULT_LOG_MESSAGE = "n/a"
+
+# Resource attribute applicationId
+_APPLICATION_ID_RESOURCE_KEY = "microsoft.applicationId"
+
+# Gen AI attributes whose value should be exempt from truncation
+_GEN_AI_ATTRIBUTES = (
+    "gen_ai.input.messages",
+    "gen_ai.output.messages",
+    "gen_ai.system_instructions",
+    "gen_ai.tool.definitions",
+    "gen_ai.tool.call.arguments",
+    "gen_ai.tool.call.result",
+    "gen_ai.evaluation.explanation",
+)
 
 # cSpell:disable

@@ -24,7 +24,7 @@ TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(
 class TestDatalakeCpk(StorageRecordedTestCase):
     def _setup(self, account_name, account_key):
         url = self.account_url(account_name, 'dfs')
-        self.dsc = DataLakeServiceClient(url, credential=account_key)
+        self.dsc = DataLakeServiceClient(url, credential=account_key.secret)
         self.file_system_name = self.get_resource_name('utfilesystem')
 
         if self.is_live:

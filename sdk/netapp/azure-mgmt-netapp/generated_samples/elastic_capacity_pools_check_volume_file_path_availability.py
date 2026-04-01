@@ -34,11 +34,11 @@ def main():
         resource_group_name="myRG",
         account_name="account1",
         pool_name="pool1",
-        body={"filePath": "my-exact-filepth"},
+        body={"filePath": "my-exact-filepath"},
     )
     print(response)
 
 
-# x-ms-original-file: 2025-09-01-preview/ElasticCapacityPools_CheckVolumeFilePathAvailability.json
+# x-ms-original-file: 2025-12-15-preview/ElasticCapacityPools_CheckVolumeFilePathAvailability.json
 if __name__ == "__main__":
     main()

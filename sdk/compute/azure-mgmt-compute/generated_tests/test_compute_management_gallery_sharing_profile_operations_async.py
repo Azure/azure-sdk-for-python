@@ -27,7 +27,7 @@ class TestComputeManagementGallerySharingProfileOperationsAsync(AzureMgmtRecorde
                 resource_group_name=resource_group.name,
                 gallery_name="str",
                 sharing_update={"operationType": "str", "groups": [{"ids": ["str"], "type": "str"}]},
-                api_version="2024-03-03",
+                api_version="2025-03-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 

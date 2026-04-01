@@ -91,7 +91,13 @@ class BlobServiceClient(  # type: ignore [misc]
     ) -> Self: ...
     @distributed_trace_async
     async def get_user_delegation_key(
-        self, key_start_time: datetime, key_expiry_time: datetime, *, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        key_start_time: datetime,
+        key_expiry_time: datetime,
+        *,
+        delegated_user_tid: Optional[str] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
     ) -> UserDelegationKey: ...
     @distributed_trace_async
     async def get_account_information(self, **kwargs: Any) -> Dict[str, str]: ...

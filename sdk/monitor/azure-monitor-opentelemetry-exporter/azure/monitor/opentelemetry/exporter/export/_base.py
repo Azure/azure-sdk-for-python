@@ -20,16 +20,11 @@ from azure.core.pipeline.policies import (
     RequestIdPolicy,
 )
 from azure.identity import ManagedIdentityCredential
-from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
-from azure.monitor.opentelemetry.exporter._generated._configuration import AzureMonitorClientConfiguration
-from azure.monitor.opentelemetry.exporter._generated.models import (
-    MessageData,
-    MetricsData,
-    MonitorDomain,
-    RemoteDependencyData,
-    RequestData,
-    TelemetryEventData,
-    TelemetryExceptionData,
+from azure.monitor.opentelemetry.exporter._generated.exporter import AzureMonitorClient
+from azure.monitor.opentelemetry.exporter._generated.exporter._configuration import (
+    AzureMonitorClientConfiguration,
+)
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     TelemetryItem,
 )
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -165,8 +160,12 @@ class BaseExporter:
             config.logging_policy,
             # Explicitly disabling to avoid infinite loop of Span creation when data is exported
             # DistributedTracingPolicy(**kwargs),
-            config.http_logging_policy or HttpLoggingPolicy(**kwargs),
         ]
+
+        # Exclude HttpLoggingPolicy for the sdkstats exporter so its HTTP
+        # traffic does not appear in the user's logs.
+        if not self._is_stats_exporter():
+            policies.append(config.http_logging_policy or HttpLoggingPolicy(**kwargs))
 
         self.client: AzureMonitorClient = AzureMonitorClient(
             host=self._endpoint, connection_timeout=self._timeout, policies=policies, **kwargs
@@ -197,14 +196,17 @@ class BaseExporter:
             try:
                 # Import here to avoid circular dependencies
                 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import collect_statsbeat_metrics
+
                 collect_statsbeat_metrics(self)
             except Exception as e:  # pylint: disable=broad-except
-                logger.warning("Failed to initialize statsbeat metrics: %s", e)
+                logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                    "Failed to initialize statsbeat metrics: %s", e
+                )
 
         # customer sdkstats initialization
         if self._should_collect_customer_sdkstats():
-
             from azure.monitor.opentelemetry.exporter.statsbeat.customer import collect_customer_sdkstats
+
             # Collect customer sdkstats metrics
             collect_customer_sdkstats(self)
 
@@ -217,7 +219,7 @@ class BaseExporter:
             if blob.lease(self._timeout + 5):
                 blob_data = blob.get()
                 if blob_data is not None:
-                    envelopes = [_format_storage_telemetry_item(TelemetryItem.from_dict(x)) for x in blob_data]
+                    envelopes = [TelemetryItem(x) for x in blob_data]
                     result = self._transmit(envelopes)
                     if result == ExportResult.FAILED_RETRYABLE:
                         blob.lease(1)
@@ -226,7 +228,6 @@ class BaseExporter:
                 else:
                     # If blob.get() returns None, delete the corrupted blob
                     blob.delete()
-
 
     def _handle_transmit_from_storage(self, envelopes: List[TelemetryItem], result: ExportResult) -> None:
         if self.storage:
@@ -254,7 +255,7 @@ class BaseExporter:
         Returns an ExportResult, this function should never
         throw an exception.
         :param envelopes: The list of telemetry items to transmit.
-        :type envelopes: list of ~azure.monitor.opentelemetry.exporter._generated.models.TelemetryItem
+        :type envelopes: list of ~azure.monitor.opentelemetry.exporter._generated.exporter.models.TelemetryItem
         :return: The result of the export.
         :rtype: ~azure.monitor.opentelemetry.exporter.export._base._ExportResult
         """
@@ -287,7 +288,16 @@ class BaseExporter:
                     reach_ingestion = True
                     resend_envelopes = []
                     for error in track_response.errors:
-                        if _is_retryable_code(error.status_code):
+                        # Check for sampling rejection - these should not be retried
+                        # because the server will always reject them based on sampling rules
+                        if _is_sampling_rejection(error.message):
+                            if not self._is_stats_exporter():
+                                logger.info(
+                                    "Data dropped due to ingestion sampling: %s %s.",
+                                    error.message,
+                                    envelopes[error.index] if error.index is not None else "",
+                                )
+                        elif _is_retryable_code(error.status_code):
                             resend_envelopes.append(envelopes[error.index])  # type: ignore
                             # Track retried items in customer sdkstats
                             if self._should_collect_customer_sdkstats():
@@ -296,7 +306,12 @@ class BaseExporter:
                             if not self._is_stats_exporter():
                                 # Track dropped items in customer sdkstats, non-retryable scenario
                                 if self._should_collect_customer_sdkstats():
-                                    if error is not None and hasattr(error, "index") and error.index is not None and isinstance(error.status_code, int):
+                                    if (
+                                        error is not None
+                                        and hasattr(error, "index")
+                                        and error.index is not None
+                                        and isinstance(error.status_code, int)
+                                    ):
                                         track_dropped_items([envelopes[error.index]], error.status_code)
                                 logger.error(
                                     "Data drop %s: %s %s.",
@@ -330,17 +345,17 @@ class BaseExporter:
                             track_retry_items(envelopes, response_error)
                         if response_error.status_code == 401:
                             logger.error(
-                                "Retryable server side error: %s. " \
-                                "Your Application Insights resource may be configured to use entra ID authentication. " \
+                                "Retryable server side error: %s. "
+                                "Your Application Insights resource may be configured to use entra ID authentication. "
                                 "Please make sure your application is configured to use the correct token credential.",
                                 response_error.message,
                             )
                         elif response_error.status_code == 403:
                             logger.error(
-                                "Retryable server side error: %s. " \
-                                "Your application may be configured with a token credential " \
-                                "but your Application Insights resource may be configured incorrectly. Please make sure " \
-                                "your Application Insights resource has enabled entra Id authentication and " \
+                                "Retryable server side error: %s. "
+                                "Your application may be configured with a token credential "
+                                "but your Application Insights resource may be configured incorrectly. Please make sure "
+                                "your Application Insights resource has enabled entra Id authentication and "
                                 "has the correct `Monitoring Metrics Publisher` role assigned.",
                                 response_error.message,
                             )
@@ -370,7 +385,11 @@ class BaseExporter:
                         else:
                             if not self._is_stats_exporter():
                                 if self._should_collect_customer_sdkstats():
-                                    track_dropped_items(envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value)
+                                    track_dropped_items(
+                                        envelopes,
+                                        DropCode.CLIENT_EXCEPTION,
+                                        _exception_categories.CLIENT_EXCEPTION.value,
+                                    )
                                 logger.error(
                                     "Error parsing redirect information.",
                                 )
@@ -380,9 +399,7 @@ class BaseExporter:
                             # Track dropped items in customer sdkstats, non-retryable scenario
                             if self._should_collect_customer_sdkstats():
                                 track_dropped_items(
-                                    envelopes,
-                                    DropCode.CLIENT_EXCEPTION,
-                                    _exception_categories.CLIENT_EXCEPTION.value
+                                    envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value
                                 )
                             logger.error(
                                 "Error sending telemetry because of circular redirects. "
@@ -432,16 +449,20 @@ class BaseExporter:
 
                 if self._should_collect_stats():
                     exc_type = request_error.exc_type
-                    if exc_type is None or exc_type is type(None):
+                    if exc_type is None or exc_type is type(None):  # pylint: disable=unidiomatic-typecheck
                         exc_type = request_error.__class__.__name__  # type: ignore
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=exc_type)
                 result = ExportResult.FAILED_RETRYABLE
             except Exception as ex:
-                logger.exception("Envelopes could not be exported and are not retryable: %s.", ex)  # pylint: disable=C4769
+                logger.exception(  # pylint: disable=do-not-log-exceptions-if-not-debug, do-not-use-logging-exception
+                    "Envelopes could not be exported and are not retryable: %s.", ex
+                )
 
                 # Track dropped items in customer sdkstats for general exceptions
                 if self._should_collect_customer_sdkstats():
-                    track_dropped_items(envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value)
+                    track_dropped_items(
+                        envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value
+                    )
 
                 if self._should_collect_stats():
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=ex.__class__.__name__)
@@ -485,7 +506,6 @@ class BaseExporter:
             and not self._instrumentation_collection
         )
 
-
     # check to see whether its the case of customer sdkstats collection
     def _should_collect_customer_sdkstats(self):
         manager = get_customer_stats_manager()
@@ -505,7 +525,8 @@ class BaseExporter:
         return getattr(self, "_is_sdkstats", False)
 
     def _is_customer_sdkstats_exporter(self):
-        return getattr(self, '_is_customer_sdkstats', False)
+        return getattr(self, "_is_customer_sdkstats", False)
+
 
 def _is_invalid_code(response_code: Optional[int]) -> bool:
     """Determine if response is a invalid response.
@@ -557,31 +578,21 @@ def _reached_ingestion_code(response_code: Optional[int]) -> bool:
     return response_code in _REACHED_INGESTION_STATUS_CODES
 
 
-_MONITOR_DOMAIN_MAPPING = {
-    "EventData": TelemetryEventData,
-    "ExceptionData": TelemetryExceptionData,
-    "MessageData": MessageData,
-    "MetricData": MetricsData,
-    "RemoteDependencyData": RemoteDependencyData,
-    "RequestData": RequestData,
-}
+def _is_sampling_rejection(message: Optional[str]) -> bool:
+    """Determine if error message indicates ingestion-side sampling rejection.
 
+    When the server rejects telemetry due to ingestion sampling, the error message
+    will be "Telemetry sampled out." These items should not be retried or persisted
+    because the server will always reject them based on sampling rules.
 
-# from_dict() deserializes incorrectly, format TelemetryItem correctly after it
-# is called
-def _format_storage_telemetry_item(item: TelemetryItem) -> TelemetryItem:
-    # After TelemetryItem.from_dict, all base_data fields are stored in
-    # additional_properties as a dict instead of in item.data.base_data itself
-    # item.data.base_data is also of type MonitorDomain instead of a child class
-    if hasattr(item, "data") and item.data is not None:
-        if hasattr(item.data, "base_data") and isinstance(item.data.base_data, MonitorDomain):
-            if hasattr(item.data, "base_type") and isinstance(item.data.base_type, str):
-                base_type = _MONITOR_DOMAIN_MAPPING.get(item.data.base_type)
-                # Apply deserialization of additional_properties and store that as base_data
-                if base_type:
-                    item.data.base_data = base_type.from_dict(item.data.base_data.additional_properties)  # type: ignore
-                    item.data.base_data.additional_properties = None  # type: ignore
-    return item
+    :param str message: Error message from the server
+    :return: True if the error indicates a sampling rejection
+    :rtype: bool
+    """
+    if message is None:
+        return False
+    return message.lower() == "telemetry sampled out."
+
 
 # mypy: disable-error-code="union-attr"
 def _get_authentication_credential(**kwargs: Any) -> Optional[ManagedIdentityCredential]:
@@ -600,10 +611,15 @@ def _get_authentication_credential(**kwargs: Any) -> Optional[ManagedIdentityCre
                 credential = ManagedIdentityCredential()
                 return credential
     except ValueError as exc:
-        logger.error("APPLICATIONINSIGHTS_AUTHENTICATION_STRING, %s, has invalid format: %s", auth_string, exc)  # pylint: disable=do-not-log-exceptions-if-not-debug
+        logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug
+            "APPLICATIONINSIGHTS_AUTHENTICATION_STRING, %s, has invalid format: %s", auth_string, exc
+        )
     except Exception as e:
-        logger.error("Failed to get authentication credential and enable AAD: %s", e)  # pylint: disable=do-not-log-exceptions-if-not-debug
+        logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug
+            "Failed to get authentication credential and enable AAD: %s", e
+        )
     return None
+
 
 def _get_storage_directory(instrumentation_key: str) -> str:
     """Return the deterministic local storage path for a given instrumentation key.
@@ -654,7 +670,7 @@ def _get_storage_directory(instrumentation_key: str) -> str:
             instrumentation_key,
             user_segment,
             process_name,
-            os.fspath(application_directory), # cspell:disable-line
+            os.fspath(application_directory),  # cspell:disable-line
         ]
     )
     subdirectory = _get_sha256_hash(hash_input)

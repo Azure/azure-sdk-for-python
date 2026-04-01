@@ -30,7 +30,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         # the tests would take too long to execute
         self.bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=key,
+            credential=key.secret,
             max_single_get_size=1024,
             max_chunk_get_size=1024)
         self.config = self.bsc._config
@@ -1662,5 +1662,20 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
         result += stream.readall()
         assert result == data
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_to_bytes_with_none_concurrency(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
+
+        # max_concurrency=None should not raise TypeError
+        stream = blob.download_blob(max_concurrency=None)
+        content = stream.readall()
+
+        assert self.byte_data == content
 
     # ------------------------------------------------------------------------------

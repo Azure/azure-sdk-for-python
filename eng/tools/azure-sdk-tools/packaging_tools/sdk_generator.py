@@ -5,6 +5,7 @@ import argparse
 import json
 import logging
 from pathlib import Path
+import subprocess
 from subprocess import check_call
 import shutil
 import re
@@ -106,6 +107,7 @@ def main(generate_input, generate_output):
     readme_and_tsp = [("relatedReadmeMdFiles", item) for item in data.get("relatedReadmeMdFiles", [])] + [
         ("relatedTypeSpecProjectFolder", item) for item in data.get("relatedTypeSpecProjectFolder", [])
     ]
+    sdk_release_type = data.get("sdkReleaseType")
     run_in_pipeline = data.get("runMode") is not None
     for input_type, readme_or_tsp in readme_and_tsp:
         _LOGGER.info(f"[CODEGEN]({readme_or_tsp})codegen begin")
@@ -146,7 +148,8 @@ def main(generate_input, generate_output):
                 "======================================= What Can I do (begin) ========================================================================",
                 f"Fail to generate sdk for {readme_or_tsp}. If you are from service team, please first check if the failure happens only to Python automation, or for all SDK automations. ",
                 "If it happens for all SDK automations, please double check your Swagger / Typespec, and check whether there is error in ModelValidation and LintDiff. ",
-                "If it happens to Python alone, you can open an issue to https://github.com/microsoft/typespec/issues. Please include the link of this Pull Request in the issue.",
+                "If it happens to Python alone, you can seek support in teams channel https://aka.ms/azsdk/support/python-teams-channel or open an issue in ",
+                "https://github.com/microsoft/typespec/issues. Please include the link of this Pull Request in the issue.",
                 "======================================= What Can I do (end) =========================================================================",
             ]:
                 _LOGGER.error(hint_message)
@@ -174,6 +177,7 @@ def main(generate_input, generate_output):
                         _LOGGER.info(f"remove additional file when roll back to swagger: {file_path}")
 
             try:
+                is_tsp = "readme.md" not in readme_or_tsp
                 package_total.add(package_name)
                 sdk_code_path = str(Path(sdk_folder, folder_name, package_name))
                 if package_name not in result:
@@ -181,7 +185,9 @@ def main(generate_input, generate_output):
                     package_entry["packageName"] = package_name
                     package_entry["path"] = [folder_name]
                     package_entry[spec_word] = [readme_or_tsp]
-                    package_entry["tagIsStable"] = not judge_tag_preview(sdk_code_path, package_name)
+                    package_entry["tagIsStable"] = (
+                        sdk_release_type == "stable" if is_tsp else (not judge_tag_preview(sdk_code_path, package_name))
+                    )
                     package_entry["targetReleaseDate"] = data.get("targetReleaseDate", "")
                     result[package_name] = package_entry
                 else:
@@ -211,6 +217,7 @@ def main(generate_input, generate_output):
                 Path(sdk_code_path).absolute(),
                 enable_changelog=data.get("enableChangelog", True),
                 package_result=result[package_name],
+                timeout=900 if data.get("runMode") in ["spec-pull-request"] else 7200,
             )
 
             # update version in _version.py and CHANGELOG.md
@@ -229,6 +236,7 @@ def main(generate_input, generate_output):
             if data.get("runMode") in ["spec-pull-request"]:
                 apiview_start_time = time.time()
                 try:
+                    _LOGGER.info("install dependencies for apiview generation")
                     package_path = Path(sdk_folder, folder_name, package_name)
                     check_call(
                         [
@@ -248,7 +256,16 @@ def main(generate_input, generate_output):
                     cross_language_mapping_path = Path(package_path, "apiview-properties.json")
                     if cross_language_mapping_path.exists():
                         cmds.extend(["--mapping-path", str(cross_language_mapping_path)])
-                    check_call(cmds, cwd=package_path, timeout=600)
+
+                    _LOGGER.info(f"generate apiview file for package {package_name}")
+                    check_call(
+                        cmds,
+                        cwd=package_path,
+                        timeout=600,
+                        # known issue that higher python version meet install warning with lower pylint.
+                        # we skip the output here to reduce confusion and will remove it after apiview tool upgrade to higher pylint version.
+                        stderr=subprocess.DEVNULL,
+                    )
                     for file in os.listdir(package_path):
                         if "_python.json" in file and package_name in file:
                             result[package_name]["apiViewArtifact"] = str(Path(package_path, file))

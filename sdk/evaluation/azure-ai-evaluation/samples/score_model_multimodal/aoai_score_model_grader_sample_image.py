@@ -24,7 +24,7 @@ Azure AI Project Configuration Options:
    - AZURE_AI_PROJECT_ENDPOINT
 2. Hub-based project (legacy):
    - AZURE_SUBSCRIPTION_ID
-   - AZURE_RESOURCE_GROUP_NAME  
+   - AZURE_RESOURCE_GROUP_NAME
    - AZURE_PROJECT_NAME
 """
 

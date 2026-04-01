@@ -21,7 +21,7 @@ class TestLogAnalyticsManagementLinkedServicesOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_linked_services_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.linked_services.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -36,7 +36,7 @@ class TestLogAnalyticsManagementLinkedServicesOperationsAsync(AzureMgmtRecordedT
                     "type": "str",
                     "writeAccessResourceId": "str",
                 },
-                api_version="2020-08-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -45,13 +45,13 @@ class TestLogAnalyticsManagementLinkedServicesOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_linked_services_begin_delete(self, resource_group):
         response = await (
             await self.client.linked_services.begin_delete(
                 resource_group_name=resource_group.name,
                 workspace_name="str",
                 linked_service_name="str",
-                api_version="2020-08-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -60,12 +60,12 @@ class TestLogAnalyticsManagementLinkedServicesOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_linked_services_get(self, resource_group):
         response = await self.client.linked_services.get(
             resource_group_name=resource_group.name,
             workspace_name="str",
             linked_service_name="str",
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -73,11 +73,11 @@ class TestLogAnalyticsManagementLinkedServicesOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_workspace(self, resource_group):
+    async def test_linked_services_list_by_workspace(self, resource_group):
         response = self.client.linked_services.list_by_workspace(
             resource_group_name=resource_group.name,
             workspace_name="str",
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

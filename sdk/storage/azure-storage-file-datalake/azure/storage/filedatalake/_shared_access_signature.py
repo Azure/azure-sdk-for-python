@@ -6,7 +6,7 @@
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 from typing import (
-    Any, Callable, cast, Optional, Union,
+    Any, Callable, cast, Dict, Optional, Union,
     TYPE_CHECKING
 )
 from urllib.parse import parse_qs
@@ -109,6 +109,8 @@ def generate_file_system_sas(
     expiry: Optional[Union["datetime", str]] = None,
     *,
     user_delegation_oid: Optional[str] = None,
+    request_headers: Optional[Dict[str, str]] = None,
+    request_query_params: Optional[Dict[str, str]] = None,
     sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
@@ -198,6 +200,12 @@ def generate_file_system_sas(
         Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
         The resulting SAS URL must be used in conjunction with an Entra ID token that has been
         issued to the user specified in this value.
+    :keyword Dict[str, str] request_headers:
+        Specifies a set of headers and their corresponding values that
+            must be present in the request when using this SAS.
+    :keyword Dict[str, str] request_query_params:
+        Specifies a set of query parameters and their corresponding values that
+            must be present in the request when using this SAS.
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
@@ -213,6 +221,8 @@ def generate_file_system_sas(
         permission=cast(Optional[Union["ContainerSasPermissions", str]], permission),
         expiry=expiry,
         user_delegation_oid=user_delegation_oid,
+        request_headers=request_headers,
+        request_query_params=request_query_params,
         sts_hook=sts_hook,
         **kwargs
     )
@@ -227,6 +237,8 @@ def generate_directory_sas(
     expiry: Optional[Union["datetime", str]] = None,
     *,
     user_delegation_oid: Optional[str] = None,
+    request_headers: Optional[Dict[str, str]] = None,
+    request_query_params: Optional[Dict[str, str]] = None,
     sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
@@ -318,6 +330,12 @@ def generate_directory_sas(
         Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
         The resulting SAS URL must be used in conjunction with an Entra ID token that has been
         issued to the user specified in this value.
+    :keyword Dict[str, str] request_headers:
+        Specifies a set of headers and their corresponding values that
+            must be present in the request when using this SAS.
+    :keyword Dict[str, str] request_query_params:
+        Specifies a set of query parameters and their corresponding values that
+            must be present in the request when using this SAS.
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
@@ -337,6 +355,8 @@ def generate_directory_sas(
         sdd=depth,
         is_directory=True,
         user_delegation_oid=user_delegation_oid,
+        request_headers=request_headers,
+        request_query_params=request_query_params,
         sts_hook=sts_hook,
         **kwargs
     )
@@ -352,6 +372,8 @@ def generate_file_sas(
     expiry: Optional[Union["datetime", str]] = None,
     *,
     user_delegation_oid: Optional[str] = None,
+    request_headers: Optional[Dict[str, str]] = None,
+    request_query_params: Optional[Dict[str, str]] = None,
     sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
@@ -445,6 +467,12 @@ def generate_file_sas(
         Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
         The resulting SAS URL must be used in conjunction with an Entra ID token that has been
         issued to the user specified in this value.
+    :keyword Dict[str, str] request_headers:
+        Specifies a set of headers and their corresponding values that
+            must be present in the request when using this SAS.
+    :keyword Dict[str, str] request_query_params:
+        Specifies a set of query parameters and their corresponding values that
+            must be present in the request when using this SAS.
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
@@ -464,8 +492,10 @@ def generate_file_sas(
         user_delegation_key=credential if not isinstance(credential, str) else None,
         permission=cast(Optional[Union["BlobSasPermissions", str]], permission),
         expiry=expiry,
-        sts_hook=sts_hook,
         user_delegation_oid=user_delegation_oid,
+        request_headers=request_headers,
+        request_query_params=request_query_params,
+        sts_hook=sts_hook,
         **kwargs
     )
 

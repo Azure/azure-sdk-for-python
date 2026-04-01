@@ -55,7 +55,7 @@ class ManagedIdentityBase(GetTokenMixin):
     def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
         # casting because mypy can't determine that these methods are called
         # only by get_token, which raises when self._client is None
-        return cast(ManagedIdentityClient, self._client).get_cached_token(*scopes)
+        return cast(ManagedIdentityClient, self._client).get_cached_token(*scopes, **kwargs)
 
     def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
         return cast(ManagedIdentityClient, self._client).request_token(*scopes, **kwargs)

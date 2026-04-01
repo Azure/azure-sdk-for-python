@@ -1,5 +1,5 @@
 import functools
-import pytest
+from typing import cast, List
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.ai.language.conversations import ConversationAnalysisClient, AnalyzeConversationLROPoller
@@ -8,6 +8,7 @@ from azure.ai.language.conversations.models import (
     # request models
     AnalyzeConversationOperationInput,
     MultiLanguageConversationInput,
+    NamedEntity,
     TextConversation,
     TextConversationItem,
     PiiOperationAction,
@@ -17,14 +18,10 @@ from azure.ai.language.conversations.models import (
     ConversationPiiOperationResult,
     ConversationalPiiResult,
     ConversationPiiItemResult,
-    NamedEntity,
-    InputWarning,
-    ConversationError,
     AnalyzeConversationOperationAction,
     CharacterMaskPolicyType,
     RedactionCharacter,
 )
-from typing import cast, List
 
 from azure.core.credentials import AzureKeyCredential
 
@@ -104,7 +101,7 @@ class TestConversationsCase(TestConversations):
         print(f"Status: {d.get('status')}")
 
         # ---- Iterate results and verify redaction ----------------------------
-        for actions_page in paged_actions:
+        for actions_page in paged_actions: # pylint: disable=too-many-nested-blocks
             for action_result in actions_page.task_results or []:
                 ar = cast(AnalyzeConversationOperationResult, action_result)
                 if isinstance(ar, ConversationPiiOperationResult):
@@ -129,6 +126,6 @@ class TestConversationsCase(TestConversations):
                                 ), f"Expected redacted text to contain '*', got: {redacted_text}"
                                 redacted_verified.append(redacted_text)
 
-        # ---- Assertions -------------------------------------------------------
+        # Assertions
         assert (d.get("status") or "").lower() in {"succeeded", "partiallysucceeded"}
         assert len(redacted_verified) > 0, "Expected at least one redacted line to be verified."

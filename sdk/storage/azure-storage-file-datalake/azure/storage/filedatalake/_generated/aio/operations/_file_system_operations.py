@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, List, Literal, Optional, TypeVar, Union
+from typing import Any, Callable, Literal, Optional, TypeVar, Union
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
@@ -36,7 +36,7 @@ from ...operations._file_system_operations import (
 from .._configuration import AzureDataLakeStorageRESTAPIConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
 class FileSystemOperations:
@@ -110,11 +110,11 @@ class FileSystemOperations:
 
         _request = build_create_request(
             url=self._config.url,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             properties=properties,
             resource=self._config.resource,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -129,7 +129,10 @@ class FileSystemOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -205,13 +208,13 @@ class FileSystemOperations:
 
         _request = build_set_properties_request(
             url=self._config.url,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             properties=properties,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             resource=self._config.resource,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -226,7 +229,10 @@ class FileSystemOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -275,10 +281,10 @@ class FileSystemOperations:
 
         _request = build_get_properties_request(
             url=self._config.url,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             resource=self._config.resource,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -293,7 +299,10 @@ class FileSystemOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -366,12 +375,12 @@ class FileSystemOperations:
 
         _request = build_delete_request(
             url=self._config.url,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             resource=self._config.resource,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -386,7 +395,10 @@ class FileSystemOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -473,6 +485,7 @@ class FileSystemOperations:
         _request = build_list_paths_request(
             url=self._config.url,
             recursive=recursive,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             continuation=continuation,
@@ -481,7 +494,6 @@ class FileSystemOperations:
             upn=upn,
             begin_from=begin_from,
             resource=self._config.resource,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -496,7 +508,10 @@ class FileSystemOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -521,7 +536,7 @@ class FileSystemOperations:
         delimiter: Optional[str] = None,
         marker: Optional[str] = None,
         max_results: Optional[int] = None,
-        include: Optional[List[Union[str, _models.ListBlobsIncludeItem]]] = None,
+        include: Optional[list[Union[str, _models.ListBlobsIncludeItem]]] = None,
         showonly: Literal["deleted"] = "deleted",
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -584,6 +599,7 @@ class FileSystemOperations:
 
         _request = build_list_blob_hierarchy_segment_request(
             url=self._config.url,
+            version=self._config.version,
             prefix=prefix,
             delimiter=delimiter,
             marker=marker,
@@ -594,7 +610,6 @@ class FileSystemOperations:
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -609,7 +624,10 @@ class FileSystemOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

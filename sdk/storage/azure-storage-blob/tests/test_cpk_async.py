@@ -20,11 +20,12 @@ from azure.storage.blob.aio import BlobServiceClient
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
+from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE, NEW_CPK_KEY_HASH, NEW_CPK_KEY_VALUE
 from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------
 TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(key_value=CPK_KEY_VALUE, key_hash=CPK_KEY_HASH)
+NEW_TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(key_value=NEW_CPK_KEY_VALUE, key_hash=NEW_CPK_KEY_HASH)
 # ------------------------------------------------------------------------------
 
 
@@ -83,7 +84,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -128,7 +129,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -171,7 +172,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # create_blob_from_bytes forces the in-memory chunks to be used
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -212,7 +213,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Act
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -250,7 +251,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -323,7 +324,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -361,7 +362,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -418,7 +419,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -456,7 +457,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -498,7 +499,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -557,7 +558,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -597,7 +598,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -643,7 +644,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -660,3 +661,195 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert blob_snapshot is not None
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_append_block_from_url_with_rekeying(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret
+        )
+        await self._setup(bsc)
+
+        source_blob_client = bsc.get_blob_client(self.container_name, self.get_resource_name("sourceblob"))
+        await source_blob_client.upload_blob(self.byte_data, blob_type=BlobType.APPENDBLOB, cpk=TEST_ENCRYPTION_KEY)
+        source_blob_sas = self.generate_sas(
+            generate_blob_sas,
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            account_key=source_blob_client.credential.account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
+        source_blob_url = source_blob_client.url + "?" + source_blob_sas
+
+        destination_blob_client = await self._create_append_blob(bsc, cpk=NEW_TEST_ENCRYPTION_KEY)
+
+        # Act
+        props = await destination_blob_client.append_block_from_url(
+            source_blob_url,
+            source_offset=0,
+            source_length=len(self.byte_data),
+            cpk=NEW_TEST_ENCRYPTION_KEY,
+            source_cpk=TEST_ENCRYPTION_KEY
+        )
+
+        # Assert
+        assert props is not None
+        assert props['etag'] is not None
+        assert props['last_modified'] is not None
+        assert props['request_server_encrypted']
+
+        if self.is_live:
+            assert props['encryption_key_sha256'] == NEW_TEST_ENCRYPTION_KEY.key_hash
+
+        self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_upload_blob_from_url_with_rekeying(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret
+        )
+        await self._setup(bsc)
+
+        source_blob_client = bsc.get_blob_client(self.container_name, self.get_resource_name("sourceblob"))
+        await source_blob_client.upload_blob(self.byte_data, cpk=TEST_ENCRYPTION_KEY)
+        source_blob_sas = self.generate_sas(
+            generate_blob_sas,
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            account_key=source_blob_client.credential.account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
+        source_blob_url = source_blob_client.url + "?" + source_blob_sas
+
+        destination_blob_client, _ = await self._create_block_blob(bsc, cpk=NEW_TEST_ENCRYPTION_KEY)
+
+        # Act
+        props = await destination_blob_client.upload_blob_from_url(
+            source_blob_url,
+            overwrite=True,
+            cpk=NEW_TEST_ENCRYPTION_KEY,
+            source_cpk=TEST_ENCRYPTION_KEY
+        )
+
+        # Assert
+        assert props is not None
+        assert props['etag'] is not None
+        assert props['last_modified'] is not None
+        assert props['request_server_encrypted']
+
+        if self.is_live:
+            assert props['encryption_key_sha256'] == NEW_TEST_ENCRYPTION_KEY.key_hash
+
+        self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_stage_block_from_url_with_rekeying(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret
+        )
+        await self._setup(bsc)
+
+        source_blob_client = bsc.get_blob_client(self.container_name, self.get_resource_name("sourceblob"))
+        await source_blob_client.upload_blob(self.byte_data, cpk=TEST_ENCRYPTION_KEY)
+        source_blob_sas = self.generate_sas(
+            generate_blob_sas,
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            account_key=source_blob_client.credential.account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
+        source_blob_url = source_blob_client.url + "?" + source_blob_sas
+
+        destination_blob_client, _ = await self._create_block_blob(bsc, cpk=NEW_TEST_ENCRYPTION_KEY)
+
+        # Act
+        block_id = '1'
+        props = await destination_blob_client.stage_block_from_url(
+            block_id,
+            source_blob_url,
+            source_offset=0,
+            source_length=len(self.byte_data),
+            cpk=NEW_TEST_ENCRYPTION_KEY,
+            source_cpk=TEST_ENCRYPTION_KEY
+        )
+
+        # Assert
+        assert props is not None
+        assert props['request_server_encrypted']
+
+        if self.is_live:
+            assert props['encryption_key_sha256'] == NEW_TEST_ENCRYPTION_KEY.key_hash
+
+        self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_upload_pages_from_url_with_rekeying(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret
+        )
+        await self._setup(bsc)
+
+        source_blob_client = bsc.get_blob_client(self.container_name, self.get_resource_name("sourceblob"))
+        await source_blob_client.upload_blob(self.byte_data, blob_type=BlobType.PAGEBLOB, cpk=TEST_ENCRYPTION_KEY)
+        source_blob_sas = self.generate_sas(
+            generate_blob_sas,
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            account_key=source_blob_client.credential.account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
+        source_blob_url = source_blob_client.url + "?" + source_blob_sas
+
+        destination_blob_client = await self._create_page_blob(bsc, cpk=NEW_TEST_ENCRYPTION_KEY)
+
+        # Act
+        props = await destination_blob_client.upload_pages_from_url(
+            source_blob_url,
+            offset=0,
+            length=len(self.byte_data),
+            source_offset=0,
+            cpk=NEW_TEST_ENCRYPTION_KEY,
+            source_cpk=TEST_ENCRYPTION_KEY
+        )
+
+        # Assert
+        assert props is not None
+        assert props['etag'] is not None
+        assert props['last_modified'] is not None
+        assert props['request_server_encrypted']
+
+        if self.is_live:
+            assert props['encryption_key_sha256'] == NEW_TEST_ENCRYPTION_KEY.key_hash
+
+        self._teardown(bsc)

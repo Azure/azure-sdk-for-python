@@ -1249,35 +1249,34 @@ class BareMetalMachineCommandSpecification(_serialization.Model):
 class BareMetalMachineConfigurationData(_serialization.Model):
     """BareMetalMachineConfigurationData represents configuration for the bare metal machine.
 
-       Variables are only populated by the server, and will be ignored when sending a request.
+    Variables are only populated by the server, and will be ignored when sending a request.
 
-       All required parameters must be populated in order to send to server.
+    All required parameters must be populated in order to send to server.
 
-       :ivar bmc_connection_string: The connection string for the baseboard management controller
-        including IP address and protocol.
-       :vartype bmc_connection_string: str
-       :ivar bmc_credentials: The credentials of the baseboard management controller on this bare
-        metal machine. The password field is expected to be an Azure Key Vault key URL. Until the
-        cluster is converted to utilize managed identity by setting the secret archive settings, the
-        actual password value should be provided instead. Required.
-       :vartype bmc_credentials: ~azure.mgmt.networkcloud.models.AdministrativeCredentials
-       :ivar bmc_mac_address: The MAC address of the BMC for this machine. Required.
-       :vartype bmc_mac_address: str
-       :ivar boot_mac_address: The MAC address associated with the PXE NIC card. Required.
-       :vartype boot_mac_address: str
-       :ivar machine_details: The free-form additional information about the machine, e.g. an asset
-        tag.
-       :vartype machine_details: str
-       :ivar machine_name: The user-provided name for the bare metal machine created from this
-        specification.
-    If not provided, the machine name will be generated programmatically.
-       :vartype machine_name: str
-       :ivar rack_slot: The slot the physical machine is in the rack based on the BOM configuration.
-        Required.
-       :vartype rack_slot: int
-       :ivar serial_number: The serial number of the machine. Hardware suppliers may use an alternate
-        value. For example, service tag. Required.
-       :vartype serial_number: str
+    :ivar bmc_connection_string: The connection string for the baseboard management controller
+     including IP address and protocol.
+    :vartype bmc_connection_string: str
+    :ivar bmc_credentials: The credentials of the baseboard management controller on this bare
+     metal machine. The password field is expected to be an Azure Key Vault key URL. Until the
+     cluster is converted to utilize managed identity by setting the secret archive settings, the
+     actual password value should be provided instead. Required.
+    :vartype bmc_credentials: ~azure.mgmt.networkcloud.models.AdministrativeCredentials
+    :ivar bmc_mac_address: The MAC address of the BMC for this machine. Required.
+    :vartype bmc_mac_address: str
+    :ivar boot_mac_address: The MAC address associated with the PXE NIC card. Required.
+    :vartype boot_mac_address: str
+    :ivar machine_details: The free-form additional information about the machine, e.g. an asset
+     tag.
+    :vartype machine_details: str
+    :ivar machine_name: The user-provided name for the bare metal machine created from this
+     specification. If not provided, the machine name will be generated programmatically.
+    :vartype machine_name: str
+    :ivar rack_slot: The slot the physical machine is in the rack based on the BOM configuration.
+     Required.
+    :vartype rack_slot: int
+    :ivar serial_number: The serial number of the machine. Hardware suppliers may use an alternate
+     value. For example, service tag. Required.
+    :vartype serial_number: str
     """
 
     _validation = {
@@ -1315,28 +1314,27 @@ class BareMetalMachineConfigurationData(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-               :keyword bmc_credentials: The credentials of the baseboard management controller on this bare
-                metal machine. The password field is expected to be an Azure Key Vault key URL. Until the
-                cluster is converted to utilize managed identity by setting the secret archive settings, the
-                actual password value should be provided instead. Required.
-               :paramtype bmc_credentials: ~azure.mgmt.networkcloud.models.AdministrativeCredentials
-               :keyword bmc_mac_address: The MAC address of the BMC for this machine. Required.
-               :paramtype bmc_mac_address: str
-               :keyword boot_mac_address: The MAC address associated with the PXE NIC card. Required.
-               :paramtype boot_mac_address: str
-               :keyword machine_details: The free-form additional information about the machine, e.g. an asset
-                tag.
-               :paramtype machine_details: str
-               :keyword machine_name: The user-provided name for the bare metal machine created from this
-                specification.
-        If not provided, the machine name will be generated programmatically.
-               :paramtype machine_name: str
-               :keyword rack_slot: The slot the physical machine is in the rack based on the BOM
-                configuration. Required.
-               :paramtype rack_slot: int
-               :keyword serial_number: The serial number of the machine. Hardware suppliers may use an
-                alternate value. For example, service tag. Required.
-               :paramtype serial_number: str
+        :keyword bmc_credentials: The credentials of the baseboard management controller on this bare
+         metal machine. The password field is expected to be an Azure Key Vault key URL. Until the
+         cluster is converted to utilize managed identity by setting the secret archive settings, the
+         actual password value should be provided instead. Required.
+        :paramtype bmc_credentials: ~azure.mgmt.networkcloud.models.AdministrativeCredentials
+        :keyword bmc_mac_address: The MAC address of the BMC for this machine. Required.
+        :paramtype bmc_mac_address: str
+        :keyword boot_mac_address: The MAC address associated with the PXE NIC card. Required.
+        :paramtype boot_mac_address: str
+        :keyword machine_details: The free-form additional information about the machine, e.g. an asset
+         tag.
+        :paramtype machine_details: str
+        :keyword machine_name: The user-provided name for the bare metal machine created from this
+         specification. If not provided, the machine name will be generated programmatically.
+        :paramtype machine_name: str
+        :keyword rack_slot: The slot the physical machine is in the rack based on the BOM
+         configuration. Required.
+        :paramtype rack_slot: int
+        :keyword serial_number: The serial number of the machine. Hardware suppliers may use an
+         alternate value. For example, service tag. Required.
+        :paramtype serial_number: str
         """
         super().__init__(**kwargs)
         self.bmc_connection_string: Optional[str] = None
@@ -1661,14 +1659,13 @@ class BareMetalMachineList(_serialization.Model):
 
 class BareMetalMachinePatchParameters(_serialization.Model):
     """BareMetalMachinePatchParameters represents the body of the request to patch bare metal machine
-       properties.
+    properties.
 
-       :ivar tags: The Azure resource tags that will replace the existing ones.
-       :vartype tags: dict[str, str]
-       :ivar machine_details: The details provided by the customer during the creation of rack
-        manifests
-    that allows for custom data to be associated with this machine.
-       :vartype machine_details: str
+    :ivar tags: The Azure resource tags that will replace the existing ones.
+    :vartype tags: dict[str, str]
+    :ivar machine_details: The details provided by the customer during the creation of rack
+     manifests that allows for custom data to be associated with this machine.
+    :vartype machine_details: str
     """
 
     _validation = {
@@ -1684,12 +1681,11 @@ class BareMetalMachinePatchParameters(_serialization.Model):
         self, *, tags: Optional[dict[str, str]] = None, machine_details: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-               :keyword tags: The Azure resource tags that will replace the existing ones.
-               :paramtype tags: dict[str, str]
-               :keyword machine_details: The details provided by the customer during the creation of rack
-                manifests
-        that allows for custom data to be associated with this machine.
-               :paramtype machine_details: str
+        :keyword tags: The Azure resource tags that will replace the existing ones.
+        :paramtype tags: dict[str, str]
+        :keyword machine_details: The details provided by the customer during the creation of rack
+         manifests that allows for custom data to be associated with this machine.
+        :paramtype machine_details: str
         """
         super().__init__(**kwargs)
         self.tags = tags
@@ -1814,20 +1810,19 @@ class BareMetalMachineReplaceParameters(_serialization.Model):
 
 class BareMetalMachineRunCommandParameters(_serialization.Model):
     """BareMetalMachineRunCommandParameters represents the body of the request to execute a script on
-       the bare metal machine.
+    the bare metal machine.
 
-       All required parameters must be populated in order to send to server.
+    All required parameters must be populated in order to send to server.
 
-       :ivar arguments: The list of string arguments that will be passed to the script in order as
-        separate arguments.
-       :vartype arguments: list[str]
-       :ivar limit_time_seconds: The maximum time the script is allowed to run.
-    If the execution time exceeds the maximum, the script will be stopped, any output produced
-        until then will be captured, and the exit code matching a timeout will be returned (252).
-        Required.
-       :vartype limit_time_seconds: int
-       :ivar script: The base64 encoded script to execute on the bare metal machine. Required.
-       :vartype script: str
+    :ivar arguments: The list of string arguments that will be passed to the script in order as
+     separate arguments.
+    :vartype arguments: list[str]
+    :ivar limit_time_seconds: The maximum time the script is allowed to run. If the execution time
+     exceeds the maximum, the script will be stopped, any output produced until then will be
+     captured, and the exit code matching a timeout will be returned (252). Required.
+    :vartype limit_time_seconds: int
+    :ivar script: The base64 encoded script to execute on the bare metal machine. Required.
+    :vartype script: str
     """
 
     _validation = {
@@ -1845,16 +1840,15 @@ class BareMetalMachineRunCommandParameters(_serialization.Model):
         self, *, limit_time_seconds: int, script: str, arguments: Optional[list[str]] = None, **kwargs: Any
     ) -> None:
         """
-               :keyword arguments: The list of string arguments that will be passed to the script in order as
-                separate arguments.
-               :paramtype arguments: list[str]
-               :keyword limit_time_seconds: The maximum time the script is allowed to run.
-        If the execution time exceeds the maximum, the script will be stopped, any output produced
-                until then will be captured, and the exit code matching a timeout will be returned (252).
-                Required.
-               :paramtype limit_time_seconds: int
-               :keyword script: The base64 encoded script to execute on the bare metal machine. Required.
-               :paramtype script: str
+        :keyword arguments: The list of string arguments that will be passed to the script in order as
+         separate arguments.
+        :paramtype arguments: list[str]
+        :keyword limit_time_seconds: The maximum time the script is allowed to run. If the execution
+         time exceeds the maximum, the script will be stopped, any output produced until then will be
+         captured, and the exit code matching a timeout will be returned (252). Required.
+        :paramtype limit_time_seconds: int
+        :keyword script: The base64 encoded script to execute on the bare metal machine. Required.
+        :paramtype script: str
         """
         super().__init__(**kwargs)
         self.arguments = arguments
@@ -1864,18 +1858,17 @@ class BareMetalMachineRunCommandParameters(_serialization.Model):
 
 class BareMetalMachineRunDataExtractsParameters(_serialization.Model):  # pylint: disable=name-too-long
     """BareMetalMachineRunDataExtractsParameters represents the body of request containing list of
-       curated data extraction commands to run on the bare metal machine.
+    curated data extraction commands to run on the bare metal machine.
 
-       All required parameters must be populated in order to send to server.
+    All required parameters must be populated in order to send to server.
 
-       :ivar commands: The list of curated data extraction commands to be executed directly against
-        the target machine. Required.
-       :vartype commands: list[~azure.mgmt.networkcloud.models.BareMetalMachineCommandSpecification]
-       :ivar limit_time_seconds: The maximum time the commands are allowed to run.
-    If the execution time exceeds the maximum, the script will be stopped, any output produced
-        until then will be captured, and the exit code matching a timeout will be returned (252).
-        Required.
-       :vartype limit_time_seconds: int
+    :ivar commands: The list of curated data extraction commands to be executed directly against
+     the target machine. Required.
+    :vartype commands: list[~azure.mgmt.networkcloud.models.BareMetalMachineCommandSpecification]
+    :ivar limit_time_seconds: The maximum time the commands are allowed to run. If the execution
+     time exceeds the maximum, the script will be stopped, any output produced until then will be
+     captured, and the exit code matching a timeout will be returned (252). Required.
+    :vartype limit_time_seconds: int
     """
 
     _validation = {
@@ -1892,14 +1885,13 @@ class BareMetalMachineRunDataExtractsParameters(_serialization.Model):  # pylint
         self, *, commands: list["_models.BareMetalMachineCommandSpecification"], limit_time_seconds: int, **kwargs: Any
     ) -> None:
         """
-               :keyword commands: The list of curated data extraction commands to be executed directly against
-                the target machine. Required.
-               :paramtype commands: list[~azure.mgmt.networkcloud.models.BareMetalMachineCommandSpecification]
-               :keyword limit_time_seconds: The maximum time the commands are allowed to run.
-        If the execution time exceeds the maximum, the script will be stopped, any output produced
-                until then will be captured, and the exit code matching a timeout will be returned (252).
-                Required.
-               :paramtype limit_time_seconds: int
+        :keyword commands: The list of curated data extraction commands to be executed directly against
+         the target machine. Required.
+        :paramtype commands: list[~azure.mgmt.networkcloud.models.BareMetalMachineCommandSpecification]
+        :keyword limit_time_seconds: The maximum time the commands are allowed to run. If the execution
+         time exceeds the maximum, the script will be stopped, any output produced until then will be
+         captured, and the exit code matching a timeout will be returned (252). Required.
+        :paramtype limit_time_seconds: int
         """
         super().__init__(**kwargs)
         self.commands = commands
@@ -1908,18 +1900,17 @@ class BareMetalMachineRunDataExtractsParameters(_serialization.Model):  # pylint
 
 class BareMetalMachineRunReadCommandsParameters(_serialization.Model):  # pylint: disable=name-too-long
     """BareMetalMachineRunReadCommandsParameters represents the body of request containing list of
-       read-only commands to run on the bare metal machine.
+    read-only commands to run on the bare metal machine.
 
-       All required parameters must be populated in order to send to server.
+    All required parameters must be populated in order to send to server.
 
-       :ivar commands: The list of read-only commands to be executed directly against the target
-        machine. Required.
-       :vartype commands: list[~azure.mgmt.networkcloud.models.BareMetalMachineCommandSpecification]
-       :ivar limit_time_seconds: The maximum time the commands are allowed to run.
-    If the execution time exceeds the maximum, the script will be stopped, any output produced
-        until then will be captured, and the exit code matching a timeout will be returned (252).
-        Required.
-       :vartype limit_time_seconds: int
+    :ivar commands: The list of read-only commands to be executed directly against the target
+     machine. Required.
+    :vartype commands: list[~azure.mgmt.networkcloud.models.BareMetalMachineCommandSpecification]
+    :ivar limit_time_seconds: The maximum time the commands are allowed to run. If the execution
+     time exceeds the maximum, the script will be stopped, any output produced until then will be
+     captured, and the exit code matching a timeout will be returned (252). Required.
+    :vartype limit_time_seconds: int
     """
 
     _validation = {
@@ -1936,14 +1927,13 @@ class BareMetalMachineRunReadCommandsParameters(_serialization.Model):  # pylint
         self, *, commands: list["_models.BareMetalMachineCommandSpecification"], limit_time_seconds: int, **kwargs: Any
     ) -> None:
         """
-               :keyword commands: The list of read-only commands to be executed directly against the target
-                machine. Required.
-               :paramtype commands: list[~azure.mgmt.networkcloud.models.BareMetalMachineCommandSpecification]
-               :keyword limit_time_seconds: The maximum time the commands are allowed to run.
-        If the execution time exceeds the maximum, the script will be stopped, any output produced
-                until then will be captured, and the exit code matching a timeout will be returned (252).
-                Required.
-               :paramtype limit_time_seconds: int
+        :keyword commands: The list of read-only commands to be executed directly against the target
+         machine. Required.
+        :paramtype commands: list[~azure.mgmt.networkcloud.models.BareMetalMachineCommandSpecification]
+        :keyword limit_time_seconds: The maximum time the commands are allowed to run. If the execution
+         time exceeds the maximum, the script will be stopped, any output produced until then will be
+         captured, and the exit code matching a timeout will be returned (252). Required.
+        :paramtype limit_time_seconds: int
         """
         super().__init__(**kwargs)
         self.commands = commands
@@ -2307,76 +2297,74 @@ class CertificateInfo(_serialization.Model):
 class CloudServicesNetwork(TrackedResource):
     """Upon creation, the additional services that are provided by the platform will be allocated and
     represented in the status of this resource. All resources associated with this cloud services
-        network will be part
-    of the same layer 2 (L2) isolation domain. At least one service network must be created but may
-        be reused across many
-    virtual machines and/or Hybrid AKS clusters.
+    network will be part of the same layer 2 (L2) isolation domain. At least one service network
+    must be created but may be reused across many virtual machines and/or Hybrid AKS clusters.
 
-        Variables are only populated by the server, and will be ignored when sending a request.
+    Variables are only populated by the server, and will be ignored when sending a request.
 
-        All required parameters must be populated in order to send to server.
+    All required parameters must be populated in order to send to server.
 
-        :ivar id: Fully qualified resource ID for the resource. E.g.
-         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-        :vartype id: str
-        :ivar name: The name of the resource.
-        :vartype name: str
-        :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-         "Microsoft.Storage/storageAccounts".
-        :vartype type: str
-        :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-         information.
-        :vartype system_data: ~azure.mgmt.networkcloud.models.SystemData
-        :ivar tags: Resource tags.
-        :vartype tags: dict[str, str]
-        :ivar location: The geo-location where the resource lives. Required.
-        :vartype location: str
-        :ivar etag: Resource ETag.
-        :vartype etag: str
-        :ivar extended_location: The extended location of the cluster associated with the resource.
-         Required.
-        :vartype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
-        :ivar additional_egress_endpoints: The list of egress endpoints. This allows for connection
-         from a Hybrid AKS cluster to the specified endpoint.
-        :vartype additional_egress_endpoints: list[~azure.mgmt.networkcloud.models.EgressEndpoint]
-        :ivar associated_resource_ids: The list of resource IDs for the other Microsoft.NetworkCloud
-         resources that have attached this network.
-        :vartype associated_resource_ids: list[str]
-        :ivar cluster_id: The resource ID of the Network Cloud cluster this cloud services network is
-         associated with.
-        :vartype cluster_id: str
-        :ivar detailed_status: The more detailed status of the cloud services network. Known values
-         are: "Error", "Available", and "Provisioning".
-        :vartype detailed_status: str or
-         ~azure.mgmt.networkcloud.models.CloudServicesNetworkDetailedStatus
-        :ivar detailed_status_message: The descriptive message about the current detailed status.
-        :vartype detailed_status_message: str
-        :ivar enable_default_egress_endpoints: The indicator of whether the platform default endpoints
-         are allowed for the egress traffic. Known values are: "True" and "False".
-        :vartype enable_default_egress_endpoints: str or
-         ~azure.mgmt.networkcloud.models.CloudServicesNetworkEnableDefaultEgressEndpoints
-        :ivar enabled_egress_endpoints: The full list of additional and default egress endpoints that
-         are currently enabled.
-        :vartype enabled_egress_endpoints: list[~azure.mgmt.networkcloud.models.EgressEndpoint]
-        :ivar hybrid_aks_clusters_associated_ids: Field Deprecated. These fields will be empty/omitted.
-         The list of Hybrid AKS cluster resource IDs that are associated with this cloud services
-         network.
-        :vartype hybrid_aks_clusters_associated_ids: list[str]
-        :ivar interface_name: The name of the interface that will be present in the virtual machine to
-         represent this network.
-        :vartype interface_name: str
-        :ivar provisioning_state: The provisioning state of the cloud services network. Known values
-         are: "Succeeded", "Failed", "Canceled", "Provisioning", and "Accepted".
-        :vartype provisioning_state: str or
-         ~azure.mgmt.networkcloud.models.CloudServicesNetworkProvisioningState
-        :ivar storage_options: The storage options for the cloud services network.
-        :vartype storage_options: ~azure.mgmt.networkcloud.models.CloudServicesNetworkStorageOptions
-        :ivar storage_status: The storage status for the cloud services network.
-        :vartype storage_status: ~azure.mgmt.networkcloud.models.CloudServicesNetworkStorageStatus
-        :ivar virtual_machines_associated_ids: Field Deprecated. These fields will be empty/omitted.
-         The list of virtual machine resource IDs, excluding any Hybrid AKS virtual machines, that are
-         currently using this cloud services network.
-        :vartype virtual_machines_associated_ids: list[str]
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.networkcloud.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar etag: Resource ETag.
+    :vartype etag: str
+    :ivar extended_location: The extended location of the cluster associated with the resource.
+     Required.
+    :vartype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
+    :ivar additional_egress_endpoints: The list of egress endpoints. This allows for connection
+     from a Hybrid AKS cluster to the specified endpoint.
+    :vartype additional_egress_endpoints: list[~azure.mgmt.networkcloud.models.EgressEndpoint]
+    :ivar associated_resource_ids: The list of resource IDs for the other Microsoft.NetworkCloud
+     resources that have attached this network.
+    :vartype associated_resource_ids: list[str]
+    :ivar cluster_id: The resource ID of the Network Cloud cluster this cloud services network is
+     associated with.
+    :vartype cluster_id: str
+    :ivar detailed_status: The more detailed status of the cloud services network. Known values
+     are: "Error", "Available", and "Provisioning".
+    :vartype detailed_status: str or
+     ~azure.mgmt.networkcloud.models.CloudServicesNetworkDetailedStatus
+    :ivar detailed_status_message: The descriptive message about the current detailed status.
+    :vartype detailed_status_message: str
+    :ivar enable_default_egress_endpoints: The indicator of whether the platform default endpoints
+     are allowed for the egress traffic. Known values are: "True" and "False".
+    :vartype enable_default_egress_endpoints: str or
+     ~azure.mgmt.networkcloud.models.CloudServicesNetworkEnableDefaultEgressEndpoints
+    :ivar enabled_egress_endpoints: The full list of additional and default egress endpoints that
+     are currently enabled.
+    :vartype enabled_egress_endpoints: list[~azure.mgmt.networkcloud.models.EgressEndpoint]
+    :ivar hybrid_aks_clusters_associated_ids: Field Deprecated. These fields will be empty/omitted.
+     The list of Hybrid AKS cluster resource IDs that are associated with this cloud services
+     network.
+    :vartype hybrid_aks_clusters_associated_ids: list[str]
+    :ivar interface_name: The name of the interface that will be present in the virtual machine to
+     represent this network.
+    :vartype interface_name: str
+    :ivar provisioning_state: The provisioning state of the cloud services network. Known values
+     are: "Succeeded", "Failed", "Canceled", "Provisioning", and "Accepted".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.networkcloud.models.CloudServicesNetworkProvisioningState
+    :ivar storage_options: The storage options for the cloud services network.
+    :vartype storage_options: ~azure.mgmt.networkcloud.models.CloudServicesNetworkStorageOptions
+    :ivar storage_status: The storage status for the cloud services network.
+    :vartype storage_status: ~azure.mgmt.networkcloud.models.CloudServicesNetworkStorageStatus
+    :ivar virtual_machines_associated_ids: Field Deprecated. These fields will be empty/omitted.
+     The list of virtual machine resource IDs, excluding any Hybrid AKS virtual machines, that are
+     currently using this cloud services network.
+    :vartype virtual_machines_associated_ids: list[str]
     """
 
     _validation = {
@@ -2703,131 +2691,130 @@ class CloudServicesNetworkStorageStatus(_serialization.Model):
 class Cluster(TrackedResource):
     """Cluster represents the on-premises Network Cloud cluster.
 
-       Variables are only populated by the server, and will be ignored when sending a request.
+    Variables are only populated by the server, and will be ignored when sending a request.
 
-       All required parameters must be populated in order to send to server.
+    All required parameters must be populated in order to send to server.
 
-       :ivar id: Fully qualified resource ID for the resource. E.g.
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-       :vartype id: str
-       :ivar name: The name of the resource.
-       :vartype name: str
-       :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-        "Microsoft.Storage/storageAccounts".
-       :vartype type: str
-       :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-        information.
-       :vartype system_data: ~azure.mgmt.networkcloud.models.SystemData
-       :ivar tags: Resource tags.
-       :vartype tags: dict[str, str]
-       :ivar location: The geo-location where the resource lives. Required.
-       :vartype location: str
-       :ivar etag: Resource ETag.
-       :vartype etag: str
-       :ivar extended_location: The extended location of the cluster manager associated with the
-        cluster. Required.
-       :vartype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
-       :ivar identity: The identity for the resource.
-       :vartype identity: ~azure.mgmt.networkcloud.models.ManagedServiceIdentity
-       :ivar action_states: The current state of any in progress or completed actions. The most recent
-        known instance of each action type is shown.
-       :vartype action_states: list[~azure.mgmt.networkcloud.models.ActionState]
-       :ivar aggregator_or_single_rack_definition: The rack definition that is intended to reflect
-        only a single rack in a single rack cluster, or an aggregator rack in a multi-rack cluster.
-        Required.
-       :vartype aggregator_or_single_rack_definition: ~azure.mgmt.networkcloud.models.RackDefinition
-       :ivar analytics_output_settings: The settings for the log analytics workspace used for output
-        of logs from this cluster.
-       :vartype analytics_output_settings: ~azure.mgmt.networkcloud.models.AnalyticsOutputSettings
-       :ivar analytics_workspace_id: Field Deprecated. The resource ID of the Log Analytics Workspace
-        that will be used for storing relevant logs.
-       :vartype analytics_workspace_id: str
-       :ivar available_upgrade_versions: The list of cluster runtime version upgrades available for
-        this cluster.
-       :vartype available_upgrade_versions:
-        list[~azure.mgmt.networkcloud.models.ClusterAvailableUpgradeVersion]
-       :ivar cluster_capacity: The capacity supported by this cluster.
-       :vartype cluster_capacity: ~azure.mgmt.networkcloud.models.ClusterCapacity
-       :ivar cluster_connection_status: The latest heartbeat status between the cluster manager and
-        the cluster. Known values are: "Connected", "Disconnected", "Timeout", and "Undefined".
-       :vartype cluster_connection_status: str or
-        ~azure.mgmt.networkcloud.models.ClusterConnectionStatus
-       :ivar cluster_extended_location: The extended location (custom location) that represents the
-        cluster's control plane location. This extended location is used to route the requests of child
-        objects of the cluster that are handled by the platform operator.
-       :vartype cluster_extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
-       :ivar cluster_location: The customer-provided location information to identify where the
-        cluster resides.
-       :vartype cluster_location: str
-       :ivar cluster_manager_connection_status: The latest connectivity status between cluster manager
-        and the cluster. Known values are: "Connected" and "Unreachable".
-       :vartype cluster_manager_connection_status: str or
-        ~azure.mgmt.networkcloud.models.ClusterManagerConnectionStatus
-       :ivar cluster_manager_id: The resource ID of the cluster manager that manages this cluster.
-        This is set by the Cluster Manager when the cluster is created.
-       :vartype cluster_manager_id: str
-       :ivar cluster_service_principal: Deprecated: Use managed identity to provide cluster
-        privileges. The service principal to be used by the cluster during Arc Appliance installation.
-       :vartype cluster_service_principal: ~azure.mgmt.networkcloud.models.ServicePrincipalInformation
-       :ivar cluster_type: The type of rack configuration for the cluster. Required. Known values are:
-        "SingleRack" and "MultiRack".
-       :vartype cluster_type: str or ~azure.mgmt.networkcloud.models.ClusterType
-       :ivar cluster_version: The current runtime version of the cluster. Required.
-       :vartype cluster_version: str
-       :ivar command_output_settings: The settings for commands run in this cluster, such as bare
-        metal machine run read only commands and data extracts.
-       :vartype command_output_settings: ~azure.mgmt.networkcloud.models.CommandOutputSettings
-       :ivar compute_deployment_threshold: The validation threshold indicating the allowable failures
-        of compute machines during environment validation and deployment.
-       :vartype compute_deployment_threshold: ~azure.mgmt.networkcloud.models.ValidationThreshold
-       :ivar compute_rack_definitions: The list of rack definitions for the compute racks in a
-        multi-rack
-    cluster, or an empty list in a single-rack cluster.
-       :vartype compute_rack_definitions: list[~azure.mgmt.networkcloud.models.RackDefinition]
-       :ivar detailed_status: The current detailed status of the cluster. Known values are:
-        "PendingDeployment", "Deploying", "Running", "Updating", "UpdatePaused", "Degraded",
-        "Deleting", "Disconnected", and "Failed".
-       :vartype detailed_status: str or ~azure.mgmt.networkcloud.models.ClusterDetailedStatus
-       :ivar detailed_status_message: The descriptive message about the detailed status.
-       :vartype detailed_status_message: str
-       :ivar hybrid_aks_extended_location: Field Deprecated. This field will not be populated in an
-        upcoming version. The extended location (custom location) that represents the Hybrid AKS
-        control plane location. This extended location is used when creating provisioned clusters
-        (Hybrid AKS clusters).
-       :vartype hybrid_aks_extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
-       :ivar managed_resource_group_configuration: The configuration of the managed resource group
-        associated with the resource.
-       :vartype managed_resource_group_configuration:
-        ~azure.mgmt.networkcloud.models.ManagedResourceGroupConfiguration
-       :ivar manual_action_count: The count of Manual Action Taken (MAT) events that have not been
-        validated.
-       :vartype manual_action_count: int
-       :ivar network_fabric_id: The resource ID of the Network Fabric associated with the cluster.
-        Required.
-       :vartype network_fabric_id: str
-       :ivar provisioning_state: The provisioning state of the cluster. Known values are: "Succeeded",
-        "Failed", "Canceled", "Accepted", "Validating", and "Updating".
-       :vartype provisioning_state: str or ~azure.mgmt.networkcloud.models.ClusterProvisioningState
-       :ivar runtime_protection_configuration: The settings for cluster runtime protection.
-       :vartype runtime_protection_configuration:
-        ~azure.mgmt.networkcloud.models.RuntimeProtectionConfiguration
-       :ivar secret_archive: The configuration for use of a key vault to store secrets for later
-        retrieval by the operator.
-       :vartype secret_archive: ~azure.mgmt.networkcloud.models.ClusterSecretArchive
-       :ivar secret_archive_settings: The settings for the secret archive used to hold credentials for
-        the cluster.
-       :vartype secret_archive_settings: ~azure.mgmt.networkcloud.models.SecretArchiveSettings
-       :ivar support_expiry_date: The support end date of the runtime version of the cluster.
-       :vartype support_expiry_date: str
-       :ivar update_strategy: The strategy for updating the cluster.
-       :vartype update_strategy: ~azure.mgmt.networkcloud.models.ClusterUpdateStrategy
-       :ivar vulnerability_scanning_settings: The settings for how security vulnerability scanning is
-        applied to the cluster.
-       :vartype vulnerability_scanning_settings:
-        ~azure.mgmt.networkcloud.models.VulnerabilityScanningSettings
-       :ivar workload_resource_ids: The list of workload resource IDs that are hosted within this
-        cluster.
-       :vartype workload_resource_ids: list[str]
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.networkcloud.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar etag: Resource ETag.
+    :vartype etag: str
+    :ivar extended_location: The extended location of the cluster manager associated with the
+     cluster. Required.
+    :vartype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
+    :ivar identity: The identity for the resource.
+    :vartype identity: ~azure.mgmt.networkcloud.models.ManagedServiceIdentity
+    :ivar action_states: The current state of any in progress or completed actions. The most recent
+     known instance of each action type is shown.
+    :vartype action_states: list[~azure.mgmt.networkcloud.models.ActionState]
+    :ivar aggregator_or_single_rack_definition: The rack definition that is intended to reflect
+     only a single rack in a single rack cluster, or an aggregator rack in a multi-rack cluster.
+     Required.
+    :vartype aggregator_or_single_rack_definition: ~azure.mgmt.networkcloud.models.RackDefinition
+    :ivar analytics_output_settings: The settings for the log analytics workspace used for output
+     of logs from this cluster.
+    :vartype analytics_output_settings: ~azure.mgmt.networkcloud.models.AnalyticsOutputSettings
+    :ivar analytics_workspace_id: Field Deprecated. The resource ID of the Log Analytics Workspace
+     that will be used for storing relevant logs.
+    :vartype analytics_workspace_id: str
+    :ivar available_upgrade_versions: The list of cluster runtime version upgrades available for
+     this cluster.
+    :vartype available_upgrade_versions:
+     list[~azure.mgmt.networkcloud.models.ClusterAvailableUpgradeVersion]
+    :ivar cluster_capacity: The capacity supported by this cluster.
+    :vartype cluster_capacity: ~azure.mgmt.networkcloud.models.ClusterCapacity
+    :ivar cluster_connection_status: The latest heartbeat status between the cluster manager and
+     the cluster. Known values are: "Connected", "Disconnected", "Timeout", and "Undefined".
+    :vartype cluster_connection_status: str or
+     ~azure.mgmt.networkcloud.models.ClusterConnectionStatus
+    :ivar cluster_extended_location: The extended location (custom location) that represents the
+     cluster's control plane location. This extended location is used to route the requests of child
+     objects of the cluster that are handled by the platform operator.
+    :vartype cluster_extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
+    :ivar cluster_location: The customer-provided location information to identify where the
+     cluster resides.
+    :vartype cluster_location: str
+    :ivar cluster_manager_connection_status: The latest connectivity status between cluster manager
+     and the cluster. Known values are: "Connected" and "Unreachable".
+    :vartype cluster_manager_connection_status: str or
+     ~azure.mgmt.networkcloud.models.ClusterManagerConnectionStatus
+    :ivar cluster_manager_id: The resource ID of the cluster manager that manages this cluster.
+     This is set by the Cluster Manager when the cluster is created.
+    :vartype cluster_manager_id: str
+    :ivar cluster_service_principal: Field Deprecated: Use managed identity to provide cluster
+     privileges. The service principal to be used by the cluster during Arc Appliance installation.
+    :vartype cluster_service_principal: ~azure.mgmt.networkcloud.models.ServicePrincipalInformation
+    :ivar cluster_type: The type of rack configuration for the cluster. Required. Known values are:
+     "SingleRack" and "MultiRack".
+    :vartype cluster_type: str or ~azure.mgmt.networkcloud.models.ClusterType
+    :ivar cluster_version: The current runtime version of the cluster. Required.
+    :vartype cluster_version: str
+    :ivar command_output_settings: The settings for commands run in this cluster, such as bare
+     metal machine run read only commands and data extracts.
+    :vartype command_output_settings: ~azure.mgmt.networkcloud.models.CommandOutputSettings
+    :ivar compute_deployment_threshold: The validation threshold indicating the allowable failures
+     of compute machines during environment validation and deployment.
+    :vartype compute_deployment_threshold: ~azure.mgmt.networkcloud.models.ValidationThreshold
+    :ivar compute_rack_definitions: The list of rack definitions for the compute racks in a
+     multi-rack cluster, or an empty list in a single-rack cluster.
+    :vartype compute_rack_definitions: list[~azure.mgmt.networkcloud.models.RackDefinition]
+    :ivar detailed_status: The current detailed status of the cluster. Known values are:
+     "PendingDeployment", "Deploying", "Running", "Updating", "UpdatePaused", "Degraded",
+     "Deleting", "Disconnected", and "Failed".
+    :vartype detailed_status: str or ~azure.mgmt.networkcloud.models.ClusterDetailedStatus
+    :ivar detailed_status_message: The descriptive message about the detailed status.
+    :vartype detailed_status_message: str
+    :ivar hybrid_aks_extended_location: Field Deprecated. This field will not be populated in an
+     upcoming version. The extended location (custom location) that represents the Hybrid AKS
+     control plane location. This extended location is used when creating provisioned clusters
+     (Hybrid AKS clusters).
+    :vartype hybrid_aks_extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
+    :ivar managed_resource_group_configuration: The configuration of the managed resource group
+     associated with the resource.
+    :vartype managed_resource_group_configuration:
+     ~azure.mgmt.networkcloud.models.ManagedResourceGroupConfiguration
+    :ivar manual_action_count: The count of Manual Action Taken (MAT) events that have not been
+     validated.
+    :vartype manual_action_count: int
+    :ivar network_fabric_id: The resource ID of the Network Fabric associated with the cluster.
+     Required.
+    :vartype network_fabric_id: str
+    :ivar provisioning_state: The provisioning state of the cluster. Known values are: "Succeeded",
+     "Failed", "Canceled", "Accepted", "Validating", and "Updating".
+    :vartype provisioning_state: str or ~azure.mgmt.networkcloud.models.ClusterProvisioningState
+    :ivar runtime_protection_configuration: The settings for cluster runtime protection.
+    :vartype runtime_protection_configuration:
+     ~azure.mgmt.networkcloud.models.RuntimeProtectionConfiguration
+    :ivar secret_archive: The configuration for use of a key vault to store secrets for later
+     retrieval by the operator.
+    :vartype secret_archive: ~azure.mgmt.networkcloud.models.ClusterSecretArchive
+    :ivar secret_archive_settings: The settings for the secret archive used to hold credentials for
+     the cluster.
+    :vartype secret_archive_settings: ~azure.mgmt.networkcloud.models.SecretArchiveSettings
+    :ivar support_expiry_date: The support end date of the runtime version of the cluster.
+    :vartype support_expiry_date: str
+    :ivar update_strategy: The strategy for updating the cluster.
+    :vartype update_strategy: ~azure.mgmt.networkcloud.models.ClusterUpdateStrategy
+    :ivar vulnerability_scanning_settings: The settings for how security vulnerability scanning is
+     applied to the cluster.
+    :vartype vulnerability_scanning_settings:
+     ~azure.mgmt.networkcloud.models.VulnerabilityScanningSettings
+    :ivar workload_resource_ids: The list of workload resource IDs that are hosted within this
+     cluster.
+    :vartype workload_resource_ids: list[str]
     """
 
     _validation = {
@@ -2947,69 +2934,68 @@ class Cluster(TrackedResource):
         **kwargs: Any
     ) -> None:
         """
-               :keyword tags: Resource tags.
-               :paramtype tags: dict[str, str]
-               :keyword location: The geo-location where the resource lives. Required.
-               :paramtype location: str
-               :keyword extended_location: The extended location of the cluster manager associated with the
-                cluster. Required.
-               :paramtype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
-               :keyword identity: The identity for the resource.
-               :paramtype identity: ~azure.mgmt.networkcloud.models.ManagedServiceIdentity
-               :keyword aggregator_or_single_rack_definition: The rack definition that is intended to reflect
-                only a single rack in a single rack cluster, or an aggregator rack in a multi-rack cluster.
-                Required.
-               :paramtype aggregator_or_single_rack_definition: ~azure.mgmt.networkcloud.models.RackDefinition
-               :keyword analytics_output_settings: The settings for the log analytics workspace used for
-                output of logs from this cluster.
-               :paramtype analytics_output_settings: ~azure.mgmt.networkcloud.models.AnalyticsOutputSettings
-               :keyword analytics_workspace_id: Field Deprecated. The resource ID of the Log Analytics
-                Workspace that will be used for storing relevant logs.
-               :paramtype analytics_workspace_id: str
-               :keyword cluster_location: The customer-provided location information to identify where the
-                cluster resides.
-               :paramtype cluster_location: str
-               :keyword cluster_service_principal: Deprecated: Use managed identity to provide cluster
-                privileges. The service principal to be used by the cluster during Arc Appliance installation.
-               :paramtype cluster_service_principal:
-                ~azure.mgmt.networkcloud.models.ServicePrincipalInformation
-               :keyword cluster_type: The type of rack configuration for the cluster. Required. Known values
-                are: "SingleRack" and "MultiRack".
-               :paramtype cluster_type: str or ~azure.mgmt.networkcloud.models.ClusterType
-               :keyword cluster_version: The current runtime version of the cluster. Required.
-               :paramtype cluster_version: str
-               :keyword command_output_settings: The settings for commands run in this cluster, such as bare
-                metal machine run read only commands and data extracts.
-               :paramtype command_output_settings: ~azure.mgmt.networkcloud.models.CommandOutputSettings
-               :keyword compute_deployment_threshold: The validation threshold indicating the allowable
-                failures of compute machines during environment validation and deployment.
-               :paramtype compute_deployment_threshold: ~azure.mgmt.networkcloud.models.ValidationThreshold
-               :keyword compute_rack_definitions: The list of rack definitions for the compute racks in a
-                multi-rack
-        cluster, or an empty list in a single-rack cluster.
-               :paramtype compute_rack_definitions: list[~azure.mgmt.networkcloud.models.RackDefinition]
-               :keyword managed_resource_group_configuration: The configuration of the managed resource group
-                associated with the resource.
-               :paramtype managed_resource_group_configuration:
-                ~azure.mgmt.networkcloud.models.ManagedResourceGroupConfiguration
-               :keyword network_fabric_id: The resource ID of the Network Fabric associated with the cluster.
-                Required.
-               :paramtype network_fabric_id: str
-               :keyword runtime_protection_configuration: The settings for cluster runtime protection.
-               :paramtype runtime_protection_configuration:
-                ~azure.mgmt.networkcloud.models.RuntimeProtectionConfiguration
-               :keyword secret_archive: The configuration for use of a key vault to store secrets for later
-                retrieval by the operator.
-               :paramtype secret_archive: ~azure.mgmt.networkcloud.models.ClusterSecretArchive
-               :keyword secret_archive_settings: The settings for the secret archive used to hold credentials
-                for the cluster.
-               :paramtype secret_archive_settings: ~azure.mgmt.networkcloud.models.SecretArchiveSettings
-               :keyword update_strategy: The strategy for updating the cluster.
-               :paramtype update_strategy: ~azure.mgmt.networkcloud.models.ClusterUpdateStrategy
-               :keyword vulnerability_scanning_settings: The settings for how security vulnerability scanning
-                is applied to the cluster.
-               :paramtype vulnerability_scanning_settings:
-                ~azure.mgmt.networkcloud.models.VulnerabilityScanningSettings
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword extended_location: The extended location of the cluster manager associated with the
+         cluster. Required.
+        :paramtype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
+        :keyword identity: The identity for the resource.
+        :paramtype identity: ~azure.mgmt.networkcloud.models.ManagedServiceIdentity
+        :keyword aggregator_or_single_rack_definition: The rack definition that is intended to reflect
+         only a single rack in a single rack cluster, or an aggregator rack in a multi-rack cluster.
+         Required.
+        :paramtype aggregator_or_single_rack_definition: ~azure.mgmt.networkcloud.models.RackDefinition
+        :keyword analytics_output_settings: The settings for the log analytics workspace used for
+         output of logs from this cluster.
+        :paramtype analytics_output_settings: ~azure.mgmt.networkcloud.models.AnalyticsOutputSettings
+        :keyword analytics_workspace_id: Field Deprecated. The resource ID of the Log Analytics
+         Workspace that will be used for storing relevant logs.
+        :paramtype analytics_workspace_id: str
+        :keyword cluster_location: The customer-provided location information to identify where the
+         cluster resides.
+        :paramtype cluster_location: str
+        :keyword cluster_service_principal: Field Deprecated: Use managed identity to provide cluster
+         privileges. The service principal to be used by the cluster during Arc Appliance installation.
+        :paramtype cluster_service_principal:
+         ~azure.mgmt.networkcloud.models.ServicePrincipalInformation
+        :keyword cluster_type: The type of rack configuration for the cluster. Required. Known values
+         are: "SingleRack" and "MultiRack".
+        :paramtype cluster_type: str or ~azure.mgmt.networkcloud.models.ClusterType
+        :keyword cluster_version: The current runtime version of the cluster. Required.
+        :paramtype cluster_version: str
+        :keyword command_output_settings: The settings for commands run in this cluster, such as bare
+         metal machine run read only commands and data extracts.
+        :paramtype command_output_settings: ~azure.mgmt.networkcloud.models.CommandOutputSettings
+        :keyword compute_deployment_threshold: The validation threshold indicating the allowable
+         failures of compute machines during environment validation and deployment.
+        :paramtype compute_deployment_threshold: ~azure.mgmt.networkcloud.models.ValidationThreshold
+        :keyword compute_rack_definitions: The list of rack definitions for the compute racks in a
+         multi-rack cluster, or an empty list in a single-rack cluster.
+        :paramtype compute_rack_definitions: list[~azure.mgmt.networkcloud.models.RackDefinition]
+        :keyword managed_resource_group_configuration: The configuration of the managed resource group
+         associated with the resource.
+        :paramtype managed_resource_group_configuration:
+         ~azure.mgmt.networkcloud.models.ManagedResourceGroupConfiguration
+        :keyword network_fabric_id: The resource ID of the Network Fabric associated with the cluster.
+         Required.
+        :paramtype network_fabric_id: str
+        :keyword runtime_protection_configuration: The settings for cluster runtime protection.
+        :paramtype runtime_protection_configuration:
+         ~azure.mgmt.networkcloud.models.RuntimeProtectionConfiguration
+        :keyword secret_archive: The configuration for use of a key vault to store secrets for later
+         retrieval by the operator.
+        :paramtype secret_archive: ~azure.mgmt.networkcloud.models.ClusterSecretArchive
+        :keyword secret_archive_settings: The settings for the secret archive used to hold credentials
+         for the cluster.
+        :paramtype secret_archive_settings: ~azure.mgmt.networkcloud.models.SecretArchiveSettings
+        :keyword update_strategy: The strategy for updating the cluster.
+        :paramtype update_strategy: ~azure.mgmt.networkcloud.models.ClusterUpdateStrategy
+        :keyword vulnerability_scanning_settings: The settings for how security vulnerability scanning
+         is applied to the cluster.
+        :paramtype vulnerability_scanning_settings:
+         ~azure.mgmt.networkcloud.models.VulnerabilityScanningSettings
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.etag: Optional[str] = None
@@ -3711,47 +3697,46 @@ class ClusterMetricsConfigurationPatchParameters(_serialization.Model):  # pylin
 class ClusterPatchParameters(_serialization.Model):
     """ClusterPatchParameters represents the body of the request to patch the cluster properties.
 
-       :ivar identity: The identity for the resource.
-       :vartype identity: ~azure.mgmt.networkcloud.models.ManagedServiceIdentity
-       :ivar tags: The Azure resource tags that will replace the existing ones.
-       :vartype tags: dict[str, str]
-       :ivar aggregator_or_single_rack_definition: The rack definition that is intended to reflect
-        only a single rack in a single rack cluster, or an aggregator rack in a multi-rack cluster.
-       :vartype aggregator_or_single_rack_definition: ~azure.mgmt.networkcloud.models.RackDefinition
-       :ivar analytics_output_settings: The settings for the log analytics workspace used for output
-        of logs from this cluster.
-       :vartype analytics_output_settings: ~azure.mgmt.networkcloud.models.AnalyticsOutputSettings
-       :ivar cluster_location: The customer-provided location information to identify where the
-        cluster resides.
-       :vartype cluster_location: str
-       :ivar cluster_service_principal: Deprecated: Use managed identity to provide cluster
-        privileges. The service principal to be used by the cluster during Arc Appliance installation.
-       :vartype cluster_service_principal: ~azure.mgmt.networkcloud.models.ServicePrincipalInformation
-       :ivar command_output_settings: The settings for commands run in this cluster, such as bare
-        metal machine run read only commands and data extracts.
-       :vartype command_output_settings: ~azure.mgmt.networkcloud.models.CommandOutputSettings
-       :ivar compute_deployment_threshold: The validation threshold indicating the allowable failures
-        of compute machines during environment validation and deployment.
-       :vartype compute_deployment_threshold: ~azure.mgmt.networkcloud.models.ValidationThreshold
-       :ivar compute_rack_definitions: The list of rack definitions for the compute racks in a
-        multi-rack
-    cluster, or an empty list in a single-rack cluster.
-       :vartype compute_rack_definitions: list[~azure.mgmt.networkcloud.models.RackDefinition]
-       :ivar runtime_protection_configuration: The settings for cluster runtime protection.
-       :vartype runtime_protection_configuration:
-        ~azure.mgmt.networkcloud.models.RuntimeProtectionConfiguration
-       :ivar secret_archive: The configuration for use of a key vault to store secrets for later
-        retrieval by the operator.
-       :vartype secret_archive: ~azure.mgmt.networkcloud.models.ClusterSecretArchive
-       :ivar secret_archive_settings: The settings for the secret archive used to hold credentials for
-        the cluster.
-       :vartype secret_archive_settings: ~azure.mgmt.networkcloud.models.SecretArchiveSettings
-       :ivar update_strategy: The strategy for updating the cluster.
-       :vartype update_strategy: ~azure.mgmt.networkcloud.models.ClusterUpdateStrategy
-       :ivar vulnerability_scanning_settings: The settings for how security vulnerability scanning is
-        applied to the cluster.
-       :vartype vulnerability_scanning_settings:
-        ~azure.mgmt.networkcloud.models.VulnerabilityScanningSettingsPatch
+    :ivar identity: The identity for the resource.
+    :vartype identity: ~azure.mgmt.networkcloud.models.ManagedServiceIdentity
+    :ivar tags: The Azure resource tags that will replace the existing ones.
+    :vartype tags: dict[str, str]
+    :ivar aggregator_or_single_rack_definition: The rack definition that is intended to reflect
+     only a single rack in a single rack cluster, or an aggregator rack in a multi-rack cluster.
+    :vartype aggregator_or_single_rack_definition: ~azure.mgmt.networkcloud.models.RackDefinition
+    :ivar analytics_output_settings: The settings for the log analytics workspace used for output
+     of logs from this cluster.
+    :vartype analytics_output_settings: ~azure.mgmt.networkcloud.models.AnalyticsOutputSettings
+    :ivar cluster_location: The customer-provided location information to identify where the
+     cluster resides.
+    :vartype cluster_location: str
+    :ivar cluster_service_principal: Field Deprecated: Use managed identity to provide cluster
+     privileges. The service principal to be used by the cluster during Arc Appliance installation.
+    :vartype cluster_service_principal: ~azure.mgmt.networkcloud.models.ServicePrincipalInformation
+    :ivar command_output_settings: The settings for commands run in this cluster, such as bare
+     metal machine run read only commands and data extracts.
+    :vartype command_output_settings: ~azure.mgmt.networkcloud.models.CommandOutputSettings
+    :ivar compute_deployment_threshold: The validation threshold indicating the allowable failures
+     of compute machines during environment validation and deployment.
+    :vartype compute_deployment_threshold: ~azure.mgmt.networkcloud.models.ValidationThreshold
+    :ivar compute_rack_definitions: The list of rack definitions for the compute racks in a
+     multi-rack cluster, or an empty list in a single-rack cluster.
+    :vartype compute_rack_definitions: list[~azure.mgmt.networkcloud.models.RackDefinition]
+    :ivar runtime_protection_configuration: The settings for cluster runtime protection.
+    :vartype runtime_protection_configuration:
+     ~azure.mgmt.networkcloud.models.RuntimeProtectionConfiguration
+    :ivar secret_archive: The configuration for use of a key vault to store secrets for later
+     retrieval by the operator.
+    :vartype secret_archive: ~azure.mgmt.networkcloud.models.ClusterSecretArchive
+    :ivar secret_archive_settings: The settings for the secret archive used to hold credentials for
+     the cluster.
+    :vartype secret_archive_settings: ~azure.mgmt.networkcloud.models.SecretArchiveSettings
+    :ivar update_strategy: The strategy for updating the cluster.
+    :vartype update_strategy: ~azure.mgmt.networkcloud.models.ClusterUpdateStrategy
+    :ivar vulnerability_scanning_settings: The settings for how security vulnerability scanning is
+     applied to the cluster.
+    :vartype vulnerability_scanning_settings:
+     ~azure.mgmt.networkcloud.models.VulnerabilityScanningSettingsPatch
     """
 
     _attribute_map = {
@@ -3803,48 +3788,47 @@ class ClusterPatchParameters(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-               :keyword identity: The identity for the resource.
-               :paramtype identity: ~azure.mgmt.networkcloud.models.ManagedServiceIdentity
-               :keyword tags: The Azure resource tags that will replace the existing ones.
-               :paramtype tags: dict[str, str]
-               :keyword aggregator_or_single_rack_definition: The rack definition that is intended to reflect
-                only a single rack in a single rack cluster, or an aggregator rack in a multi-rack cluster.
-               :paramtype aggregator_or_single_rack_definition: ~azure.mgmt.networkcloud.models.RackDefinition
-               :keyword analytics_output_settings: The settings for the log analytics workspace used for
-                output of logs from this cluster.
-               :paramtype analytics_output_settings: ~azure.mgmt.networkcloud.models.AnalyticsOutputSettings
-               :keyword cluster_location: The customer-provided location information to identify where the
-                cluster resides.
-               :paramtype cluster_location: str
-               :keyword cluster_service_principal: Deprecated: Use managed identity to provide cluster
-                privileges. The service principal to be used by the cluster during Arc Appliance installation.
-               :paramtype cluster_service_principal:
-                ~azure.mgmt.networkcloud.models.ServicePrincipalInformation
-               :keyword command_output_settings: The settings for commands run in this cluster, such as bare
-                metal machine run read only commands and data extracts.
-               :paramtype command_output_settings: ~azure.mgmt.networkcloud.models.CommandOutputSettings
-               :keyword compute_deployment_threshold: The validation threshold indicating the allowable
-                failures of compute machines during environment validation and deployment.
-               :paramtype compute_deployment_threshold: ~azure.mgmt.networkcloud.models.ValidationThreshold
-               :keyword compute_rack_definitions: The list of rack definitions for the compute racks in a
-                multi-rack
-        cluster, or an empty list in a single-rack cluster.
-               :paramtype compute_rack_definitions: list[~azure.mgmt.networkcloud.models.RackDefinition]
-               :keyword runtime_protection_configuration: The settings for cluster runtime protection.
-               :paramtype runtime_protection_configuration:
-                ~azure.mgmt.networkcloud.models.RuntimeProtectionConfiguration
-               :keyword secret_archive: The configuration for use of a key vault to store secrets for later
-                retrieval by the operator.
-               :paramtype secret_archive: ~azure.mgmt.networkcloud.models.ClusterSecretArchive
-               :keyword secret_archive_settings: The settings for the secret archive used to hold credentials
-                for the cluster.
-               :paramtype secret_archive_settings: ~azure.mgmt.networkcloud.models.SecretArchiveSettings
-               :keyword update_strategy: The strategy for updating the cluster.
-               :paramtype update_strategy: ~azure.mgmt.networkcloud.models.ClusterUpdateStrategy
-               :keyword vulnerability_scanning_settings: The settings for how security vulnerability scanning
-                is applied to the cluster.
-               :paramtype vulnerability_scanning_settings:
-                ~azure.mgmt.networkcloud.models.VulnerabilityScanningSettingsPatch
+        :keyword identity: The identity for the resource.
+        :paramtype identity: ~azure.mgmt.networkcloud.models.ManagedServiceIdentity
+        :keyword tags: The Azure resource tags that will replace the existing ones.
+        :paramtype tags: dict[str, str]
+        :keyword aggregator_or_single_rack_definition: The rack definition that is intended to reflect
+         only a single rack in a single rack cluster, or an aggregator rack in a multi-rack cluster.
+        :paramtype aggregator_or_single_rack_definition: ~azure.mgmt.networkcloud.models.RackDefinition
+        :keyword analytics_output_settings: The settings for the log analytics workspace used for
+         output of logs from this cluster.
+        :paramtype analytics_output_settings: ~azure.mgmt.networkcloud.models.AnalyticsOutputSettings
+        :keyword cluster_location: The customer-provided location information to identify where the
+         cluster resides.
+        :paramtype cluster_location: str
+        :keyword cluster_service_principal: Field Deprecated: Use managed identity to provide cluster
+         privileges. The service principal to be used by the cluster during Arc Appliance installation.
+        :paramtype cluster_service_principal:
+         ~azure.mgmt.networkcloud.models.ServicePrincipalInformation
+        :keyword command_output_settings: The settings for commands run in this cluster, such as bare
+         metal machine run read only commands and data extracts.
+        :paramtype command_output_settings: ~azure.mgmt.networkcloud.models.CommandOutputSettings
+        :keyword compute_deployment_threshold: The validation threshold indicating the allowable
+         failures of compute machines during environment validation and deployment.
+        :paramtype compute_deployment_threshold: ~azure.mgmt.networkcloud.models.ValidationThreshold
+        :keyword compute_rack_definitions: The list of rack definitions for the compute racks in a
+         multi-rack cluster, or an empty list in a single-rack cluster.
+        :paramtype compute_rack_definitions: list[~azure.mgmt.networkcloud.models.RackDefinition]
+        :keyword runtime_protection_configuration: The settings for cluster runtime protection.
+        :paramtype runtime_protection_configuration:
+         ~azure.mgmt.networkcloud.models.RuntimeProtectionConfiguration
+        :keyword secret_archive: The configuration for use of a key vault to store secrets for later
+         retrieval by the operator.
+        :paramtype secret_archive: ~azure.mgmt.networkcloud.models.ClusterSecretArchive
+        :keyword secret_archive_settings: The settings for the secret archive used to hold credentials
+         for the cluster.
+        :paramtype secret_archive_settings: ~azure.mgmt.networkcloud.models.SecretArchiveSettings
+        :keyword update_strategy: The strategy for updating the cluster.
+        :paramtype update_strategy: ~azure.mgmt.networkcloud.models.ClusterUpdateStrategy
+        :keyword vulnerability_scanning_settings: The settings for how security vulnerability scanning
+         is applied to the cluster.
+        :paramtype vulnerability_scanning_settings:
+         ~azure.mgmt.networkcloud.models.VulnerabilityScanningSettingsPatch
         """
         super().__init__(**kwargs)
         self.identity = identity
@@ -3935,24 +3919,23 @@ class ClusterSecretArchive(_serialization.Model):
 class ClusterUpdateStrategy(_serialization.Model):
     """ClusterUpdateStrategy represents the strategy for updating the cluster.
 
-       All required parameters must be populated in order to send to server.
+    All required parameters must be populated in order to send to server.
 
-       :ivar max_unavailable: The maximum number of worker nodes that can be offline within the
-        increment of update, e.g., rack-by-rack.
-    Limited by the maximum number of machines in the increment. Defaults to the whole increment
-        size.
-       :vartype max_unavailable: int
-       :ivar strategy_type: The mode of operation for runtime protection. Required. Known values are:
-        "Rack" and "PauseAfterRack".
-       :vartype strategy_type: str or ~azure.mgmt.networkcloud.models.ClusterUpdateStrategyType
-       :ivar threshold_type: Selection of how the threshold should be evaluated. Required. Known
-        values are: "CountSuccess" and "PercentSuccess".
-       :vartype threshold_type: str or ~azure.mgmt.networkcloud.models.ValidationThresholdType
-       :ivar threshold_value: The numeric threshold value. Required.
-       :vartype threshold_value: int
-       :ivar wait_time_minutes: The time to wait between the increments of update defined by the
-        strategy.
-       :vartype wait_time_minutes: int
+    :ivar max_unavailable: The maximum number of worker nodes that can be offline within the
+     increment of update, e.g., rack-by-rack. Limited by the maximum number of machines in the
+     increment. Defaults to the whole increment size.
+    :vartype max_unavailable: int
+    :ivar strategy_type: The mode of operation for runtime protection. Required. Known values are:
+     "Rack" and "PauseAfterRack".
+    :vartype strategy_type: str or ~azure.mgmt.networkcloud.models.ClusterUpdateStrategyType
+    :ivar threshold_type: Selection of how the threshold should be evaluated. Required. Known
+     values are: "CountSuccess" and "PercentSuccess".
+    :vartype threshold_type: str or ~azure.mgmt.networkcloud.models.ValidationThresholdType
+    :ivar threshold_value: The numeric threshold value. Required.
+    :vartype threshold_value: int
+    :ivar wait_time_minutes: The time to wait between the increments of update defined by the
+     strategy.
+    :vartype wait_time_minutes: int
     """
 
     _validation = {
@@ -3982,22 +3965,21 @@ class ClusterUpdateStrategy(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-               :keyword max_unavailable: The maximum number of worker nodes that can be offline within the
-                increment of update, e.g., rack-by-rack.
-        Limited by the maximum number of machines in the increment. Defaults to the whole increment
-                size.
-               :paramtype max_unavailable: int
-               :keyword strategy_type: The mode of operation for runtime protection. Required. Known values
-                are: "Rack" and "PauseAfterRack".
-               :paramtype strategy_type: str or ~azure.mgmt.networkcloud.models.ClusterUpdateStrategyType
-               :keyword threshold_type: Selection of how the threshold should be evaluated. Required. Known
-                values are: "CountSuccess" and "PercentSuccess".
-               :paramtype threshold_type: str or ~azure.mgmt.networkcloud.models.ValidationThresholdType
-               :keyword threshold_value: The numeric threshold value. Required.
-               :paramtype threshold_value: int
-               :keyword wait_time_minutes: The time to wait between the increments of update defined by the
-                strategy.
-               :paramtype wait_time_minutes: int
+        :keyword max_unavailable: The maximum number of worker nodes that can be offline within the
+         increment of update, e.g., rack-by-rack. Limited by the maximum number of machines in the
+         increment. Defaults to the whole increment size.
+        :paramtype max_unavailable: int
+        :keyword strategy_type: The mode of operation for runtime protection. Required. Known values
+         are: "Rack" and "PauseAfterRack".
+        :paramtype strategy_type: str or ~azure.mgmt.networkcloud.models.ClusterUpdateStrategyType
+        :keyword threshold_type: Selection of how the threshold should be evaluated. Required. Known
+         values are: "CountSuccess" and "PercentSuccess".
+        :paramtype threshold_type: str or ~azure.mgmt.networkcloud.models.ValidationThresholdType
+        :keyword threshold_value: The numeric threshold value. Required.
+        :paramtype threshold_value: int
+        :keyword wait_time_minutes: The time to wait between the increments of update defined by the
+         strategy.
+        :paramtype wait_time_minutes: int
         """
         super().__init__(**kwargs)
         self.max_unavailable = max_unavailable
@@ -4042,7 +4024,8 @@ class CommandOutputOverride(_serialization.Model):
     :vartype associated_identity: ~azure.mgmt.networkcloud.models.IdentitySelector
     :ivar command_output_type: The type of command output for the override. Known values are:
      "BareMetalMachineRunCommand", "BareMetalMachineRunDataExtracts",
-     "BareMetalMachineRunReadCommands", and "StorageRunReadCommands".
+     "BareMetalMachineRunReadCommands", "StorageRunReadCommands", and
+     "BareMetalMachineRunDataExtractsRestricted".
     :vartype command_output_type: str or ~azure.mgmt.networkcloud.models.CommandOutputType
     :ivar container_url: The URL of the storage account container that is to be used by the
      specified identities.
@@ -4069,7 +4052,8 @@ class CommandOutputOverride(_serialization.Model):
         :paramtype associated_identity: ~azure.mgmt.networkcloud.models.IdentitySelector
         :keyword command_output_type: The type of command output for the override. Known values are:
          "BareMetalMachineRunCommand", "BareMetalMachineRunDataExtracts",
-         "BareMetalMachineRunReadCommands", and "StorageRunReadCommands".
+         "BareMetalMachineRunReadCommands", "StorageRunReadCommands", and
+         "BareMetalMachineRunDataExtractsRestricted".
         :paramtype command_output_type: str or ~azure.mgmt.networkcloud.models.CommandOutputType
         :keyword container_url: The URL of the storage account container that is to be used by the
          specified identities.
@@ -6088,82 +6072,80 @@ class L2ServiceLoadBalancerConfiguration(_serialization.Model):
 
 class L3Network(TrackedResource):
     """L3Network represents a network that utilizes a single isolation domain set up for layer-3
-       resources.
+    resources.
 
-       Variables are only populated by the server, and will be ignored when sending a request.
+    Variables are only populated by the server, and will be ignored when sending a request.
 
-       All required parameters must be populated in order to send to server.
+    All required parameters must be populated in order to send to server.
 
-       :ivar id: Fully qualified resource ID for the resource. E.g.
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-       :vartype id: str
-       :ivar name: The name of the resource.
-       :vartype name: str
-       :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-        "Microsoft.Storage/storageAccounts".
-       :vartype type: str
-       :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-        information.
-       :vartype system_data: ~azure.mgmt.networkcloud.models.SystemData
-       :ivar tags: Resource tags.
-       :vartype tags: dict[str, str]
-       :ivar location: The geo-location where the resource lives. Required.
-       :vartype location: str
-       :ivar etag: Resource ETag.
-       :vartype etag: str
-       :ivar extended_location: The extended location of the cluster associated with the resource.
-        Required.
-       :vartype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
-       :ivar associated_resource_ids: The list of resource IDs for the other Microsoft.NetworkCloud
-        resources that have attached this network.
-       :vartype associated_resource_ids: list[str]
-       :ivar cluster_id: The resource ID of the Network Cloud cluster this L3 network is associated
-        with.
-       :vartype cluster_id: str
-       :ivar detailed_status: The more detailed status of the L3 network. Known values are: "Error",
-        "Available", and "Provisioning".
-       :vartype detailed_status: str or ~azure.mgmt.networkcloud.models.L3NetworkDetailedStatus
-       :ivar detailed_status_message: The descriptive message about the current detailed status.
-       :vartype detailed_status_message: str
-       :ivar hybrid_aks_clusters_associated_ids: Field Deprecated. These fields will be empty/omitted.
-        The list of Hybrid AKS cluster resource IDs that are associated with this L3 network.
-       :vartype hybrid_aks_clusters_associated_ids: list[str]
-       :ivar hybrid_aks_ipam_enabled: Field Deprecated. The field was previously optional, now it will
-        have no defined behavior and will be ignored. The indicator of whether or not to disable IPAM
-        allocation on the network attachment definition injected into the Hybrid AKS Cluster. Known
-        values are: "True" and "False".
-       :vartype hybrid_aks_ipam_enabled: str or ~azure.mgmt.networkcloud.models.HybridAksIpamEnabled
-       :ivar hybrid_aks_plugin_type: Field Deprecated. The field was previously optional, now it will
-        have no defined behavior and will be ignored. The network plugin type for Hybrid AKS. Known
-        values are: "DPDK", "SRIOV", and "OSDevice".
-       :vartype hybrid_aks_plugin_type: str or ~azure.mgmt.networkcloud.models.HybridAksPluginType
-       :ivar interface_name: The default interface name for this L3 network in the virtual machine.
-        This name can be overridden by the name supplied in the network attachment configuration of
-        that virtual machine.
-       :vartype interface_name: str
-       :ivar ip_allocation_type: The type of the IP address allocation, defaulted to "DualStack".
-        Known values are: "IPV4", "IPV6", and "DualStack".
-       :vartype ip_allocation_type: str or ~azure.mgmt.networkcloud.models.IpAllocationType
-       :ivar ipv4_connected_prefix: The IPV4 prefix (CIDR) assigned to this L3 network. Required when
-        the IP allocation type
-    is IPV4 or DualStack.
-       :vartype ipv4_connected_prefix: str
-       :ivar ipv6_connected_prefix: The IPV6 prefix (CIDR) assigned to this L3 network. Required when
-        the IP allocation type
-    is IPV6 or DualStack.
-       :vartype ipv6_connected_prefix: str
-       :ivar l3_isolation_domain_id: The resource ID of the Network Fabric l3IsolationDomain.
-        Required.
-       :vartype l3_isolation_domain_id: str
-       :ivar provisioning_state: The provisioning state of the L3 network. Known values are:
-        "Succeeded", "Failed", "Canceled", "Provisioning", and "Accepted".
-       :vartype provisioning_state: str or ~azure.mgmt.networkcloud.models.L3NetworkProvisioningState
-       :ivar virtual_machines_associated_ids: Field Deprecated. These fields will be empty/omitted.
-        The list of virtual machine resource IDs, excluding any Hybrid AKS virtual machines, that are
-        currently using this L3 network.
-       :vartype virtual_machines_associated_ids: list[str]
-       :ivar vlan: The VLAN from the l3IsolationDomain that is used for this network. Required.
-       :vartype vlan: int
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.networkcloud.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar etag: Resource ETag.
+    :vartype etag: str
+    :ivar extended_location: The extended location of the cluster associated with the resource.
+     Required.
+    :vartype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
+    :ivar associated_resource_ids: The list of resource IDs for the other Microsoft.NetworkCloud
+     resources that have attached this network.
+    :vartype associated_resource_ids: list[str]
+    :ivar cluster_id: The resource ID of the Network Cloud cluster this L3 network is associated
+     with.
+    :vartype cluster_id: str
+    :ivar detailed_status: The more detailed status of the L3 network. Known values are: "Error",
+     "Available", and "Provisioning".
+    :vartype detailed_status: str or ~azure.mgmt.networkcloud.models.L3NetworkDetailedStatus
+    :ivar detailed_status_message: The descriptive message about the current detailed status.
+    :vartype detailed_status_message: str
+    :ivar hybrid_aks_clusters_associated_ids: Field Deprecated. These fields will be empty/omitted.
+     The list of Hybrid AKS cluster resource IDs that are associated with this L3 network.
+    :vartype hybrid_aks_clusters_associated_ids: list[str]
+    :ivar hybrid_aks_ipam_enabled: Field Deprecated. The field was previously optional, now it will
+     have no defined behavior and will be ignored. The indicator of whether or not to disable IPAM
+     allocation on the network attachment definition injected into the Hybrid AKS Cluster. Known
+     values are: "True" and "False".
+    :vartype hybrid_aks_ipam_enabled: str or ~azure.mgmt.networkcloud.models.HybridAksIpamEnabled
+    :ivar hybrid_aks_plugin_type: Field Deprecated. The field was previously optional, now it will
+     have no defined behavior and will be ignored. The network plugin type for Hybrid AKS. Known
+     values are: "DPDK", "SRIOV", and "OSDevice".
+    :vartype hybrid_aks_plugin_type: str or ~azure.mgmt.networkcloud.models.HybridAksPluginType
+    :ivar interface_name: The default interface name for this L3 network in the virtual machine.
+     This name can be overridden by the name supplied in the network attachment configuration of
+     that virtual machine.
+    :vartype interface_name: str
+    :ivar ip_allocation_type: The type of the IP address allocation, defaulted to "DualStack".
+     Known values are: "IPV4", "IPV6", and "DualStack".
+    :vartype ip_allocation_type: str or ~azure.mgmt.networkcloud.models.IpAllocationType
+    :ivar ipv4_connected_prefix: The IPV4 prefix (CIDR) assigned to this L3 network. Required when
+     the IP allocation type is IPV4 or DualStack.
+    :vartype ipv4_connected_prefix: str
+    :ivar ipv6_connected_prefix: The IPV6 prefix (CIDR) assigned to this L3 network. Required when
+     the IP allocation type is IPV6 or DualStack.
+    :vartype ipv6_connected_prefix: str
+    :ivar l3_isolation_domain_id: The resource ID of the Network Fabric l3IsolationDomain.
+     Required.
+    :vartype l3_isolation_domain_id: str
+    :ivar provisioning_state: The provisioning state of the L3 network. Known values are:
+     "Succeeded", "Failed", "Canceled", "Provisioning", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.networkcloud.models.L3NetworkProvisioningState
+    :ivar virtual_machines_associated_ids: Field Deprecated. These fields will be empty/omitted.
+     The list of virtual machine resource IDs, excluding any Hybrid AKS virtual machines, that are
+     currently using this L3 network.
+    :vartype virtual_machines_associated_ids: list[str]
+    :ivar vlan: The VLAN from the l3IsolationDomain that is used for this network. Required.
+    :vartype vlan: int
     """
 
     _validation = {
@@ -6229,42 +6211,40 @@ class L3Network(TrackedResource):
         **kwargs: Any
     ) -> None:
         """
-               :keyword tags: Resource tags.
-               :paramtype tags: dict[str, str]
-               :keyword location: The geo-location where the resource lives. Required.
-               :paramtype location: str
-               :keyword extended_location: The extended location of the cluster associated with the resource.
-                Required.
-               :paramtype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
-               :keyword hybrid_aks_ipam_enabled: Field Deprecated. The field was previously optional, now it
-                will have no defined behavior and will be ignored. The indicator of whether or not to disable
-                IPAM allocation on the network attachment definition injected into the Hybrid AKS Cluster.
-                Known values are: "True" and "False".
-               :paramtype hybrid_aks_ipam_enabled: str or ~azure.mgmt.networkcloud.models.HybridAksIpamEnabled
-               :keyword hybrid_aks_plugin_type: Field Deprecated. The field was previously optional, now it
-                will have no defined behavior and will be ignored. The network plugin type for Hybrid AKS.
-                Known values are: "DPDK", "SRIOV", and "OSDevice".
-               :paramtype hybrid_aks_plugin_type: str or ~azure.mgmt.networkcloud.models.HybridAksPluginType
-               :keyword interface_name: The default interface name for this L3 network in the virtual machine.
-                This name can be overridden by the name supplied in the network attachment configuration of
-                that virtual machine.
-               :paramtype interface_name: str
-               :keyword ip_allocation_type: The type of the IP address allocation, defaulted to "DualStack".
-                Known values are: "IPV4", "IPV6", and "DualStack".
-               :paramtype ip_allocation_type: str or ~azure.mgmt.networkcloud.models.IpAllocationType
-               :keyword ipv4_connected_prefix: The IPV4 prefix (CIDR) assigned to this L3 network. Required
-                when the IP allocation type
-        is IPV4 or DualStack.
-               :paramtype ipv4_connected_prefix: str
-               :keyword ipv6_connected_prefix: The IPV6 prefix (CIDR) assigned to this L3 network. Required
-                when the IP allocation type
-        is IPV6 or DualStack.
-               :paramtype ipv6_connected_prefix: str
-               :keyword l3_isolation_domain_id: The resource ID of the Network Fabric l3IsolationDomain.
-                Required.
-               :paramtype l3_isolation_domain_id: str
-               :keyword vlan: The VLAN from the l3IsolationDomain that is used for this network. Required.
-               :paramtype vlan: int
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword extended_location: The extended location of the cluster associated with the resource.
+         Required.
+        :paramtype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
+        :keyword hybrid_aks_ipam_enabled: Field Deprecated. The field was previously optional, now it
+         will have no defined behavior and will be ignored. The indicator of whether or not to disable
+         IPAM allocation on the network attachment definition injected into the Hybrid AKS Cluster.
+         Known values are: "True" and "False".
+        :paramtype hybrid_aks_ipam_enabled: str or ~azure.mgmt.networkcloud.models.HybridAksIpamEnabled
+        :keyword hybrid_aks_plugin_type: Field Deprecated. The field was previously optional, now it
+         will have no defined behavior and will be ignored. The network plugin type for Hybrid AKS.
+         Known values are: "DPDK", "SRIOV", and "OSDevice".
+        :paramtype hybrid_aks_plugin_type: str or ~azure.mgmt.networkcloud.models.HybridAksPluginType
+        :keyword interface_name: The default interface name for this L3 network in the virtual machine.
+         This name can be overridden by the name supplied in the network attachment configuration of
+         that virtual machine.
+        :paramtype interface_name: str
+        :keyword ip_allocation_type: The type of the IP address allocation, defaulted to "DualStack".
+         Known values are: "IPV4", "IPV6", and "DualStack".
+        :paramtype ip_allocation_type: str or ~azure.mgmt.networkcloud.models.IpAllocationType
+        :keyword ipv4_connected_prefix: The IPV4 prefix (CIDR) assigned to this L3 network. Required
+         when the IP allocation type is IPV4 or DualStack.
+        :paramtype ipv4_connected_prefix: str
+        :keyword ipv6_connected_prefix: The IPV6 prefix (CIDR) assigned to this L3 network. Required
+         when the IP allocation type is IPV6 or DualStack.
+        :paramtype ipv6_connected_prefix: str
+        :keyword l3_isolation_domain_id: The resource ID of the Network Fabric l3IsolationDomain.
+         Required.
+        :paramtype l3_isolation_domain_id: str
+        :keyword vlan: The VLAN from the l3IsolationDomain that is used for this network. Required.
+        :paramtype vlan: int
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.etag: Optional[str] = None
@@ -6642,53 +6622,43 @@ class ManagedServiceIdentity(_serialization.Model):
 class NetworkAttachment(_serialization.Model):
     """NetworkAttachment represents the single network attachment.
 
-       Variables are only populated by the server, and will be ignored when sending a request.
+    Variables are only populated by the server, and will be ignored when sending a request.
 
-       All required parameters must be populated in order to send to server.
+    All required parameters must be populated in order to send to server.
 
-       :ivar attached_network_id: The resource ID of the associated network attached to the virtual
-        machine.
-    It can be one of cloudServicesNetwork, l3Network, l2Network or trunkedNetwork resources.
-        Required.
-       :vartype attached_network_id: str
-       :ivar default_gateway: The indicator of whether this is the default gateway.
-    Only one of the attached networks (including the CloudServicesNetwork attachment) for a single
-        machine may be specified as True. Known values are: "True" and "False".
-       :vartype default_gateway: str or ~azure.mgmt.networkcloud.models.DefaultGateway
-       :ivar ip_allocation_method: The IP allocation mechanism for the virtual machine.
-    Dynamic and Static are only valid for l3Network which may also specify Disabled.
-    Otherwise, Disabled is the only permitted value. Required. Known values are: "Dynamic",
-        "Static", and "Disabled".
-       :vartype ip_allocation_method: str or
-        ~azure.mgmt.networkcloud.models.VirtualMachineIPAllocationMethod
-       :ivar ipv4_address: The IPv4 address of the virtual machine.
-    This field is used only if the attached network has IPAllocationType of IPV4 or DualStack.
-    If IPAllocationMethod is:
-    Static - this field must contain a user specified IPv4 address from within the subnet specified
-        in the attached network.
-    Dynamic - this field is read-only, but will be populated with an address from within the subnet
-        specified in the attached network.
-    Disabled - this field will be empty.
-       :vartype ipv4_address: str
-       :ivar ipv6_address: The IPv6 address of the virtual machine.
-    This field is used only if the attached network has IPAllocationType of IPV6 or DualStack.
-    If IPAllocationMethod is:
-    Static - this field must contain an IPv6 address range from within the range specified in the
-        attached network.
-    Dynamic - this field is read-only, but will be populated with an range from within the subnet
-        specified in the attached network.
-    Disabled - this field will be empty.
-       :vartype ipv6_address: str
-       :ivar mac_address: The MAC address of the interface for the virtual machine that corresponds to
-        this network attachment.
-       :vartype mac_address: str
-       :ivar network_attachment_name: The associated network's interface name.
-    If specified, the network attachment name has a maximum length of 15 characters and must be
-        unique to this virtual machine.
-    If the user doesn’t specify this value, the default interface name of the network resource will
-        be used.
-    For a CloudServicesNetwork resource, this name will be ignored.
-       :vartype network_attachment_name: str
+    :ivar attached_network_id: The resource ID of the associated network attached to the virtual
+     machine. It can be one of cloudServicesNetwork, l3Network, l2Network or trunkedNetwork
+     resources. Required.
+    :vartype attached_network_id: str
+    :ivar default_gateway: The indicator of whether this is the default gateway. Only one of the
+     attached networks (including the CloudServicesNetwork attachment) for a single machine may be
+     specified as True. Known values are: "True" and "False".
+    :vartype default_gateway: str or ~azure.mgmt.networkcloud.models.DefaultGateway
+    :ivar ip_allocation_method: The IP allocation mechanism for the virtual machine. Dynamic and
+     Static are only valid for l3Network which may also specify Disabled. Otherwise, Disabled is the
+     only permitted value. Required. Known values are: "Dynamic", "Static", and "Disabled".
+    :vartype ip_allocation_method: str or
+     ~azure.mgmt.networkcloud.models.VirtualMachineIPAllocationMethod
+    :ivar ipv4_address: The IPv4 address of the virtual machine.  This field is used only if the
+     attached network has IPAllocationType of IPV4 or DualStack.  If IPAllocationMethod is: Static -
+     this field must contain a user specified IPv4 address from within the subnet specified in the
+     attached network. Dynamic - this field is read-only, but will be populated with an address from
+     within the subnet specified in the attached network. Disabled - this field will be empty.
+    :vartype ipv4_address: str
+    :ivar ipv6_address: The IPv6 address of the virtual machine.  This field is used only if the
+     attached network has IPAllocationType of IPV6 or DualStack.  If IPAllocationMethod is: Static -
+     this field must contain an IPv6 address range from within the range specified in the attached
+     network. Dynamic - this field is read-only, but will be populated with an range from within the
+     subnet specified in the attached network. Disabled - this field will be empty.
+    :vartype ipv6_address: str
+    :ivar mac_address: The MAC address of the interface for the virtual machine that corresponds to
+     this network attachment.
+    :vartype mac_address: str
+    :ivar network_attachment_name: The associated network's interface name. If specified, the
+     network attachment name has a maximum length of 15 characters and must be unique to this
+     virtual machine. If the user doesn’t specify this value, the default interface name of the
+     network resource will be used. For a CloudServicesNetwork resource, this name will be ignored.
+    :vartype network_attachment_name: str
     """
 
     _validation = {
@@ -6720,46 +6690,36 @@ class NetworkAttachment(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-               :keyword attached_network_id: The resource ID of the associated network attached to the virtual
-                machine.
-        It can be one of cloudServicesNetwork, l3Network, l2Network or trunkedNetwork resources.
-                Required.
-               :paramtype attached_network_id: str
-               :keyword default_gateway: The indicator of whether this is the default gateway.
-        Only one of the attached networks (including the CloudServicesNetwork attachment) for a single
-                machine may be specified as True. Known values are: "True" and "False".
-               :paramtype default_gateway: str or ~azure.mgmt.networkcloud.models.DefaultGateway
-               :keyword ip_allocation_method: The IP allocation mechanism for the virtual machine.
-        Dynamic and Static are only valid for l3Network which may also specify Disabled.
-        Otherwise, Disabled is the only permitted value. Required. Known values are: "Dynamic",
-                "Static", and "Disabled".
-               :paramtype ip_allocation_method: str or
-                ~azure.mgmt.networkcloud.models.VirtualMachineIPAllocationMethod
-               :keyword ipv4_address: The IPv4 address of the virtual machine.
-        This field is used only if the attached network has IPAllocationType of IPV4 or DualStack.
-        If IPAllocationMethod is:
-        Static - this field must contain a user specified IPv4 address from within the subnet specified
-                in the attached network.
-        Dynamic - this field is read-only, but will be populated with an address from within the subnet
-                specified in the attached network.
-        Disabled - this field will be empty.
-               :paramtype ipv4_address: str
-               :keyword ipv6_address: The IPv6 address of the virtual machine.
-        This field is used only if the attached network has IPAllocationType of IPV6 or DualStack.
-        If IPAllocationMethod is:
-        Static - this field must contain an IPv6 address range from within the range specified in the
-                attached network.
-        Dynamic - this field is read-only, but will be populated with an range from within the subnet
-                specified in the attached network.
-        Disabled - this field will be empty.
-               :paramtype ipv6_address: str
-               :keyword network_attachment_name: The associated network's interface name.
-        If specified, the network attachment name has a maximum length of 15 characters and must be
-                unique to this virtual machine.
-        If the user doesn’t specify this value, the default interface name of the network resource will
-                be used.
-        For a CloudServicesNetwork resource, this name will be ignored.
-               :paramtype network_attachment_name: str
+        :keyword attached_network_id: The resource ID of the associated network attached to the virtual
+         machine. It can be one of cloudServicesNetwork, l3Network, l2Network or trunkedNetwork
+         resources. Required.
+        :paramtype attached_network_id: str
+        :keyword default_gateway: The indicator of whether this is the default gateway. Only one of the
+         attached networks (including the CloudServicesNetwork attachment) for a single machine may be
+         specified as True. Known values are: "True" and "False".
+        :paramtype default_gateway: str or ~azure.mgmt.networkcloud.models.DefaultGateway
+        :keyword ip_allocation_method: The IP allocation mechanism for the virtual machine. Dynamic and
+         Static are only valid for l3Network which may also specify Disabled. Otherwise, Disabled is the
+         only permitted value. Required. Known values are: "Dynamic", "Static", and "Disabled".
+        :paramtype ip_allocation_method: str or
+         ~azure.mgmt.networkcloud.models.VirtualMachineIPAllocationMethod
+        :keyword ipv4_address: The IPv4 address of the virtual machine.  This field is used only if the
+         attached network has IPAllocationType of IPV4 or DualStack.  If IPAllocationMethod is: Static -
+         this field must contain a user specified IPv4 address from within the subnet specified in the
+         attached network. Dynamic - this field is read-only, but will be populated with an address from
+         within the subnet specified in the attached network. Disabled - this field will be empty.
+        :paramtype ipv4_address: str
+        :keyword ipv6_address: The IPv6 address of the virtual machine.  This field is used only if the
+         attached network has IPAllocationType of IPV6 or DualStack.  If IPAllocationMethod is: Static -
+         this field must contain an IPv6 address range from within the range specified in the attached
+         network. Dynamic - this field is read-only, but will be populated with an range from within the
+         subnet specified in the attached network. Disabled - this field will be empty.
+        :paramtype ipv6_address: str
+        :keyword network_attachment_name: The associated network's interface name. If specified, the
+         network attachment name has a maximum length of 15 characters and must be unique to this
+         virtual machine. If the user doesn’t specify this value, the default interface name of the
+         network resource will be used. For a CloudServicesNetwork resource, this name will be ignored.
+        :paramtype network_attachment_name: str
         """
         super().__init__(**kwargs)
         self.attached_network_id = attached_network_id
@@ -9127,7 +9087,7 @@ class VirtualMachine(TrackedResource):
     :vartype memory_size_gb: int
     :ivar network_attachments: The list of network attachments to the virtual machine.
     :vartype network_attachments: list[~azure.mgmt.networkcloud.models.NetworkAttachment]
-    :ivar network_data: Deprecated: The Base64 encoded cloud-init network data. The
+    :ivar network_data: Field Deprecated: The Base64 encoded cloud-init network data. The
      networkDataContent property will be used in preference to this property.
     :vartype network_data: str
     :ivar network_data_content: The Base64 encoded cloud-init network data.
@@ -9147,7 +9107,7 @@ class VirtualMachine(TrackedResource):
     :ivar storage_profile: The storage profile that specifies size and other parameters about the
      disks related to the virtual machine. Required.
     :vartype storage_profile: ~azure.mgmt.networkcloud.models.StorageProfile
-    :ivar user_data: Deprecated: The Base64 encoded cloud-init user data. The userDataContent
+    :ivar user_data: Field Deprecated: The Base64 encoded cloud-init user data. The userDataContent
      property will be used in preference to this property.
     :vartype user_data: str
     :ivar user_data_content: The Base64 encoded cloud-init user data.
@@ -9301,7 +9261,7 @@ class VirtualMachine(TrackedResource):
         :paramtype memory_size_gb: int
         :keyword network_attachments: The list of network attachments to the virtual machine.
         :paramtype network_attachments: list[~azure.mgmt.networkcloud.models.NetworkAttachment]
-        :keyword network_data: Deprecated: The Base64 encoded cloud-init network data. The
+        :keyword network_data: Field Deprecated: The Base64 encoded cloud-init network data. The
          networkDataContent property will be used in preference to this property.
         :paramtype network_data: str
         :keyword network_data_content: The Base64 encoded cloud-init network data.
@@ -9314,8 +9274,8 @@ class VirtualMachine(TrackedResource):
         :keyword storage_profile: The storage profile that specifies size and other parameters about
          the disks related to the virtual machine. Required.
         :paramtype storage_profile: ~azure.mgmt.networkcloud.models.StorageProfile
-        :keyword user_data: Deprecated: The Base64 encoded cloud-init user data. The userDataContent
-         property will be used in preference to this property.
+        :keyword user_data: Field Deprecated: The Base64 encoded cloud-init user data. The
+         userDataContent property will be used in preference to this property.
         :paramtype user_data: str
         :keyword user_data_content: The Base64 encoded cloud-init user data.
         :paramtype user_data_content: str

@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, Literal, Optional, TypeVar
+from typing import Any, Callable, Literal, Optional, TypeVar
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -29,7 +29,7 @@ from .._configuration import AzureDataLakeStorageRESTAPIConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -38,6 +38,7 @@ _SERIALIZER.client_side_validation = False
 def build_list_file_systems_request(
     url: str,
     *,
+    version: str,
     prefix: Optional[str] = None,
     continuation: Optional[str] = None,
     max_results: Optional[int] = None,
@@ -49,7 +50,6 @@ def build_list_file_systems_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["account"] = kwargs.pop("resource", _params.pop("resource", "account"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -160,13 +160,13 @@ class ServiceOperations:
 
                 _request = build_list_file_systems_request(
                     url=self._config.url,
+                    version=self._config.version,
                     prefix=prefix,
                     continuation=continuation,
                     max_results=max_results,
                     request_id_parameter=request_id_parameter,
                     timeout=timeout,
                     resource=resource,
-                    version=self._config.version,
                     headers=_headers,
                     params=_params,
                 )
@@ -196,7 +196,10 @@ class ServiceOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.StorageError,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response

@@ -1,5 +1,66 @@
 # Release History
 
+## 4.0.0b3 (2026-03-24)
+
+### Features Added
+
+  - Model `UpdateGroup` added property `max_concurrency`
+  - Model `UpdateGroupStatus` added property `max_concurrency`
+  - Model `UpdateStage` added property `max_concurrency`
+  - Model `UpdateStageStatus` added property `max_concurrency`
+  - Operation group `AutoUpgradeProfilesOperations` added parameter `top` in method `list_by_fleet`
+  - Operation group `AutoUpgradeProfilesOperations` added parameter `skip_token` in method `list_by_fleet`
+  - Operation group `FleetMembersOperations` added parameter `top` in method `list_by_fleet`
+  - Operation group `FleetMembersOperations` added parameter `skip_token` in method `list_by_fleet`
+  - Operation group `FleetMembersOperations` added parameter `filter` in method `list_by_fleet`
+  - Operation group `FleetUpdateStrategiesOperations` added parameter `top` in method `list_by_fleet`
+  - Operation group `FleetUpdateStrategiesOperations` added parameter `skip_token` in method `list_by_fleet`
+  - Operation group `FleetsOperations` added parameter `top` in method `list_by_subscription`
+  - Operation group `FleetsOperations` added parameter `skip_token` in method `list_by_subscription`
+  - Operation group `GatesOperations` added parameter `filter` in method `list_by_fleet`
+  - Operation group `GatesOperations` added parameter `top` in method `list_by_fleet`
+  - Operation group `GatesOperations` added parameter `skip_token` in method `list_by_fleet`
+  - Operation group `UpdateRunsOperations` added parameter `top` in method `list_by_fleet`
+  - Operation group `UpdateRunsOperations` added parameter `skip_token` in method `list_by_fleet`
+
+## 4.0.0b2 (2025-12-03)
+
+### Features Added
+
+  - Model `ContainerServiceFleetMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ContainerServiceFleetMgmtClient` added operation group `fleet_managed_namespaces`
+  - Added enum `AdoptionPolicy`
+  - Added model `Affinity`
+  - Added model `ClusterAffinity`
+  - Added model `ClusterResourcePlacementSpec`
+  - Added model `ClusterSelector`
+  - Added model `ClusterSelectorTerm`
+  - Added enum `DeletePolicy`
+  - Added model `FleetManagedNamespace`
+  - Added model `FleetManagedNamespacePatch`
+  - Added model `FleetManagedNamespaceProperties`
+  - Added enum `FleetManagedNamespaceProvisioningState`
+  - Added model `FleetManagedNamespaceStatus`
+  - Added model `LabelSelector`
+  - Added enum `LabelSelectorOperator`
+  - Added model `LabelSelectorRequirement`
+  - Added model `ManagedNamespaceProperties`
+  - Added model `NetworkPolicy`
+  - Added model `PlacementPolicy`
+  - Added model `PlacementProfile`
+  - Added enum `PlacementType`
+  - Added enum `PolicyRule`
+  - Added model `PropagationPolicy`
+  - Added enum `PropagationType`
+  - Added model `PropertySelector`
+  - Added enum `PropertySelectorOperator`
+  - Added model `PropertySelectorRequirement`
+  - Added model `ResourceQuota`
+  - Added enum `TaintEffect`
+  - Added model `Toleration`
+  - Added enum `TolerationOperator`
+  - Added operation group `FleetManagedNamespacesOperations`
+
 ## 4.0.0b1 (2025-08-04)
 
 ### Features Added

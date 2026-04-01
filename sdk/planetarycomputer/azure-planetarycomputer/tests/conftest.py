@@ -222,6 +222,15 @@ def add_sanitizers(test_proxy):
         value='"id": "00000000-0000-0000-0000-000000000000"',
     )
 
+    # Sanitize static image filenames in both URIs and response bodies
+    # Pattern: geocatalog-<collection>-<32hex>.png (UUID without dashes)
+    # This ensures consistency between the POST response body (which contains the URL)
+    # and the subsequent GET request URI, preventing playback mismatches
+    add_general_regex_sanitizer(
+        regex=r"geocatalog-[a-zA-Z0-9\-]+-[a-f0-9]{32}\.png",
+        value="geocatalog-static-image-00000000000000000000000000000000.png",
+    )
+
     # Sanitize operation-location header for LRO polling
     # This header contains the polling URL with operation UUID that needs to be sanitized
     add_header_regex_sanitizer(
@@ -274,4 +283,19 @@ def add_sanitizers(test_proxy):
         regex=rf'"{re.escape(collection_base)}-[a-f0-9]{{8}}"',
         value=f'"{collection_base}-00000000"',
     )
-    # else: no hash suffix, use collection ID as-is (like "naip-atl")
+
+    # Also sanitize the hash suffix AFTER the EnvironmentVariableLoader replaces
+    # the real collection_id with its default value. For example, if the real
+    # collection_id is "naip-atl-2" and the default is "naip-atl", the EnvVarLoader
+    # replaces "naip-atl-2" -> "naip-atl", turning container name "naip-atl-2-1232d7af"
+    # into "naip-atl-1232d7af". We need a sanitizer for this post-replacement form too.
+    default_collection_id = "naip-atl"
+    if collection_base != default_collection_id:
+        add_uri_regex_sanitizer(
+            regex=rf"{re.escape(default_collection_id)}-[a-f0-9]{{8}}",
+            value=f"{default_collection_id}-00000000",
+        )
+        add_body_regex_sanitizer(
+            regex=rf'"{re.escape(default_collection_id)}-[a-f0-9]{{8}}"',
+            value=f'"{default_collection_id}-00000000"',
+        )

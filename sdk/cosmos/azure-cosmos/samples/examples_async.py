@@ -366,22 +366,22 @@ async def examples_async():
         print("Sample done running!")
 
         # configure availability strategy config on request level
-        # [START read_item_with_availability_strategy_config]
+        # [START read_item_with_availability_strategy]
         strategy = {'threshold_ms':500, 'threshold_steps_ms':100}
         await container.read_item(
             item="id1",
             partition_key="pk1",
-            availability_strategy_config=strategy)
-        # [END read_item_with_availability_strategy_config]
+            availability_strategy=strategy)
+        # [END read_item_with_availability_strategy]
 
         # disable availability strategy config on request level
-        # [START read_item_with_disabled_availability_strategy_config]
+        # [START read_item_with_disabled_availability_strategy]
         await container.read_item(
             item="id1",
             partition_key="pk1",
-            availability_strategy_config=None
+            availability_strategy=None
         )
-        # [END read_item_with_disabled_availability_strategy_config]
+        # [END read_item_with_disabled_availability_strategy]
 
 if __name__ == "__main__":
     asyncio.run(examples_async())

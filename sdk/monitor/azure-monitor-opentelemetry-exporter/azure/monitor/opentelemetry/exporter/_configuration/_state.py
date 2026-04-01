@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 # Global singleton instance for easy access throughout the codebase
 _configuration_manager = None
 
+
 def get_configuration_manager() -> Optional["_ConfigurationManager"]:
     """Get the global Configuration Manager singleton instance.
 
@@ -30,5 +31,6 @@ def get_configuration_manager() -> Optional["_ConfigurationManager"]:
     global _configuration_manager  # pylint: disable=global-statement
     if _configuration_manager is None:
         from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
+
         _configuration_manager = _ConfigurationManager()
     return _configuration_manager

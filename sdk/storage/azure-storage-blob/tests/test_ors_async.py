@@ -35,7 +35,7 @@ class TestStorageObjectReplicationAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
         )
         blob = bsc.get_blob_client(container=self.SRC_CONTAINER, blob=self.BLOB_NAME)
 
@@ -68,7 +68,7 @@ class TestStorageObjectReplicationAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
         )
         blob = bsc.get_blob_client(container=self.DST_CONTAINER, blob=self.BLOB_NAME)
 

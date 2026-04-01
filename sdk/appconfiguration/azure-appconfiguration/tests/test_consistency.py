@@ -3,24 +3,31 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import functools
+import json
+import pytest
+from testcase import AppConfigTestCase
+from consts import APPCONFIGURATION_ENDPOINT_STRING
+from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy, set_custom_default_matcher
 from azure.appconfiguration import (
     FeatureFlagConfigurationSetting,
     FILTER_PERCENTAGE,
 )
-from testcase import AppConfigTestCase
-from preparers import app_config_decorator
-from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
-import json
-import pytest
+
+AppConfigPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_endpoint_string=APPCONFIGURATION_ENDPOINT_STRING,
+)
 
 
 class TestAppConfigurationConsistency(AppConfigTestCase):
-    @app_config_decorator
+    @AppConfigPreparer()
     @recorded_by_proxy
-    def test_update_json_by_value(self, appconfiguration_connection_string):
+    def test_update_json_by_value(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        client = self.create_client(appconfiguration_connection_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         key = self.get_resource_name("key")
         feature_flag = FeatureFlagConfigurationSetting(
             key, enabled=True, filters=[{"name": FILTER_PERCENTAGE, "parameters": {"Value": 10, "User": "user1"}}]
@@ -53,12 +60,12 @@ class TestAppConfigurationConsistency(AppConfigTestCase):
 
         client.delete_configuration_setting(set_flag)
 
-    @app_config_decorator
+    @AppConfigPreparer()
     @recorded_by_proxy
-    def test_feature_flag_invalid_json(self, appconfiguration_connection_string):
+    def test_feature_flag_invalid_json(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        client = self.create_client(appconfiguration_connection_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         key = self.get_resource_name("key")
         feature_flag = FeatureFlagConfigurationSetting(key, enabled=True)
         set_flag = client.set_configuration_setting(feature_flag)
@@ -69,12 +76,12 @@ class TestAppConfigurationConsistency(AppConfigTestCase):
 
         client.delete_configuration_setting(feature_flag)
 
-    @app_config_decorator
+    @AppConfigPreparer()
     @recorded_by_proxy
-    def test_feature_flag_invalid_json_string(self, appconfiguration_connection_string):
+    def test_feature_flag_invalid_json_string(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        client = self.create_client(appconfiguration_connection_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         key = self.get_resource_name("key")
         feature_flag = FeatureFlagConfigurationSetting(key, enabled=True)
         set_flag = client.set_configuration_setting(feature_flag)
@@ -85,12 +92,12 @@ class TestAppConfigurationConsistency(AppConfigTestCase):
         assert isinstance(received, FeatureFlagConfigurationSetting)
         client.delete_configuration_setting(set_flag)
 
-    @app_config_decorator
+    @AppConfigPreparer()
     @recorded_by_proxy
-    def test_feature_flag_invalid_json_access_properties(self, appconfiguration_connection_string):
+    def test_feature_flag_invalid_json_access_properties(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        client = self.create_client(appconfiguration_connection_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         key = self.get_resource_name("key")
         feature_flag = FeatureFlagConfigurationSetting(key, enabled=True)
         set_flag = client.set_configuration_setting(feature_flag)

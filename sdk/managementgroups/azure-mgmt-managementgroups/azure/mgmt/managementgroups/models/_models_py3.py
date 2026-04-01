@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8,12 +8,11 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, List, Literal, Optional, TYPE_CHECKING, Union
+from typing import Any, Literal, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -65,10 +64,10 @@ class AzureAsyncOperationResults(_serialization.Model):
         :paramtype display_name: str
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.type = None
-        self.name = None
-        self.status = None
+        self.id: Optional[str] = None
+        self.type: Optional[str] = None
+        self.name: Optional[str] = None
+        self.status: Optional[str] = None
         self.tenant_id = tenant_id
         self.display_name = display_name
 
@@ -142,9 +141,9 @@ class CheckNameAvailabilityResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name_available = None
-        self.reason = None
-        self.message = None
+        self.name_available: Optional[bool] = None
+        self.reason: Optional[Union[str, "_models.Reason"]] = None
+        self.message: Optional[str] = None
 
 
 class CreateManagementGroupChildInfo(_serialization.Model):
@@ -187,11 +186,11 @@ class CreateManagementGroupChildInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.id = None
-        self.name = None
-        self.display_name = None
-        self.children = None
+        self.type: Optional[Union[str, "_models.ManagementGroupChildType"]] = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.display_name: Optional[str] = None
+        self.children: Optional[list["_models.CreateManagementGroupChildInfo"]] = None
 
 
 class CreateManagementGroupDetails(_serialization.Model):
@@ -228,9 +227,9 @@ class CreateManagementGroupDetails(_serialization.Model):
         :paramtype parent: ~azure.mgmt.managementgroups.models.CreateParentGroupInfo
         """
         super().__init__(**kwargs)
-        self.version = None
-        self.updated_time = None
-        self.updated_by = None
+        self.version: Optional[int] = None
+        self.updated_time: Optional[datetime.datetime] = None
+        self.updated_by: Optional[str] = None
         self.parent = parent
 
 
@@ -295,13 +294,13 @@ class CreateManagementGroupRequest(_serialization.Model):
         :paramtype details: ~azure.mgmt.managementgroups.models.CreateManagementGroupDetails
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.type: Optional[str] = None
         self.name = name
-        self.tenant_id = None
+        self.tenant_id: Optional[str] = None
         self.display_name = display_name
         self.details = details
-        self.children = None
+        self.children: Optional[list["_models.CreateManagementGroupChildInfo"]] = None
 
 
 class CreateOrUpdateSettingsRequest(_serialization.Model):
@@ -384,8 +383,8 @@ class CreateParentGroupInfo(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.id = id
-        self.name = None
-        self.display_name = None
+        self.name: Optional[str] = None
+        self.display_name: Optional[str] = None
 
 
 class DescendantInfo(_serialization.Model):
@@ -436,9 +435,9 @@ class DescendantInfo(_serialization.Model):
         :paramtype parent: ~azure.mgmt.managementgroups.models.DescendantParentGroupInfo
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.type = None
-        self.name = None
+        self.id: Optional[str] = None
+        self.type: Optional[str] = None
+        self.name: Optional[str] = None
         self.display_name = display_name
         self.parent = parent
 
@@ -463,14 +462,14 @@ class DescendantListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.DescendantInfo"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.DescendantInfo"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of descendants.
         :paramtype value: list[~azure.mgmt.managementgroups.models.DescendantInfo]
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class DescendantParentGroupInfo(_serialization.Model):
@@ -537,7 +536,7 @@ class EntityHierarchyItem(_serialization.Model):
         *,
         display_name: Optional[str] = None,
         permissions: Optional[Union[str, "_models.Permissions"]] = None,
-        children: Optional[List["_models.EntityHierarchyItem"]] = None,
+        children: Optional[list["_models.EntityHierarchyItem"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -550,15 +549,15 @@ class EntityHierarchyItem(_serialization.Model):
         :paramtype children: list[~azure.mgmt.managementgroups.models.EntityHierarchyItem]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.type = None
-        self.name = None
+        self.id: Optional[str] = None
+        self.type: Optional[str] = None
+        self.name: Optional[str] = None
         self.display_name = display_name
         self.permissions = permissions
         self.children = children
 
 
-class EntityInfo(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class EntityInfo(_serialization.Model):
     """The entity.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -631,8 +630,8 @@ class EntityInfo(_serialization.Model):  # pylint: disable=too-many-instance-att
         number_of_descendants: Optional[int] = None,
         number_of_children: Optional[int] = None,
         number_of_child_groups: Optional[int] = None,
-        parent_display_name_chain: Optional[List[str]] = None,
-        parent_name_chain: Optional[List[str]] = None,
+        parent_display_name_chain: Optional[list[str]] = None,
+        parent_name_chain: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -664,9 +663,9 @@ class EntityInfo(_serialization.Model):  # pylint: disable=too-many-instance-att
         :paramtype parent_name_chain: list[str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.type = None
-        self.name = None
+        self.id: Optional[str] = None
+        self.type: Optional[str] = None
+        self.name: Optional[str] = None
         self.tenant_id = tenant_id
         self.display_name = display_name
         self.parent = parent
@@ -703,15 +702,15 @@ class EntityListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.EntityInfo"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.EntityInfo"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of entities.
         :paramtype value: list[~azure.mgmt.managementgroups.models.EntityInfo]
         """
         super().__init__(**kwargs)
         self.value = value
-        self.count = None
-        self.next_link = None
+        self.count: Optional[int] = None
+        self.next_link: Optional[str] = None
 
 
 class EntityParentGroupInfo(_serialization.Model):
@@ -860,9 +859,9 @@ class HierarchySettings(_serialization.Model):
         :paramtype default_management_group: str
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.type = None
-        self.name = None
+        self.id: Optional[str] = None
+        self.type: Optional[str] = None
+        self.name: Optional[str] = None
         self.tenant_id = tenant_id
         self.require_authorization_for_group_creation = require_authorization_for_group_creation
         self.default_management_group = default_management_group
@@ -938,9 +937,9 @@ class HierarchySettingsInfo(_serialization.Model):
         :paramtype default_management_group: str
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.type = None
-        self.name = None
+        self.id: Optional[str] = None
+        self.type: Optional[str] = None
+        self.name: Optional[str] = None
         self.tenant_id = tenant_id
         self.require_authorization_for_group_creation = require_authorization_for_group_creation
         self.default_management_group = default_management_group
@@ -966,14 +965,14 @@ class HierarchySettingsList(_serialization.Model):
         "next_link": {"key": "@nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.HierarchySettingsInfo"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.HierarchySettingsInfo"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of hierarchy settings.
         :paramtype value: list[~azure.mgmt.managementgroups.models.HierarchySettingsInfo]
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class ListSubscriptionUnderManagementGroup(_serialization.Model):
@@ -997,7 +996,7 @@ class ListSubscriptionUnderManagementGroup(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.SubscriptionUnderManagementGroup"]] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.SubscriptionUnderManagementGroup"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of subscriptions.
@@ -1005,7 +1004,7 @@ class ListSubscriptionUnderManagementGroup(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class ManagementGroup(_serialization.Model):
@@ -1054,7 +1053,7 @@ class ManagementGroup(_serialization.Model):
         tenant_id: Optional[str] = None,
         display_name: Optional[str] = None,
         details: Optional["_models.ManagementGroupDetails"] = None,
-        children: Optional[List["_models.ManagementGroupChildInfo"]] = None,
+        children: Optional[list["_models.ManagementGroupChildInfo"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1069,9 +1068,9 @@ class ManagementGroup(_serialization.Model):
         :paramtype children: list[~azure.mgmt.managementgroups.models.ManagementGroupChildInfo]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.type = None
-        self.name = None
+        self.id: Optional[str] = None
+        self.type: Optional[str] = None
+        self.name: Optional[str] = None
         self.tenant_id = tenant_id
         self.display_name = display_name
         self.details = details
@@ -1112,7 +1111,7 @@ class ManagementGroupChildInfo(_serialization.Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         display_name: Optional[str] = None,
-        children: Optional[List["_models.ManagementGroupChildInfo"]] = None,
+        children: Optional[list["_models.ManagementGroupChildInfo"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1180,9 +1179,9 @@ class ManagementGroupDetails(_serialization.Model):
         updated_time: Optional[datetime.datetime] = None,
         updated_by: Optional[str] = None,
         parent: Optional["_models.ParentGroupInfo"] = None,
-        path: Optional[List["_models.ManagementGroupPathElement"]] = None,
-        management_group_ancestors: Optional[List[str]] = None,
-        management_group_ancestors_chain: Optional[List["_models.ManagementGroupPathElement"]] = None,
+        path: Optional[list["_models.ManagementGroupPathElement"]] = None,
+        management_group_ancestors: Optional[list[str]] = None,
+        management_group_ancestors_chain: Optional[list["_models.ManagementGroupPathElement"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1256,9 +1255,9 @@ class ManagementGroupInfo(_serialization.Model):
         :paramtype display_name: str
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.type = None
-        self.name = None
+        self.id: Optional[str] = None
+        self.type: Optional[str] = None
+        self.name: Optional[str] = None
         self.tenant_id = tenant_id
         self.display_name = display_name
 
@@ -1283,14 +1282,14 @@ class ManagementGroupListResult(_serialization.Model):
         "next_link": {"key": "@nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ManagementGroupInfo"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.ManagementGroupInfo"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of management groups.
         :paramtype value: list[~azure.mgmt.managementgroups.models.ManagementGroupInfo]
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class ManagementGroupPathElement(_serialization.Model):
@@ -1345,7 +1344,7 @@ class Operation(_serialization.Model):
         :paramtype display: ~azure.mgmt.managementgroups.models.OperationDisplayProperties
         """
         super().__init__(**kwargs)
-        self.name = None
+        self.name: Optional[str] = None
         self.display = display
 
 
@@ -1381,10 +1380,10 @@ class OperationDisplayProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provider = None
-        self.resource = None
-        self.operation = None
-        self.description = None
+        self.provider: Optional[str] = None
+        self.resource: Optional[str] = None
+        self.operation: Optional[str] = None
+        self.description: Optional[str] = None
 
 
 class OperationListResult(_serialization.Model):
@@ -1411,8 +1410,8 @@ class OperationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.Operation"]] = None
+        self.next_link: Optional[str] = None
 
 
 class OperationResults(_serialization.Model):
@@ -1458,9 +1457,9 @@ class OperationResults(_serialization.Model):
         :paramtype display_name: str
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.type = None
-        self.name = None
+        self.id: Optional[str] = None
+        self.type: Optional[str] = None
+        self.name: Optional[str] = None
         self.tenant_id = tenant_id
         self.display_name = display_name
 
@@ -1543,7 +1542,7 @@ class SubscriptionUnderManagementGroup(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: The fully qualified ID for the subscription.  For example,
-     /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000/subscriptions/0000000-0000-0000-0000-000000000001.  # pylint: disable=line-too-long
+     /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000/subscriptions/0000000-0000-0000-0000-000000000001.
     :vartype id: str
     :ivar type: The type of the resource.  For example,
      Microsoft.Management/managementGroups/subscriptions.
@@ -1599,9 +1598,9 @@ class SubscriptionUnderManagementGroup(_serialization.Model):
         :paramtype state: str
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.type = None
-        self.name = None
+        self.id: Optional[str] = None
+        self.type: Optional[str] = None
+        self.name: Optional[str] = None
         self.tenant = tenant
         self.display_name = display_name
         self.parent = parent
@@ -1634,5 +1633,5 @@ class TenantBackfillStatusResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.tenant_id = None
-        self.status = None
+        self.tenant_id: Optional[str] = None
+        self.status: Optional[Union[str, "_models.Status"]] = None

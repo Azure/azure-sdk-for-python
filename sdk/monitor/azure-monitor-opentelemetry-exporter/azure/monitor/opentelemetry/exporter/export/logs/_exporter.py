@@ -5,24 +5,41 @@ import logging
 from typing import Optional, Sequence, Any
 
 from opentelemetry._logs.severity import SeverityNumber
+from opentelemetry.sdk._logs import ReadableLogRecord
+from opentelemetry.sdk._logs.export import LogRecordExporter, LogRecordExportResult
 from opentelemetry.semconv.attributes.exception_attributes import (
     EXCEPTION_ESCAPED,
     EXCEPTION_MESSAGE,
     EXCEPTION_STACKTRACE,
     EXCEPTION_TYPE,
 )
-from opentelemetry.sdk._logs import LogData
-from opentelemetry.sdk._logs.export import LogExporter, LogExportResult
+
+try:
+    from opentelemetry.semconv.logs import (
+        LogRecordAttributes as _SemconvLogRecordAttributes,
+    )
+except ImportError:
+    _SemconvLogRecordAttributes = None
+try:
+    from opentelemetry.semconv._incubating.attributes import (
+        enduser_attributes as _enduser_attributes,
+    )
+except ImportError:
+    _enduser_attributes = None  # type: ignore
 
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._constants import (
-    _EXCEPTION_ENVELOPE_NAME,
-    _MESSAGE_ENVELOPE_NAME,
+    _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
     _DEFAULT_LOG_MESSAGE,
+    _EXCEPTION_ENVELOPE_NAME,
+    _EXPORTER_DOMAIN_SCHEMA_VERSION,
+    _MESSAGE_ENVELOPE_NAME,
+    _MICROSOFT_CUSTOM_EVENT_NAME,
 )
-from azure.monitor.opentelemetry.exporter._generated.models import (
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     ContextTagKeys,
     MessageData,
+    MonitorDomain,
     MonitorBase,
     TelemetryEventData,
     TelemetryExceptionData,
@@ -34,15 +51,22 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     ExportResult,
 )
 from azure.monitor.opentelemetry.exporter.export.trace import _utils as trace_utils
-from azure.monitor.opentelemetry.exporter._constants import (
-    _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
-    _MICROSOFT_CUSTOM_EVENT_NAME,
-)
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_statsbeat_shutdown,
     get_statsbeat_custom_events_feature_set,
     is_statsbeat_enabled,
     set_statsbeat_custom_events_feature_set,
+)
+
+_ENDUSER_ID_ATTRIBUTE = (
+    getattr(_SemconvLogRecordAttributes, "ENDUSER_ID", None)
+    or getattr(_enduser_attributes, "ENDUSER_ID", None)
+    or "enduser.id"
+)
+_ENDUSER_PSEUDO_ID_ATTRIBUTE = (
+    getattr(_SemconvLogRecordAttributes, "ENDUSER_PSEUDO_ID", None)
+    or getattr(_enduser_attributes, "ENDUSER_PSEUDO_ID", None)
+    or "enduser.pseudo.id"
 )
 
 _logger = logging.getLogger(__name__)
@@ -53,16 +77,17 @@ _DEFAULT_TRACE_ID = 0
 __all__ = ["AzureMonitorLogExporter"]
 
 
-class AzureMonitorLogExporter(BaseExporter, LogExporter):
+class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
     """Azure Monitor Log exporter for OpenTelemetry."""
 
-    def export(self, batch: Sequence[LogData], **kwargs: Any) -> LogExportResult:  # pylint: disable=unused-argument
+    def export(self, batch: Sequence[ReadableLogRecord], **kwargs: Any) -> LogRecordExportResult:
+        # pylint: disable=unused-argument
         """Export log data.
 
-        :param batch: OpenTelemetry LogData(s) to export.
-        :type batch: ~typing.Sequence[~opentelemetry._logs.LogData]
+        :param batch: OpenTelemetry ReadableLogRecord(s) to export.
+        :type batch: ~typing.Sequence[~opentelemetry._logs.ReadableLogRecord]
         :return: The result of the export.
-        :rtype: ~opentelemetry.sdk._logs.export.LogData
+        :rtype: ~opentelemetry.sdk._logs.export.LogRecordExportResult
         """
         envelopes = [self._log_to_envelope(log) for log in batch]
         try:
@@ -81,8 +106,8 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
         if self.storage:
             self.storage.close()
 
-    def _log_to_envelope(self, log_data: LogData) -> TelemetryItem:
-        envelope = _convert_log_to_envelope(log_data)
+    def _log_to_envelope(self, readable_log_record: ReadableLogRecord) -> TelemetryItem:
+        envelope = _convert_log_to_envelope(readable_log_record)
         envelope.instrumentation_key = self._instrumentation_key
         return envelope
 
@@ -106,26 +131,31 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
         return cls(connection_string=conn_str, **kwargs)
 
 
-def _log_data_is_event(log_data: LogData) -> bool:
-    log_record = log_data.log_record
+def _log_data_is_event(readable_log_record: ReadableLogRecord) -> bool:
+    log_record = readable_log_record.log_record
     is_event = None
     if log_record.attributes:
-        is_event = log_record.attributes.get(_MICROSOFT_CUSTOM_EVENT_NAME) or \
-            log_record.attributes.get(_APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE)  # type: ignore
+        is_event = log_record.attributes.get(_MICROSOFT_CUSTOM_EVENT_NAME) or log_record.attributes.get(
+            _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE
+        )  # type: ignore
     return is_event is not None
 
 
 # pylint: disable=protected-access
 # pylint: disable=too-many-statements
-def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
-    log_record = log_data.log_record
+def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> TelemetryItem:
+    log_record = readable_log_record.log_record
     time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
     envelope = _utils._create_telemetry_item(time_stamp)
-    envelope.tags.update(_utils._populate_part_a_fields(log_record.resource))  # type: ignore
-    envelope.tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(  # type: ignore
-        log_record.trace_id or _DEFAULT_TRACE_ID
-    )
-    envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(  # type: ignore
+    tags = envelope.tags or {}
+    tags.update(_utils._populate_part_a_fields(readable_log_record.resource))  # type: ignore
+    tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(log_record.trace_id or _DEFAULT_TRACE_ID)  # type: ignore
+    if log_record.attributes and _ENDUSER_ID_ATTRIBUTE in log_record.attributes:
+        tags[ContextTagKeys.AI_USER_AUTH_USER_ID] = log_record.attributes[_ENDUSER_ID_ATTRIBUTE]  # type: ignore
+    if log_record.attributes and _ENDUSER_PSEUDO_ID_ATTRIBUTE in log_record.attributes:
+        tags[ContextTagKeys.AI_USER_ID] = log_record.attributes[_ENDUSER_PSEUDO_ID_ATTRIBUTE]  # type: ignore
+
+    tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(  # type: ignore
         log_record.span_id or _DEFAULT_SPAN_ID
     )
     if (
@@ -133,15 +163,15 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
         and ContextTagKeys.AI_OPERATION_NAME in log_record.attributes
         and log_record.attributes[ContextTagKeys.AI_OPERATION_NAME] is not None
     ):
-        envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = log_record.attributes.get( # type: ignore
+        tags[ContextTagKeys.AI_OPERATION_NAME] = log_record.attributes.get(  # type: ignore
             ContextTagKeys.AI_OPERATION_NAME
         )
     if _utils._is_any_synthetic_source(log_record.attributes):
-        envelope.tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"  # type: ignore
+        tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"  # type: ignore
     # Special use case: Customers want to be able to set location ip on log records
     location_ip = trace_utils._get_location_ip(log_record.attributes)
     if location_ip:
-        envelope.tags[ContextTagKeys.AI_LOCATION_IP] = location_ip  # type: ignore
+        tags[ContextTagKeys.AI_LOCATION_IP] = location_ip  # type: ignore
     properties = _utils._filter_custom_properties(
         log_record.attributes, lambda key, val: not _is_ignored_attribute(key)  # type: ignore
     )
@@ -171,13 +201,14 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
             has_full_stack=has_full_stack,
             stack=str(stack_trace)[:32768],
         )
-        data = TelemetryExceptionData(  # type: ignore
-            severity_level=severity_level,  # type: ignore
+        data: MonitorDomain = TelemetryExceptionData(
+            version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
+            severity_level=severity_level,
             properties=properties,
             exceptions=[exc_details],
         )
         envelope.data = MonitorBase(base_data=data, base_type="ExceptionData")
-    elif _log_data_is_event(log_data):  # Event telemetry
+    elif _log_data_is_event(readable_log_record):  # Event telemetry
         _set_statsbeat_custom_events_feature()
         envelope.name = "Microsoft.ApplicationInsights.Event"
         event_name = ""
@@ -185,7 +216,8 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
             event_name = str(log_record.attributes.get(_MICROSOFT_CUSTOM_EVENT_NAME))  # type: ignore
         else:
             event_name = _map_body_to_message(log_record.body)
-        data = TelemetryEventData(  # type: ignore
+        data = TelemetryEventData(
+            version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
             name=event_name,
             properties=properties,
         )
@@ -194,23 +226,29 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
         envelope.name = _MESSAGE_ENVELOPE_NAME
         # pylint: disable=line-too-long
         # Severity number: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-severitynumber
-        data = MessageData(  # type: ignore
+        data = MessageData(
+            version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
             message=_map_body_to_message(log_record.body),
-            severity_level=severity_level,  # type: ignore
+            severity_level=severity_level,
             properties=properties,
         )
-        data.message = data.message.strip()
-        if len(data.message) == 0:
-            data.message = _DEFAULT_LOG_MESSAGE
+        if hasattr(data, "message"):
+            data.message = data.message.strip()
+            if len(data.message) == 0:
+                data.message = _DEFAULT_LOG_MESSAGE
         envelope.data = MonitorBase(base_data=data, base_type="MessageData")
+
+        # Assign updated tags after all tag modifications to avoid losing changes when
+        # TelemetryItem clones the incoming mapping in its setter.
+        envelope.tags = tags
 
     return envelope
 
 
-def _get_log_export_result(result: ExportResult) -> LogExportResult:
+def _get_log_export_result(result: ExportResult) -> LogRecordExportResult:
     if result == ExportResult.SUCCESS:
-        return LogExportResult.SUCCESS
-    return LogExportResult.FAILURE
+        return LogRecordExportResult.SUCCESS
+    return LogRecordExportResult.FAILURE
 
 
 # pylint: disable=line-too-long
@@ -234,7 +272,7 @@ def _map_body_to_message(log_body: Any) -> str:
 
     try:
         return json.dumps(log_body)[:32768]
-    except:  # pylint: disable=bare-except
+    except Exception:  # pylint: disable=broad-except
         return str(log_body)[:32768]
 
 
@@ -250,6 +288,8 @@ _IGNORED_ATTRS = frozenset(
         EXCEPTION_ESCAPED,
         _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
         _MICROSOFT_CUSTOM_EVENT_NAME,
+        _ENDUSER_ID_ATTRIBUTE,
+        _ENDUSER_PSEUDO_ID_ATTRIBUTE,
     )
 )
 

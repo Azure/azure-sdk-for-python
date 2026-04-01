@@ -47,7 +47,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -61,7 +61,7 @@ def build_update_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "galleryName": _SERIALIZER.url("gallery_name", gallery_name, "str"),
+        "galleryName": _SERIALIZER.url("gallery_name", gallery_name, "str", pattern=r"^[^_\W][\w-._]{0,79}(?<![-.])$"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -114,7 +114,7 @@ class GallerySharingProfileOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -249,7 +249,7 @@ class GallerySharingProfileOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SharingUpdate] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)

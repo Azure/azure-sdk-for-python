@@ -15,7 +15,8 @@ import msal
 
 
 @pytest.mark.skipif(
-    sys.platform.startswith("linux"), reason="linux requires manual setup to install InTune to make it work"
+    sys.platform.startswith("linux") or sys.platform == "darwin",
+    reason="linux and macOS require additional setup to install InTune to make it work",
 )
 def test_interactive_browser_broker_cred():
     cred = InteractiveBrowserBrokerCredential()

@@ -112,7 +112,13 @@ def build_rai_svc_get_jail_break_dataset_with_type_request(  # pylint: disable=n
 
 
 def build_rai_svc_get_attack_objectives_request(  # pylint: disable=name-too-long
-    *, risk_types: List[str], lang: str, **kwargs: Any
+    *,
+    risk_types: List[str],
+    lang: str,
+    strategy: Optional[str] = None,
+    risk_category: Optional[str] = None,
+    target_type: Optional[str] = None,
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -127,6 +133,12 @@ def build_rai_svc_get_attack_objectives_request(  # pylint: disable=name-too-lon
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     _params["riskTypes"] = _SERIALIZER.query("risk_types", risk_types, "[str]", div=",")
     _params["lang"] = _SERIALIZER.query("lang", lang, "str")
+    if strategy:
+        _params["strategy"] = _SERIALIZER.query("strategy", strategy, "str")
+    if risk_category:
+        _params["riskCategory"] = _SERIALIZER.query("risk_category", risk_category, "str")
+    if target_type:
+        _params["targetType"] = _SERIALIZER.query("target_type", target_type, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -566,13 +578,28 @@ class RAISvcOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_attack_objectives(self, *, risk_types: List[str], lang: str, **kwargs: Any) -> str:
+    def get_attack_objectives(
+        self,
+        *,
+        risk_types: List[str],
+        lang: str,
+        strategy: Optional[str] = None,
+        risk_category: Optional[str] = None,
+        target_type: Optional[str] = None,
+        **kwargs: Any,
+    ) -> str:
         """Get the attack objectives.
 
         :keyword risk_types: Risk types for the attack objectives dataset. Required.
         :paramtype risk_types: list[str]
         :keyword lang: The language for the attack objectives dataset, defaults to 'en'. Required.
         :paramtype lang: str
+        :keyword strategy: Attack strategy filter. Optional.
+        :paramtype strategy: str
+        :keyword risk_category: Risk category filter. Optional.
+        :paramtype risk_category: str
+        :keyword target_type: Target type filter (e.g., "agent"). Optional.
+        :paramtype target_type: str
         :return: str
         :rtype: str
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -593,6 +620,9 @@ class RAISvcOperations:
         _request = build_rai_svc_get_attack_objectives_request(
             risk_types=risk_types,
             lang=lang,
+            strategy=strategy,
+            risk_category=risk_category,
+            target_type=target_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

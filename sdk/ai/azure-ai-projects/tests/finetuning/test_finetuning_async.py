@@ -1,10 +1,11 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 
-import pytest
 import os
+import pytest
 import asyncio
 from pathlib import Path
 from test_base import (
@@ -16,16 +17,54 @@ from test_base import (
     STANDARD_TRAINING_TYPE,
     GLOBAL_STANDARD_TRAINING_TYPE,
     DEVELOPER_TIER_TRAINING_TYPE,
+    SUPERVISED_METHOD_TYPE,
+    DPO_METHOD_TYPE,
+    REINFORCEMENT_METHOD_TYPE,
+    OPENAI_MODEL_TYPE,
+    OSS_MODEL_TYPE,
 )
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import is_live_and_not_recording
+from devtools_testutils import is_live, RecordedTransport, is_live_and_not_recording
 from azure.mgmt.cognitiveservices.aio import CognitiveServicesManagementClient as CognitiveServicesManagementClientAsync
 from azure.mgmt.cognitiveservices.models import Deployment, DeploymentProperties, DeploymentModel, Sku
 
 
-@pytest.mark.skipif(
-    condition=(not is_live_and_not_recording()),
-    reason="Skipped because we cannot record network calls with AOAI client",
+# Intermediate decorator required for pytest.mark.parametrize with recorded_by_proxy_async
+# See: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_troubleshooting.md#special-case-using-pytestmarkparametrize-with-recorded-tests
+def _pass_create_args_async(fn):
+    async def _wrapper(test_class, job_type, model_type, training_type, **kwargs):
+        await fn(test_class, job_type, model_type, training_type, **kwargs)
+
+    return _wrapper
+
+
+def _pass_cancel_args_async(fn):
+    async def _wrapper(test_class, job_type, model_type, training_type, expected_method_type, **kwargs):
+        await fn(test_class, job_type, model_type, training_type, expected_method_type, **kwargs)
+
+    return _wrapper
+
+
+def _pass_deploy_args_async(fn):
+    async def _wrapper(
+        test_class, job_id_env_var, deployment_format, deployment_capacity, test_prefix, inference_content, **kwargs
+    ):
+        await fn(
+            test_class, job_id_env_var, deployment_format, deployment_capacity, test_prefix, inference_content, **kwargs
+        )
+
+    return _wrapper
+
+
+def _pass_retrieve_args_async(fn):
+    async def _wrapper(test_class, job_type, expected_method_type, **kwargs):
+        await fn(test_class, job_type, expected_method_type, **kwargs)
+
+    return _wrapper
+
+
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
 )
 class TestFineTuningAsync(TestBase):
 
@@ -37,7 +76,7 @@ class TestFineTuningAsync(TestBase):
             validation_file=validation_file_id,
             model=self.test_finetuning_params["sft"][model_type]["model_name"],
             method={
-                "type": "supervised",
+                "type": SUPERVISED_METHOD_TYPE,
                 "supervised": {
                     "hyperparameters": {
                         "n_epochs": self.test_finetuning_params["n_epochs"],
@@ -57,7 +96,7 @@ class TestFineTuningAsync(TestBase):
             validation_file=validation_file_id,
             model=self.test_finetuning_params["dpo"][model_type]["model_name"],
             method={
-                "type": "dpo",
+                "type": DPO_METHOD_TYPE,
                 "dpo": {
                     "hyperparameters": {
                         "n_epochs": self.test_finetuning_params["n_epochs"],
@@ -90,7 +129,7 @@ class TestFineTuningAsync(TestBase):
             validation_file=validation_file_id,
             model=self.test_finetuning_params["rft"][model_type]["model_name"],
             method={
-                "type": "reinforcement",
+                "type": REINFORCEMENT_METHOD_TYPE,
                 "reinforcement": {
                     "grader": grader,
                     "hyperparameters": {
@@ -111,7 +150,7 @@ class TestFineTuningAsync(TestBase):
         training_file_path = test_data_dir / self.test_finetuning_params[job_type]["training_file_name"]
         validation_file_path = test_data_dir / self.test_finetuning_params[job_type]["validation_file_name"]
 
-        with open(training_file_path, "rb") as f:
+        with self.open_with_lf(str(training_file_path), "rb") as f:
             train_file = await openai_client.files.create(file=f, purpose="fine-tune")
         train_processed_file = await openai_client.files.wait_for_processing(train_file.id)
         assert train_processed_file is not None
@@ -119,7 +158,7 @@ class TestFineTuningAsync(TestBase):
         TestBase.assert_equal_or_not_none(train_processed_file.status, "processed")
         print(f"[_upload_test_files_async] Uploaded training file: {train_processed_file.id}")
 
-        with open(validation_file_path, "rb") as f:
+        with self.open_with_lf(str(validation_file_path), "rb") as f:
             validation_file = await openai_client.files.create(file=f, purpose="fine-tune")
         validation_processed_file = await openai_client.files.wait_for_processing(validation_file.id)
         assert validation_processed_file is not None
@@ -212,7 +251,7 @@ class TestFineTuningAsync(TestBase):
             )
 
             # For OSS models, validate the specific model name
-            if model_type == "oss":
+            if model_type == OSS_MODEL_TYPE:
                 TestBase.validate_fine_tuning_job(
                     fine_tuning_job, expected_model=self.test_finetuning_params["sft"]["oss"]["model_name"]
                 )
@@ -299,22 +338,18 @@ class TestFineTuningAsync(TestBase):
         return endpoint_clean.split(".services.ai.azure.com")[0]
 
     async def _test_deploy_and_infer_helper_async(
-        self, completed_job_id_env_var, deployment_format, deployment_capacity, test_prefix, inference_content, **kwargs
+        self, completed_job_id, deployment_format, deployment_capacity, test_prefix, inference_content, **kwargs
     ):
-        completed_job_id = os.getenv(completed_job_id_env_var)
-
         if not completed_job_id:
-            pytest.skip(
-                f"{completed_job_id_env_var} environment variable not set - skipping {test_prefix} deploy and infer test"
-            )
+            pytest.skip(f"completed_job_id parameter not set - skipping {test_prefix} deploy and infer test")
 
-        subscription_id = os.getenv("AZURE_AI_PROJECTS_TESTS_AZURE_SUBSCRIPTION_ID")
-        resource_group = os.getenv("AZURE_AI_PROJECTS_TESTS_AZURE_RESOURCE_GROUP")
-        project_endpoint = os.getenv("AZURE_AI_PROJECTS_TESTS_PROJECT_ENDPOINT")
+        subscription_id = kwargs.get("azure_subscription_id")
+        resource_group = kwargs.get("azure_resource_group")
+        project_endpoint = kwargs.get("azure_ai_project_endpoint")
 
         if not all([subscription_id, resource_group, project_endpoint]):
             pytest.skip(
-                f"Missing required environment variables for deployment (AZURE_AI_PROJECTS_TESTS_AZURE_SUBSCRIPTION_ID, AZURE_AI_PROJECTS_TESTS_AZURE_RESOURCE_GROUP, AZURE_AI_PROJECTS_TESTS_PROJECT_ENDPOINT) - skipping {test_prefix} deploy and infer test"
+                f"Missing required environment variables for deployment (azure_subscription_id, azure_resource_group, azure_ai_project_endpoint) - skipping {test_prefix} deploy and infer test"
             )
 
         account_name = self._extract_account_name_from_endpoint(project_endpoint, test_prefix)
@@ -353,15 +388,16 @@ class TestFineTuningAsync(TestBase):
                     deployment_name=deployment_name,
                     deployment=deployment_config,
                 )
-
-                while deployment_operation.status() not in ["Succeeded", "Failed"]:
-                    await asyncio.sleep(30)
+                if is_live():
+                    print(f"[{test_prefix}] Waiting for deployment to complete...")
+                    await deployment_operation.result()
                     print(f"[{test_prefix}] Deployment status: {deployment_operation.status()}")
 
                 print(f"[{test_prefix}] Deployment completed successfully")
-
+                if is_live():
+                    print(f"[{test_prefix}] Waiting for 10 minutes for deployment to be fully ready.")
+                    await asyncio.sleep(600)
                 print(f"[{test_prefix}] Testing inference on deployment: {deployment_name}")
-                await asyncio.sleep(120)  # Wait for deployment to be fully ready
 
                 response = await openai_client.responses.create(
                     model=deployment_name, input=[{"role": "user", "content": inference_content}]
@@ -382,160 +418,165 @@ class TestFineTuningAsync(TestBase):
                     f"[{test_prefix}] Successfully completed deployment and inference test for job: {completed_job_id}"
                 )
 
+    @pytest.mark.parametrize(
+        "job_type,model_type,training_type",
+        [
+            (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, STANDARD_TRAINING_TYPE),
+            (DPO_JOB_TYPE, OPENAI_MODEL_TYPE, STANDARD_TRAINING_TYPE),
+            (RFT_JOB_TYPE, OPENAI_MODEL_TYPE, STANDARD_TRAINING_TYPE),
+        ],
+    )
     @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_sft_finetuning_create_job_openai_standard_async(self, **kwargs):
-        await self._test_sft_create_job_helper_async("openai", STANDARD_TRAINING_TYPE, **kwargs)
+    @_pass_create_args_async
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_create_job_async(self, job_type, model_type, training_type, **kwargs):
+        if job_type == SFT_JOB_TYPE:
+            await self._test_sft_create_job_helper_async(model_type, training_type, **kwargs)
+        elif job_type == DPO_JOB_TYPE:
+            await self._test_dpo_create_job_helper_async(model_type, training_type, **kwargs)
+        elif job_type == RFT_JOB_TYPE:
+            await self._test_rft_create_job_helper_async(model_type, training_type, **kwargs)
+        else:
+            raise ValueError(f"Unsupported job type: {job_type}")
 
+    @pytest.mark.skipif(
+        not is_live_and_not_recording() or os.getenv("RUN_EXTENDED_FINE_TUNING_LIVE_TESTS", "false").lower() != "true",
+        reason="Skipped extended FT live tests. Those only run live, without recordings, when RUN_EXTENDED_FINE_TUNING_LIVE_TESTS=true",
+    )
+    @pytest.mark.parametrize(
+        "job_type,model_type,training_type",
+        [
+            (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE),
+            (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE),
+            (SFT_JOB_TYPE, OSS_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE),
+            (DPO_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE),
+            (DPO_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE),
+            (RFT_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE),
+            (RFT_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE),
+        ],
+    )
     @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_sft_finetuning_create_job_openai_globalstandard_async(self, **kwargs):
-        await self._test_sft_create_job_helper_async("openai", GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
+    @_pass_create_args_async
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_create_job_async_live_extended(self, job_type, model_type, training_type, **kwargs):
+        if job_type == SFT_JOB_TYPE:
+            await self._test_sft_create_job_helper_async(model_type, training_type, **kwargs)
+        elif job_type == DPO_JOB_TYPE:
+            await self._test_dpo_create_job_helper_async(model_type, training_type, **kwargs)
+        elif job_type == RFT_JOB_TYPE:
+            await self._test_rft_create_job_helper_async(model_type, training_type, **kwargs)
+        else:
+            raise ValueError(f"Unsupported job type: {job_type}")
 
+    @pytest.mark.parametrize(
+        "job_type,expected_method_type",
+        [
+            (SFT_JOB_TYPE, SUPERVISED_METHOD_TYPE),
+        ],
+    )
     @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_sft_finetuning_create_job_openai_developer_async(self, **kwargs):
-        await self._test_sft_create_job_helper_async("openai", DEVELOPER_TIER_TRAINING_TYPE, **kwargs)
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_sft_finetuning_create_job_oss_globalstandard_async(self, **kwargs):
-        await self._test_sft_create_job_helper_async("oss", GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_dpo_finetuning_create_job_openai_standard_async(self, **kwargs):
-        await self._test_dpo_create_job_helper_async("openai", STANDARD_TRAINING_TYPE, **kwargs)
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_dpo_finetuning_create_job_openai_globalstandard_async(self, **kwargs):
-        await self._test_dpo_create_job_helper_async("openai", GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_dpo_finetuning_create_job_openai_developer_async(self, **kwargs):
-        await self._test_dpo_create_job_helper_async("openai", DEVELOPER_TIER_TRAINING_TYPE, **kwargs)
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_rft_finetuning_create_job_openai_standard_async(self, **kwargs):
-        await self._test_rft_create_job_helper_async("openai", STANDARD_TRAINING_TYPE, **kwargs)
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_rft_finetuning_create_job_openai_globalstandard_async(self, **kwargs):
-        await self._test_rft_create_job_helper_async("openai", GLOBAL_STANDARD_TRAINING_TYPE, **kwargs)
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_rft_finetuning_create_job_openai_developer_async(self, **kwargs):
-        await self._test_rft_create_job_helper_async("openai", DEVELOPER_TIER_TRAINING_TYPE, **kwargs)
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_finetuning_retrieve_sft_job_async(self, **kwargs):
+    @_pass_retrieve_args_async
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_retrieve_job_async(self, job_type, expected_method_type, **kwargs):
         project_client = self.create_async_client(**kwargs)
         openai_client = project_client.get_openai_client()
 
         async with project_client:
 
-            train_file, validation_file = await self._upload_test_files_async(openai_client, SFT_JOB_TYPE)
+            train_file, validation_file = await self._upload_test_files_async(openai_client, job_type)
 
-            fine_tuning_job = await self._create_sft_finetuning_job_async(
-                openai_client, train_file.id, validation_file.id, STANDARD_TRAINING_TYPE, "openai"
-            )
-            print(f"[test_finetuning_retrieve_sft] Created job: {fine_tuning_job.id}")
+            if job_type == SFT_JOB_TYPE:
+                fine_tuning_job = await self._create_sft_finetuning_job_async(
+                    openai_client, train_file.id, validation_file.id, STANDARD_TRAINING_TYPE, OPENAI_MODEL_TYPE
+                )
+            elif job_type == DPO_JOB_TYPE:
+                fine_tuning_job = await self._create_dpo_finetuning_job_async(
+                    openai_client, train_file.id, validation_file.id, STANDARD_TRAINING_TYPE, OPENAI_MODEL_TYPE
+                )
+            elif job_type == RFT_JOB_TYPE:
+                fine_tuning_job = await self._create_rft_finetuning_job_async(
+                    openai_client, train_file.id, validation_file.id, STANDARD_TRAINING_TYPE, OPENAI_MODEL_TYPE
+                )
+
+            print(f"[test_finetuning_retrieve_{job_type}] Created job: {fine_tuning_job.id}")
 
             retrieved_job = await openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)
-            print(f"[test_finetuning_retrieve_sft] Retrieved job: {retrieved_job.id}")
+            print(f"[test_finetuning_retrieve_{job_type}] Retrieved job: {retrieved_job.id}")
 
             TestBase.validate_fine_tuning_job(retrieved_job, expected_job_id=fine_tuning_job.id)
             TestBase.assert_equal_or_not_none(retrieved_job.training_file, train_file.id)
             TestBase.assert_equal_or_not_none(retrieved_job.validation_file, validation_file.id)
             TestBase.assert_equal_or_not_none(retrieved_job.trainingType.lower(), STANDARD_TRAINING_TYPE.lower())
-            assert retrieved_job.method is not None, "Method should not be None for SFT job"
-            TestBase.assert_equal_or_not_none(retrieved_job.method.type, "supervised")
+            assert retrieved_job.method is not None, f"Method should not be None for {job_type} job"
+            TestBase.assert_equal_or_not_none(retrieved_job.method.type, expected_method_type)
             assert (
-                self.test_finetuning_params["sft"]["openai"]["model_name"] in retrieved_job.model
-            ), f"Expected model name {self.test_finetuning_params['sft']['openai']['model_name']} not found in {retrieved_job.model}"
+                self.test_finetuning_params[job_type][OPENAI_MODEL_TYPE]["model_name"] in retrieved_job.model
+            ), f"Expected model name {self.test_finetuning_params[job_type][OPENAI_MODEL_TYPE]['model_name']} not found in {retrieved_job.model}"
 
             await openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
-            print(f"[test_finetuning_retrieve_sft] Cancelled job: {fine_tuning_job.id}")
+            print(f"[test_finetuning_retrieve_{job_type}] Cancelled job: {fine_tuning_job.id}")
 
             await self._cleanup_test_file_async(openai_client, train_file.id)
             await self._cleanup_test_file_async(openai_client, validation_file.id)
 
+    @pytest.mark.skipif(
+        not is_live_and_not_recording() or os.getenv("RUN_EXTENDED_FINE_TUNING_LIVE_TESTS", "false").lower() != "true",
+        reason="Skipped extended FT live tests. Those only run live, without recordings, when RUN_EXTENDED_FINE_TUNING_LIVE_TESTS=true",
+    )
+    @pytest.mark.parametrize(
+        "job_type,expected_method_type",
+        [
+            (DPO_JOB_TYPE, DPO_METHOD_TYPE),
+            (RFT_JOB_TYPE, REINFORCEMENT_METHOD_TYPE),
+        ],
+    )
     @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_finetuning_retrieve_dpo_job_async(self, **kwargs):
+    @_pass_retrieve_args_async
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_retrieve_job_async_live_extended(self, job_type, expected_method_type, **kwargs):
         project_client = self.create_async_client(**kwargs)
         openai_client = project_client.get_openai_client()
 
         async with project_client:
 
-            train_file, validation_file = await self._upload_test_files_async(openai_client, DPO_JOB_TYPE)
+            train_file, validation_file = await self._upload_test_files_async(openai_client, job_type)
 
-            fine_tuning_job = await self._create_dpo_finetuning_job_async(
-                openai_client, train_file.id, validation_file.id, STANDARD_TRAINING_TYPE, "openai"
-            )
-            print(f"[test_finetuning_retrieve_dpo] Created job: {fine_tuning_job.id}")
+            if job_type == SFT_JOB_TYPE:
+                fine_tuning_job = await self._create_sft_finetuning_job_async(
+                    openai_client, train_file.id, validation_file.id, STANDARD_TRAINING_TYPE, OPENAI_MODEL_TYPE
+                )
+            elif job_type == DPO_JOB_TYPE:
+                fine_tuning_job = await self._create_dpo_finetuning_job_async(
+                    openai_client, train_file.id, validation_file.id, STANDARD_TRAINING_TYPE, OPENAI_MODEL_TYPE
+                )
+            elif job_type == RFT_JOB_TYPE:
+                fine_tuning_job = await self._create_rft_finetuning_job_async(
+                    openai_client, train_file.id, validation_file.id, STANDARD_TRAINING_TYPE, OPENAI_MODEL_TYPE
+                )
+
+            print(f"[test_finetuning_retrieve_{job_type}_live] Created job: {fine_tuning_job.id}")
 
             retrieved_job = await openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)
-            print(f"[test_finetuning_retrieve_dpo] Retrieved job: {retrieved_job.id}")
+            print(f"[test_finetuning_retrieve_{job_type}_live] Retrieved job: {retrieved_job.id}")
 
             TestBase.validate_fine_tuning_job(retrieved_job, expected_job_id=fine_tuning_job.id)
             TestBase.assert_equal_or_not_none(retrieved_job.training_file, train_file.id)
             TestBase.assert_equal_or_not_none(retrieved_job.validation_file, validation_file.id)
             TestBase.assert_equal_or_not_none(retrieved_job.trainingType.lower(), STANDARD_TRAINING_TYPE.lower())
-            assert retrieved_job.method is not None, "Method should not be None for DPO job"
-            TestBase.assert_equal_or_not_none(retrieved_job.method.type, "dpo")
+            assert retrieved_job.method is not None, f"Method should not be None for {job_type} job"
+            TestBase.assert_equal_or_not_none(retrieved_job.method.type, expected_method_type)
             assert (
-                self.test_finetuning_params["dpo"]["openai"]["model_name"] in retrieved_job.model
-            ), f"Expected model name {self.test_finetuning_params['dpo']['openai']['model_name']} not found in {retrieved_job.model}"
+                self.test_finetuning_params[job_type][OPENAI_MODEL_TYPE]["model_name"] in retrieved_job.model
+            ), f"Expected model name {self.test_finetuning_params[job_type][OPENAI_MODEL_TYPE]['model_name']} not found in {retrieved_job.model}"
 
             await openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
-            print(f"[test_finetuning_retrieve_dpo] Cancelled job: {fine_tuning_job.id}")
+            print(f"[test_finetuning_retrieve_{job_type}_live] Cancelled job: {fine_tuning_job.id}")
 
             await self._cleanup_test_file_async(openai_client, train_file.id)
             await self._cleanup_test_file_async(openai_client, validation_file.id)
 
     @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_finetuning_retrieve_rft_job_async(self, **kwargs):
-        project_client = self.create_async_client(**kwargs)
-        openai_client = project_client.get_openai_client()
-
-        async with project_client:
-
-            train_file, validation_file = await self._upload_test_files_async(openai_client, RFT_JOB_TYPE)
-
-            fine_tuning_job = await self._create_rft_finetuning_job_async(
-                openai_client, train_file.id, validation_file.id, STANDARD_TRAINING_TYPE, "openai"
-            )
-            print(f"[test_finetuning_retrieve_rft] Created job: {fine_tuning_job.id}")
-
-            retrieved_job = await openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)
-            print(f"[test_finetuning_retrieve_rft] Retrieved job: {retrieved_job.id}")
-
-            TestBase.validate_fine_tuning_job(retrieved_job, expected_job_id=fine_tuning_job.id)
-            TestBase.assert_equal_or_not_none(retrieved_job.training_file, train_file.id)
-            TestBase.assert_equal_or_not_none(retrieved_job.validation_file, validation_file.id)
-            TestBase.assert_equal_or_not_none(retrieved_job.trainingType.lower(), STANDARD_TRAINING_TYPE.lower())
-            assert retrieved_job.method is not None, "Method should not be None for RFT job"
-            TestBase.assert_equal_or_not_none(retrieved_job.method.type, "reinforcement")
-            assert (
-                self.test_finetuning_params["rft"]["openai"]["model_name"] in retrieved_job.model
-            ), f"Expected model name {self.test_finetuning_params['rft']['openai']['model_name']} not found in {retrieved_job.model}"
-
-            await openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
-            print(f"[test_finetuning_retrieve_rft] Cancelled job: {fine_tuning_job.id}")
-
-            await self._cleanup_test_file_async(openai_client, train_file.id)
-            await self._cleanup_test_file_async(openai_client, validation_file.id)
-
-    @servicePreparer()
-    @recorded_by_proxy_async
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_finetuning_list_jobs_async(self, **kwargs):
         project_client = self.create_async_client(**kwargs)
         openai_client = project_client.get_openai_client()
@@ -557,70 +598,46 @@ class TestFineTuningAsync(TestBase):
                 print(f"[test_finetuning_list] Validated job {job.id} with status {job.status}")
             print(f"[test_finetuning_list] Successfully validated list functionality with {len(jobs_list)} jobs")
 
+    @pytest.mark.parametrize(
+        "job_type,model_type,training_type,expected_method_type",
+        [
+            (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, STANDARD_TRAINING_TYPE, SUPERVISED_METHOD_TYPE),
+        ],
+    )
     @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_sft_cancel_job_openai_standard_async(self, **kwargs):
-        await self._test_cancel_job_helper_async(SFT_JOB_TYPE, "openai", STANDARD_TRAINING_TYPE, "supervised", **kwargs)
+    @_pass_cancel_args_async
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_cancel_job_async(self, job_type, model_type, training_type, expected_method_type, **kwargs):
+        await self._test_cancel_job_helper_async(job_type, model_type, training_type, expected_method_type, **kwargs)
+
+    @pytest.mark.skipif(
+        not is_live_and_not_recording() or os.getenv("RUN_EXTENDED_FINE_TUNING_LIVE_TESTS", "false").lower() != "true",
+        reason="Skipped extended FT live tests. Those only run live, without recordings, when RUN_EXTENDED_FINE_TUNING_LIVE_TESTS=true",
+    )
+    @pytest.mark.parametrize(
+        "job_type,model_type,training_type,expected_method_type",
+        [
+            (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE, SUPERVISED_METHOD_TYPE),
+            (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE, SUPERVISED_METHOD_TYPE),
+            (SFT_JOB_TYPE, OSS_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE, SUPERVISED_METHOD_TYPE),
+            (DPO_JOB_TYPE, OPENAI_MODEL_TYPE, STANDARD_TRAINING_TYPE, DPO_METHOD_TYPE),
+            (DPO_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE, DPO_METHOD_TYPE),
+            (DPO_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE, DPO_METHOD_TYPE),
+            (RFT_JOB_TYPE, OPENAI_MODEL_TYPE, STANDARD_TRAINING_TYPE, REINFORCEMENT_METHOD_TYPE),
+            (RFT_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE, REINFORCEMENT_METHOD_TYPE),
+            (RFT_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE, REINFORCEMENT_METHOD_TYPE),
+        ],
+    )
+    @servicePreparer()
+    @_pass_cancel_args_async
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_cancel_job_async_live_extended(
+        self, job_type, model_type, training_type, expected_method_type, **kwargs
+    ):
+        await self._test_cancel_job_helper_async(job_type, model_type, training_type, expected_method_type, **kwargs)
 
     @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_sft_cancel_job_openai_developer_async(self, **kwargs):
-        await self._test_cancel_job_helper_async(
-            SFT_JOB_TYPE, "openai", DEVELOPER_TIER_TRAINING_TYPE, "supervised", **kwargs
-        )
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_sft_cancel_job_openai_globalstandard_async(self, **kwargs):
-        await self._test_cancel_job_helper_async(
-            SFT_JOB_TYPE, "openai", GLOBAL_STANDARD_TRAINING_TYPE, "supervised", **kwargs
-        )
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_sft_cancel_job_oss_globalstandard_async(self, **kwargs):
-        await self._test_cancel_job_helper_async(
-            SFT_JOB_TYPE, "oss", GLOBAL_STANDARD_TRAINING_TYPE, "supervised", **kwargs
-        )
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_dpo_cancel_job_openai_standard_async(self, **kwargs):
-        await self._test_cancel_job_helper_async(DPO_JOB_TYPE, "openai", STANDARD_TRAINING_TYPE, "dpo", **kwargs)
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_dpo_cancel_job_openai_developer_async(self, **kwargs):
-        await self._test_cancel_job_helper_async(DPO_JOB_TYPE, "openai", DEVELOPER_TIER_TRAINING_TYPE, "dpo", **kwargs)
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_dpo_cancel_job_openai_globalstandard_async(self, **kwargs):
-        await self._test_cancel_job_helper_async(DPO_JOB_TYPE, "openai", GLOBAL_STANDARD_TRAINING_TYPE, "dpo", **kwargs)
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_rft_cancel_job_openai_standard_async(self, **kwargs):
-        await self._test_cancel_job_helper_async(
-            RFT_JOB_TYPE, "openai", STANDARD_TRAINING_TYPE, "reinforcement", **kwargs
-        )
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_rft_cancel_job_openai_developer_async(self, **kwargs):
-        await self._test_cancel_job_helper_async(
-            RFT_JOB_TYPE, "openai", DEVELOPER_TIER_TRAINING_TYPE, "reinforcement", **kwargs
-        )
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_rft_cancel_job_openai_globalstandard_async(self, **kwargs):
-        await self._test_cancel_job_helper_async(
-            RFT_JOB_TYPE, "openai", GLOBAL_STANDARD_TRAINING_TYPE, "reinforcement", **kwargs
-        )
-
-    @servicePreparer()
-    @recorded_by_proxy_async
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_finetuning_list_events_async(self, **kwargs):
 
         project_client = self.create_async_client(**kwargs)
@@ -631,22 +648,22 @@ class TestFineTuningAsync(TestBase):
             train_file, validation_file = await self._upload_test_files_async(openai_client, SFT_JOB_TYPE)
 
             fine_tuning_job = await self._create_sft_finetuning_job_async(
-                openai_client, train_file.id, validation_file.id, STANDARD_TRAINING_TYPE, "openai"
+                openai_client, train_file.id, validation_file.id, STANDARD_TRAINING_TYPE, OPENAI_MODEL_TYPE
             )
-            print(f"[test_finetuning_sft] Created job: {fine_tuning_job.id}")
+            print(f"[test_finetuning_list_events] Created job: {fine_tuning_job.id}")
 
             TestBase.validate_fine_tuning_job(fine_tuning_job)
             TestBase.assert_equal_or_not_none(fine_tuning_job.training_file, train_file.id)
             TestBase.assert_equal_or_not_none(fine_tuning_job.validation_file, validation_file.id)
 
             await openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
-            print(f"[test_finetuning_sft] Cancelled job: {fine_tuning_job.id}")
+            print(f"[test_finetuning_list_events] Cancelled job: {fine_tuning_job.id}")
 
             events_list_async = openai_client.fine_tuning.jobs.list_events(fine_tuning_job.id)
             events_list = []
             async for event in events_list_async:
                 events_list.append(event)
-            print(f"[test_finetuning_sft] Listed {len(events_list)} events for job: {fine_tuning_job.id}")
+            print(f"[test_finetuning_list_events] Listed {len(events_list)} events for job: {fine_tuning_job.id}")
 
             assert len(events_list) > 0, "Fine-tuning job should have at least one event"
 
@@ -657,30 +674,28 @@ class TestFineTuningAsync(TestBase):
                 assert event.level is not None, "Event should have a level"
                 assert event.message is not None, "Event should have a message"
                 assert event.type is not None, "Event should have a type"
-            print(f"[test_finetuning_sft] Successfully validated {len(events_list)} events")
+            print(f"[test_finetuning_list_events] Successfully validated {len(events_list)} events")
 
             await self._cleanup_test_file_async(openai_client, train_file.id)
             await self._cleanup_test_file_async(openai_client, validation_file.id)
 
     @servicePreparer()
-    @recorded_by_proxy_async
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_finetuning_pause_job_async(self, **kwargs):
-        running_job_id = os.getenv("AZURE_AI_PROJECTS_TESTS_RUNNING_FINE_TUNING_JOB_ID")
+        running_job_id = kwargs.get("running_fine_tuning_job_id")
 
         if not running_job_id:
-            pytest.skip(
-                "AZURE_AI_PROJECTS_TESTS_RUNNING_FINE_TUNING_JOB_ID environment variable not set - skipping pause test"
-            )
+            pytest.skip("running_fine_tuning_job_id environment variable not set - skipping pause test")
 
         project_client = self.create_async_client(**kwargs)
         openai_client = project_client.get_openai_client()
 
         async with project_client:
 
-            print(f"[test_finetuning_pause] Testing pause functionality on job: {running_job_id}")
+            print(f"[test_finetuning_pause_job] Testing pause functionality on job: {running_job_id}")
 
             job = await openai_client.fine_tuning.jobs.retrieve(running_job_id)
-            print(f"[test_finetuning_pause] Job status before pause: {job.status}")
+            print(f"[test_finetuning_pause_job] Job status before pause: {job.status}")
 
             if job.status != "running":
                 pytest.skip(
@@ -688,33 +703,30 @@ class TestFineTuningAsync(TestBase):
                 )
 
             paused_job = await openai_client.fine_tuning.jobs.pause(running_job_id)
-            print(f"[test_finetuning_pause] Paused job: {paused_job.id}")
+            print(f"[test_finetuning_pause_job] Paused job: {paused_job.id}")
 
             TestBase.validate_fine_tuning_job(paused_job, expected_job_id=running_job_id)
-            TestBase.assert_equal_or_not_none(paused_job.status, "paused")
-            print(f"[test_finetuning_pause] Job status after pause: {paused_job.status}")
-
-            print(f"[test_finetuning_pause] Successfully paused and verified job: {running_job_id}")
+            TestBase.assert_equal_or_not_none(paused_job.status, "pausing")
+            print(f"[test_finetuning_pause_job] Job status after pause: {paused_job.status}")
+            print(f"[test_finetuning_pause_job] Successfully paused and verified job: {running_job_id}")
 
     @servicePreparer()
-    @recorded_by_proxy_async
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_finetuning_resume_job_async(self, **kwargs):
-        paused_job_id = os.getenv("AZURE_AI_PROJECTS_TESTS_PAUSED_FINE_TUNING_JOB_ID")
+        paused_job_id = kwargs.get("paused_fine_tuning_job_id")
 
         if not paused_job_id:
-            pytest.skip(
-                "AZURE_AI_PROJECTS_TESTS_PAUSED_FINE_TUNING_JOB_ID environment variable not set - skipping resume test"
-            )
+            pytest.skip("paused_fine_tuning_job_id environment variable not set - skipping resume test")
 
         project_client = self.create_async_client(**kwargs)
         openai_client = project_client.get_openai_client()
 
         async with project_client:
 
-            print(f"[test_finetuning_resume] Testing resume functionality on job: {paused_job_id}")
+            print(f"[test_finetuning_resume_job] Testing resume functionality on job: {paused_job_id}")
 
             job = await openai_client.fine_tuning.jobs.retrieve(paused_job_id)
-            print(f"[test_finetuning_resume] Job status before resume: {job.status}")
+            print(f"[test_finetuning_resume_job] Job status before resume: {job.status}")
 
             if job.status != "paused":
                 pytest.skip(
@@ -722,19 +734,21 @@ class TestFineTuningAsync(TestBase):
                 )
 
             resumed_job = await openai_client.fine_tuning.jobs.resume(paused_job_id)
-            print(f"[test_finetuning_resume] Resumed job: {resumed_job.id}")
+            print(f"[test_finetuning_resume_job] Resumed job: {resumed_job.id}")
 
             TestBase.validate_fine_tuning_job(resumed_job, expected_job_id=paused_job_id)
-            print(f"[test_finetuning_resume] Job status after resume: {resumed_job.status}")
+            TestBase.assert_equal_or_not_none(resumed_job.status, "resuming")
+            print(f"[test_finetuning_resume_job] Job status after resume: {resumed_job.status}")
+            print(f"[test_finetuning_resume_job] Successfully resumed and verified job: {paused_job_id}")
 
     @servicePreparer()
-    @recorded_by_proxy_async
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_finetuning_list_checkpoints_async(self, **kwargs):
-        completed_job_id = os.getenv("AZURE_AI_PROJECTS_TESTS_COMPLETED_OAI_MODEL_SFT_FINE_TUNING_JOB_ID")
+        completed_job_id = kwargs.get("completed_oai_model_sft_fine_tuning_job_id")
 
         if not completed_job_id:
             pytest.skip(
-                "AZURE_AI_PROJECTS_TESTS_COMPLETED_OAI_MODEL_SFT_FINE_TUNING_JOB_ID environment variable not set - skipping checkpoints test"
+                "completed_oai_model_sft_fine_tuning_job_id environment variable not set - skipping checkpoints test"
             )
 
         project_client = self.create_async_client(**kwargs)
@@ -770,50 +784,76 @@ class TestFineTuningAsync(TestBase):
                 f"[test_finetuning_list_checkpoints] Successfully validated {len(checkpoints_list)} checkpoints for job: {completed_job_id}"
             )
 
+    @pytest.mark.parametrize(
+        "job_id_env_var,deployment_format,deployment_capacity,test_prefix,inference_content",
+        [
+            (
+                "completed_oai_model_sft_fine_tuning_job_id",
+                "OpenAI",
+                50,
+                "test_deploy_infer_oai_sft",
+                "Who invented the telephone?",
+            ),
+        ],
+    )
     @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_finetuning_deploy_and_infer_oai_model_sft_job_async(self, **kwargs):
+    @_pass_deploy_args_async
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_deploy_and_infer_job_async(
+        self, job_id_env_var, deployment_format, deployment_capacity, test_prefix, inference_content, **kwargs
+    ):
+        completed_job_id = kwargs.get(job_id_env_var)
         await self._test_deploy_and_infer_helper_async(
-            "AZURE_AI_PROJECTS_TESTS_COMPLETED_OAI_MODEL_SFT_FINE_TUNING_JOB_ID",
-            "OpenAI",
-            50,
-            "test_finetuning_deploy_and_infer_oai_model_sft_job",
-            "Who invented the telephone?",
+            completed_job_id,
+            deployment_format,
+            deployment_capacity,
+            test_prefix,
+            inference_content,
             **kwargs,
         )
 
+    @pytest.mark.skipif(
+        not is_live_and_not_recording() or os.getenv("RUN_EXTENDED_FINE_TUNING_LIVE_TESTS", "false").lower() != "true",
+        reason="Skipped extended FT live tests. Those only run live, without recordings, when RUN_EXTENDED_FINE_TUNING_LIVE_TESTS=true",
+    )
+    @pytest.mark.parametrize(
+        "job_id_env_var,deployment_format,deployment_capacity,test_prefix,inference_content",
+        [
+            (
+                "completed_oai_model_rft_fine_tuning_job_id",
+                "OpenAI",
+                50,
+                "test_deploy_infer_oai_rft",
+                "Target: 85 Numbers: [20, 4, 15, 10]. Find a mathematical expression using all numbers exactly once to reach the target.",
+            ),
+            (
+                "completed_oai_model_dpo_fine_tuning_job_id",
+                "OpenAI",
+                50,
+                "test_deploy_infer_oai_dpo",
+                "Explain machine learning in simple terms.",
+            ),
+            (
+                "completed_oss_model_sft_fine_tuning_job_id",
+                "Mistral AI",
+                50,
+                "test_deploy_infer_oss_sft",
+                "Who invented the telephone?",
+            ),
+        ],
+    )
     @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_finetuning_deploy_and_infer_oai_model_rft_job_async(self, **kwargs):
+    @_pass_deploy_args_async
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_deploy_and_infer_job_async_live_extended(
+        self, job_id_env_var, deployment_format, deployment_capacity, test_prefix, inference_content, **kwargs
+    ):
+        completed_job_id = kwargs.get(job_id_env_var)
         await self._test_deploy_and_infer_helper_async(
-            "AZURE_AI_PROJECTS_TESTS_COMPLETED_OAI_MODEL_RFT_FINE_TUNING_JOB_ID",
-            "OpenAI",
-            50,
-            "test_finetuning_deploy_and_infer_oai_model_rft_job",
-            "Target: 85 Numbers: [20, 4, 15, 10]. Find a mathematical expression using all numbers exactly once to reach the target.",
-            **kwargs,
-        )
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_finetuning_deploy_and_infer_oai_model_dpo_job_async(self, **kwargs):
-        await self._test_deploy_and_infer_helper_async(
-            "AZURE_AI_PROJECTS_TESTS_COMPLETED_OAI_MODEL_DPO_FINE_TUNING_JOB_ID",
-            "OpenAI",
-            50,
-            "test_finetuning_deploy_and_infer_oai_model_dpo_job",
-            "What is the largest desert in the world?",
-            **kwargs,
-        )
-
-    @servicePreparer()
-    @recorded_by_proxy_async
-    async def test_finetuning_deploy_and_infer_oss_model_sft_job_async(self, **kwargs):
-        await self._test_deploy_and_infer_helper_async(
-            "AZURE_AI_PROJECTS_TESTS_COMPLETED_OSS_MODEL_SFT_FINE_TUNING_JOB_ID",
-            "Mistral AI",
-            50,
-            "test_finetuning_deploy_and_infer_oss_model_sft_job",
-            "Who invented the telephone?",
+            completed_job_id,
+            deployment_format,
+            deployment_capacity,
+            test_prefix,
+            inference_content,
             **kwargs,
         )

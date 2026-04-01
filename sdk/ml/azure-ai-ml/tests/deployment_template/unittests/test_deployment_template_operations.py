@@ -61,7 +61,7 @@ class TestDeploymentTemplateOperations:
         rest_template = RestDeploymentTemplate(
             deployment_template_type="model_deployment",
             environment_id="azureml:test-env:1",
-            allowed_instance_type=["Standard_DS2_v2"],
+            allowed_instance_types=["Standard_DS2_v2"],
             default_instance_type="Standard_DS2_v2",
             instance_count=2,
             description="Test deployment template",
@@ -596,7 +596,7 @@ class TestDeploymentTemplateOperations:
             "name": "test-template",
             "version": "1.0",
             "environmentId": "azureml:test-env:1",
-            "allowedInstanceType": ["Standard_DS2_v2", "Standard_DS3_v2"],
+            "allowedInstanceTypes": ["Standard_DS2_v2", "Standard_DS3_v2"],
             "defaultInstanceType": "Standard_DS2_v2",
             "deploymentTemplateType": "model_deployment",
             "instanceCount": "5",
@@ -606,7 +606,7 @@ class TestDeploymentTemplateOperations:
         result = deployment_template_ops._convert_dict_to_deployment_template(dict_data)
 
         assert result.environment == "azureml:test-env:1"
-        assert result.allowed_instance_type == ["Standard_DS2_v2", "Standard_DS3_v2"]
+        assert result.allowed_instance_types == ["Standard_DS2_v2", "Standard_DS3_v2"]
         assert result.default_instance_type == "Standard_DS2_v2"
         assert result.deployment_template_type == "model_deployment"
         assert result.instance_count == 5
@@ -681,17 +681,17 @@ class TestDeploymentTemplateOperations:
         assert result.scoring_port == 8080
 
     def test_convert_dict_to_deployment_template_space_separated_instance_types(self, deployment_template_ops):
-        """Test _convert_dict_to_deployment_template with space-separated allowed_instance_type."""
+        """Test _convert_dict_to_deployment_template with space-separated allowed_instance_types."""
         dict_data = {
             "name": "test-template",
             "version": "1.0",
             "environment": "azureml:test-env:1",
-            "allowed_instance_type": "Standard_DS2_v2 Standard_DS3_v2 Standard_DS4_v2",
+            "allowed_instance_types": "Standard_DS2_v2 Standard_DS3_v2 Standard_DS4_v2",
         }
 
         result = deployment_template_ops._convert_dict_to_deployment_template(dict_data)
 
-        assert result.allowed_instance_type == ["Standard_DS2_v2", "Standard_DS3_v2", "Standard_DS4_v2"]
+        assert result.allowed_instance_types == ["Standard_DS2_v2", "Standard_DS3_v2", "Standard_DS4_v2"]
 
     def test_convert_dict_to_deployment_template_all_fields(self, deployment_template_ops):
         """Test _convert_dict_to_deployment_template with all possible fields."""
@@ -701,7 +701,7 @@ class TestDeploymentTemplateOperations:
             "description": "Full featured template",
             "tags": {"env": "prod", "team": "ml"},
             "environment": "azureml:prod-env:1",
-            "allowed_instance_type": ["Standard_DS2_v2"],
+            "allowed_instance_types": ["Standard_DS2_v2"],
             "default_instance_type": "Standard_DS2_v2",
             "deployment_template_type": "model_deployment",
             "instance_count": 5,

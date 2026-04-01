@@ -163,12 +163,12 @@ class PathClient(StorageAccountHostsMixin):
     def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
         client = AzureDataLakeStorageRESTAPI(
             url,
+            version=self._api_version,
             base_url=url,
             file_system=self.file_system_name,
             path=self.path_name,
             pipeline=self._pipeline
         )
-        client._config.version = self._api_version  # type: ignore [assignment] # pylint: disable=protected-access
         return client
 
     def _format_url(self, hostname: str) -> str:
@@ -962,3 +962,102 @@ class PathClient(StorageAccountHostsMixin):
         lease = DataLakeLeaseClient(self, lease_id=lease_id)
         lease.acquire(lease_duration=lease_duration, **kwargs)
         return lease
+
+    @distributed_trace
+    def set_tags(self, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> Dict[str, Any]:
+        """
+        The Set Tags operation enables users to set tags on a path.
+        Each call to this operation replaces all existing tags attached to the path.
+        To remove all tags from the path, call this operation with no tags set.
+
+        :param tags:
+            Name-value pairs associated with the path as tag. Tags are case-sensitive.
+            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
+            and tag values must be between 0 and 256 characters.
+            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
+            space (' '), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+        :type tags: Dict[str, str]
+        :keyword str version_id:
+            The version id parameter is an opaque DateTime value that, when present,
+            specifies the version of the path to add tags to.
+        :keyword bool validate_content:
+            If true, calculates an MD5 hash of the tags content. The storage service checks the
+            hash of the content that has arrived with the hash that was sent. This is primarily
+            valuable for detecting bitflips on the wire if using http instead of https, as https (the default),
+            will already validate. Note that this MD5 hash is not stored with the path.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on path tags to operate only on destination path with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+        :keyword lease:
+            Required if the path has an active lease. Value can be a DataLakeLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag.
+        :keyword int timeout:
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
+        :return: Path-updated property dict (Etag and last modified)
+        :rtype: Dict[str, Any]
+        """
+        return self._blob_client.set_blob_tags(tags, **kwargs)
+
+    @distributed_trace
+    def get_tags(self, **kwargs: Any) -> Dict[str, str]:
+        """The Get Tags operation enables users to get tags on a path.
+
+        :keyword Optional[str] version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the path to add tags to.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on path tags to operate only on destination path with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+        :keyword lease:
+            Required if the path has an active lease. Value can be a DataLakeLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag.
+        :keyword int timeout:
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
+        :return: Key value pairs of path tags.
+        :rtype: Dict[str, str]
+        """
+        return self._blob_client.get_blob_tags(**kwargs)

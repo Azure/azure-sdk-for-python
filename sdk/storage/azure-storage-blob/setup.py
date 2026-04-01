@@ -64,6 +64,8 @@ setup(
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
+        'Programming Language :: Python :: 3.14',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -77,14 +79,14 @@ setup(
     ]),
     python_requires=">=3.9",
     install_requires=[
-        "azure-core>=1.30.0",
+        "azure-core>=1.37.0",
         "cryptography>=2.1.4",
         "typing-extensions>=4.6.0",
         "isodate>=0.6.1"
     ],
     extras_require={
         "aio": [
-            "azure-core[aio]>=1.30.0",
+            "azure-core[aio]>=1.37.0",
         ],
     },
 )

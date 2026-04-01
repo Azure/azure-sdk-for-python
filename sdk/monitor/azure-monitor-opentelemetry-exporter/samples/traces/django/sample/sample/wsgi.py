@@ -21,7 +21,8 @@ from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sample.settings")
 
-# Azure Monitor OpenTelemetry Exporters and Django Instrumentation should only be set up once in either asgi.py, wsgi.py, or manage.py, depending on startup method.
+# Azure Monitor OpenTelemetry Exporters and Django Instrumentation should only be set up once in either asgi.py,
+# wsgi.py, or manage.py, depending on startup method.
 # If using manage.py, please remove setup from asgi.py and wsgi.py
 # Enable instrumentation in the django library.
 DjangoInstrumentor().instrument()

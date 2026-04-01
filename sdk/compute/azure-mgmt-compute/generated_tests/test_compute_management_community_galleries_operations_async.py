@@ -25,7 +25,7 @@ class TestComputeManagementCommunityGalleriesOperationsAsync(AzureMgmtRecordedTe
         response = await self.client.community_galleries.get(
             location="str",
             public_gallery_name="str",
-            api_version="2024-03-03",
+            api_version="2025-03-03",
         )
 
         # please add some check logic here by yourself

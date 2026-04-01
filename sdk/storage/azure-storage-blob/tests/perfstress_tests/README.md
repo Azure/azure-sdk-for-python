@@ -65,6 +65,7 @@ The options are available for all Blob perf tests:
 - `--max-block-size` Maximum size of data in a block within a blob.
 - `--max-get-size` Initial chunk size of a Blob download.
 - `--buffer-threshold` Minimum block size to prevent full block buffering.
+- `--data-block-size` The chunk size used when reading from the network stream.
 - `--client-encryption` The version of client-side encryption to use. Leave out for no encryption.
 
 #### List Blobs command line options

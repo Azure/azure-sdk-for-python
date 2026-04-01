@@ -31,11 +31,21 @@ from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _QUICKPULSE_ETAG_HEADER_NAME,
     _QUICKPULSE_SUBSCRIBED_HEADER_NAME,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._generated._configuration import QuickpulseClientConfiguration
-from azure.monitor.opentelemetry.exporter._quickpulse._generated._client import QuickpulseClient
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import MonitoringDataPoint
-from azure.monitor.opentelemetry.exporter._quickpulse._filter import _update_filter_configuration
-from azure.monitor.opentelemetry.exporter._quickpulse._policy import _QuickpulseRedirectPolicy
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._configuration import (
+    LiveMetricsClientConfiguration,
+)
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._client import (
+    LiveMetricsClient,
+)
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics.models import (
+    MonitoringDataPoint,
+)
+from azure.monitor.opentelemetry.exporter._quickpulse._filter import (
+    _update_filter_configuration,
+)
+from azure.monitor.opentelemetry.exporter._quickpulse._policy import (
+    _QuickpulseRedirectPolicy,
+)
 from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _get_and_clear_quickpulse_documents,
     _get_global_quickpulse_state,
@@ -48,7 +58,9 @@ from azure.monitor.opentelemetry.exporter._quickpulse._state import (
 from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
     _metric_to_quick_pulse_data_points,
 )
-from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
+from azure.monitor.opentelemetry.exporter._connection_string_parser import (
+    ConnectionStringParser,
+)
 from azure.monitor.opentelemetry.exporter._utils import (
     _get_auth_policy,
     _ticks_since_dot_net_epoch,
@@ -82,7 +94,6 @@ class _UnsuccessfulQuickPulsePostError(Exception):
 
 
 class _QuickpulseExporter(MetricExporter):
-
     def __init__(self, **kwargs: Any) -> None:
         """Metric exporter for Quickpulse.
 
@@ -97,7 +108,8 @@ class _QuickpulseExporter(MetricExporter):
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         self._credential = kwargs.get("credential")
         self.aad_audience = parsed_connection_string.aad_audience
-        config = QuickpulseClientConfiguration(credential=self._credential)  # type: ignore
+        # Do not pass credential to config; auth is handled explicitly via _get_auth_policy
+        config = LiveMetricsClientConfiguration()
         qp_redirect_policy = _QuickpulseRedirectPolicy(permit_redirects=False)
         policies = [
             # Custom redirect policy for QP
@@ -107,11 +119,10 @@ class _QuickpulseExporter(MetricExporter):
             # Logging for client calls
             config.http_logging_policy,
             _get_auth_policy(self._credential, config.authentication_policy, self.aad_audience),
-            config.authentication_policy,
             # Explicitly disabling to avoid tracing live metrics calls
             # DistributedTracingPolicy(),
         ]
-        self._client = QuickpulseClient(
+        self._client = LiveMetricsClient(
             credential=self._credential, endpoint=self._live_endpoint, policies=policies  # type: ignore
         )
         # Create a weakref of the client to the redirect policy so the endpoint can be
@@ -152,7 +163,6 @@ class _QuickpulseExporter(MetricExporter):
         # pylint: disable=R1702
         try:
             post_response = self._client.publish(  # type: ignore
-                endpoint=self._live_endpoint,
                 monitoring_data_points=data_points,
                 ikey=self._instrumentation_key,  # type: ignore
                 configuration_etag=configuration_etag,
@@ -184,7 +194,9 @@ class _QuickpulseExporter(MetricExporter):
                             try:
                                 _update_filter_configuration(etag, config)
                             except Exception:  # pylint: disable=broad-except
-                                _logger.exception("Exception occurred while updating filter config.")  # pylint: disable=C4769
+                                _logger.exception(  # pylint: disable=do-not-use-logging-exception
+                                    "Exception occurred while updating filter config."
+                                )  # pylint: disable=C4769
                                 result = MetricExportResult.FAILURE
         except Exception:  # pylint: disable=broad-except
             _logger.exception("Exception occurred while publishing live metrics.")  # pylint: disable=C4769
@@ -227,7 +239,6 @@ class _QuickpulseExporter(MetricExporter):
         etag = _get_quickpulse_etag() or ""
         try:
             ping_response = self._client.is_subscribed(  # type: ignore
-                endpoint=self._live_endpoint,
                 monitoring_data_point=monitoring_data_point,
                 ikey=self._instrumentation_key,  # type: ignore
                 transmission_time=_ticks_since_dot_net_epoch(),
@@ -247,7 +258,6 @@ class _QuickpulseExporter(MetricExporter):
 
 
 class _QuickpulseMetricReader(MetricReader):
-
     def __init__(
         self,
         exporter: _QuickpulseExporter,
@@ -302,7 +312,9 @@ class _QuickpulseMetricReader(MetricReader):
                             # Reset etag to default if not subscribed
                             _set_quickpulse_etag("")
                     except Exception:  # pylint: disable=broad-except
-                        _logger.exception("Exception occurred while reading live metrics ping response.")  # pylint: disable=C4769
+                        _logger.exception(  # pylint: disable=do-not-use-logging-exception
+                            "Exception occurred while reading live metrics ping response."
+                        )  # pylint: disable=C4769
                         _set_quickpulse_etag("")
                 # TODO: Implement redirect
                 else:

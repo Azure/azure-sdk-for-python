@@ -46,3 +46,7 @@ pyright = false
 type_check_samples = true
 verifytypes = true
 pylint = true
+
+[tool.azure-sdk-conda]
+in_bundle = true
+bundle_name = "azure-eventhub"

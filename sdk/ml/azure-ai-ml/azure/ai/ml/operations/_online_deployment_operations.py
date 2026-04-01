@@ -183,7 +183,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             if deployment.data_collector:
                 self._register_collection_data_assets(deployment=deployment)
 
-            upload_dependencies(deployment, orchestrators)
+            upload_dependencies(deployment, orchestrators, self._credentials)
             try:
                 location = self._get_workspace_location()
                 is_package_model = deployment.package_model if hasattr(deployment, "package_model") else False

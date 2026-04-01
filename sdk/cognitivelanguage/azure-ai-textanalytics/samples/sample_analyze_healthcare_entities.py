@@ -111,19 +111,12 @@ def sample_analyze_healthcare_entities():
                         print(f"  Offset: {entity.offset}")
                         print(f"  Length: {entity.length}")
                         print(f"  Confidence score: {entity.confidence_score}")
-                        if entity.links:
-                            for link in entity.links:
-                                print(f"    Link ID: {link.id}")
-                                print(f"    Data source: {link.data_source}")
                         print()
 
                     # Relations
                     print("Relations:")
                     for relation in doc.relations or []:
                         print(f"  Relation type: {relation.relation_type}")
-                        for rel_entity in relation.entities or []:
-                            print(f"    Role: {rel_entity.role}")
-                            print(f"    Ref: {rel_entity.ref}")
                         print()
             else:
                 # Other action kinds, if present
@@ -132,8 +125,8 @@ def sample_analyze_healthcare_entities():
                         f"\n[Non-healthcare action] name={op_result.task_name}, "
                         f"status={op_result.status}, kind={op_result.kind}"
                     )
-                except Exception:
-                    print("\n[Non-healthcare action present]")
+                except (AttributeError, TypeError) as e:
+                    print(f"\n[Non-healthcare action present] Error: {e}")
 
 
 # [END analyze_healthcare_entities]

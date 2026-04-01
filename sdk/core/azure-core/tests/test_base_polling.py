@@ -28,7 +28,6 @@ import datetime
 import json
 import re
 import types
-import pickle
 import platform
 
 try:
@@ -172,6 +171,67 @@ def test_base_polling_continuation_token(client, polling_response, http_response
         continuation_token,
         deserialization_callback="deserialization_callback",
         client=client,
+    )
+    new_polling = LROBasePolling()
+    new_polling.initialize(*polling_args)
+
+
+def test_base_polling_continuation_token_pickle_incompatibility(client):
+    """Test that from_continuation_token raises ValueError with helpful message for old pickle tokens."""
+    import pickle
+
+    # Simulate an old pickle-based continuation token (would have been a pickled PipelineResponse)
+    old_pickle_data = pickle.dumps({"some": "data"})
+    old_continuation_token = base64.b64encode(old_pickle_data).decode("ascii")
+
+    with pytest.raises(ValueError) as excinfo:
+        LROBasePolling.from_continuation_token(
+            old_continuation_token,
+            deserialization_callback=lambda x: x,
+            client=client,
+        )
+
+    error_message = str(excinfo.value)
+    assert "aka.ms" in error_message
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_base_polling_continuation_token_with_stream_response(port, http_request, deserialization_cb):
+    """Test that get_continuation_token works correctly with real server responses."""
+    client = MockRestClient(port)
+    request = http_request(
+        "POST",
+        "http://localhost:{}/polling/continuation-token-stream".format(port),
+    )
+    initial_response = client._client._pipeline.run(request)
+
+    # Create polling operation
+    polling = LROBasePolling(timeout=0)
+    polling.initialize(
+        client._client,
+        initial_response,
+        deserialization_cb,
+    )
+
+    # get_continuation_token should work with real server response
+    continuation_token = polling.get_continuation_token()
+    assert isinstance(continuation_token, str)
+
+    # Verify the token can be decoded and contains expected structure
+    decoded = json.loads(base64.b64decode(continuation_token).decode("utf-8"))
+    assert decoded["version"] == 1
+    assert "request" in decoded["data"]
+    assert "response" in decoded["data"]
+    assert decoded["data"]["response"]["status_code"] == 202
+    # Content should be preserved
+    content_bytes = base64.b64decode(decoded["data"]["response"]["content"])
+    assert b"InProgress" in content_bytes
+
+    # Verify we can restore from the continuation token
+    polling_args = LROBasePolling.from_continuation_token(
+        continuation_token,
+        deserialization_callback=deserialization_cb,
+        client=client._client,
     )
     new_polling = LROBasePolling()
     new_polling.initialize(*polling_args)
@@ -714,7 +774,13 @@ class TestBasePolling(object):
         poll = LROPoller(CLIENT, response, TestBasePolling.mock_outputs, LROBasePolling(0))
         with pytest.raises(HttpResponseError) as error:  # TODO: Node.js raises on deserialization
             poll.result()
-        assert error.value.continuation_token == base64.b64encode(pickle.dumps(response)).decode("ascii")
+        # Verify continuation token is set and is a valid JSON-encoded token
+        assert error.value.continuation_token is not None
+        assert isinstance(error.value.continuation_token, str)
+        # Verify the token can be decoded
+        decoded = json.loads(base64.b64decode(error.value.continuation_token).decode("utf-8"))
+        assert "request" in decoded["data"]
+        assert "response" in decoded["data"]
 
         LOCATION_BODY = json.dumps({"name": TEST_NAME})
         POLLING_STATUS = 200
@@ -833,3 +899,102 @@ def test_post_check_patch(http_request):
     with pytest.raises(AttributeError) as ex:
         algorithm.get_final_get_url(None)
     assert "'NoneType' object has no attribute 'http_response'" in str(ex.value)
+
+
+def test_continuation_token_with_non_json_serializable_data(port, deserialization_cb):
+    """Test that continuation token gracefully handles non-JSON-serializable data like XML."""
+    import base64
+    import json
+    import xml.etree.ElementTree as ET
+
+    from azure.core.polling.base_polling import LROBasePolling
+    from azure.core.rest import HttpRequest
+
+    client = MockRestClient(port)
+    request = HttpRequest(
+        "POST",
+        "http://localhost:{}/polling/continuation-token-xml".format(port),
+    )
+    initial_response = client._client._pipeline.run(request)
+
+    # Simulate XML deserialized data (non-JSON-serializable)
+    xml_element = ET.fromstring(b"<root><status>InProgress</status></root>")
+    initial_response.context["deserialized_data"] = xml_element
+
+    # Create polling operation
+    polling = LROBasePolling(timeout=0)
+    polling.initialize(
+        client._client,
+        initial_response,
+        deserialization_cb,
+    )
+
+    # Get continuation token - this should NOT raise an error
+    token = polling.get_continuation_token()
+
+    # Decode and verify the token structure
+    decoded = json.loads(base64.b64decode(token).decode("utf-8"))
+
+    # deserialized_data should be None because XML is not JSON-serializable
+    assert decoded["data"]["context"]["deserialized_data"] is None
+
+    # The raw content should still be preserved
+    content_bytes = base64.b64decode(decoded["data"]["response"]["content"])
+    assert b"<root>" in content_bytes or b"InProgress" in content_bytes
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_continuation_token_excludes_request_headers(port, http_request, deserialization_cb):
+    """Test that continuation token does not include sensitive request headers for security."""
+    import base64
+    import json
+
+    from azure.core.polling.base_polling import LROBasePolling
+
+    client = MockRestClient(port)
+    request = http_request(
+        "POST",
+        "http://localhost:{}/polling/continuation-token".format(port),
+    )
+    # Add headers that should NOT be included in the continuation token
+    request.headers["Authorization"] = "Bearer super-secret-token"
+    request.headers["x-ms-authorization-auxiliary"] = "auxiliary-secret"
+    request.headers["x-custom-header"] = "custom-value"
+    # Add header that SHOULD be included for request correlation
+    request.headers["x-ms-client-request-id"] = "test-request-id-12345"
+
+    initial_response = client._client._pipeline.run(request)
+
+    # Create polling operation
+    polling = LROBasePolling(timeout=0)
+    polling.initialize(
+        client._client,
+        initial_response,
+        deserialization_cb,
+    )
+
+    token = polling.get_continuation_token()
+
+    # Decode and verify sensitive request headers are not included
+    decoded = json.loads(base64.b64decode(token).decode("utf-8"))
+
+    # Request should contain method, url, and only safe headers (x-ms-client-request-id)
+    request_state = decoded["data"]["request"]
+    assert request_state["method"] == "POST"
+    assert "continuation-token" in request_state["url"]
+    # Only x-ms-client-request-id should be in headers
+    assert "headers" in request_state
+    assert request_state["headers"].get("x-ms-client-request-id") == "test-request-id-12345"
+    # Sensitive headers should NOT be included
+    assert "Authorization" not in request_state["headers"]
+    assert "x-ms-authorization-auxiliary" not in request_state["headers"]
+    assert "x-custom-header" not in request_state["headers"]
+
+    # Verify we can restore from the continuation token
+    polling_args = LROBasePolling.from_continuation_token(
+        token,
+        deserialization_callback=deserialization_cb,
+        client=client._client,
+    )
+    new_polling = LROBasePolling()
+    new_polling.initialize(*polling_args)

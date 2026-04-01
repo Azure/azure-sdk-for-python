@@ -1,6 +1,41 @@
 # Release History
 
-## 12.24.0b1 (Unreleased)
+## 12.26.0b1 (2026-04-01)
+
+### Features Added
+- Added support for service version 2026-06-06.
+- Added support for the keyword `file_property_semantics` in `ShareClient`'s `create_directory` and `DirectoryClient`'s
+`create_directory` APIs, which specifies permissions to be configured upon directory creation.
+- Added support for the keyword `data` to `FileClient`'s `create_file` API, which specifies the
+optional initial data to be uploaded (up to 4MB).
+- Added support for connection strings and `account_url`s to accept URLs with `-ipv6` and `-dualstack` suffixes 
+for `ShareClient`, `ShareDirectoryClient`, and `ShareFileClient`.
+
+### Other Changes
+- Consolidated the behavior of `max_concurrency=None` by defaulting to the shared `DEFAULT_MAX_CONCURRENCY` constant.
+
+## 12.25.0b1 (2026-01-27)
+
+### Features Added
+- Added support for service version 2026-04-06.
+- Added support for improved error handling for file share provisioning.
+- Added support for the keyword `user_delegation_tid` to `ShareServiceClient.get_user_delegation_key` API, which
+can be used in `generate_share_sas` and `generate_file_sas` to specify the Tenant ID that is authorized
+to use the generated SAS URL. Note that `user_delegation_tid` must be used together with `user_delegation_oid`.
+
+### Other Changes
+- Bumped minimum `azure-core` dependency to 1.37.0.
+
+## 12.24.0 (2026-01-06)
+
+### Features Added
+- Stable release of features from 12.24.0b1
+
+### Other Changes
+- Changed the default `connection_data_block_size` for all clients from 4 KiB to 256 KiB. This should result in
+significantly better throughput on large file downloads for most environments.
+
+## 12.24.0b1 (2025-12-04)
 
 ### Features Added
 - Added support for service version 2026-02-06.

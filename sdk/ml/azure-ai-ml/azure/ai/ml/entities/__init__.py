@@ -12,7 +12,7 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 import logging
 from typing import Any, Optional
 
-from azure.ai.ml._restclient.v2022_10_01.models import CreatedByType
+from azure.ai.ml._restclient.arm_ml_service.models import CreatedByType
 from azure.ai.ml._restclient.v2022_10_01_preview.models import UsageUnit
 
 from ._assets._artifacts._package.base_environment_source import BaseEnvironment
@@ -41,6 +41,7 @@ from ._assets.intellectual_property import IntellectualProperty
 from ._assets.workspace_asset_reference import (
     WorkspaceAssetReference as WorkspaceModelReference,
 )
+from ._assets.default_deployment_template import DefaultDeploymentTemplate
 from ._autogen_entities.models import (
     AzureOpenAIDeployment,
     MarketplacePlan,
@@ -571,6 +572,7 @@ __all__ = [
     "GitSource",
     "LocalSource",
     "IndexModelConfiguration",
+    "DefaultDeploymentTemplate",
 ]
 
 # Allow importing these types for backwards compatibility

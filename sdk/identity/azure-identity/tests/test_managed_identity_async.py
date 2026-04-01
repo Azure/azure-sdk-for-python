@@ -1439,3 +1439,81 @@ def test_log(caplog):
         with mock.patch.dict("os.environ", mock_environ, clear=True):
             ManagedIdentityCredential(client_id="foo")
             assert "workload identity with client_id: foo" in caplog.text
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("environ", ALL_ENVIRONMENTS)
+async def test_claims_force_token_refresh(environ):
+    """When claims are provided, the token cache should be bypassed and claims passed to the token request."""
+    expected_token = "****"
+    scope = "scope"
+    expected_claims = '{"access_token": {"xms_cc": {"values": ["cp1"]}}}'
+    now = int(time.time())
+
+    call_count = 0
+
+    async def mock_send(request, **kwargs):
+        nonlocal call_count
+        call_count += 1
+
+        assert "claims" not in kwargs
+        return mock_response(
+            json_payload={
+                "access_token": expected_token,
+                "expires_in": 3600,
+                "expires_on": now + 3600,
+                "resource": scope,
+                "token_type": "Bearer",
+            }
+        )
+
+    with mock.patch.dict(MANAGED_IDENTITY_ENVIRON, environ, clear=True):
+        credential = ManagedIdentityCredential(transport=mock.Mock(send=mock_send))
+
+        # First call without claims
+        token = await credential.get_token(scope)
+        assert token.token == expected_token
+        first_call_count = call_count
+
+        # Second call with claims - should make a new request (not use cache)
+        token = await credential.get_token_info(scope, options={"claims": expected_claims})
+        assert token.token == expected_token
+
+        # Verify a new token request was made when claims were provided
+        assert call_count > first_call_count, "Expected a new token request when claims were provided"
+
+
+@pytest.mark.asyncio
+async def test_access_tokens_cached():
+    """Verify that cached tokens are used on subsequent token requests for the same scope."""
+    expected_token = "****"
+    scope = "scope"
+    now = int(time.time())
+
+    call_count = 0
+
+    async def mock_send(request, **kwargs):
+        nonlocal call_count
+        call_count += 1
+        return mock_response(
+            json_payload={
+                "access_token": expected_token,
+                "expires_in": 3600,
+                "expires_on": now + 3600,
+                "resource": scope,
+                "token_type": "Bearer",
+            }
+        )
+
+    transport = mock.Mock(send=mock_send)
+    credential = ManagedIdentityCredential(transport=transport)
+
+    token = await credential.get_token(scope)
+    assert token.token == expected_token
+    first_call_count = call_count
+
+    token_info = await credential.get_token_info(scope)
+    assert token_info.token == expected_token
+
+    # Verify no new token request was made when getting token info
+    assert call_count == first_call_count

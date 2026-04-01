@@ -82,6 +82,7 @@ class TestDeviceRegistryMgmtNamespaceDevicesOperationsAsync(AzureMgmtRecordedTes
                         "model": "str",
                         "operatingSystem": "str",
                         "operatingSystemVersion": "str",
+                        "policy": {"resourceId": "str"},
                         "provisioningState": "str",
                         "status": {
                             "config": {
@@ -169,6 +170,7 @@ class TestDeviceRegistryMgmtNamespaceDevicesOperationsAsync(AzureMgmtRecordedTes
                             },
                         },
                         "operatingSystemVersion": "str",
+                        "policy": {"resourceId": "str"},
                     },
                     "tags": {"str": "str"},
                 },
@@ -200,5 +202,20 @@ class TestDeviceRegistryMgmtNamespaceDevicesOperationsAsync(AzureMgmtRecordedTes
             namespace_name="str",
         )
         result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_namespace_devices_begin_revoke(self, resource_group):
+        response = await (
+            await self.client.namespace_devices.begin_revoke(
+                resource_group_name=resource_group.name,
+                namespace_name="str",
+                device_name="str",
+                body={"disable": bool},
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...

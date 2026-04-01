@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 import datetime
-from typing import Any, Callable, Dict, IO, Iterator, Literal, Optional, TypeVar, Union
+from typing import Any, Callable, IO, Iterator, Literal, Optional, TypeVar, Union
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -31,15 +31,16 @@ from .._configuration import AzureDataLakeStorageRESTAPIConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_create_request(
+def build_create_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
     url: str,
     *,
+    version: str,
     request_id_parameter: Optional[str] = None,
     timeout: Optional[int] = None,
     resource: Optional[Union[str, _models.PathResourceType]] = None,
@@ -80,7 +81,6 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -176,12 +176,13 @@ def build_create_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_update_request(
+def build_update_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
     url: str,
     *,
     action: Union[str, _models.PathUpdateAction],
     mode: Union[str, _models.PathSetAccessControlRecursiveMode],
     content: IO[bytes],
+    version: str,
     request_id_parameter: Optional[str] = None,
     timeout: Optional[int] = None,
     max_records: Optional[int] = None,
@@ -215,7 +216,6 @@ def build_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -299,6 +299,7 @@ def build_lease_request(
     url: str,
     *,
     x_ms_lease_action: Union[str, _models.PathLeaseAction],
+    version: str,
     request_id_parameter: Optional[str] = None,
     timeout: Optional[int] = None,
     x_ms_lease_break_period: Optional[int] = None,
@@ -314,7 +315,6 @@ def build_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -360,6 +360,7 @@ def build_lease_request(
 def build_read_request(
     url: str,
     *,
+    version: str,
     request_id_parameter: Optional[str] = None,
     timeout: Optional[int] = None,
     range: Optional[str] = None,
@@ -377,7 +378,6 @@ def build_read_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -428,6 +428,7 @@ def build_read_request(
 def build_get_properties_request(
     url: str,
     *,
+    version: str,
     request_id_parameter: Optional[str] = None,
     timeout: Optional[int] = None,
     action: Optional[Union[str, _models.PathGetPropertiesAction]] = None,
@@ -442,7 +443,6 @@ def build_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -483,6 +483,7 @@ def build_get_properties_request(
 def build_delete_request(
     url: str,
     *,
+    version: str,
     request_id_parameter: Optional[str] = None,
     timeout: Optional[int] = None,
     recursive: Optional[bool] = None,
@@ -498,7 +499,6 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -541,6 +541,7 @@ def build_delete_request(
 def build_set_access_control_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     owner: Optional[str] = None,
@@ -558,7 +559,6 @@ def build_set_access_control_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["setAccessControl"] = kwargs.pop("action", _params.pop("action", "setAccessControl"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -605,6 +605,7 @@ def build_set_access_control_recursive_request(  # pylint: disable=name-too-long
     url: str,
     *,
     mode: Union[str, _models.PathSetAccessControlRecursiveMode],
+    version: str,
     timeout: Optional[int] = None,
     continuation: Optional[str] = None,
     force_flag: Optional[bool] = None,
@@ -619,7 +620,6 @@ def build_set_access_control_recursive_request(  # pylint: disable=name-too-long
     action: Literal["setAccessControlRecursive"] = kwargs.pop(
         "action", _params.pop("action", "setAccessControlRecursive")
     )
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -653,9 +653,10 @@ def build_set_access_control_recursive_request(  # pylint: disable=name-too-long
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_flush_data_request(
+def build_flush_data_request(  # pylint: disable=too-many-locals
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     position: Optional[int] = None,
     retain_uncommitted_data: Optional[bool] = None,
@@ -685,7 +686,6 @@ def build_flush_data_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["flush"] = kwargs.pop("action", _params.pop("action", "flush"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -754,10 +754,11 @@ def build_flush_data_request(
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_append_data_request(
+def build_append_data_request(  # pylint: disable=too-many-locals
     url: str,
     *,
     content: IO[bytes],
+    version: str,
     position: Optional[int] = None,
     timeout: Optional[int] = None,
     content_length: Optional[int] = None,
@@ -781,7 +782,6 @@ def build_append_data_request(
 
     action: Literal["append"] = kwargs.pop("action", _params.pop("action", "append"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -848,6 +848,7 @@ def build_set_expiry_request(
     url: str,
     *,
     expiry_options: Union[str, _models.PathExpiryOptions],
+    version: str,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     expires_on: Optional[str] = None,
@@ -857,7 +858,6 @@ def build_set_expiry_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["expiry"] = kwargs.pop("comp", _params.pop("comp", "expiry"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -888,6 +888,7 @@ def build_set_expiry_request(
 def build_undelete_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     undelete_source: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
@@ -897,7 +898,6 @@ def build_undelete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -946,7 +946,7 @@ class PathOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def create(  # pylint: disable=inconsistent-return-statements
+    def create(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         request_id_parameter: Optional[str] = None,
         timeout: Optional[int] = None,
@@ -1131,6 +1131,7 @@ class PathOperations:
 
         _request = build_create_request(
             url=self._config.url,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             resource=resource,
@@ -1166,7 +1167,6 @@ class PathOperations:
             expiry_options=expiry_options,
             expires_on=expires_on,
             encryption_context=encryption_context,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1181,7 +1181,10 @@ class PathOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1203,7 +1206,7 @@ class PathOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def update(
+    def update(  # pylint: disable=too-many-locals
         self,
         action: Union[str, _models.PathUpdateAction],
         mode: Union[str, _models.PathSetAccessControlRecursiveMode],
@@ -1396,6 +1399,7 @@ class PathOperations:
             url=self._config.url,
             action=action,
             mode=mode,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             max_records=max_records,
@@ -1424,7 +1428,6 @@ class PathOperations:
             structured_body_type=structured_body_type,
             structured_content_length=structured_content_length,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1440,7 +1443,10 @@ class PathOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         deserialized = None
@@ -1509,7 +1515,7 @@ class PathOperations:
          the current lease ID in "x-ms-lease-id" and the new lease ID in "x-ms-proposed-lease-id" to
          change the lease ID of an active lease. Use "renew" and specify the "x-ms-lease-id" to renew an
          existing lease. Use "release" and specify the "x-ms-lease-id" to release a lease. Known values
-         are: "acquire", "break", "change", "renew", "release", and "break". Required.
+         are: "acquire", "break", "change", "renew", and "release". Required.
         :type x_ms_lease_action: str or ~azure.storage.filedatalake.models.PathLeaseAction
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -1565,6 +1571,7 @@ class PathOperations:
         _request = build_lease_request(
             url=self._config.url,
             x_ms_lease_action=x_ms_lease_action,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             x_ms_lease_break_period=x_ms_lease_break_period,
@@ -1575,7 +1582,6 @@ class PathOperations:
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             x_ms_lease_duration=self._config.x_ms_lease_duration,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1590,7 +1596,10 @@ class PathOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1703,6 +1712,7 @@ class PathOperations:
 
         _request = build_read_request(
             url=self._config.url,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             range=range,
@@ -1715,7 +1725,6 @@ class PathOperations:
             encryption_key=_encryption_key,
             encryption_key_sha256=_encryption_key_sha256,
             encryption_algorithm=_encryption_algorithm,  # type: ignore
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1735,7 +1744,10 @@ class PathOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1890,6 +1902,7 @@ class PathOperations:
 
         _request = build_get_properties_request(
             url=self._config.url,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             action=action,
@@ -1899,7 +1912,6 @@ class PathOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1914,7 +1926,10 @@ class PathOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2038,6 +2053,7 @@ class PathOperations:
 
         _request = build_delete_request(
             url=self._config.url,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             recursive=recursive,
@@ -2048,7 +2064,6 @@ class PathOperations:
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             paginated=paginated,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2063,7 +2078,10 @@ class PathOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2159,6 +2177,7 @@ class PathOperations:
 
         _request = build_set_access_control_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             owner=owner,
@@ -2171,7 +2190,6 @@ class PathOperations:
             if_unmodified_since=_if_unmodified_since,
             request_id_parameter=request_id_parameter,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2186,7 +2204,10 @@ class PathOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2274,6 +2295,7 @@ class PathOperations:
         _request = build_set_access_control_recursive_request(
             url=self._config.url,
             mode=mode,
+            version=self._config.version,
             timeout=timeout,
             continuation=continuation,
             force_flag=force_flag,
@@ -2281,7 +2303,6 @@ class PathOperations:
             acl=acl,
             request_id_parameter=request_id_parameter,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2296,7 +2317,10 @@ class PathOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2316,7 +2340,7 @@ class PathOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def flush_data(  # pylint: disable=inconsistent-return-statements
+    def flush_data(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         timeout: Optional[int] = None,
         position: Optional[int] = None,
@@ -2448,6 +2472,7 @@ class PathOperations:
 
         _request = build_flush_data_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             position=position,
             retain_uncommitted_data=retain_uncommitted_data,
@@ -2472,7 +2497,6 @@ class PathOperations:
             encryption_key_sha256=_encryption_key_sha256,
             encryption_algorithm=_encryption_algorithm,  # type: ignore
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2487,7 +2511,10 @@ class PathOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2512,7 +2539,7 @@ class PathOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def append_data(  # pylint: disable=inconsistent-return-statements
+    def append_data(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         body: IO[bytes],
         position: Optional[int] = None,
@@ -2624,6 +2651,7 @@ class PathOperations:
 
         _request = build_append_data_request(
             url=self._config.url,
+            version=self._config.version,
             position=position,
             timeout=timeout,
             content_length=content_length,
@@ -2642,7 +2670,6 @@ class PathOperations:
             structured_content_length=structured_content_length,
             action=action,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -2658,7 +2685,10 @@ class PathOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2733,11 +2763,11 @@ class PathOperations:
         _request = build_set_expiry_request(
             url=self._config.url,
             expiry_options=expiry_options,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             expires_on=expires_on,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2752,7 +2782,10 @@ class PathOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2810,11 +2843,11 @@ class PathOperations:
 
         _request = build_undelete_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             undelete_source=undelete_source,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2829,7 +2862,10 @@ class PathOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

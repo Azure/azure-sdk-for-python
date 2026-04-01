@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -27,26 +28,27 @@ from azure.mgmt.redhatopenshift import AzureRedHatOpenShiftClient
 def main():
     client = AzureRedHatOpenShiftClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.open_shift_clusters.begin_update(
         resource_group_name="resourceGroup",
         resource_name="resourceName",
         parameters={
+            "identity": {"type": "UserAssigned", "userAssignedIdentities": {"": {}}},
             "properties": {
                 "apiserverProfile": {"visibility": "Public"},
                 "clusterProfile": {
                     "domain": "cluster.location.aroapp.io",
                     "fipsValidatedModules": "Enabled",
                     "pullSecret": '{"auths":{"registry.connect.redhat.com":{"auth":""},"registry.redhat.io":{"auth":""}}}',
-                    "resourceGroupId": "/subscriptions/subscriptionId/resourceGroups/clusterResourceGroup",
+                    "resourceGroupId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clusterResourceGroup",
                 },
                 "consoleProfile": {},
                 "ingressProfiles": [{"name": "default", "visibility": "Public"}],
                 "masterProfile": {
                     "encryptionAtHost": "Enabled",
-                    "subnetId": "/subscriptions/subscriptionId/resourceGroups/vnetResourceGroup/providers/Microsoft.Network/virtualNetworks/vnet/subnets/master",
+                    "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vnetResourceGroup/providers/Microsoft.Network/virtualNetworks/vnet/subnets/master",
                     "vmSize": "Standard_D8s_v3",
                 },
                 "networkProfile": {
@@ -55,13 +57,14 @@ def main():
                     "preconfiguredNSG": "Disabled",
                     "serviceCidr": "172.30.0.0/16",
                 },
+                "platformWorkloadIdentityProfile": {"platformWorkloadIdentities": {"": {}}},
                 "servicePrincipalProfile": {"clientId": "clientId", "clientSecret": "clientSecret"},
                 "workerProfiles": [
                     {
                         "count": 3,
                         "diskSizeGB": 128,
                         "name": "worker",
-                        "subnetId": "/subscriptions/subscriptionId/resourceGroups/vnetResourceGroup/providers/Microsoft.Network/virtualNetworks/vnet/subnets/worker",
+                        "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vnetResourceGroup/providers/Microsoft.Network/virtualNetworks/vnet/subnets/worker",
                         "vmSize": "Standard_D2s_v3",
                     }
                 ],
@@ -72,6 +75,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/redhatopenshift/resource-manager/Microsoft.RedHatOpenShift/openshiftclusters/stable/2023-11-22/examples/OpenShiftClusters_Update.json
+# x-ms-original-file: specification/redhatopenshift/resource-manager/Microsoft.RedHatOpenShift/OpenShiftClusters/stable/2025-07-25/examples/OpenShiftClusters_Update.json
 if __name__ == "__main__":
     main()

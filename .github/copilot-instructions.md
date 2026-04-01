@@ -14,8 +14,11 @@
 
 ### RULE 3: VERIFY ENVIRONMENT FIRST
 **REQUIRED CONDITIONS:**
-- Always run the [`azsdk_verify_setup`](../eng/common/instructions/azsdk-tools/verify-setup.instructions.md) tool to check the user's development environment setup for using SDK MCP tools. DO NOT PROCEED with running other tools before completing this step. Only skip for queries that don't need tools.
 - To use Azure MCP tool calls, users must have PowerShell installed. Provide [PowerShell installation instructions](https://learn.microsoft.com/powershell/scripting/install/installing-powershell) if not installed, and recommend restarting the IDE to start the MCP server.
+- When using Copilot from Visual Studio or VS Code (not applicable when using Coding Agent on Github.com):
+  - **Always run** the [`azsdk_verify_setup`](../eng/common/instructions/azsdk-tools/verify-setup.instructions.md) tool first to validate the user's development environment for SDK MCP tools.
+  - **Do not proceed** with any other tool execution until this step is complete.
+  - **Skip this check only** for queries that do not require tool execution.
 
 ---
 
@@ -106,6 +109,58 @@ Mypy: FAIL
 Tests - CI: FAIL
 
 This library is failing two release blocking checks - Mypy and Tests - CI. The library needs attention primarily due to Pylint warnings, disabled sample tests, and open customer-reported issues.
+
+---
+
+## Local SDK Generation and Package Lifecycle (TypeSpec)
+
+### AUTHORITATIVE REFERENCE
+For all TypeSpec-based SDK workflows (generation, building, validation, testing, versioning, and release), follow #file:../eng/common/instructions/azsdk-tools/local-sdk-workflow.instructions.md
+
+### DEFAULT BEHAVIORS
+- **Repository:** Use the current workspace as the local SDK repository unless the user specifies a different path.
+- **Configuration:** Identify `tsp-location.yaml` from files open in the editor. If unclear, ask the user.
+
+### PYTHON-SPECIFIC RULES
+- **Skip build step:** Python packages do not require compilation. After generation, proceed directly to validation and tests.
+
+### REQUIRED CONFIRMATIONS
+Ask the user for clarification if repository path or configuration file is ambiguous.
+
+---
+
+## MGMT SDK Code Review Rules
+
+### SCOPE
+These rules apply to management-plane SDK packages located at `sdk/*/azure-mgmt-*/`.
+
+### REVIEW EXCLUSIONS
+- **Skip** the `generated_samples/` and `generated_tests/` folders entirely — do not review generated sample or test code.
+- **Skip** source code under `azure/mgmt/**/` **except** `_client.py` — only review `_client.py` among the generated source files.
+
+### VERSION CONSISTENCY
+- The version string in `_version.py` **must** match the latest version listed in `CHANGELOG.md`.
+
+### CHANGELOG DATE
+- If the release date of the latest version in `CHANGELOG.md` is **more than 3 weeks in the future** from the current date, remind the author to verify and update the date.
+
+### PYPROJECT.TOML STABILITY FLAGS
+- **Stable version** (version string does **not** contain `b`):
+  - `is_stable` in `pyproject.toml` must be `true`
+  - `classifiers` must include `"Development Status :: 5 - Production/Stable"`
+- **Preview version** (version string contains `b`):
+  - `is_stable` in `pyproject.toml` must be `false`
+  - `classifiers` must include `"Development Status :: 4 - Beta"`
+
+### CLIENT SIGNATURE
+- The `__init__` method of the client class in `_client.py` must include the parameters `credential`, `subscription_id`, and `base_url` **in that order**. Default values are not checked.
+- If `subscription_id` is **not** present in the client's `__init__` signature, `pyproject.toml` must contain `no_sub = true`. If it does not, hint the user to add `no_sub = true` in `pyproject.toml` and regenerate the SDK.
+
+### CLIENT NAME CONSISTENCY
+- The client class name in `_client.py`, the client name referenced in `README.md`, and the `title` value in `pyproject.toml` must all be the same.
+
+### README CODE SNIPPETS
+- Code snippets in `README.md` must follow the real client class signatures and usage patterns. Verify that sample code matches the actual client API.
 
 ---
 

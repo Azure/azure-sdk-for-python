@@ -1,0 +1,294 @@
+from datetime import timedelta
+
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+import pytest
+
+from azure.core.exceptions import HttpResponseError
+from azure.core import MatchConditions
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureRecordedTestCase, get_credential
+
+from search_service_preparer import SearchEnvVarPreparer, search_decorator
+from azure.search.documents.indexes.aio import SearchIndexClient
+from azure.search.documents.indexes.models import (
+    AnalyzeTextOptions,
+    CorsOptions,
+    FreshnessScoringFunction,
+    FreshnessScoringParameters,
+    SearchField,
+    SearchIndex,
+    ScoringFunctionAggregation,
+    ScoringProfile,
+    SimpleField,
+    SearchFieldDataType,
+)
+
+
+class TestSearchIndexClientAsync(AzureRecordedTestCase):
+    @SearchEnvVarPreparer()
+    @search_decorator(schema=None, index_batch=None)
+    @recorded_by_proxy_async
+    async def test_search_index_client(self, endpoint, index_name):
+        client = SearchIndexClient(endpoint, get_credential(is_async=True), retry_backoff_factor=60)
+        index_name = "hotels"
+        async with client:
+            await self._test_get_service_statistics(client)
+            await self._test_list_indexes_empty(client)
+            await self._test_create_index(client, index_name)
+            await self._test_list_indexes(client, index_name)
+            await self._test_get_index(client, index_name)
+            await self._test_get_index_statistics(client, index_name)
+            await self._test_delete_indexes_if_unchanged(client)
+            await self._test_create_or_update_index(client)
+            await self._test_create_or_update_indexes_if_unchanged(client)
+            await self._test_analyze_text(client, index_name)
+            await self._test_delete_indexes(client)
+
+    async def _test_get_service_statistics(self, client):
+        result = await client.get_service_statistics()
+        assert "counters" in set(result.keys())
+        assert "limits" in set(result.keys())
+
+    async def _test_list_indexes_empty(self, client):
+        result = client.list_indexes()
+        with pytest.raises(StopAsyncIteration):
+            await result.__anext__()
+
+    async def _test_create_index(self, client, index_name):
+        fields = fields = [
+            SimpleField(name="hotelId", type=SearchFieldDataType.STRING, key=True),
+            SimpleField(name="baseRate", type=SearchFieldDataType.DOUBLE),
+        ]
+
+        scoring_profile = ScoringProfile(name="MyProfile")
+        scoring_profiles = []
+        scoring_profiles.append(scoring_profile)
+        cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
+        index = SearchIndex(
+            name=index_name,
+            fields=fields,
+            scoring_profiles=scoring_profiles,
+            cors_options=cors_options,
+        )
+        result = await client.create_index(index)
+        assert result.name == "hotels"
+        assert result.scoring_profiles[0].name == scoring_profile.name
+        assert result.cors_options.allowed_origins == cors_options.allowed_origins
+        assert result.cors_options.max_age_in_seconds == cors_options.max_age_in_seconds
+
+    async def _test_list_indexes(self, client, index_name):
+        result = client.list_indexes()
+        first = await result.__anext__()
+        assert first.name == index_name
+        with pytest.raises(StopAsyncIteration):
+            await result.__anext__()
+
+    async def _test_get_index(self, client, index_name):
+        result = await client.get_index(index_name)
+        assert result.name == index_name
+
+    async def _test_get_index_statistics(self, client, index_name):
+        result = await client.get_index_statistics(index_name)
+        keys = set(result.keys())
+        assert "documentCount" in keys
+        assert "storageSize" in keys
+        assert "vectorIndexSize" in keys
+
+    async def _test_delete_indexes_if_unchanged(self, client):
+        # First create an index
+        name = "hotels-del-unchanged"
+        fields = [
+            {"name": "hotelId", "type": "Edm.String", "key": True, "searchable": False},
+            {"name": "baseRate", "type": "Edm.Double"},
+        ]
+        scoring_profile = ScoringProfile(name="MyProfile")
+        scoring_profiles = []
+        scoring_profiles.append(scoring_profile)
+        cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
+        index = SearchIndex(
+            name=name,
+            fields=fields,
+            scoring_profiles=scoring_profiles,
+            cors_options=cors_options,
+        )
+        result = await client.create_index(index)
+        etag = result.e_tag
+        # get eTag and update
+        index.scoring_profiles = []
+        await client.create_or_update_index(index)
+
+        index.e_tag = etag
+        with pytest.raises(HttpResponseError):
+            await client.delete_index(index, match_condition=MatchConditions.IfNotModified)
+
+    async def _test_create_or_update_index(self, client):
+        name = "hotels-cou"
+        fields = fields = [
+            SimpleField(name="hotelId", type=SearchFieldDataType.STRING, key=True),
+            SimpleField(name="baseRate", type=SearchFieldDataType.DOUBLE),
+        ]
+
+        cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
+        scoring_profiles = []
+        index = SearchIndex(
+            name=name,
+            fields=fields,
+            scoring_profiles=scoring_profiles,
+            cors_options=cors_options,
+        )
+        result = await client.create_or_update_index(index=index)
+        assert len(result.scoring_profiles) == 0
+        assert result.cors_options.allowed_origins == cors_options.allowed_origins
+        assert result.cors_options.max_age_in_seconds == cors_options.max_age_in_seconds
+        scoring_profile = ScoringProfile(name="MyProfile")
+        scoring_profiles = []
+        scoring_profiles.append(scoring_profile)
+        index = SearchIndex(
+            name=name,
+            fields=fields,
+            scoring_profiles=scoring_profiles,
+            cors_options=cors_options,
+        )
+        result = await client.create_or_update_index(index=index)
+        assert result.scoring_profiles[0].name == scoring_profile.name
+        assert result.cors_options.allowed_origins == cors_options.allowed_origins
+        assert result.cors_options.max_age_in_seconds == cors_options.max_age_in_seconds
+
+    async def _test_create_or_update_indexes_if_unchanged(self, client):
+        # First create an index
+        name = "hotels-coa-unchanged"
+        fields = [
+            {"name": "hotelId", "type": "Edm.String", "key": True, "searchable": False},
+            {"name": "baseRate", "type": "Edm.Double"},
+        ]
+        scoring_profile = ScoringProfile(name="MyProfile")
+        scoring_profiles = []
+        scoring_profiles.append(scoring_profile)
+        cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
+        index = SearchIndex(
+            name=name,
+            fields=fields,
+            scoring_profiles=scoring_profiles,
+            cors_options=cors_options,
+        )
+        result = await client.create_index(index)
+        etag = result.e_tag
+        # get eTag and update
+        index.scoring_profiles = []
+        await client.create_or_update_index(index)
+
+        index.e_tag = etag
+        with pytest.raises(HttpResponseError):
+            await client.create_or_update_index(index, match_condition=MatchConditions.IfNotModified)
+
+    async def _test_analyze_text(self, client, index_name):
+        analyze_request = AnalyzeTextOptions(text="One's <two/>", analyzer_name="standard.lucene")
+        result = await client.analyze_text(index_name, analyze_request)
+        assert len(result.tokens) == 2
+
+    async def _test_delete_indexes(self, client):
+        result = client.list_indexes()
+        async for index in result:
+            await client.delete_index(index.name)
+
+    @SearchEnvVarPreparer()
+    @recorded_by_proxy_async
+    async def test_purview_enabled_index(self, search_service_endpoint, search_service_name):
+        del search_service_name  # unused
+        endpoint = search_service_endpoint
+        client = SearchIndexClient(endpoint, get_credential(is_async=True), retry_backoff_factor=60)
+
+        index_name = self.get_resource_name("purview-index")
+        fields = [
+            SearchField(
+                name="id",
+                type=SearchFieldDataType.STRING,
+                key=True,
+                filterable=True,
+                sortable=True,
+            ),
+            SearchField(
+                name="sensitivityLabel",
+                type=SearchFieldDataType.STRING,
+                filterable=True,
+                sensitivity_label=True,
+            ),
+        ]
+        index = SearchIndex(name=index_name, fields=fields, purview_enabled=True)
+
+        async with client:
+            created = await client.create_index(index)
+            try:
+                assert created.purview_enabled is True
+                for field in created.fields:
+                    if field.name == "sensitivityLabel":
+                        assert field.sensitivity_label is True
+                        break
+                else:
+                    raise AssertionError("Expected sensitivityLabel field to be present")
+
+                fetched = await client.get_index(index_name)
+                assert fetched.purview_enabled is True
+                for field in fetched.fields:
+                    if field.name == "sensitivityLabel":
+                        assert field.sensitivity_label is True
+                        break
+                else:
+                    raise AssertionError("Expected sensitivityLabel field to be present")
+            finally:
+                try:
+                    await client.delete_index(index_name)
+                except HttpResponseError:
+                    pass
+
+    @SearchEnvVarPreparer()
+    @recorded_by_proxy_async
+    async def test_scoring_profile_product_aggregation(self, search_service_endpoint, search_service_name):
+        del search_service_name  # unused
+        endpoint = search_service_endpoint
+        client = SearchIndexClient(endpoint, get_credential(is_async=True), retry_backoff_factor=60)
+
+        index_name = self.get_resource_name("agg-product")
+        fields = [
+            SimpleField(name="hotelId", type=SearchFieldDataType.STRING, key=True),
+            SimpleField(
+                name="lastUpdated",
+                type=SearchFieldDataType.DATE_TIME_OFFSET,
+                filterable=True,
+            ),
+        ]
+        scoring_profile = ScoringProfile(
+            name="product-score",
+            function_aggregation=ScoringFunctionAggregation.PRODUCT,
+            functions=[
+                FreshnessScoringFunction(
+                    field_name="lastUpdated",
+                    boost=2.5,
+                    parameters=FreshnessScoringParameters(boosting_duration=timedelta(days=7)),
+                )
+            ],
+        )
+        index = SearchIndex(name=index_name, fields=fields, scoring_profiles=[scoring_profile])
+
+        async with client:
+            created = await client.create_index(index)
+            try:
+                assert created.scoring_profiles[0].function_aggregation == ScoringFunctionAggregation.PRODUCT
+
+                fetched = await client.get_index(index_name)
+                assert fetched.scoring_profiles[0].function_aggregation == ScoringFunctionAggregation.PRODUCT
+
+                fetched.scoring_profiles[0].function_aggregation = ScoringFunctionAggregation.SUM
+                await client.create_or_update_index(index=fetched)
+
+                updated = await client.get_index(index_name)
+                assert updated.scoring_profiles[0].function_aggregation == ScoringFunctionAggregation.SUM
+            finally:
+                try:
+                    await client.delete_index(index_name)
+                except HttpResponseError:
+                    pass

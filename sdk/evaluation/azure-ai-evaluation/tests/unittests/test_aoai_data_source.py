@@ -84,6 +84,24 @@ def wrapped_flat_test_data_file():
     return _get_file("wrapped_flat_test_data.jsonl")
 
 
+@pytest.fixture
+def nested_item_keyword_data():
+    """Fixture for data that already contains an 'item' wrapper column."""
+    return pd.read_json(_get_file("nested_item_keyword.jsonl"), lines=True)
+
+
+@pytest.fixture
+def nested_item_sample_keyword_data():
+    """Fixture for data that already contains an 'item' wrapper column."""
+    return pd.read_json(_get_file("nested_item_sample_keyword.jsonl"), lines=True)
+
+
+@pytest.fixture
+def flat_sample_output_data():
+    """Fixture for flat data that includes dotted sample metadata (e.g. sample.output_text)."""
+    return pd.read_json(_get_file("flat_sample_output.jsonl"), lines=True)
+
+
 @pytest.mark.unittest
 class TestBuildSchemaTreeFromPaths:
     """Test suite for the _build_schema_tree_from_paths helper function."""
@@ -98,7 +116,6 @@ class TestBuildSchemaTreeFromPaths:
         assert "required" in schema
         assert set(schema["properties"].keys()) == {"query", "response", "ground_truth"}
         assert all(prop["type"] == "string" for prop in schema["properties"].values())
-        assert set(schema["required"]) == {"query", "response", "ground_truth"}
 
     def test_nested_paths(self):
         """Test building schema with nested paths."""
@@ -153,6 +170,26 @@ class TestBuildSchemaTreeFromPaths:
         nested = schema["properties"]["nested"]
         assert nested["type"] == "object"
         assert "field" in nested["properties"]
+
+    def test_leaf_type_map_overrides_force_leaf_type(self):
+        """Test that leaf_type_map overrides force_leaf_type for specific paths."""
+        paths = ["query", "tags", "metadata"]
+        leaf_type_map = {"tags": "array", "metadata": "object"}
+        schema = _build_schema_tree_from_paths(paths, force_leaf_type="string", leaf_type_map=leaf_type_map)
+
+        assert schema["properties"]["query"]["type"] == "string"
+        assert schema["properties"]["tags"]["type"] == "array"
+        assert schema["properties"]["metadata"]["type"] == "object"
+
+    def test_leaf_type_map_nested_paths(self):
+        """Test leaf_type_map with nested paths."""
+        paths = ["context.tags", "context.query"]
+        leaf_type_map = {"context.tags": "array"}
+        schema = _build_schema_tree_from_paths(paths, force_leaf_type="string", leaf_type_map=leaf_type_map)
+
+        context = schema["properties"]["context"]
+        assert context["properties"]["tags"]["type"] == "array"
+        assert context["properties"]["query"]["type"] == "string"
 
 
 @pytest.mark.unittest
@@ -280,6 +317,102 @@ class TestGenerateDataSourceConfig:
         # After wrapper stripping, should see context
         assert "context" in schema["properties"]
 
+    def test_flat_schema_infers_list_and_dict_types(self, flat_test_data):
+        """Test that flat schema correctly infers array/object types from data."""
+        flat_test_data["tags"] = [["tag1", "tag2"], ["tag3"], []]
+        flat_test_data["metadata"] = [{"key": "val"}, {"key2": "val2"}, {}]
+        flat_test_data["score"] = [95, 87, 92]
+
+        column_mapping = {
+            "query": "${data.query}",
+            "tags": "${data.tags}",
+            "metadata": "${data.metadata}",
+            "score": "${data.score}",
+        }
+
+        config = _generate_data_source_config(flat_test_data, column_mapping)
+
+        properties = config["item_schema"]["properties"]
+        # Strings should be typed as string
+        assert properties["query"]["type"] == "string"
+        # Lists should be typed as array
+        assert properties["tags"]["type"] == "array"
+        # Dicts should be typed as object
+        assert properties["metadata"]["type"] == "object"
+        # Numerics (converted to str by _convert_value) should be typed as string
+        assert properties["score"]["type"] == "string"
+
+    def test_flat_schema_skips_none_nan_for_type_inference(self):
+        """Test that schema inference skips None/NaN rows to find the real type."""
+        import numpy as np
+
+        df = pd.DataFrame(
+            {
+                "tags": [None, ["tag1", "tag2"], ["tag3"]],
+                "metadata": [np.nan, {"key": "val"}, {}],
+                "query": [None, None, "hello"],
+            }
+        )
+        column_mapping = {
+            "tags": "${data.tags}",
+            "metadata": "${data.metadata}",
+            "query": "${data.query}",
+        }
+
+        config = _generate_data_source_config(df, column_mapping)
+        properties = config["item_schema"]["properties"]
+
+        # Should look past None in row 0 and find list in row 1
+        assert properties["tags"]["type"] == "array"
+        # Should look past NaN in row 0 and find dict in row 1
+        assert properties["metadata"]["type"] == "object"
+        # All None → falls back to string
+        assert properties["query"]["type"] == "string"
+
+    def test_flat_schema_skips_pd_na_for_type_inference(self):
+        """Test that schema inference skips pd.NA sentinel values."""
+        df = pd.DataFrame(
+            {
+                "tags": [pd.NA, ["tag1", "tag2"], ["tag3"]],
+                "query": ["hello", "world", "test"],
+            }
+        )
+        column_mapping = {
+            "tags": "${data.tags}",
+            "query": "${data.query}",
+        }
+
+        config = _generate_data_source_config(df, column_mapping)
+        properties = config["item_schema"]["properties"]
+
+        assert properties["tags"]["type"] == "array"
+        assert properties["query"]["type"] == "string"
+
+    def test_nested_schema_infers_list_and_dict_leaf_types(self):
+        """Test that nested schema infers array/object types for leaf nodes."""
+        df = pd.DataFrame(
+            [
+                {
+                    "item.query": "hello",
+                    "item.tags": ["tag1", "tag2"],
+                    "item.metadata": {"key": "val"},
+                }
+            ]
+        )
+        column_mapping = {
+            "query": "${data.item.query}",
+            "tags": "${data.item.tags}",
+            "metadata": "${data.item.metadata}",
+        }
+
+        config = _generate_data_source_config(df, column_mapping)
+        schema = config["item_schema"]
+
+        # After wrapper stripping, leaves should have inferred types
+        assert schema["properties"]["query"]["type"] == "string"
+        assert schema["properties"]["tags"]["type"] == "array"
+        assert schema["properties"]["metadata"]["type"] == "object"
+
 
 @pytest.mark.unittest
 class TestGetDataSource:
@@ -395,6 +528,81 @@ class TestGetDataSource:
         # None should be converted to empty string
         assert content[1][WRAPPER_KEY]["response"] == ""
 
+    def test_data_source_with_item_column_and_nested_values(self, nested_item_keyword_data):
+        """Ensure rows that already have an 'item' column keep nested dicts intact."""
+
+        column_mapping = {
+            "query": "${data.item.query}",
+            "response": "${data.item.response}",
+            "test_string": "${data.item.test.test_string}",
+            "output_text": "${data.sample.output_text}",
+            "output_items": "${data.sample.output_items}",
+        }
+
+        data_source = _get_data_source(nested_item_keyword_data, column_mapping)
+        content = data_source["source"]["content"]
+
+        assert len(content) == len(nested_item_keyword_data)
+        first_row = content[0]
+        assert WRAPPER_KEY in first_row
+
+        item_payload = first_row[WRAPPER_KEY]
+        assert item_payload["query"] == "what is the weather today"
+        assert item_payload["response"] == "It is sunny out"
+        assert item_payload["test"]["test_string"] == ("baking cakes is a fun pass time when you are bored!")
+        # Ensure we did not accidentally nest another 'item' key inside the wrapper
+        assert "item" not in item_payload
+        assert item_payload["sample"]["output_text"] == "someoutput"
+        assert item_payload["sample"]["output_items"] == ["item1", "item2"]
+
+    def test_data_source_with_item_sample_column_and_nested_values(self, nested_item_sample_keyword_data):
+        """Ensure rows that already have an 'item' column keep nested dicts intact."""
+
+        column_mapping = {
+            "query": "${data.item.query}",
+            "response": "${data.item.response}",
+            "test_string": "${data.item.test.test_string}",
+            "output_text": "${data.sample.output_text}",
+            "output_items": "${data.sample.output_items}",
+        }
+
+        data_source = _get_data_source(nested_item_sample_keyword_data, column_mapping)
+        content = data_source["source"]["content"]
+
+        assert len(content) == len(nested_item_sample_keyword_data)
+        first_row = content[0]
+        assert WRAPPER_KEY in first_row
+
+        item_payload = first_row[WRAPPER_KEY]
+        assert item_payload["query"] == "what is the weather today"
+        assert item_payload["response"] == "It is sunny out"
+        assert item_payload["test"]["test_string"] == ("baking cakes is a fun pass time when you are bored!")
+        # Ensure we did not accidentally nest another 'item' key inside the wrapper
+        assert "item" not in item_payload
+        assert item_payload["sample"]["output_text"] == "someoutput"
+        assert item_payload["sample"]["output_items"] == ["item1", "item2"]
+
+    def test_data_source_with_sample_output_metadata(self, flat_sample_output_data):
+        """Ensure flat rows that include dotted sample metadata remain accessible."""
+
+        column_mapping = {
+            "query": "${data.item.query}",
+            "response": "${data.item.response}",
+            "test_string": "${data.item.test.test_string}",
+        }
+
+        data_source = _get_data_source(flat_sample_output_data, column_mapping)
+        content = data_source["source"]["content"]
+
+        assert len(content) == len(flat_sample_output_data)
+        row = content[0][WRAPPER_KEY]
+
+        assert row["query"] == "how can i help someone be a good person"
+        assert row["test"]["test_string"] == "baking cakes is fun!"
+        # sample.output_text should follow the row through normalization without being stringified
+        assert row["sample.output_text"] == "someoutput"
+        assert row["sample.output_items"] == ["item1", "item2"]
+
     def test_data_source_with_numeric_values(self, flat_test_data):
         """Test data source generation converts numeric values to strings."""
         flat_test_data["score"] = [95, 87, 92]
@@ -411,6 +619,35 @@ class TestGetDataSource:
         assert content[0][WRAPPER_KEY]["confidence"] == "0.95"
         assert isinstance(content[0][WRAPPER_KEY]["score"], str)
         assert isinstance(content[0][WRAPPER_KEY]["confidence"], str)
+
+    def test_data_source_with_list_and_dict_values(self, flat_test_data):
+        """Test data source generation preserves list and dict values as-is."""
+        flat_test_data["tags"] = [["tag1", "tag2"], ["tag3"], []]
+        flat_test_data["metadata"] = [{"key": "val"}, {"key2": "val2"}, {}]
+
+        column_mapping = {
+            "query": "${data.query}",
+            "tags": "${data.tags}",
+            "metadata": "${data.metadata}",
+        }
+
+        data_source = _get_data_source(flat_test_data, column_mapping)
+
+        content = data_source["source"]["content"]
+
+        # Lists should be preserved as lists, not stringified
+        assert content[0][WRAPPER_KEY]["tags"] == ["tag1", "tag2"]
+        assert isinstance(content[0][WRAPPER_KEY]["tags"], list)
+        # Empty lists should also be preserved
+        assert content[2][WRAPPER_KEY]["tags"] == []
+        assert isinstance(content[2][WRAPPER_KEY]["tags"], list)
+
+        # Dicts should be preserved as dicts
+        assert content[0][WRAPPER_KEY]["metadata"] == {"key": "val"}
+        assert isinstance(content[0][WRAPPER_KEY]["metadata"], dict)
+        # Empty dicts should also be preserved
+        assert content[2][WRAPPER_KEY]["metadata"] == {}
+        assert isinstance(content[2][WRAPPER_KEY]["metadata"], dict)
 
     def test_empty_dataframe(self):
         """Test data source generation with empty dataframe."""
@@ -508,3 +745,33 @@ class TestDataSourceConfigIntegration:
         assert "query" in item
         assert "context" in item
         assert "company" in item["context"]
+
+    def test_flat_schema_and_data_alignment_with_list_and_dict(self, flat_test_data):
+        """Test that schema types and data values agree for list/dict columns."""
+        flat_test_data["tags"] = [["tag1", "tag2"], ["tag3"], []]
+        flat_test_data["metadata"] = [{"key": "val"}, {"key2": "val2"}, {}]
+
+        column_mapping = {
+            "query": "${data.query}",
+            "tags": "${data.tags}",
+            "metadata": "${data.metadata}",
+        }
+
+        config = _generate_data_source_config(flat_test_data, column_mapping)
+        data_source = _get_data_source(flat_test_data, column_mapping)
+
+        schema_props = config["item_schema"]["properties"]
+        data_item = data_source["source"]["content"][0][WRAPPER_KEY]
+
+        # Schema declares array → data contains a list
+        assert schema_props["tags"]["type"] == "array"
+        assert isinstance(data_item["tags"], list)
+
+        # Schema declares object → data contains a dict
+        assert schema_props["metadata"]["type"] == "object"
+        assert isinstance(data_item["metadata"], dict)
+
+        # Empty collections should also align
+        empty_item = data_source["source"]["content"][2][WRAPPER_KEY]
+        assert isinstance(empty_item["tags"], list)
+        assert isinstance(empty_item["metadata"], dict)

@@ -24,18 +24,16 @@ from azure.search.documents.indexes.models import (
 def test_serialize_search_index():
     new_index_name = "hotels"
     fields = [
-        SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
-        SimpleField(name="baseRate", type=SearchFieldDataType.Double),
-        SearchableField(
-            name="description", type=SearchFieldDataType.String, collection=True
-        ),
-        SearchableField(name="hotelName", type=SearchFieldDataType.String),
+        SimpleField(name="hotelId", type=SearchFieldDataType.STRING, key=True),
+        SimpleField(name="baseRate", type=SearchFieldDataType.DOUBLE),
+        SearchableField(name="description", type=SearchFieldDataType.STRING, collection=True),
+        SearchableField(name="hotelName", type=SearchFieldDataType.STRING),
         ComplexField(
             name="address",
             fields=[
-                SimpleField(name="streetAddress", type=SearchFieldDataType.String),
-                SimpleField(name="city", type=SearchFieldDataType.String),
-                SimpleField(name="state", type=SearchFieldDataType.String),
+                SimpleField(name="streetAddress", type=SearchFieldDataType.STRING),
+                SimpleField(name="city", type=SearchFieldDataType.STRING),
+                SimpleField(name="state", type=SearchFieldDataType.STRING),
             ],
             collection=True,
         ),
@@ -50,8 +48,8 @@ def test_serialize_search_index():
         scoring_profiles=scoring_profiles,
         cors_options=cors_options,
     )
-    search_index_serialized = index.serialize()
-    search_index = SearchIndex.deserialize(search_index_serialized)
+    search_index_serialized = index.as_dict()
+    search_index = SearchIndex(search_index_serialized)
     assert search_index
 
 
@@ -59,9 +57,7 @@ def test_serialize_search_indexer_skillset():
     COGNITIVE_KEY = ...
     COGNITIVE_DESCRIPTION = ...
 
-    cognitive_services_account = CognitiveServicesAccountKey(
-        key=COGNITIVE_KEY, description=COGNITIVE_DESCRIPTION
-    )
+    cognitive_services_account = CognitiveServicesAccountKey(key=COGNITIVE_KEY, description=COGNITIVE_DESCRIPTION)
 
     inputs = [InputFieldMappingEntry(name="text", source="/document/content")]
 
@@ -83,26 +79,24 @@ def test_serialize_search_indexer_skillset():
         cognitive_services_account=cognitive_services_account,
     )
 
-    serialized_skillset = skillset.serialize()
-    skillset = SearchIndexerSkillset.deserialize(serialized_skillset)
+    serialized_skillset = skillset.as_dict()
+    skillset = SearchIndexerSkillset(serialized_skillset)
     assert skillset
 
 
 def test_serialize_search_index_dict():
     new_index_name = "hotels"
     fields = [
-        SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
-        SimpleField(name="baseRate", type=SearchFieldDataType.Double),
-        SearchableField(
-            name="description", type=SearchFieldDataType.String, collection=True
-        ),
-        SearchableField(name="hotelName", type=SearchFieldDataType.String),
+        SimpleField(name="hotelId", type=SearchFieldDataType.STRING, key=True),
+        SimpleField(name="baseRate", type=SearchFieldDataType.DOUBLE),
+        SearchableField(name="description", type=SearchFieldDataType.STRING, collection=True),
+        SearchableField(name="hotelName", type=SearchFieldDataType.STRING),
         ComplexField(
             name="address",
             fields=[
-                SimpleField(name="streetAddress", type=SearchFieldDataType.String),
-                SimpleField(name="city", type=SearchFieldDataType.String),
-                SimpleField(name="state", type=SearchFieldDataType.String),
+                SimpleField(name="streetAddress", type=SearchFieldDataType.STRING),
+                SimpleField(name="city", type=SearchFieldDataType.STRING),
+                SimpleField(name="state", type=SearchFieldDataType.STRING),
             ],
             collection=True,
         ),
@@ -118,5 +112,5 @@ def test_serialize_search_index_dict():
         cors_options=cors_options,
     )
     search_index_serialized_dict = index.as_dict()
-    search_index = SearchIndex.from_dict(search_index_serialized_dict)
+    search_index = SearchIndex(search_index_serialized_dict)
     assert search_index

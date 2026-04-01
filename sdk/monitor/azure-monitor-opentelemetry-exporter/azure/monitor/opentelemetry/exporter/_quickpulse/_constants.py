@@ -12,7 +12,7 @@ _PROCESS_PHYSICAL_BYTES_NAME = ("azuremonitor.quickpulse.processphysicalbytes", 
 _PROCESSOR_TIME_NAME = ("azuremonitor.quickpulse.processortotalprocessortime", "\\Processor(_Total)\\% Processor Time")
 _PROCESS_TIME_NORMALIZED_NAME = (
     "azuremonitor.quickpulse.processtimenormalized",
-    "\\% Process\\Processor Time Normalized"
+    "\\% Process\\Processor Time Normalized",
 )
 # Request
 _REQUEST_RATE_NAME = ("azuremonitor.quickpulse.requestssec", "\\ApplicationInsights\\Requests/Sec")
@@ -26,7 +26,7 @@ _DEPENDENCY_FAILURE_RATE_NAME = (
 )
 _DEPENDENCY_DURATION_NAME = (
     "azuremonitor.quickpulse.dependencycallduration",
-    "\\ApplicationInsights\\Dependency Call Duration"
+    "\\ApplicationInsights\\Dependency Call Duration",
 )
 # Exception
 _EXCEPTION_RATE_NAME = ("azuremonitor.quickpulse.exceptionssec", "\\ApplicationInsights\\Exceptions/Sec")

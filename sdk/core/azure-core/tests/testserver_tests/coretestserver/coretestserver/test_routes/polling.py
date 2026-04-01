@@ -169,3 +169,57 @@ def polling_with_options_first():
 @polling_api.route("/final-get-with-location", methods=["GET"])
 def polling_with_options_final_get_with_location():
     return Response('{"returnedFrom": "locationHeaderUrl"}', status=200)
+
+
+@polling_api.route("/continuation-token", methods=["POST"])
+def continuation_token_initial():
+    """Initial LRO response for continuation token tests."""
+    base_url = get_base_url(request)
+    return Response(
+        '{"properties":{"provisioningState": "InProgress"}}',
+        headers={
+            "operation-location": "{}/polling/continuation-token-status".format(base_url),
+            "x-ms-request-id": "test-request-id-12345",
+        },
+        status=202,
+    )
+
+
+@polling_api.route("/continuation-token-status", methods=["GET"])
+def continuation_token_status():
+    """Status endpoint for continuation token tests."""
+    return Response('{"status": "Succeeded"}', status=200)
+
+
+@polling_api.route("/continuation-token-xml", methods=["POST"])
+def continuation_token_xml_initial():
+    """Initial LRO response with XML body for continuation token tests."""
+    base_url = get_base_url(request)
+    return Response(
+        "<root><status>InProgress</status></root>",
+        headers={
+            "operation-location": "{}/polling/continuation-token-xml-status".format(base_url),
+            "content-type": "application/xml",
+        },
+        status=202,
+    )
+
+
+@polling_api.route("/continuation-token-xml-status", methods=["GET"])
+def continuation_token_xml_status():
+    """Status endpoint for XML continuation token tests."""
+    return Response('{"status": "Succeeded"}', status=200)
+
+
+@polling_api.route("/continuation-token-stream", methods=["POST"])
+def continuation_token_stream_initial():
+    """Initial LRO response for stream continuation token tests."""
+    base_url = get_base_url(request)
+    return Response(
+        '{"status": "InProgress"}',
+        headers={
+            "operation-location": "{}/polling/continuation-token-status".format(base_url),
+            "content-type": "application/json",
+        },
+        status=202,
+    )

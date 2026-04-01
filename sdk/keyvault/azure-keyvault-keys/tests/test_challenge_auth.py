@@ -283,6 +283,38 @@ def test_tenant(token_type):
 
 
 @empty_challenge_cache
+def test_challenge_cache_casing():
+    """The challenge cache should update and retrieve challenges in a case-insensitive manner"""
+
+    url = get_random_url()
+    endpoint = f"https://authority.net/tenant-id"
+    resource = "https://vault.azure.net"
+    headers = {"WWW-Authenticate": f'Bearer authorization="{endpoint}", resource={resource}'}
+
+    challenge = HttpChallenge(
+        url,
+        headers["WWW-Authenticate"],
+        response_headers=headers,
+    )
+
+    # Store the challenge with original casing
+    HttpChallengeCache.set_challenge_for_url(url, challenge)
+    # Retrieve the challenge using a different casing
+    retrieved_challenge = HttpChallengeCache.get_challenge_for_url(url.upper())
+    assert retrieved_challenge == challenge
+    # Remove the challenge and ensure it's no longer retrievable
+    HttpChallengeCache.remove_challenge_for_url(url.upper())
+    assert HttpChallengeCache.get_challenge_for_url(url) is None
+
+    # Do the above, but with opposite casing
+    HttpChallengeCache.set_challenge_for_url(url.upper(), challenge)
+    retrieved_challenge = HttpChallengeCache.get_challenge_for_url(url)
+    assert retrieved_challenge == challenge
+    HttpChallengeCache.remove_challenge_for_url(url)
+    assert HttpChallengeCache.get_challenge_for_url(url) is None
+
+
+@empty_challenge_cache
 @pytest.mark.parametrize("token_type", TOKEN_TYPES)
 def test_adfs(token_type):
     """The policy should handle AD FS challenges as a special case and omit the tenant ID from token requests"""

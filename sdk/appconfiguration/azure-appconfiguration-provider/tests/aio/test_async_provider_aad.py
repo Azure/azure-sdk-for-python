@@ -3,17 +3,29 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
+import functools
+from devtools_testutils import EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
-from async_preparers import app_config_decorator_async
 from testcase import has_feature_flag
 from asynctestcase import AppConfigTestCase
-from test_constants import FEATURE_MANAGEMENT_KEY
+from test_constants import (
+    APPCONFIGURATION_ENDPOINT_STRING,
+    APPCONFIGURATION_KEYVAULT_SECRET_URL,
+    FEATURE_MANAGEMENT_KEY,
+)
+from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
+
+AppConfigProviderPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_endpoint_string=APPCONFIGURATION_ENDPOINT_STRING,
+    appconfiguration_keyvault_secret_url=APPCONFIGURATION_KEYVAULT_SECRET_URL,
+)
 
 
 class TestAppConfigurationProvider(AppConfigTestCase):
     # method: provider_creation_aad
-    @app_config_decorator_async
+    @AppConfigProviderPreparer()
     @recorded_by_proxy_async
     async def test_provider_creation_aad(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         async with await self.create_client(
@@ -28,7 +40,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             assert has_feature_flag(client, "Alpha")
 
     # method: provider_trim_prefixes
-    @app_config_decorator_async
+    @AppConfigProviderPreparer()
     @recorded_by_proxy_async
     async def test_provider_trim_prefixes(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         trimmed = {"test."}
@@ -45,7 +57,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             assert has_feature_flag(client, "Alpha")
 
     # method: provider_selectors
-    @app_config_decorator_async
+    @AppConfigProviderPreparer()
     @recorded_by_proxy_async
     async def test_provider_selectors(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         selects = {SettingSelector(key_filter="message*", label_filter="dev")}
@@ -59,7 +71,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             assert FEATURE_MANAGEMENT_KEY not in client
 
     # method: provider_selectors
-    @app_config_decorator_async
+    @AppConfigProviderPreparer()
     @recorded_by_proxy_async
     async def test_provider_key_vault_reference(
         self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url
@@ -73,7 +85,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             assert client["secret"] == "Very secret value"
 
     # method: provider_selectors
-    @app_config_decorator_async
+    @AppConfigProviderPreparer()
     @recorded_by_proxy_async
     async def test_provider_secret_resolver(self, appconfiguration_endpoint_string):
         selects = {SettingSelector(key_filter="*", label_filter="prod")}
@@ -83,7 +95,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             assert client["secret"] == "Resolver Value"
 
     # method: provider_selectors
-    @app_config_decorator_async
+    @AppConfigProviderPreparer()
     @recorded_by_proxy_async
     async def test_provider_key_vault_reference_options(
         self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url
@@ -99,7 +111,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             assert client["secret"] == "Very secret value"
 
     # method: provider_selectors
-    @app_config_decorator_async
+    @AppConfigProviderPreparer()
     @recorded_by_proxy_async
     async def test_provider_secret_resolver_options(self, appconfiguration_endpoint_string):
         selects = {SettingSelector(key_filter="*", label_filter="prod")}
@@ -109,7 +121,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         ) as client:
             assert client["secret"] == "Resolver Value"
 
-    @app_config_decorator_async
+    @AppConfigProviderPreparer()
     @recorded_by_proxy_async
     async def test_provider_tag_filters(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         selects = {SettingSelector(key_filter="*", tag_filters=["a=b"])}
@@ -126,5 +138,5 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             assert "message" not in client
 
 
-async def secret_resolver(secret_id):
+async def secret_resolver(_):
     return "Resolver Value"

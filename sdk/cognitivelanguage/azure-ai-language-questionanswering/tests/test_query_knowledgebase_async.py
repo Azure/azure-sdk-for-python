@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 import pytest
 
+from testcase import QuestionAnsweringTestCase
 from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
 from azure.ai.language.questionanswering.models import (
     AnswersOptions,
@@ -16,12 +17,10 @@ from azure.ai.language.questionanswering.models import (
 )
 from azure.core.credentials import AzureKeyCredential
 
-from testcase import QuestionAnsweringTestCase
-
 
 class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
     @pytest.mark.asyncio
-    async def test_query_knowledgebase_basic(self, recorded_test, qna_creds):
+    async def test_query_knowledgebase_basic(self, recorded_test, qna_creds): # pylint: disable=unused-argument
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         params = AnswersOptions(
             question="Ports and connectors",
@@ -39,7 +38,7 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
             assert answer.metadata is not None
 
     @pytest.mark.asyncio
-    async def test_query_knowledgebase_with_short_answer(self, recorded_test, qna_creds):
+    async def test_query_knowledgebase_with_short_answer(self, recorded_test, qna_creds): # pylint: disable=unused-argument
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         params = AnswersOptions(
             question="Ports and connectors",
@@ -56,7 +55,7 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
                 assert answer.short_answer.confidence is not None
 
     @pytest.mark.asyncio
-    async def test_query_knowledgebase_filter(self, recorded_test, qna_creds):
+    async def test_query_knowledgebase_filter(self, recorded_test, qna_creds): # pylint: disable=unused-argument
         filters = QueryFilters(
             metadata_filter=MetadataFilter(
                 metadata=[
@@ -80,14 +79,14 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
                 deployment_name="production",
             )
             assert response.answers
-            assert any(
+            assert any( # pylint: disable=use-a-generator
                 [
                     a
                     for a in response.answers
                     if (a.metadata or {}).get("explicitlytaggedheading") == "check the battery level"
                 ]
             )
-            assert any(
+            assert any( # pylint: disable=use-a-generator
                 [
                     a
                     for a in response.answers

@@ -54,8 +54,6 @@ class _Constants:
     EnableMultipleWritableLocations: Literal["enableMultipleWriteLocations"] = "enableMultipleWriteLocations"
 
     # Environment variables
-    NON_STREAMING_ORDER_BY_DISABLED_CONFIG: str = "AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"
-    NON_STREAMING_ORDER_BY_DISABLED_CONFIG_DEFAULT: str = "False"
     HS_MAX_ITEMS_CONFIG: str = "AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS"
     HS_MAX_ITEMS_CONFIG_DEFAULT: int = 1000
     MAX_ITEM_BUFFER_VS_CONFIG: str = "AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH"
@@ -111,8 +109,12 @@ class _Constants:
         RETRY_WRITE: Literal["retry_write"] = "retry_write"
         """Whether to retry write operations if they fail. Used either at client level or request level."""
         EXCLUDED_LOCATIONS: Literal["excludedLocations"] = "excludedLocations"
-        AVAILABILITY_STRATEGY_CONFIG: Literal["availabilityStrategyConfig"] = "availabilityStrategyConfig"
+        AVAILABILITY_STRATEGY: Literal["availabilityStrategy"] = "availabilityStrategy"
         """Availability strategy config. Used either at client level or request level"""
+        READ_TIMEOUT: Literal["read_timeout"] = "read_timeout"
+        """Socket read timeout in seconds. Used either at client level or request level."""
+        TIMEOUT: Literal["timeout"] = "timeout"
+        """Absolute timeout in seconds for the combined HTTP request and response processing."""
 
     class UserAgentFeatureFlags(IntEnum):
         """
