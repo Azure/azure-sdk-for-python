@@ -35,6 +35,9 @@ GEN_AI_SYSTEM_MESSAGE = "gen_ai.system_instructions"
 # --- Agent attributes ---
 GEN_AI_AGENT_NAME = "gen_ai.agent.name"
 GEN_AI_AGENT_ID = "gen_ai.agent.id"
+GEN_AI_AGENT_THREAD_ID = "gen_ai.agent.thread_id"
+GEN_AI_AGENT_VERSION = "gen_ai.agent.version"
+GEN_AI_AGENT_PROJECT_NAME = "gen_ai.agent.project_name"
 GEN_AI_REQUEST_TOOLS = "gen_ai.request.tools"
 
 # --- Conversation attributes ---
@@ -55,6 +58,8 @@ GEN_AI_PROVIDER_VALUE = "microsoft.foundry"
 GEN_AI_VOICE_SESSION_ID = "gen_ai.voice.session_id"
 GEN_AI_VOICE_CALL_ID = "gen_ai.voice.call_id"
 GEN_AI_VOICE_ITEM_ID = "gen_ai.voice.item_id"
+GEN_AI_VOICE_PREVIOUS_ITEM_ID = "gen_ai.voice.previous_item_id"
+GEN_AI_VOICE_OUTPUT_INDEX = "gen_ai.voice.output_index"
 GEN_AI_VOICE_INPUT_SAMPLE_RATE = "gen_ai.voice.input_sample_rate"
 GEN_AI_VOICE_OUTPUT_SAMPLE_RATE = "gen_ai.voice.output_sample_rate"
 GEN_AI_VOICE_INPUT_AUDIO_FORMAT = "gen_ai.voice.input_audio_format"
@@ -65,6 +70,14 @@ GEN_AI_VOICE_TURN_COUNT = "gen_ai.voice.turn_count"
 GEN_AI_VOICE_INTERRUPTION_COUNT = "gen_ai.voice.interruption_count"
 GEN_AI_VOICE_AUDIO_BYTES_SENT = "gen_ai.voice.audio_bytes_sent"
 GEN_AI_VOICE_AUDIO_BYTES_RECEIVED = "gen_ai.voice.audio_bytes_received"
+
+# --- MCP-specific attributes ---
+GEN_AI_VOICE_MCP_SERVER_LABEL = "gen_ai.voice.mcp.server_label"
+GEN_AI_VOICE_MCP_TOOL_NAME = "gen_ai.voice.mcp.tool_name"
+GEN_AI_VOICE_MCP_APPROVAL_REQUEST_ID = "gen_ai.voice.mcp.approval_request_id"
+GEN_AI_VOICE_MCP_APPROVE = "gen_ai.voice.mcp.approve"
+GEN_AI_VOICE_MCP_CALL_COUNT = "gen_ai.voice.mcp.call_count"
+GEN_AI_VOICE_MCP_LIST_TOOLS_COUNT = "gen_ai.voice.mcp.list_tools_count"
 
 # --- Per-message attributes ---
 GEN_AI_VOICE_MESSAGE_SIZE = "gen_ai.voice.message_size"

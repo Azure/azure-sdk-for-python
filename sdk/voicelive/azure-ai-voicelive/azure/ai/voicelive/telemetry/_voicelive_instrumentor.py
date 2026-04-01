@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,protected-access,too-many-statements
+# pylint: disable=line-too-long,useless-suppression,protected-access,too-many-statements,too-many-lines,invalid-name,import-outside-toplevel
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -22,7 +22,11 @@ from ._utils import (
     AZ_AI_VOICELIVE_SYSTEM,
     ERROR_MESSAGE,
     ERROR_TYPE,
+    GEN_AI_AGENT_ID,
     GEN_AI_AGENT_NAME,
+    GEN_AI_AGENT_PROJECT_NAME,
+    GEN_AI_AGENT_THREAD_ID,
+    GEN_AI_AGENT_VERSION,
     GEN_AI_CLIENT_OPERATION_DURATION,
     GEN_AI_CLIENT_TOKEN_USAGE,
     GEN_AI_CONVERSATION_ID,
@@ -49,8 +53,16 @@ from ._utils import (
     GEN_AI_VOICE_INPUT_AUDIO_FORMAT,
     GEN_AI_VOICE_INPUT_SAMPLE_RATE,
     GEN_AI_VOICE_INTERRUPTION_COUNT,
+    GEN_AI_VOICE_MCP_APPROVAL_REQUEST_ID,
+    GEN_AI_VOICE_MCP_APPROVE,
+    GEN_AI_VOICE_MCP_CALL_COUNT,
+    GEN_AI_VOICE_MCP_LIST_TOOLS_COUNT,
+    GEN_AI_VOICE_MCP_SERVER_LABEL,
+    GEN_AI_VOICE_MCP_TOOL_NAME,
     GEN_AI_VOICE_MESSAGE_SIZE,
     GEN_AI_VOICE_OUTPUT_AUDIO_FORMAT,
+    GEN_AI_VOICE_OUTPUT_INDEX,
+    GEN_AI_VOICE_PREVIOUS_ITEM_ID,
     GEN_AI_VOICE_SESSION_ID,
     GEN_AI_VOICE_TURN_COUNT,
     SERVER_ADDRESS,
@@ -325,7 +337,7 @@ class _VoiceLiveInstrumentorPreview:
         instrumentor = self
 
         @functools.wraps(original_aenter)
-        async def wrapper(mgr_self, *args, **kwargs):  # pylint: disable=protected-access
+        async def wrapper(mgr_self, *args, **kwargs):  # pylint: disable=protected-access,too-many-locals
             span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
             if span_impl_type is None:
                 return await original_aenter(mgr_self, *args, **kwargs)
@@ -378,6 +390,12 @@ class _VoiceLiveInstrumentorPreview:
                     if conv_id:
                         result._telemetry_conversation_id = conv_id
                         span.add_attribute(GEN_AI_CONVERSATION_ID, conv_id)
+                    agent_version = agent_config.get("agent_version")
+                    if agent_version:
+                        span.add_attribute(GEN_AI_AGENT_VERSION, agent_version)
+                    project_name = agent_config.get("project_name")
+                    if project_name:
+                        span.add_attribute(GEN_AI_AGENT_PROJECT_NAME, project_name)
 
                 return result
             except Exception as exc:
@@ -419,6 +437,14 @@ class _VoiceLiveInstrumentorPreview:
                     span.add_attribute(GEN_AI_VOICE_AUDIO_BYTES_SENT, audio_bytes_sent)
                 if audio_bytes_received > 0:
                     span.add_attribute(GEN_AI_VOICE_AUDIO_BYTES_RECEIVED, audio_bytes_received)
+
+                # MCP session-level counters
+                mcp_call_count = getattr(conn, "_telemetry_mcp_call_count", 0)
+                mcp_list_tools_count = getattr(conn, "_telemetry_mcp_list_tools_count", 0)
+                if mcp_call_count > 0:
+                    span.add_attribute(GEN_AI_VOICE_MCP_CALL_COUNT, mcp_call_count)
+                if mcp_list_tools_count > 0:
+                    span.add_attribute(GEN_AI_VOICE_MCP_LIST_TOOLS_COUNT, mcp_list_tools_count)
 
                 # Record duration metric
                 connect_start = getattr(conn, "_telemetry_connect_start_time", None)
@@ -671,6 +697,7 @@ class _VoiceLiveInstrumentorPreview:
                     if event_type_str in (ServerEventType.SESSION_CREATED, ServerEventType.SESSION_UPDATED):
                         instrumentor._extract_session_id(conn_self, result)
                         instrumentor._extract_audio_format_from_recv(conn_self, result)
+                        instrumentor._extract_agent_config_from_session(conn_self, result)
 
                     # --- First-token latency ---
                     if event_type_str in (ServerEventType.RESPONSE_AUDIO_DELTA, ServerEventType.RESPONSE_TEXT_DELTA):
@@ -710,6 +737,22 @@ class _VoiceLiveInstrumentorPreview:
                     # --- Rate limit / error events ---
                     if event_type_str in (ServerEventType.ERROR, "rate_limits.updated"):
                         instrumentor._add_rate_limit_event(span, event_type_str, result)
+
+                    # --- MCP call count ---
+                    if event_type_str in (
+                        ServerEventType.RESPONSE_MCP_CALL_COMPLETED,
+                        ServerEventType.RESPONSE_MCP_CALL_FAILED,
+                    ):
+                        current = getattr(conn_self, "_telemetry_mcp_call_count", 0)
+                        conn_self._telemetry_mcp_call_count = current + 1
+
+                    # --- MCP list tools count ---
+                    if event_type_str in (
+                        ServerEventType.MCP_LIST_TOOLS_COMPLETED,
+                        ServerEventType.MCP_LIST_TOOLS_FAILED,
+                    ):
+                        current = getattr(conn_self, "_telemetry_mcp_list_tools_count", 0)
+                        conn_self._telemetry_mcp_list_tools_count = current + 1
 
                     # Capture token usage if present on the event
                     usage = None
@@ -837,7 +880,39 @@ class _VoiceLiveInstrumentorPreview:
                     connect_span.add_attribute(GEN_AI_VOICE_SESSION_ID, session_id)
 
     @staticmethod
-    def _extract_audio_format_from_send(conn_self: Any, event: Any) -> None:
+    def _extract_agent_config_from_session(conn_self: Any, result: Any) -> None:
+        """Extract agent_id and thread_id from the ``session.agent`` field in
+        a ``session.created`` / ``session.updated`` event.
+
+        The server-side ``AgentConfig`` object lives inside ``session.agent``
+        and carries ``agent_id`` and ``thread_id``.
+
+        :param conn_self: The ``VoiceLiveConnection`` instance.
+        :type conn_self: ~azure.ai.voicelive.aio.VoiceLiveConnection
+        :param result: The received event object.
+        :type result: any
+        """
+        get = _VoiceLiveInstrumentorPreview._get_field
+        session = get(result, "session")
+        if session is None:
+            return
+
+        agent = get(session, "agent")
+        if agent is None:
+            return
+
+        connect_span = getattr(conn_self, "_telemetry_span", None)
+
+        agent_id = get(agent, "agent_id")
+        if agent_id and connect_span is not None:
+            connect_span.add_attribute(GEN_AI_AGENT_ID, agent_id)
+
+        thread_id = get(agent, "thread_id")
+        if thread_id and connect_span is not None:
+            connect_span.add_attribute(GEN_AI_AGENT_THREAD_ID, thread_id)
+
+    @staticmethod
+    def _extract_audio_format_from_send(conn_self: Any, event: Any) -> None:  # pylint: disable=too-many-branches
         """Extract audio format, codec, and sample rate from a session.update
         send event and store on the connection. Also sets on the parent connect span.
 
@@ -891,7 +966,7 @@ class _VoiceLiveInstrumentorPreview:
                 connect_span.add_attribute(GEN_AI_VOICE_OUTPUT_AUDIO_FORMAT, output_fmt_str)
 
     @staticmethod
-    def _extract_audio_format_from_recv(conn_self: Any, result: Any) -> None:
+    def _extract_audio_format_from_recv(conn_self: Any, result: Any) -> None:  # pylint: disable=too-many-branches
         """Extract audio format and sample rate from a session.created or
         session.updated server event. The server response is authoritative and
         may include values the client did not explicitly set (e.g. defaults).
@@ -1041,12 +1116,13 @@ class _VoiceLiveInstrumentorPreview:
         return getattr(obj, field, None)
 
     @staticmethod
-    def _extract_event_ids(conn_self: Any, result: Any, span: "AbstractSpan") -> None:
-        """Extract response_id, call_id, and conversation_id from any recv event.
+    def _extract_event_ids(conn_self: Any, result: Any, span: "AbstractSpan") -> None:  # pylint: disable=too-many-branches,too-many-locals
+        """Extract IDs, MCP fields, and agent fields from any recv event.
 
-        Many server events carry ``response_id``, ``call_id``, and ``item_id``
-        at the top level. This method extracts them generically so every recv
-        span that carries these fields gets the corresponding attributes.
+        Extracts ``response_id``, ``call_id``, ``item_id``, ``previous_item_id``,
+        ``output_index`` from top-level fields, and ``conversation_id``,
+        ``call_id``, ``server_label``, ``name``, ``approval_request_id``,
+        ``approve``, and ``id`` from nested ``response`` / ``item`` objects.
 
         :param conn_self: The ``VoiceLiveConnection`` instance.
         :type conn_self: ~azure.ai.voicelive.aio.VoiceLiveConnection
@@ -1072,9 +1148,18 @@ class _VoiceLiveInstrumentorPreview:
         if item_id:
             span.add_attribute(GEN_AI_VOICE_ITEM_ID, item_id)
 
+        # previous_item_id – present on conversation.item.created
+        previous_item_id = get(result, "previous_item_id")
+        if previous_item_id:
+            span.add_attribute(GEN_AI_VOICE_PREVIOUS_ITEM_ID, previous_item_id)
+
+        # output_index – present on MCP call events and response output/content events
+        output_index = get(result, "output_index")
+        if output_index is not None:
+            span.add_attribute(GEN_AI_VOICE_OUTPUT_INDEX, output_index)
+
         # conversation_id is NOT a top-level field on most events; it lives
         # inside the nested ``response`` object on response.done/created events.
-        # For response.created, extract response_id and conversation_id from nested response.
         response_obj = get(result, "response")
         if response_obj:
             if not response_id:
@@ -1086,8 +1171,52 @@ class _VoiceLiveInstrumentorPreview:
                 conn_self._telemetry_conversation_id = nested_conv_id  # pylint: disable=protected-access
                 span.add_attribute(GEN_AI_CONVERSATION_ID, nested_conv_id)
 
+        # Nested item – only extract from events known to carry a ResponseItem.
+        # This guards against future events reusing the ``item`` field name
+        # for something semantically different.
+        item_bearing_events = frozenset({
+            ServerEventType.CONVERSATION_ITEM_CREATED,
+            ServerEventType.CONVERSATION_ITEM_RETRIEVED,
+            ServerEventType.RESPONSE_OUTPUT_ITEM_ADDED,
+            ServerEventType.RESPONSE_OUTPUT_ITEM_DONE,
+        })
+        event_type = str(get(result, "type") or "")
+        if event_type in item_bearing_events:
+            item_obj = get(result, "item")
+            if item_obj:
+                # item.id → item_id (if not already set from top-level)
+                if not item_id:
+                    nested_item_id = get(item_obj, "id")
+                    if nested_item_id:
+                        span.add_attribute(GEN_AI_VOICE_ITEM_ID, nested_item_id)
+
+                # item.call_id → call_id (function_call / function_call_output)
+                if not call_id:
+                    nested_call_id = get(item_obj, "call_id")
+                    if nested_call_id:
+                        span.add_attribute(GEN_AI_VOICE_CALL_ID, nested_call_id)
+
+                # MCP fields from nested item (ResponseMCPCallItem, ResponseMCPApprovalRequestItem, etc.)
+                server_label = get(item_obj, "server_label")
+                if server_label:
+                    span.add_attribute(GEN_AI_VOICE_MCP_SERVER_LABEL, server_label)
+
+                tool_name = get(item_obj, "name")
+                item_type = get(item_obj, "type")
+                # Only set tool_name for MCP/function_call item types (not message items)
+                if tool_name and item_type and str(item_type) not in ("message",):
+                    span.add_attribute(GEN_AI_VOICE_MCP_TOOL_NAME, tool_name)
+
+                approval_request_id = get(item_obj, "approval_request_id")
+                if approval_request_id:
+                    span.add_attribute(GEN_AI_VOICE_MCP_APPROVAL_REQUEST_ID, approval_request_id)
+
+                approve = get(item_obj, "approve")
+                if approve is not None:
+                    span.add_attribute(GEN_AI_VOICE_MCP_APPROVE, approve)
+
     @staticmethod
-    def _extract_send_event_ids(conn_self: Any, event: Any, span: "AbstractSpan") -> None:
+    def _extract_send_event_ids(conn_self: Any, event: Any, span: "AbstractSpan") -> None:  # pylint: disable=unused-argument
         """Extract call_id and response_id from send events.
 
         For ``conversation.item.create`` events, the nested ``item`` may carry
@@ -1115,8 +1244,21 @@ class _VoiceLiveInstrumentorPreview:
             if call_id:
                 span.add_attribute(GEN_AI_VOICE_CALL_ID, call_id)
 
+            # MCP approval response: approval_request_id and approve
+            approval_request_id = get(item, "approval_request_id")
+            if approval_request_id:
+                span.add_attribute(GEN_AI_VOICE_MCP_APPROVAL_REQUEST_ID, approval_request_id)
+            approve = get(item, "approve")
+            if approve is not None:
+                span.add_attribute(GEN_AI_VOICE_MCP_APPROVE, approve)
+
+        # previous_item_id on conversation.item.create
+        previous_item_id = get(event, "previous_item_id")
+        if previous_item_id:
+            span.add_attribute(GEN_AI_VOICE_PREVIOUS_ITEM_ID, previous_item_id)
+
     @staticmethod
-    def _extract_response_done(conn_self: Any, result: Any, span: "AbstractSpan") -> None:
+    def _extract_response_done(conn_self: Any, result: Any, span: "AbstractSpan") -> None:  # pylint: disable=too-many-branches
         """Extract response metadata from a response.done event.
 
         Sets ``gen_ai.response.id``, ``gen_ai.conversation.id``, and
@@ -1202,7 +1344,7 @@ class _VoiceLiveInstrumentorPreview:
             logger.debug("Failed to initialize VoiceLive metrics", exc_info=True)
 
     @staticmethod
-    def _record_operation_duration(
+    def _record_operation_duration(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         duration: float,
         operation_name: str,
         server_address: Optional[str] = None,
@@ -1282,7 +1424,7 @@ class _VoiceLiveInstrumentorPreview:
             logger.debug("Failed to record token usage", exc_info=True)
 
     @staticmethod
-    def _add_rate_limit_event(span: "AbstractSpan", event_type: str, result: Any) -> None:
+    def _add_rate_limit_event(span: "AbstractSpan", event_type: str, result: Any) -> None:  # pylint: disable=too-many-branches
         """Add a span event for rate limit or error events from the server.
 
         :param span: The active span.

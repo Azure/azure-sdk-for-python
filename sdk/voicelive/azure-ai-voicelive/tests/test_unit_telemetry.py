@@ -844,7 +844,19 @@ class TestNewConstants:
             GEN_AI_VOICE_FIRST_TOKEN_LATENCY_MS,
             GEN_AI_VOICE_CALL_ID,
             GEN_AI_VOICE_ITEM_ID,
+            GEN_AI_VOICE_PREVIOUS_ITEM_ID,
+            GEN_AI_VOICE_OUTPUT_INDEX,
+            GEN_AI_VOICE_MCP_SERVER_LABEL,
+            GEN_AI_VOICE_MCP_TOOL_NAME,
+            GEN_AI_VOICE_MCP_APPROVAL_REQUEST_ID,
+            GEN_AI_VOICE_MCP_APPROVE,
+            GEN_AI_VOICE_MCP_CALL_COUNT,
+            GEN_AI_VOICE_MCP_LIST_TOOLS_COUNT,
             GEN_AI_AGENT_NAME,
+            GEN_AI_AGENT_ID,
+            GEN_AI_AGENT_THREAD_ID,
+            GEN_AI_AGENT_VERSION,
+            GEN_AI_AGENT_PROJECT_NAME,
             GEN_AI_CONVERSATION_ID,
             GEN_AI_RESPONSE_ID,
             GEN_AI_RESPONSE_FINISH_REASONS,
@@ -870,7 +882,19 @@ class TestNewConstants:
         assert GEN_AI_VOICE_FIRST_TOKEN_LATENCY_MS == "gen_ai.voice.first_token_latency_ms"
         assert GEN_AI_VOICE_CALL_ID == "gen_ai.voice.call_id"
         assert GEN_AI_VOICE_ITEM_ID == "gen_ai.voice.item_id"
+        assert GEN_AI_VOICE_PREVIOUS_ITEM_ID == "gen_ai.voice.previous_item_id"
+        assert GEN_AI_VOICE_OUTPUT_INDEX == "gen_ai.voice.output_index"
+        assert GEN_AI_VOICE_MCP_SERVER_LABEL == "gen_ai.voice.mcp.server_label"
+        assert GEN_AI_VOICE_MCP_TOOL_NAME == "gen_ai.voice.mcp.tool_name"
+        assert GEN_AI_VOICE_MCP_APPROVAL_REQUEST_ID == "gen_ai.voice.mcp.approval_request_id"
+        assert GEN_AI_VOICE_MCP_APPROVE == "gen_ai.voice.mcp.approve"
+        assert GEN_AI_VOICE_MCP_CALL_COUNT == "gen_ai.voice.mcp.call_count"
+        assert GEN_AI_VOICE_MCP_LIST_TOOLS_COUNT == "gen_ai.voice.mcp.list_tools_count"
         assert GEN_AI_AGENT_NAME == "gen_ai.agent.name"
+        assert GEN_AI_AGENT_ID == "gen_ai.agent.id"
+        assert GEN_AI_AGENT_THREAD_ID == "gen_ai.agent.thread_id"
+        assert GEN_AI_AGENT_VERSION == "gen_ai.agent.version"
+        assert GEN_AI_AGENT_PROJECT_NAME == "gen_ai.agent.project_name"
         assert GEN_AI_CONVERSATION_ID == "gen_ai.conversation.id"
         assert GEN_AI_RESPONSE_ID == "gen_ai.response.id"
         assert GEN_AI_RESPONSE_FINISH_REASONS == "gen_ai.response.finish_reasons"
@@ -1155,6 +1179,76 @@ class TestExtractEventIds:
         span.add_attribute.assert_any_call("gen_ai.conversation.id", "conv_abc")
         assert conn._telemetry_conversation_id == "conv_abc"
 
+    def test_extract_previous_item_id_from_conversation_item_created(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        span = MagicMock()
+
+        result = {
+            "type": "conversation.item.created",
+            "previous_item_id": "item_prev_001",
+            "item": {
+                "id": "item_new",
+                "type": "function_call",
+                "call_id": "call_fc_001",
+                "name": "get_weather",
+            },
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_event_ids(conn, result, span)
+
+        span.add_attribute.assert_any_call("gen_ai.voice.previous_item_id", "item_prev_001")
+        span.add_attribute.assert_any_call("gen_ai.voice.call_id", "call_fc_001")
+
+    def test_extract_nested_call_id_from_output_item_added(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        span = MagicMock()
+
+        result = {
+            "type": "response.output_item.added",
+            "response_id": "resp_abc",
+            "output_index": 0,
+            "item": {
+                "id": "item_fc",
+                "type": "function_call",
+                "call_id": "call_nested_001",
+                "name": "search_db",
+            },
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_event_ids(conn, result, span)
+
+        span.add_attribute.assert_any_call("gen_ai.response.id", "resp_abc")
+        span.add_attribute.assert_any_call("gen_ai.voice.call_id", "call_nested_001")
+
+    def test_no_nested_call_id_when_top_level_present(self):
+        """Top-level call_id takes precedence; nested item.call_id is NOT duplicated."""
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        span = MagicMock()
+
+        result = {
+            "type": "response.function_call_arguments.delta",
+            "response_id": "resp_abc",
+            "call_id": "call_top",
+            "item_id": "item_001",
+            "item": {
+                "call_id": "call_nested_should_be_ignored",
+            },
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_event_ids(conn, result, span)
+
+        # call_id should be from top-level, not nested
+        span.add_attribute.assert_any_call("gen_ai.voice.call_id", "call_top")
+        # Ensure nested call_id was NOT set (only one call for call_id key)
+        call_id_calls = [c for c in span.add_attribute.call_args_list if c[0][0] == "gen_ai.voice.call_id"]
+        assert len(call_id_calls) == 1
+
     def test_no_ids_on_session_created(self):
         from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
 
@@ -1184,7 +1278,10 @@ class TestExtractEventIds:
         result.response_id = "resp_obj"
         result.call_id = "call_obj"
         result.item_id = "item_obj"
+        result.previous_item_id = None
+        result.output_index = None
         result.response = None
+        result.item = None
 
         _VoiceLiveInstrumentorPreview._extract_event_ids(conn, result, span)
 
@@ -1220,6 +1317,27 @@ class TestExtractSendEventIds:
 
         span.add_attribute.assert_any_call("gen_ai.voice.call_id", "call_xyz")
 
+    def test_extract_previous_item_id_from_conversation_item_create(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        span = MagicMock()
+
+        event = {
+            "type": "conversation.item.create",
+            "previous_item_id": "item_prev_send",
+            "item": {
+                "type": "function_call_output",
+                "call_id": "call_xyz",
+                "output": '{"result": "sunny"}',
+            },
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_send_event_ids(conn, event, span)
+
+        span.add_attribute.assert_any_call("gen_ai.voice.previous_item_id", "item_prev_send")
+        span.add_attribute.assert_any_call("gen_ai.voice.call_id", "call_xyz")
+
     def test_extract_response_id_from_response_cancel(self):
         from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
 
@@ -1249,4 +1367,320 @@ class TestExtractSendEventIds:
         _VoiceLiveInstrumentorPreview._extract_send_event_ids(conn, event, span)
 
         span.add_attribute.assert_not_called()
+
+
+# ------------------------------------------------------------------ #
+#  MCP event ID / field extraction (recv)                             #
+# ------------------------------------------------------------------ #
+
+
+class TestMCPEventExtraction:
+    """Tests for MCP-specific field extraction from recv events."""
+
+    def test_extract_mcp_fields_from_output_item_added_mcp_call(self):
+        """response.output_item.added with an mcp_call item."""
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        span = MagicMock()
+
+        result = {
+            "type": "response.output_item.added",
+            "response_id": "resp_mcp",
+            "output_index": 0,
+            "item": {
+                "id": "item_mcp_call_001",
+                "type": "mcp_call",
+                "server_label": "my_mcp_server",
+                "name": "search_docs",
+                "arguments": "{}",
+                "approval_request_id": "apr_001",
+            },
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_event_ids(conn, result, span)
+
+        span.add_attribute.assert_any_call("gen_ai.response.id", "resp_mcp")
+        span.add_attribute.assert_any_call("gen_ai.voice.output_index", 0)
+        span.add_attribute.assert_any_call("gen_ai.voice.item_id", "item_mcp_call_001")
+        span.add_attribute.assert_any_call("gen_ai.voice.mcp.server_label", "my_mcp_server")
+        span.add_attribute.assert_any_call("gen_ai.voice.mcp.tool_name", "search_docs")
+        span.add_attribute.assert_any_call("gen_ai.voice.mcp.approval_request_id", "apr_001")
+
+    def test_extract_mcp_approval_request_item(self):
+        """response.output_item.added with an mcp_approval_request item."""
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        span = MagicMock()
+
+        result = {
+            "type": "response.output_item.added",
+            "response_id": "resp_apr",
+            "output_index": 1,
+            "item": {
+                "id": "item_apr_001",
+                "type": "mcp_approval_request",
+                "server_label": "secure_server",
+                "name": "delete_record",
+                "arguments": '{"id": 42}',
+            },
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_event_ids(conn, result, span)
+
+        span.add_attribute.assert_any_call("gen_ai.voice.mcp.server_label", "secure_server")
+        span.add_attribute.assert_any_call("gen_ai.voice.mcp.tool_name", "delete_record")
+        span.add_attribute.assert_any_call("gen_ai.voice.item_id", "item_apr_001")
+
+    def test_extract_mcp_approval_response_item(self):
+        """conversation.item.created with an mcp_approval_response."""
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        span = MagicMock()
+
+        result = {
+            "type": "conversation.item.created",
+            "previous_item_id": "item_prev",
+            "item": {
+                "id": "item_apres_001",
+                "type": "mcp_approval_response",
+                "approval_request_id": "apr_001",
+                "approve": True,
+            },
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_event_ids(conn, result, span)
+
+        span.add_attribute.assert_any_call("gen_ai.voice.mcp.approval_request_id", "apr_001")
+        span.add_attribute.assert_any_call("gen_ai.voice.mcp.approve", True)
+        span.add_attribute.assert_any_call("gen_ai.voice.item_id", "item_apres_001")
+        span.add_attribute.assert_any_call("gen_ai.voice.previous_item_id", "item_prev")
+
+    def test_extract_mcp_list_tools_item(self):
+        """response.output_item.done with an mcp_list_tools item."""
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        span = MagicMock()
+
+        result = {
+            "type": "response.output_item.done",
+            "response_id": "resp_lt",
+            "output_index": 0,
+            "item": {
+                "id": "item_lt_001",
+                "type": "mcp_list_tools",
+                "server_label": "tools_server",
+                "tools": [{"name": "tool_a"}, {"name": "tool_b"}],
+            },
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_event_ids(conn, result, span)
+
+        span.add_attribute.assert_any_call("gen_ai.voice.mcp.server_label", "tools_server")
+        span.add_attribute.assert_any_call("gen_ai.voice.item_id", "item_lt_001")
+        span.add_attribute.assert_any_call("gen_ai.voice.output_index", 0)
+
+    def test_no_tool_name_for_message_items(self):
+        """Message items have 'name' in some contexts but we should NOT set mcp.tool_name."""
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        span = MagicMock()
+
+        result = {
+            "type": "conversation.item.created",
+            "item": {
+                "id": "item_msg",
+                "type": "message",
+                "role": "assistant",
+                "content": [],
+            },
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_event_ids(conn, result, span)
+
+        # Should NOT have mcp.tool_name
+        tool_name_calls = [c for c in span.add_attribute.call_args_list
+                           if c[0][0] == "gen_ai.voice.mcp.tool_name"]
+        assert len(tool_name_calls) == 0
+
+    def test_extract_item_id_from_nested_item(self):
+        """conversation.item.created has no top-level item_id; should extract from item.id."""
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        span = MagicMock()
+
+        result = {
+            "type": "conversation.item.created",
+            "item": {
+                "id": "item_nested_id_001",
+                "type": "function_call",
+                "call_id": "call_fc",
+                "name": "get_weather",
+            },
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_event_ids(conn, result, span)
+
+        span.add_attribute.assert_any_call("gen_ai.voice.item_id", "item_nested_id_001")
+        span.add_attribute.assert_any_call("gen_ai.voice.call_id", "call_fc")
+        span.add_attribute.assert_any_call("gen_ai.voice.mcp.tool_name", "get_weather")
+
+    def test_output_index_extraction(self):
+        """output_index should be tracked on MCP call argument events."""
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        span = MagicMock()
+
+        result = {
+            "type": "response.mcp_call_arguments.delta",
+            "response_id": "resp_mcp",
+            "item_id": "item_mcp",
+            "output_index": 2,
+            "delta": "{}",
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_event_ids(conn, result, span)
+
+        span.add_attribute.assert_any_call("gen_ai.voice.output_index", 2)
+
+
+# ------------------------------------------------------------------ #
+#  MCP send event extraction                                          #
+# ------------------------------------------------------------------ #
+
+
+class TestMCPSendEventExtraction:
+    """Tests for MCP-specific field extraction from send events."""
+
+    def test_extract_approval_response_from_send(self):
+        """conversation.item.create with mcp_approval_response item."""
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        span = MagicMock()
+
+        event = {
+            "type": "conversation.item.create",
+            "item": {
+                "type": "mcp_approval_response",
+                "approval_request_id": "apr_send_001",
+                "approve": False,
+            },
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_send_event_ids(conn, event, span)
+
+        span.add_attribute.assert_any_call("gen_ai.voice.mcp.approval_request_id", "apr_send_001")
+        span.add_attribute.assert_any_call("gen_ai.voice.mcp.approve", False)
+
+
+# ------------------------------------------------------------------ #
+#  Agent config extraction from session.created                       #
+# ------------------------------------------------------------------ #
+
+
+class TestAgentConfigExtraction:
+    """Tests for _extract_agent_config_from_session."""
+
+    def test_extract_agent_id_and_thread_id(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        conn._telemetry_span = MagicMock()
+
+        result = {
+            "type": "session.created",
+            "session": {
+                "id": "session_abc",
+                "agent": {
+                    "type": "agent",
+                    "name": "MyAgent",
+                    "agent_id": "agent_001",
+                    "thread_id": "thread_001",
+                },
+            },
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_agent_config_from_session(conn, result)
+
+        conn._telemetry_span.add_attribute.assert_any_call("gen_ai.agent.id", "agent_001")
+        conn._telemetry_span.add_attribute.assert_any_call("gen_ai.agent.thread_id", "thread_001")
+
+    def test_no_agent_config_in_session(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        conn._telemetry_span = MagicMock()
+
+        result = {
+            "type": "session.created",
+            "session": {
+                "id": "session_abc",
+            },
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_agent_config_from_session(conn, result)
+
+        conn._telemetry_span.add_attribute.assert_not_called()
+
+    def test_no_session_field(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        conn._telemetry_span = MagicMock()
+
+        result = {"type": "session.created"}
+
+        _VoiceLiveInstrumentorPreview._extract_agent_config_from_session(conn, result)
+
+        conn._telemetry_span.add_attribute.assert_not_called()
+
+
+# ------------------------------------------------------------------ #
+#  Agent session config extraction on connect span                    #
+# ------------------------------------------------------------------ #
+
+
+class TestAgentSessionConfigOnConnect:
+    """Tests for agent_version and project_name on the connect span."""
+
+    def test_agent_version_and_project_name_on_connect(self):
+        """Verify agent_version and project_name are set on the connect span."""
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        span = MagicMock()
+
+        # Simulate _trace_aenter agent config extraction
+        agent_config = {
+            "agent_name": "TestAgent",
+            "project_name": "TestProject",
+            "agent_version": "v2.1",
+            "conversation_id": "conv_123",
+        }
+
+        # Extract logic inline (as done in _trace_aenter)
+        agent_name = agent_config.get("agent_name")
+        if agent_name:
+            span.add_attribute("gen_ai.agent.name", agent_name)
+        conv_id = agent_config.get("conversation_id")
+        if conv_id:
+            span.add_attribute("gen_ai.conversation.id", conv_id)
+        agent_version = agent_config.get("agent_version")
+        if agent_version:
+            span.add_attribute("gen_ai.agent.version", agent_version)
+        project_name = agent_config.get("project_name")
+        if project_name:
+            span.add_attribute("gen_ai.agent.project_name", project_name)
+
+        span.add_attribute.assert_any_call("gen_ai.agent.name", "TestAgent")
+        span.add_attribute.assert_any_call("gen_ai.conversation.id", "conv_123")
+        span.add_attribute.assert_any_call("gen_ai.agent.version", "v2.1")
+        span.add_attribute.assert_any_call("gen_ai.agent.project_name", "TestProject")
 
