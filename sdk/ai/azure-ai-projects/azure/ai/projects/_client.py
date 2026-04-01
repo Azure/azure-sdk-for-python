@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 from typing_extensions import Self
 
 from azure.core import PipelineClient
@@ -55,15 +55,22 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
+    :param allow_preview: Whether to enable preview features. Must be specified and set to True to
+     enable preview features. Default value is None.
+    :type allow_preview: bool
     :keyword api_version: The API version to use for this operation. Known values are "v1" and
      None. Default value is "v1". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: "TokenCredential", allow_preview: Optional[bool] = None, **kwargs: Any
+    ) -> None:
         _endpoint = "{endpoint}"
-        self._config = AIProjectClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = AIProjectClientConfiguration(
+            endpoint=endpoint, credential=credential, allow_preview=allow_preview, **kwargs
+        )
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:

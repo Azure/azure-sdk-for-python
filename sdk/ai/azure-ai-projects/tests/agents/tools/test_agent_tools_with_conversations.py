@@ -19,15 +19,12 @@ from azure.ai.projects.models import (
     FunctionTool,
     FileSearchTool,
     CodeInterpreterTool,
-    CodeInterpreterContainerAuto,
+    AutoCodeInterpreterToolParam,
     PromptAgentDefinition,
 )
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestAgentToolsWithConversations(TestBase):
 
     @servicePreparer()
@@ -333,7 +330,7 @@ Widget C:
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a data analysis assistant. Use Python to perform calculations.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[]))],
+                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[]))],
                 ),
                 description="Code interpreter agent for conversation testing.",
             )
@@ -432,7 +429,7 @@ Widget C:
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful assistant.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[uploaded_file.id]))],
+                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[uploaded_file.id]))],
                 ),
                 description="Code interpreter agent for data analysis and visualization.",
             )

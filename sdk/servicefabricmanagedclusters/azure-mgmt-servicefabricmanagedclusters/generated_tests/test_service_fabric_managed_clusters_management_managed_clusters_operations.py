@@ -119,6 +119,7 @@ class TestServiceFabricManagedClustersManagementManagedClustersOperations(AzureM
                     "publicIPPrefixId": "str",
                     "publicIPv6PrefixId": "str",
                     "serviceEndpoints": [{"service": "str", "locations": ["str"], "networkIdentifier": "str"}],
+                    "skipManagedNsgAssignment": bool,
                     "subnetId": "str",
                     "upgradeDescription": {
                         "deltaHealthPolicy": {
@@ -129,11 +130,11 @@ class TestServiceFabricManagedClustersManagementManagedClustersOperations(AzureM
                         "forceRestart": bool,
                         "healthPolicy": {"maxPercentUnhealthyApplications": 0, "maxPercentUnhealthyNodes": 0},
                         "monitoringPolicy": {
-                            "healthCheckRetryTimeout": "1 day, 0:00:00",
-                            "healthCheckStableDuration": "1 day, 0:00:00",
-                            "healthCheckWaitDuration": "1 day, 0:00:00",
-                            "upgradeDomainTimeout": "1 day, 0:00:00",
-                            "upgradeTimeout": "1 day, 0:00:00",
+                            "healthCheckRetryTimeout": "str",
+                            "healthCheckStableDuration": "str",
+                            "healthCheckWaitDuration": "str",
+                            "upgradeDomainTimeout": "str",
+                            "upgradeTimeout": "str",
                         },
                         "upgradeReplicaSetCheckTimeout": "str",
                     },
@@ -195,52 +196,5 @@ class TestServiceFabricManagedClustersManagementManagedClustersOperations(AzureM
     def test_managed_clusters_list_by_subscription(self, resource_group):
         response = self.client.managed_clusters.list_by_subscription()
         result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_managed_clusters_get_fault_simulation(self, resource_group):
-        response = self.client.managed_clusters.get_fault_simulation(
-            resource_group_name=resource_group.name,
-            cluster_name="str",
-            parameters={"simulationId": "str"},
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_managed_clusters_list_fault_simulation(self, resource_group):
-        response = self.client.managed_clusters.list_fault_simulation(
-            resource_group_name=resource_group.name,
-            cluster_name="str",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_managed_clusters_begin_start_fault_simulation(self, resource_group):
-        response = self.client.managed_clusters.begin_start_fault_simulation(
-            resource_group_name=resource_group.name,
-            cluster_name="str",
-            parameters={"parameters": "fault_simulation_content"},
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_managed_clusters_begin_stop_fault_simulation(self, resource_group):
-        response = self.client.managed_clusters.begin_stop_fault_simulation(
-            resource_group_name=resource_group.name,
-            cluster_name="str",
-            parameters={"simulationId": "str"},
-        ).result()  # call '.result()' to poll until service return final result
-
         # please add some check logic here by yourself
         # ...

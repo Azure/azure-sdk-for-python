@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b4" python-dotenv azure-mgmt-authorization azure-mgmt-resource
+    pip install "azure-ai-projects>=2.0.0" python-dotenv azure-mgmt-authorization azure-mgmt-resource
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -302,19 +302,19 @@ def schedule_dataset_evaluation() -> None:
             task=EvaluationScheduleTask(eval_id=eval_object.id, eval_run=eval_run_object),
         )
         schedule_response = project_client.beta.schedules.create_or_update(
-            id="dataset-eval-run-schedule-9am", schedule=schedule
+            schedule_id="dataset-eval-run-schedule-9am", schedule=schedule
         )
 
-        print(f"Schedule created for dataset evaluation: {schedule_response.id}")
+        print(f"Schedule created for dataset evaluation: {schedule_response.schedule_id}")
         pprint(schedule_response)
 
         time.sleep(5)  # Wait for schedule to be fully created
-        schedule_runs = project_client.beta.schedules.list_runs(schedule_response.id)
-        print(f"Listing schedule runs for schedule id: {schedule_response.id}")
+        schedule_runs = project_client.beta.schedules.list_runs(schedule_response.schedule_id)
+        print(f"Listing schedule runs for schedule id: {schedule_response.schedule_id}")
         for run in schedule_runs:
             pprint(run)
 
-        project_client.beta.schedules.delete(schedule_response.id)
+        project_client.beta.schedules.delete(schedule_response.schedule_id)
         print("Schedule deleted")
 
         client.evals.delete(eval_id=eval_object.id)
@@ -410,19 +410,19 @@ def schedule_redteam_evaluation() -> None:
             task=EvaluationScheduleTask(eval_id=eval_object.id, eval_run=eval_run_object),
         )
         schedule_response = project_client.beta.schedules.create_or_update(
-            id="redteam-eval-run-schedule-9am", schedule=schedule
+            schedule_id="redteam-eval-run-schedule-9am", schedule=schedule
         )
 
-        print(f"Schedule created for red teaming: {schedule_response.id}")
+        print(f"Schedule created for red teaming: {schedule_response.schedule_id}")
         pprint(schedule_response)
 
         time.sleep(5)  # Wait for schedule to be fully created
-        schedule_runs = project_client.beta.schedules.list_runs(schedule_response.id)
-        print(f"Listing schedule runs for schedule id: {schedule_response.id}")
+        schedule_runs = project_client.beta.schedules.list_runs(schedule_response.schedule_id)
+        print(f"Listing schedule runs for schedule id: {schedule_response.schedule_id}")
         for run in schedule_runs:
             pprint(run)
 
-        project_client.beta.schedules.delete(schedule_response.id)
+        project_client.beta.schedules.delete(schedule_response.schedule_id)
         print("Schedule deleted")
 
         client.evals.delete(eval_id=eval_object.id)

@@ -20,9 +20,6 @@ from azure.ai.projects.models import (
 # https://arxiv.org/pdf/2508.03680
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestAgentAISearch(TestBase):
 
     # Test questions with expected answers

@@ -84,9 +84,7 @@ class TestManagedOpsMgmtManagedOpsOperations(AzureMgmtRecordedTestCase):
     def test_managed_ops_begin_update(self, resource_group):
         response = self.client.managed_ops.begin_update(
             managed_ops_name="str",
-            properties={
-                "properties": {"desiredConfiguration": {"defenderCspm": "Enable", "defenderForServers": "Enable"}}
-            },
+            properties={"properties": {"desiredConfiguration": {"defenderCspm": "str", "defenderForServers": "str"}}},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

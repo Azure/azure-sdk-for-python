@@ -7,6 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 import os
 import re
 import logging
@@ -18,7 +19,6 @@ from azure.core.credentials import TokenCredential
 from azure.identity import get_bearer_token_provider
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
-
 
 logger = logging.getLogger(__name__)
 
@@ -48,13 +48,24 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
+    :param allow_preview: Whether to enable preview features. Optional, default is False.
+     Set this to True to create a Hosted Agent (using :class:`~azure.ai.projects.models.HostedAgentDefinition`)
+     or a Workflow Agent (using :class:`~azure.ai.projects.models.WorkflowAgentDefinition`).
+     Set this to True to use human evaluation rule action (class :class:`~azure.ai.projects.models.HumanEvaluationPreviewRuleAction`).
+     Methods on the `.beta` sub-client (class :class:`~azure.ai.projects.operations.BetaOperations`)
+     are all in preview, but do not require setting `allow_preview=True` since it's implied by the sub-client name.
+     When preview features are enabled, the client libraries sends the HTTP request header `Foundry-Features`
+     with the appropriate value in all relevant calls to the service.
+    :type allow_preview: bool
     :keyword api_version: The API version to use for this operation. Known values are "v1" and
      None. Default value is "v1". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: TokenCredential, **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: TokenCredential, *, allow_preview: bool = False, **kwargs: Any
+    ) -> None:
 
         self._console_logging_enabled: bool = (
             os.environ.get("AZURE_AI_PROJECTS_CONSOLE_LOGGING", "false").lower() == "true"
@@ -81,7 +92,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         self._kwargs = kwargs.copy()
         self._custom_user_agent = self._kwargs.get("user_agent", None)
 
-        super().__init__(endpoint=endpoint, credential=credential, **kwargs)
+        super().__init__(endpoint=endpoint, credential=credential, allow_preview=allow_preview, **kwargs)
 
         self.telemetry = TelemetryOperations(self)  # type: ignore
 

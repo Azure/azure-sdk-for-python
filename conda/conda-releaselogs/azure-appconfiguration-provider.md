@@ -4,4 +4,4 @@
 
 ### Packages included
 
-- azure-appconfiguration-provider-2.3.1
+- azure-appconfiguration-provider-2.4.0

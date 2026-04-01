@@ -93,12 +93,16 @@ async def main() -> None:
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client:
         # [START update_defaults]
         # Get deployment names from environment variables
         gpt_4_1_deployment = os.getenv("GPT_4_1_DEPLOYMENT")
         gpt_4_1_mini_deployment = os.getenv("GPT_4_1_MINI_DEPLOYMENT")
-        text_embedding_3_large_deployment = os.getenv("TEXT_EMBEDDING_3_LARGE_DEPLOYMENT")
+        text_embedding_3_large_deployment = os.getenv(
+            "TEXT_EMBEDDING_3_LARGE_DEPLOYMENT"
+        )
 
         # Check if required deployments are configured
         missing_deployments = []
@@ -114,7 +118,9 @@ async def main() -> None:
             for deployment in missing_deployments:
                 print(f"   - {deployment}")
             print("\nPlease set these environment variables and try again.")
-            print("The deployment names should match the models you deployed in Microsoft Foundry.")
+            print(
+                "The deployment names should match the models you deployed in Microsoft Foundry."
+            )
             return
 
         # Map your deployed models to the models required by prebuilt analyzers
@@ -131,11 +137,16 @@ async def main() -> None:
         }
 
         print("Configuring model deployments...")
-        updated_defaults = await client.update_defaults(model_deployments=model_deployments)
+        updated_defaults = await client.update_defaults(
+            model_deployments=model_deployments
+        )
 
         print("Model deployments configured successfully!")
         if updated_defaults.model_deployments:
-            for model_name, deployment_name in updated_defaults.model_deployments.items():
+            for (
+                model_name,
+                deployment_name,
+            ) in updated_defaults.model_deployments.items():
                 print(f"  {model_name}: {deployment_name}")
         # [END update_defaults]
 

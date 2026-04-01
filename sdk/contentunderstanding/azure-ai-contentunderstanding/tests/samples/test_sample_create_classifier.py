@@ -51,7 +51,7 @@ class TestSampleCreateClassifier(ContentUnderstandingClientTestBase):
         """
         # Get variables from test proxy (recorded values in playback, empty dict in recording)
         variables = kwargs.pop("variables", {})
-        
+
         client = self.create_client(endpoint=contentunderstanding_endpoint)
 
         # Generate a unique analyzer ID
@@ -168,7 +168,7 @@ class TestSampleCreateClassifier(ContentUnderstandingClientTestBase):
         """
         # Get variables from test proxy (recorded values in playback, empty dict in recording)
         variables = kwargs.pop("variables", {})
-        
+
         client = self.create_client(endpoint=contentunderstanding_endpoint)
 
         # Generate a unique analyzer ID

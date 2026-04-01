@@ -210,9 +210,8 @@ class RedirectPolicy(RedirectPolicyBase, HTTPPolicy[HTTPRequestType, HTTPRespons
                 if domain_changed(original_domain, request.http_request.url):
                     # "insecure_domain_change" is used to indicate that a redirect
                     # has occurred to a different domain. This tells the SensitiveHeaderCleanupPolicy
-                    # to clean up sensitive headers. We need to remove it before sending the request
-                    # to the transport layer.
-                    request.context.options["insecure_domain_change"] = True
+                    # to clean up sensitive headers.
+                    request.context["insecure_domain_change"] = True
                 continue
             return response
 

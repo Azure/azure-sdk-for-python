@@ -44,6 +44,8 @@ from ._models import (  # type: ignore
 from ._enums import (  # type: ignore
     ActionType,
     CreatedByType,
+    DesiredEnablementState,
+    EnablementState,
     Origin,
     ProvisioningState,
 )
@@ -79,6 +81,8 @@ __all__ = [
     "UpdateManagerInformation",
     "ActionType",
     "CreatedByType",
+    "DesiredEnablementState",
+    "EnablementState",
     "Origin",
     "ProvisioningState",
 ]

@@ -9,7 +9,6 @@ from logging import getLogger
 from opentelemetry import trace
 from opentelemetry.sdk._logs import LogRecordProcessor, ReadWriteLogRecord
 from azure.monitor.opentelemetry import configure_azure_monitor
-from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
 
 logger = getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -23,7 +22,7 @@ class LogRecordEnrichingProcessor(LogRecordProcessor):
         if current_span and getattr(current_span, "name", None):
             if log_record.log_record.attributes is None:
                 log_record.log_record.attributes = {}
-            log_record.log_record.attributes[ContextTagKeys.AI_OPERATION_NAME] = current_span.name  # type: ignore[attr-defined, index]
+            log_record.log_record.attributes["ai.operation.name"] = current_span.name  # type: ignore[attr-defined, index]
 
     def shutdown(self) -> None:
         pass

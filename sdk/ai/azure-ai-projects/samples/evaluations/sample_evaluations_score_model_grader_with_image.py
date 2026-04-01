@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b2" azure-identity python-dotenv Pillow
+    pip install "azure-ai-projects>=2.0.0" python-dotenv pillow
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -42,7 +42,6 @@ from openai.types.evals.create_eval_completions_run_data_source_param import (
 from openai.types.responses import EasyInputMessageParam
 from openai.types.eval_create_params import DataSourceConfigCustom
 from dotenv import load_dotenv
-
 
 load_dotenv()
 file_path = os.path.abspath(__file__)

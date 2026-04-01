@@ -20,11 +20,11 @@ from azure.ai.projects.models import (
 )
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestAgentMemorySearchAsync(TestBase):
 
+    @pytest.mark.skip(
+        reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+    )
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_memory_search_async(self, **kwargs):

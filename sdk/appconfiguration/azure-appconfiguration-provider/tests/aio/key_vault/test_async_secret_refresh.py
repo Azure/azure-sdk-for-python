@@ -3,20 +3,33 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import functools
 import time
-import asyncio
 import unittest
 from unittest.mock import Mock, patch
+from devtools_testutils import EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
-from async_preparers import app_config_aad_decorator_async
 from asynctestcase import AppConfigTestCase
+from test_constants import (
+    APPCONFIGURATION_ENDPOINT_STRING,
+    APPCONFIGURATION_KEYVAULT_SECRET_URL,
+    APPCONFIGURATION_KEYVAULT_SECRET_URL2,
+)
 from azure.appconfiguration import SecretReferenceConfigurationSetting
 from azure.appconfiguration.provider import SettingSelector, WatchKey
+
+AppConfigProviderPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_endpoint_string=APPCONFIGURATION_ENDPOINT_STRING,
+    appconfiguration_keyvault_secret_url=APPCONFIGURATION_KEYVAULT_SECRET_URL,
+    appconfiguration_keyvault_secret_url2=APPCONFIGURATION_KEYVAULT_SECRET_URL2,
+)
 
 
 class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
 
-    @app_config_aad_decorator_async
+    @AppConfigProviderPreparer()
     @recorded_by_proxy_async
     async def testsecret_refresh_timer(
         self,
@@ -49,22 +62,17 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
 
         # Mock the refresh method to track calls
         with patch.object(client, "refresh") as mock_refresh:
-            # Wait for the secret refresh interval to pass
-            await asyncio.sleep(2)
-
             await client.refresh()
 
             # Verify refresh was called
             assert mock_refresh.call_count >= 1
 
-            # Wait again to ensure multiple refreshes
-            await asyncio.sleep(2)
             await client.refresh()
 
             # Should have been called at least twice now
             assert mock_refresh.call_count >= 2
 
-    @app_config_aad_decorator_async
+    @AppConfigProviderPreparer()
     @recorded_by_proxy_async
     async def test_secret_refresh_with_updated_values(
         self,
@@ -88,7 +96,7 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
         )
 
         # Add a key vault reference to the client (this will use mock resolver)
-        appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+        appconfig_client = self.create_appconfig_client(appconfiguration_endpoint_string)
 
         # Get and modify a key vault reference setting
         kv_setting = await appconfig_client.get_configuration_setting(key="secret", label="prod")
@@ -102,17 +110,22 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
         kv_setting.secret_id = appconfiguration_keyvault_secret_url2
         await appconfig_client.set_configuration_setting(kv_setting)
 
-        # Wait for the secret refresh interval to pass
-        await asyncio.sleep(2)
+        try:
+            # Expire the refresh timers to simulate time passing
+            client._refresh_timer._next_refresh_time = 0
+            client._secret_provider.secret_refresh_timer._next_refresh_time = 0
 
-        # Access the value again to trigger refresh
-        await client.refresh()
+            # Access the value again to trigger refresh
+            await client.refresh()
 
-        # Verify the value was updated
-        assert client["secret"] == "Very secret value 2"
-        assert mock_callback.call_count >= 1
+            # Verify the value was updated
+            assert client["secret"] == "Very secret value 2"
+            assert mock_callback.call_count >= 1
+        finally:
+            kv_setting.secret_id = appconfiguration_keyvault_secret_url
+            await appconfig_client.set_configuration_setting(kv_setting)
 
-    @app_config_aad_decorator_async
+    @AppConfigProviderPreparer()
     @recorded_by_proxy_async
     async def test_no_secret_refresh_without_timer(
         self,
@@ -157,7 +170,7 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
             # but there should be no automatic refresh caused by the secret timer
             assert mock_time.call_count == 2
 
-    @app_config_aad_decorator_async
+    @AppConfigProviderPreparer()
     @recorded_by_proxy_async
     async def test_secret_refresh_timer_triggers_refresh(
         self,
@@ -197,7 +210,7 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
                 # Verify refresh was called
                 assert mock_refresh.call_count > 0
 
-    @app_config_aad_decorator_async
+    @AppConfigProviderPreparer()
     @recorded_by_proxy_async
     async def test_secret_refresh_interval_parameter(
         self,

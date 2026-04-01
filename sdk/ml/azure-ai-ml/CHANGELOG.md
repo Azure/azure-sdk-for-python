@@ -6,6 +6,7 @@
 
 ### Bugs Fixed
 
+- Fixed default deployment template check to verify `asset_id` is not None before logging template information.
 - Skip _list_secrets for identity-based datastores to prevent noisy telemetry traces.
 
 ### Other Changes

@@ -242,3 +242,28 @@ Behavior:
 - **All samples:** Execution errors (exceptions) always fail the test, regardless of the allowlist.
 
 This allows you to dismiss false alarms from LLM validation while keeping the CI pipeline green. Failed reports are still generated for monitoring purposes.
+
+## Preprocessing validation text
+
+Before the captured output is sent to the LLM for validation, you can apply a preprocessor to filter or transform the entries. This is useful when debug log entries contain words (like `error`, `failed`, `timeout`) in innocuous contexts that cause the LLM to produce false positives.
+
+Pass a `validation_text_preprocessor` callback to the executor:
+
+```python
+def _preprocess_validation(entries: list[str]) -> str:
+    """Filter debug log entries and annotate metric counters."""
+    import re
+    # Remove SDK debug log entries (they start with "[module.name]")
+    _NOISE = re.compile(r"^\[(?:azure\.|openai\.|httpx|httpcore|msrest)")
+    kept = [e for e in entries if not _NOISE.match(e.strip())]
+    return "\n".join(kept)
+
+executor = SyncSampleExecutor(
+    self,
+    sample_path,
+    validation_text_preprocessor=_preprocess_validation,
+    **kwargs,
+)
+```
+
+The callback receives the list of captured print/log entries (each entry is one `print()` call or one log record) and returns the final text string that will be uploaded for LLM analysis. This gives you entry-level control to filter, annotate, or restructure the validation text before it reaches the LLM.

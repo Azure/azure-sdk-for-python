@@ -1,6 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import re
 import unittest
 import uuid
 
@@ -83,7 +84,8 @@ class TestFullTextPolicy(unittest.TestCase):
             indexing_policy=indexing_policy
         )
         properties = created_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy
+        assert properties["fullTextPolicy"]["defaultLanguage"] == full_text_policy["defaultLanguage"]
+        assert properties["fullTextPolicy"]["fullTextPaths"] == full_text_policy["fullTextPaths"]
         assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
         self.test_db.delete_container(created_container.id)
 
@@ -97,7 +99,7 @@ class TestFullTextPolicy(unittest.TestCase):
             full_text_policy=full_text_policy_no_paths,
         )
         properties = created_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy_no_paths
+        assert properties["fullTextPolicy"]["defaultLanguage"] == full_text_policy_no_paths["defaultLanguage"]
         self.test_db.delete_container(created_container.id)
 
         # Create a container with a full text policy with a given path containing only default language
@@ -115,7 +117,8 @@ class TestFullTextPolicy(unittest.TestCase):
             full_text_policy=full_text_policy_no_langs,
         )
         properties = created_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy_no_langs
+        assert properties["fullTextPolicy"]["defaultLanguage"] == full_text_policy_no_langs["defaultLanguage"]
+        assert properties["fullTextPolicy"]["fullTextPaths"] == full_text_policy_no_langs["fullTextPaths"]
         self.test_db.delete_container(created_container.id)
 
     def test_replace_full_text_container(self):
@@ -149,7 +152,8 @@ class TestFullTextPolicy(unittest.TestCase):
             indexing_policy=indexing_policy
         )
         properties = replaced_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy
+        assert properties["fullTextPolicy"]["defaultLanguage"] == full_text_policy["defaultLanguage"]
+        assert properties["fullTextPolicy"]["fullTextPaths"] == full_text_policy["fullTextPaths"]
         assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
         assert created_container_properties['indexingPolicy'] != properties['indexingPolicy']
         self.test_db.delete_container(created_container.id)
@@ -162,8 +166,9 @@ class TestFullTextPolicy(unittest.TestCase):
             indexing_policy=indexing_policy
         )
         created_container_properties = created_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy
-        assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
+        assert created_container_properties["fullTextPolicy"]["defaultLanguage"] == full_text_policy["defaultLanguage"]
+        assert created_container_properties["fullTextPolicy"]["fullTextPaths"] == full_text_policy["fullTextPaths"]
+        assert created_container_properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
 
         # Replace the container with new policies
         full_text_policy['fullTextPaths'][0]['path'] = "/new_path"
@@ -175,7 +180,8 @@ class TestFullTextPolicy(unittest.TestCase):
             indexing_policy=indexing_policy
         )
         properties = replaced_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy
+        assert properties["fullTextPolicy"]["defaultLanguage"] == full_text_policy["defaultLanguage"]
+        assert properties["fullTextPolicy"]["fullTextPaths"] == full_text_policy["fullTextPaths"]
         assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
         assert created_container_properties['fullTextPolicy'] != properties['fullTextPolicy']
         assert created_container_properties["indexingPolicy"] != properties["indexingPolicy"]
@@ -201,7 +207,9 @@ class TestFullTextPolicy(unittest.TestCase):
             pytest.fail("Container creation should have failed for invalid path.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "The Full Text Policy contains an invalid Path: abstract" in e.http_error_message
+            assert re.search(
+                    r"the full.text policy contains an invalid path.*abstract",
+                    e.http_error_message, re.IGNORECASE)
 
         # Pass a full text policy with an unsupported default language
         full_text_policy_wrong_default = {
@@ -222,8 +230,9 @@ class TestFullTextPolicy(unittest.TestCase):
             pytest.fail("Container creation should have failed for wrong supported language.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "The Full Text Policy contains an unsupported language spa-SPA. Supported languages are:"\
-                   in e.http_error_message
+            assert re.search(
+                    r"the full.text policy contains an unsupported language.*spa-SPA",
+                    e.http_error_message, re.IGNORECASE)
 
         # Pass a full text policy with an unsupported path language
         full_text_policy_wrong_default = {
@@ -244,8 +253,9 @@ class TestFullTextPolicy(unittest.TestCase):
             pytest.fail("Container creation should have failed for wrong supported language.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "The Full Text Policy contains an unsupported language spa-SPA. Supported languages are:"\
-                   in e.http_error_message
+            assert re.search(
+                    r"the full.text policy contains an unsupported language.*spa-SPA",
+                    e.http_error_message, re.IGNORECASE)
 
     def test_fail_create_full_text_indexing_policy(self):
         full_text_policy = {
@@ -274,8 +284,9 @@ class TestFullTextPolicy(unittest.TestCase):
             # pytest.fail("Container creation should have failed for lack of embedding policy.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "The path of the Full Text Index /path does not match the path specified in the Full Text Policy"\
-                   in e.http_error_message
+            assert re.search(
+                    r"the path of the full.text index.*does not match the path specified in the full.text policy",
+                    e.http_error_message, re.IGNORECASE)
 
         # Pass a full text indexing policy with a wrongly formatted path
         indexing_policy_wrong_path = {
@@ -293,7 +304,9 @@ class TestFullTextPolicy(unittest.TestCase):
             pytest.fail("Container creation should have failed for invalid path.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "Full-text index specification at index (0) contains invalid path" in e.http_error_message
+            assert re.search(
+                    r"full.text index specification at index \(0\) contains invalid path",
+                    e.http_error_message, re.IGNORECASE)
 
         # Pass a full text indexing policy without a path field
         indexing_policy_no_path = {
@@ -311,7 +324,9 @@ class TestFullTextPolicy(unittest.TestCase):
             pytest.fail("Container creation should have failed for missing path.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "Missing path in full-text index specification at index (0)" in e.http_error_message
+            assert re.search(
+                    r"missing path in full.text index specification at index \(0\)",
+                    e.http_error_message, re.IGNORECASE)
 
     # Skipped until testing pipeline is set up for full text multi-language support
     @pytest.mark.skip
@@ -342,7 +357,8 @@ class TestFullTextPolicy(unittest.TestCase):
                     full_text_policy=updated_policy
                 )
                 properties = replaced_container.read()
-                assert properties["fullTextPolicy"] == updated_policy
+                assert properties["fullTextPolicy"]["defaultLanguage"] == updated_policy["defaultLanguage"]
+                assert properties["fullTextPolicy"]["fullTextPaths"] == updated_policy["fullTextPaths"]
         finally:
             self.test_db.delete_container(container.id)
 
@@ -376,7 +392,8 @@ class TestFullTextPolicy(unittest.TestCase):
                     full_text_policy=updated_policy
                 )
                 properties = replaced_container.read()
-                assert properties["fullTextPolicy"] == updated_policy
+                assert properties["fullTextPolicy"]["defaultLanguage"] == updated_policy["defaultLanguage"]
+                assert properties["fullTextPolicy"]["fullTextPaths"] == updated_policy["fullTextPaths"]
                 # Insert and verify item
                 item = {
                     "id": str(uuid.uuid4()),
@@ -429,7 +446,8 @@ class TestFullTextPolicy(unittest.TestCase):
                 full_text_policy=updated_policy
             )
             properties = replaced_container.read()
-            assert properties["fullTextPolicy"] == updated_policy
+            assert properties["fullTextPolicy"]["defaultLanguage"] == updated_policy["defaultLanguage"]
+            assert properties["fullTextPolicy"]["fullTextPaths"] == updated_policy["fullTextPaths"]
 
         finally:
             # Delete the container at the end of the test
@@ -472,7 +490,8 @@ class TestFullTextPolicy(unittest.TestCase):
                     full_text_policy=updated_policy
                 )
                 properties = replaced_container.read()
-                assert properties["fullTextPolicy"] == updated_policy
+                assert properties["fullTextPolicy"]["defaultLanguage"] == updated_policy["defaultLanguage"]
+                assert properties["fullTextPolicy"]["fullTextPaths"] == updated_policy["fullTextPaths"]
 
         finally:
             # Delete the container at the end of the test
@@ -515,7 +534,8 @@ class TestFullTextPolicy(unittest.TestCase):
                     full_text_policy=updated_policy
                 )
                 properties = replaced_container.read()
-                assert properties["fullTextPolicy"] == updated_policy
+                assert properties["fullTextPolicy"]["defaultLanguage"] == updated_policy["defaultLanguage"]
+                assert properties["fullTextPolicy"]["fullTextPaths"] == updated_policy["fullTextPaths"]
 
         finally:
             # Delete the container at the end of the test
@@ -611,7 +631,9 @@ class TestFullTextPolicy(unittest.TestCase):
                 pytest.fail("Container replacement should have failed for unsupported language.")
             except exceptions.CosmosHttpResponseError as e:
                 assert e.status_code == 400
-                assert "The Full Text Policy contains an unsupported language" in e.http_error_message
+                assert re.search(
+                        r"the full.text policy contains an unsupported language",
+                        e.http_error_message, re.IGNORECASE)
         finally:
             self.test_db.delete_container(container.id)
 

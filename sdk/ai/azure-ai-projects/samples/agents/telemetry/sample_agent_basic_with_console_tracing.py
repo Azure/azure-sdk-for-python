@@ -13,7 +13,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b4" python-dotenv opentelemetry-sdk azure-core-tracing-opentelemetry
+    pip install "azure-ai-projects>=2.0.0" python-dotenv opentelemetry-sdk azure-core-tracing-opentelemetry
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -46,7 +46,6 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition
 from openai.types.responses.response_input_text import ResponseInputText
 from openai.types.responses.response_output_text import ResponseOutputText
-
 
 load_dotenv()
 

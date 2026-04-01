@@ -6,12 +6,12 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to create an AI agent with Microsoft Fabric capabilities
-    using the MicrosoftFabricPreviewTool and synchronous Azure AI Projects client. The agent can query
-    Fabric data sources and provide responses based on data analysis.
+    This sample demonstrates how to create an AI agent with Azure Function capabilities
+    using the AzureFunctionTool and synchronous Azure AI Projects client. The agent can call
+    an Azure Function via Storage Queue input/output bindings.
 
 USAGE:
-    python sample_agent_fabric.py
+    python sample_agent_azure_function.py
 
     Before running the sample:
 

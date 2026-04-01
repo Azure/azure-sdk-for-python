@@ -22,9 +22,6 @@ from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool, Func
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestAgentFileSearchAndFunction(TestBase):
     """Tests for agents using File Search + Function Tool combination."""
 

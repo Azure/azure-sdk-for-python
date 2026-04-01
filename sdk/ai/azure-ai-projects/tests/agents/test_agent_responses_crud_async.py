@@ -17,9 +17,6 @@ from azure.ai.projects.models import (
 import pytest
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestAgentResponsesCrudAsync(TestBase):
 
     @servicePreparer()
@@ -179,7 +176,7 @@ class TestAgentResponsesCrudAsync(TestBase):
                 extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
             print(f"Response id: {response.id}, output text: {response.output_text}")
-            assert response.output_text == '{"name":"Science Fair","date":"2025-11-07","participants":["Alice","Bob"]}'
+            assert response.output_text == '{"name":"Science fair","date":"2025-11-07","participants":["Alice","Bob"]}'
 
             await openai_client.conversations.delete(conversation_id=conversation.id)
             print("Conversation deleted")

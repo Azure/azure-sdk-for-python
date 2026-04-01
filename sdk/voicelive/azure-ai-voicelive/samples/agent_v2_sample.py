@@ -78,12 +78,14 @@ except ImportError:
     print("Note: python-dotenv not installed. Using existing environment variables.")
 
 # Azure VoiceLive SDK imports
+from azure.ai.voicelive._types import InterimResponseConfig
 from azure.ai.voicelive.aio import VoiceLiveConnection, connect, AgentSessionConfig
 from azure.ai.voicelive.models import (
     AudioEchoCancellation,
     AudioNoiseReduction,
     AzureStandardVoice,
     InputAudioFormat,
+    # LlmInterimResponseConfig,
     Modality,
     OutputAudioFormat,
     RequestSession,
@@ -175,14 +177,19 @@ class AudioProcessor:
         ):
             """Audio capture callback - runs in PyAudio thread."""
             audio_base64 = base64.b64encode(in_data).decode("utf-8")
-            asyncio.run_coroutine_threadsafe(self.connection.input_audio_buffer.append(audio=audio_base64), self.loop)
+            future = asyncio.run_coroutine_threadsafe(
+                self.connection.input_audio_buffer.append(audio=audio_base64), self.loop
+            )
+            future.add_done_callback(
+                lambda f: logger.error("Error in audio buffer append: %s", f.exception()) if f.exception() else None
+            )
             return (None, pyaudio.paContinue)
 
         if self.input_stream:
             return
 
         # Store the current event loop for use in callbacks
-        self.loop = asyncio.get_event_loop()
+        self.loop = asyncio.get_running_loop()
 
         try:
             self.input_stream = self.audio.open(
@@ -382,6 +389,11 @@ class AgentV2VoiceAssistant:
             silence_duration_ms=500,
         )
 
+        # Set up interim response configuration
+        interim_response_config: InterimResponseConfig | None = None
+        # Uncomment to get interim responses based on latency thresholds
+        # interim_response_config = LlmInterimResponseConfig(latency_threshold_ms=300)
+
         # Create session configuration
         session_config = RequestSession(
             modalities=[Modality.TEXT, Modality.AUDIO],
@@ -391,6 +403,7 @@ class AgentV2VoiceAssistant:
             turn_detection=turn_detection_config,
             input_audio_echo_cancellation=AudioEchoCancellation(),
             input_audio_noise_reduction=AudioNoiseReduction(type="azure_deep_noise_suppression"),
+            interim_response=interim_response_config,
         )
 
         conn = self.connection

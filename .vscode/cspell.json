@@ -2194,6 +2194,10 @@
     {
       "filename": ".github/**/ml/**",
       "words": ["envml", "paginators"]
+    },
+    {
+      "filename": "sdk/agentserver/azure-ai-agentserver-github/**",
+      "words": ["RAPI", "BYOK", "byok", "NCUS", "ncusacr", "fstring", "ename", "valeriepham", "coreai", "Vnext", "PYTHONIOENCODING"]
     }
   ],
   "allowCompoundWords": true

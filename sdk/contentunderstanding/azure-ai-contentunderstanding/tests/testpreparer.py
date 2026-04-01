@@ -18,7 +18,7 @@ class ContentUnderstandingClientTestBase(AzureRecordedTestCase):
     def create_client(self, endpoint: str) -> ContentUnderstandingClient:
         # Normalize endpoint: remove trailing slashes to prevent double slashes in URLs
         endpoint = endpoint.rstrip("/")
-        
+
         # Try API key first (for Content Understanding service)
         # Check CONTENTUNDERSTANDING_KEY
         key = os.getenv("CONTENTUNDERSTANDING_KEY")

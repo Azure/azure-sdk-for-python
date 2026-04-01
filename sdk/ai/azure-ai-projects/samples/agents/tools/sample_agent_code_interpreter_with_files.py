@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
+    pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -28,7 +28,7 @@ import tempfile
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool, CodeInterpreterContainerAuto
+from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool, AutoCodeInterpreterToolParam
 
 load_dotenv()
 
@@ -48,7 +48,7 @@ with (
 
     # Upload the CSV file for the code interpreter
     file = openai_client.files.create(purpose="assistants", file=open(asset_file_path, "rb"))
-    tool = CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[file.id]))
+    tool = CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))
     # [END tool_declaration]
 
     print(f"File uploaded (id: {file.id})")

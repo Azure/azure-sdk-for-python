@@ -35,7 +35,6 @@ import json
 import datetime
 import logging
 import base64
-import signal
 import threading
 import queue
 from typing import Union, Optional, Dict, Any, Mapping, Callable, TYPE_CHECKING, cast
@@ -737,14 +736,6 @@ async def main():
         "Explain when you're using a function and include the results in your response naturally.",
     )
 
-    # Setup signal handlers for graceful shutdown
-    def signal_handler(sig, frame):
-        logger.info("Received shutdown signal")
-        raise KeyboardInterrupt()
-
-    signal.signal(signal.SIGINT, signal_handler)
-    signal.signal(signal.SIGTERM, signal_handler)
-
     try:
         await client.run()
     except KeyboardInterrupt:
@@ -813,4 +804,7 @@ if __name__ == "__main__":
     print("=" * 65)
 
     # Run the async main function
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\n👋 Voice Live function calling client shut down.")

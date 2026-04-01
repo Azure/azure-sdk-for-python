@@ -32,6 +32,28 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a key."""
 
 
+class DesiredEnablementState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The desired enablement state of a service."""
+
+    ENABLE = "Enable"
+    """Enable the service."""
+    DISABLE = "Disable"
+    """Disable the service."""
+
+
+class EnablementState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The enablement state of a service."""
+
+    ENABLED = "Enabled"
+    """Service is enabled."""
+    IN_PROGRESS = "InProgress"
+    """Service enablement is in progress."""
+    FAILED = "Failed"
+    """Service enablement has failed."""
+    DISABLED = "Disabled"
+    """Service is disabled."""
+
+
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system".
