@@ -36,7 +36,7 @@ def my_handler(
 ) -> AsyncIterable[dict[str, Any]]:
     stream = ResponseEventStream(
         response_id=context.response_id,
-        model=getattr(request, "model", None),
+        model=request.model,
     )
 
     yield stream.emit_created()
