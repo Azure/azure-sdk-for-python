@@ -7,6 +7,9 @@
 
 import os
 import json
+import sys
+import subprocess
+import tempfile
 import pytest
 from breaking_changes_checker.breaking_changes_tracker import BreakingChangesTracker
 from breaking_changes_checker.detect_breaking_changes import main
@@ -577,3 +580,35 @@ def test_removed_overload():
     expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
     assert changes == expected_msg
+
+
+def test_report_mode_without_setup_py():
+    """Verify detect_breaking_changes.py works with --source-report and --target-report
+    when --target points to a directory without setup.py or pyproject.toml.
+
+    This reproduces the scenario from _run_from_reports() in azpysdk/breaking.py,
+    which creates a temp directory as --target and relies on the pre-built reports.
+    """
+    tests_dir = os.path.dirname(__file__)
+    source_report = os.path.join(tests_dir, "test_stable.json")
+    target_report = os.path.join(tests_dir, "test_current.json")
+    detect_script = os.path.join(os.path.dirname(tests_dir), "detect_breaking_changes.py")
+
+    with tempfile.TemporaryDirectory() as tmp_root:
+        # Create a subdirectory matching azure-mgmt-* so it passes the opt-in check
+        tmp_pkg_dir = os.path.join(tmp_root, "azure-mgmt-fake")
+        os.makedirs(tmp_pkg_dir)
+
+        cmd = [
+            sys.executable,
+            detect_script,
+            "--target", tmp_pkg_dir,
+            "--source-report", source_report,
+            "--target-report", target_report,
+            "--changelog",
+        ]
+        # Should succeed without ValueError about missing setup.py/pyproject.toml
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        assert result.returncode == 0, (
+            f"detect_breaking_changes.py failed with:\n{result.stderr}"
+        )
