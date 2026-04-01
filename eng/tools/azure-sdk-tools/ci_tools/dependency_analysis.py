@@ -55,10 +55,16 @@ def record_dep(dependencies: Dict[str, Dict[str, Any]], req_name: str, spec: str
     dependencies[req_name][spec].append(lib_name)
 
 
-def get_lib_deps(base_dir: str) -> Tuple[Dict[str, Dict[str, Any]], Dict[str, Dict[str, Any]]]:
+def get_lib_deps(base_dir: str, glob_string: str) -> Tuple[Dict[str, Dict[str, Any]], Dict[str, Dict[str, Any]]]:
     packages = {}
     dependencies = {}
-    for lib_dir in discover_targeted_packages("azure*", base_dir, compatibility_filter=False):
+
+    if glob_string:
+        lib_dirs = discover_targeted_packages(glob_string, base_dir, compatibility_filter=False)
+    else:
+        lib_dirs = discover_targeted_packages("azure*", base_dir, compatibility_filter=False)
+
+    for lib_dir in lib_dirs:
         try:
             parsed = ParsedSetup.from_path(lib_dir)
             lib_name, version, requires = parsed.name, parsed.version, parsed.requires
@@ -185,6 +191,14 @@ def analyze_dependencies() -> None:
     version specs will be frozen to shared_requirements.txt.
     """
     )
+    parser.add_argument(
+        "glob_string",
+        nargs="?",
+        help=(
+            "A comma separated list of glob strings that will target the top level directories that contain packages."
+            'Examples: All = "azure-*", Single = "azure-keyvault-keys", Targeted Multiple = "azure-keyvault-keys,azure-mgmt-resource"'
+        ),
+    )
     parser.add_argument("--verbose", help="verbose output", action="store_true")
     parser.add_argument(
         "--freeze",
@@ -214,7 +228,7 @@ def analyze_dependencies() -> None:
     if args.wheeldir:
         all_packages, dependencies = get_wheel_deps(args.wheeldir)
     else:
-        all_packages, dependencies = get_lib_deps(base_dir)
+        all_packages, dependencies = get_lib_deps(base_dir, args.glob_string)
 
     packages = {k: v for k, v in all_packages.items() if not report_should_skip_lib(k)}
 

@@ -12,7 +12,7 @@ from urllib.parse import urlparse
 import yaml
 
 from .._artifacts._artifact_utilities import get_datastore_info, get_storage_client
-from .._restclient.v2023_10_01.operations import (  # pylint: disable = unused-import
+from .._restclient.arm_ml_service.operations import (  # pylint: disable = unused-import
     FeaturesetContainersOperations,
     FeaturesetVersionsOperations,
     FeaturestoreEntityContainersOperations,

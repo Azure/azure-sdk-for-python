@@ -427,6 +427,21 @@ class Settings:
     :type tracing_enabled: PrioritizedSetting
     :cvar tracing_implementation: The tracing implementation to use (AZURE_SDK_TRACING_IMPLEMENTATION)
     :type tracing_implementation: PrioritizedSetting
+    :cvar azure_cloud: The Azure cloud environment to use (AZURE_SDK_CLOUD_CONF)
+    :type azure_cloud: PrioritizedSetting
+
+    The following environment variables are used by the settings:
+
+    * ``AZURE_LOG_LEVEL`` - Logging level. Accepted values: ``CRITICAL``, ``ERROR``, ``WARNING``,
+      ``INFO``, ``DEBUG`` (case-insensitive). Default: ``INFO``.
+    * ``AZURE_TRACING_ENABLED`` - Enable/disable tracing. Accepted values: ``true``/``false``,
+      ``yes``/``no``, ``1``/``0``, ``on``/``off`` (case-insensitive). Default: auto-detected
+      based on whether a tracing implementation is configured.
+    * ``AZURE_SDK_TRACING_IMPLEMENTATION`` - Tracing implementation. Accepted values:
+      ``opentelemetry``. Default: None.
+    * ``AZURE_SDK_CLOUD_CONF`` - Azure cloud environment. Accepted values:
+      ``AZURE_PUBLIC_CLOUD``, ``AZURE_CHINA_CLOUD``, ``AZURE_US_GOVERNMENT``.
+      Default: ``AZURE_PUBLIC_CLOUD``.
 
     :Example:
 
@@ -527,7 +542,7 @@ class Settings:
 
     azure_cloud: PrioritizedSetting[Union[str, AzureClouds], AzureClouds] = PrioritizedSetting(
         "azure_cloud",
-        env_var="AZURE_CLOUD",
+        env_var="AZURE_SDK_CLOUD_CONF",
         convert=convert_azure_cloud,
         default=AzureClouds.AZURE_PUBLIC_CLOUD,
     )

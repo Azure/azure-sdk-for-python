@@ -35,6 +35,7 @@ def main():
         resource_name="clustername1",
         managed_namespace_name="namespace1",
         parameters={
+            "location": "eastus2",
             "properties": {
                 "adoptionPolicy": "IfIdentical",
                 "annotations": {"annatationKey": "annatationValue"},
@@ -54,6 +55,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-01-01/ManagedNamespacesCreate_Update.json
+# x-ms-original-file: 2026-01-02-preview/ManagedNamespacesCreate_Update.json
 if __name__ == "__main__":
     main()

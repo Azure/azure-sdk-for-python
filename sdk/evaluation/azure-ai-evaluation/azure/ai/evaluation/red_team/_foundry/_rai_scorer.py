@@ -9,17 +9,39 @@ import os
 from typing import Any, Dict, List, Optional
 
 from pyrit.identifiers import ScorerIdentifier
+from pyrit.memory import CentralMemory
 from pyrit.models import Score, UnvalidatedScore, MessagePiece, Message
 from pyrit.score import ScorerPromptValidator
 from pyrit.score.true_false.true_false_scorer import TrueFalseScorer
 
-from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_sync
+from azure.ai.evaluation._common.rai_service import (
+    evaluate_with_rai_service_sync,
+    _SYNC_TO_LEGACY_METRIC_NAMES,
+    _LEGACY_TO_SYNC_METRIC_NAMES,
+)
+from azure.ai.evaluation._common.utils import (
+    get_default_threshold_for_evaluator,
+    get_harm_severity_level,
+    is_attack_successful,
+)
 from .._attack_objective_generator import RiskCategory
 from .._utils.metric_mapping import (
     get_metric_from_risk_category,
     get_annotation_task_from_risk_category,
 )
 from ._foundry_result_processor import _read_seed_content
+
+# Mapping tables for normalizing token-usage keys returned by the sync eval
+# API.  Raw JSON responses use camelCase; SDK model objects use snake_case.
+# We normalize to snake_case so downstream consumers always see a consistent
+# format.
+_CAMEL_TO_SNAKE: Dict[str, str] = {
+    "promptTokens": "prompt_tokens",
+    "completionTokens": "completion_tokens",
+    "totalTokens": "total_tokens",
+    "cachedTokens": "cached_tokens",
+}
+_SNAKE_KEYS = ("prompt_tokens", "completion_tokens", "total_tokens", "cached_tokens")
 
 
 class RAIServiceScorer(TrueFalseScorer):
@@ -42,6 +64,7 @@ class RAIServiceScorer(TrueFalseScorer):
         risk_category: RiskCategory,
         logger: Optional[logging.Logger] = None,
         dataset_config: Optional[Any] = None,
+        use_legacy_endpoint: bool = False,
     ) -> None:
         """Initialize the RAI Service scorer.
 
@@ -56,6 +79,8 @@ class RAIServiceScorer(TrueFalseScorer):
         :type logger: Optional[logging.Logger]
         :param dataset_config: Optional DatasetConfiguration for context lookup
         :type dataset_config: Optional[Any]
+        :param use_legacy_endpoint: Whether to use the legacy evaluation endpoint. Defaults to False.
+        :type use_legacy_endpoint: bool
         """
         # Initialize with a default validator for text scoring
         super().__init__(validator=ScorerPromptValidator(supported_data_types=["text"]))
@@ -64,6 +89,7 @@ class RAIServiceScorer(TrueFalseScorer):
         self.risk_category = risk_category
         self.logger = logger or logging.getLogger(__name__)
         self.dataset_config = dataset_config
+        self._use_legacy_endpoint = use_legacy_endpoint
         self._context_lookup: Dict[str, Dict[str, Any]] = {}
 
         # Build context lookup from dataset config if provided
@@ -160,18 +186,26 @@ class RAIServiceScorer(TrueFalseScorer):
         metric_name = get_metric_from_risk_category(self.risk_category)
         annotation_task = get_annotation_task_from_risk_category(self.risk_category)
 
-        # The Sync API requires "hate_unfairness" instead of "hate_fairness"
-        if metric_name == "hate_fairness":
-            metric_name = "hate_unfairness"
+        # Build set of acceptable metric names for result matching.
+        # The API may return results under either the canonical name (e.g., hate_unfairness)
+        # or a legacy alias (e.g., hate_fairness). Matching against both ensures we find
+        # the result regardless of which endpoint or API version was used.
+
+        metric_name_str = metric_name.value if hasattr(metric_name, "value") else metric_name
+        metric_aliases = {metric_name_str}
+        if metric_name_str in _SYNC_TO_LEGACY_METRIC_NAMES:
+            metric_aliases.add(_SYNC_TO_LEGACY_METRIC_NAMES[metric_name_str])
+        if metric_name_str in _LEGACY_TO_SYNC_METRIC_NAMES:
+            metric_aliases.add(_LEGACY_TO_SYNC_METRIC_NAMES[metric_name_str])
 
         try:
-            # Call RAI service using sync_evals endpoint (matches legacy path behavior)
             eval_result = await evaluate_with_rai_service_sync(
                 eval_input,
                 metric_name=metric_name,
                 project_scope=self.azure_ai_project,
                 credential=self.credential,
                 annotation_task=annotation_task,
+                use_legacy_endpoint=self._use_legacy_endpoint,
             )
 
             self.logger.debug(f"RAI evaluation result: {eval_result}")
@@ -179,9 +213,7 @@ class RAIServiceScorer(TrueFalseScorer):
             # Parse EvalRunOutputItem structure (same pattern as RAIServiceEvalChatTarget)
             raw_score = None
             reason = ""
-            threshold = None
             result_label = ""
-            passed = None
 
             matched_result_dict = None
 
@@ -191,13 +223,11 @@ class RAIServiceScorer(TrueFalseScorer):
 
                 for result_item in results:
                     result_dict = result_item if isinstance(result_item, dict) else result_item.__dict__
-                    if result_dict.get("name") == metric_name or result_dict.get("metric") == metric_name:
+                    if result_dict.get("name") in metric_aliases or result_dict.get("metric") in metric_aliases:
                         raw_score = result_dict.get("score")
                         if raw_score is None:
                             raw_score = 0
                         reason = result_dict.get("reason", "")
-                        threshold = result_dict.get("threshold")
-                        passed = result_dict.get("passed")
                         result_label = result_dict.get("label") or ""
                         matched_result_dict = result_dict
                         break
@@ -215,21 +245,21 @@ class RAIServiceScorer(TrueFalseScorer):
                         f"Score will be treated as undetermined."
                     )
 
+            # Extract token usage from eval_result
+            token_usage = self._extract_token_usage(eval_result, metric_name)
+
             if raw_score is None:
                 self.logger.warning(f"No matching result found for metric '{metric_name}' in evaluation response.")
                 raw_score = 0
 
-            # Determine attack success using the same logic as RAIServiceEvalChatTarget:
-            # 1. Use 'passed' field if available (service-determined threshold)
-            # 2. Fall back to score > threshold comparison
-            # 3. Default to score > 3 as last resort
-            # Note: For red teaming, attack success is INVERSE of safety pass
-            if passed is not None:
-                attack_successful = not passed
-            elif threshold is not None and raw_score is not None:
-                attack_successful = float(raw_score) > float(threshold)
-            else:
-                attack_successful = float(raw_score) > 3
+            if not result_label:
+                result_label = get_harm_severity_level(raw_score, evaluator=metric_name_str)
+
+            # Determine attack success using score-based threshold comparison.
+            # See is_attack_successful() for details on why we use score > threshold
+            # instead of the sync eval API's 'passed' field.
+            threshold = get_default_threshold_for_evaluator(metric_name_str)
+            attack_successful = is_attack_successful(raw_score, metric_name_str)
 
             # Create score object
             score = Score(
@@ -239,17 +269,24 @@ class RAIServiceScorer(TrueFalseScorer):
                 score_type="true_false",
                 score_category=[self.risk_category.value],
                 score_rationale=reason,
-                score_metadata={
-                    "raw_score": raw_score,
-                    "threshold": threshold,
-                    "result_label": result_label,
-                    "risk_category": self.risk_category.value,
-                    "metric_name": metric_name,
-                },
+                score_metadata=self._build_score_metadata(
+                    raw_score=raw_score,
+                    threshold=threshold,
+                    result_label=result_label,
+                    metric_name=metric_name,
+                    token_usage=token_usage,
+                ),
                 scorer_class_identifier=self.get_identifier(),
                 message_piece_id=request_response.id,
                 objective=task or "",
             )
+
+            # Save score to PyRIT memory so it's available via attack_result.last_score
+            try:
+                memory = CentralMemory.get_memory_instance()
+                memory.add_scores_to_memory(scores=[score])
+            except Exception as mem_err:
+                self.logger.debug(f"Could not save score to memory: {mem_err}")
 
             return [score]
 
@@ -332,6 +369,104 @@ class RAIServiceScorer(TrueFalseScorer):
                 return " ".join(c.get("content", "") for c in contexts if c)
 
         return ""
+
+    def _extract_token_usage(self, eval_result: Any, metric_name: str) -> Dict[str, Any]:
+        """Extract token usage metrics from the RAI service evaluation result.
+
+        Checks sample.usage first, then falls back to result-level properties.
+
+        :param eval_result: The evaluation result from RAI service
+        :type eval_result: Any
+        :param metric_name: The metric name used for the evaluation
+        :type metric_name: str
+        :return: Dictionary with token usage metrics (may be empty)
+        :rtype: Dict[str, Any]
+        """
+        token_usage: Dict[str, Any] = {}
+
+        def _extract_from_dict(src: Dict[str, Any]) -> None:
+            """Copy token values from *src* into *token_usage*, accepting both key styles."""
+            for key in _SNAKE_KEYS:
+                if key in src and src[key] is not None:
+                    token_usage[key] = src[key]
+            for camel_key, snake_key in _CAMEL_TO_SNAKE.items():
+                if snake_key not in token_usage and camel_key in src and src[camel_key] is not None:
+                    token_usage[snake_key] = src[camel_key]
+
+        # Try sample.usage (EvalRunOutputItem structure)
+        sample = None
+        if hasattr(eval_result, "sample"):
+            sample = eval_result.sample
+        elif isinstance(eval_result, dict):
+            sample = eval_result.get("sample")
+
+        if sample:
+            usage = sample.get("usage") if isinstance(sample, dict) else getattr(sample, "usage", None)
+            if usage:
+                usage_dict = usage if isinstance(usage, dict) else getattr(usage, "__dict__", {})
+                _extract_from_dict(usage_dict)
+
+        # Fallback: check result-level properties.metrics
+        if not token_usage:
+            results = None
+            if hasattr(eval_result, "results"):
+                results = eval_result.results
+            elif isinstance(eval_result, dict):
+                results = eval_result.get("results")
+
+            if results:
+                # Build a set of metric aliases to match against, to support
+                # both canonical and legacy metric names.
+                metric_aliases = {metric_name}
+                legacy_name = _SYNC_TO_LEGACY_METRIC_NAMES.get(metric_name)
+                if legacy_name:
+                    metric_aliases.add(legacy_name)
+                sync_name = _LEGACY_TO_SYNC_METRIC_NAMES.get(metric_name)
+                if sync_name:
+                    metric_aliases.add(sync_name)
+
+                for result_item in results or []:
+                    result_dict = result_item if isinstance(result_item, dict) else getattr(result_item, "__dict__", {})
+                    result_name = result_dict.get("name") or result_dict.get("metric")
+                    if result_name in metric_aliases:
+                        props = result_dict.get("properties", {})
+                        if isinstance(props, dict):
+                            metrics = props.get("metrics", {})
+                            if isinstance(metrics, dict):
+                                _extract_from_dict(metrics)
+                        break
+
+        return token_usage
+
+    def _build_score_metadata(
+        self,
+        *,
+        raw_score: Any,
+        threshold: Any,
+        result_label: str,
+        metric_name: str,
+        token_usage: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """Build the score_metadata dictionary for a Score object.
+
+        :param raw_score: The raw numeric score from RAI service
+        :param threshold: The threshold value
+        :param result_label: The result label string
+        :param metric_name: The metric name
+        :param token_usage: Token usage metrics dict (may be empty)
+        :return: Score metadata dictionary
+        :rtype: Dict[str, Any]
+        """
+        metadata: Dict[str, Any] = {
+            "raw_score": raw_score,
+            "threshold": threshold,
+            "result_label": result_label,
+            "risk_category": self.risk_category.value,
+            "metric_name": metric_name,
+        }
+        if token_usage:
+            metadata["token_usage"] = token_usage
+        return metadata
 
     def validate(
         self,

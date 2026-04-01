@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2025-10-01",
+  "apiVersions": {
+    "Microsoft.Network": "2025-10-01"
+  },
+  "commit": "5809ccc0da6207fc5544876346664e5e4b8035b4",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/frontdoor/resource-manager/Microsoft.Network/FrontDoor",
+  "emitterVersion": "0.61.0"
+}
