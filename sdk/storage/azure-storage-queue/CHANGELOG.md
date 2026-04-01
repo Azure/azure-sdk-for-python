@@ -1,5 +1,9 @@
 # Release History
 
+## 12.28.0b1 (Unreleased)
+
+### Features Added
+
 ## 12.17.0b1 (2026-04-01)
 
 ### Features Added
