@@ -190,6 +190,11 @@ class UserAgentPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     :keyword str sdk_moniker: If specified, the user agent string will be
         azsdk-python-[sdk_moniker] Python/[python_version] ([platform_version])
 
+    Environment variables:
+
+    * ``AZURE_HTTP_USER_AGENT`` - If set and ``user_agent_use_env`` is True (the default),
+      the value is appended to the User-Agent header string sent with each request.
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/test_example_sansio.py
@@ -389,6 +394,11 @@ class HttpLoggingPolicy(
 
     :param logger: The logger to use for logging. Default to azure.core.pipeline.policies.http_logging_policy.
     :type logger: logging.Logger
+
+    Environment variables:
+
+    * ``AZURE_SDK_LOGGING_MULTIRECORD`` - If set to any truthy value, HTTP request and response
+      details are logged as separate log records instead of a single combined record.
     """
 
     DEFAULT_HEADERS_ALLOWLIST: Set[str] = set(
