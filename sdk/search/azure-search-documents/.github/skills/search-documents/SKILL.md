@@ -1,6 +1,6 @@
 ---
 name: search-documents-python
-description: 'Post-regeneration customization guide for the azure-search-documents Python SDK. After running tsp-client update, consult this skill to re-apply all search-specific customizations and produce a production-ready SDK. USE WHEN: regenerating the search SDK from TypeSpec, running tsp-client update, fixing broken _patch.py imports after regeneration, adding a new operation or model to the search SDK, verifying the SDK still works after spec changes, or any task that mentions "regenerate", "tsp-client", "typespec", or "codegen" in the context of this package.'
+description: 'Post-regeneration customization guide for azure-search-documents. Verifies _patch.py imports, ApiVersion, enum aliases, mypy/pylint, and changelog after codegen. USE WHEN: running tsp-client update, regenerating from TypeSpec, fixing _patch.py breaks, bumping ApiVersion, adding operation wrappers, or updating search SDK documentation.'
 ---
 
 # azure-search-documents — Post-Regeneration Customization Guide
