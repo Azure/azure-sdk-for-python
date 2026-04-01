@@ -2,7 +2,56 @@
 
 ## 1.2.0b1 (2026-04-01)
 
-skip changelog generation
+### Features Added
+
+  - Model `CreateManagementGroupRequest` added property `properties`
+  - Model `HierarchySettingsInfo` added property `properties`
+  - Enum `ManagementGroupChildType` added member `SUBSCRIPTIONS`
+  - Added model `CreateManagementGroupProperties`
+  - Added model `CreateOrUpdateSettingsProperties`
+
+### Breaking Changes
+
+  - Deleted or renamed model `ManagementGroupsAPI`
+  - Model `CreateManagementGroupRequest` deleted or renamed its instance variable `tenant_id`
+  - Model `CreateManagementGroupRequest` deleted or renamed its instance variable `display_name`
+  - Model `CreateManagementGroupRequest` deleted or renamed its instance variable `details`
+  - Model `CreateManagementGroupRequest` deleted or renamed its instance variable `children`
+  - Model `CreateOrUpdateSettingsRequest` deleted or renamed its instance variable `require_authorization_for_group_creation`
+  - Model `CreateOrUpdateSettingsRequest` deleted or renamed its instance variable `default_management_group`
+  - Model `HierarchySettingsInfo` deleted or renamed its instance variable `tenant_id`
+  - Model `HierarchySettingsInfo` deleted or renamed its instance variable `require_authorization_for_group_creation`
+  - Model `HierarchySettingsInfo` deleted or renamed its instance variable `default_management_group`
+  - Deleted or renamed model `AzureAsyncOperationResults`
+  - Deleted or renamed model `ListSubscriptionUnderManagementGroup`
+  - Method `EntitiesOperations.list` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `EntitiesOperations.list` changed its parameter `select` from `positional_or_keyword` to `keyword_only`
+  - Method `EntitiesOperations.list` changed its parameter `search` from `positional_or_keyword` to `keyword_only`
+  - Method `EntitiesOperations.list` changed its parameter `view` from `positional_or_keyword` to `keyword_only`
+  - Method `EntitiesOperations.list` changed its parameter `group_name` from `positional_or_keyword` to `keyword_only`
+  - Method `EntitiesOperations.list` parameter `cache_control` changed default value from `str` to `none`
+  - Method `EntitiesOperations.list` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupSubscriptionsOperations.create` parameter `cache_control` changed default value from `str` to `none`
+  - Method `ManagementGroupSubscriptionsOperations.create` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupSubscriptionsOperations.delete` parameter `cache_control` changed default value from `str` to `none`
+  - Method `ManagementGroupSubscriptionsOperations.delete` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupSubscriptionsOperations.get_subscription` parameter `cache_control` changed default value from `str` to `none`
+  - Method `ManagementGroupSubscriptionsOperations.get_subscription` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupSubscriptionsOperations.get_subscriptions_under_management_group` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.begin_create_or_update` parameter `cache_control` changed default value from `str` to `none`
+  - Method `ManagementGroupsOperations.begin_create_or_update` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.begin_delete` parameter `cache_control` changed default value from `str` to `none`
+  - Method `ManagementGroupsOperations.begin_delete` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.get` changed its parameter `recurse` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.get` parameter `cache_control` changed default value from `str` to `none`
+  - Method `ManagementGroupsOperations.get` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.get_descendants` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.list` parameter `cache_control` changed default value from `str` to `none`
+  - Method `ManagementGroupsOperations.list` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.list` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.update` parameter `cache_control` changed default value from `str` to `none`
+  - Method `ManagementGroupsOperations.update` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
 
 ## 1.2.0 (2026-04-01)
 
