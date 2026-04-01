@@ -131,4 +131,13 @@ model GraderScoreModel {
 Yet sample code `sample_evaluations_graders.py` sets this additional property: `"image_tag": "2025-05-08"`. Where did that come from?
 
 
+## EvalGraderAzureAIEvaluator
 
+Why this nested definition? Just define EvalGraderAzureAIEvaluator once.
+
+```
+@summary("AzureAIEvaluatorGrader")
+model EvalGraderAzureAIEvaluator {
+  ...GraderAzureAIEvaluator;
+}
+```
