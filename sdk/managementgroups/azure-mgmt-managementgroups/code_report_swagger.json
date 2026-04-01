@@ -134,20 +134,20 @@
           "client_side_validation": {
             "attr_type": false
           },
-          "entities": {
-            "attr_type": "EntitiesOperations"
-          },
           "management_groups": {
             "attr_type": "ManagementGroupsOperations"
-          },
-          "hierarchy_settings": {
-            "attr_type": "HierarchySettingsOperations"
           },
           "management_group_subscriptions": {
             "attr_type": "ManagementGroupSubscriptionsOperations"
           },
+          "hierarchy_settings": {
+            "attr_type": "HierarchySettingsOperations"
+          },
           "operations": {
             "attr_type": "Operations"
+          },
+          "entities": {
+            "attr_type": "EntitiesOperations"
           }
         }
       }
@@ -289,20 +289,20 @@
           "client_side_validation": {
             "attr_type": false
           },
-          "entities": {
-            "attr_type": "EntitiesOperations"
-          },
           "management_groups": {
             "attr_type": "ManagementGroupsOperations"
-          },
-          "hierarchy_settings": {
-            "attr_type": "HierarchySettingsOperations"
           },
           "management_group_subscriptions": {
             "attr_type": "ManagementGroupSubscriptionsOperations"
           },
+          "hierarchy_settings": {
+            "attr_type": "HierarchySettingsOperations"
+          },
           "operations": {
             "attr_type": "Operations"
+          },
+          "entities": {
+            "attr_type": "EntitiesOperations"
           }
         }
       }
@@ -1086,60 +1086,6 @@
   },
   "azure.mgmt.managementgroups.models": {
     "class_nodes": {
-      "ActionType": {
-        "type": "Enum",
-        "methods": {},
-        "properties": {
-          "INTERNAL": "INTERNAL",
-          "capitalize": "capitalize",
-          "casefold": "casefold",
-          "center": "center",
-          "count": "count",
-          "encode": "encode",
-          "endswith": "endswith",
-          "expandtabs": "expandtabs",
-          "find": "find",
-          "format": "format",
-          "format_map": "format_map",
-          "index": "index",
-          "isalnum": "isalnum",
-          "isalpha": "isalpha",
-          "isascii": "isascii",
-          "isdecimal": "isdecimal",
-          "isdigit": "isdigit",
-          "isidentifier": "isidentifier",
-          "islower": "islower",
-          "isnumeric": "isnumeric",
-          "isprintable": "isprintable",
-          "isspace": "isspace",
-          "istitle": "istitle",
-          "isupper": "isupper",
-          "join": "join",
-          "ljust": "ljust",
-          "lower": "lower",
-          "lstrip": "lstrip",
-          "maketrans": "maketrans",
-          "partition": "partition",
-          "removeprefix": "removeprefix",
-          "removesuffix": "removesuffix",
-          "replace": "replace",
-          "rfind": "rfind",
-          "rindex": "rindex",
-          "rjust": "rjust",
-          "rpartition": "rpartition",
-          "rsplit": "rsplit",
-          "rstrip": "rstrip",
-          "split": "split",
-          "splitlines": "splitlines",
-          "startswith": "startswith",
-          "strip": "strip",
-          "swapcase": "swapcase",
-          "title": "title",
-          "translate": "translate",
-          "upper": "upper",
-          "zfill": "zfill"
-        }
-      },
       "AzureAsyncOperationResults": {
         "type": null,
         "methods": {
@@ -2128,63 +2074,6 @@
           }
         }
       },
-      "CreatedByType": {
-        "type": "Enum",
-        "methods": {},
-        "properties": {
-          "APPLICATION": "APPLICATION",
-          "KEY": "KEY",
-          "MANAGED_IDENTITY": "MANAGED_IDENTITY",
-          "USER": "USER",
-          "capitalize": "capitalize",
-          "casefold": "casefold",
-          "center": "center",
-          "count": "count",
-          "encode": "encode",
-          "endswith": "endswith",
-          "expandtabs": "expandtabs",
-          "find": "find",
-          "format": "format",
-          "format_map": "format_map",
-          "index": "index",
-          "isalnum": "isalnum",
-          "isalpha": "isalpha",
-          "isascii": "isascii",
-          "isdecimal": "isdecimal",
-          "isdigit": "isdigit",
-          "isidentifier": "isidentifier",
-          "islower": "islower",
-          "isnumeric": "isnumeric",
-          "isprintable": "isprintable",
-          "isspace": "isspace",
-          "istitle": "istitle",
-          "isupper": "isupper",
-          "join": "join",
-          "ljust": "ljust",
-          "lower": "lower",
-          "lstrip": "lstrip",
-          "maketrans": "maketrans",
-          "partition": "partition",
-          "removeprefix": "removeprefix",
-          "removesuffix": "removesuffix",
-          "replace": "replace",
-          "rfind": "rfind",
-          "rindex": "rindex",
-          "rjust": "rjust",
-          "rpartition": "rpartition",
-          "rsplit": "rsplit",
-          "rstrip": "rstrip",
-          "split": "split",
-          "splitlines": "splitlines",
-          "startswith": "startswith",
-          "strip": "strip",
-          "swapcase": "swapcase",
-          "title": "title",
-          "translate": "translate",
-          "upper": "upper",
-          "zfill": "zfill"
-        }
-      },
       "DescendantInfo": {
         "type": null,
         "methods": {
@@ -2324,10 +2213,6 @@
                 "param_type": "positional_or_keyword"
               },
               "value": {
-                "default": null,
-                "param_type": "keyword_only"
-              },
-              "next_link": {
                 "default": "none",
                 "param_type": "keyword_only"
               },
@@ -2427,7 +2312,7 @@
             "attr_type": "value"
           },
           "next_link": {
-            "attr_type": "next_link"
+            "attr_type": null
           },
           "additional_properties": {
             "attr_type": null
@@ -2541,6 +2426,142 @@
         "properties": {
           "id": {
             "attr_type": "id"
+          },
+          "additional_properties": {
+            "attr_type": null
+          }
+        }
+      },
+      "EntityHierarchyItem": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "display_name": {
+                "default": "none",
+                "param_type": "keyword_only"
+              },
+              "permissions": {
+                "default": "none",
+                "param_type": "keyword_only"
+              },
+              "children": {
+                "default": "none",
+                "param_type": "keyword_only"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          },
+          "as_dict": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "keep_readonly": {
+                "default": "bool",
+                "param_type": "positional_or_keyword"
+              },
+              "key_transformer": {
+                "default": "attribute_transformer",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          },
+          "deserialize": {
+            "parameters": {
+              "data": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "content_type": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          },
+          "enable_additional_properties_sending": {
+            "parameters": {},
+            "is_async": false,
+            "overloads": []
+          },
+          "from_dict": {
+            "parameters": {
+              "data": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key_extractors": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "content_type": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          },
+          "is_xml_model": {
+            "parameters": {},
+            "is_async": false,
+            "overloads": []
+          },
+          "serialize": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "keep_readonly": {
+                "default": "bool",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          }
+        },
+        "properties": {
+          "id": {
+            "attr_type": null
+          },
+          "type": {
+            "attr_type": null
+          },
+          "name": {
+            "attr_type": null
+          },
+          "display_name": {
+            "attr_type": "display_name"
+          },
+          "permissions": {
+            "attr_type": "permissions"
+          },
+          "children": {
+            "attr_type": "children"
           },
           "additional_properties": {
             "attr_type": null
@@ -2742,14 +2763,6 @@
                 "param_type": "positional_or_keyword"
               },
               "value": {
-                "default": null,
-                "param_type": "keyword_only"
-              },
-              "next_link": {
-                "default": "none",
-                "param_type": "keyword_only"
-              },
-              "count": {
                 "default": "none",
                 "param_type": "keyword_only"
               },
@@ -2848,11 +2861,11 @@
           "value": {
             "attr_type": "value"
           },
-          "next_link": {
-            "attr_type": "next_link"
-          },
           "count": {
-            "attr_type": "count"
+            "attr_type": null
+          },
+          "next_link": {
+            "attr_type": null
           },
           "additional_properties": {
             "attr_type": null
@@ -3087,7 +3100,7 @@
           "zfill": "zfill"
         }
       },
-      "ErrorAdditionalInfo": {
+      "ErrorDetails": {
         "type": null,
         "methods": {
           "__init__": {
@@ -3096,117 +3109,17 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "as_dict": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "keep_readonly": {
-                "default": "bool",
-                "param_type": "positional_or_keyword"
-              },
-              "key_transformer": {
-                "default": "attribute_transformer",
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "deserialize": {
-            "parameters": {
-              "data": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "content_type": {
+              "code": {
                 "default": "none",
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "enable_additional_properties_sending": {
-            "parameters": {},
-            "is_async": false,
-            "overloads": []
-          },
-          "from_dict": {
-            "parameters": {
-              "data": {
-                "default": null,
-                "param_type": "positional_or_keyword"
+                "param_type": "keyword_only"
               },
-              "key_extractors": {
+              "message": {
                 "default": "none",
-                "param_type": "positional_or_keyword"
+                "param_type": "keyword_only"
               },
-              "content_type": {
+              "details": {
                 "default": "none",
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "is_xml_model": {
-            "parameters": {},
-            "is_async": false,
-            "overloads": []
-          },
-          "serialize": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "keep_readonly": {
-                "default": "bool",
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          }
-        },
-        "properties": {
-          "type": {
-            "attr_type": null
-          },
-          "info": {
-            "attr_type": null
-          },
-          "additional_properties": {
-            "attr_type": null
-          }
-        }
-      },
-      "ErrorDetail": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "default": null,
@@ -3301,19 +3214,13 @@
         },
         "properties": {
           "code": {
-            "attr_type": null
+            "attr_type": "code"
           },
           "message": {
-            "attr_type": null
-          },
-          "target": {
-            "attr_type": null
+            "attr_type": "message"
           },
           "details": {
-            "attr_type": null
-          },
-          "additional_info": {
-            "attr_type": null
+            "attr_type": "details"
           },
           "additional_properties": {
             "attr_type": null
@@ -3546,6 +3453,15 @@
           }
         },
         "properties": {
+          "id": {
+            "attr_type": null
+          },
+          "type": {
+            "attr_type": null
+          },
+          "name": {
+            "attr_type": null
+          },
           "tenant_id": {
             "attr_type": "tenant_id"
           },
@@ -3554,18 +3470,6 @@
           },
           "default_management_group": {
             "attr_type": "default_management_group"
-          },
-          "id": {
-            "attr_type": null
-          },
-          "name": {
-            "attr_type": null
-          },
-          "type": {
-            "attr_type": null
-          },
-          "system_data": {
-            "attr_type": null
           },
           "additional_properties": {
             "attr_type": null
@@ -3834,10 +3738,6 @@
                 "param_type": "positional_or_keyword"
               },
               "value": {
-                "default": null,
-                "param_type": "keyword_only"
-              },
-              "next_link": {
                 "default": "none",
                 "param_type": "keyword_only"
               },
@@ -3937,7 +3837,7 @@
             "attr_type": "value"
           },
           "next_link": {
-            "attr_type": "next_link"
+            "attr_type": null
           },
           "additional_properties": {
             "attr_type": null
@@ -4061,6 +3961,15 @@
           }
         },
         "properties": {
+          "id": {
+            "attr_type": null
+          },
+          "type": {
+            "attr_type": null
+          },
+          "name": {
+            "attr_type": null
+          },
           "tenant_id": {
             "attr_type": "tenant_id"
           },
@@ -4072,18 +3981,6 @@
           },
           "children": {
             "attr_type": "children"
-          },
-          "id": {
-            "attr_type": null
-          },
-          "name": {
-            "attr_type": null
-          },
-          "type": {
-            "attr_type": null
-          },
-          "system_data": {
-            "attr_type": null
           },
           "additional_properties": {
             "attr_type": null
@@ -4969,24 +4866,15 @@
           "name": {
             "attr_type": null
           },
-          "is_data_action": {
-            "attr_type": null
-          },
           "display": {
             "attr_type": "display"
-          },
-          "origin": {
-            "attr_type": null
-          },
-          "action_type": {
-            "attr_type": null
           },
           "additional_properties": {
             "attr_type": null
           }
         }
       },
-      "OperationDisplay": {
+      "OperationDisplayProperties": {
         "type": null,
         "methods": {
           "__init__": {
@@ -5216,60 +5104,133 @@
           }
         }
       },
-      "Origin": {
-        "type": "Enum",
-        "methods": {},
+      "OperationResults": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "tenant_id": {
+                "default": "none",
+                "param_type": "keyword_only"
+              },
+              "display_name": {
+                "default": "none",
+                "param_type": "keyword_only"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          },
+          "as_dict": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "keep_readonly": {
+                "default": "bool",
+                "param_type": "positional_or_keyword"
+              },
+              "key_transformer": {
+                "default": "attribute_transformer",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          },
+          "deserialize": {
+            "parameters": {
+              "data": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "content_type": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          },
+          "enable_additional_properties_sending": {
+            "parameters": {},
+            "is_async": false,
+            "overloads": []
+          },
+          "from_dict": {
+            "parameters": {
+              "data": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key_extractors": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "content_type": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          },
+          "is_xml_model": {
+            "parameters": {},
+            "is_async": false,
+            "overloads": []
+          },
+          "serialize": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "keep_readonly": {
+                "default": "bool",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          }
+        },
         "properties": {
-          "SYSTEM": "SYSTEM",
-          "USER": "USER",
-          "USER_SYSTEM": "USER_SYSTEM",
-          "capitalize": "capitalize",
-          "casefold": "casefold",
-          "center": "center",
-          "count": "count",
-          "encode": "encode",
-          "endswith": "endswith",
-          "expandtabs": "expandtabs",
-          "find": "find",
-          "format": "format",
-          "format_map": "format_map",
-          "index": "index",
-          "isalnum": "isalnum",
-          "isalpha": "isalpha",
-          "isascii": "isascii",
-          "isdecimal": "isdecimal",
-          "isdigit": "isdigit",
-          "isidentifier": "isidentifier",
-          "islower": "islower",
-          "isnumeric": "isnumeric",
-          "isprintable": "isprintable",
-          "isspace": "isspace",
-          "istitle": "istitle",
-          "isupper": "isupper",
-          "join": "join",
-          "ljust": "ljust",
-          "lower": "lower",
-          "lstrip": "lstrip",
-          "maketrans": "maketrans",
-          "partition": "partition",
-          "removeprefix": "removeprefix",
-          "removesuffix": "removesuffix",
-          "replace": "replace",
-          "rfind": "rfind",
-          "rindex": "rindex",
-          "rjust": "rjust",
-          "rpartition": "rpartition",
-          "rsplit": "rsplit",
-          "rstrip": "rstrip",
-          "split": "split",
-          "splitlines": "splitlines",
-          "startswith": "startswith",
-          "strip": "strip",
-          "swapcase": "swapcase",
-          "title": "title",
-          "translate": "translate",
-          "upper": "upper",
-          "zfill": "zfill"
+          "id": {
+            "attr_type": null
+          },
+          "type": {
+            "attr_type": null
+          },
+          "name": {
+            "attr_type": null
+          },
+          "tenant_id": {
+            "attr_type": "tenant_id"
+          },
+          "display_name": {
+            "attr_type": "display_name"
+          },
+          "additional_properties": {
+            "attr_type": null
+          }
         }
       },
       "ParentGroupInfo": {
@@ -5576,124 +5537,6 @@
           "zfill": "zfill"
         }
       },
-      "ProxyResource": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "as_dict": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "keep_readonly": {
-                "default": "bool",
-                "param_type": "positional_or_keyword"
-              },
-              "key_transformer": {
-                "default": "attribute_transformer",
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "deserialize": {
-            "parameters": {
-              "data": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "content_type": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "enable_additional_properties_sending": {
-            "parameters": {},
-            "is_async": false,
-            "overloads": []
-          },
-          "from_dict": {
-            "parameters": {
-              "data": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "key_extractors": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              },
-              "content_type": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "is_xml_model": {
-            "parameters": {},
-            "is_async": false,
-            "overloads": []
-          },
-          "serialize": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "keep_readonly": {
-                "default": "bool",
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          }
-        },
-        "properties": {
-          "id": {
-            "attr_type": null
-          },
-          "name": {
-            "attr_type": null
-          },
-          "type": {
-            "attr_type": null
-          },
-          "system_data": {
-            "attr_type": null
-          },
-          "additional_properties": {
-            "attr_type": null
-          }
-        }
-      },
       "Reason": {
         "type": "Enum",
         "methods": {},
@@ -5747,124 +5590,6 @@
           "translate": "translate",
           "upper": "upper",
           "zfill": "zfill"
-        }
-      },
-      "Resource": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "as_dict": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "keep_readonly": {
-                "default": "bool",
-                "param_type": "positional_or_keyword"
-              },
-              "key_transformer": {
-                "default": "attribute_transformer",
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "deserialize": {
-            "parameters": {
-              "data": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "content_type": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "enable_additional_properties_sending": {
-            "parameters": {},
-            "is_async": false,
-            "overloads": []
-          },
-          "from_dict": {
-            "parameters": {
-              "data": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "key_extractors": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              },
-              "content_type": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "is_xml_model": {
-            "parameters": {},
-            "is_async": false,
-            "overloads": []
-          },
-          "serialize": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "keep_readonly": {
-                "default": "bool",
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          }
-        },
-        "properties": {
-          "id": {
-            "attr_type": null
-          },
-          "name": {
-            "attr_type": null
-          },
-          "type": {
-            "attr_type": null
-          },
-          "system_data": {
-            "attr_type": null
-          },
-          "additional_properties": {
-            "attr_type": null
-          }
         }
       },
       "Status": {
@@ -6043,6 +5768,15 @@
           }
         },
         "properties": {
+          "id": {
+            "attr_type": null
+          },
+          "type": {
+            "attr_type": null
+          },
+          "name": {
+            "attr_type": null
+          },
           "tenant": {
             "attr_type": "tenant"
           },
@@ -6054,166 +5788,6 @@
           },
           "state": {
             "attr_type": "state"
-          },
-          "id": {
-            "attr_type": null
-          },
-          "name": {
-            "attr_type": null
-          },
-          "type": {
-            "attr_type": null
-          },
-          "system_data": {
-            "attr_type": null
-          },
-          "additional_properties": {
-            "attr_type": null
-          }
-        }
-      },
-      "SystemData": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "created_by": {
-                "default": "none",
-                "param_type": "keyword_only"
-              },
-              "created_by_type": {
-                "default": "none",
-                "param_type": "keyword_only"
-              },
-              "created_at": {
-                "default": "none",
-                "param_type": "keyword_only"
-              },
-              "last_modified_by": {
-                "default": "none",
-                "param_type": "keyword_only"
-              },
-              "last_modified_by_type": {
-                "default": "none",
-                "param_type": "keyword_only"
-              },
-              "last_modified_at": {
-                "default": "none",
-                "param_type": "keyword_only"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "as_dict": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "keep_readonly": {
-                "default": "bool",
-                "param_type": "positional_or_keyword"
-              },
-              "key_transformer": {
-                "default": "attribute_transformer",
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "deserialize": {
-            "parameters": {
-              "data": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "content_type": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "enable_additional_properties_sending": {
-            "parameters": {},
-            "is_async": false,
-            "overloads": []
-          },
-          "from_dict": {
-            "parameters": {
-              "data": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "key_extractors": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              },
-              "content_type": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "is_xml_model": {
-            "parameters": {},
-            "is_async": false,
-            "overloads": []
-          },
-          "serialize": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "keep_readonly": {
-                "default": "bool",
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          }
-        },
-        "properties": {
-          "created_by": {
-            "attr_type": "created_by"
-          },
-          "created_by_type": {
-            "attr_type": "created_by_type"
-          },
-          "created_at": {
-            "attr_type": "created_at"
-          },
-          "last_modified_by": {
-            "attr_type": "last_modified_by"
-          },
-          "last_modified_by_type": {
-            "attr_type": "last_modified_by_type"
-          },
-          "last_modified_at": {
-            "attr_type": "last_modified_at"
           },
           "additional_properties": {
             "attr_type": null
