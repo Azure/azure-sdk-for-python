@@ -37,9 +37,9 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 from starlette.routing import Route
 
-from azure.ai.agentserver.core import AgentLogger, AgentHost, TracingHelper
+from azure.ai.agentserver.core import get_logger, AgentHost, TracingHelper
 
-logger = AgentLogger.get()
+logger = get_logger()
 
 server = AgentHost()
 

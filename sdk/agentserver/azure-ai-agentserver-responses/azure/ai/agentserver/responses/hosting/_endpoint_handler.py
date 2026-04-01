@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING, Any
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
-from azure.ai.agentserver.core import AgentLogger
+from azure.ai.agentserver.core import get_logger
 from azure.ai.agentserver.responses.models._generated.sdk.models.models._models import CreateResponse
 
 from .._response_context import ResponseContext
@@ -61,7 +61,7 @@ from ..streaming._helpers import EVENT_TYPE
 if TYPE_CHECKING:
     from azure.ai.agentserver.core import TracingHelper
 
-logger = AgentLogger.get()
+logger = get_logger()
 
 
 class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes

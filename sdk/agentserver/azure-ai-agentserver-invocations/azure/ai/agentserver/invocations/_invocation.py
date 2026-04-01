@@ -19,9 +19,9 @@ from starlette.responses import JSONResponse, Response, StreamingResponse
 from starlette.routing import Route
 
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
-    AgentLogger,
+    get_logger,
     Constants,
-    ErrorResponse,
+    create_error_response,
 )
 
 if TYPE_CHECKING:
@@ -29,7 +29,7 @@ if TYPE_CHECKING:
 
 from ._constants import InvocationConstants
 
-logger = AgentLogger.get()
+logger = get_logger()
 
 # Maximum length and allowed characters for user-provided IDs (defense in depth).
 _MAX_ID_LENGTH = 256
@@ -225,12 +225,12 @@ class InvocationHandler:
     async def _dispatch_get_invocation(self, request: Request) -> Response:
         if self._get_invocation_fn is not None:
             return await self._get_invocation_fn(request)
-        return ErrorResponse.create("not_found", "get_invocation not implemented", status_code=404)
+        return create_error_response("not_found", "get_invocation not implemented", status_code=404)
 
     async def _dispatch_cancel_invocation(self, request: Request) -> Response:
         if self._cancel_invocation_fn is not None:
             return await self._cancel_invocation_fn(request)
-        return ErrorResponse.create("not_found", "cancel_invocation not implemented", status_code=404)
+        return create_error_response("not_found", "cancel_invocation not implemented", status_code=404)
 
     def get_openapi_spec(self) -> Optional[dict[str, Any]]:
         """Return the stored OpenAPI spec, or None."""
@@ -307,7 +307,7 @@ class InvocationHandler:
     async def _get_openapi_spec_endpoint(self, request: Request) -> Response:  # pylint: disable=unused-argument
         spec = self.get_openapi_spec()
         if spec is None:
-            return ErrorResponse.create("not_found", "No OpenAPI spec registered", status_code=404)
+            return create_error_response("not_found", "No OpenAPI spec registered", status_code=404)
         return JSONResponse(spec)
 
     async def _create_invocation_endpoint(self, request: Request) -> Response:
@@ -360,7 +360,7 @@ class InvocationHandler:
                 if self._tracing is not None:
                     self._tracing.end_span(otel_span, exc=exc)
                 logger.error("Invocation %s failed: %s", invocation_id, exc)
-                return ErrorResponse.create(
+                return create_error_response(
                     "not_implemented",
                     str(exc),
                     status_code=501,
@@ -377,7 +377,7 @@ class InvocationHandler:
                 if self._tracing is not None:
                     self._tracing.end_span(otel_span, exc=exc)
                 logger.error("Error processing invocation %s: %s", invocation_id, exc, exc_info=True)
-                return ErrorResponse.create(
+                return create_error_response(
                     "internal_error",
                     "Internal server error",
                     status_code=500,
@@ -440,7 +440,7 @@ class InvocationHandler:
                 if self._tracing is not None:
                     self._tracing.record_error(_otel_span, exc)
                 logger.error("Error in %s %s: %s", span_operation, invocation_id, exc, exc_info=True)
-                return ErrorResponse.create(
+                return create_error_response(
                     "internal_error",
                     "Internal server error",
                     status_code=500,

@@ -28,7 +28,7 @@ from contextlib import contextmanager
 from typing import TYPE_CHECKING, Any, Iterator, Optional, Union
 
 from . import _config
-from ._logger import AgentLogger
+from ._logger import get_logger
 
 #: Starlette's ``Content`` type — the element type for streaming bodies.
 _Content = Union[str, bytes, memoryview]
@@ -60,7 +60,7 @@ _SERVICE_NAME_VALUE = "azure.ai.agentserver"
 _GEN_AI_SYSTEM_VALUE = "azure.ai.agentserver"
 _GEN_AI_PROVIDER_NAME_VALUE = "AzureAI Hosted Agents"
 
-logger = AgentLogger.get()
+logger = get_logger()
 
 _HAS_OTEL = False
 _HAS_BAGGAGE = False
@@ -704,6 +704,14 @@ def _ensure_trace_provider(resource: Any) -> Any:
     return provider
 
 
+# Sentinel flags to prevent adding duplicate exporters across multiple
+# TracingHelper instantiations within the same process.
+_az_trace_export_configured = False
+_az_log_export_configured = False
+_otlp_trace_export_configured = False
+_otlp_log_export_configured = False
+
+
 def _setup_trace_export(provider: Any, connection_string: str) -> None:
     """Add an Azure Monitor span processor to the given *provider*.
 
@@ -712,6 +720,9 @@ def _setup_trace_export(provider: Any, connection_string: str) -> None:
     :param connection_string: Application Insights connection string.
     :type connection_string: str
     """
+    global _az_trace_export_configured  # pylint: disable=global-statement
+    if _az_trace_export_configured:
+        return
     if provider is None:
         return
     try:
@@ -730,6 +741,7 @@ def _setup_trace_export(provider: Any, connection_string: str) -> None:
 
     exporter = AzureMonitorTraceExporter(connection_string=connection_string)
     provider.add_span_processor(BatchSpanProcessor(exporter))
+    _az_trace_export_configured = True
     logger.info("Application Insights trace exporter configured.")
 
 
@@ -741,6 +753,9 @@ def _setup_log_export(resource: Any, connection_string: str) -> None:
     :param connection_string: Application Insights connection string.
     :type connection_string: str
     """
+    global _az_log_export_configured  # pylint: disable=global-statement
+    if _az_log_export_configured:
+        return
     try:
         from opentelemetry._logs import set_logger_provider
         from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
@@ -762,6 +777,7 @@ def _setup_log_export(resource: Any, connection_string: str) -> None:
     log_provider.add_log_record_processor(BatchLogRecordProcessor(log_exporter))
     handler = LoggingHandler(logger_provider=log_provider)
     logging.getLogger("azure.ai.agentserver").addHandler(handler)
+    _az_log_export_configured = True
     logger.info("Application Insights log exporter configured.")
 
 
@@ -773,6 +789,9 @@ def _setup_otlp_trace_export(provider: Any, endpoint: str) -> None:
     :param endpoint: The OTLP collector endpoint URL.
     :type endpoint: str
     """
+    global _otlp_trace_export_configured  # pylint: disable=global-statement
+    if _otlp_trace_export_configured:
+        return
     if provider is None:
         return
     try:
@@ -788,6 +807,7 @@ def _setup_otlp_trace_export(provider: Any, endpoint: str) -> None:
 
     exporter = OTLPSpanExporter(endpoint=endpoint)
     provider.add_span_processor(BatchSpanProcessor(exporter))
+    _otlp_trace_export_configured = True
     logger.info("OTLP trace exporter configured (endpoint=%s).", endpoint)
 
 
@@ -799,6 +819,9 @@ def _setup_otlp_log_export(resource: Any, endpoint: str) -> None:
     :param endpoint: The OTLP collector endpoint URL.
     :type endpoint: str
     """
+    global _otlp_log_export_configured  # pylint: disable=global-statement
+    if _otlp_log_export_configured:
+        return
     try:
         from opentelemetry._logs import get_logger_provider
         from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter
@@ -823,6 +846,7 @@ def _setup_otlp_log_export(resource: Any, endpoint: str) -> None:
 
     log_exporter = OTLPLogExporter(endpoint=endpoint)
     log_provider.add_log_record_processor(BatchLogRecordProcessor(log_exporter))  # type: ignore[union-attr]
+    _otlp_log_export_configured = True
     logger.info("OTLP log exporter configured (endpoint=%s).", endpoint)
 
 

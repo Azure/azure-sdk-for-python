@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING, AsyncIterator, Callable, Optional
 
 from starlette.routing import Route
 
-from azure.ai.agentserver.core import AgentLogger
+from azure.ai.agentserver.core import get_logger
 
 from ._endpoint_handler import _ResponseEndpointHandler
 from ._orchestrator import _ResponseOrchestrator
@@ -26,7 +26,7 @@ from ..store._memory import InMemoryResponseProvider
 if TYPE_CHECKING:
     from azure.ai.agentserver.core import AgentHost, TracingHelper
 
-logger = AgentLogger.get()
+logger = get_logger()
 
 
 async def _sync_to_async_gen(sync_gen: types.GeneratorType) -> AsyncIterator:

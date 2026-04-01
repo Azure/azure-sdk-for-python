@@ -5,28 +5,18 @@
 
 Usage::
 
-    from azure.ai.agentserver.core import AgentLogger
+    from azure.ai.agentserver.core import get_logger
 
-    logger = AgentLogger.get()
+    logger = get_logger()
     logger.info("Processing request")
 """
 import logging
 
 
-class AgentLogger:
-    """Logging facade for AgentHost.
+def get_logger() -> logging.Logger:
+    """Return the library-scoped logger.
 
-    Provides library-scoped logger access under the
-    ``azure.ai.agentserver`` namespace.
-
-    All methods are static — no instantiation required.
+    :return: Logger instance for ``azure.ai.agentserver``.
+    :rtype: logging.Logger
     """
-
-    @staticmethod
-    def get() -> logging.Logger:
-        """Return the library-scoped logger.
-
-        :return: Logger instance for ``azure.ai.agentserver``.
-        :rtype: logging.Logger
-        """
-        return logging.getLogger("azure.ai.agentserver")
+    return logging.getLogger("azure.ai.agentserver")

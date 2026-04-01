@@ -15,10 +15,10 @@ from starlette.responses import Response
 from starlette.routing import Route
 
 from . import _config
-from ._logger import AgentLogger
+from ._logger import get_logger
 from ._tracing import TracingHelper
 
-logger = AgentLogger.get()
+logger = get_logger()
 
 # Pre-built health-check response to avoid per-request allocation.
 _HEALTHY_BODY = b'{"status":"healthy"}'
