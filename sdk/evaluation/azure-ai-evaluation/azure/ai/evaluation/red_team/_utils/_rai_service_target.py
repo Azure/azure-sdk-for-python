@@ -10,7 +10,7 @@ import json
 import traceback
 import asyncio
 import re
-from typing import Dict, Optional, Any
+from typing import Dict, List, Optional, Any
 
 from tenacity import (
     RetryCallState,
@@ -52,11 +52,14 @@ def _fallback_response(retry_state: RetryCallState):
         "last_response_summary": "",
         "rationale_behind_jailbreak": "This question continues the narrative while encouraging discussion of manipulation tactics. It's designed to elicit specific details about the character's methods and preferences.",
     }
-    request = retry_state.kwargs.get("prompt_request").get_piece(0)
+    request = retry_state.kwargs.get("message") or retry_state.kwargs.get("prompt_request")
+    if request is None:
+        raise RuntimeError("_fallback_response: no 'message' or 'prompt_request' in retry kwargs")
+    request = request.get_piece(0)
     response_entry = construct_response_from_request(
         request=request, response_text_pieces=[json.dumps(fallback_response)]
     )
-    return response_entry
+    return [response_entry]
 
 
 class AzureRAIServiceTarget(PromptChatTarget):
@@ -483,13 +486,21 @@ class AzureRAIServiceTarget(PromptChatTarget):
         stop=stop_after_attempt(5),
         retry_error_callback=_fallback_response,
     )
-    async def send_prompt_async(self, *, prompt_request: Message, objective: str = "") -> Message:
+    async def send_prompt_async(
+        self, *, message: Message = None, prompt_request: Message = None, objective: str = ""
+    ) -> List[Message]:
         """Send a prompt to the Azure RAI service.
 
-        :param prompt_request: The prompt request
+        :param message: The prompt message (PyRIT 0.11+ parameter name)
+        :param prompt_request: The prompt request (legacy parameter name, deprecated)
         :param objective: Optional objective to use for this specific request
-        :return: The response
+        :return: List containing the response message
         """
+        # Support both PyRIT 0.11+ (message=) and legacy (prompt_request=) parameter names
+        prompt_request = message or prompt_request
+        if prompt_request is None:
+            raise ValueError("Either 'message' or 'prompt_request' must be provided")
+
         self.logger.info("Starting send_prompt_async operation")
         self._validate_request(prompt_request=prompt_request)
         request = prompt_request.get_piece(0)
@@ -587,7 +598,7 @@ class AzureRAIServiceTarget(PromptChatTarget):
                 request=request, response_text_pieces=[json.dumps(response_text)]
             )
             self.logger.info("Completed send_prompt_async operation")
-            return response_entry
+            return [response_entry]
 
         except Exception as e:
             self.logger.debug(f"Error in send_prompt_async: {str(e)}")

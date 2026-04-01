@@ -717,7 +717,7 @@ if __name__ == "__main__":
                         f"See http://aka.ms/azsdk/breaking-changes-tool to opt-in.")
             exit(0)
 
-    if not target_module:
+    if not target_module and not (args.source_report and args.target_report):
         from ci_tools.parsing import ParsedSetup
         pkg_details = ParsedSetup.from_path(pkg_dir)
         target_module = pkg_details.namespace

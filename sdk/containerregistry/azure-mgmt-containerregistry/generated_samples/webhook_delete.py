@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-11-01/WebhookDelete.json
+# x-ms-original-file: 2026-01-01-preview/WebhookDelete.json
 if __name__ == "__main__":
     main()

@@ -1,5 +1,17 @@
 # Release History
 
+## 1.8.8 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+- Remove deprecated events packages.
+  ([#45684](https://github.com/Azure/azure-sdk-for-python/pull/45684))
+
 ## 1.8.7 (2026-03-20)
 
 ### Features Added
@@ -26,6 +38,7 @@
 
 ### Other Changes
 - Add missing copyright headers and ensure consistent formatting across files.
+  ([#44908](https://github.com/Azure/azure-sdk-for-python/pull/44908))
 
 ## 1.8.5 (2026-01-28)
 
