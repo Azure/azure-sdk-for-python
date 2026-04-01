@@ -13,7 +13,7 @@ from urllib.parse import urlparse
 ALLOWED_HOST_SUFFIXES: Tuple[str, ...] = (
     ".asm.skype.com",
     ".asyncgw.teams.microsoft.com",
-    ".gov.teams.microsoft.us",
+    ".ams.gov.teams.microsoft.us",
 )
 
 
