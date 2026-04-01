@@ -154,6 +154,10 @@ These rules apply to management-plane SDK packages located at `sdk/*/azure-mgmt-
 
 ### CLIENT SIGNATURE
 - The `__init__` method of the client class in `_client.py` must include the parameters `credential`, `subscription_id`, and `base_url` **in that order**. Default values are not checked.
+- If `subscription_id` is **not** present in the client's `__init__` signature, `pyproject.toml` must contain `no_sub = true`. If it does not, hint the user to add `no_sub = true` in `pyproject.toml` and regenerate the SDK.
+
+### CLIENT NAME CONSISTENCY
+- The client class name in `_client.py`, the client name referenced in `README.md`, and the `title` value in `pyproject.toml` must all be the same.
 
 ### README CODE SNIPPETS
 - Code snippets in `README.md` must follow the real client class signatures and usage patterns. Verify that sample code matches the actual client API.
