@@ -398,15 +398,14 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         request_id = extract_request_id(request.headers)
 
         # Start OTel request span now that we have the response_id.
-        # Span display name: "create_response {model}" per spec.
         if self._tracing is not None:
             otel_span = self._tracing.start_request_span(
                 request.headers,
                 response_id,
-                span_operation="create_response",
+                span_operation="invoke_agent",
                 operation_name="invoke_agent",
             )
-            _span_name = f"create_response {ctx.model}".strip() if ctx.model else "create_response"
+            _span_name = f"invoke_agent {ctx.model}".strip() if ctx.model else "invoke_agent"
             if otel_span is not None:
                 try:
                     otel_span.update_name(_span_name)
