@@ -2565,7 +2565,11 @@ def _process_criteria_metrics(
 
 
 def _extract_metric_values(
-    criteria_name: str, criteria_type: str, metrics: Dict[str, Any], expected_metrics: List[str], logger: logging.Logger
+    criteria_name: str,
+    criteria_type: str,
+    metrics: Dict[str, Any],
+    expected_metrics: List[str],
+    logger: logging.Logger,
 ) -> Dict[str, Dict[str, Any]]:
     """Extract and organize metric values by metric name.
 
@@ -2614,7 +2618,12 @@ def _extract_metric_values(
             result_per_metric[metric] = {}
 
         result_name, result_name_child_level, result_name_nested_child_level, derived_passed = _update_metric_value(
-            criteria_type, result_per_metric[metric], metric_key, metric, metric_value, logger
+            criteria_type,
+            result_per_metric[metric],
+            metric_key,
+            metric,
+            metric_value,
+            logger,
         )
         if result_name is not None:
             _append_indirect_attachments_to_results(
@@ -2690,7 +2699,7 @@ def _update_metric_value(
     result_name_nested_child_level = None
     derived_passed = None
 
-    property_name = _get_result_property_name(metric_key)
+    property_name = None if metric_key == metric else _get_result_property_name(metric_key)
     if property_name:
         _ensure_properties_dict(metric_dict)
         metric_dict["properties"][property_name] = metric_value
@@ -2703,14 +2712,17 @@ def _update_metric_value(
     elif metric_key == "passed":
         metric_dict["passed"] = metric_value
         result_name = "passed"
-    elif metric_key.endswith("_result") or metric_key == "result" or metric_key.endswith("_label"):
+    elif metric_key.endswith("_result") or metric_key in ["result", "label"] or metric_key.endswith("_label"):
         metric_dict["label"] = metric_value
         result_name = "label"
         if criteria_type == "azure_ai_evaluator":
             passed = str(metric_value).lower() in ["pass", "true"]
             metric_dict["passed"] = passed
             derived_passed = passed
-    elif (metric_key.endswith("_reason") and not metric_key.endswith("_finish_reason")) or metric_key == "reason":
+    elif (
+        (metric_key.endswith("_reason") and not metric_key.endswith("_finish_reason"))
+        or metric_key in ["reason", "explanation"]
+    ):
         metric_dict["reason"] = metric_value
         result_name = "reason"
     elif metric_key.endswith("_threshold") or metric_key == "threshold":
@@ -2834,13 +2846,20 @@ def _ensure_properties_dict(metric_dict: Dict[str, Any]) -> None:
 
 
 def _get_result_property_name(metric_key: str) -> Optional[str]:
-    """Return the result property name for custom-prefixed keys."""
+    """Return the result property name for fields that should be preserved in properties."""
     result_property_prefix = "custom_"
+    standard_metric_keys = {"score", "passed", "result", "label", "reason", "explanation", "threshold", "sample"}
 
     if metric_key.startswith(result_property_prefix) and len(metric_key) > len(result_property_prefix):
         if any(metric_key.endswith(suffix) for suffix in _RESULT_PROPERTY_SUFFIXES):
             return None
         return metric_key[len(result_property_prefix) :]
+
+    if metric_key not in standard_metric_keys:
+        if any(metric_key.endswith(suffix) for suffix in _RESULT_PROPERTY_SUFFIXES):
+            return None
+        return metric_key
+
     return None
 
 
@@ -3297,7 +3316,11 @@ def _append_indirect_attachments_to_results(
                     ) = metric_value
 
 
-def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metric_list: List[str]) -> str:
+def _get_metric_from_criteria(
+    testing_criteria_name: str,
+    metric_key: str,
+    metric_list: List[str],
+) -> str:
     """
     Get the metric name from the testing criteria and metric key.
 
@@ -3310,7 +3333,6 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
     :return: The metric name if found, otherwise the testing criteria name
     :rtype: str
     """
-    result_property_prefix = "custom_"
     metric = None
 
     if metric_key == "xpia_manipulated_content":
@@ -3325,7 +3347,7 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
     elif metric_key == "f1_result" or metric_key == "f1_threshold" or metric_key == "f1_score":
         metric = "f1_score"
         return metric
-    elif metric_key.startswith(result_property_prefix) and len(metric_list) == 1:
+    elif len(metric_list) == 1:
         metric = metric_list[0]
         return metric
     for expected_metric in metric_list:

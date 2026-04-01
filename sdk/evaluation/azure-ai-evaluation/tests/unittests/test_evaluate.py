@@ -1365,10 +1365,11 @@ class TestEvaluate:
                     {
                         "inputs.query": "test query",
                         "outputs.friendly_evaluator_gh4y.custom_score": 4.5,
-                        "outputs.friendly_evaluator_gh4y.custom_reason": "Detailed attack reasoning",
                         "outputs.friendly_evaluator_gh4y.custom_threshold": 3,
-                        "outputs.friendly_evaluator_gh4y.custom_label": False,
+                        "outputs.friendly_evaluator_gh4y.label": False,
                         "outputs.friendly_evaluator_gh4y.custom_observation_flag": False,
+                        "outputs.friendly_evaluator_gh4y.explanation": "Detailed attack reasoning",
+                        "outputs.friendly_evaluator_gh4y.attack_phase": "probe",
                     }
                 ],
                 "studio_url": None,
@@ -1391,6 +1392,7 @@ class TestEvaluate:
         property_result = property_results["_evaluation_results_list"][0]["results"][0]
         assert property_result["properties"] == {
             "observation_flag": False,
+            "attack_phase": "probe",
         }
         assert property_result["score"] == 4.5
         assert property_result["reason"] == "Detailed attack reasoning"
