@@ -151,14 +151,6 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_eval_catalog_prompt_based_evaluators.py",  # For some reason fails with 500 (Internal server error)
                 "sample_eval_upload_custom_evaluator.py",  # TODO: Need to add recordings
                 "sample_eval_upload_friendly_evaluator.py",  # TODO: Need to add recordings
-                "sample_evaluations_graders.alt.py",  # Need to remove "image_tag": "2025-05-08" from the recordings, once .alt.py relplaces the original
-                "sample_agent_evaluation.alt.py",  # This is the same sample as sample_agent_evaluation.py but using Azure-specific grader/data source types, so we want to test both
-                "sample_evaluations_graders_async.alt.py",
-                "sample_agent_response_evaluation.alt.py",
-                "sample_continuous_evaluation_rule.alt.py",
-                "sample_eval_catalog_code_based_evaluators.alt.py",
-                "sample_eval_upload_friendly_evaluator.alt.py",
-                "sample_evaluations_builtin_with_csv.alt.py",
             ],
         ),
     )

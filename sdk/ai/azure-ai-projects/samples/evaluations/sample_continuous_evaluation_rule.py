@@ -41,6 +41,8 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
+    AzureAIDataSourceConfig,
+    EvalGraderAzureAIEvaluator,
     PromptAgentDefinition,
     EvaluationRule,
     ContinuousEvaluationRuleAction,
@@ -71,14 +73,16 @@ with (
 
     # Setup agent continuous evaluation
 
-    data_source_config = {"type": "azure_ai_source", "scenario": "responses"}
+    data_source_config = AzureAIDataSourceConfig(type="azure_ai_source", scenario="responses")
     testing_criteria = [
-        {"type": "azure_ai_evaluator", "name": "violence_detection", "evaluator_name": "builtin.violence"}
+        EvalGraderAzureAIEvaluator(
+            type="azure_ai_evaluator", name="violence_detection", evaluator_name="builtin.violence"
+        )
     ]
     eval_object = openai_client.evals.create(
         name="Continuous Evaluation",
-        data_source_config=data_source_config,  # type: ignore
-        testing_criteria=testing_criteria,  # type: ignore
+        data_source_config=data_source_config,
+        testing_criteria=testing_criteria,
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 

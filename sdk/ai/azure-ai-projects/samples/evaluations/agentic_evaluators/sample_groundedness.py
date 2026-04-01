@@ -53,41 +53,39 @@ def main() -> None:  # pylint: disable=too-many-locals
         project_client.get_openai_client() as client,
     ):
         data_source_config = DataSourceConfigCustom(
-            {
-                "type": "custom",
-                "item_schema": {
-                    "type": "object",
-                    "properties": {
-                        "context": {"type": "string"},
-                        "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                        "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                        "tool_definitions": {
-                            "anyOf": [
-                                {"type": "string"},
-                                {"type": "object"},
-                                {"type": "array", "items": {"type": "object"}},
-                            ]
-                        },
+            type="custom",
+            item_schema={
+                "type": "object",
+                "properties": {
+                    "context": {"type": "string"},
+                    "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                    "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                    "tool_definitions": {
+                        "anyOf": [
+                            {"type": "string"},
+                            {"type": "object"},
+                            {"type": "array", "items": {"type": "object"}},
+                        ]
                     },
-                    "required": ["response"],
                 },
-                "include_sample_schema": True,
-            }
+                "required": ["response"],
+            },
+            include_sample_schema=True,
         )
 
         testing_criteria = [
-            {
-                "type": "azure_ai_evaluator",
-                "name": "groundedness",
-                "evaluator_name": "builtin.groundedness",
-                "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
-                "data_mapping": {
+            EvalGraderAzureAIEvaluator(
+                type="azure_ai_evaluator",
+                name="groundedness",
+                evaluator_name="builtin.groundedness",
+                initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+                data_mapping={
                     "context": "{{item.context}}",
                     "query": "{{item.query}}",
                     "response": "{{item.response}}",
                     "tool_definitions": "{{item.tool_definitions}}",
                 },
-            }
+            )
         ]
 
         print("Creating Evaluation")

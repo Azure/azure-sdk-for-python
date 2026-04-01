@@ -41,6 +41,9 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     DatasetVersion,
+    EvalCsvFileIdSource,
+    EvalCsvRunDataSource,
+    EvalGraderAzureAIEvaluator,
 )
 
 load_dotenv()
@@ -71,45 +74,43 @@ with (
     pprint(dataset)
 
     data_source_config = DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {
-                    "query": {"type": "string"},
-                    "response": {"type": "string"},
-                    "context": {"type": "string"},
-                    "ground_truth": {"type": "string"},
-                },
-                "required": [],
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {
+                "query": {"type": "string"},
+                "response": {"type": "string"},
+                "context": {"type": "string"},
+                "ground_truth": {"type": "string"},
             },
-            "include_sample_schema": True,
-        }
+            "required": [],
+        },
+        include_sample_schema=True,
     )
 
     testing_criteria = [
-        {
-            "type": "azure_ai_evaluator",
-            "name": "violence",
-            "evaluator_name": "builtin.violence",
-            "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
-            "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
-        },
-        {"type": "azure_ai_evaluator", "name": "f1", "evaluator_name": "builtin.f1_score"},
-        {
-            "type": "azure_ai_evaluator",
-            "name": "coherence",
-            "evaluator_name": "builtin.coherence",
-            "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
-            "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
-        },
+        EvalGraderAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="violence",
+            evaluator_name="builtin.violence",
+            data_mapping={"query": "{{item.query}}", "response": "{{item.response}}"},
+            initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+        ),
+        EvalGraderAzureAIEvaluator(type="azure_ai_evaluator", name="f1", evaluator_name="builtin.f1_score"),
+        EvalGraderAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="coherence",
+            evaluator_name="builtin.coherence",
+            data_mapping={"query": "{{item.query}}", "response": "{{item.response}}"},
+            initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+        ),
     ]
 
     print("Creating evaluation")
     eval_object = client.evals.create(
         name="CSV evaluation with built-in evaluators",
-        data_source_config=data_source_config,  # type: ignore
-        testing_criteria=testing_criteria,  # type: ignore
+        data_source_config=data_source_config,
+        testing_criteria=testing_criteria,
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
@@ -118,13 +119,13 @@ with (
         eval_id=eval_object.id,
         name="csv_evaluation_run",
         metadata={"team": "eval-exp", "scenario": "csv-eval-v1"},
-        data_source={  # type: ignore
-            "type": "csv",
-            "source": {
-                "type": "file_id",
-                "id": dataset.id if dataset.id else "",
-            },
-        },
+        data_source=EvalCsvRunDataSource(
+            type="csv",
+            source=EvalCsvFileIdSource(
+                type="file_id",
+                id=dataset.id if dataset.id else "",
+            ),
+        ),
     )
 
     print(f"Evaluation run created (id: {eval_run_object.id})")

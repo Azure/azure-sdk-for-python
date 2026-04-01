@@ -37,6 +37,7 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
 from openai.types.eval_create_params import DataSourceConfigCustom
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import EvalGraderAzureAIEvaluator
 
 load_dotenv()
 
@@ -53,35 +54,33 @@ def main() -> None:
         project_client.get_openai_client() as client,
     ):
         data_source_config = DataSourceConfigCustom(
-            {
-                "type": "custom",
-                "item_schema": {
-                    "type": "object",
-                    "properties": {
-                        "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                        "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                        "tool_definitions": {
-                            "anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]
-                        },
+            type="custom",
+            item_schema={
+                "type": "object",
+                "properties": {
+                    "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                    "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                    "tool_definitions": {
+                        "anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]
                     },
-                    "required": ["query", "response"],
                 },
-                "include_sample_schema": True,
-            }
+                "required": ["query", "response"],
+            },
+            include_sample_schema=True,
         )
 
         testing_criteria = [
-            {
-                "type": "azure_ai_evaluator",
-                "name": "tool_output_utilization",
-                "evaluator_name": "builtin.tool_output_utilization",
-                "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
-                "data_mapping": {
+            EvalGraderAzureAIEvaluator(
+                type="azure_ai_evaluator",
+                name="tool_output_utilization",
+                evaluator_name="builtin.tool_output_utilization",
+                initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+                data_mapping={
                     "query": "{{item.query}}",
                     "response": "{{item.response}}",
                     "tool_definitions": "{{item.tool_definitions}}",
                 },
-            }
+            )
         ]
 
         print("Creating Evaluation")

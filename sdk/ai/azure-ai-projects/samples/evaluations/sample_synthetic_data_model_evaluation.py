@@ -44,6 +44,7 @@ from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import AzureAIDataSourceConfig, EvalGraderAzureAIEvaluator
 
 load_dotenv()
 
@@ -57,40 +58,40 @@ with (
 ):
     # Use the azure_ai_source data source config with the synthetic_data_gen_preview scenario.
     # The schema is inferred from the service — no custom item_schema is needed.
-    data_source_config = {"type": "azure_ai_source", "scenario": "synthetic_data_gen_preview"}
+    data_source_config = AzureAIDataSourceConfig(type="azure_ai_source", scenario="synthetic_data_gen_preview")
 
     # Define testing criteria using builtin evaluators.
     # {{item.query}} references the synthetically generated query.
     # {{sample.output_text}} references the model's response.
     testing_criteria = [
-        {
-            "type": "azure_ai_evaluator",
-            "name": "coherence",
-            "evaluator_name": "builtin.coherence",
-            "initialization_parameters": {
+        EvalGraderAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="coherence",
+            evaluator_name="builtin.coherence",
+            initialization_parameters={
                 "deployment_name": model_deployment_name,
             },
-            "data_mapping": {
+            data_mapping={
                 "query": "{{item.query}}",
                 "response": "{{sample.output_text}}",
             },
-        },
-        {
-            "type": "azure_ai_evaluator",
-            "name": "violence",
-            "evaluator_name": "builtin.violence",
-            "data_mapping": {
+        ),
+        EvalGraderAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="violence",
+            evaluator_name="builtin.violence",
+            data_mapping={
                 "query": "{{item.query}}",
                 "response": "{{sample.output_text}}",
             },
-        },
+        ),
     ]
 
     print("Creating evaluation for synthetic data generation")
     eval_object = client.evals.create(
         name="Synthetic Data Model Evaluation",
-        data_source_config=data_source_config,  # type: ignore
-        testing_criteria=testing_criteria,  # type: ignore
+        data_source_config=data_source_config,
+        testing_criteria=testing_criteria,
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 

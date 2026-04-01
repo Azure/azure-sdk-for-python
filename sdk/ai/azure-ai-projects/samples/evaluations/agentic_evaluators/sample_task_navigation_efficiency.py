@@ -36,6 +36,7 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
 from openai.types.eval_create_params import DataSourceConfigCustom
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import EvalGraderAzureAIEvaluator
 
 load_dotenv()
 
@@ -54,27 +55,25 @@ def main() -> None:
         print("Creating an OpenAI client from the AI Project client")
 
         data_source_config = DataSourceConfigCustom(
-            {
-                "type": "custom",
-                "item_schema": {
-                    "type": "object",
-                    "properties": {"response": {"type": "array"}, "ground_truth": {"type": "array"}},
-                    "required": ["response", "ground_truth"],
-                },
-                "include_sample_schema": True,
-            }
+            type="custom",
+            item_schema={
+                "type": "object",
+                "properties": {"response": {"type": "array"}, "ground_truth": {"type": "array"}},
+                "required": ["response", "ground_truth"],
+            },
+            include_sample_schema=True,
         )
 
         testing_criteria = [
-            {
-                "type": "azure_ai_evaluator",
-                "name": "task_navigation_efficiency",
-                "evaluator_name": "builtin.task_navigation_efficiency",
-                "initialization_parameters": {
+            EvalGraderAzureAIEvaluator(
+                type="azure_ai_evaluator",
+                name="task_navigation_efficiency",
+                evaluator_name="builtin.task_navigation_efficiency",
+                initialization_parameters={
                     "matching_mode": "exact_match"  #  Can be "exact_match", "in_order_match", or "any_order_match"
                 },
-                "data_mapping": {"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
-            }
+                data_mapping={"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
+            )
         ]
 
         print("Creating Evaluation")

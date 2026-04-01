@@ -4,7 +4,14 @@
 
 ### Features Added
 
-* Placeholder
+* Type hinting support for OpenAI client operations `.evals.create()` and `.evals.runs.create()`, when you
+get the OpenAI client using `get_openai_client()` method of `AIProjectClient`. This includes new TypedDicts
+classes to help you author the input to these methods. See new TypedDict classes `ModelSamplingParamsTyped`, 
+`ToolDescriptionTyped`, `AzureAIAgentTargetTyped`, `AzureAIModelTargetTyped`,
+`ResponseRetrievalItemGenerationParams`, `AzureAIResponsesEvalRunDataSource`, `AzureAIDataSourceConfig`,
+`TargetCompletionEvalRunDataSource`, `EvalGraderAzureAIEvaluator`, `AzureAIBenchmarkPreviewEvalRunDataSource`,
+`EvalCsvFileIdSource`, `EvalCsvRunDataSource`, `RedTeamEvalRunDataSource`, `TracesPreviewEvalRunDataSource`.
+
 
 ### Breaking Changes
 
@@ -12,10 +19,11 @@
 
 ### Bugs Fixed
 
-* Placeholder
+* Fix missing type hinting on the returned OpenAI client from method 'get_openai_client()`.
 
 ### Sample updates
 
+* Evaluation samples updated to use TypedDicts to specify inputs to `.evals.create()` and `.evals.runs.create()` methods.
 * Renamed environment variable `AZURE_AI_PROJECT_ENDPOINT` to `FOUNDRY_PROJECT_ENDPOINT` in all samples.
 * Renamed environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` to `FOUNDRY_MODEL_NAME` in all samples.
 * Renamed environment variable `AZURE_AI_MODEL_AGENT_NAME` to `FOUNDRY_AGENT_NAME` in all samples.

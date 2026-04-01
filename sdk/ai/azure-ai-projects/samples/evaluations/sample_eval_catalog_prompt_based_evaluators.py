@@ -69,7 +69,7 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
 from openai.types.eval_create_params import DataSourceConfigCustom
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import EvaluatorCategory, EvaluatorDefinitionType
+from azure.ai.projects.models import EvalGraderAzureAIEvaluator, EvaluatorCategory, EvaluatorDefinitionType
 
 load_dotenv()
 
@@ -157,40 +157,38 @@ with (
     pprint(prompt_evaluator)
 
     data_source_config = DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {
-                    "query": {"type": "string"},
-                    "response": {"type": "string"},
-                    "ground_truth": {"type": "string"},
-                },
-                "required": ["query", "response", "ground_truth"],
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {
+                "query": {"type": "string"},
+                "response": {"type": "string"},
+                "ground_truth": {"type": "string"},
             },
-            "include_sample_schema": True,
-        }
+            "required": ["query", "response", "ground_truth"],
+        },
+        include_sample_schema=True,
     )
 
     testing_criteria = [
-        {
-            "type": "azure_ai_evaluator",
-            "name": "my_custom_evaluator_prompt",
-            "evaluator_name": "my_custom_evaluator_prompt",
-            "data_mapping": {
+        EvalGraderAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="my_custom_evaluator_prompt",
+            evaluator_name="my_custom_evaluator_prompt",
+            data_mapping={
                 "query": "{{item.query}}",
                 "response": "{{item.response}}",
                 "ground_truth": "{{item.ground_truth}}",
             },
-            "initialization_parameters": {"deployment_name": f"{model_deployment_name}", "threshold": 3},
-        }
+            initialization_parameters={"deployment_name": f"{model_deployment_name}", "threshold": 3},
+        )
     ]
 
     print("Creating evaluation")
     eval_object = client.evals.create(
         name="label model test with inline data",
         data_source_config=data_source_config,
-        testing_criteria=testing_criteria,  # type: ignore
+        testing_criteria=testing_criteria,
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
     pprint(eval_object)

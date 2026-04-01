@@ -35,6 +35,7 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
 )
 from openai.types.eval_create_params import DataSourceConfigCustom
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+from azure.ai.projects.models import EvalGraderAzureAIEvaluator
 
 load_dotenv()
 
@@ -46,44 +47,42 @@ client = OpenAI(
 model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME", "")  # Sample : gpt-4o-mini
 
 data_source_config = DataSourceConfigCustom(
-    {
-        "type": "custom",
-        "item_schema": {
-            "type": "object",
-            "properties": {
-                "query": {"type": "string"},
-                "response": {"type": "string"},
-                "context": {"type": "string"},
-                "ground_truth": {"type": "string"},
-            },
-            "required": [],
+    type="custom",
+    item_schema={
+        "type": "object",
+        "properties": {
+            "query": {"type": "string"},
+            "response": {"type": "string"},
+            "context": {"type": "string"},
+            "ground_truth": {"type": "string"},
         },
-        "include_sample_schema": True,
-    }
+        "required": [],
+    },
+    include_sample_schema=True,
 )
 
 testing_criteria = [
-    {
-        "type": "azure_ai_evaluator",
-        "name": "violence",
-        "evaluator_name": "builtin.violence",
-        "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
-        "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
-    },
-    {"type": "azure_ai_evaluator", "name": "f1", "evaluator_name": "builtin.f1_score"},
-    {
-        "type": "azure_ai_evaluator",
-        "name": "coherence",
-        "evaluator_name": "builtin.coherence",
-        "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
-    },
+    EvalGraderAzureAIEvaluator(
+        type="azure_ai_evaluator",
+        name="violence",
+        evaluator_name="builtin.violence",
+        data_mapping={"query": "{{item.query}}", "response": "{{item.response}}"},
+        initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+    ),
+    EvalGraderAzureAIEvaluator(type="azure_ai_evaluator", name="f1", evaluator_name="builtin.f1_score"),
+    EvalGraderAzureAIEvaluator(
+        type="azure_ai_evaluator",
+        name="coherence",
+        evaluator_name="builtin.coherence",
+        initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+    ),
 ]
 
 print("Creating Evaluation")
 eval_object = client.evals.create(
     name="testing_builtin_inline_data_eval_with_openai_client",
     data_source_config=data_source_config,
-    testing_criteria=testing_criteria,  # type: ignore
+    testing_criteria=testing_criteria,
 )
 print("Evaluation created")
 
