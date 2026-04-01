@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/management/resource-manager/Microsoft.Management/ManagementGroups/stable/2021-04-01/examples/GetSubscriptionFromManagementGroup.json
+# x-ms-original-file: specification/managementgroups/resource-manager/Microsoft.Management/ManagementGroups/stable/2023-04-01/examples/GetSubscriptionFromManagementGroup.json
 if __name__ == "__main__":
     main()

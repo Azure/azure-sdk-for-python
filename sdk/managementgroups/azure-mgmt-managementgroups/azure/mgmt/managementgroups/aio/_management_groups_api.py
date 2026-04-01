@@ -35,23 +35,23 @@ if TYPE_CHECKING:
 
 
 class ManagementGroupsAPI(_ManagementGroupsAPIOperationsMixin):
-    """The Azure Management Groups API enables consolidation of multiple
-    subscriptions/resources into an organizational hierarchy and centrally
-    manage access control, policies, alerting and reporting for those resources.
+    """The Azure Management Groups API enables consolidation of multiple subscriptions/resources into
+    an organizational hierarchy and centrally manage access control, policies, alerting and
+    reporting for those resources.
 
+    :ivar entities: EntitiesOperations operations
+    :vartype entities: azure.mgmt.managementgroups.aio.operations.EntitiesOperations
     :ivar management_groups: ManagementGroupsOperations operations
     :vartype management_groups:
      azure.mgmt.managementgroups.aio.operations.ManagementGroupsOperations
-    :ivar management_group_subscriptions: ManagementGroupSubscriptionsOperations operations
-    :vartype management_group_subscriptions:
-     azure.mgmt.managementgroups.aio.operations.ManagementGroupSubscriptionsOperations
     :ivar hierarchy_settings: HierarchySettingsOperations operations
     :vartype hierarchy_settings:
      azure.mgmt.managementgroups.aio.operations.HierarchySettingsOperations
+    :ivar management_group_subscriptions: ManagementGroupSubscriptionsOperations operations
+    :vartype management_group_subscriptions:
+     azure.mgmt.managementgroups.aio.operations.ManagementGroupSubscriptionsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.managementgroups.aio.operations.Operations
-    :ivar entities: EntitiesOperations operations
-    :vartype entities: azure.mgmt.managementgroups.aio.operations.EntitiesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param base_url: Service URL. Default value is None.
@@ -59,7 +59,7 @@ class ManagementGroupsAPI(_ManagementGroupsAPIOperationsMixin):
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: Api Version. Default value is "2021-04-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2023-04-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -109,17 +109,17 @@ class ManagementGroupsAPI(_ManagementGroupsAPIOperationsMixin):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
+        self.entities = EntitiesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.management_groups = ManagementGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.management_group_subscriptions = ManagementGroupSubscriptionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.hierarchy_settings = HierarchySettingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.management_group_subscriptions = ManagementGroupSubscriptionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.entities = EntitiesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

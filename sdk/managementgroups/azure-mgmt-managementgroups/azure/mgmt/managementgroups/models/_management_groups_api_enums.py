@@ -10,47 +10,90 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
+
+    INTERNAL = "Internal"
+
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+
 class EntitySearchType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """EntitySearchType."""
 
     ALLOWED_PARENTS = "AllowedParents"
+    """AllowedParents"""
     ALLOWED_CHILDREN = "AllowedChildren"
+    """AllowedChildren"""
     PARENT_AND_FIRST_LEVEL_CHILDREN = "ParentAndFirstLevelChildren"
+    """ParentAndFirstLevelChildren"""
     PARENT_ONLY = "ParentOnly"
+    """ParentOnly"""
     CHILDREN_ONLY = "ChildrenOnly"
+    """ChildrenOnly"""
 
 
 class EntityViewParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """EntityViewParameterType."""
 
     FULL_HIERARCHY = "FullHierarchy"
+    """FullHierarchy"""
     GROUPS_ONLY = "GroupsOnly"
+    """GroupsOnly"""
     SUBSCRIPTIONS_ONLY = "SubscriptionsOnly"
+    """SubscriptionsOnly"""
     AUDIT = "Audit"
+    """Audit"""
 
 
 class ManagementGroupChildType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of child resource."""
 
     MICROSOFT_MANAGEMENT_MANAGEMENT_GROUPS = "Microsoft.Management/managementGroups"
+    """Microsoft.Management/managementGroups"""
     _SUBSCRIPTIONS = "/subscriptions"
+    """/subscriptions"""
 
 
 class ManagementGroupExpandType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ManagementGroupExpandType."""
 
     CHILDREN = "children"
+    """children"""
     PATH = "path"
+    """path"""
     ANCESTORS = "ancestors"
+    """ancestors"""
+
+
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+    logs UX. Default value is "user,system".
+    """
+
+    USER = "user"
+    SYSTEM = "system"
+    USER_SYSTEM = "user,system"
 
 
 class Permissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The users specific permissions to this item."""
 
     NOACCESS = "noaccess"
+    """noaccess"""
     VIEW = "view"
+    """view"""
     EDIT = "edit"
+    """edit"""
     DELETE = "delete"
+    """delete"""
 
 
 class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -60,15 +103,23 @@ class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     INVALID = "Invalid"
+    """Invalid"""
     ALREADY_EXISTS = "AlreadyExists"
+    """AlreadyExists"""
 
 
 class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the Tenant Backfill."""
 
     NOT_STARTED = "NotStarted"
+    """NotStarted"""
     NOT_STARTED_BUT_GROUPS_EXIST = "NotStartedButGroupsExist"
+    """NotStartedButGroupsExist"""
     STARTED = "Started"
+    """Started"""
     FAILED = "Failed"
+    """Failed"""
     CANCELLED = "Cancelled"
+    """Cancelled"""
     COMPLETED = "Completed"
+    """Completed"""

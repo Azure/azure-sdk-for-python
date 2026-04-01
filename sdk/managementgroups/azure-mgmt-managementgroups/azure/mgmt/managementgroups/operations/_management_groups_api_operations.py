@@ -41,7 +41,7 @@ def build_check_name_availability_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -63,7 +63,7 @@ def build_start_tenant_backfill_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -82,7 +82,7 @@ def build_tenant_backfill_status_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -111,8 +111,7 @@ class _ManagementGroupsAPIOperationsMixin(
     ) -> _models.CheckNameAvailabilityResult:
         """Checks if the specified management group name is valid and unique.
 
-        :param check_name_availability_request: Management group name availability check parameters.
-         Required.
+        :param check_name_availability_request: The request body. Required.
         :type check_name_availability_request:
          ~azure.mgmt.managementgroups.models.CheckNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -129,8 +128,7 @@ class _ManagementGroupsAPIOperationsMixin(
     ) -> _models.CheckNameAvailabilityResult:
         """Checks if the specified management group name is valid and unique.
 
-        :param check_name_availability_request: Management group name availability check parameters.
-         Required.
+        :param check_name_availability_request: The request body. Required.
         :type check_name_availability_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -146,8 +144,8 @@ class _ManagementGroupsAPIOperationsMixin(
     ) -> _models.CheckNameAvailabilityResult:
         """Checks if the specified management group name is valid and unique.
 
-        :param check_name_availability_request: Management group name availability check parameters. Is
-         either a CheckNameAvailabilityRequest type or a IO[bytes] type. Required.
+        :param check_name_availability_request: The request body. Is either a
+         CheckNameAvailabilityRequest type or a IO[bytes] type. Required.
         :type check_name_availability_request:
          ~azure.mgmt.managementgroups.models.CheckNameAvailabilityRequest or IO[bytes]
         :return: CheckNameAvailabilityResult or the result of cls(response)

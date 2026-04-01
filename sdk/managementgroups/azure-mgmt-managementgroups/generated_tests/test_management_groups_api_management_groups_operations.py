@@ -22,7 +22,7 @@ class TestManagementGroupsAPIManagementGroupsOperations(AzureMgmtRecordedTestCas
     @recorded_by_proxy
     def test_management_groups_list(self, resource_group):
         response = self.client.management_groups.list(
-            api_version="2021-04-01",
+            api_version="2023-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestManagementGroupsAPIManagementGroupsOperations(AzureMgmtRecordedTestCas
     def test_management_groups_get(self, resource_group):
         response = self.client.management_groups.get(
             group_id="str",
-            api_version="2021-04-01",
+            api_version="2023-04-01",
         )
 
         # please add some check logic here by yourself
@@ -58,7 +58,7 @@ class TestManagementGroupsAPIManagementGroupsOperations(AzureMgmtRecordedTestCas
                 "tenantId": "str",
                 "type": "str",
             },
-            api_version="2021-04-01",
+            api_version="2023-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -70,7 +70,7 @@ class TestManagementGroupsAPIManagementGroupsOperations(AzureMgmtRecordedTestCas
         response = self.client.management_groups.update(
             group_id="str",
             patch_group_request={"displayName": "str", "parentGroupId": "str"},
-            api_version="2021-04-01",
+            api_version="2023-04-01",
         )
 
         # please add some check logic here by yourself
@@ -81,7 +81,7 @@ class TestManagementGroupsAPIManagementGroupsOperations(AzureMgmtRecordedTestCas
     def test_management_groups_begin_delete(self, resource_group):
         response = self.client.management_groups.begin_delete(
             group_id="str",
-            api_version="2021-04-01",
+            api_version="2023-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -92,7 +92,7 @@ class TestManagementGroupsAPIManagementGroupsOperations(AzureMgmtRecordedTestCas
     def test_management_groups_get_descendants(self, resource_group):
         response = self.client.management_groups.get_descendants(
             group_id="str",
-            api_version="2021-04-01",
+            api_version="2023-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -23,7 +23,7 @@ class TestManagementGroupsAPIEntitiesOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_entities_list(self, resource_group):
         response = self.client.entities.list(
-            api_version="2021-04-01",
+            api_version="2023-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -16,7 +16,7 @@ from azure.mgmt.managementgroups import ManagementGroupsAPI
     pip install azure-identity
     pip install azure-mgmt-managementgroups
 # USAGE
-    python tenant_backfill_status_request.py
+    python patch_hierarchy_settings.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,10 +30,13 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.tenant_backfill_status()
+    response = client.hierarchy_settings.update(
+        group_id="root",
+        create_tenant_settings_request={"defaultManagementGroup": "str", "requireAuthorizationForGroupCreation": bool},
+    )
     print(response)
 
 
-# x-ms-original-file: specification/managementgroups/resource-manager/Microsoft.Management/ManagementGroups/stable/2023-04-01/examples/TenantBackfillStatusRequest.json
+# x-ms-original-file: specification/managementgroups/resource-manager/Microsoft.Management/ManagementGroups/stable/2023-04-01/examples/PatchHierarchySettings.json
 if __name__ == "__main__":
     main()

@@ -13,23 +13,23 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._management_groups_operations import ManagementGroupsOperations  # type: ignore
-from ._management_group_subscriptions_operations import ManagementGroupSubscriptionsOperations  # type: ignore
-from ._hierarchy_settings_operations import HierarchySettingsOperations  # type: ignore
-from ._operations import Operations  # type: ignore
 from ._management_groups_api_operations import _ManagementGroupsAPIOperationsMixin  # type: ignore # pylint: disable=unused-import
 from ._entities_operations import EntitiesOperations  # type: ignore
+from ._management_groups_operations import ManagementGroupsOperations  # type: ignore
+from ._hierarchy_settings_operations import HierarchySettingsOperations  # type: ignore
+from ._management_group_subscriptions_operations import ManagementGroupSubscriptionsOperations  # type: ignore
+from ._operations import Operations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "ManagementGroupsOperations",
-    "ManagementGroupSubscriptionsOperations",
-    "HierarchySettingsOperations",
-    "Operations",
     "EntitiesOperations",
+    "ManagementGroupsOperations",
+    "HierarchySettingsOperations",
+    "ManagementGroupSubscriptionsOperations",
+    "Operations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

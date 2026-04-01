@@ -24,7 +24,7 @@ class TestManagementGroupsAPIAsync(AzureMgmtRecordedTestCase):
     async def test_check_name_availability(self, resource_group):
         response = await self.client.check_name_availability(
             check_name_availability_request={"name": "str", "type": "Microsoft.Management/managementGroups"},
-            api_version="2021-04-01",
+            api_version="2023-04-01",
         )
 
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestManagementGroupsAPIAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_start_tenant_backfill(self, resource_group):
         response = await self.client.start_tenant_backfill(
-            api_version="2021-04-01",
+            api_version="2023-04-01",
         )
 
         # please add some check logic here by yourself
@@ -44,7 +44,7 @@ class TestManagementGroupsAPIAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_tenant_backfill_status(self, resource_group):
         response = await self.client.tenant_backfill_status(
-            api_version="2021-04-01",
+            api_version="2023-04-01",
         )
 
         # please add some check logic here by yourself

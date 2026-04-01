@@ -53,8 +53,7 @@ class _ManagementGroupsAPIOperationsMixin(
     ) -> _models.CheckNameAvailabilityResult:
         """Checks if the specified management group name is valid and unique.
 
-        :param check_name_availability_request: Management group name availability check parameters.
-         Required.
+        :param check_name_availability_request: The request body. Required.
         :type check_name_availability_request:
          ~azure.mgmt.managementgroups.models.CheckNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -71,8 +70,7 @@ class _ManagementGroupsAPIOperationsMixin(
     ) -> _models.CheckNameAvailabilityResult:
         """Checks if the specified management group name is valid and unique.
 
-        :param check_name_availability_request: Management group name availability check parameters.
-         Required.
+        :param check_name_availability_request: The request body. Required.
         :type check_name_availability_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -88,8 +86,8 @@ class _ManagementGroupsAPIOperationsMixin(
     ) -> _models.CheckNameAvailabilityResult:
         """Checks if the specified management group name is valid and unique.
 
-        :param check_name_availability_request: Management group name availability check parameters. Is
-         either a CheckNameAvailabilityRequest type or a IO[bytes] type. Required.
+        :param check_name_availability_request: The request body. Is either a
+         CheckNameAvailabilityRequest type or a IO[bytes] type. Required.
         :type check_name_availability_request:
          ~azure.mgmt.managementgroups.models.CheckNameAvailabilityRequest or IO[bytes]
         :return: CheckNameAvailabilityResult or the result of cls(response)

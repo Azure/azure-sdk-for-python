@@ -48,7 +48,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -79,7 +79,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -111,7 +111,7 @@ def build_create_or_update_request(group_id: str, *, cache_control: str = "no-ca
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -140,7 +140,7 @@ def build_update_request(group_id: str, *, cache_control: str = "no-cache", **kw
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -169,7 +169,7 @@ def build_delete_request(group_id: str, *, cache_control: str = "no-cache", **kw
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -197,7 +197,7 @@ def build_get_descendants_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -475,10 +475,10 @@ class ManagementGroupsOperations:
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -497,9 +497,9 @@ class ManagementGroupsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.ManagementGroup]:
-        """Create or update a management group.
-        If a management group is already created and a subsequent create request is issued with
-        different properties, the management group properties will be updated.
+        """Create or update a management group. If a management group is already created and a subsequent
+        create request is issued with different properties, the management group properties will be
+        updated.
 
         :param group_id: Management Group ID. Required.
         :type group_id: str
@@ -529,9 +529,9 @@ class ManagementGroupsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.ManagementGroup]:
-        """Create or update a management group.
-        If a management group is already created and a subsequent create request is issued with
-        different properties, the management group properties will be updated.
+        """Create or update a management group. If a management group is already created and a subsequent
+        create request is issued with different properties, the management group properties will be
+        updated.
 
         :param group_id: Management Group ID. Required.
         :type group_id: str
@@ -558,9 +558,9 @@ class ManagementGroupsOperations:
         cache_control: str = "no-cache",
         **kwargs: Any
     ) -> LROPoller[_models.ManagementGroup]:
-        """Create or update a management group.
-        If a management group is already created and a subsequent create request is issued with
-        different properties, the management group properties will be updated.
+        """Create or update a management group. If a management group is already created and a subsequent
+        create request is issued with different properties, the management group properties will be
+        updated.
 
         :param group_id: Management Group ID. Required.
         :type group_id: str
@@ -806,10 +806,11 @@ class ManagementGroupsOperations:
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -822,8 +823,7 @@ class ManagementGroupsOperations:
     def begin_delete(
         self, group_id: str, cache_control: str = "no-cache", **kwargs: Any
     ) -> LROPoller[_models.AzureAsyncOperationResults]:
-        """Delete management group.
-        If a management group contains child resources, the request will fail.
+        """Delete management group. If a management group contains child resources, the request will fail.
 
         :param group_id: Management Group ID. Required.
         :type group_id: str
@@ -860,10 +860,11 @@ class ManagementGroupsOperations:
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
             deserialized = self._deserialize("AzureAsyncOperationResults", pipeline_response.http_response)
             if cls:

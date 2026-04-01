@@ -23,7 +23,7 @@ class TestManagementGroupsAPIHierarchySettingsOperations(AzureMgmtRecordedTestCa
     def test_hierarchy_settings_list(self, resource_group):
         response = self.client.hierarchy_settings.list(
             group_id="str",
-            api_version="2021-04-01",
+            api_version="2023-04-01",
         )
 
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestManagementGroupsAPIHierarchySettingsOperations(AzureMgmtRecordedTestCa
     def test_hierarchy_settings_get(self, resource_group):
         response = self.client.hierarchy_settings.get(
             group_id="str",
-            api_version="2021-04-01",
+            api_version="2023-04-01",
         )
 
         # please add some check logic here by yourself
@@ -49,7 +49,7 @@ class TestManagementGroupsAPIHierarchySettingsOperations(AzureMgmtRecordedTestCa
                 "defaultManagementGroup": "str",
                 "requireAuthorizationForGroupCreation": bool,
             },
-            api_version="2021-04-01",
+            api_version="2023-04-01",
         )
 
         # please add some check logic here by yourself
@@ -64,7 +64,7 @@ class TestManagementGroupsAPIHierarchySettingsOperations(AzureMgmtRecordedTestCa
                 "defaultManagementGroup": "str",
                 "requireAuthorizationForGroupCreation": bool,
             },
-            api_version="2021-04-01",
+            api_version="2023-04-01",
         )
 
         # please add some check logic here by yourself
@@ -75,7 +75,7 @@ class TestManagementGroupsAPIHierarchySettingsOperations(AzureMgmtRecordedTestCa
     def test_hierarchy_settings_delete(self, resource_group):
         response = self.client.hierarchy_settings.delete(
             group_id="str",
-            api_version="2021-04-01",
+            api_version="2023-04-01",
         )
 
         # please add some check logic here by yourself

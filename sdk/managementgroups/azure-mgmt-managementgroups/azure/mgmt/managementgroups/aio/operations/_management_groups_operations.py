@@ -303,10 +303,10 @@ class ManagementGroupsOperations:
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -325,9 +325,9 @@ class ManagementGroupsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagementGroup]:
-        """Create or update a management group.
-        If a management group is already created and a subsequent create request is issued with
-        different properties, the management group properties will be updated.
+        """Create or update a management group. If a management group is already created and a subsequent
+        create request is issued with different properties, the management group properties will be
+        updated.
 
         :param group_id: Management Group ID. Required.
         :type group_id: str
@@ -358,9 +358,9 @@ class ManagementGroupsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagementGroup]:
-        """Create or update a management group.
-        If a management group is already created and a subsequent create request is issued with
-        different properties, the management group properties will be updated.
+        """Create or update a management group. If a management group is already created and a subsequent
+        create request is issued with different properties, the management group properties will be
+        updated.
 
         :param group_id: Management Group ID. Required.
         :type group_id: str
@@ -388,9 +388,9 @@ class ManagementGroupsOperations:
         cache_control: str = "no-cache",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagementGroup]:
-        """Create or update a management group.
-        If a management group is already created and a subsequent create request is issued with
-        different properties, the management group properties will be updated.
+        """Create or update a management group. If a management group is already created and a subsequent
+        create request is issued with different properties, the management group properties will be
+        updated.
 
         :param group_id: Management Group ID. Required.
         :type group_id: str
@@ -640,10 +640,11 @@ class ManagementGroupsOperations:
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -656,8 +657,7 @@ class ManagementGroupsOperations:
     async def begin_delete(
         self, group_id: str, cache_control: str = "no-cache", **kwargs: Any
     ) -> AsyncLROPoller[_models.AzureAsyncOperationResults]:
-        """Delete management group.
-        If a management group contains child resources, the request will fail.
+        """Delete management group. If a management group contains child resources, the request will fail.
 
         :param group_id: Management Group ID. Required.
         :type group_id: str
@@ -694,10 +694,11 @@ class ManagementGroupsOperations:
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
             deserialized = self._deserialize("AzureAsyncOperationResults", pipeline_response.http_response)
             if cls:
