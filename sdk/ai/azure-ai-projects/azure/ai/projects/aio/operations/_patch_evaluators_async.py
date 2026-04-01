@@ -47,7 +47,8 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
     ) -> None:
         """Walk *folder* and upload every eligible file to the blob container.
 
-        Skips ``__pycache__``, ``.git``, ``.venv``, ``venv``, ``node_modules``
+        Skips directories starting with ``.`` (e.g. ``.git``, ``.venv``),
+        ``__pycache__``, ``venv``, ``node_modules``
         directories and ``.pyc`` / ``.pyo`` files.
 
         :param container_client: The blob container client to upload files to.
@@ -58,12 +59,12 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         :raises HttpResponseError: Re-raised with a friendlier message on
             ``AuthorizationPermissionMismatch``.
         """
-        skip_dirs = {"__pycache__", ".git", ".venv", "venv", "node_modules"}
+        skip_dirs = {"__pycache__", "venv", "node_modules"}
         skip_extensions = {".pyc", ".pyo"}
         files_uploaded = False
 
         for root, dirs, files in os.walk(folder):
-            dirs[:] = [d for d in dirs if d not in skip_dirs]
+            dirs[:] = [d for d in dirs if d not in skip_dirs and not d.startswith(".")]
             for file_name in files:
                 if any(file_name.endswith(ext) for ext in skip_extensions):
                     continue
