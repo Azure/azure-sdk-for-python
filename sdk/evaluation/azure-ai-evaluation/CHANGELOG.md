@@ -8,9 +8,7 @@
 
 ### Bugs Fixed
 - Fixed attack success rate (ASR) always reporting 0% because the sync eval API's `passed` field indicates task completion, not content safety. Replaced `passed`-based logic with score-based threshold comparison matching `_evaluation_processor.py`.
-
 - Fixed partial red team results being discarded when some objectives fail. Previously, if PyRIT raised due to incomplete objectives (e.g., evaluator model refuses to score), all completed results were lost. Now recovers partial results from PyRIT's memory database.
-
 - Fixed evaluator token metrics (`promptTokens`, `completionTokens`) not persisted in red teaming output items. The sync eval API returns camelCase keys but the extraction code only checked for snake_case, silently dropping all evaluator token usage data.
 
 ## 1.16.2 (2026-03-24)
