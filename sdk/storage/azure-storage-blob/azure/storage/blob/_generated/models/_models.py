@@ -459,8 +459,8 @@ class BlobProperties(_Model):
     :vartype creation_time: ~datetime.datetime
     :ivar last_modified: The date-time the blob was last modified in RFC1123 format. Required.
     :vartype last_modified: ~datetime.datetime
-    :ivar e_tag: The blob ETag. Required.
-    :vartype e_tag: str
+    :ivar etag: The blob ETag. Required.
+    :vartype etag: str
     :ivar content_length: The content length of the blob.
     :vartype content_length: int
     :ivar content_type: The content type of the blob.
@@ -564,8 +564,7 @@ class BlobProperties(_Model):
         xml={"attribute": False, "name": "Last-Modified", "text": False, "unwrapped": False},
     )
     """The date-time the blob was last modified in RFC1123 format. Required."""
-    e_tag: str = rest_field(
-        name="eTag",
+    etag: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Etag", "text": False, "unwrapped": False},
     )
@@ -822,7 +821,7 @@ class BlobProperties(_Model):
         self,
         *,
         last_modified: datetime.datetime,
-        e_tag: str,
+        etag: str,
         creation_time: Optional[datetime.datetime] = None,
         content_length: Optional[int] = None,
         content_type: Optional[str] = None,
