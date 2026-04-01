@@ -1251,6 +1251,12 @@ class TestEvaluate:
             expected_results_json = json.load(f)
         assert converted_results_json == expected_results_json
 
+        builtin_results = converted_results["_evaluation_results_list"][0]["results"]
+        labelgrader_result = next(result for result in builtin_results if result["name"] == "labelgrader")
+        fluency_result = next(result for result in builtin_results if result["name"] == "Fluency")
+        assert labelgrader_result["properties"] == {"type": None}
+        assert fluency_result["properties"] == {"gpt_fluency": 1.0}
+
         # Verify metrics preserved
         assert converted_results["metrics"]["overall_score"] == 0.75
 
@@ -1384,7 +1390,12 @@ class TestEvaluate:
             evaluators={"friendly_evaluator_gh4y": lambda **kwargs: {"score": 1}},
             eval_meta_data={
                 "testing_criteria": [
-                    {"name": "friendly_evaluator_gh4y", "type": "quality", "metrics": ["score"]}
+                    {
+                        "name": "friendly_evaluator_gh4y",
+                        "type": "quality",
+                        "metrics": ["score"],
+                        "evaluator_name": "builtin.friendly_evaluator_gh4y",
+                    }
                 ]
             },
         )

@@ -2526,9 +2526,11 @@ def _process_criteria_metrics(
             {"input": "...", "output": "..."}
         )
     """
-    expected_metrics = testing_criteria_metadata.get(criteria_name, {}).get("metrics", [])
-    criteria_type = testing_criteria_metadata.get(criteria_name, {}).get("type", "")
-    is_inverse = testing_criteria_metadata.get(criteria_name, {}).get("is_inverse", False)
+    criteria_metadata = testing_criteria_metadata.get(criteria_name, {})
+    expected_metrics = criteria_metadata.get("metrics", [])
+    criteria_type = criteria_metadata.get("type", "")
+    evaluator_name = criteria_metadata.get("evaluator_name", "")
+    is_inverse = criteria_metadata.get("is_inverse", False)
 
     if _is_none_or_nan(criteria_type) or _is_none_or_nan(criteria_name):
         logger.warning(
@@ -2537,7 +2539,15 @@ def _process_criteria_metrics(
         return ([], {})
 
     # Extract metric values
-    result_per_metric = _extract_metric_values(criteria_name, criteria_type, metrics, expected_metrics, logger)
+    include_property_bag = _should_include_property_bag(evaluator_name, metrics)
+    result_per_metric = _extract_metric_values(
+        criteria_name,
+        criteria_type,
+        include_property_bag,
+        metrics,
+        expected_metrics,
+        logger,
+    )
 
     # Inject threshold from evaluator config when not present in raw results
     # (e.g., PythonGrader/code evaluators don't emit a threshold column)
@@ -2567,6 +2577,7 @@ def _process_criteria_metrics(
 def _extract_metric_values(
     criteria_name: str,
     criteria_type: str,
+    include_property_bag: bool,
     metrics: Dict[str, Any],
     expected_metrics: List[str],
     logger: logging.Logger,
@@ -2619,6 +2630,7 @@ def _extract_metric_values(
 
         result_name, result_name_child_level, result_name_nested_child_level, derived_passed = _update_metric_value(
             criteria_type,
+            include_property_bag,
             result_per_metric[metric],
             metric_key,
             metric,
@@ -2649,6 +2661,7 @@ def _extract_metric_values(
 
 def _update_metric_value(
     criteria_type: str,
+    include_property_bag: bool,
     metric_dict: Dict[str, Any],
     metric_key: str,
     metric: str,
@@ -2700,7 +2713,7 @@ def _update_metric_value(
     derived_passed = None
 
     property_name = None if metric_key == metric else _get_result_property_name(metric_key)
-    if property_name:
+    if property_name and include_property_bag:
         _ensure_properties_dict(metric_dict)
         metric_dict["properties"][property_name] = metric_value
         result_name = "properties"
@@ -2846,6 +2859,13 @@ def _ensure_properties_dict(metric_dict: Dict[str, Any]) -> None:
     """
     if "properties" not in metric_dict:
         metric_dict["properties"] = {}
+
+
+def _should_include_property_bag(evaluator_name: Optional[str], metrics: Dict[str, Any]) -> bool:
+    """Return whether AOAI result properties should be emitted for a custom evaluator result."""
+    if "custom_score" in metrics:
+        return True
+    return not (evaluator_name and evaluator_name.startswith("builtin."))
 
 
 def _get_result_property_name(metric_key: str) -> Optional[str]:
