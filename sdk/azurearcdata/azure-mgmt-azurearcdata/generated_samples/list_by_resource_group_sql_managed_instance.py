@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.azurearcdata import AzureArcDataManagementClient
 
 """
@@ -36,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/azurearcdata/resource-manager/Microsoft.AzureArcData/preview/2022-03-01-preview/examples/ListByResourceGroupSqlManagedInstance.json
+# x-ms-original-file: specification/azurearcdata/resource-manager/Microsoft.AzureArcData/preview/2026-03-01-preview/examples/ListByResourceGroupSqlManagedInstance.json
 if __name__ == "__main__":
     main()
