@@ -2721,10 +2721,13 @@ def _update_metric_value(
             derived_passed = passed
     elif (
         (metric_key.endswith("_reason") and not metric_key.endswith("_finish_reason"))
-        or metric_key in ["reason", "explanation"]
+        or metric_key == "reason"
     ):
         metric_dict["reason"] = metric_value
         result_name = "reason"
+    elif metric_key == "explanation":
+        metric_dict["explanation"] = metric_value
+        result_name = "explanation"
     elif metric_key.endswith("_threshold") or metric_key == "threshold":
         metric_dict["threshold"] = metric_value
         result_name = "threshold"
@@ -2925,6 +2928,7 @@ def _create_result_object(
     score = metric_values.get("score")
     label = metric_values.get("label")
     reason = metric_values.get("reason")
+    explanation = metric_values.get("explanation")
     threshold = metric_values.get("threshold")
     passed = metric_values.get("passed")
     sample = metric_values.get("sample")
@@ -2942,6 +2946,7 @@ def _create_result_object(
         "score": score if not (score is None or (isinstance(score, float) and math.isnan(score))) else None,
         "label": label,
         "reason": reason,
+        "explanation": explanation,
         "threshold": threshold,
         "passed": passed,
     }

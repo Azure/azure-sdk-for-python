@@ -1395,7 +1395,8 @@ class TestEvaluate:
             "attack_phase": "probe",
         }
         assert property_result["score"] == 4.5
-        assert property_result["reason"] == "Detailed attack reasoning"
+        assert property_result["reason"] is None
+        assert property_result["explanation"] == "Detailed attack reasoning"
         assert property_result["threshold"] == 3
         assert property_result["label"] is False
 
