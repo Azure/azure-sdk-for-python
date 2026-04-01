@@ -1,5 +1,15 @@
 # Release History
 
+## 12.30.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 12.30.0b1 (2026-04-01)
 
 ### Features Added
