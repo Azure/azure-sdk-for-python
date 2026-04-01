@@ -26,7 +26,6 @@ from .operations import (
 from ._client import BlobClient as GeneratedBlobClient
 from ._configuration import BlobClientConfiguration as GeneratedBlobClientConfiguration
 from .._patch import RangeHeaderPolicy
-from .._version import VERSION
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -55,8 +54,8 @@ class BlobClientConfiguration(GeneratedBlobClientConfiguration):
         version: str = kwargs.pop("version", "2026-06-06")
         self.url = url
         self.credential = credential
+        from .._version import VERSION
         self.version = version
-        self.api_version = version  # alias for _validation.py compatibility
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://storage.azure.com/.default"])
 
         kwargs.setdefault("sdk_moniker", "storage-blob/{}".format(VERSION))

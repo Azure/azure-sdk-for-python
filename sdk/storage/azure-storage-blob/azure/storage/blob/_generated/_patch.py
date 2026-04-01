@@ -23,7 +23,6 @@ from .operations import (
     PageBlobOperations,
     ServiceOperations,
 )
-from ._version import VERSION
 from ._client import BlobClient as GeneratedBlobClient
 from ._configuration import BlobClientConfiguration as GeneratedBlobClientConfiguration
 
@@ -61,10 +60,10 @@ class BlobClientConfiguration(GeneratedBlobClientConfiguration):
             raise ValueError("Parameter 'url' must not be None.")
 
         version: str = kwargs.pop("version", "2026-06-06")
+        from ._version import VERSION
         self.url = url
         self.credential = credential
         self.version = version
-        self.api_version = version  # alias for _validation.py compatibility
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://storage.azure.com/.default"])
 
         kwargs.setdefault("sdk_moniker", "storage-blob/{}".format(VERSION))
