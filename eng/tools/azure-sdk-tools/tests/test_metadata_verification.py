@@ -240,7 +240,9 @@ def test_verify_conda_section_passes_with_valid_config(tmp_path):
     result = verify_conda_section(str(tmp_path), "pkg", parsed_pkg, pypi_versions=["1.0.0"])
     assert result is True
 
+
 # ======================= disallowed file tests =======================
+
 
 def _create_test_wheel(dist_dir, version, files):
     wheel_path = os.path.join(dist_dir, f"azure_test_package-{version}-py3-none-any.whl")
