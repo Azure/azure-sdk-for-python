@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 import os
+import logging
 from typing import Dict, List, Union
 
 from typing_extensions import overload, override
@@ -11,7 +12,9 @@ from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common._validators import ConversationValidator, ValidatorInterface
 from azure.ai.evaluation._exceptions import ErrorTarget
 from azure.ai.evaluation._model_configurations import Conversation
+from azure.ai.evaluation._common.utils import reformat_agent_response
 
+logger = logging.getLogger(__name__)
 
 class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
