@@ -318,12 +318,12 @@ class DiscoverySource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Instance is registered via Import."""
     DMS_PORTAL = "DMS-Portal"
     """Instance is discovered/registered from Azure Database Migration Service(DMS) Azure Portal."""
-    DMSPS = "DMS-PS"
+    DMS_PS = "DMS-PS"
     """Instance is discovered/registered from DMS using PowerShell - Azure DataMigration Service
     Module."""
-    DMSCLI = "DMS-CLI"
+    DMS_CLI = "DMS-CLI"
     """Instance is discovered/registered from DMS using datamigration extension for the Azure CLI."""
-    DMSSDK = "DMS-SDK"
+    DMS_SDK = "DMS-SDK"
     """Instance is discovered/registered from Azure Database Migration Service SDK like Python or .NET
     SDKs."""
     OTHER = "Other"
@@ -333,7 +333,7 @@ class DiscoverySource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class DtcSupport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies whether DTC support has been enabled for this availability group."""
 
-    PERDB = "PER_DB"
+    PER_DB = "PER_DB"
     """PER_DB."""
     NONE = "NONE"
     """NONE."""
@@ -375,13 +375,13 @@ class EncryptionAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """NONE, RC4."""
     NONE_AES = "NONE, AES"
     """NONE, AES."""
-    RC4AES = "RC4, AES"
+    RC4_AES = "RC4, AES"
     """RC4, AES."""
-    AESRC4 = "AES, RC4"
+    AES_RC4 = "AES, RC4"
     """AES, RC4."""
     NONE_RC4_AES = "NONE, RC4, AES"
     """NONE, RC4, AES."""
-    NONE_AESRC4 = "NONE, AES, RC4"
+    NONE_AES_RC4 = "NONE, AES, RC4"
     """NONE, AES, RC4."""
 
 
@@ -434,11 +434,11 @@ class HostType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Azure VMWare Virtual Machine."""
     AZURE_KUBERNETES_SERVICE = "Azure Kubernetes Service"
     """Azure Kubernetes Service."""
-    AWSVM_WARE_VIRTUAL_MACHINE = "AWS VMWare Virtual Machine"
+    AWS_VM_WARE_VIRTUAL_MACHINE = "AWS VMWare Virtual Machine"
     """AWS VMWare Virtual Machine."""
     AWS_KUBERNETES_SERVICE = "AWS Kubernetes Service"
     """AWS Kubernetes Service."""
-    GCPVM_WARE_VIRTUAL_MACHINE = "GCP VMWare Virtual Machine"
+    GCP_VM_WARE_VIRTUAL_MACHINE = "GCP VMWare Virtual Machine"
     """GCP VMWare Virtual Machine."""
     GCP_KUBERNETES_SERVICE = "GCP Kubernetes Service"
     """GCP Kubernetes Service."""
@@ -499,11 +499,11 @@ class InitiatedFrom(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Migration is initiated from SQL Server Migration Assistant (SSMA)."""
     DMS_PORTAL = "DMS-Portal"
     """Migration is initiated from Azure Database Migration Service(DMS) Azure Portal."""
-    DMSPS = "DMS-PS"
+    DMS_PS = "DMS-PS"
     """Migration is initiated from DMS using PowerShell - Azure DataMigration Service Module."""
-    DMSCLI = "DMS-CLI"
+    DMS_CLI = "DMS-CLI"
     """Migration is initiated from DMS using datamigration extension for the Azure CLI."""
-    DMSSDK = "DMS-SDK"
+    DMS_SDK = "DMS-SDK"
     """Migration is initiated from Azure Database Migration Service SDK like Python or .NET SDKs."""
     OTHER = "Other"
     """Migration is initiated from any other client not listed above."""
@@ -635,7 +635,7 @@ class Mode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Used for scenarios were the mode cannot be determined."""
 
 
-class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class OperationOrigin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system".
     """

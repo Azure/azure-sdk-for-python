@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.azurearcdata import AzureArcDataClient
+from azure.mgmt.azurearcdata import AzureArcDataManagementClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.azurearcdata import AzureArcDataClient
 
 
 def main():
-    client = AzureArcDataClient(
+    client = AzureArcDataManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

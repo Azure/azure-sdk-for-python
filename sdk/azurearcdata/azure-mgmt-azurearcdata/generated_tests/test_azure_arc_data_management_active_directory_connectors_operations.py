@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.azurearcdata import AzureArcDataClient
+from azure.mgmt.azurearcdata import AzureArcDataManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,17 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestAzureArcDataFailoverGroupsOperations(AzureMgmtRecordedTestCase):
+class TestAzureArcDataManagementActiveDirectoryConnectorsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(AzureArcDataClient)
+        self.client = self.create_mgmt_client(AzureArcDataManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_failover_groups_get(self, resource_group):
-        response = self.client.failover_groups.get(
+    def test_active_directory_connectors_get(self, resource_group):
+        response = self.client.active_directory_connectors.get(
             resource_group_name=resource_group.name,
-            sql_managed_instance_name="str",
-            failover_group_name="str",
+            data_controller_name="str",
+            active_directory_connector_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,25 +32,34 @@ class TestAzureArcDataFailoverGroupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_failover_groups_begin_create(self, resource_group):
-        response = self.client.failover_groups.begin_create(
+    def test_active_directory_connectors_begin_create(self, resource_group):
+        response = self.client.active_directory_connectors.begin_create(
             resource_group_name=resource_group.name,
-            sql_managed_instance_name="str",
-            failover_group_name="str",
-            failover_group_resource={
+            data_controller_name="str",
+            active_directory_connector_name="str",
+            active_directory_connector_resource={
                 "properties": {
-                    "partnerManagedInstanceId": "str",
                     "spec": {
-                        "role": "str",
-                        "partnerMI": "str",
-                        "partnerMirroringCert": "str",
-                        "partnerMirroringURL": "str",
-                        "partnerSyncMode": "str",
-                        "sharedName": "str",
-                        "sourceMI": "str",
+                        "activeDirectory": {
+                            "realm": "str",
+                            "domainControllers": {
+                                "primaryDomainController": {"hostname": "str"},
+                                "secondaryDomainControllers": [{"hostname": "str"}],
+                            },
+                            "netbiosDomainName": "str",
+                            "ouDistinguishedName": "str",
+                            "serviceAccountProvisioning": "str",
+                        },
+                        "dns": {
+                            "nameserverIPAddresses": ["str"],
+                            "domainName": "str",
+                            "preferK8sDnsForPtrLookups": bool,
+                            "replicas": 0,
+                        },
                     },
+                    "domainServiceAccountLoginInformation": {"password": "str", "username": "str"},
                     "provisioningState": "str",
-                    "status": {},
+                    "status": {"lastUpdateTime": "str", "observedGeneration": 0, "state": "str"},
                 },
                 "id": "str",
                 "name": "str",
@@ -71,11 +80,11 @@ class TestAzureArcDataFailoverGroupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_failover_groups_begin_delete(self, resource_group):
-        response = self.client.failover_groups.begin_delete(
+    def test_active_directory_connectors_begin_delete(self, resource_group):
+        response = self.client.active_directory_connectors.begin_delete(
             resource_group_name=resource_group.name,
-            sql_managed_instance_name="str",
-            failover_group_name="str",
+            data_controller_name="str",
+            active_directory_connector_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -83,10 +92,10 @@ class TestAzureArcDataFailoverGroupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_failover_groups_list(self, resource_group):
-        response = self.client.failover_groups.list(
+    def test_active_directory_connectors_list(self, resource_group):
+        response = self.client.active_directory_connectors.list(
             resource_group_name=resource_group.name,
-            sql_managed_instance_name="str",
+            data_controller_name="str",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

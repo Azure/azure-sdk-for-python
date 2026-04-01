@@ -34,7 +34,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
-from .._configuration import AzureArcDataClientConfiguration
+from .._configuration import AzureArcDataManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
@@ -2383,14 +2383,16 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.azurearcdata.AzureArcDataClient`'s
+        :class:`~azure.mgmt.azurearcdata.AzureArcDataManagementClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AzureArcDataClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AzureArcDataManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2490,14 +2492,16 @@ class SqlManagedInstancesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.azurearcdata.AzureArcDataClient`'s
+        :class:`~azure.mgmt.azurearcdata.AzureArcDataManagementClient`'s
         :attr:`sql_managed_instances` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AzureArcDataClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AzureArcDataManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3295,14 +3299,16 @@ class SqlServerInstancesOperations:  # pylint: disable=too-many-public-methods
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.azurearcdata.AzureArcDataClient`'s
+        :class:`~azure.mgmt.azurearcdata.AzureArcDataManagementClient`'s
         :attr:`sql_server_instances` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AzureArcDataClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AzureArcDataManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -7034,14 +7040,16 @@ class SqlServerLicensesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.azurearcdata.AzureArcDataClient`'s
+        :class:`~azure.mgmt.azurearcdata.AzureArcDataManagementClient`'s
         :attr:`sql_server_licenses` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AzureArcDataClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AzureArcDataManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -7709,14 +7717,16 @@ class PostgresInstancesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.azurearcdata.AzureArcDataClient`'s
+        :class:`~azure.mgmt.azurearcdata.AzureArcDataManagementClient`'s
         :attr:`postgres_instances` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AzureArcDataClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AzureArcDataManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -8507,14 +8517,16 @@ class SqlServerEsuLicensesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.azurearcdata.AzureArcDataClient`'s
+        :class:`~azure.mgmt.azurearcdata.AzureArcDataManagementClient`'s
         :attr:`sql_server_esu_licenses` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AzureArcDataClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AzureArcDataManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9188,14 +9200,16 @@ class FailoverGroupsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.azurearcdata.AzureArcDataClient`'s
+        :class:`~azure.mgmt.azurearcdata.AzureArcDataManagementClient`'s
         :attr:`failover_groups` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AzureArcDataClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AzureArcDataManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9758,14 +9772,16 @@ class SqlServerAvailabilityGroupsOperations:  # pylint: disable=too-many-public-
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.azurearcdata.AzureArcDataClient`'s
+        :class:`~azure.mgmt.azurearcdata.AzureArcDataManagementClient`'s
         :attr:`sql_server_availability_groups` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AzureArcDataClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AzureArcDataManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -12301,14 +12317,16 @@ class DataControllersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.azurearcdata.AzureArcDataClient`'s
+        :class:`~azure.mgmt.azurearcdata.AzureArcDataManagementClient`'s
         :attr:`data_controllers` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AzureArcDataClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AzureArcDataManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -13173,14 +13191,16 @@ class ActiveDirectoryConnectorsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.azurearcdata.AzureArcDataClient`'s
+        :class:`~azure.mgmt.azurearcdata.AzureArcDataManagementClient`'s
         :attr:`active_directory_connectors` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AzureArcDataClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AzureArcDataManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -13756,14 +13776,16 @@ class SqlServerDatabasesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.azurearcdata.AzureArcDataClient`'s
+        :class:`~azure.mgmt.azurearcdata.AzureArcDataManagementClient`'s
         :attr:`sql_server_databases` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AzureArcDataClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AzureArcDataManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

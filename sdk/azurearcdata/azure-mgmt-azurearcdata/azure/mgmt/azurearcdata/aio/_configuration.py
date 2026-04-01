@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AzureArcDataClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for AzureArcDataClient.
+class AzureArcDataManagementClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+    """Configuration for AzureArcDataManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

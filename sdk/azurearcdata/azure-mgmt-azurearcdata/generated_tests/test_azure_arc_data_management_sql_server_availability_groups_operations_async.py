@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.azurearcdata.aio import AzureArcDataClient
+from azure.mgmt.azurearcdata.aio import AzureArcDataManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,9 +15,9 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestAzureArcDataSqlServerAvailabilityGroupsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestAzureArcDataManagementSqlServerAvailabilityGroupsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(AzureArcDataClient, is_async=True)
+        self.client = self.create_mgmt_client(AzureArcDataManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async

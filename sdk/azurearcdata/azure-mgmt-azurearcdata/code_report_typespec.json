@@ -1,7 +1,7 @@
 {
   "azure.mgmt.azurearcdata": {
     "class_nodes": {
-      "AzureArcDataClient": {
+      "AzureArcDataManagementClient": {
         "type": null,
         "methods": {
           "__init__": {
@@ -14505,10 +14505,10 @@
           "ADS": "ADS",
           "AZURE_ARC": "AZURE_ARC",
           "AZURE_MIGRATE": "AZURE_MIGRATE",
-          "DMSCLI": "DMSCLI",
-          "DMSPS": "DMSPS",
-          "DMSSDK": "DMSSDK",
+          "DMS_CLI": "DMS_CLI",
           "DMS_PORTAL": "DMS_PORTAL",
+          "DMS_PS": "DMS_PS",
+          "DMS_SDK": "DMS_SDK",
           "IMPORT": "IMPORT",
           "OTHER": "OTHER",
           "SSMA": "SSMA",
@@ -15465,7 +15465,7 @@
         "methods": {},
         "properties": {
           "NONE": "NONE",
-          "PERDB": "PERDB",
+          "PER_DB": "PER_DB",
           "capitalize": "capitalize",
           "casefold": "casefold",
           "center": "center",
@@ -15582,14 +15582,14 @@
         "methods": {},
         "properties": {
           "AES": "AES",
-          "AESRC4": "AESRC4",
+          "AES_RC4": "AES_RC4",
           "NONE": "NONE",
           "NONE_AES": "NONE_AES",
-          "NONE_AESRC4": "NONE_AESRC4",
+          "NONE_AES_RC4": "NONE_AES_RC4",
           "NONE_RC4": "NONE_RC4",
           "NONE_RC4_AES": "NONE_RC4_AES",
           "RC4": "RC4",
-          "RC4AES": "RC4AES",
+          "RC4_AES": "RC4_AES",
           "capitalize": "capitalize",
           "casefold": "casefold",
           "center": "center",
@@ -18033,16 +18033,16 @@
         "type": "Enum",
         "methods": {},
         "properties": {
-          "AWSVM_WARE_VIRTUAL_MACHINE": "AWSVM_WARE_VIRTUAL_MACHINE",
           "AWS_KUBERNETES_SERVICE": "AWS_KUBERNETES_SERVICE",
           "AWS_VIRTUAL_MACHINE": "AWS_VIRTUAL_MACHINE",
+          "AWS_VM_WARE_VIRTUAL_MACHINE": "AWS_VM_WARE_VIRTUAL_MACHINE",
           "AZURE_KUBERNETES_SERVICE": "AZURE_KUBERNETES_SERVICE",
           "AZURE_VIRTUAL_MACHINE": "AZURE_VIRTUAL_MACHINE",
           "AZURE_VM_WARE_VIRTUAL_MACHINE": "AZURE_VM_WARE_VIRTUAL_MACHINE",
           "CONTAINER": "CONTAINER",
-          "GCPVM_WARE_VIRTUAL_MACHINE": "GCPVM_WARE_VIRTUAL_MACHINE",
           "GCP_KUBERNETES_SERVICE": "GCP_KUBERNETES_SERVICE",
           "GCP_VIRTUAL_MACHINE": "GCP_VIRTUAL_MACHINE",
+          "GCP_VM_WARE_VIRTUAL_MACHINE": "GCP_VM_WARE_VIRTUAL_MACHINE",
           "HYPER_V_VIRTUAL_MACHINE": "HYPER_V_VIRTUAL_MACHINE",
           "OTHER": "OTHER",
           "PHYSICAL_SERVER": "PHYSICAL_SERVER",
@@ -18606,10 +18606,10 @@
         "properties": {
           "ADS": "ADS",
           "AZURE_ARC": "AZURE_ARC",
-          "DMSCLI": "DMSCLI",
-          "DMSPS": "DMSPS",
-          "DMSSDK": "DMSSDK",
+          "DMS_CLI": "DMS_CLI",
           "DMS_PORTAL": "DMS_PORTAL",
+          "DMS_PS": "DMS_PS",
+          "DMS_SDK": "DMS_SDK",
           "OTHER": "OTHER",
           "SSMA": "SSMA",
           "SSMS": "SSMS",
@@ -18776,7 +18776,7 @@
           "zfill": "zfill"
         }
       },
-      "K8sActiveDirectory": {
+      "K8SActiveDirectory": {
         "type": null,
         "methods": {
           "__init__": {
@@ -18804,7 +18804,7 @@
                     "param_type": "positional_or_keyword"
                   },
                   "connector": {
-                    "type": "Optional[_models.K8sActiveDirectoryConnector]",
+                    "type": "Optional[_models.K8SActiveDirectoryConnector]",
                     "default": null,
                     "param_type": "keyword_only"
                   },
@@ -18999,7 +18999,7 @@
           "encryption_types": "Optional"
         }
       },
-      "K8sActiveDirectoryConnector": {
+      "K8SActiveDirectoryConnector": {
         "type": null,
         "methods": {
           "__init__": {
@@ -19210,7 +19210,7 @@
           "namespace": "Optional"
         }
       },
-      "K8sNetworkSettings": {
+      "K8SNetworkSettings": {
         "type": null,
         "methods": {
           "__init__": {
@@ -19427,7 +19427,7 @@
           "tlsprotocols": "Optional"
         }
       },
-      "K8sResourceRequirements": {
+      "K8SResourceRequirements": {
         "type": null,
         "methods": {
           "__init__": {
@@ -19638,7 +19638,7 @@
           "limits": "Optional"
         }
       },
-      "K8sScheduling": {
+      "K8SScheduling": {
         "type": null,
         "methods": {
           "__init__": {
@@ -19666,7 +19666,7 @@
                     "param_type": "positional_or_keyword"
                   },
                   "default": {
-                    "type": "Optional[_models.K8sSchedulingOptions]",
+                    "type": "Optional[_models.K8SSchedulingOptions]",
                     "default": null,
                     "param_type": "keyword_only"
                   }
@@ -19843,7 +19843,7 @@
           "default": "Optional"
         }
       },
-      "K8sSchedulingOptions": {
+      "K8SSchedulingOptions": {
         "type": null,
         "methods": {
           "__init__": {
@@ -19871,7 +19871,7 @@
                     "param_type": "positional_or_keyword"
                   },
                   "resources": {
-                    "type": "Optional[_models.K8sResourceRequirements]",
+                    "type": "Optional[_models.K8SResourceRequirements]",
                     "default": null,
                     "param_type": "keyword_only"
                   }
@@ -20048,7 +20048,7 @@
           "resources": "Optional"
         }
       },
-      "K8sSecurity": {
+      "K8SSecurity": {
         "type": null,
         "methods": {
           "__init__": {
@@ -20086,12 +20086,12 @@
                     "param_type": "keyword_only"
                   },
                   "active_directory": {
-                    "type": "Optional[_models.K8sActiveDirectory]",
+                    "type": "Optional[_models.K8SActiveDirectory]",
                     "default": null,
                     "param_type": "keyword_only"
                   },
                   "transparent_data_encryption": {
-                    "type": "Optional[_models.K8stransparentDataEncryption]",
+                    "type": "Optional[_models.K8STransparentDataEncryption]",
                     "default": null,
                     "param_type": "keyword_only"
                   }
@@ -20271,7 +20271,7 @@
           "transparent_data_encryption": "Optional"
         }
       },
-      "K8sSettings": {
+      "K8SSettings": {
         "type": null,
         "methods": {
           "__init__": {
@@ -20299,7 +20299,7 @@
                     "param_type": "positional_or_keyword"
                   },
                   "network": {
-                    "type": "Optional[_models.K8sNetworkSettings]",
+                    "type": "Optional[_models.K8SNetworkSettings]",
                     "default": null,
                     "param_type": "keyword_only"
                   }
@@ -20476,7 +20476,7 @@
           "network": "Optional"
         }
       },
-      "K8stransparentDataEncryption": {
+      "K8STransparentDataEncryption": {
         "type": null,
         "methods": {
           "__init__": {
@@ -23373,7 +23373,7 @@
           "description": "Optional"
         }
       },
-      "Origin": {
+      "OperationOrigin": {
         "type": "Enum",
         "methods": {},
         "properties": {
@@ -31191,7 +31191,7 @@
           "system_data": "Optional"
         }
       },
-      "SqlManagedInstanceK8sRaw": {
+      "SqlManagedInstanceK8SRaw": {
         "type": null,
         "methods": {
           "__init__": {
@@ -31219,7 +31219,7 @@
                     "param_type": "positional_or_keyword"
                   },
                   "spec": {
-                    "type": "Optional[_models.SqlManagedInstanceK8sSpec]",
+                    "type": "Optional[_models.SqlManagedInstanceK8SSpec]",
                     "default": null,
                     "param_type": "keyword_only"
                   }
@@ -31396,7 +31396,7 @@
           "spec": "Optional"
         }
       },
-      "SqlManagedInstanceK8sSpec": {
+      "SqlManagedInstanceK8SSpec": {
         "type": null,
         "methods": {
           "__init__": {
@@ -31424,7 +31424,7 @@
                     "param_type": "positional_or_keyword"
                   },
                   "scheduling": {
-                    "type": "Optional[_models.K8sScheduling]",
+                    "type": "Optional[_models.K8SScheduling]",
                     "default": null,
                     "param_type": "keyword_only"
                   },
@@ -31434,12 +31434,12 @@
                     "param_type": "keyword_only"
                   },
                   "security": {
-                    "type": "Optional[_models.K8sSecurity]",
+                    "type": "Optional[_models.K8SSecurity]",
                     "default": null,
                     "param_type": "keyword_only"
                   },
                   "settings": {
-                    "type": "Optional[_models.K8sSettings]",
+                    "type": "Optional[_models.K8SSettings]",
                     "default": null,
                     "param_type": "keyword_only"
                   }
@@ -31667,7 +31667,7 @@
                     "param_type": "keyword_only"
                   },
                   "k8_s_raw": {
-                    "type": "Optional[_models.SqlManagedInstanceK8sRaw]",
+                    "type": "Optional[_models.SqlManagedInstanceK8SRaw]",
                     "default": null,
                     "param_type": "keyword_only"
                   },
@@ -44242,7 +44242,7 @@
   },
   "azure.mgmt.azurearcdata.aio": {
     "class_nodes": {
-      "AzureArcDataClient": {
+      "AzureArcDataManagementClient": {
         "type": null,
         "methods": {
           "__init__": {

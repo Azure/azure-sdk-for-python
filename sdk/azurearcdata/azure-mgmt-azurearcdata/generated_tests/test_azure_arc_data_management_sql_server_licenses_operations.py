@@ -6,48 +6,46 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.azurearcdata.aio import AzureArcDataClient
+from azure.mgmt.azurearcdata import AzureArcDataManagementClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
-from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestAzureArcDataSqlServerEsuLicensesOperationsAsync(AzureMgmtRecordedTestCase):
+class TestAzureArcDataManagementSqlServerLicensesOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(AzureArcDataClient, is_async=True)
+        self.client = self.create_mgmt_client(AzureArcDataManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_sql_server_esu_licenses_get(self, resource_group):
-        response = await self.client.sql_server_esu_licenses.get(
+    @recorded_by_proxy
+    def test_sql_server_licenses_get(self, resource_group):
+        response = self.client.sql_server_licenses.get(
             resource_group_name=resource_group.name,
-            sql_server_esu_license_name="str",
+            sql_server_license_name="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_sql_server_esu_licenses_create(self, resource_group):
-        response = await self.client.sql_server_esu_licenses.create(
+    @recorded_by_proxy
+    def test_sql_server_licenses_create(self, resource_group):
+        response = self.client.sql_server_licenses.create(
             resource_group_name=resource_group.name,
-            sql_server_esu_license_name="str",
-            sql_server_esu_license={
+            sql_server_license_name="str",
+            sql_server_license={
                 "location": "str",
                 "properties": {
                     "activationState": "str",
                     "billingPlan": "str",
+                    "licenseCategory": "str",
                     "physicalCores": 0,
                     "scopeType": "str",
-                    "version": "str",
-                    "activatedAt": "2020-02-20 00:00:00",
+                    "lastActivatedAt": "2020-02-20 00:00:00",
+                    "lastDeactivatedAt": "2020-02-20 00:00:00",
                     "tenantId": "str",
-                    "terminatedAt": "2020-02-20 00:00:00",
-                    "uniqueId": "str",
                 },
                 "id": "str",
                 "name": "str",
@@ -68,22 +66,21 @@ class TestAzureArcDataSqlServerEsuLicensesOperationsAsync(AzureMgmtRecordedTestC
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_sql_server_esu_licenses_update(self, resource_group):
-        response = await self.client.sql_server_esu_licenses.update(
+    @recorded_by_proxy
+    def test_sql_server_licenses_update(self, resource_group):
+        response = self.client.sql_server_licenses.update(
             resource_group_name=resource_group.name,
-            sql_server_esu_license_name="str",
+            sql_server_license_name="str",
             parameters={
                 "properties": {
-                    "activatedAt": "2020-02-20 00:00:00",
                     "activationState": "str",
                     "billingPlan": "str",
+                    "lastActivatedAt": "2020-02-20 00:00:00",
+                    "lastDeactivatedAt": "2020-02-20 00:00:00",
+                    "licenseCategory": "str",
                     "physicalCores": 0,
                     "scopeType": "str",
                     "tenantId": "str",
-                    "terminatedAt": "2020-02-20 00:00:00",
-                    "uniqueId": "str",
-                    "version": "str",
                 },
                 "tags": {"str": "str"},
             },
@@ -93,30 +90,30 @@ class TestAzureArcDataSqlServerEsuLicensesOperationsAsync(AzureMgmtRecordedTestC
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_sql_server_esu_licenses_delete(self, resource_group):
-        response = await self.client.sql_server_esu_licenses.delete(
+    @recorded_by_proxy
+    def test_sql_server_licenses_delete(self, resource_group):
+        response = self.client.sql_server_licenses.delete(
             resource_group_name=resource_group.name,
-            sql_server_esu_license_name="str",
+            sql_server_license_name="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_sql_server_esu_licenses_list_by_resource_group(self, resource_group):
-        response = self.client.sql_server_esu_licenses.list_by_resource_group(
+    @recorded_by_proxy
+    def test_sql_server_licenses_list_by_resource_group(self, resource_group):
+        response = self.client.sql_server_licenses.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
-        result = [r async for r in response]
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_sql_server_esu_licenses_list(self, resource_group):
-        response = self.client.sql_server_esu_licenses.list()
-        result = [r async for r in response]
+    @recorded_by_proxy
+    def test_sql_server_licenses_list(self, resource_group):
+        response = self.client.sql_server_licenses.list()
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

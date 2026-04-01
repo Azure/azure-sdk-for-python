@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import AzureArcDataClientConfiguration
+from ._configuration import AzureArcDataManagementClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     ActiveDirectoryConnectorsOperations,
@@ -38,7 +38,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AzureArcDataClient:  # pylint: disable=too-many-instance-attributes
+class AzureArcDataManagementClient:  # pylint: disable=too-many-instance-attributes
     """The AzureArcData management API provides a RESTful set of web APIs to manage Azure Data
     Services on Azure Arc Resources.
 
@@ -100,7 +100,7 @@ class AzureArcDataClient:  # pylint: disable=too-many-instance-attributes
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = AzureArcDataClientConfiguration(
+        self._config = AzureArcDataManagementClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

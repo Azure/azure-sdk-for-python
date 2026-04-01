@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.azurearcdata.aio import AzureArcDataClient
+from azure.mgmt.azurearcdata.aio import AzureArcDataManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,16 +15,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestAzureArcDataSqlManagedInstancesOperationsAsync(AzureMgmtRecordedTestCase):
+class TestAzureArcDataManagementPostgresInstancesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(AzureArcDataClient, is_async=True)
+        self.client = self.create_mgmt_client(AzureArcDataManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_sql_managed_instances_get(self, resource_group):
-        response = await self.client.sql_managed_instances.get(
+    async def test_postgres_instances_get(self, resource_group):
+        response = await self.client.postgres_instances.get(
             resource_group_name=resource_group.name,
-            sql_managed_instance_name="str",
+            postgres_instance_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,52 +32,32 @@ class TestAzureArcDataSqlManagedInstancesOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_sql_managed_instances_begin_create(self, resource_group):
+    async def test_postgres_instances_begin_create(self, resource_group):
         response = await (
-            await self.client.sql_managed_instances.begin_create(
+            await self.client.postgres_instances.begin_create(
                 resource_group_name=resource_group.name,
-                sql_managed_instance_name="str",
-                sql_managed_instance={
+                postgres_instance_name="str",
+                resource={
                     "location": "str",
                     "properties": {
-                        "activeDirectoryInformation": {"keytabInformation": {"keytab": "str"}},
                         "admin": "str",
                         "basicLoginInformation": {"password": "str", "username": "str"},
-                        "clusterId": "str",
                         "dataControllerId": "str",
-                        "endTime": "str",
-                        "extensionId": "str",
-                        "k8sRaw": {
-                            "spec": {
-                                "replicas": 0,
-                                "scheduling": {
-                                    "default": {"resources": {"limits": {"str": "str"}, "requests": {"str": "str"}}}
-                                },
-                                "security": {
-                                    "activeDirectory": {
-                                        "accountName": "str",
-                                        "connector": {"name": "str", "namespace": "str"},
-                                        "encryptionTypes": ["str"],
-                                        "keytabSecret": "str",
-                                    },
-                                    "adminLoginSecret": "str",
-                                    "serviceCertificateSecret": "str",
-                                    "transparentDataEncryption": {"mode": "str", "protectorSecret": "str"},
-                                },
-                                "settings": {
-                                    "network": {"forceencryption": 0, "tlsciphers": "str", "tlsprotocols": "str"}
-                                },
-                            }
-                        },
+                        "k8sRaw": {},
                         "lastUploadedDate": "2020-02-20 00:00:00",
-                        "licenseType": "str",
                         "provisioningState": "str",
-                        "startTime": "str",
                     },
                     "extendedLocation": {"name": "str", "type": "str"},
                     "id": "str",
                     "name": "str",
-                    "sku": {"name": "vCore", "capacity": 0, "dev": bool, "family": "str", "size": "str", "tier": "str"},
+                    "sku": {
+                        "name": "str",
+                        "capacity": 0,
+                        "dev": bool,
+                        "family": "str",
+                        "size": "str",
+                        "tier": "Hyperscale",
+                    },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",
@@ -97,11 +77,21 @@ class TestAzureArcDataSqlManagedInstancesOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_sql_managed_instances_update(self, resource_group):
-        response = await self.client.sql_managed_instances.update(
+    async def test_postgres_instances_update(self, resource_group):
+        response = await self.client.postgres_instances.update(
             resource_group_name=resource_group.name,
-            sql_managed_instance_name="str",
-            parameters={"tags": {"str": "str"}},
+            postgres_instance_name="str",
+            parameters={
+                "properties": {
+                    "admin": "str",
+                    "basicLoginInformation": {"password": "str", "username": "str"},
+                    "dataControllerId": "str",
+                    "k8sRaw": {},
+                    "lastUploadedDate": "2020-02-20 00:00:00",
+                    "provisioningState": "str",
+                },
+                "tags": {"str": "str"},
+            },
         )
 
         # please add some check logic here by yourself
@@ -109,11 +99,11 @@ class TestAzureArcDataSqlManagedInstancesOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_sql_managed_instances_begin_delete(self, resource_group):
+    async def test_postgres_instances_begin_delete(self, resource_group):
         response = await (
-            await self.client.sql_managed_instances.begin_delete(
+            await self.client.postgres_instances.begin_delete(
                 resource_group_name=resource_group.name,
-                sql_managed_instance_name="str",
+                postgres_instance_name="str",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -122,8 +112,8 @@ class TestAzureArcDataSqlManagedInstancesOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_sql_managed_instances_list_by_resource_group(self, resource_group):
-        response = self.client.sql_managed_instances.list_by_resource_group(
+    async def test_postgres_instances_list_by_resource_group(self, resource_group):
+        response = self.client.postgres_instances.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
         result = [r async for r in response]
@@ -132,8 +122,8 @@ class TestAzureArcDataSqlManagedInstancesOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_sql_managed_instances_list(self, resource_group):
-        response = self.client.sql_managed_instances.list()
+    async def test_postgres_instances_list(self, resource_group):
+        response = self.client.postgres_instances.list()
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

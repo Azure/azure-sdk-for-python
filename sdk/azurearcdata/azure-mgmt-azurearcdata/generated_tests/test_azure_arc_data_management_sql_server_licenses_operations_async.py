@@ -6,22 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.azurearcdata import AzureArcDataClient
+from azure.mgmt.azurearcdata.aio import AzureArcDataManagementClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestAzureArcDataSqlServerLicensesOperations(AzureMgmtRecordedTestCase):
+class TestAzureArcDataManagementSqlServerLicensesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(AzureArcDataClient)
+        self.client = self.create_mgmt_client(AzureArcDataManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_sql_server_licenses_get(self, resource_group):
-        response = self.client.sql_server_licenses.get(
+    @recorded_by_proxy_async
+    async def test_sql_server_licenses_get(self, resource_group):
+        response = await self.client.sql_server_licenses.get(
             resource_group_name=resource_group.name,
             sql_server_license_name="str",
         )
@@ -30,9 +31,9 @@ class TestAzureArcDataSqlServerLicensesOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_sql_server_licenses_create(self, resource_group):
-        response = self.client.sql_server_licenses.create(
+    @recorded_by_proxy_async
+    async def test_sql_server_licenses_create(self, resource_group):
+        response = await self.client.sql_server_licenses.create(
             resource_group_name=resource_group.name,
             sql_server_license_name="str",
             sql_server_license={
@@ -66,9 +67,9 @@ class TestAzureArcDataSqlServerLicensesOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_sql_server_licenses_update(self, resource_group):
-        response = self.client.sql_server_licenses.update(
+    @recorded_by_proxy_async
+    async def test_sql_server_licenses_update(self, resource_group):
+        response = await self.client.sql_server_licenses.update(
             resource_group_name=resource_group.name,
             sql_server_license_name="str",
             parameters={
@@ -90,9 +91,9 @@ class TestAzureArcDataSqlServerLicensesOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_sql_server_licenses_delete(self, resource_group):
-        response = self.client.sql_server_licenses.delete(
+    @recorded_by_proxy_async
+    async def test_sql_server_licenses_delete(self, resource_group):
+        response = await self.client.sql_server_licenses.delete(
             resource_group_name=resource_group.name,
             sql_server_license_name="str",
         )
@@ -101,19 +102,19 @@ class TestAzureArcDataSqlServerLicensesOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_sql_server_licenses_list_by_resource_group(self, resource_group):
+    @recorded_by_proxy_async
+    async def test_sql_server_licenses_list_by_resource_group(self, resource_group):
         response = self.client.sql_server_licenses.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
-        result = [r for r in response]
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_sql_server_licenses_list(self, resource_group):
+    @recorded_by_proxy_async
+    async def test_sql_server_licenses_list(self, resource_group):
         response = self.client.sql_server_licenses.list()
-        result = [r for r in response]
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

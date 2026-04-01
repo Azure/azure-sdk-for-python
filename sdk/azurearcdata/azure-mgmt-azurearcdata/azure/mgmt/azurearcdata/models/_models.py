@@ -2905,11 +2905,11 @@ class ImpactedObjectsSuitabilitySummary(_Model):
     )
 
 
-class K8sActiveDirectory(_Model):
+class K8SActiveDirectory(_Model):
     """The kubernetes active directory information.
 
     :ivar connector:
-    :vartype connector: ~azure.mgmt.azurearcdata.models.K8sActiveDirectoryConnector
+    :vartype connector: ~azure.mgmt.azurearcdata.models.K8SActiveDirectoryConnector
     :ivar account_name: Account name for AAD.
     :vartype account_name: str
     :ivar keytab_secret: Keytab secret used to authenticate with Active Directory.
@@ -2918,7 +2918,7 @@ class K8sActiveDirectory(_Model):
     :vartype encryption_types: list[str]
     """
 
-    connector: Optional["_models.K8sActiveDirectoryConnector"] = rest_field(
+    connector: Optional["_models.K8SActiveDirectoryConnector"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     account_name: Optional[str] = rest_field(
@@ -2938,7 +2938,7 @@ class K8sActiveDirectory(_Model):
     def __init__(
         self,
         *,
-        connector: Optional["_models.K8sActiveDirectoryConnector"] = None,
+        connector: Optional["_models.K8SActiveDirectoryConnector"] = None,
         account_name: Optional[str] = None,
         keytab_secret: Optional[str] = None,
         encryption_types: Optional[list[str]] = None,
@@ -2955,8 +2955,8 @@ class K8sActiveDirectory(_Model):
         super().__init__(*args, **kwargs)
 
 
-class K8sActiveDirectoryConnector(_Model):
-    """K8sActiveDirectoryConnector.
+class K8SActiveDirectoryConnector(_Model):
+    """K8SActiveDirectoryConnector.
 
     :ivar name: Name of the connector.
     :vartype name: str
@@ -2988,7 +2988,7 @@ class K8sActiveDirectoryConnector(_Model):
         super().__init__(*args, **kwargs)
 
 
-class K8sNetworkSettings(_Model):
+class K8SNetworkSettings(_Model):
     """The kubernetes network settings information.
 
     :ivar forceencryption: If 1, then SQL Server forces all connections to be encrypted. By
@@ -3027,7 +3027,7 @@ class K8sNetworkSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class K8sResourceRequirements(_Model):
+class K8SResourceRequirements(_Model):
     """The kubernetes resource limits and requests used to restrict or reserve resource usage.
 
     :ivar requests: Requests for a kubernetes resource type (e.g 'cpu', 'memory'). The 'cpu'
@@ -3072,15 +3072,15 @@ class K8sResourceRequirements(_Model):
         super().__init__(*args, **kwargs)
 
 
-class K8sScheduling(_Model):
+class K8SScheduling(_Model):
     """The kubernetes scheduling information.
 
     :ivar default: The kubernetes scheduling options. It describes restrictions used to help
      Kubernetes select appropriate nodes to host the database service.
-    :vartype default: ~azure.mgmt.azurearcdata.models.K8sSchedulingOptions
+    :vartype default: ~azure.mgmt.azurearcdata.models.K8SSchedulingOptions
     """
 
-    default: Optional["_models.K8sSchedulingOptions"] = rest_field(
+    default: Optional["_models.K8SSchedulingOptions"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The kubernetes scheduling options. It describes restrictions used to help Kubernetes select
@@ -3090,7 +3090,7 @@ class K8sScheduling(_Model):
     def __init__(
         self,
         *,
-        default: Optional["_models.K8sSchedulingOptions"] = None,
+        default: Optional["_models.K8SSchedulingOptions"] = None,
     ) -> None: ...
 
     @overload
@@ -3104,16 +3104,16 @@ class K8sScheduling(_Model):
         super().__init__(*args, **kwargs)
 
 
-class K8sSchedulingOptions(_Model):
+class K8SSchedulingOptions(_Model):
     """The kubernetes scheduling options. It describes restrictions used to help Kubernetes select
     appropriate nodes to host the database service.
 
     :ivar resources: The kubernetes resource limits and requests used to restrict or reserve
      resource usage.
-    :vartype resources: ~azure.mgmt.azurearcdata.models.K8sResourceRequirements
+    :vartype resources: ~azure.mgmt.azurearcdata.models.K8SResourceRequirements
     """
 
-    resources: Optional["_models.K8sResourceRequirements"] = rest_field(
+    resources: Optional["_models.K8SResourceRequirements"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The kubernetes resource limits and requests used to restrict or reserve resource usage."""
@@ -3122,7 +3122,7 @@ class K8sSchedulingOptions(_Model):
     def __init__(
         self,
         *,
-        resources: Optional["_models.K8sResourceRequirements"] = None,
+        resources: Optional["_models.K8SResourceRequirements"] = None,
     ) -> None: ...
 
     @overload
@@ -3136,7 +3136,7 @@ class K8sSchedulingOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class K8sSecurity(_Model):
+class K8SSecurity(_Model):
     """The kubernetes security information.
 
     :ivar admin_login_secret: Admin login secret key.
@@ -3144,10 +3144,10 @@ class K8sSecurity(_Model):
     :ivar service_certificate_secret: Service certificate secret used.
     :vartype service_certificate_secret: str
     :ivar active_directory: The kubernetes active directory information.
-    :vartype active_directory: ~azure.mgmt.azurearcdata.models.K8sActiveDirectory
+    :vartype active_directory: ~azure.mgmt.azurearcdata.models.K8SActiveDirectory
     :ivar transparent_data_encryption: Transparent data encryption information.
     :vartype transparent_data_encryption:
-     ~azure.mgmt.azurearcdata.models.K8stransparentDataEncryption
+     ~azure.mgmt.azurearcdata.models.K8STransparentDataEncryption
     """
 
     admin_login_secret: Optional[str] = rest_field(
@@ -3158,11 +3158,11 @@ class K8sSecurity(_Model):
         name="serviceCertificateSecret", visibility=["read", "create", "update", "delete", "query"]
     )
     """Service certificate secret used."""
-    active_directory: Optional["_models.K8sActiveDirectory"] = rest_field(
+    active_directory: Optional["_models.K8SActiveDirectory"] = rest_field(
         name="activeDirectory", visibility=["read", "create", "update", "delete", "query"]
     )
     """The kubernetes active directory information."""
-    transparent_data_encryption: Optional["_models.K8stransparentDataEncryption"] = rest_field(
+    transparent_data_encryption: Optional["_models.K8STransparentDataEncryption"] = rest_field(
         name="transparentDataEncryption", visibility=["read", "create", "update", "delete", "query"]
     )
     """Transparent data encryption information."""
@@ -3173,8 +3173,8 @@ class K8sSecurity(_Model):
         *,
         admin_login_secret: Optional[str] = None,
         service_certificate_secret: Optional[str] = None,
-        active_directory: Optional["_models.K8sActiveDirectory"] = None,
-        transparent_data_encryption: Optional["_models.K8stransparentDataEncryption"] = None,
+        active_directory: Optional["_models.K8SActiveDirectory"] = None,
+        transparent_data_encryption: Optional["_models.K8STransparentDataEncryption"] = None,
     ) -> None: ...
 
     @overload
@@ -3188,14 +3188,14 @@ class K8sSecurity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class K8sSettings(_Model):
+class K8SSettings(_Model):
     """The kubernetes settings information.
 
     :ivar network: The kubernetes network settings information.
-    :vartype network: ~azure.mgmt.azurearcdata.models.K8sNetworkSettings
+    :vartype network: ~azure.mgmt.azurearcdata.models.K8SNetworkSettings
     """
 
-    network: Optional["_models.K8sNetworkSettings"] = rest_field(
+    network: Optional["_models.K8SNetworkSettings"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The kubernetes network settings information."""
@@ -3204,7 +3204,7 @@ class K8sSettings(_Model):
     def __init__(
         self,
         *,
-        network: Optional["_models.K8sNetworkSettings"] = None,
+        network: Optional["_models.K8SNetworkSettings"] = None,
     ) -> None: ...
 
     @overload
@@ -3218,7 +3218,7 @@ class K8sSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class K8stransparentDataEncryption(_Model):
+class K8STransparentDataEncryption(_Model):
     """Transparent data encryption information.
 
     :ivar mode: Transparent data encryption mode. Can be Service Managed, Customer managed or
@@ -3703,7 +3703,7 @@ class Operation(_Model):
     :ivar origin: The intended executor of the operation; as in Resource Based Access Control
      (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
      and "user,system".
-    :vartype origin: str or ~azure.mgmt.azurearcdata.models.Origin
+    :vartype origin: str or ~azure.mgmt.azurearcdata.models.OperationOrigin
     :ivar action_type: Extensible enum. Indicates the action type. "Internal" refers to actions
      that are for internal only APIs. "Internal"
     :vartype action_type: str or ~azure.mgmt.azurearcdata.models.ActionType
@@ -3720,7 +3720,7 @@ class Operation(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Localized display information for this particular operation."""
-    origin: Optional[Union[str, "_models.Origin"]] = rest_field(visibility=["read"])
+    origin: Optional[Union[str, "_models.OperationOrigin"]] = rest_field(visibility=["read"])
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
      logs UX. Default value is \"user,system\". Known values are: \"user\", \"system\", and
      \"user,system\"."""
@@ -5409,14 +5409,14 @@ class SqlManagedInstance(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class SqlManagedInstanceK8sRaw(_Model):
+class SqlManagedInstanceK8SRaw(_Model):
     """The raw kubernetes information.
 
     :ivar spec: The kubernetes spec information.
-    :vartype spec: ~azure.mgmt.azurearcdata.models.SqlManagedInstanceK8sSpec
+    :vartype spec: ~azure.mgmt.azurearcdata.models.SqlManagedInstanceK8SSpec
     """
 
-    spec: Optional["_models.SqlManagedInstanceK8sSpec"] = rest_field(
+    spec: Optional["_models.SqlManagedInstanceK8SSpec"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The kubernetes spec information."""
@@ -5425,7 +5425,7 @@ class SqlManagedInstanceK8sRaw(_Model):
     def __init__(
         self,
         *,
-        spec: Optional["_models.SqlManagedInstanceK8sSpec"] = None,
+        spec: Optional["_models.SqlManagedInstanceK8SSpec"] = None,
     ) -> None: ...
 
     @overload
@@ -5439,23 +5439,23 @@ class SqlManagedInstanceK8sRaw(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SqlManagedInstanceK8sSpec(_Model):
+class SqlManagedInstanceK8SSpec(_Model):
     """The kubernetes spec information.
 
     :ivar scheduling: The kubernetes scheduling information.
-    :vartype scheduling: ~azure.mgmt.azurearcdata.models.K8sScheduling
+    :vartype scheduling: ~azure.mgmt.azurearcdata.models.K8SScheduling
     :ivar replicas: This option specifies the number of SQL Managed Instance replicas that will be
      deployed in your Kubernetes cluster for high availability purposes. If sku.tier is
      BusinessCritical, allowed values are '2' or '3' with default of '3'. If sku.tier is
      GeneralPurpose, replicas must be '1'.
     :vartype replicas: int
     :ivar security: The kubernetes security information.
-    :vartype security: ~azure.mgmt.azurearcdata.models.K8sSecurity
+    :vartype security: ~azure.mgmt.azurearcdata.models.K8SSecurity
     :ivar settings: The kubernetes settings information.
-    :vartype settings: ~azure.mgmt.azurearcdata.models.K8sSettings
+    :vartype settings: ~azure.mgmt.azurearcdata.models.K8SSettings
     """
 
-    scheduling: Optional["_models.K8sScheduling"] = rest_field(
+    scheduling: Optional["_models.K8SScheduling"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The kubernetes scheduling information."""
@@ -5463,19 +5463,19 @@ class SqlManagedInstanceK8sSpec(_Model):
     """This option specifies the number of SQL Managed Instance replicas that will be deployed in your
      Kubernetes cluster for high availability purposes. If sku.tier is BusinessCritical, allowed
      values are '2' or '3' with default of '3'. If sku.tier is GeneralPurpose, replicas must be '1'."""
-    security: Optional["_models.K8sSecurity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    security: Optional["_models.K8SSecurity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The kubernetes security information."""
-    settings: Optional["_models.K8sSettings"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    settings: Optional["_models.K8SSettings"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The kubernetes settings information."""
 
     @overload
     def __init__(
         self,
         *,
-        scheduling: Optional["_models.K8sScheduling"] = None,
+        scheduling: Optional["_models.K8SScheduling"] = None,
         replicas: Optional[int] = None,
-        security: Optional["_models.K8sSecurity"] = None,
-        settings: Optional["_models.K8sSettings"] = None,
+        security: Optional["_models.K8SSecurity"] = None,
+        settings: Optional["_models.K8SSettings"] = None,
     ) -> None: ...
 
     @overload
@@ -5501,7 +5501,7 @@ class SqlManagedInstanceProperties(_Model):
     :ivar end_time: The instance end time.
     :vartype end_time: str
     :ivar k8_s_raw: The raw kubernetes information.
-    :vartype k8_s_raw: ~azure.mgmt.azurearcdata.models.SqlManagedInstanceK8sRaw
+    :vartype k8_s_raw: ~azure.mgmt.azurearcdata.models.SqlManagedInstanceK8SRaw
     :ivar basic_login_information: Username and password for basic authentication.
     :vartype basic_login_information: ~azure.mgmt.azurearcdata.models.BasicLoginInformation
     :ivar last_uploaded_date: Last uploaded date from Kubernetes cluster. Defaults to current date
@@ -5535,7 +5535,7 @@ class SqlManagedInstanceProperties(_Model):
     """The instance start time."""
     end_time: Optional[str] = rest_field(name="endTime", visibility=["read", "create", "update", "delete", "query"])
     """The instance end time."""
-    k8_s_raw: Optional["_models.SqlManagedInstanceK8sRaw"] = rest_field(
+    k8_s_raw: Optional["_models.SqlManagedInstanceK8SRaw"] = rest_field(
         name="k8sRaw", visibility=["read", "create", "update", "delete", "query"]
     )
     """The raw kubernetes information."""
@@ -5575,7 +5575,7 @@ class SqlManagedInstanceProperties(_Model):
         admin: Optional[str] = None,
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
-        k8_s_raw: Optional["_models.SqlManagedInstanceK8sRaw"] = None,
+        k8_s_raw: Optional["_models.SqlManagedInstanceK8SRaw"] = None,
         basic_login_information: Optional["_models.BasicLoginInformation"] = None,
         last_uploaded_date: Optional[datetime.datetime] = None,
         active_directory_information: Optional["_models.ActiveDirectoryInformation"] = None,
