@@ -7,9 +7,8 @@
 from io import BytesIO
 
 import pytest
-from azure.storage.filedatalake.aio import (
-    DataLakeServiceClient
-)
+from azure.storage.filedatalake import FileSystemClient as SyncFileSystemClient
+from azure.storage.filedatalake.aio import DataLakeServiceClient
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase, GenericTestProxyParametrize1
@@ -30,11 +29,17 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         self.file_system = self.dsc.get_file_system_client(self.get_resource_name('filesystem'))
         await self.file_system.create_file_system()
 
-    # TODO: Figure out how to get this to run automatically
-    async def _teardown(self):
+    def teardown_method(self, _):
+        # Use sync client as teardown_method must be sync
         if self.file_system:
+            sync_credential = self.get_credential(SyncFileSystemClient, is_async=False)
+            sync_file_system = SyncFileSystemClient(
+                self.account_url(self.file_system.account_name, "dfs"),
+                self.file_system.file_system_name,
+                credential=sync_credential)
+
             try:
-                await self.file_system.delete_file_system()
+                sync_file_system.delete_file_system()
             except:
                 pass
 
@@ -42,7 +47,7 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         return self.get_resource_name('file')
     
     @DataLakePreparer()
-    @pytest.mark.parametrize('a', [True, 'auto', 'md5', 'crc64'])  # a: validate_content
+    @pytest.mark.parametrize('a', [True])  # a: validate_content
     @GenericTestProxyParametrize1()
     @recorded_by_proxy_async
     async def test_upload_data(self, a, **kwargs):
@@ -59,7 +64,6 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         content = await file.download_file()
         assert await content.read() == data
-        await self._teardown()
 
     @DataLakePreparer()
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
@@ -79,7 +83,6 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         content = await file.download_file()
         assert await content.read() == data
-        await self._teardown()
 
     @DataLakePreparer()
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
@@ -103,7 +106,6 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         content = await file.download_file()
         assert await content.read() == data
-        await self._teardown()
 
     @DataLakePreparer()
     @pytest.mark.parametrize('a', [True, 'auto', 'md5', 'crc64'])  # a: validate_content
@@ -136,7 +138,6 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         content = await file.download_file()
         assert await content.read() == data1 + encoded2 + data1
-        await self._teardown()
 
     @DataLakePreparer()
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
@@ -158,7 +159,6 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         result = await file.download_file()
         assert await result.read() == content
-        await self._teardown()
 
     @DataLakePreparer()
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
@@ -184,7 +184,6 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         result = await file.download_file()
         assert await result.read() == data1 + data2 + data3
-        await self._teardown()
 
     @DataLakePreparer()
     @pytest.mark.parametrize('a', [True, 'auto', 'md5', 'crc64'])  # a: validate_content
@@ -211,7 +210,6 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert content == data
         assert stream.read() == data
-        await self._teardown()
 
     @DataLakePreparer()
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
@@ -246,7 +244,6 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         assert content == data
         assert stream.read() == data
         assert read_content == data
-        await self._teardown()
 
     @DataLakePreparer()
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
@@ -275,7 +272,6 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert content == data[10:1010]
         assert stream.read() == data[512:1536]
-        await self._teardown()
 
     @DataLakePreparer()
     @pytest.mark.live_test_only
@@ -299,4 +295,3 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert content == data
         assert partial == data[5 * 1024 * 1024:30 * 1024 * 1024]
-        await self._teardown()

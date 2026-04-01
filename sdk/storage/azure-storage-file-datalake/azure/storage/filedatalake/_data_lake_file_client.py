@@ -427,15 +427,11 @@ class DataLakeFileClient(PathClient):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash for each chunk of the file. The storage
-            service checks the hash of the content that has arrived with the hash
-            that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https, as https (the default), will
-            already validate. Note that this MD5 hash is not stored with the
-            blob. Also note that if enabled, the memory-efficient upload algorithm
-            will not be used because computing the MD5 hash requires buffering
-            entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any checksum calculated is NOT stored with the blob.
+            Choose "auto" (let the SDK choose the best algorithm), "crc64", or "md5". The use of bool is deprecated.
+            NOTE: The use of "auto" or "crc64" requires the `azure-storage-extensions` package to be installed.
+        :paramtype validate_content: Union[bool, Literal['auto', 'crc64', 'md5']]
         :keyword str etag:
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
@@ -497,13 +493,11 @@ class DataLakeFileClient(PathClient):
         :type length: int or None
         :keyword bool flush:
             If true, will commit the data after it is appended.
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash of the block content. The storage
-            service checks the hash of the content that has arrived
-            with the hash that was sent. This is primarily valuable for detecting
-            bitflips on the wire if using http instead of https as https (the default)
-            will already validate. Note that this MD5 hash is not stored with the
-            file.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any checksum calculated is NOT stored with the blob.
+            Choose "auto" (let the SDK choose the best algorithm), "crc64", or "md5". The use of bool is deprecated.
+            NOTE: The use of "auto" or "crc64" requires the `azure-storage-extensions` package to be installed.
+        :paramtype validate_content: Union[bool, Literal['auto', 'crc64', 'md5']]
         :keyword lease_action:
             Used to perform lease operations along with appending data.
 
@@ -714,6 +708,11 @@ class DataLakeFileClient(PathClient):
         :paramtype progress_hook: ~typing.Callable[[int, int], None]
         :keyword bool decompress: If True, any compressed content, identified by the Content-Encoding header, will be
             decompressed automatically before being returned. Default value is True.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any checksum calculated is NOT stored with the blob.
+            Choose "auto" (let the SDK choose the best algorithm), "crc64", or "md5". The use of bool is deprecated.
+            NOTE: The use of "auto" or "crc64" requires the `azure-storage-extensions` package to be installed.
+        :paramtype validate_content: Union[bool, Literal['auto', 'crc64', 'md5']]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
