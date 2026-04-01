@@ -1163,7 +1163,7 @@ class TestExtractEventIds:
 
         result = {
             "type": "session.created",
-            "session": {"id": "sess_123"},
+            "session": {"id": "session_123"},
         }
 
         _VoiceLiveInstrumentorPreview._extract_event_ids(conn, result, span)
