@@ -31,6 +31,7 @@ from azure.ai.evaluation.red_team._foundry._foundry_result_processor import (
     FoundryResultProcessor,
     _get_attack_type_name,
 )
+from azure.ai.evaluation.red_team._result_processor import ResultProcessor
 from azure.ai.evaluation.red_team._foundry._execution_manager import (
     FoundryExecutionManager,
 )
@@ -2591,8 +2592,124 @@ class TestFoundryResultProcessorExtended:
 
 
 # =============================================================================
-# Additional Tests for FoundryExecutionManager
+# Tests for ResultProcessor._compute_per_model_usage
 # =============================================================================
+@pytest.mark.unittest
+class TestComputePerModelUsage:
+    """Tests for _compute_per_model_usage with both camelCase and snake_case keys."""
+
+    def test_camelcase_evaluator_metrics(self):
+        """Evaluator metrics with camelCase keys (raw JSON) are correctly aggregated."""
+        output_items = [
+            {
+                "results": [
+                    {
+                        "properties": {
+                            "metrics": {
+                                "promptTokens": 200,
+                                "completionTokens": 80,
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+        usage = ResultProcessor._compute_per_model_usage(output_items)
+        assert len(usage) == 1
+        entry = usage[0]
+        assert entry["model_name"] == "azure_ai_system_model"
+        assert entry["prompt_tokens"] == 200
+        assert entry["completion_tokens"] == 80
+        assert entry["invocation_count"] == 1
+
+    def test_snake_case_evaluator_metrics(self):
+        """Evaluator metrics with snake_case keys are correctly aggregated."""
+        output_items = [
+            {
+                "results": [
+                    {
+                        "properties": {
+                            "metrics": {
+                                "prompt_tokens": 150,
+                                "completion_tokens": 60,
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+        usage = ResultProcessor._compute_per_model_usage(output_items)
+        assert len(usage) == 1
+        entry = usage[0]
+        assert entry["prompt_tokens"] == 150
+        assert entry["completion_tokens"] == 60
+
+    def test_camelcase_takes_precedence_when_both_present(self):
+        """When both camelCase and snake_case keys exist, camelCase is preferred (checked first)."""
+        output_items = [
+            {
+                "results": [
+                    {
+                        "properties": {
+                            "metrics": {
+                                "promptTokens": 300,
+                                "completionTokens": 100,
+                                "prompt_tokens": 999,
+                                "completion_tokens": 999,
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+        usage = ResultProcessor._compute_per_model_usage(output_items)
+        assert len(usage) == 1
+        entry = usage[0]
+        assert entry["prompt_tokens"] == 300
+        assert entry["completion_tokens"] == 100
+
+    def test_multiple_items_aggregate(self):
+        """Token counts aggregate across multiple output items with mixed key styles."""
+        output_items = [
+            {
+                "results": [
+                    {
+                        "properties": {
+                            "metrics": {
+                                "promptTokens": 100,
+                                "completionTokens": 40,
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "results": [
+                    {
+                        "properties": {
+                            "metrics": {
+                                "prompt_tokens": 200,
+                                "completion_tokens": 60,
+                            }
+                        }
+                    }
+                ]
+            },
+        ]
+        usage = ResultProcessor._compute_per_model_usage(output_items)
+        assert len(usage) == 1
+        entry = usage[0]
+        assert entry["prompt_tokens"] == 300
+        assert entry["completion_tokens"] == 100
+        assert entry["invocation_count"] == 2
+
+    def test_empty_metrics_returns_empty(self):
+        """No metrics at all returns an empty list."""
+        output_items = [{"results": [{"properties": {"metrics": {}}}]}]
+        usage = ResultProcessor._compute_per_model_usage(output_items)
+        assert usage == []
+
+
 @pytest.mark.unittest
 class TestFoundryExecutionManagerExtended:
     """Extended tests for FoundryExecutionManager."""
@@ -4059,6 +4176,123 @@ class TestRAIServiceScorerTokenMetrics:
             # Verify core metadata is still present
             assert metadata["raw_score"] == 1
             assert metadata["metric_name"] == "violence"
+
+    @pytest.mark.asyncio
+    async def test_score_metadata_includes_token_usage_from_sample_camelcase(
+        self, mock_credential, mock_azure_ai_project, mock_logger
+    ):
+        """Token usage from eval_result.sample.usage with camelCase keys (raw JSON) is normalized to snake_case."""
+        scorer = RAIServiceScorer(
+            credential=mock_credential,
+            azure_ai_project=mock_azure_ai_project,
+            risk_category=RiskCategory.Violence,
+            logger=mock_logger,
+        )
+
+        mock_piece = MagicMock()
+        mock_piece.id = "test-id"
+        mock_piece.converted_value = "Harmful content"
+        mock_piece.original_value = "Original"
+        mock_piece.labels = {}
+        mock_piece.api_role = "assistant"
+
+        mock_message = MagicMock()
+        mock_message.message_pieces = [mock_piece]
+
+        # Simulate raw JSON response (non-OneDP) with camelCase keys
+        mock_eval_result = {
+            "results": [
+                {
+                    "name": "violence",
+                    "metric": "violence",
+                    "score": 5,
+                    "reason": "Violent content",
+                    "threshold": 3,
+                    "passed": False,
+                    "label": "high",
+                }
+            ],
+            "sample": {
+                "usage": {
+                    "promptTokens": 100,
+                    "completionTokens": 50,
+                    "totalTokens": 150,
+                }
+            },
+        }
+
+        with patch(
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
+            new_callable=AsyncMock,
+        ) as mock_eval, patch("azure.ai.evaluation.red_team._foundry._rai_scorer.CentralMemory") as mock_memory_cls:
+            mock_memory_instance = MagicMock()
+            mock_memory_cls.get_memory_instance.return_value = mock_memory_instance
+            mock_eval.return_value = mock_eval_result
+
+            scores = await scorer.score_async(mock_message, objective="Test")
+
+            assert len(scores) == 1
+            metadata = scores[0].score_metadata
+            assert "token_usage" in metadata
+            assert metadata["token_usage"]["prompt_tokens"] == 100
+            assert metadata["token_usage"]["completion_tokens"] == 50
+            assert metadata["token_usage"]["total_tokens"] == 150
+
+    @pytest.mark.asyncio
+    async def test_score_metadata_includes_token_usage_from_result_properties_camelcase(
+        self, mock_credential, mock_azure_ai_project, mock_logger
+    ):
+        """Token usage from result properties.metrics with camelCase keys (raw JSON) is normalized to snake_case."""
+        scorer = RAIServiceScorer(
+            credential=mock_credential,
+            azure_ai_project=mock_azure_ai_project,
+            risk_category=RiskCategory.Violence,
+            logger=mock_logger,
+        )
+
+        mock_piece = MagicMock()
+        mock_piece.id = "test-id"
+        mock_piece.converted_value = "Harmful content"
+        mock_piece.original_value = "Original"
+        mock_piece.labels = {}
+        mock_piece.api_role = "assistant"
+
+        mock_message = MagicMock()
+        mock_message.message_pieces = [mock_piece]
+
+        # No sample.usage, result has camelCase properties.metrics (raw JSON)
+        mock_result_item = {
+            "name": "violence",
+            "metric": "violence",
+            "score": 5,
+            "reason": "Violent",
+            "threshold": 3,
+            "passed": False,
+            "label": "high",
+            "properties": {
+                "metrics": {
+                    "promptTokens": 3002,
+                    "completionTokens": 51,
+                }
+            },
+        }
+        mock_eval_result = {"results": [mock_result_item]}
+
+        with patch(
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
+            new_callable=AsyncMock,
+        ) as mock_eval, patch("azure.ai.evaluation.red_team._foundry._rai_scorer.CentralMemory") as mock_memory_cls:
+            mock_memory_instance = MagicMock()
+            mock_memory_cls.get_memory_instance.return_value = mock_memory_instance
+            mock_eval.return_value = mock_eval_result
+
+            scores = await scorer.score_async(mock_message, objective="Test")
+
+            assert len(scores) == 1
+            metadata = scores[0].score_metadata
+            assert "token_usage" in metadata
+            assert metadata["token_usage"]["prompt_tokens"] == 3002
+            assert metadata["token_usage"]["completion_tokens"] == 51
 
     @pytest.mark.asyncio
     async def test_scores_saved_to_memory(self, mock_credential, mock_azure_ai_project, mock_logger):
