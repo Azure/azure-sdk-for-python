@@ -186,7 +186,10 @@ class ChangelogTracker(BreakingChangesTracker):
             for _, bc in enumerate(content):
                 # Extract the message, skip the change type and the module name
                 msg, _, _,*args = bc
-                buffer.append("  - " + msg.format(*args))
+                try:
+                    buffer.append("  - " + msg.format(*args))
+                except (IndexError, KeyError):
+                    buffer.append("  - " + msg)
             buffer.append("")
             return buffer
 

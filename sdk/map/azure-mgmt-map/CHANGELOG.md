@@ -2,6 +2,6 @@
 
 ## 1.0.0b1 (2026-04-01)
 
-### Other Changes
+### Breaking Changes
 
-  - Initial version
+  - Deleted or renamed model `MicrosoftDependencyMapManagementService`
