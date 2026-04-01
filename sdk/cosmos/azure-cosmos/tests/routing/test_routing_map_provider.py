@@ -12,21 +12,25 @@ from azure.cosmos._routing.routing_map_provider import PartitionKeyRangeCache
 from azure.cosmos import http_constants
 
 from typing import Optional, Mapping, Any
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock
 import threading
 
 @pytest.mark.cosmosEmulator
 class TestRoutingMapProvider(unittest.TestCase):
+    @staticmethod
+    def _capture_internal_headers(kwargs, etag):
+        captured_headers = kwargs.get('_internal_response_headers_capture')
+        if captured_headers is not None:
+            captured_headers.clear()
+            captured_headers.update({'ETag': etag})
+
     class MockedCosmosClientConnection(object):
 
         def __init__(self, partition_key_ranges):
             self.partition_key_ranges = partition_key_ranges
 
         def _ReadPartitionKeyRanges(self, _collection_link: str, _feed_options: Optional[Mapping[str, Any]] = None, **kwargs):
-            # Call the response_hook if provided, to simulate real behavior
-            response_hook = kwargs.get('response_hook')
-            if response_hook:
-                response_hook({'ETag': '"test-etag-1"'}, None)
+            TestRoutingMapProvider._capture_internal_headers(kwargs, '"test-etag-1"')
             return self.partition_key_ranges
 
     def setUp(self):
@@ -208,6 +212,34 @@ class TestRoutingMapProvider(unittest.TestCase):
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
         self.assertIn(collection_id, provider._collection_routing_map_by_item)
 
+    def test_fetch_routing_map_preserves_user_response_hook_and_internal_etag_capture(self):
+        """User response_hook should still be invoked while internal header capture sets map ETag."""
+        hook_calls = []
+        expected_internal_etag = '"internal-etag"'
+
+        class HookAwareClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                TestRoutingMapProvider._capture_internal_headers(kwargs, expected_internal_etag)
+                response_hook = kwargs.get('response_hook')
+                if response_hook:
+                    response_hook({'ETag': '"user-hook-etag"'}, None)
+                return self.partition_key_ranges
+
+            def __init__(self, partition_key_ranges):
+                self.partition_key_ranges = partition_key_ranges
+
+        provider = PartitionKeyRangeCache(HookAwareClient(self.partition_key_ranges))
+        collection_link = "dbs/db/colls/container"
+
+        def user_hook(headers, _):
+            hook_calls.append(headers.get('ETag'))
+
+        result = provider.get_routing_map(collection_link, feed_options={}, response_hook=user_hook)
+
+        self.assertIsNotNone(result)
+        self.assertEqual(result.change_feed_etag, expected_internal_etag)
+        self.assertEqual(hook_calls, ['"user-hook-etag"'])
+
     def test_get_routing_map_returns_cached_on_second_call(self):
         """Second call returns the same cached object without re-fetching."""
         call_count = {'count': 0}
@@ -216,9 +248,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         class CountingClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 call_count['count'] += 1
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'ETag': '"test-etag-1"'}, None)
+                TestRoutingMapProvider._capture_internal_headers(kwargs, '"test-etag-1"')
                 return original_ranges
 
         provider = PartitionKeyRangeCache(CountingClient())
@@ -251,9 +281,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         class CountingClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 call_count['count'] += 1
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'ETag': f'"test-etag-{call_count["count"]}"'}, None)
+                TestRoutingMapProvider._capture_internal_headers(kwargs, f'"test-etag-{call_count["count"]}"')
                 if call_count['count'] == 1:
                     return original_ranges
                 return split_ranges
@@ -310,9 +338,7 @@ class TestRoutingMapProvider(unittest.TestCase):
 
         class IncompleteClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'ETag': '"incomplete-etag"'}, None)
+                TestRoutingMapProvider._capture_internal_headers(kwargs, '"incomplete-etag"')
                 return incomplete_ranges
 
         provider = PartitionKeyRangeCache(IncompleteClient())
@@ -349,9 +375,7 @@ class TestRoutingMapProvider(unittest.TestCase):
 
         class DeltaClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'ETag': '"etag-2"'}, None)
+                TestRoutingMapProvider._capture_internal_headers(kwargs, '"etag-2"')
                 return delta_ranges
 
         provider = PartitionKeyRangeCache(DeltaClient())
@@ -395,9 +419,7 @@ class TestRoutingMapProvider(unittest.TestCase):
                 call_count['count'] += 1
                 headers = kwargs.get('headers', {})
                 captured_headers_list.append(headers.copy())
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'ETag': f'"etag-{call_count["count"]}"'}, None)
+                TestRoutingMapProvider._capture_internal_headers(kwargs, f'"etag-{call_count["count"]}"')
                 if call_count['count'] == 1:
                     # Return a child with missing parent to force fallback
                     return [{'id': '99', 'minInclusive': '', 'maxExclusive': 'FF', 'parents': ['MISSING']}]
@@ -455,9 +477,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         class MergeClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 call_count['count'] += 1
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'ETag': '"etag-C"'}, None)
+                TestRoutingMapProvider._capture_internal_headers(kwargs, '"etag-C"')
                 return delta_ranges
 
         provider = PartitionKeyRangeCache(MergeClient())
@@ -504,9 +524,7 @@ class TestRoutingMapProvider(unittest.TestCase):
 
         class MergeClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'ETag': '"etag-2"'}, None)
+                TestRoutingMapProvider._capture_internal_headers(kwargs, '"etag-2"')
                 return delta_ranges
 
         provider = PartitionKeyRangeCache(MergeClient())
@@ -576,9 +594,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         class RapidSplitClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 call_count['count'] += 1
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'ETag': f'"etag-{call_count["count"]}"'}, None)
+                TestRoutingMapProvider._capture_internal_headers(kwargs, f'"etag-{call_count["count"]}"')
                 if call_count['count'] == 1:
                     return delta_ranges
                 return full_ranges
@@ -632,9 +648,7 @@ class TestRoutingMapProvider(unittest.TestCase):
 
         class MergeClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'ETag': '"etag-2"'}, None)
+                TestRoutingMapProvider._capture_internal_headers(kwargs, '"etag-2"')
                 return delta_ranges
 
         provider = PartitionKeyRangeCache(MergeClient())
@@ -676,9 +690,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         class CountingClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 call_count['count'] += 1
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'ETag': f'"test-etag-{call_count["count"]}"'}, None)
+                TestRoutingMapProvider._capture_internal_headers(kwargs, f'"test-etag-{call_count["count"]}"')
                 return original_ranges
 
         provider = PartitionKeyRangeCache(CountingClient())
@@ -715,9 +727,7 @@ class TestRoutingMapProvider(unittest.TestCase):
                 call_count['count'] += 1
                 # Simulate a slow service call to widen the contention window
                 fetch_event.wait(timeout=2)
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'ETag': f'"test-etag-{call_count["count"]}"'}, None)
+                TestRoutingMapProvider._capture_internal_headers(kwargs, f'"test-etag-{call_count["count"]}"')
                 return original_ranges
 
         provider = PartitionKeyRangeCache(SlowCountingClient())
@@ -773,9 +783,7 @@ class TestRoutingMapProvider(unittest.TestCase):
                 call_count['count'] += 1
                 import time
                 time.sleep(0.1)  # Simulate network delay
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'ETag': f'"etag-{call_count["count"]}"'}, None)
+                TestRoutingMapProvider._capture_internal_headers(kwargs, f'"etag-{call_count["count"]}"')
                 return original_ranges
 
         provider = PartitionKeyRangeCache(SlowClient())

@@ -26,7 +26,7 @@ from azure.cosmos._gone_retry_policy_base import _PartitionKeyRangeGoneRetryPoli
 
 class PartitionKeyRangeGoneRetryPolicyAsync(_PartitionKeyRangeGoneRetryPolicyBase):
 
-    async def ShouldRetry(self, exception):
+    def ShouldRetry(self, exception):
         self.exception = exception
 
         return False

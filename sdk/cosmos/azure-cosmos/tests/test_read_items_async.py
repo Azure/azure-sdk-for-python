@@ -11,12 +11,13 @@ import pytest
 from azure.core.utils import CaseInsensitiveDict
 
 import test_config
-from azure.cosmos import PartitionKey, CosmosDict
+from azure.cosmos import PartitionKey
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.documents import _OperationType
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport_async import FaultInjectionTransportAsync
 from azure.cosmos._resource_throttle_retry_policy import ResourceThrottleRetryPolicy
+from azure.cosmos.aio._gone_retry_policy_async import PartitionKeyRangeGoneRetryPolicyAsync
 
 @pytest.mark.cosmosEmulator
 class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
@@ -72,6 +73,13 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
 
         await asyncio.gather(*tasks)
         return items_to_read, item_ids
+
+    @staticmethod
+    def _delegate_should_retry(original_should_retry):
+        def _side_effect(self_instance, exception, *args, **kwargs):
+            return original_should_retry(self_instance, exception)
+
+        return _side_effect
 
     def _setup_fault_injection_async(self, error_to_inject, inject_once=False):
         """Helper to set up a client with fault injection for async read_items queries."""
@@ -419,12 +427,9 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
 
             original_should_retry = ResourceThrottleRetryPolicy.ShouldRetry
 
-            def side_effect_should_retry(self_instance, exception, *args, **kwargs):
-                return original_should_retry(self_instance, exception)
-
             with patch(
                     'azure.cosmos._resource_throttle_retry_policy.ResourceThrottleRetryPolicy.ShouldRetry',
-                    side_effect=side_effect_should_retry,
+                    side_effect=self._delegate_should_retry(original_should_retry),
                     autospec=True
             ) as mock_should_retry:
                 read_items = await container_with_faults.read_items(items=items_to_read)
@@ -447,8 +452,11 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
         try:
             items_to_read, item_ids = await self._create_records_for_read_items(self.container, 20, "item_for_gone")
 
+            original_should_retry = PartitionKeyRangeGoneRetryPolicyAsync.ShouldRetry
+
             with patch(
                     'azure.cosmos.aio._gone_retry_policy_async.PartitionKeyRangeGoneRetryPolicyAsync.ShouldRetry',
+                    side_effect=self._delegate_should_retry(original_should_retry),
                     autospec=True
             ) as mock_should_retry:
                 read_items = await container_with_faults.read_items(items=items_to_read)

@@ -3226,6 +3226,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if timeout is not None:
             kwargs.setdefault("timeout", timeout)
 
+        internal_headers_capture = kwargs.pop("_internal_response_headers_capture", None)
+
         if query:
             __GetBodiesFromQueryResult = result_fn
         else:
@@ -3276,6 +3278,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
             result, last_response_headers = self.__Get(path, request_params, headers, **kwargs)
             self.last_response_headers = last_response_headers
+            if internal_headers_capture is not None:
+                internal_headers_capture.clear()
+                internal_headers_capture.update(last_response_headers)
             if response_headers_list is not None:
                 response_headers_list.append(last_response_headers.copy())
             if response_hook:
@@ -3369,6 +3374,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     path, request_params, query, req_headers, **kwargs
                 )
                 self.last_response_headers = last_response_headers
+                if internal_headers_capture is not None:
+                    internal_headers_capture.clear()
+                    internal_headers_capture.update(last_response_headers)
                 self._UpdateSessionIfRequired(req_headers, partial_result, last_response_headers)
                 # Introducing a temporary complex function into a critical path to handle aggregated queries
                 # during splits, as a precaution falling back to the original logic if anything goes wrong
@@ -3398,6 +3406,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         result, last_response_headers = self.__Post(path, request_params, query, req_headers, **kwargs)
         self.last_response_headers = last_response_headers
+        if internal_headers_capture is not None:
+            internal_headers_capture.clear()
+            internal_headers_capture.update(last_response_headers)
         self._UpdateSessionIfRequired(req_headers, result, last_response_headers)
         if last_response_headers.get(http_constants.HttpHeaders.IndexUtilization) is not None:
             INDEX_METRICS_HEADER = http_constants.HttpHeaders.IndexUtilization

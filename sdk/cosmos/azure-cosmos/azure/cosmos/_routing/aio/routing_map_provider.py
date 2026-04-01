@@ -25,11 +25,11 @@ Cosmos database service.
 import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 from typing import Dict, Any, Optional, List, TYPE_CHECKING
+from azure.core.utils import CaseInsensitiveDict
 from ... import _base, http_constants
 from ..collection_routing_map import CollectionRoutingMap
 from ...exceptions import CosmosHttpResponseError
 from .._routing_map_provider_common import (
-    build_response_hook,
     prepare_fetch_options_and_headers,
     process_fetched_ranges,
     is_cache_stale,
@@ -209,11 +209,8 @@ class PartitionKeyRangeCache(object):
         :raises CosmosHttpResponseError: If the underlying request to fetch ranges fails.
         """
         request_kwargs = dict(kwargs)
-
-        # Build the response hook (chains with any upstream hook in kwargs).
-        capture_response_hook, response_headers = build_response_hook(request_kwargs)
-        # response_hook is passed explicitly below; avoid duplicate kwargs.
-        request_kwargs.pop('response_hook', None)
+        response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
+        request_kwargs['_internal_response_headers_capture'] = response_headers
 
         # Prepare sanitised options and headers for the PK-range fetch.
         change_feed_options = prepare_fetch_options_and_headers(
@@ -225,7 +222,6 @@ class PartitionKeyRangeCache(object):
             pk_range_generator = self._document_client._ReadPartitionKeyRanges(
                 collection_link,
                 change_feed_options,
-                response_hook=capture_response_hook,
                 **request_kwargs
             )
             async for item in pk_range_generator:

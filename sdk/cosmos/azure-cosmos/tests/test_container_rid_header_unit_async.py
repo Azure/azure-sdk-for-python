@@ -45,6 +45,13 @@ class CapturingMockClient:
         self.captured_feed_options = None
         self.call_count = 0
 
+    @staticmethod
+    def _capture_internal_headers(kwargs, etag):
+        captured_headers = kwargs.get('_internal_response_headers_capture')
+        if captured_headers is not None:
+            captured_headers.clear()
+            captured_headers.update({'ETag': etag})
+
     async def _ReadPartitionKeyRanges(
         self,
         collection_link: str,
@@ -53,7 +60,7 @@ class CapturingMockClient:
     ):
         self.captured_feed_options = dict(feed_options) if feed_options else {}
         self.call_count += 1
-        # Invoke the response_hook if provided (the cache uses it to capture etag)
+        CapturingMockClient._capture_internal_headers(kwargs, '"test-etag-1"')
         response_hook = kwargs.get("response_hook")
         if response_hook:
             response_hook({"etag": "test-etag-1"}, None)
@@ -64,8 +71,8 @@ class CapturingMockClient:
 class TestContainerRIDHeaderUnitAsync(unittest.IsolatedAsyncioTestCase):
     """Verifies that the containerRID feed option (which becomes the
     x-ms-cosmos-intended-collection-rid HTTP header) flows correctly through
-    the async PartitionKeyRangeCache, SmartRoutingMapProvider, response_hook
-    chaining, and the incremental-to-full-load fallback path.
+    the async PartitionKeyRangeCache, SmartRoutingMapProvider, and the
+    incremental-to-full-load fallback path.
     """
 
     # ----- PartitionKeyRangeCache -----
@@ -139,13 +146,17 @@ class TestContainerRIDHeaderUnitAsync(unittest.IsolatedAsyncioTestCase):
         client = CapturingMockClient()
         cache = PartitionKeyRangeCache(client)
         feed_options: Dict[str, Any] = {"containerRID": CONTAINER_RID}
-        await cache.get_routing_map(COLLECTION_LINK, feed_options)
+        previous_map = await cache.get_routing_map(COLLECTION_LINK, feed_options)
         assert client.call_count == 1
         assert client.captured_feed_options.get("containerRID") == CONTAINER_RID
-        await cache.get_routing_map(COLLECTION_LINK, feed_options, force_refresh=True)
-        # force_refresh without previous_routing_map uses the existing cached map as
-        # base for an incremental attempt. The ranges have no parents, which triggers a
-        # defensive fallback to full refresh -> 2 additional service calls (incremental + full).
+        await cache.get_routing_map(
+            COLLECTION_LINK,
+            feed_options,
+            force_refresh=True,
+            previous_routing_map=previous_map,
+        )
+        # In this mock setup, incremental refresh has no split/merge deltas and
+        # falls back to a full refresh, so force-refresh performs two reads.
         assert client.call_count == 3
         assert client.captured_feed_options.get("containerRID") == CONTAINER_RID
 
@@ -160,9 +171,7 @@ class TestContainerRIDHeaderUnitAsync(unittest.IsolatedAsyncioTestCase):
         class HeaderCapturingClient:
             async def _ReadPartitionKeyRanges(self, collection_link, feed_options=None, **kwargs):
                 captured_headers.append(dict(kwargs.get('headers', {})))
-                response_hook = kwargs.get("response_hook")
-                if response_hook:
-                    response_hook({"etag": "etag-full"}, None)
+                CapturingMockClient._capture_internal_headers(kwargs, '"etag-full"')
                 for item in PARTITION_KEY_RANGES:
                     yield item
 
@@ -222,9 +231,7 @@ class TestContainerRIDHeaderUnitAsync(unittest.IsolatedAsyncioTestCase):
         class FallbackClient:
             async def _ReadPartitionKeyRanges(self, collection_link, feed_options=None, **kwargs):
                 call_count[0] += 1
-                response_hook = kwargs.get("response_hook")
-                if response_hook:
-                    response_hook({"etag": f"etag-{call_count[0]}"}, None)
+                CapturingMockClient._capture_internal_headers(kwargs, f'"etag-{call_count[0]}"')
 
                 if call_count[0] == 1:
                     # First call: incremental — return a child whose parent doesn't exist

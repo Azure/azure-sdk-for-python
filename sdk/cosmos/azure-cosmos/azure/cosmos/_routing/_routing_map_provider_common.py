@@ -30,8 +30,6 @@ to both code paths simultaneously.
 import logging
 from typing import Any, Dict, List, Optional, Tuple
 
-from azure.core.utils import CaseInsensitiveDict
-
 from .. import _base, http_constants
 from .collection_routing_map import CollectionRoutingMap, _build_routing_map_from_ranges
 from . import routing_range
@@ -80,44 +78,6 @@ def is_cache_stale(
     return previous_routing_map.change_feed_etag == current_map.change_feed_etag
 
 
-
-def build_response_hook(kwargs: Dict[str, Any]):
-    """Build a ``response_hook`` that captures response headers.
-
-    If the caller already supplied a ``response_hook`` in *kwargs* it is
-    chained so that both hooks are invoked.
-
-    The captured headers are stored in a ``CaseInsensitiveDict`` so that
-    header lookups (e.g. for ``ETag``) are always case-insensitive,
-    regardless of the casing used by the service or test mocks.
-
-    :param dict kwargs: The keyword arguments dict.
-    :return: A 2-tuple ``(hook_callable, captured_headers_dict)``.  The
-        *captured_headers_dict* is populated by the hook when it fires.
-    :rtype: tuple[Callable, CaseInsensitiveDict]
-    """
-    response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
-
-    def capture_response_hook(hook_headers: Dict[str, Any], _):
-        response_headers.clear()
-        response_headers.update(hook_headers)
-
-    upstream_hook = kwargs.get('response_hook', None)
-    if upstream_hook:
-        original_capture = capture_response_hook
-
-        def _chained_response_hook(
-            hook_headers: Dict[str, Any],
-            body,
-            _upstream=upstream_hook,
-        ):
-            original_capture(hook_headers, body)
-            if _upstream is not None:
-                _upstream(hook_headers, body)
-
-        return _chained_response_hook, response_headers  # type: ignore[return-value]
-
-    return capture_response_hook, response_headers
 
 
 def prepare_fetch_options_and_headers(

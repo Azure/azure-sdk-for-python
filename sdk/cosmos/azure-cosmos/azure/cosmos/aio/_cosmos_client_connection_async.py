@@ -3026,6 +3026,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # we need to set operation_state in kwargs as that's where it is looked at while sending the request
             kwargs.setdefault("timeout", timeout)
 
+        internal_headers_capture = kwargs.pop("_internal_response_headers_capture", None)
+
         if query:
             __GetBodiesFromQueryResult = result_fn
         else:
@@ -3073,6 +3075,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
             result, last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
             self.last_response_headers = last_response_headers
+            if internal_headers_capture is not None:
+                internal_headers_capture.clear()
+                internal_headers_capture.update(last_response_headers)
             self._UpdateSessionIfRequired(headers, result, last_response_headers)
             if response_headers_list is not None:
                 response_headers_list.append(last_response_headers.copy())
@@ -3165,6 +3170,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     **kwargs
                 )
                 self.last_response_headers = last_response_headers
+                if internal_headers_capture is not None:
+                    internal_headers_capture.clear()
+                    internal_headers_capture.update(last_response_headers)
                 self._UpdateSessionIfRequired(req_headers, partial_result, last_response_headers)
 
                 # Introducing a temporary complex function into a critical path to handle aggregated queries,
@@ -3196,6 +3204,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         result, last_response_headers = await self.__Post(path, request_params, query, req_headers, **kwargs)
         self.last_response_headers = last_response_headers
+        if internal_headers_capture is not None:
+            internal_headers_capture.clear()
+            internal_headers_capture.update(last_response_headers)
         # update session for request mutates data on server side
         self._UpdateSessionIfRequired(req_headers, result, last_response_headers)
         # TODO: this part might become an issue since HTTP/2 can return read-only headers

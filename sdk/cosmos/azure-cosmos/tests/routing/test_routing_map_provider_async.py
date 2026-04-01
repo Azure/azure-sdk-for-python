@@ -20,6 +20,13 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
     """Async unit tests for PartitionKeyRangeCache and SmartRoutingMapProvider.
     """
 
+    @staticmethod
+    def _capture_internal_headers(kwargs, etag):
+        captured_headers = kwargs.get('_internal_response_headers_capture')
+        if captured_headers is not None:
+            captured_headers.clear()
+            captured_headers.update({'ETag': etag})
+
     class MockedCosmosClientConnection(object):
         """Mock that returns partition key ranges as an async generator."""
 
@@ -28,9 +35,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
 
         def _ReadPartitionKeyRanges(self, _collection_link: str,
                                     _feed_options: Optional[Mapping[str, Any]] = None, **kwargs):
-            response_hook = kwargs.get('response_hook')
-            if response_hook:
-                response_hook({'ETag': '"test-etag-1"'}, None)
+            TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"test-etag-1"')
 
             ranges = self.partition_key_ranges
 
@@ -173,6 +178,39 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
         self.assertIn(collection_id, provider._collection_routing_map_by_item)
 
+    async def test_fetch_routing_map_preserves_user_response_hook_and_internal_etag_capture_async(self):
+        """User response_hook should still fire while internal header capture sets map ETag."""
+        hook_calls = []
+        expected_internal_etag = '"internal-etag"'
+
+        class HookAwareClient:
+            def __init__(self, partition_key_ranges):
+                self.partition_key_ranges = partition_key_ranges
+
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, expected_internal_etag)
+                response_hook = kwargs.get('response_hook')
+                if response_hook:
+                    response_hook({'ETag': '"user-hook-etag"'}, None)
+
+                async def _gen():
+                    for r in self.partition_key_ranges:
+                        yield r
+
+                return _gen()
+
+        provider = PartitionKeyRangeCache(HookAwareClient(self.partition_key_ranges))
+        collection_link = "dbs/db/colls/container"
+
+        def user_hook(headers, _):
+            hook_calls.append(headers.get('ETag'))
+
+        result = await provider.get_routing_map(collection_link, feed_options={}, response_hook=user_hook)
+
+        self.assertIsNotNone(result)
+        self.assertEqual(result.change_feed_etag, expected_internal_etag)
+        self.assertEqual(hook_calls, ['"user-hook-etag"'])
+
     async def test_get_routing_map_returns_cached_on_second_call_async(self):
         """Second call returns the same cached object without re-fetching."""
         call_count = {'count': 0}
@@ -181,9 +219,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         class CountingClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 call_count['count'] += 1
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'ETag': '"test-etag-1"'}, None)
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"test-etag-1"')
 
                 async def _gen():
                     for r in original_ranges:
@@ -221,9 +257,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         class CountingClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 call_count['count'] += 1
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'ETag': f'"test-etag-{call_count["count"]}"'}, None)
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, f'"test-etag-{call_count["count"]}"')
 
                 data = original_ranges if call_count['count'] == 1 else split_ranges
 
@@ -284,9 +318,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
 
         class IncompleteClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'ETag': '"incomplete-etag"'}, None)
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"incomplete-etag"')
 
                 async def _gen():
                     for r in incomplete_ranges:
@@ -326,9 +358,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
 
         class DeltaClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'ETag': '"etag-2"'}, None)
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"etag-2"')
 
                 async def _gen():
                     for r in delta_ranges:
@@ -377,9 +407,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 call_count['count'] += 1
                 headers = kwargs.get('headers', {})
                 captured_headers_list.append(headers.copy())
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'ETag': f'"etag-{call_count["count"]}"'}, None)
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, f'"etag-{call_count["count"]}"')
                 data = ([{'id': '99', 'minInclusive': '', 'maxExclusive': 'FF',
                           'parents': ['MISSING']}] if call_count['count'] == 1 else full_ranges)
 
@@ -440,9 +468,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         class MergeClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 call_count['count'] += 1
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'ETag': '"etag-C"'}, None)
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"etag-C"')
 
                 async def _gen():
                     for r in delta_ranges:
@@ -494,9 +520,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
 
         class MergeClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'ETag': '"etag-2"'}, None)
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"etag-2"')
 
                 async def _gen():
                     for r in delta_ranges:
@@ -566,9 +590,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         class RapidSplitClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 call_count['count'] += 1
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'ETag': f'"etag-{call_count["count"]}"'}, None)
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, f'"etag-{call_count["count"]}"')
                 data = delta_ranges if call_count['count'] == 1 else full_ranges
 
                 async def _gen():
@@ -626,9 +648,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
 
         class MergeClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'ETag': '"etag-2"'}, None)
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"etag-2"')
 
                 async def _gen():
                     for r in delta_ranges:
@@ -675,9 +695,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         class CountingClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 call_count['count'] += 1
-                response_hook = kwargs.get('response_hook')
-                if response_hook:
-                    response_hook({'ETag': f'"test-etag-{call_count["count"]}"'}, None)
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, f'"test-etag-{call_count["count"]}"')
 
                 async def _gen():
                     for r in original_ranges:
@@ -719,9 +737,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
 
                 async def _gen():
                     await fetch_event.wait()
-                    response_hook = kwargs.get('response_hook')
-                    if response_hook:
-                        response_hook({'ETag': f'"test-etag-{call_count["count"]}"'}, None)
+                    TestRoutingMapProviderAsync._capture_internal_headers(kwargs, f'"test-etag-{call_count["count"]}"')
                     for r in original_ranges:
                         yield r
 
@@ -769,9 +785,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
 
                 async def _gen():
                     await asyncio.sleep(0.05)
-                    response_hook = kwargs.get('response_hook')
-                    if response_hook:
-                        response_hook({'ETag': f'"etag-{call_count["count"]}"'}, None)
+                    TestRoutingMapProviderAsync._capture_internal_headers(kwargs, f'"etag-{call_count["count"]}"')
                     for r in original_ranges:
                         yield r
 

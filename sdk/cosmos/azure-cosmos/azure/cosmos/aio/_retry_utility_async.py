@@ -253,14 +253,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             # If none of the retry policies applies or there is no retry needed, set the
             # throttle related response headers and re-throw the exception back arg[0]
             # is the request. It needs to be modified for write forbidden exception
-            # Support both sync and async ShouldRetry implementations.
-            should_retry_result = retry_policy.ShouldRetry(e)
-            should_retry = (
-                await should_retry_result
-                if asyncio.iscoroutine(should_retry_result)
-                else should_retry_result
-            )
-            if not should_retry:
+            if not retry_policy.ShouldRetry(e):
                 if not client.last_response_headers:
                     client.last_response_headers = {}
                 client.last_response_headers[
