@@ -53,6 +53,8 @@ GEN_AI_PROVIDER_VALUE = "microsoft.foundry"
 
 # --- VoiceLive-specific attributes ---
 GEN_AI_VOICE_SESSION_ID = "gen_ai.voice.session_id"
+GEN_AI_VOICE_CALL_ID = "gen_ai.voice.call_id"
+GEN_AI_VOICE_ITEM_ID = "gen_ai.voice.item_id"
 GEN_AI_VOICE_INPUT_SAMPLE_RATE = "gen_ai.voice.input_sample_rate"
 GEN_AI_VOICE_OUTPUT_SAMPLE_RATE = "gen_ai.voice.output_sample_rate"
 GEN_AI_VOICE_INPUT_AUDIO_FORMAT = "gen_ai.voice.input_audio_format"

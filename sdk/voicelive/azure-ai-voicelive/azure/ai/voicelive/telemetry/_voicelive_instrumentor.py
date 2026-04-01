@@ -43,7 +43,9 @@ from ._utils import (
     GEN_AI_USAGE_OUTPUT_TOKENS,
     GEN_AI_VOICE_AUDIO_BYTES_RECEIVED,
     GEN_AI_VOICE_AUDIO_BYTES_SENT,
+    GEN_AI_VOICE_CALL_ID,
     GEN_AI_VOICE_FIRST_TOKEN_LATENCY_MS,
+    GEN_AI_VOICE_ITEM_ID,
     GEN_AI_VOICE_INPUT_AUDIO_FORMAT,
     GEN_AI_VOICE_INPUT_SAMPLE_RATE,
     GEN_AI_VOICE_INTERRUPTION_COUNT,
@@ -561,6 +563,8 @@ class _VoiceLiveInstrumentorPreview:
                         span.add_attribute("gen_ai.voice.event_type", event_type)
                     if message_size is not None:
                         span.add_attribute(GEN_AI_VOICE_MESSAGE_SIZE, message_size)
+                    # Extract call_id from send events (e.g. conversation.item.create with function_call_output)
+                    instrumentor._extract_send_event_ids(conn_self, event, span)
                     instrumentor._add_send_event(span, event_type, content_str)
                     return await original_send(conn_self, event, *args, **kwargs)
             except Exception as exc:
@@ -659,6 +663,9 @@ class _VoiceLiveInstrumentorPreview:
                         span.add_attribute(GEN_AI_VOICE_MESSAGE_SIZE, message_size)
 
                     instrumentor._add_recv_event(span, event_type_str if event_type else None, content_str)
+
+                    # --- Extract response_id, call_id, conversation_id from top-level fields ---
+                    instrumentor._extract_event_ids(conn_self, result, span)
 
                     # --- Session ID and audio format tracking ---
                     if event_type_str in (ServerEventType.SESSION_CREATED, ServerEventType.SESSION_UPDATED):
@@ -1017,6 +1024,96 @@ class _VoiceLiveInstrumentorPreview:
                 connect_span.add_attribute(GEN_AI_REQUEST_TOOLS, tools_json)
             except (TypeError, ValueError):
                 pass
+
+    @staticmethod
+    def _get_field(obj: Any, field: str) -> Any:
+        """Get a field from an object or dict.
+
+        :param obj: The object or dict.
+        :type obj: any
+        :param field: The field name.
+        :type field: str
+        :return: The field value, or None.
+        :rtype: any
+        """
+        if hasattr(obj, "get"):
+            return obj.get(field)
+        return getattr(obj, field, None)
+
+    @staticmethod
+    def _extract_event_ids(conn_self: Any, result: Any, span: "AbstractSpan") -> None:
+        """Extract response_id, call_id, and conversation_id from any recv event.
+
+        Many server events carry ``response_id``, ``call_id``, and ``item_id``
+        at the top level. This method extracts them generically so every recv
+        span that carries these fields gets the corresponding attributes.
+
+        :param conn_self: The ``VoiceLiveConnection`` instance.
+        :type conn_self: ~azure.ai.voicelive.aio.VoiceLiveConnection
+        :param result: The received event object.
+        :type result: any
+        :param span: The current recv span.
+        :type span: ~azure.core.tracing.AbstractSpan
+        """
+        get = _VoiceLiveInstrumentorPreview._get_field
+
+        # response_id – present on most response.* events at the top level
+        response_id = get(result, "response_id")
+        if response_id:
+            span.add_attribute(GEN_AI_RESPONSE_ID, response_id)
+
+        # call_id – present on function_call_arguments.delta/done, mcp_call events
+        call_id = get(result, "call_id")
+        if call_id:
+            span.add_attribute(GEN_AI_VOICE_CALL_ID, call_id)
+
+        # item_id – present on output_item, content_part, function_call events
+        item_id = get(result, "item_id")
+        if item_id:
+            span.add_attribute(GEN_AI_VOICE_ITEM_ID, item_id)
+
+        # conversation_id is NOT a top-level field on most events; it lives
+        # inside the nested ``response`` object on response.done/created events.
+        # For response.created, extract response_id and conversation_id from nested response.
+        response_obj = get(result, "response")
+        if response_obj:
+            if not response_id:
+                nested_resp_id = get(response_obj, "id")
+                if nested_resp_id:
+                    span.add_attribute(GEN_AI_RESPONSE_ID, nested_resp_id)
+            nested_conv_id = get(response_obj, "conversation_id")
+            if nested_conv_id:
+                conn_self._telemetry_conversation_id = nested_conv_id  # pylint: disable=protected-access
+                span.add_attribute(GEN_AI_CONVERSATION_ID, nested_conv_id)
+
+    @staticmethod
+    def _extract_send_event_ids(conn_self: Any, event: Any, span: "AbstractSpan") -> None:
+        """Extract call_id and response_id from send events.
+
+        For ``conversation.item.create`` events, the nested ``item`` may carry
+        a ``call_id`` (for function_call_output items). For ``response.cancel``
+        events, ``response_id`` may be present.
+
+        :param conn_self: The ``VoiceLiveConnection`` instance.
+        :type conn_self: ~azure.ai.voicelive.aio.VoiceLiveConnection
+        :param event: The client event being sent.
+        :type event: any
+        :param span: The current send span.
+        :type span: ~azure.core.tracing.AbstractSpan
+        """
+        get = _VoiceLiveInstrumentorPreview._get_field
+
+        # response_id on response.cancel
+        response_id = get(event, "response_id")
+        if response_id:
+            span.add_attribute(GEN_AI_RESPONSE_ID, response_id)
+
+        # call_id from nested item (conversation.item.create with function_call_output)
+        item = get(event, "item")
+        if item:
+            call_id = get(item, "call_id")
+            if call_id:
+                span.add_attribute(GEN_AI_VOICE_CALL_ID, call_id)
 
     @staticmethod
     def _extract_response_done(conn_self: Any, result: Any, span: "AbstractSpan") -> None:

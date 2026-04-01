@@ -842,6 +842,8 @@ class TestNewConstants:
             GEN_AI_VOICE_AUDIO_BYTES_RECEIVED,
             GEN_AI_VOICE_MESSAGE_SIZE,
             GEN_AI_VOICE_FIRST_TOKEN_LATENCY_MS,
+            GEN_AI_VOICE_CALL_ID,
+            GEN_AI_VOICE_ITEM_ID,
             GEN_AI_AGENT_NAME,
             GEN_AI_CONVERSATION_ID,
             GEN_AI_RESPONSE_ID,
@@ -866,6 +868,8 @@ class TestNewConstants:
         assert GEN_AI_VOICE_AUDIO_BYTES_RECEIVED == "gen_ai.voice.audio_bytes_received"
         assert GEN_AI_VOICE_MESSAGE_SIZE == "gen_ai.voice.message_size"
         assert GEN_AI_VOICE_FIRST_TOKEN_LATENCY_MS == "gen_ai.voice.first_token_latency_ms"
+        assert GEN_AI_VOICE_CALL_ID == "gen_ai.voice.call_id"
+        assert GEN_AI_VOICE_ITEM_ID == "gen_ai.voice.item_id"
         assert GEN_AI_AGENT_NAME == "gen_ai.agent.name"
         assert GEN_AI_CONVERSATION_ID == "gen_ai.conversation.id"
         assert GEN_AI_RESPONSE_ID == "gen_ai.response.id"
@@ -1061,3 +1065,188 @@ class TestAgentConfigExtraction:
             mock_span.add_attribute.assert_any_call("gen_ai.conversation.id", "conv_123")
             assert mock_conn._telemetry_agent_name == "TestAgent"
             assert mock_conn._telemetry_conversation_id == "conv_123"
+
+
+# ------------------------------------------------------------------ #
+#  Event ID extraction (recv)                                         #
+# ------------------------------------------------------------------ #
+
+
+class TestExtractEventIds:
+    """Tests for _extract_event_ids - generic ID extraction from recv events."""
+
+    def test_extract_response_id_and_call_id_from_function_call_delta(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        span = MagicMock()
+
+        result = {
+            "type": "response.function_call_arguments.delta",
+            "response_id": "resp_abc123",
+            "item_id": "item_001",
+            "call_id": "call_xyz",
+            "delta": '{"arg": "val"}',
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_event_ids(conn, result, span)
+
+        span.add_attribute.assert_any_call("gen_ai.response.id", "resp_abc123")
+        span.add_attribute.assert_any_call("gen_ai.voice.call_id", "call_xyz")
+        span.add_attribute.assert_any_call("gen_ai.voice.item_id", "item_001")
+
+    def test_extract_response_id_and_call_id_from_function_call_done(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        span = MagicMock()
+
+        result = {
+            "type": "response.function_call_arguments.done",
+            "response_id": "resp_abc123",
+            "item_id": "item_001",
+            "call_id": "call_xyz",
+            "name": "get_weather",
+            "arguments": '{"city": "Seattle"}',
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_event_ids(conn, result, span)
+
+        span.add_attribute.assert_any_call("gen_ai.response.id", "resp_abc123")
+        span.add_attribute.assert_any_call("gen_ai.voice.call_id", "call_xyz")
+        span.add_attribute.assert_any_call("gen_ai.voice.item_id", "item_001")
+
+    def test_extract_response_id_from_audio_delta(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        span = MagicMock()
+
+        result = {
+            "type": "response.audio.delta",
+            "response_id": "resp_abc123",
+            "item_id": "item_002",
+            "delta": "base64data",
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_event_ids(conn, result, span)
+
+        span.add_attribute.assert_any_call("gen_ai.response.id", "resp_abc123")
+        span.add_attribute.assert_any_call("gen_ai.voice.item_id", "item_002")
+
+    def test_extract_conversation_id_from_response_created(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        span = MagicMock()
+
+        result = {
+            "type": "response.created",
+            "response": {
+                "id": "resp_new",
+                "conversation_id": "conv_abc",
+                "status": "in_progress",
+            },
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_event_ids(conn, result, span)
+
+        span.add_attribute.assert_any_call("gen_ai.response.id", "resp_new")
+        span.add_attribute.assert_any_call("gen_ai.conversation.id", "conv_abc")
+        assert conn._telemetry_conversation_id == "conv_abc"
+
+    def test_no_ids_on_session_created(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        span = MagicMock()
+
+        result = {
+            "type": "session.created",
+            "session": {"id": "sess_123"},
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_event_ids(conn, result, span)
+
+        # session.created has no response_id, call_id, or item_id
+        span.add_attribute.assert_not_called()
+
+    def test_extract_with_model_objects(self):
+        """Test extraction from model objects (attribute access instead of dict)."""
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        span = MagicMock()
+
+        result = MagicMock()
+        result.get = MagicMock(side_effect=AttributeError)
+        del result.get  # force attribute access path
+        result.response_id = "resp_obj"
+        result.call_id = "call_obj"
+        result.item_id = "item_obj"
+        result.response = None
+
+        _VoiceLiveInstrumentorPreview._extract_event_ids(conn, result, span)
+
+        span.add_attribute.assert_any_call("gen_ai.response.id", "resp_obj")
+        span.add_attribute.assert_any_call("gen_ai.voice.call_id", "call_obj")
+        span.add_attribute.assert_any_call("gen_ai.voice.item_id", "item_obj")
+
+
+# ------------------------------------------------------------------ #
+#  Send event ID extraction                                           #
+# ------------------------------------------------------------------ #
+
+
+class TestExtractSendEventIds:
+    """Tests for _extract_send_event_ids - ID extraction from send events."""
+
+    def test_extract_call_id_from_conversation_item_create(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        span = MagicMock()
+
+        event = {
+            "type": "conversation.item.create",
+            "item": {
+                "type": "function_call_output",
+                "call_id": "call_xyz",
+                "output": '{"result": "sunny"}',
+            },
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_send_event_ids(conn, event, span)
+
+        span.add_attribute.assert_any_call("gen_ai.voice.call_id", "call_xyz")
+
+    def test_extract_response_id_from_response_cancel(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        span = MagicMock()
+
+        event = {
+            "type": "response.cancel",
+            "response_id": "resp_cancel",
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_send_event_ids(conn, event, span)
+
+        span.add_attribute.assert_any_call("gen_ai.response.id", "resp_cancel")
+
+    def test_no_ids_on_audio_append(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        span = MagicMock()
+
+        event = {
+            "type": "input_audio_buffer.append",
+            "audio": "base64data",
+        }
+
+        _VoiceLiveInstrumentorPreview._extract_send_event_ids(conn, event, span)
+
+        span.add_attribute.assert_not_called()
+
