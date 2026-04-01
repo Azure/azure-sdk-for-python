@@ -259,22 +259,24 @@ class InvocationHandler:
         response: StreamingResponse,
         otel_span: Any,
         baggage_token: Any,
+        span_token: Any,
     ) -> StreamingResponse:
-        """Wrap a streaming response's body iterator with tracing and baggage cleanup.
+        """Wrap a streaming response's body iterator with tracing and context cleanup.
 
         Two layers of wrapping are applied in order:
 
         1. **Inner (tracing):** ``trace_stream`` wraps the body iterator so
            the OTel span covers the full streaming duration and records any
            errors that occur while yielding chunks.
-        2. **Outer (baggage cleanup):** A second async generator detaches the
-           W3C Baggage context *after* all chunks have been sent (or an
-           error occurs).  This ordering ensures the span is ended before
-           the baggage context is detached.
+        2. **Outer (context cleanup):** A second async generator detaches the
+           span context and W3C Baggage context *after* all chunks have been
+           sent (or an error occurs).  This ordering ensures the span is
+           ended before the contexts are detached.
 
         :param response: The ``StreamingResponse`` returned by the user handler.
         :param otel_span: The OTel span (or *None* when tracing is disabled).
         :param baggage_token: Token from ``set_baggage`` (or *None*).
+        :param span_token: Token from ``set_current_span`` (or *None*).
         :return: The same response object, with its body_iterator replaced.
         """
         # When tracing is disabled there is nothing to wrap — skip the
@@ -286,7 +288,7 @@ class InvocationHandler:
         # Inner wrap: trace_stream ends the span when iteration completes.
         response.body_iterator = self._tracing.trace_stream(response.body_iterator, otel_span)
 
-        # Outer wrap: detach baggage after all chunks are sent.
+        # Outer wrap: detach span context and baggage after all chunks are sent.
         original_iterator = response.body_iterator
         tracing = self._tracing  # capture for the closure
 
@@ -295,6 +297,7 @@ class InvocationHandler:
                 async for chunk in original_iterator:
                     yield chunk
             finally:
+                tracing.detach_context(span_token)
                 tracing.detach_baggage(baggage_token)
 
         response.body_iterator = _cleanup_iter()
@@ -326,6 +329,7 @@ class InvocationHandler:
         request.state.session_id = session_id
 
         baggage_token = None
+        span_token = None
         response: Optional[Response] = None
         streaming_wrapped = False
 
@@ -339,6 +343,10 @@ class InvocationHandler:
                     operation_name="invoke_agent",
                     session_id=session_id,
                 )
+                # Make the span the current span in context so that
+                # child spans created by framework handlers are correctly
+                # parented under this span instead of appearing as siblings.
+                span_token = self._tracing.set_current_span(otel_span)
                 self._safe_set_attrs(otel_span, {
                     InvocationConstants.ATTR_SPAN_INVOCATION_ID: invocation_id,
                     InvocationConstants.ATTR_SPAN_SESSION_ID: session_id,
@@ -388,7 +396,7 @@ class InvocationHandler:
                 )
 
             if isinstance(response, StreamingResponse):
-                wrapped = self._wrap_streaming_response(response, otel_span, baggage_token)
+                wrapped = self._wrap_streaming_response(response, otel_span, baggage_token, span_token)
                 streaming_wrapped = True
                 return wrapped
 
@@ -399,11 +407,12 @@ class InvocationHandler:
             return response
         finally:
             # For non-streaming responses (or error paths that returned
-            # before reaching _wrap_streaming_response), detach baggage
-            # immediately.  Streaming responses handle this in
+            # before reaching _wrap_streaming_response), detach context
+            # and baggage immediately.  Streaming responses handle this in
             # _wrap_streaming_response's cleanup iterator instead.
             if not streaming_wrapped:
                 if self._tracing is not None:
+                    self._tracing.detach_context(span_token)
                     self._tracing.detach_baggage(baggage_token)
 
     async def _traced_invocation_endpoint(
