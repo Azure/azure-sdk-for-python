@@ -1,6 +1,6 @@
 # Release History
 
-## 3.0.0b1 (2026-03-31)
+## 3.0.0b1 (2026-04-01)
 
 ### Features Added
 
@@ -13,6 +13,7 @@
   - Model `CreatorProperties` added property `total_storage_unit_size_in_bytes`
   - Model `CreatorProperties` added property `consumed_storage_unit_size_in_bytes`
   - Model `CreatorUpdateParameters` added property `properties`
+  - Model `CustomerManagedKeyEncryptionKeyIdentity` added property `federated_client_id`
   - Model `MapsAccountProperties` added property `locations`
   - Model `MapsAccountProperties` added property `private_endpoint_connections`
   - Model `MapsAccountProperties` added property `public_network_access`
@@ -20,9 +21,6 @@
   - Model `Resource` added property `system_data`
   - Model `TrackedResource` added property `system_data`
   - Added enum `ActionType`
-  - Added model `EncryptionCustomerManagedKeyEncryption`
-  - Added model `EncryptionCustomerManagedKeyEncryptionKeyIdentity`
-  - Added enum `EncryptionCustomerManagedKeyEncryptionKeyIdentityType`
   - Added model `LocationsItem`
   - Added model `Operation`
   - Added model `OperationStatusResult`
@@ -56,10 +54,7 @@
   - Deleted or renamed enum value `Name.S0`
   - Deleted or renamed enum value `Name.S1`
   - Deleted or renamed model `CreatorList`
-  - Deleted or renamed model `CustomerManagedKeyEncryption`
-  - Deleted or renamed model `CustomerManagedKeyEncryptionKeyIdentity`
   - Deleted or renamed model `Dimension`
-  - Deleted or renamed model `IdentityType`
   - Deleted or renamed model `MapsAccounts`
   - Deleted or renamed model `MapsOperations`
   - Deleted or renamed model `MetricSpecification`
