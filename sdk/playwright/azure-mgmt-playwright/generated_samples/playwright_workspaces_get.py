@@ -15,7 +15,7 @@ from azure.mgmt.playwright import PlaywrightMgmtClient
     pip install azure-identity
     pip install azure-mgmt-playwright
 # USAGE
-    python playwright_workspaces_delete.py
+    python playwright_workspaces_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,12 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.playwright_workspaces.begin_delete(
+    response = client.playwright_workspaces.get(
         resource_group_name="dummyrg",
         playwright_workspace_name="myWorkspace",
-    ).result()
+    )
+    print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/PlaywrightWorkspaces_Delete.json
+# x-ms-original-file: 2026-02-01-preview/PlaywrightWorkspaces_Get.json
 if __name__ == "__main__":
     main()
