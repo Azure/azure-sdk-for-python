@@ -141,3 +141,80 @@ model EvalGraderAzureAIEvaluator {
   ...GraderAzureAIEvaluator;
 }
 ```
+
+## Should all properties on `ModelSamplingParams` be required?
+
+Out TypeSpec defines:
+
+```
+/** Represents a target specifying an Azure AI model for operations requiring model selection. */
+model AzureAIModelTarget extends Target {
+  /** The type of target, always `azure_ai_model`. */
+  type: "azure_ai_model";
+
+  /** The unique identifier of the Azure AI model. */
+  `model`?: string;
+
+  /** The parameters used to control the sampling behavior of the model during text generation. */
+  sampling_params?: ModelSamplingParams;
+}
+
+/** Represents a set of parameters used to control the sampling behavior of a language model during text generation. */
+model ModelSamplingParams {
+  /** The temperature parameter for sampling. */
+  temperature: float32;
+
+  /** The top-p parameter for nucleus sampling. */
+  top_p: float32;
+
+  /** The random seed for reproducibility. */
+  seed: int32;
+
+  /** The maximum number of tokens allowed in the completion. */
+  max_completion_tokens: int32;
+}
+```
+
+Note that all properties are REQUIRED on ModelSamplingParam. Yet when I look at the sample `samples\evaluations\sample_model_evaluation.py` it has:
+
+```
+"sampling_params": {  # Note: model sampling parameters are optional and can differ per model
+    "top_p": 1.0,
+    "max_completion_tokens": 2048,
+},
+```
+
+so only 2 out of the 4 are set. 
+
+## ModelSamplingParams vs. the open from OpenAI
+
+We define this in Foundry TypeSpec
+
+```
+/** Represents a set of parameters used to control the sampling behavior of a language model during text generation. */
+model ModelSamplingParams {
+  /** The temperature parameter for sampling. */
+  temperature: float32;
+
+  /** The top-p parameter for nucleus sampling. */
+  top_p: float32;
+
+  /** The random seed for reproducibility. */
+  seed: int32;
+
+  /** The maximum number of tokens allowed in the completion. */
+  max_completion_tokens: int32;
+}
+```
+
+Yet OpenAI has a similar definition... below is from OpenAI TypeSpec package. Is it intentional that we have our own one?
+
+```
+model EvalGraderScoreModelSamplingParams {
+  seed?: integer | null;
+  top_p?: numeric | null = 1;
+  temperature?: numeric | null;
+  max_completions_tokens?: integer | null;
+  reasoning_effort?: ReasoningEffort;
+}
+```

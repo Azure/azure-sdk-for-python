@@ -60,9 +60,7 @@ def main() -> None:
             item_schema={
                 "type": "object",
                 "properties": {
-                    "tool_definitions": {
-                        "anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]
-                    },
+                    "tool_definitions": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
                     "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
                 },
                 "required": ["response"],

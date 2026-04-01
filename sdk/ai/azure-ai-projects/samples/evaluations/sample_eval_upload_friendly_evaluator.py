@@ -157,8 +157,8 @@ with (
             name=evaluator_name,
             evaluator_name=evaluator_name,
             initialization_parameters={
-                 "deployment_name": f"{model_deployment_name}", # provide model_config or, deployment name passed is used to construct the model_config for the evaluator. 
-                 "threshold": 3,
+                "deployment_name": f"{model_deployment_name}",  # provide model_config or, deployment name passed is used to construct the model_config for the evaluator.
+                "threshold": 3,
             },
         )
     ]

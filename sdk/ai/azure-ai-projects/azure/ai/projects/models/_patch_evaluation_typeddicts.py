@@ -18,18 +18,20 @@ from openai.types.evals.create_eval_completions_run_data_source_param import (
 # with "Typed" suffix, so they can be used in type annotations for "openai_client.evals" operations
 # **************************************************************************************************
 
+
+# Note all properties on this class where required. Sample code suggest they are all optional. Update it here.
 class ModelSamplingParamsTyped(TypedDict, total=False):
     """Represents a set of parameters used to control the sampling behavior of a language model
     during text generation.
     """
 
-    temperature: Required[float]
+    temperature: float
     """The temperature parameter for sampling. Required."""
-    top_p: Required[float]
+    top_p: float
     """The top-p parameter for nucleus sampling. Required."""
-    seed: Required[int]
+    seed: int
     """The random seed for reproducibility. Required."""
-    max_completion_tokens: Required[int]
+    max_completion_tokens: int
     """The maximum number of tokens allowed in the completion. Required."""
 
 
@@ -124,7 +126,7 @@ class TargetCompletionEvalRunDataSource(TypedDict, total=False):
     source: Required[Union[SourceFileContent, SourceFileID]]
     """The source configuration for inline or file data. Required. Is either a
      SourceFileContent type or a SourceFileID type."""
-    target: Required[Union[AzureAIAgentTargetTyped, AzureAIModelTargetTyped]]
+    target: Required[Union[AzureAIAgentTargetTyped, AzureAIModelTargetTyped, dict[str, Any]]]
     """The target configuration for the evaluation. Required."""
     input_messages: Required[InputMessagesItemReference]
     """Input messages configuration."""
@@ -154,7 +156,7 @@ class AzureAIBenchmarkPreviewEvalRunDataSource(TypedDict, total=False):
     type: Required[Literal["azure_ai_benchmark_preview"]]
     """The type of data source, always ``azure_ai_benchmark_preview``. Required. Default value is
      \"azure_ai_benchmark_preview\"."""
-    target: Required[Union[AzureAIModelTargetTyped, AzureAIAgentTargetTyped]]
+    target: Required[Union[AzureAIModelTargetTyped, AzureAIAgentTargetTyped, dict[str, Any]]]
     """The target model or agent to evaluate against the benchmark. When using ``azure_ai_model``
      target, ``sampling_params`` must not be provided; inference parameters are auto-filled from the
      benchmark specification stored in eval group properties. Required. Is either a
@@ -189,7 +191,7 @@ class RedTeamEvalRunDataSource(TypedDict, total=False):
      \"azure_ai_red_team\"."""
     item_generation_params: Required[Any]  # ItemGenerationParams
     """The parameters for item generation. Required."""
-    target: Required[Union[AzureAIModelTargetTyped, AzureAIAgentTargetTyped]]
+    target: Required[Union[AzureAIModelTargetTyped, AzureAIAgentTargetTyped, dict[str, Any]]]
     """The target configuration for the evaluation. Required."""
 
 

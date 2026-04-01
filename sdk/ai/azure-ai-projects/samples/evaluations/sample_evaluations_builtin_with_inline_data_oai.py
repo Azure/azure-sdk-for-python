@@ -35,7 +35,6 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
 )
 from openai.types.eval_create_params import DataSourceConfigCustom
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
-from azure.ai.projects.models import EvalGraderAzureAIEvaluator
 
 load_dotenv()
 
@@ -62,27 +61,27 @@ data_source_config = DataSourceConfigCustom(
 )
 
 testing_criteria = [
-    EvalGraderAzureAIEvaluator(
-        type="azure_ai_evaluator",
-        name="violence",
-        evaluator_name="builtin.violence",
-        data_mapping={"query": "{{item.query}}", "response": "{{item.response}}"},
-        initialization_parameters={"deployment_name": f"{model_deployment_name}"},
-    ),
-    EvalGraderAzureAIEvaluator(type="azure_ai_evaluator", name="f1", evaluator_name="builtin.f1_score"),
-    EvalGraderAzureAIEvaluator(
-        type="azure_ai_evaluator",
-        name="coherence",
-        evaluator_name="builtin.coherence",
-        initialization_parameters={"deployment_name": f"{model_deployment_name}"},
-    ),
+    {
+        "type": "azure_ai_evaluator",
+        "name": "violence",
+        "evaluator_name": "builtin.violence",
+        "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
+        "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
+    },
+    {"type": "azure_ai_evaluator", "name": "f1", "evaluator_name": "builtin.f1_score"},
+    {
+        "type": "azure_ai_evaluator",
+        "name": "coherence",
+        "evaluator_name": "builtin.coherence",
+        "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
+    },
 ]
 
 print("Creating Evaluation")
 eval_object = client.evals.create(
     name="testing_builtin_inline_data_eval_with_openai_client",
     data_source_config=data_source_config,
-    testing_criteria=testing_criteria,
+    testing_criteria=testing_criteria,  # type: ignore
 )
 print("Evaluation created")
 

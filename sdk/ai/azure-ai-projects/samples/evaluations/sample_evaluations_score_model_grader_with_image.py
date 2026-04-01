@@ -32,11 +32,12 @@ from PIL import Image
 from dotenv import load_dotenv
 from openai.types.evals.create_eval_completions_run_data_source_param import (
     CreateEvalCompletionsRunDataSourceParam,
-    SourceFileContent,
-    SourceFileContentContent,
     InputMessagesTemplate,
     InputMessagesTemplateTemplateEvalItem,
     InputMessagesTemplateTemplateEvalItemContentInputImage,
+    SamplingParams,
+    SourceFileContent,
+    SourceFileContentContent,
 )
 from openai.types.responses import EasyInputMessageParam
 from openai.types.eval_create_params import DataSourceConfigCustom, TestingCriterionScoreModel
@@ -165,9 +166,9 @@ with (
             source=source_file_content,
             model=model_deployment_name,
             input_messages=input_messages,
-            sampling_params={
-                "temperature": 0.8,
-            },
+            sampling_params=SamplingParams(
+                temperature=0.8,
+            ),
         ),
     )
     print(f"Eval Run created (id: {eval_run_object.id}, name: {eval_run_object.name})")

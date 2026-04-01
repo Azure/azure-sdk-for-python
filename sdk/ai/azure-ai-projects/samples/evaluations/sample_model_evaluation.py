@@ -40,6 +40,7 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     AzureAIModelTargetTyped,
     EvalGraderAzureAIEvaluator,
+    ModelSamplingParamsTyped,
     TargetCompletionEvalRunDataSource,
 )
 
@@ -93,10 +94,10 @@ with (
         target=AzureAIModelTargetTyped(
             type="azure_ai_model",
             model=model,
-            sampling_params={  # Note: model sampling parameters are optional and can differ per model
-                "top_p": 1.0,
-                "max_completion_tokens": 2048,
-            },
+            sampling_params=ModelSamplingParamsTyped(  # Note: model sampling parameters are optional and can differ per model
+                top_p=1.0,
+                max_completion_tokens=2048,
+            ),
         ),
     )
 
