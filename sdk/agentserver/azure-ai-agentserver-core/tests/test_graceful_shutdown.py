@@ -10,8 +10,7 @@ from unittest import mock
 import pytest
 
 from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.core._config import resolve_graceful_shutdown_timeout
-from azure.ai.agentserver.core._constants import Constants
+from azure.ai.agentserver.core._config import resolve_graceful_shutdown_timeout, _DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT
 
 
 # ------------------------------------------------------------------ #
@@ -25,20 +24,8 @@ class TestResolveGracefulShutdownTimeout:
     def test_explicit_wins(self) -> None:
         assert resolve_graceful_shutdown_timeout(10) == 10
 
-    def test_env_var(self) -> None:
-        with mock.patch.dict(os.environ, {"AGENT_GRACEFUL_SHUTDOWN_TIMEOUT": "45"}):
-            assert resolve_graceful_shutdown_timeout(None) == 45
-
     def test_default(self) -> None:
-        env = os.environ.copy()
-        env.pop("AGENT_GRACEFUL_SHUTDOWN_TIMEOUT", None)
-        with mock.patch.dict(os.environ, env, clear=True):
-            assert resolve_graceful_shutdown_timeout(None) == Constants.DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT
-
-    def test_invalid_env_var_raises(self) -> None:
-        with mock.patch.dict(os.environ, {"AGENT_GRACEFUL_SHUTDOWN_TIMEOUT": "abc"}):
-            with pytest.raises(ValueError, match="Invalid value for AGENT_GRACEFUL_SHUTDOWN_TIMEOUT"):
-                resolve_graceful_shutdown_timeout(None)
+        assert resolve_graceful_shutdown_timeout(None) == _DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT
 
     def test_non_int_explicit_raises(self) -> None:
         with pytest.raises(ValueError, match="expected an integer"):
@@ -49,21 +36,6 @@ class TestResolveGracefulShutdownTimeout:
 
     def test_zero_explicit(self) -> None:
         assert resolve_graceful_shutdown_timeout(0) == 0
-
-
-# ------------------------------------------------------------------ #
-# Constants existence
-# ------------------------------------------------------------------ #
-
-
-class TestConstants:
-    """Verify the graceful-shutdown constants exist on Constants."""
-
-    def test_timeout_env_var_name(self) -> None:
-        assert Constants.AGENT_GRACEFUL_SHUTDOWN_TIMEOUT == "AGENT_GRACEFUL_SHUTDOWN_TIMEOUT"
-
-    def test_default_timeout_value(self) -> None:
-        assert Constants.DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT == 30
 
 
 # ------------------------------------------------------------------ #
@@ -90,7 +62,7 @@ class TestHypercornConfig:
         with mock.patch.dict(os.environ, env, clear=True):
             agent = AgentHost()
             config = agent._build_hypercorn_config("0.0.0.0", 8088)
-            assert config.graceful_timeout == float(Constants.DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT)
+            assert config.graceful_timeout == float(_DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT)
 
 
 # ------------------------------------------------------------------ #

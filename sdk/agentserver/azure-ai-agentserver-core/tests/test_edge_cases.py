@@ -3,15 +3,12 @@
 # ---------------------------------------------------------
 """Hosting-specific edge-case tests."""
 import logging
-import os
-from unittest import mock
 
 import pytest
 import httpx
 
 from azure.ai.agentserver.core import AgentHost
 from azure.ai.agentserver.core._config import resolve_log_level
-from azure.ai.agentserver.core._constants import Constants
 
 
 # ------------------------------------------------------------------ #
@@ -64,38 +61,12 @@ class TestLogLevelConstructor:
 # ------------------------------------------------------------------ #
 
 
-class TestLogLevelEnvVar:
-    """Log-level configuration via the AGENT_LOG_LEVEL environment variable."""
-
-    def test_log_level_via_env_var(self) -> None:
-        with mock.patch.dict(os.environ, {Constants.AGENT_LOG_LEVEL: "CRITICAL"}):
-            AgentHost()  # side-effect: configures logger
-            lib_logger = logging.getLogger("azure.ai.agentserver")
-            assert lib_logger.level == logging.CRITICAL
-
-    def test_constructor_overrides_env_var(self) -> None:
-        with mock.patch.dict(os.environ, {Constants.AGENT_LOG_LEVEL: "CRITICAL"}):
-            AgentHost(log_level="DEBUG")  # side-effect: configures logger
-            lib_logger = logging.getLogger("azure.ai.agentserver")
-            assert lib_logger.level == logging.DEBUG
-
-
-# ------------------------------------------------------------------ #
-# Invalid log level raises
-# ------------------------------------------------------------------ #
-
-
 class TestInvalidLogLevel:
     """Invalid log levels are rejected with ValueError."""
 
     def test_invalid_log_level_raises(self) -> None:
         with pytest.raises(ValueError, match="Invalid log level"):
             AgentHost(log_level="TRACE")
-
-    def test_invalid_log_level_via_env_raises(self) -> None:
-        with mock.patch.dict(os.environ, {Constants.AGENT_LOG_LEVEL: "VERBOSE"}):
-            with pytest.raises(ValueError, match="Invalid log level"):
-                AgentHost()
 
 
 # ------------------------------------------------------------------ #
@@ -128,12 +99,5 @@ class TestResolveLogLevel:
         with pytest.raises(ValueError, match="Invalid log level"):
             resolve_log_level("TRACE")
 
-    def test_env_var_fallback(self) -> None:
-        with mock.patch.dict(os.environ, {Constants.AGENT_LOG_LEVEL: "ERROR"}):
-            assert resolve_log_level(None) == "ERROR"
-
     def test_default_info(self) -> None:
-        env = os.environ.copy()
-        env.pop(Constants.AGENT_LOG_LEVEL, None)
-        with mock.patch.dict(os.environ, env, clear=True):
-            assert resolve_log_level(None) == "INFO"
+        assert resolve_log_level(None) == "INFO"
