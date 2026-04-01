@@ -3403,6 +3403,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         content_md5: Optional[bytes] = None,
         file_property_semantics: Optional[Union[str, _models.FilePropertySemantics]] = None,
         optional_content_length: Optional[int] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """Creates a new file or replaces a file. Note it only initializes the file with no content.
@@ -3492,6 +3494,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :keyword optional_content_length: Optional. Specifies the content length of the file. Default
          value is None.
         :paramtype optional_content_length: int
+        :keyword structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3543,6 +3552,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             content_md5=content_md5,
             file_property_semantics=file_property_semantics,
             optional_content_length=optional_content_length,
+            structured_body_type=structured_body_type,
+            structured_content_length=structured_content_length,
             file_type=file_type,
             content_type=content_type,
             version=self._config.version,
@@ -3599,6 +3610,9 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
         response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
         response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers["x-ms-structured-body"] = self._deserialize(
+            "str", response.headers.get("x-ms-structured-body")
+        )
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
         response_headers["x-ms-client-request-id"] = self._deserialize(
