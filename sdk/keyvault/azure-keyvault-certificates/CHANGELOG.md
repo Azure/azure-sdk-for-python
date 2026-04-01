@@ -1,10 +1,11 @@
 # Release History
 
-## 4.10.1 (Unreleased)
+## 4.11.0 (2026-03-27)
 
 ### Features Added
 
-### Breaking Changes
+- Added support for service API version `2025-07-01`
+- Added `uris` and `ip_addresses` properties to `SubjectAlternativeNames`
 
 ### Bugs Fixed
 
@@ -13,8 +14,6 @@
 - When a certificate operation's error doesn't have an inner error, `CertificateOperationError` will be correctly
   serialized instead of raising an exception
   ([Azure/azure-cli #31764](https://github.com/Azure/azure-cli/issues/31764))
-
-### Other Changes
 
 ## 4.10.0 (2025-06-16)
 
