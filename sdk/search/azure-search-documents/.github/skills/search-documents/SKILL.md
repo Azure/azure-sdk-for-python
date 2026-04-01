@@ -132,24 +132,35 @@ If the regeneration added new operations, models, or changed the API version, up
 
 ### Changelog
 
-```bash
-# Edit CHANGELOG.md — add an entry under the next unreleased version
-# Format:
-#   ## 11.x.0bN (Unreleased)
-#   ### Features Added
-#   - Added `new_operation` to `SearchIndexClient`
-#   ### Breaking Changes
-#   - Renamed `OldModel` to `NewModel`
-code CHANGELOG.md
+Open `CHANGELOG.md` and find the topmost `## (Unreleased)` section. Add entries under the appropriate heading:
+
+- **`### Features Added`** — new operations, models, parameters, or API version support
+- **`### Breaking Changes`** — renamed/removed models, changed signatures, dropped API versions
+- **`### Bugs Fixed`** — fixes to `_patch.py` logic, pagination, encoding, etc.
+
+Example entry:
+```markdown
+## 11.x.0bN (Unreleased)
+
+### Features Added
+
+- Added `create_or_update_knowledge_base` to `SearchIndexClient`
+- Support for API version `2026-05-01-preview`
+
+### Breaking Changes
+
+- Renamed `OldModel` to `NewModel`
 ```
+
+If no `(Unreleased)` section exists, create one above the latest release with the next version from `_version.py`.
 
 ### README
 
-If new client classes or major features were added, update `README.md` with usage examples:
+If new client classes or major features were added, update `README.md`:
 
-```bash
-code README.md
-```
+- Add usage examples for new client classes or operations
+- Update the "Key concepts" section if new resource types were introduced
+- Update the listed API version in the "Getting started" section if it changed
 
 # Customization Patterns Reference
 

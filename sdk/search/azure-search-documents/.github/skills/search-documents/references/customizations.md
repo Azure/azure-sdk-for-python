@@ -14,7 +14,6 @@ Use this file after running `tsp-client update` to verify every customization. E
 |--------|------|-------------|
 | `SearchClient` | class | Subclass of `_SearchClient`; reorders constructor to `(endpoint, index_name, credential)` |
 | `SearchIndexingBufferedSender` | class | Hand-authored batching sender. Uses `threading.Timer` for auto-flush, recursive 413 splitting, retry per doc key (409/422/503), key field auto-detection |
-| `ApiVersion` | enum | Supported API versions. Default: `V2025_11_01_PREVIEW` |
 | `is_retryable_status_code()` | function | Returns True for 409, 422, 503 |
 
 ### After Regeneration, Verify
