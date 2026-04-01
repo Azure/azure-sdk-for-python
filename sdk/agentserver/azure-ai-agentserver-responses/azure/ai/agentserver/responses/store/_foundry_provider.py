@@ -7,8 +7,10 @@ from __future__ import annotations
 from typing import Any, Iterable
 from urllib.parse import quote as _url_quote
 
-import httpx
+from azure.core import AsyncPipelineClient
 from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.pipeline import policies
+from azure.core.rest import HttpRequest
 
 from ..models._generated import ResponseObject  # type: ignore[attr-defined]
 from ._foundry_errors import raise_for_storage_error
@@ -39,14 +41,14 @@ class FoundryStorageProvider:
     protocol.  Obtain an instance through the constructor and supply it when building a
     ``ResponsesServer``.
 
+    Uses :class:`~azure.core.AsyncPipelineClient` for HTTP transport, providing
+    built-in retry, logging, distributed tracing, and bearer-token authentication.
+
     :param credential: An async credential used to obtain bearer tokens for the Foundry API.
     :type credential: AsyncTokenCredential
     :param settings: Storage settings. If omitted,
         :meth:`~FoundryStorageSettings.from_env` is called automatically.
     :type settings: FoundryStorageSettings | None
-    :param http_client: An existing :class:`httpx.AsyncClient` to use. If omitted, a new
-        client is created and owned by this instance (closed in :meth:`aclose`).
-    :type http_client: httpx.AsyncClient | None
 
     Example::
 
@@ -58,38 +60,39 @@ class FoundryStorageProvider:
         self,
         credential: AsyncTokenCredential,
         settings: FoundryStorageSettings | None = None,
-        http_client: httpx.AsyncClient | None = None,
     ) -> None:
-        self._credential = credential
         self._settings = settings or FoundryStorageSettings.from_env()
-        self._owns_client = http_client is None
-        self._http_client = http_client if http_client is not None else httpx.AsyncClient()
+        self._client: AsyncPipelineClient = AsyncPipelineClient(
+            base_url=self._settings.storage_base_url,
+            policies=[
+                policies.RequestIdPolicy(),
+                policies.HeadersPolicy(),
+                policies.UserAgentPolicy(
+                    sdk_moniker="ai-agentserver-responses",
+                ),
+                policies.RetryPolicy(),
+                policies.AsyncBearerTokenCredentialPolicy(
+                    credential, _FOUNDRY_TOKEN_SCOPE,
+                ),
+                policies.ContentDecodePolicy(),
+                policies.DistributedTracingPolicy(),
+                policies.HttpLoggingPolicy(),
+            ],
+        )
 
     # ------------------------------------------------------------------
     # Async context-manager support
     # ------------------------------------------------------------------
 
     async def aclose(self) -> None:
-        """Close the underlying HTTP client if it is owned by this instance."""
-        if self._owns_client:
-            await self._http_client.aclose()
+        """Close the underlying HTTP pipeline client."""
+        await self._client.close()
 
     async def __aenter__(self) -> "FoundryStorageProvider":
         return self
 
     async def __aexit__(self, *args: Any) -> None:
         await self.aclose()
-
-    # ------------------------------------------------------------------
-    # Internal helpers
-    # ------------------------------------------------------------------
-
-    async def _auth_headers(self) -> dict[str, str]:
-        token = await self._credential.get_token(_FOUNDRY_TOKEN_SCOPE)
-        return {
-            "Authorization": f"Bearer {token.token}",
-            "Content-Type": _JSON_CONTENT_TYPE,
-        }
 
     # ------------------------------------------------------------------
     # ResponseProviderProtocol implementation
@@ -113,7 +116,8 @@ class FoundryStorageProvider:
         """
         body = serialize_create_request(response, input_items, history_item_ids)
         url = self._settings.build_url("responses")
-        http_resp = await self._http_client.post(url, content=body, headers=await self._auth_headers())
+        request = HttpRequest("POST", url, content=body, headers={"Content-Type": _JSON_CONTENT_TYPE})
+        http_resp = await self._client.send_request(request)
         raise_for_storage_error(http_resp)
 
     async def get_response_async(self, response_id: str) -> ResponseObject:
@@ -127,9 +131,10 @@ class FoundryStorageProvider:
         :raises FoundryApiError: On other non-success HTTP response.
         """
         url = self._settings.build_url(f"responses/{_encode(response_id)}")
-        http_resp = await self._http_client.get(url, headers=await self._auth_headers())
+        request = HttpRequest("GET", url)
+        http_resp = await self._client.send_request(request)
         raise_for_storage_error(http_resp)
-        return deserialize_response(http_resp.text)
+        return deserialize_response(http_resp.text())
 
     async def update_response_async(self, response: ResponseObject) -> None:
         """Persist an updated response snapshot.
@@ -142,7 +147,8 @@ class FoundryStorageProvider:
         response_id = str(response["id"])  # type: ignore[index]
         body = serialize_response(response)
         url = self._settings.build_url(f"responses/{_encode(response_id)}")
-        http_resp = await self._http_client.post(url, content=body, headers=await self._auth_headers())
+        request = HttpRequest("POST", url, content=body, headers={"Content-Type": _JSON_CONTENT_TYPE})
+        http_resp = await self._client.send_request(request)
         raise_for_storage_error(http_resp)
 
     async def delete_response_async(self, response_id: str) -> None:
@@ -154,7 +160,8 @@ class FoundryStorageProvider:
         :raises FoundryApiError: On other non-success HTTP response.
         """
         url = self._settings.build_url(f"responses/{_encode(response_id)}")
-        http_resp = await self._http_client.delete(url, headers=await self._auth_headers())
+        request = HttpRequest("DELETE", url)
+        http_resp = await self._client.send_request(request)
         raise_for_storage_error(http_resp)
 
     async def get_input_items_async(
@@ -192,9 +199,10 @@ class FoundryStorageProvider:
             extra["before"] = before
 
         url = self._settings.build_url(f"responses/{_encode(response_id)}/input_items", **extra)
-        http_resp = await self._http_client.get(url, headers=await self._auth_headers())
+        request = HttpRequest("GET", url)
+        http_resp = await self._client.send_request(request)
         raise_for_storage_error(http_resp)
-        return deserialize_paged_items(http_resp.text)
+        return deserialize_paged_items(http_resp.text())
 
     async def get_items_async(self, item_ids: Iterable[str]) -> list[Any | None]:
         """Retrieve multiple items by their IDs in a single batch request.
@@ -211,9 +219,10 @@ class FoundryStorageProvider:
         ids = list(item_ids)
         body = serialize_batch_request(ids)
         url = self._settings.build_url("items/batch/retrieve")
-        http_resp = await self._http_client.post(url, content=body, headers=await self._auth_headers())
+        request = HttpRequest("POST", url, content=body, headers={"Content-Type": _JSON_CONTENT_TYPE})
+        http_resp = await self._client.send_request(request)
         raise_for_storage_error(http_resp)
-        return deserialize_items_array(http_resp.text)
+        return deserialize_items_array(http_resp.text())
 
     async def get_history_item_ids_async(
         self,
@@ -240,6 +249,7 @@ class FoundryStorageProvider:
             extra["conversation_id"] = conversation_id
 
         url = self._settings.build_url("history/item_ids", **extra)
-        http_resp = await self._http_client.get(url, headers=await self._auth_headers())
+        request = HttpRequest("GET", url)
+        http_resp = await self._client.send_request(request)
         raise_for_storage_error(http_resp)
-        return deserialize_history_ids(http_resp.text)
+        return deserialize_history_ids(http_resp.text())

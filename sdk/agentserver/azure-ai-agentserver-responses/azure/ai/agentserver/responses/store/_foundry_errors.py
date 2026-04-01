@@ -5,8 +5,10 @@
 from __future__ import annotations
 
 import json
+from typing import TYPE_CHECKING
 
-import httpx
+if TYPE_CHECKING:
+    from azure.core.rest import HttpResponse
 
 
 class FoundryStorageError(Exception):
@@ -33,19 +35,19 @@ class FoundryApiError(FoundryStorageError):
         self.status_code = status_code
 
 
-def raise_for_storage_error(response: httpx.Response) -> None:
+def raise_for_storage_error(response: "HttpResponse") -> None:
     """Raise an appropriate :class:`FoundryStorageError` subclass if *response* is not successful.
 
     :param response: The HTTP response to inspect.
-    :type response: httpx.Response
+    :type response: ~azure.core.rest.HttpResponse
     :raises FoundryResourceNotFoundError: For HTTP 404.
     :raises FoundryBadRequestError: For HTTP 400 or 409.
     :raises FoundryApiError: For all other non-2xx responses.
     """
-    if response.is_success:
+    status = response.status_code
+    if 200 <= status < 300:
         return
 
-    status = response.status_code
     message = _extract_error_message(response, status)
 
     if status == 404:
@@ -55,18 +57,18 @@ def raise_for_storage_error(response: httpx.Response) -> None:
     raise FoundryApiError(message, status)
 
 
-def _extract_error_message(response: httpx.Response, status: int) -> str:
+def _extract_error_message(response: "HttpResponse", status: int) -> str:
     """Extract an error message from *response*, falling back to a generic string.
 
     :param response: The HTTP response whose body is inspected.
-    :type response: httpx.Response
+    :type response: ~azure.core.rest.HttpResponse
     :param status: The HTTP status code of the response.
     :type status: int
     :returns: A human-readable error message string.
     :rtype: str
     """
     try:
-        body = response.text
+        body = response.text()
         if body:
             data = json.loads(body)
             error = data.get("error")
