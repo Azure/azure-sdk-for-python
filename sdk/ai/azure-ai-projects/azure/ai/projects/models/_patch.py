@@ -32,6 +32,7 @@ from ._patch_evaluation_typeddicts import (
     TypedDictAzureAIModelTarget,
     TypedDictModelSamplingParams,
     TypedDictTarget,
+    TypedDictToolDescription,
 )
 from ._models import CustomCredential as CustomCredentialGenerated
 from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
@@ -376,11 +377,12 @@ __all__: List[str] = [
     "ResponseRetrievalItemGenerationParams",
     "TargetCompletionEvalRunDataSource",
     "TracesPreviewEvalRunDataSource",
-    "UpdateMemoriesLROPoller",
     "TypedDictAzureAIAgentTarget",
     "TypedDictAzureAIModelTarget",
     "TypedDictModelSamplingParams",
     "TypedDictTarget",
+    "TypedDictToolDescription",
+    "UpdateMemoriesLROPoller",
 ]  # Add all objects you want publicly available to users at this package level
 
 

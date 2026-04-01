@@ -33,6 +33,15 @@ class TypedDictModelSamplingParams(TypedDict, total=False):
     """The maximum number of tokens allowed in the completion. Required."""
 
 
+class TypedDictToolDescription(TypedDict, total=False):
+    """Description of a tool that can be used by an agent."""
+
+    name: str
+    """The name of the tool."""
+    description: str
+    """A brief description of the tool's purpose."""
+
+
 class TypedDictTarget(TypedDict, total=False):
     """Base class for targets with discriminator support.
 
@@ -53,7 +62,7 @@ class TypedDictAzureAIAgentTarget(TypedDict, total=False):
     """The unique identifier of the Azure AI agent. Required."""
     version: str
     """The version of the Azure AI agent."""
-    tool_descriptions: List[Dict[str, Any]]
+    tool_descriptions: List[TypedDictToolDescription]
     """The parameters used to control the sampling behavior of the agent during text generation."""
 
 
