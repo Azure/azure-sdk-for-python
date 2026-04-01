@@ -31,5 +31,4 @@ steps:
         Write-Host "PIP Index URL detected: $env:PIP_INDEX_URL"
         Write-Host "##vso[task.setvariable variable=UV_INDEX_URL]$($env:PIP_INDEX_URL)"
       }
-    displayName: 'Configure UV Authentication (Disabled)'
-    condition: false  # Explicitly disabled - change to 'true' or remove to enable
+    displayName: 'Configure UV Authentication'
