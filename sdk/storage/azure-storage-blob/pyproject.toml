@@ -38,11 +38,10 @@ dependencies = [
     "typing-extensions>=4.6.0",
 ]
 
+dynamic = ["version", "readme"]
+
 [project.optional-dependencies]
 aio = ["azure-core[aio]>=1.38.3"]
-dynamic = [
-"version", "readme"
-]
 
 [project.urls]
 repository = "https://github.com/Azure/azure-sdk-for-python"
