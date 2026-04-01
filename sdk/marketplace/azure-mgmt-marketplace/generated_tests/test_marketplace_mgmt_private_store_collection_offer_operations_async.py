@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.marketplace.aio import MarketplaceClient
+from azure.mgmt.marketplace.aio import MarketplaceMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,9 +15,9 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestMarketplacePrivateStoreCollectionOfferOperationsAsync(AzureMgmtRecordedTestCase):
+class TestMarketplaceMgmtPrivateStoreCollectionOfferOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(MarketplaceClient, is_async=True)
+        self.client = self.create_mgmt_client(MarketplaceMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async

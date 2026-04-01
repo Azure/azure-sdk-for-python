@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.marketplace import MarketplaceClient
+from azure.mgmt.marketplace import MarketplaceMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.marketplace import MarketplaceClient
 
 
 def main():
-    client = MarketplaceClient(
+    client = MarketplaceMgmtClient(
         credential=DefaultAzureCredential(),
     )
 

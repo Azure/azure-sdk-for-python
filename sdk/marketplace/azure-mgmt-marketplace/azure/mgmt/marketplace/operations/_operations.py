@@ -31,7 +31,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
-from .._configuration import MarketplaceClientConfiguration
+from .._configuration import MarketplaceMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import ClientMixinABC
@@ -1180,7 +1180,7 @@ def build_private_store_collection_offer_post_request(  # pylint: disable=name-t
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_marketplace_query_user_rules_request(  # pylint: disable=name-too-long
+def build_marketplace_mgmt_query_user_rules_request(  # pylint: disable=name-too-long
     private_store_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1209,7 +1209,7 @@ def build_marketplace_query_user_rules_request(  # pylint: disable=name-too-long
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_marketplace_set_collection_rules_request(  # pylint: disable=name-too-long
+def build_marketplace_mgmt_set_collection_rules_request(  # pylint: disable=name-too-long
     private_store_id: str, collection_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1236,7 +1236,9 @@ def build_marketplace_set_collection_rules_request(  # pylint: disable=name-too-
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_marketplace_query_rules_request(private_store_id: str, collection_id: str, **kwargs: Any) -> HttpRequest:
+def build_marketplace_mgmt_query_rules_request(  # pylint: disable=name-too-long
+    private_store_id: str, collection_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1267,14 +1269,14 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.marketplace.MarketplaceClient`'s
+        :class:`~azure.mgmt.marketplace.MarketplaceMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MarketplaceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MarketplaceMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1374,14 +1376,14 @@ class PrivateStoreOperations:  # pylint: disable=too-many-public-methods
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.marketplace.MarketplaceClient`'s
+        :class:`~azure.mgmt.marketplace.MarketplaceMgmtClient`'s
         :attr:`private_store` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MarketplaceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MarketplaceMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4111,14 +4113,14 @@ class PrivateStoreCollectionOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.marketplace.MarketplaceClient`'s
+        :class:`~azure.mgmt.marketplace.MarketplaceMgmtClient`'s
         :attr:`private_store_collection` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MarketplaceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MarketplaceMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4866,14 +4868,14 @@ class PrivateStoreCollectionOfferOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.marketplace.MarketplaceClient`'s
+        :class:`~azure.mgmt.marketplace.MarketplaceMgmtClient`'s
         :attr:`private_store_collection_offer` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MarketplaceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MarketplaceMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5919,8 +5921,8 @@ class PrivateStoreCollectionOfferOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class _MarketplaceClientOperationsMixin(
-    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], MarketplaceClientConfiguration]
+class _MarketplaceMgmtClientOperationsMixin(
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], MarketplaceMgmtClientConfiguration]
 ):
 
     @overload
@@ -6035,7 +6037,7 @@ class _MarketplaceClientOperationsMixin(
             else:
                 _content = None
 
-        _request = build_marketplace_query_user_rules_request(
+        _request = build_marketplace_mgmt_query_user_rules_request(
             private_store_id=private_store_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6203,7 +6205,7 @@ class _MarketplaceClientOperationsMixin(
             else:
                 _content = None
 
-        _request = build_marketplace_set_collection_rules_request(
+        _request = build_marketplace_mgmt_set_collection_rules_request(
             private_store_id=private_store_id,
             collection_id=collection_id,
             content_type=content_type,
@@ -6260,7 +6262,7 @@ class _MarketplaceClientOperationsMixin(
 
         cls: ClsType[_models.RuleListResponse] = kwargs.pop("cls", None)
 
-        _request = build_marketplace_query_rules_request(
+        _request = build_marketplace_mgmt_query_rules_request(
             private_store_id=private_store_id,
             collection_id=collection_id,
             api_version=self._config.api_version,

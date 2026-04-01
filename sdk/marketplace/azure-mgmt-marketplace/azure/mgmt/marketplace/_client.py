@@ -17,14 +17,14 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import MarketplaceClientConfiguration
+from ._configuration import MarketplaceMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     Operations,
     PrivateStoreCollectionOfferOperations,
     PrivateStoreCollectionOperations,
     PrivateStoreOperations,
-    _MarketplaceClientOperationsMixin,
+    _MarketplaceMgmtClientOperationsMixin,
 )
 
 if TYPE_CHECKING:
@@ -32,7 +32,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class MarketplaceClient(_MarketplaceClientOperationsMixin):
+class MarketplaceMgmtClient(_MarketplaceMgmtClientOperationsMixin):
     """REST APIs for Private Marketplace.
 
     :ivar operations: Operations operations
@@ -72,7 +72,7 @@ class MarketplaceClient(_MarketplaceClientOperationsMixin):
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = MarketplaceClientConfiguration(
+        self._config = MarketplaceMgmtClientConfiguration(
             credential=credential,
             base_url=cast(str, base_url),
             cloud_setting=cloud_setting,

@@ -170,11 +170,11 @@
         "azure.mgmt.marketplace.aio.operations.PrivateStoreCollectionOfferOperations.upsert_offer_with_multi_context": "Microsoft.Marketplace.Offers.upsertOfferWithMultiContext",
         "azure.mgmt.marketplace.operations.PrivateStoreCollectionOfferOperations.post": "Microsoft.Marketplace.PrivateStoreCollectionOfferOperationGroup.post",
         "azure.mgmt.marketplace.aio.operations.PrivateStoreCollectionOfferOperations.post": "Microsoft.Marketplace.PrivateStoreCollectionOfferOperationGroup.post",
-        "azure.mgmt.marketplace.MarketplaceClient.query_user_rules": "Microsoft.Marketplace.PrivateStores.queryUserRules",
-        "azure.mgmt.marketplace.aio.MarketplaceClient.query_user_rules": "Microsoft.Marketplace.PrivateStores.queryUserRules",
-        "azure.mgmt.marketplace.MarketplaceClient.set_collection_rules": "Microsoft.Marketplace.Collections.setCollectionRules",
-        "azure.mgmt.marketplace.aio.MarketplaceClient.set_collection_rules": "Microsoft.Marketplace.Collections.setCollectionRules",
-        "azure.mgmt.marketplace.MarketplaceClient.query_rules": "Microsoft.Marketplace.Collections.queryRules",
-        "azure.mgmt.marketplace.aio.MarketplaceClient.query_rules": "Microsoft.Marketplace.Collections.queryRules"
+        "azure.mgmt.marketplace.MarketplaceMgmtClient.query_user_rules": "Microsoft.Marketplace.PrivateStores.queryUserRules",
+        "azure.mgmt.marketplace.aio.MarketplaceMgmtClient.query_user_rules": "Microsoft.Marketplace.PrivateStores.queryUserRules",
+        "azure.mgmt.marketplace.MarketplaceMgmtClient.set_collection_rules": "Microsoft.Marketplace.Collections.setCollectionRules",
+        "azure.mgmt.marketplace.aio.MarketplaceMgmtClient.set_collection_rules": "Microsoft.Marketplace.Collections.setCollectionRules",
+        "azure.mgmt.marketplace.MarketplaceMgmtClient.query_rules": "Microsoft.Marketplace.Collections.queryRules",
+        "azure.mgmt.marketplace.aio.MarketplaceMgmtClient.query_rules": "Microsoft.Marketplace.Collections.queryRules"
     }
 }

@@ -6,23 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.marketplace.aio import MarketplaceClient
+from azure.mgmt.marketplace import MarketplaceMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
-from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestMarketplacePrivateStoreOperationsAsync(AzureMgmtRecordedTestCase):
+class TestMarketplaceMgmtPrivateStoreOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(MarketplaceClient, is_async=True)
+        self.client = self.create_mgmt_client(MarketplaceMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_get(self, resource_group):
-        response = await self.client.private_store.get(
+    @recorded_by_proxy
+    def test_private_store_get(self, resource_group):
+        response = self.client.private_store.get(
             private_store_id="str",
         )
 
@@ -30,9 +29,9 @@ class TestMarketplacePrivateStoreOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_create_or_update(self, resource_group):
-        response = await self.client.private_store.create_or_update(
+    @recorded_by_proxy
+    def test_private_store_create_or_update(self, resource_group):
+        response = self.client.private_store.create_or_update(
             private_store_id="str",
         )
 
@@ -40,9 +39,9 @@ class TestMarketplacePrivateStoreOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_delete(self, resource_group):
-        response = await self.client.private_store.delete(
+    @recorded_by_proxy
+    def test_private_store_delete(self, resource_group):
+        response = self.client.private_store.delete(
             private_store_id="str",
         )
 
@@ -50,17 +49,17 @@ class TestMarketplacePrivateStoreOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_list(self, resource_group):
+    @recorded_by_proxy
+    def test_private_store_list(self, resource_group):
         response = self.client.private_store.list()
-        result = [r async for r in response]
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_any_existing_offers_in_the_collections(self, resource_group):
-        response = await self.client.private_store.any_existing_offers_in_the_collections(
+    @recorded_by_proxy
+    def test_private_store_any_existing_offers_in_the_collections(self, resource_group):
+        response = self.client.private_store.any_existing_offers_in_the_collections(
             private_store_id="str",
         )
 
@@ -68,9 +67,9 @@ class TestMarketplacePrivateStoreOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_query_offers(self, resource_group):
-        response = await self.client.private_store.query_offers(
+    @recorded_by_proxy
+    def test_private_store_query_offers(self, resource_group):
+        response = self.client.private_store.query_offers(
             private_store_id="str",
         )
 
@@ -78,9 +77,9 @@ class TestMarketplacePrivateStoreOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_query_user_offers(self, resource_group):
-        response = await self.client.private_store.query_user_offers(
+    @recorded_by_proxy
+    def test_private_store_query_user_offers(self, resource_group):
+        response = self.client.private_store.query_user_offers(
             private_store_id="str",
         )
 
@@ -88,9 +87,9 @@ class TestMarketplacePrivateStoreOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_billing_accounts(self, resource_group):
-        response = await self.client.private_store.billing_accounts(
+    @recorded_by_proxy
+    def test_private_store_billing_accounts(self, resource_group):
+        response = self.client.private_store.billing_accounts(
             private_store_id="str",
         )
 
@@ -98,9 +97,9 @@ class TestMarketplacePrivateStoreOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_collections_to_subscriptions_mapping(self, resource_group):
-        response = await self.client.private_store.collections_to_subscriptions_mapping(
+    @recorded_by_proxy
+    def test_private_store_collections_to_subscriptions_mapping(self, resource_group):
+        response = self.client.private_store.collections_to_subscriptions_mapping(
             private_store_id="str",
         )
 
@@ -108,9 +107,9 @@ class TestMarketplacePrivateStoreOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_query_approved_plans(self, resource_group):
-        response = await self.client.private_store.query_approved_plans(
+    @recorded_by_proxy
+    def test_private_store_query_approved_plans(self, resource_group):
+        response = self.client.private_store.query_approved_plans(
             private_store_id="str",
         )
 
@@ -118,9 +117,9 @@ class TestMarketplacePrivateStoreOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_bulk_collections_action(self, resource_group):
-        response = await self.client.private_store.bulk_collections_action(
+    @recorded_by_proxy
+    def test_private_store_bulk_collections_action(self, resource_group):
+        response = self.client.private_store.bulk_collections_action(
             private_store_id="str",
         )
 
@@ -128,9 +127,9 @@ class TestMarketplacePrivateStoreOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_query_notifications_state(self, resource_group):
-        response = await self.client.private_store.query_notifications_state(
+    @recorded_by_proxy
+    def test_private_store_query_notifications_state(self, resource_group):
+        response = self.client.private_store.query_notifications_state(
             private_store_id="str",
         )
 
@@ -138,9 +137,9 @@ class TestMarketplacePrivateStoreOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_acknowledge_offer_notification(self, resource_group):
-        response = await self.client.private_store.acknowledge_offer_notification(
+    @recorded_by_proxy
+    def test_private_store_acknowledge_offer_notification(self, resource_group):
+        response = self.client.private_store.acknowledge_offer_notification(
             private_store_id="str",
             offer_id="str",
         )
@@ -149,9 +148,9 @@ class TestMarketplacePrivateStoreOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_fetch_all_subscriptions_in_tenant(self, resource_group):
-        response = await self.client.private_store.fetch_all_subscriptions_in_tenant(
+    @recorded_by_proxy
+    def test_private_store_fetch_all_subscriptions_in_tenant(self, resource_group):
+        response = self.client.private_store.fetch_all_subscriptions_in_tenant(
             private_store_id="str",
         )
 
@@ -159,9 +158,9 @@ class TestMarketplacePrivateStoreOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_list_new_plans_notifications(self, resource_group):
-        response = await self.client.private_store.list_new_plans_notifications(
+    @recorded_by_proxy
+    def test_private_store_list_new_plans_notifications(self, resource_group):
+        response = self.client.private_store.list_new_plans_notifications(
             private_store_id="str",
         )
 
@@ -169,9 +168,9 @@ class TestMarketplacePrivateStoreOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_list_stop_sell_offers_plans_notifications(self, resource_group):
-        response = await self.client.private_store.list_stop_sell_offers_plans_notifications(
+    @recorded_by_proxy
+    def test_private_store_list_stop_sell_offers_plans_notifications(self, resource_group):
+        response = self.client.private_store.list_stop_sell_offers_plans_notifications(
             private_store_id="str",
         )
 
@@ -179,9 +178,9 @@ class TestMarketplacePrivateStoreOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_list_subscriptions_context(self, resource_group):
-        response = await self.client.private_store.list_subscriptions_context(
+    @recorded_by_proxy
+    def test_private_store_list_subscriptions_context(self, resource_group):
+        response = self.client.private_store.list_subscriptions_context(
             private_store_id="str",
         )
 
@@ -189,9 +188,9 @@ class TestMarketplacePrivateStoreOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_get_request_approval(self, resource_group):
-        response = await self.client.private_store.get_request_approval(
+    @recorded_by_proxy
+    def test_private_store_get_request_approval(self, resource_group):
+        response = self.client.private_store.get_request_approval(
             private_store_id="str",
             request_approval_id="str",
         )
@@ -200,9 +199,9 @@ class TestMarketplacePrivateStoreOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_create_approval_request(self, resource_group):
-        response = await self.client.private_store.create_approval_request(
+    @recorded_by_proxy
+    def test_private_store_create_approval_request(self, resource_group):
+        response = self.client.private_store.create_approval_request(
             private_store_id="str",
             request_approval_id="str",
             payload={
@@ -241,9 +240,9 @@ class TestMarketplacePrivateStoreOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_get_approval_requests_list(self, resource_group):
-        response = await self.client.private_store.get_approval_requests_list(
+    @recorded_by_proxy
+    def test_private_store_get_approval_requests_list(self, resource_group):
+        response = self.client.private_store.get_approval_requests_list(
             private_store_id="str",
         )
 
@@ -251,20 +250,9 @@ class TestMarketplacePrivateStoreOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_query_request_approval(self, resource_group):
-        response = await self.client.private_store.query_request_approval(
-            private_store_id="str",
-            request_approval_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_withdraw_plan(self, resource_group):
-        response = await self.client.private_store.withdraw_plan(
+    @recorded_by_proxy
+    def test_private_store_query_request_approval(self, resource_group):
+        response = self.client.private_store.query_request_approval(
             private_store_id="str",
             request_approval_id="str",
         )
@@ -273,9 +261,20 @@ class TestMarketplacePrivateStoreOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_get_admin_request_approval(self, resource_group):
-        response = await self.client.private_store.get_admin_request_approval(
+    @recorded_by_proxy
+    def test_private_store_withdraw_plan(self, resource_group):
+        response = self.client.private_store.withdraw_plan(
+            private_store_id="str",
+            request_approval_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_private_store_get_admin_request_approval(self, resource_group):
+        response = self.client.private_store.get_admin_request_approval(
             private_store_id="str",
             admin_request_approval_id="str",
             publisher_id="str",
@@ -285,9 +284,9 @@ class TestMarketplacePrivateStoreOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_update_admin_request_approval(self, resource_group):
-        response = await self.client.private_store.update_admin_request_approval(
+    @recorded_by_proxy
+    def test_private_store_update_admin_request_approval(self, resource_group):
+        response = self.client.private_store.update_admin_request_approval(
             private_store_id="str",
             admin_request_approval_id="str",
         )
@@ -296,9 +295,9 @@ class TestMarketplacePrivateStoreOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_store_admin_request_approvals_list(self, resource_group):
-        response = await self.client.private_store.admin_request_approvals_list(
+    @recorded_by_proxy
+    def test_private_store_admin_request_approvals_list(self, resource_group):
+        response = self.client.private_store.admin_request_approvals_list(
             private_store_id="str",
         )
 

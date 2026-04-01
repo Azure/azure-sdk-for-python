@@ -36,9 +36,9 @@ from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deseria
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC
 from ...operations._operations import (
-    build_marketplace_query_rules_request,
-    build_marketplace_query_user_rules_request,
-    build_marketplace_set_collection_rules_request,
+    build_marketplace_mgmt_query_rules_request,
+    build_marketplace_mgmt_query_user_rules_request,
+    build_marketplace_mgmt_set_collection_rules_request,
     build_operations_list_request,
     build_private_store_acknowledge_offer_notification_request,
     build_private_store_admin_request_approvals_list_request,
@@ -82,7 +82,7 @@ from ...operations._operations import (
     build_private_store_update_admin_request_approval_request,
     build_private_store_withdraw_plan_request,
 )
-from .._configuration import MarketplaceClientConfiguration
+from .._configuration import MarketplaceMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -96,14 +96,14 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.marketplace.aio.MarketplaceClient`'s
+        :class:`~azure.mgmt.marketplace.aio.MarketplaceMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MarketplaceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MarketplaceMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -203,14 +203,14 @@ class PrivateStoreOperations:  # pylint: disable=too-many-public-methods
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.marketplace.aio.MarketplaceClient`'s
+        :class:`~azure.mgmt.marketplace.aio.MarketplaceMgmtClient`'s
         :attr:`private_store` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MarketplaceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MarketplaceMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2948,14 +2948,14 @@ class PrivateStoreCollectionOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.marketplace.aio.MarketplaceClient`'s
+        :class:`~azure.mgmt.marketplace.aio.MarketplaceMgmtClient`'s
         :attr:`private_store_collection` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MarketplaceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MarketplaceMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3703,14 +3703,14 @@ class PrivateStoreCollectionOfferOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.marketplace.aio.MarketplaceClient`'s
+        :class:`~azure.mgmt.marketplace.aio.MarketplaceMgmtClient`'s
         :attr:`private_store_collection_offer` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MarketplaceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MarketplaceMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4758,8 +4758,8 @@ class PrivateStoreCollectionOfferOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class _MarketplaceClientOperationsMixin(
-    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], MarketplaceClientConfiguration]
+class _MarketplaceMgmtClientOperationsMixin(
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], MarketplaceMgmtClientConfiguration]
 ):
 
     @overload
@@ -4874,7 +4874,7 @@ class _MarketplaceClientOperationsMixin(
             else:
                 _content = None
 
-        _request = build_marketplace_query_user_rules_request(
+        _request = build_marketplace_mgmt_query_user_rules_request(
             private_store_id=private_store_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -5042,7 +5042,7 @@ class _MarketplaceClientOperationsMixin(
             else:
                 _content = None
 
-        _request = build_marketplace_set_collection_rules_request(
+        _request = build_marketplace_mgmt_set_collection_rules_request(
             private_store_id=private_store_id,
             collection_id=collection_id,
             content_type=content_type,
@@ -5099,7 +5099,7 @@ class _MarketplaceClientOperationsMixin(
 
         cls: ClsType[_models.RuleListResponse] = kwargs.pop("cls", None)
 
-        _request = build_marketplace_query_rules_request(
+        _request = build_marketplace_mgmt_query_rules_request(
             private_store_id=private_store_id,
             collection_id=collection_id,
             api_version=self._config.api_version,

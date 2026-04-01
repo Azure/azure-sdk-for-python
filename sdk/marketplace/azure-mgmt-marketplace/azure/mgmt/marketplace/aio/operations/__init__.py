@@ -16,7 +16,7 @@ from ._operations import Operations  # type: ignore
 from ._operations import PrivateStoreOperations  # type: ignore
 from ._operations import PrivateStoreCollectionOperations  # type: ignore
 from ._operations import PrivateStoreCollectionOfferOperations  # type: ignore
-from ._operations import _MarketplaceClientOperationsMixin  # type: ignore # pylint: disable=unused-import
+from ._operations import _MarketplaceMgmtClientOperationsMixin  # type: ignore # pylint: disable=unused-import
 
 from ._patch import __all__ as _patch_all
 from ._patch import *

@@ -18,13 +18,13 @@ from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPol
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import MarketplaceClientConfiguration
+from ._configuration import MarketplaceMgmtClientConfiguration
 from .operations import (
     Operations,
     PrivateStoreCollectionOfferOperations,
     PrivateStoreCollectionOperations,
     PrivateStoreOperations,
-    _MarketplaceClientOperationsMixin,
+    _MarketplaceMgmtClientOperationsMixin,
 )
 
 if TYPE_CHECKING:
@@ -32,7 +32,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class MarketplaceClient(_MarketplaceClientOperationsMixin):
+class MarketplaceMgmtClient(_MarketplaceMgmtClientOperationsMixin):
     """REST APIs for Private Marketplace.
 
     :ivar operations: Operations operations
@@ -72,7 +72,7 @@ class MarketplaceClient(_MarketplaceClientOperationsMixin):
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = MarketplaceClientConfiguration(
+        self._config = MarketplaceMgmtClientConfiguration(
             credential=credential,
             base_url=cast(str, base_url),
             cloud_setting=cloud_setting,
