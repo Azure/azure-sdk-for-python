@@ -2,4 +2,5 @@
 ../../core/azure-core
 ../../identity/azure-identity
 ../azure-storage-blob
+../azure-storage-extensions
 aiohttp>=3.0
