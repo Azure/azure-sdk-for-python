@@ -19,15 +19,6 @@ class AccountProvisioningMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """manual."""
 
 
-class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
-    only APIs.
-    """
-
-    INTERNAL = "Internal"
-    """Actions are for internal-only APIs."""
-
-
 class ActivationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The activation state of the license."""
 
@@ -636,16 +627,12 @@ class Mode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class OperationOrigin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
-    """
+    """The intended executor of the operation."""
 
     USER = "user"
-    """Indicates the operation is initiated by a user."""
+    """user."""
     SYSTEM = "system"
-    """Indicates the operation is initiated by a system."""
-    USER_SYSTEM = "user,system"
-    """Indicates the operation is initiated by a user or system."""
+    """system."""
 
 
 class PrimaryAllowConnections(str, Enum, metaclass=CaseInsensitiveEnumMeta):

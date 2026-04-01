@@ -74,7 +74,7 @@ from ._models import (  # type: ignore
     K8SSchedulingOptions,
     K8SSecurity,
     K8SSettings,
-    K8STransparentDataEncryption,
+    K8StransparentDataEncryption,
     KeytabInformation,
     LogAnalyticsWorkspaceConfig,
     ManagedInstanceLinkCreateUpdateConfiguration,
@@ -176,7 +176,6 @@ from ._models import (  # type: ignore
 
 from ._enums import (  # type: ignore
     AccountProvisioningMode,
-    ActionType,
     ActivationState,
     AggregationType,
     AlwaysOnRole,
@@ -308,7 +307,7 @@ __all__ = [
     "K8SSchedulingOptions",
     "K8SSecurity",
     "K8SSettings",
-    "K8STransparentDataEncryption",
+    "K8StransparentDataEncryption",
     "KeytabInformation",
     "LogAnalyticsWorkspaceConfig",
     "ManagedInstanceLinkCreateUpdateConfiguration",
@@ -407,7 +406,6 @@ __all__ = [
     "UploadServicePrincipal",
     "UploadWatermark",
     "AccountProvisioningMode",
-    "ActionType",
     "ActivationState",
     "AggregationType",
     "AlwaysOnRole",

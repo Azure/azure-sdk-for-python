@@ -8,7 +8,6 @@
 # --------------------------------------------------------------------------
 # pylint: disable=protected-access, broad-except
 
-from __future__ import annotations
 import copy
 import calendar
 import decimal

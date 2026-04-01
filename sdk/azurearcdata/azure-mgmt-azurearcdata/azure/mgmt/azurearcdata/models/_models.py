@@ -8,7 +8,6 @@
 # --------------------------------------------------------------------------
 # pylint: disable=useless-super-delegation
 
-from __future__ import annotations
 import datetime
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
@@ -3147,7 +3146,7 @@ class K8SSecurity(_Model):
     :vartype active_directory: ~azure.mgmt.azurearcdata.models.K8SActiveDirectory
     :ivar transparent_data_encryption: Transparent data encryption information.
     :vartype transparent_data_encryption:
-     ~azure.mgmt.azurearcdata.models.K8STransparentDataEncryption
+     ~azure.mgmt.azurearcdata.models.K8StransparentDataEncryption
     """
 
     admin_login_secret: Optional[str] = rest_field(
@@ -3162,7 +3161,7 @@ class K8SSecurity(_Model):
         name="activeDirectory", visibility=["read", "create", "update", "delete", "query"]
     )
     """The kubernetes active directory information."""
-    transparent_data_encryption: Optional["_models.K8STransparentDataEncryption"] = rest_field(
+    transparent_data_encryption: Optional["_models.K8StransparentDataEncryption"] = rest_field(
         name="transparentDataEncryption", visibility=["read", "create", "update", "delete", "query"]
     )
     """Transparent data encryption information."""
@@ -3174,7 +3173,7 @@ class K8SSecurity(_Model):
         admin_login_secret: Optional[str] = None,
         service_certificate_secret: Optional[str] = None,
         active_directory: Optional["_models.K8SActiveDirectory"] = None,
-        transparent_data_encryption: Optional["_models.K8STransparentDataEncryption"] = None,
+        transparent_data_encryption: Optional["_models.K8StransparentDataEncryption"] = None,
     ) -> None: ...
 
     @overload
@@ -3218,7 +3217,7 @@ class K8SSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class K8STransparentDataEncryption(_Model):
+class K8StransparentDataEncryption(_Model):
     """Transparent data encryption information.
 
     :ivar mode: Transparent data encryption mode. Can be Service Managed, Customer managed or
@@ -3690,49 +3689,39 @@ class OnPremiseProperty(_Model):
 
 
 class Operation(_Model):
-    """REST API Operation.
+    """Azure Data Services on Azure Arc operation definition.
 
-    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
-     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
+    :ivar name: The name of the operation being performed on this particular object. Required.
     :vartype name: str
-    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
-     data-plane operations and "false" for Azure Resource Manager/control-plane operations.
-    :vartype is_data_action: bool
-    :ivar display: Localized display information for this particular operation.
+    :ivar display: The localized display information for this particular operation / action.
+     Required.
     :vartype display: ~azure.mgmt.azurearcdata.models.OperationDisplay
-    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
-     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
-     and "user,system".
+    :ivar origin: The intended executor of the operation. Known values are: "user" and "system".
     :vartype origin: str or ~azure.mgmt.azurearcdata.models.OperationOrigin
-    :ivar action_type: Extensible enum. Indicates the action type. "Internal" refers to actions
-     that are for internal only APIs. "Internal"
-    :vartype action_type: str or ~azure.mgmt.azurearcdata.models.ActionType
+    :ivar is_data_action: Indicates whether the operation is a data action. Required.
+    :vartype is_data_action: bool
+    :ivar properties: Additional descriptions for the operation.
+    :vartype properties: dict[str, any]
     """
 
-    name: Optional[str] = rest_field(visibility=["read"])
-    """The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
-     \"Microsoft.Compute/virtualMachines/write\",
-     \"Microsoft.Compute/virtualMachines/capture/action\"."""
-    is_data_action: Optional[bool] = rest_field(name="isDataAction", visibility=["read"])
-    """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
-     \"false\" for Azure Resource Manager/control-plane operations."""
-    display: Optional["_models.OperationDisplay"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Localized display information for this particular operation."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the operation being performed on this particular object. Required."""
+    display: "_models.OperationDisplay" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The localized display information for this particular operation / action. Required."""
     origin: Optional[Union[str, "_models.OperationOrigin"]] = rest_field(visibility=["read"])
-    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-     logs UX. Default value is \"user,system\". Known values are: \"user\", \"system\", and
-     \"user,system\"."""
-    action_type: Optional[Union[str, "_models.ActionType"]] = rest_field(name="actionType", visibility=["read"])
-    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for
-     internal only APIs. \"Internal\""""
+    """The intended executor of the operation. Known values are: \"user\" and \"system\"."""
+    is_data_action: bool = rest_field(name="isDataAction", visibility=["read", "create", "update", "delete", "query"])
+    """Indicates whether the operation is a data action. Required."""
+    properties: Optional[dict[str, Any]] = rest_field(visibility=["read"])
+    """Additional descriptions for the operation."""
 
     @overload
     def __init__(
         self,
         *,
-        display: Optional["_models.OperationDisplay"] = None,
+        name: str,
+        display: "_models.OperationDisplay",
+        is_data_action: bool,
     ) -> None: ...
 
     @overload
@@ -3747,34 +3736,47 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for an operation.
+    """Display metadata associated with the operation.
 
-    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
-     Monitoring Insights" or "Microsoft Compute".
+    :ivar provider: The localized friendly form of the resource provider name. Required.
     :vartype provider: str
-    :ivar resource: The localized friendly name of the resource type related to this operation.
-     E.g. "Virtual Machines" or "Job Schedule Collections".
+    :ivar resource: The localized friendly form of the resource type related to this
+     action/operation. Required.
     :vartype resource: str
-    :ivar operation: The concise, localized friendly name for the operation; suitable for
-     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
+    :ivar operation: The localized friendly name for the operation. Required.
     :vartype operation: str
-    :ivar description: The short, localized friendly description of the operation; suitable for
-     tool tips and detailed views.
+    :ivar description: The localized friendly description for the operation. Required.
     :vartype description: str
     """
 
-    provider: Optional[str] = rest_field(visibility=["read"])
-    """The localized friendly form of the resource provider name, e.g. \"Microsoft Monitoring
-     Insights\" or \"Microsoft Compute\"."""
-    resource: Optional[str] = rest_field(visibility=["read"])
-    """The localized friendly name of the resource type related to this operation. E.g. \"Virtual
-     Machines\" or \"Job Schedule Collections\"."""
-    operation: Optional[str] = rest_field(visibility=["read"])
-    """The concise, localized friendly name for the operation; suitable for dropdowns. E.g. \"Create
-     or Update Virtual Machine\", \"Restart Virtual Machine\"."""
-    description: Optional[str] = rest_field(visibility=["read"])
-    """The short, localized friendly description of the operation; suitable for tool tips and detailed
-     views."""
+    provider: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The localized friendly form of the resource provider name. Required."""
+    resource: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The localized friendly form of the resource type related to this action/operation. Required."""
+    operation: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The localized friendly name for the operation. Required."""
+    description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The localized friendly description for the operation. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        provider: str,
+        resource: str,
+        operation: str,
+        description: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class PostgresInstance(TrackedResource):
