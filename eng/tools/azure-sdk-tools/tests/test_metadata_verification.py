@@ -253,16 +253,18 @@ def _create_test_wheel(dist_dir, version, files):
 
 
 def test_verify_whl_root_directory_fails_when_api_md_present(monkeypatch, tmp_path):
-    monkeypatch.setattr("azpysdk.verify_whl.extract_package_metadata", lambda _: {"homepage": "https://example.com"})
-
     version = "1.0.0"
+    monkeypatch.setattr(
+        "azpysdk.verify_whl.extract_package_metadata", lambda _: {"name": "azure-test-package", "version": version}
+    )
+
     _create_test_wheel(
         str(tmp_path),
         version,
         {
             "azure/testpackage/__init__.py": "",
             "azure/testpackage/api.md": "",
-            "azure_test_package-1.0.0.dist-info/METADATA": "Metadata-Version: 2.1\nName: azure-test-package\nVersion: 1.0.0\n",
+            f"azure_test_package-{version}.dist-info/METADATA": f"Metadata-Version: 2.1\nName: azure-test-package\nVersion: {version}\n",
         },
     )
 
@@ -276,15 +278,17 @@ def test_verify_whl_root_directory_fails_when_api_md_present(monkeypatch, tmp_pa
 
 
 def test_verify_whl_root_directory_passes_without_api_md(monkeypatch, tmp_path):
-    monkeypatch.setattr("azpysdk.verify_whl.extract_package_metadata", lambda _: {"homepage": "https://example.com"})
-
     version = "1.0.0"
+    monkeypatch.setattr(
+        "azpysdk.verify_whl.extract_package_metadata", lambda _: {"name": "azure-test-package", "version": version}
+    )
+
     _create_test_wheel(
         str(tmp_path),
         version,
         {
             "azure/testpackage/__init__.py": "",
-            "azure_test_package-1.0.0.dist-info/METADATA": "Metadata-Version: 2.1\nName: azure-test-package\nVersion: 1.0.0\n",
+            f"azure_test_package-{version}.dist-info/METADATA": f"Metadata-Version: 2.1\nName: azure-test-package\nVersion: {version}\n",
         },
     )
 
