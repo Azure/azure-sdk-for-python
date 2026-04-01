@@ -6,7 +6,7 @@
         "azure.storage.blob._generated.models.ArrowField": "Storage.Blob.ArrowField",
         "azure.storage.blob._generated.models.BlobFlatListSegment": "Storage.Blob.BlobFlatListSegment",
         "azure.storage.blob._generated.models.BlobHierarchyListSegment": "Storage.Blob.BlobHierarchyListSegment",
-        "azure.storage.blob._generated.models.BlobItem": "Storage.Blob.BlobItem",
+        "azure.storage.blob._generated.models.BlobItemInternal": "Storage.Blob.BlobItem",
         "azure.storage.blob._generated.models.BlobMetadata": "Storage.Blob.BlobMetadata",
         "azure.storage.blob._generated.models.BlobName": "Storage.Blob.BlobName",
         "azure.storage.blob._generated.models.BlobPrefix": "Storage.Blob.BlobPrefix",

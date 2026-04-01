@@ -15,8 +15,7 @@ from .._utils import utils as _generated_utils
 _generated_utils.quote_etag = lambda etag: etag
 
 
-__all__: list[str] = [
-]
+__all__: list[str] = []
 
 
 def patch_sdk():

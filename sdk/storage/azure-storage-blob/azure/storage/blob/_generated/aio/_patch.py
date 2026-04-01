@@ -55,6 +55,7 @@ class BlobClientConfiguration(GeneratedBlobClientConfiguration):
         self.url = url
         self.credential = credential
         from .._version import VERSION
+
         self.version = version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://storage.azure.com/.default"])
 

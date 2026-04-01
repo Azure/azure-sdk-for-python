@@ -61,6 +61,7 @@ class BlobClientConfiguration(GeneratedBlobClientConfiguration):
 
         version: str = kwargs.pop("version", "2026-06-06")
         from ._version import VERSION
+
         self.url = url
         self.credential = credential
         self.version = version
