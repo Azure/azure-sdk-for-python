@@ -16,6 +16,7 @@ from azure.ai.evaluation._common.utils import reformat_agent_response
 
 logger = logging.getLogger(__name__)
 
+
 class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
     Evaluates the fluency of a given response or a multi-turn conversation, including reasoning.
