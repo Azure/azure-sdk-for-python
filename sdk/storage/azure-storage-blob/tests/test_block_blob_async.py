@@ -6,7 +6,7 @@
 import aiohttp
 import tempfile
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from io import BytesIO
 
 import pytest
@@ -22,7 +22,7 @@ from azure.storage.blob import (
     BlobImmutabilityPolicyMode, ImmutabilityPolicy
 )
 from azure.storage.blob.aio import BlobClient, BlobServiceClient
-from azure.storage.blob._shared.policies import StorageContentValidation
+from azure.storage.blob._shared.validation import calculate_content_md5
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
@@ -575,7 +575,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         source_blob = await self._create_blob(data=b"This is test data to be copied over.")
         source_blob_props = await source_blob.get_blob_properties()
         source_md5 = source_blob_props.content_settings.content_md5
-        bad_source_md5 = StorageContentValidation.get_content_md5(b"this is bad data")
+        bad_source_md5 = calculate_content_md5(b"this is bad data")
         sas = self.generate_sas(
             generate_blob_sas,
             account_name=storage_account_name,

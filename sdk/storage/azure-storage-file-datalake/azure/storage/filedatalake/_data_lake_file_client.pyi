@@ -149,7 +149,7 @@ class DataLakeFileClient(PathClient):
         if_unmodified_since: Optional[datetime] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
-        validate_content: Optional[bool] = None,
+        validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
         max_concurrency: Optional[int] = None,
         chunk_size: Optional[int] = None,
@@ -166,7 +166,7 @@ class DataLakeFileClient(PathClient):
         length: Optional[int] = None,
         *,
         flush: Optional[bool] = None,
-        validate_content: Optional[bool] = None,
+        validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]] = None,
         lease_action: Optional[Literal["acquire", "auto-renew", "release", "acquire-release"]] = None,
         lease_duration: int = -1,
         lease: Optional[Union[DataLakeLeaseClient, str]] = None,
@@ -207,6 +207,7 @@ class DataLakeFileClient(PathClient):
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
         max_concurrency: Optional[int] = None,
         progress_hook: Optional[Callable[[int, int], None]] = None,
+        validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader: ...
