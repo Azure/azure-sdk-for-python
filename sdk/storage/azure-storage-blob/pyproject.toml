@@ -26,6 +26,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 requires-python = ">=3.9"
 keywords = ["azure", "azure sdk"]
@@ -33,8 +34,12 @@ keywords = ["azure", "azure sdk"]
 dependencies = [
     "isodate>=0.6.1",
     "azure-core>=1.38.3",
+    "cryptography>=2.1.4",
     "typing-extensions>=4.6.0",
 ]
+
+[project.optional-dependencies]
+aio = ["azure-core[aio]>=1.38.3"]
 dynamic = [
 "version", "readme"
 ]

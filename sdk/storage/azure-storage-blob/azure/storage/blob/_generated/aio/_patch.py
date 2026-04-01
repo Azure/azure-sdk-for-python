@@ -52,7 +52,7 @@ class BlobClientConfiguration(GeneratedBlobClientConfiguration):
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
 
-        version: str = kwargs.pop("version", "2026-04-06")
+        version: str = kwargs.pop("version", "2026-06-06")
         self.url = url
         self.credential = credential
         self.version = version
