@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2025-12-01-preview",
+  "apiVersions": {
+    "Microsoft.BillingBenefits": "2025-12-01-preview"
+  },
+  "commit": "b684aff3319ffa5784a8b8d19d6af5adf168a4bb",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/billingbenefits/BillingBenefits.Management",
+  "emitterVersion": "0.61.2"
+}

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -31,14 +32,21 @@ def main():
     )
 
     response = client.auto_upgrade_profiles.begin_create_or_update(
-        resource_group_name="rg1",
+        resource_group_name="rgfleets",
         fleet_name="fleet1",
         auto_upgrade_profile_name="autoupgradeprofile1",
-        resource={"properties": {"channel": "Stable", "longTermSupport": False, "targetKubernetesVersion": ""}},
+        resource={
+            "properties": {
+                "channel": "Stable",
+                "disabled": True,
+                "nodeImageSelection": {"type": "Latest"},
+                "updateStrategyId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgfleets/providers/Microsoft.ContainerService/fleets/fleet1/updateStrategies/strategy1",
+            }
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-08-01-preview/AutoUpgradeProfiles_CreateOrUpdate.json
+# x-ms-original-file: 2026-02-01-preview/AutoUpgradeProfiles_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

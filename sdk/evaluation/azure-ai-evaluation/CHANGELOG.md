@@ -1,9 +1,44 @@
 # Release History
 
-## 1.16.1 (Unreleased)
+## 1.16.3 (Unreleased)
+
+### Features Added
+
+- Added `extra_headers` support to `OpenAIModelConfiguration` to allow passing custom HTTP headers.
+
+### Breaking Changes
+
+### Bugs Fixed
+- Fixed attack success rate (ASR) always reporting 0% because the sync eval API's `passed` field indicates task completion, not content safety. Replaced `passed`-based logic with score-based threshold comparison matching `_evaluation_processor.py`.
+
+- Fixed partial red team results being discarded when some objectives fail. Previously, if PyRIT raised due to incomplete objectives (e.g., evaluator model refuses to score), all completed results were lost. Now recovers partial results from PyRIT's memory database.
+
+- Fixed evaluator token metrics (`promptTokens`, `completionTokens`) not persisted in red teaming output items. The sync eval API returns camelCase keys but the extraction code only checked for snake_case, silently dropping all evaluator token usage data.
+
+### Other Changes
+
+## 1.16.2 (2026-03-24)
+
+### Bugs Fixed
+- Fixed adversarial chat target incorrectly using user's callback instead of RAI service, causing callback response to appear as user message in red team scan results when using converter strategies (e.g., `DIFFICULT`, `Tense`).
+- Fixed `hate_unfairness` attack success rate always reporting 0% due to metric name mapping using legacy `hate_fairness` name instead of canonical `hate_unfairness`.
+- Fixed `TypeError` in multi-turn and crescendo attacks caused by PyRIT 0.11+ renaming `send_prompt_async` parameter from `prompt_request` to `message`.
+- Expanded endpoint normalization (`/openai/v1` suffix) to all Azure OpenAI host suffixes (including sovereign clouds), fixing 404 errors for classic AOAI endpoints with PyRIT 0.11+.
+- Added `aml-aca-token` credential fallback for agent-type seed requests when running locally without ACA managed identity.
+- Extract RAI scorer token metrics (prompt_tokens, completion_tokens, total_tokens) into Score metadata and propagate through result processing for downstream aggregation.
+
+## 1.16.1 (2026-03-18)
+
+### Features Added
+
+- Agentic evaluators (Groundedness, ToolCallAccuracy, ToolCallSuccess, ToolInputAccuracy, ToolOutputUtilization, ToolSelection) now accept plain string inputs directly, skipping structured parsing when string format is provided.
 
 ### Bugs Fixed
 - Fixed inconsistency where sample data in evaluation result items did not match the generated sample data from corresponding input rows, ensuring proper synchronization between row-level input samples and their associated evaluation output items.
+- Fixed indirect jailbreak (XPIA) `ValueError` when targeting models by converting `binary_path` file-based context prompts to inline text before invoking the callback target.
+- Fixed content-filter responses showing raw JSON API payloads in red team results by detecting blocked responses and replacing them with human-readable messages.
+- Fixed missing `token_usage` on row-level output items for agent targets using the Foundry execution path by extracting usage data from piece labels.
+- Fixed 7 backwards-compatibility bugs with the `_use_legacy_endpoint=True` feature flag including metric name mapping, result parsing, conversation evaluation mode, and Foundry scorer integration.
 
 ## 1.16.0 (2026-03-10)
 

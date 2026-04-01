@@ -123,15 +123,27 @@ class ScenarioOrchestrator:
             # The FoundryExecutionManager (see PR #45541) provides an additional
             # outer recovery layer. If _scenario_result remains None,
             # downstream get_attack_results() returns an empty list safely.
+            #
+            # PyRIT's Scenario._execute_scenario_async saves completed results to memory
+            # (via _update_scenario_result_async) before raising on incomplete objectives.
+            # Retrieve partial results so they aren't lost when some objectives fail
+            # (e.g., evaluator model refuses to score adversarial content).
             try:
-                # Relies on PyRIT FoundryScenario internal `_result` attribute
-                # to retrieve partial results accumulated before the failure.
-                # hasattr guards against future PyRIT versions removing this attribute.
-                # If the attribute type changes, get_attack_results() will fail safely downstream.
-                if hasattr(self._scenario, "_result"):
-                    self._scenario_result = self._scenario._result
-            except Exception as e:
-                self.logger.debug("Failed to retrieve partial scenario result: %s", e, exc_info=True)
+                scenario_result_id = getattr(self._scenario, "_scenario_result_id", None)
+                if scenario_result_id:
+                    memory = self.get_memory()
+                    stored_results = memory.get_scenario_results(scenario_result_ids=[scenario_result_id])
+                    if stored_results and stored_results[0] is not None:
+                        self._scenario_result = stored_results[0]
+                        attack_results = getattr(self._scenario_result, "attack_results", {}) or {}
+                        attack_count = sum(len(v) for v in attack_results.values() if v)
+                        self.logger.info(
+                            "Retrieved partial results from memory for %s: %d attack results recovered.",
+                            self.risk_category,
+                            attack_count,
+                        )
+            except Exception as recovery_err:
+                self.logger.debug("Failed to retrieve partial scenario result: %s", recovery_err, exc_info=True)
 
         self.logger.info(f"Attack execution complete for {self.risk_category}")
 
@@ -141,7 +153,10 @@ class ScenarioOrchestrator:
         """Create attack scoring configuration from RAI scorer.
 
         FoundryScenario uses AttackScoringConfig to configure how attacks are scored.
-        We wrap our RAI scorer in the appropriate configuration.
+        We use the RAI scorer for both objective scoring AND refusal detection.
+        For refusal: a safe response (score=False) means the model refused the attack,
+        triggering crescendo's backtrack logic. A harmful response (score=True) means
+        the model didn't refuse and crescendo should continue escalating.
 
         :return: Attack scoring configuration
         :rtype: Any
@@ -151,6 +166,7 @@ class ScenarioOrchestrator:
 
         return AttackScoringConfig(
             objective_scorer=self.rai_scorer,
+            refusal_scorer=self.rai_scorer,
             use_score_as_feedback=True,
         )
 

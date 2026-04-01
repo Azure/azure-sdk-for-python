@@ -11,6 +11,7 @@ import pytest
 from checkers.added_method_overloads_checker import AddedMethodOverloadChecker
 from breaking_changes_checker.changelog_tracker import ChangelogTracker, BreakingChangesTracker
 from breaking_changes_checker.detect_breaking_changes import main
+from breaking_changes_checker.detect_breaking_changes import test_compare_reports as compare_reports
 
 
 def test_changelog_flag():
@@ -681,3 +682,18 @@ def test_added_overload():
     msg, _, *args = bc.features_added[1]
     assert msg == AddedMethodOverloadChecker.message["default"]
     assert args == ['azure.contoso', 'class_name', 'two', 'def two(foo: JSON)']
+
+
+def test_compare_reports_with_absolute_paths(capsys):
+    """Verify test_compare_reports accepts absolute paths for source/target reports."""
+    tests_dir = os.path.dirname(__file__)
+    source_report = os.path.abspath(os.path.join(tests_dir, "examples", "code-reports", "content-safety", "stable.json"))
+    target_report = os.path.abspath(os.path.join(tests_dir, "examples", "code-reports", "content-safety", "current.json"))
+    pkg_dir = tests_dir  # pkg_dir must exist and is still used (e.g., for package_name and cleanup); its value is independent of using absolute report paths
+
+    # Should not raise; changelog=True means no SystemExit(1) even if breaking changes exist
+    compare_reports(pkg_dir, changelog=True, source_report=source_report, target_report=target_report)
+
+    captured = capsys.readouterr()
+    assert "===== changelog start =====" in captured.out
+    assert "===== changelog end =====" in captured.out

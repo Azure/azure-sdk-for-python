@@ -306,8 +306,15 @@ class FoundryResultProcessor:
             # Get role, handling api_role property
             role = getattr(piece, "api_role", None) or getattr(piece, "role", "user")
 
-            # Get content (prefer converted_value over original_value)
-            content = getattr(piece, "converted_value", None) or getattr(piece, "original_value", "")
+            # Get content: for user messages show the original adversarial prompt,
+            # not the converter output (e.g., Base64-encoded or tense-rephrased text).
+            # For assistant messages, show the response as-is.
+            if role == "user":
+                original = getattr(piece, "original_value", None)
+                converted = getattr(piece, "converted_value", None)
+                content = original if isinstance(original, str) and original else (converted or "")
+            else:
+                content = getattr(piece, "converted_value", None) or getattr(piece, "original_value", "")
 
             message: Dict[str, Any] = {
                 "role": role,
