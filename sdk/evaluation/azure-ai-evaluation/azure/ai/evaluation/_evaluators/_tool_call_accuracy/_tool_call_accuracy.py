@@ -15,7 +15,7 @@ from azure.ai.evaluation._exceptions import (
     ErrorTarget,
     EvaluationException,
 )
-from ..._common.utils import check_score_is_valid
+from azure.ai.evaluation._common.utils import check_score_is_valid, reformat_conversation_history, reformat_agent_response
 from azure.ai.evaluation._common._experimental import experimental
 
 logger = logging.getLogger(__name__)
@@ -206,9 +206,17 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if not needed_tool_definitions:
             return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
 
+        # Reformat response/tool_calls for cleaner LLM evaluation
+        if isinstance(tool_calls, str):
+            formatted_tool_calls = tool_calls
+        elif response:
+            formatted_tool_calls = reformat_agent_response(response, include_tool_messages=True)
+        else:
+            formatted_tool_calls = tool_calls
+
         return {
             "query": query,
-            "tool_calls": tool_calls,
+            "tool_calls": formatted_tool_calls,
             "tool_definitions": needed_tool_definitions,
         }
 
@@ -251,6 +259,11 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         if isinstance(eval_input.get("query"), list):
             eval_input["query"] = _preprocess_messages(eval_input["query"])
+
+        # Reformat conversation history for cleaner evaluation
+        eval_input["query"] = reformat_conversation_history(
+            eval_input["query"], logger, include_system_messages=True, include_tool_messages=True
+        )
 
         # Single LLM call for all tool calls
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)

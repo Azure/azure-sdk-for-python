@@ -769,3 +769,163 @@ class TestToolCallAccuracyEvaluator:
             evaluator(tool_calls=tool_calls, tool_definitions=tool_definitions)
 
         assert "Query is a required input" in str(exc_info.value)
+
+    def test_evaluate_with_conversation_history_query(self, mock_model_config):
+        """Test that query provided as a list of messages (conversation history) is reformatted correctly."""
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+
+        query = [
+            {"role": "system", "content": "You are a helpful weather assistant."},
+            {"role": "user", "content": "What's the weather like in Paris?"},
+            {"role": "assistant", "content": "Let me check that for you."},
+        ]
+        tool_calls = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_good",
+                "name": "fetch_weather",
+                "arguments": {"location": "Paris"},
+            }
+        ]
+        tool_definitions = [
+            {
+                "name": "fetch_weather",
+                "type": "function",
+                "description": "Fetches the weather information for the specified location.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "location": {"type": "string", "description": "The location to fetch weather for."}
+                    },
+                },
+            }
+        ]
+
+        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        assert result is not None
+        assert key in result
+        assert f"{key}_result" in result
+        assert result[key] == 5.0
+        assert result[f"{key}_result"] == "pass"
+
+    def test_evaluate_with_response_list(self, mock_model_config):
+        """Test that response provided as a list of messages containing tool calls is reformatted correctly."""
+
+        async def flow_side_effect_string_tool_calls(timeout, **kwargs):
+            # When tool_calls is a reformatted string, return a fixed passing score
+            tool_calls = kwargs.get("tool_calls", "")
+            if isinstance(tool_calls, str) and tool_calls:
+                return {
+                    "llm_output": {
+                        "chain_of_thought": "Tool calls were reformatted and evaluated.",
+                        "tool_calls_success_level": 5,
+                        "details": {"tool_calls_made_by_agent": 1, "correct_tool_calls_made_by_agent": 1},
+                    }
+                }
+            return {
+                "llm_output": {
+                    "chain_of_thought": "No tool calls found.",
+                    "tool_calls_success_level": 1,
+                    "details": {},
+                }
+            }
+
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=flow_side_effect_string_tool_calls)
+
+        query = "What's the weather in Paris?"
+        response = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_123",
+                        "name": "fetch_weather",
+                        "arguments": {"location": "Paris"},
+                    }
+                ],
+            }
+        ]
+        tool_definitions = [
+            {
+                "name": "fetch_weather",
+                "type": "function",
+                "description": "Fetches the weather information for the specified location.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "location": {"type": "string", "description": "The location to fetch weather for."}
+                    },
+                },
+            }
+        ]
+
+        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
+
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        assert result is not None
+        assert key in result
+        assert f"{key}_result" in result
+        assert result[key] == 5.0
+        assert result[f"{key}_result"] == "pass"
+
+    def test_tool_calls_reformatting_is_applied(self, mock_model_config):
+        """Verify that when response is provided as a list, the tool_calls passed to _flow
+        is the reformatted string produced by reformat_agent_response, not the raw message list."""
+        captured_kwargs = {}
+
+        async def capturing_flow(timeout, **kwargs):
+            captured_kwargs.update(kwargs)
+            return {
+                "llm_output": {
+                    "chain_of_thought": "Verified reformatted tool_calls string.",
+                    "tool_calls_success_level": 5,
+                    "details": {"tool_calls_made_by_agent": 1, "correct_tool_calls_made_by_agent": 1},
+                }
+            }
+
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=capturing_flow)
+
+        query = "What's the weather in Paris?"
+        response = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_123",
+                        "name": "fetch_weather",
+                        "arguments": {"location": "Paris"},
+                    }
+                ],
+            }
+        ]
+        tool_definitions = [
+            {
+                "name": "fetch_weather",
+                "type": "function",
+                "description": "Fetches the weather information for the specified location.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "location": {"type": "string", "description": "The location to fetch weather for."}
+                    },
+                },
+            }
+        ]
+
+        evaluator(query=query, response=response, tool_definitions=tool_definitions)
+
+        # tool_calls should be a reformatted string, not a raw list
+        tool_calls_sent = captured_kwargs.get("tool_calls")
+        assert isinstance(tool_calls_sent, str), (
+            f"Expected tool_calls to be a reformatted string, got {type(tool_calls_sent)}"
+        )
+        assert "[TOOL_CALL]" in tool_calls_sent
+        assert "fetch_weather" in tool_calls_sent
+        assert "Paris" in tool_calls_sent
