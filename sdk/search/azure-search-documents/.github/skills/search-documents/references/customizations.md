@@ -57,7 +57,7 @@ ScoringStatistics.Global = ScoringStatistics.GLOBAL_ENUM
 | Symbol | Type | What It Does |
 |--------|------|-------------|
 | `_convert_search_result(result)` | function | Extracts `@search.score`, `@search.reranker_score`, `@search.highlights`, `@search.captions`, `@search.document_debug_info`, `@search.reranker_boosted_score` |
-| `_pack_continuation_token(response, api_version)` | function | Base64 JSON: `{apiVersion, nextLink, nextPageParameters}` |
+| `_pack_continuation_token(response, api_version)` | function | Returns base64 JSON: `{apiVersion, nextLink, nextPageParameters}` |
 | `_unpack_continuation_token(token)` | function | Decodes token to `(next_link, next_page_request)` |
 | `_build_search_request(search_text, **kwargs)` | function | Builds `SearchRequest`. Pipe-delimited encoding for answers/captions/rewrites |
 | `SearchPageIterator` | class | Custom page iterator with `get_facets()`, `get_count()`, `get_coverage()`, `get_answers()`, `get_debug_info()` |
