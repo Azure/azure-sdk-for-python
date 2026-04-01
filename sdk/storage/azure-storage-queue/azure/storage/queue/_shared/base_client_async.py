@@ -36,12 +36,12 @@ from .models import StorageConfiguration
 from .parser import DEVSTORE_ACCOUNT_KEY, _get_development_storage_endpoint
 from .policies import (
     QueueMessagePolicy,
-    StorageContentValidation,
     StorageHeadersPolicy,
     StorageHosts,
     StorageRequestHook,
 )
 from .policies_async import (
+    AsyncContentValidationPolicy,
     AsyncStorageBearerTokenCredentialPolicy,
     AsyncStorageResponseHook,
 )
@@ -161,7 +161,7 @@ class AsyncStorageAccountHostsMixin(object):
             QueueMessagePolicy(),
             config.proxy_policy,
             config.user_agent_policy,
-            StorageContentValidation(),
+            AsyncContentValidationPolicy(),
             ContentDecodePolicy(response_encoding="utf-8"),
             AsyncRedirectPolicy(**kwargs),
             StorageHosts(hosts=hosts, **kwargs),
