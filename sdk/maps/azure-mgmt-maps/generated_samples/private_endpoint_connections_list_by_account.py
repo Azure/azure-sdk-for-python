@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.maps import AzureMapsManagementClient
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.maps import AzureMapsManagementClient
     pip install azure-identity
     pip install azure-mgmt-maps
 # USAGE
-    python create_account.py
+    python private_endpoint_connections_list_by_account.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,23 +31,14 @@ def main():
         subscription_id="21a9967a-e8a9-4656-a70b-96ff1c4d05a0",
     )
 
-    response = client.accounts.create_or_update(
+    response = client.private_endpoint_connections.list_by_account(
         resource_group_name="myResourceGroup",
         account_name="myMapsAccount",
-        maps_account={
-            "kind": "Gen1",
-            "location": "eastus",
-            "properties": {
-                "cors": {"corsRules": [{"allowedOrigins": ["http://www.contoso.com", "http://www.fabrikam.com"]}]},
-                "disableLocalAuth": False,
-            },
-            "sku": {"name": "S0"},
-            "tags": {"test": "true"},
-        },
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/maps/resource-manager/Microsoft.Maps/stable/2023-06-01/examples/CreateAccount.json
+# x-ms-original-file: specification/maps/resource-manager/Microsoft.Maps/Maps/preview/2025-10-01-preview/examples/PrivateEndpointConnections_ListByAccount.json
 if __name__ == "__main__":
     main()

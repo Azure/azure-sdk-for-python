@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.maps import AzureMapsManagementClient
 
 """
@@ -33,17 +35,17 @@ def main():
         resource_group_name="myResourceGroup",
         account_name="myMapsAccount",
         maps_account_sas_parameters={
-            "expiry": "2017-05-24T11:42:03.1567373Z",
+            "expiry": "str",
             "maxRatePerSecond": 500,
-            "principalId": "e917f87b-324d-4728-98ed-e31d311a7d65",
-            "regions": ["eastus"],
-            "signingKey": "primaryKey",
-            "start": "2017-05-24T10:42:03.1567373Z",
+            "principalId": "str",
+            "signingKey": "str",
+            "start": "str",
+            "regions": ["str"],
         },
     )
     print(response)
 
 
-# x-ms-original-file: specification/maps/resource-manager/Microsoft.Maps/stable/2023-06-01/examples/AccountListSAS.json
+# x-ms-original-file: specification/maps/resource-manager/Microsoft.Maps/Maps/preview/2025-10-01-preview/examples/AccountListSAS.json
 if __name__ == "__main__":
     main()

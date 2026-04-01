@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.maps import AzureMapsManagementClient
 
 """
@@ -33,19 +35,76 @@ def main():
         resource_group_name="myResourceGroup",
         account_name="myMapsAccount",
         maps_account={
-            "kind": "Gen2",
-            "location": "eastus",
-            "properties": {
-                "cors": {"corsRules": [{"allowedOrigins": ["http://www.contoso.com", "http://www.fabrikam.com"]}]},
-                "disableLocalAuth": True,
+            "location": "str",
+            "sku": {"name": "str", "tier": "str"},
+            "id": "str",
+            "identity": {
+                "type": "str",
+                "principalId": "str",
+                "tenantId": "str",
+                "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
             },
-            "sku": {"name": "G2"},
-            "tags": {"test": "true"},
+            "kind": "str",
+            "name": "str",
+            "properties": {
+                "cors": {"corsRules": [{"allowedOrigins": ["str"]}]},
+                "disableLocalAuth": False,
+                "encryption": {
+                    "customerManagedKeyEncryption": {
+                        "keyEncryptionKeyIdentity": {
+                            "delegatedIdentityClientId": "str",
+                            "federatedClientId": "str",
+                            "identityType": "str",
+                            "userAssignedIdentityResourceId": "str",
+                        },
+                        "keyEncryptionKeyUrl": "str",
+                    },
+                    "infrastructureEncryption": "str",
+                },
+                "linkedResources": [{"id": "str", "uniqueName": "str"}],
+                "locations": [{"locationName": "str"}],
+                "privateEndpointConnections": [
+                    {
+                        "groupIds": ["str"],
+                        "id": "str",
+                        "name": "str",
+                        "privateEndpoint": {"id": "str"},
+                        "privateLinkServiceConnectionState": {
+                            "actionsRequired": "str",
+                            "description": "str",
+                            "status": "str",
+                        },
+                        "provisioningState": "str",
+                        "systemData": {
+                            "createdAt": "2020-02-20 00:00:00",
+                            "createdBy": "str",
+                            "createdByType": "str",
+                            "lastModifiedAt": "2020-02-20 00:00:00",
+                            "lastModifiedBy": "str",
+                            "lastModifiedByType": "str",
+                        },
+                        "type": "str",
+                    }
+                ],
+                "provisioningState": "str",
+                "publicNetworkAccess": "str",
+                "uniqueId": "str",
+            },
+            "systemData": {
+                "createdAt": "2020-02-20 00:00:00",
+                "createdBy": "str",
+                "createdByType": "str",
+                "lastModifiedAt": "2020-02-20 00:00:00",
+                "lastModifiedBy": "str",
+                "lastModifiedByType": "str",
+            },
+            "tags": {"str": "str"},
+            "type": "str",
         },
     )
     print(response)
 
 
-# x-ms-original-file: specification/maps/resource-manager/Microsoft.Maps/stable/2023-06-01/examples/CreateAccountGen2.json
+# x-ms-original-file: specification/maps/resource-manager/Microsoft.Maps/Maps/preview/2025-10-01-preview/examples/CreateAccountGen2.json
 if __name__ == "__main__":
     main()

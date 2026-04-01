@@ -7,22 +7,35 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING, cast
+from typing_extensions import Self
 
+from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.settings import settings
 from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 
 from . import models as _models
 from ._configuration import AzureMapsManagementClientConfiguration
-from ._serialization import Deserializer, Serializer
-from .operations import AccountsOperations, CreatorsOperations, MapsOperations
+from ._utils.serialization import Deserializer, Serializer
+from .operations import (
+    AccountsOperations,
+    CreatorsOperations,
+    MapsOperations,
+    OperationResultOperations,
+    OperationStatusOperations,
+    PrivateEndpointConnectionsOperations,
+    PrivateLinkResourcesOperations,
+)
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
-class AzureMapsManagementClient:  # pylint: disable=client-accepts-api-version-keyword
+class AzureMapsManagementClient:  # pylint: disable=too-many-instance-attributes
     """Azure Maps.
 
     :ivar accounts: AccountsOperations operations
@@ -31,28 +44,72 @@ class AzureMapsManagementClient:  # pylint: disable=client-accepts-api-version-k
     :vartype maps: azure.mgmt.maps.operations.MapsOperations
     :ivar creators: CreatorsOperations operations
     :vartype creators: azure.mgmt.maps.operations.CreatorsOperations
+    :ivar private_link_resources: PrivateLinkResourcesOperations operations
+    :vartype private_link_resources: azure.mgmt.maps.operations.PrivateLinkResourcesOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
+    :vartype private_endpoint_connections:
+     azure.mgmt.maps.operations.PrivateEndpointConnectionsOperations
+    :ivar operation_result: OperationResultOperations operations
+    :vartype operation_result: azure.mgmt.maps.operations.OperationResultOperations
+    :ivar operation_status: OperationStatusOperations operations
+    :vartype operation_status: azure.mgmt.maps.operations.OperationStatusOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is None.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-06-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: Api Version. Default value is "2025-10-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
         self,
         credential: "TokenCredential",
         subscription_id: str,
-        base_url: str = "https://management.azure.com",
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
+        _endpoints = get_arm_endpoints(_cloud)
+        if not base_url:
+            base_url = _endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = AzureMapsManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
         )
-        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                ARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=cast(str, base_url), policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -61,8 +118,20 @@ class AzureMapsManagementClient:  # pylint: disable=client-accepts-api-version-k
         self.accounts = AccountsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.maps = MapsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.creators = CreatorsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.operation_result = OperationResultOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.operation_status = OperationStatusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -82,12 +151,12 @@ class AzureMapsManagementClient:  # pylint: disable=client-accepts-api-version-k
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "AzureMapsManagementClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 
