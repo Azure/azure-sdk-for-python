@@ -114,27 +114,6 @@ class TestHealthDataAIServicesMgmtDeidServicesOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_deid_services_begin_update(self, resource_group):
-        response = await (
-            await self.client.deid_services.begin_update(
-                resource_group_name=resource_group.name,
-                deid_service_name="str",
-                properties={
-                    "identity": {
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
-                    "properties": {"publicNetworkAccess": "str"},
-                    "tags": {"str": "str"},
-                },
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
     async def test_deid_services_begin_delete(self, resource_group):
         response = await (
             await self.client.deid_services.begin_delete(

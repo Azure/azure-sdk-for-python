@@ -14,15 +14,12 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
-    DeidPropertiesUpdate,
     DeidService,
     DeidServiceProperties,
-    DeidUpdate,
     ErrorAdditionalInfo,
     ErrorDetail,
     ErrorResponse,
     ManagedServiceIdentity,
-    ManagedServiceIdentityUpdate,
     Operation,
     OperationDisplay,
     PrivateEndpoint,
@@ -54,15 +51,12 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "DeidPropertiesUpdate",
     "DeidService",
     "DeidServiceProperties",
-    "DeidUpdate",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
     "ManagedServiceIdentity",
-    "ManagedServiceIdentityUpdate",
     "Operation",
     "OperationDisplay",
     "PrivateEndpoint",
