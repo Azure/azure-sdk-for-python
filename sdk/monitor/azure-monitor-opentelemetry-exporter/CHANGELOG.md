@@ -2,10 +2,6 @@
 
 ## 1.0.0b50 (Unreleased)
 
-### Features Added
-
-### Breaking Changes
-
 ### Bugs Fixed
 - Fix duplicate authentication policy in live metrics exporter causing Unauthorized errors
   for authenticated Application Insights resources
