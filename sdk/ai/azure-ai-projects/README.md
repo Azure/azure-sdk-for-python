@@ -825,55 +825,55 @@ with (
     # sample.output_text is the string output of the agent
     # sample.output_items is the structured JSON output of the agent, including tool calls information
     testing_criteria = [
-        {
-            "type": "azure_ai_evaluator",
-            "name": "violence_detection",
-            "evaluator_name": "builtin.violence",
-            "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_text}}"},
-        },
-        {
-            "type": "azure_ai_evaluator",
-            "name": "fluency",
-            "evaluator_name": "builtin.fluency",
-            "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
-            "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_text}}"},
-        },
-        {
-            "type": "azure_ai_evaluator",
-            "name": "task_adherence",
-            "evaluator_name": "builtin.task_adherence",
-            "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
-            "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_items}}"},
-        },
+        EvalGraderAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="violence_detection",
+            evaluator_name="builtin.violence",
+            data_mapping={"query": "{{item.query}}", "response": "{{sample.output_text}}"},
+        ),
+        EvalGraderAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="fluency",
+            evaluator_name="builtin.fluency",
+            initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+            data_mapping={"query": "{{item.query}}", "response": "{{sample.output_text}}"},
+        ),
+        EvalGraderAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="task_adherence",
+            evaluator_name="builtin.task_adherence",
+            initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+            data_mapping={"query": "{{item.query}}", "response": "{{sample.output_items}}"},
+        ),
     ]
     eval_object = openai_client.evals.create(
         name="Agent Evaluation",
         data_source_config=data_source_config,
-        testing_criteria=testing_criteria,  # type: ignore
+        testing_criteria=testing_criteria,
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
-    data_source = {
-        "type": "azure_ai_target_completions",
-        "source": {
-            "type": "file_content",
-            "content": [
-                {"item": {"query": "What is the capital of France?"}},
-                {"item": {"query": "How do I reverse a string in Python?"}},
+    data_source = TargetCompletionEvalRunDataSource(
+        type="azure_ai_target_completions",
+        source=SourceFileContent(
+            type="file_content",
+            content=[
+                SourceFileContentContent(item={"query": "What is the capital of France?"}),
+                SourceFileContentContent(item={"query": "How do I reverse a string in Python?"}),
             ],
-        },
-        "input_messages": {
-            "type": "template",
+        ),
+        input_messages={
+            "type": "template",  # type: ignore  # TODO: This is not an option based on our TypeSpec..
             "template": [
                 {"type": "message", "role": "user", "content": {"type": "input_text", "text": "{{item.query}}"}}
             ],
         },
-        "target": {
-            "type": "azure_ai_agent",
-            "name": agent.name,
-            "version": agent.version,  # Version is optional. Defaults to latest version if not specified
-        },
-    }
+        target=AzureAIAgentTargetTyped(
+            type="azure_ai_agent",
+            name=agent.name,
+            version=agent.version,  # Version is optional. Defaults to latest version if not specified
+        ),
+    )
 
     agent_eval_run: Union[RunCreateResponse, RunRetrieveResponse] = openai_client.evals.runs.create(
         eval_id=eval_object.id, name=f"Evaluation Run for Agent {agent.name}", data_source=data_source  # type: ignore

@@ -113,7 +113,7 @@ def main() -> None:  # pylint: disable=too-many-statements
                     "num_turns": 5,
                     "source": {"type": "file_id", "id": taxonomy.id},
                 },
-                target=target.as_dict(),  # type: ignore
+                target=target.as_dict(),
             ),
         )
 
