@@ -484,6 +484,7 @@ from azure.core.pipeline.policies import (
 |  |  | logging_enable | x | x | Use to enable per operation. Defaults to `False`. |
 | HttpLoggingPolicy | SansIOHTTPPolicy |  |  |  |  |
 |  |  | logger | x | x | If specified, it will be used to log information |
+|  |  | http_logging_level | x | x | The logging level to use for HTTP request and response logs. Defaults to `logging.INFO`. |
 | ContentDecodePolicy | SansIOHTTPPolicy |  |  |  |  |
 |  |  | response_encoding | x | x | The encoding to use if known for this service (will disable auto-detection). |
 | ProxyPolicy | SansIOHTTPPolicy |  |  |  |  |

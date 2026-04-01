@@ -155,7 +155,7 @@ def test_http_logger_operation_level(http_request, http_response):
     logger.setLevel(logging.DEBUG)
 
     policy = HttpLoggingPolicy()
-    kwargs = {"logger": logger}
+    kwargs = {"logger": logger, "http_logging_level": logging.DEBUG}
 
     universal_request = http_request("GET", "http://localhost/")
     http_response = create_http_response(http_response, universal_request, None)
@@ -168,7 +168,7 @@ def test_http_logger_operation_level(http_request, http_response):
     response = PipelineResponse(request, http_response, request.context)
     policy.on_response(request, response)
 
-    assert all(m.levelname == "INFO" for m in mock_handler.messages)
+    assert all(m.levelname == "DEBUG" for m in mock_handler.messages)
     assert len(mock_handler.messages) == 2
     messages_request = mock_handler.messages[0].message.split("\n")
     messages_response = mock_handler.messages[1].message.split("\n")
@@ -193,7 +193,7 @@ def test_http_logger_operation_level(http_request, http_response):
     response = PipelineResponse(request, http_response, request.context)
     policy.on_response(request, response)
 
-    assert all(m.levelname == "INFO" for m in mock_handler.messages)
+    assert all(m.levelname == "DEBUG" for m in mock_handler.messages)
     assert len(mock_handler.messages) == 4
     messages_request1 = mock_handler.messages[0].message.split("\n")
     messages_response1 = mock_handler.messages[1].message.split("\n")
