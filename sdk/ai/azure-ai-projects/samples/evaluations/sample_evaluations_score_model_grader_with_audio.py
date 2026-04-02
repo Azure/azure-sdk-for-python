@@ -7,7 +7,8 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
-    `openai.evals.*` methods to create, get, and list evaluations and eval runs.
+    `openai.evals.*` methods to create, get, and list evaluations and eval runs
+    with audio data using a score model grader.
 
     The OpenAI official tutorial is here: https://cookbook.openai.com/examples/evaluation/use-cases/evalsapi_audio_inputs
 
@@ -48,32 +49,15 @@ load_dotenv()
 file_path = os.path.abspath(__file__)
 folder_path = os.path.dirname(file_path)
 
-endpoint = os.environ.get("AZURE_AI_PROJECT_ENDPOINT", "")
-model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")
-model_deployment_name_for_audio = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME_FOR_AUDIO", "")
-
-missing_env_vars = [
-    name
-    for name, value in {
-        "AZURE_AI_PROJECT_ENDPOINT": endpoint,
-        "AZURE_AI_MODEL_DEPLOYMENT_NAME": model_deployment_name,
-        "AZURE_AI_MODEL_DEPLOYMENT_NAME_FOR_AUDIO": model_deployment_name_for_audio,
-    }.items()
-    if not value
-]
-
-if missing_env_vars:
-    raise RuntimeError(
-        "Missing required environment variables for this sample: "
-        + ", ".join(missing_env_vars)
-        + ". Please set them as described in the sample docstring."
-    )
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]
+model_deployment_name_for_audio = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME_FOR_AUDIO"]
 
 
 def audio_to_base64(audio_path: str) -> str:
     """Read an audio file and return its base64-encoded content."""
     with open(audio_path, "rb") as f:
-        return base64.b64encode(f.read()).decode()
+        return base64.b64encode(f.read()).decode("utf-8")
 
 
 with (
@@ -83,27 +67,25 @@ with (
 ):
 
     data_source_config = DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {
-                    "audio_data": {
-                        "type": "string",
-                        "description": "Base64-encoded WAV audio data."
-                    },
-                    "expected": {
-                        "type": "string",
-                        "description": "The expected content in the audio."
-                    }
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {
+                "audio_data": {
+                    "type": "string",
+                    "description": "Base64-encoded WAV audio data.",
                 },
-                "required": [
-                    "audio_data",
-                    "expected",
-                ],
+                "expected": {
+                    "type": "string",
+                    "description": "The expected content in the audio.",
+                },
             },
-            "include_sample_schema": True,
-        }
+            "required": [
+                "audio_data",
+                "expected",
+            ],
+        },
+        include_sample_schema=True,
     )
 
     testing_criteria = [
@@ -119,12 +101,9 @@ with (
                 {
                     "role": "user",
                     "content": "{{sample.output_text}}",
-                }
+                },
             ],
-            "range": [
-                0.0,
-                1.0
-            ],
+            "range": [0.0, 1.0],
             "pass_threshold": 0.5,
         },
     ]
@@ -144,7 +123,9 @@ with (
 
     source_file_content_content = SourceFileContentContent(
         item={
-            "audio_data": audio_to_base64(os.path.join(folder_path, "data_folder/sample_evaluations_score_model_grader_with_audio.wav")),
+            "audio_data": audio_to_base64(
+                os.path.join(folder_path, "data_folder/sample_evaluations_score_model_grader_with_audio.wav")
+            ),
             "expected": "Don't forget a jacket",
         },
     )
@@ -172,9 +153,9 @@ with (
                     input_audio={
                         "data": "{{item.audio_data}}",
                         "format": "wav",
-                    }
-                )
-            )
+                    },
+                ),
+            ),
         ],
     )
 
@@ -212,5 +193,5 @@ with (
         time.sleep(5)
         print("Waiting for eval run to complete...")
 
-    # client.evals.delete(eval_id=eval_object.id)
+    client.evals.delete(eval_id=eval_object.id)
     print("Evaluation deleted")

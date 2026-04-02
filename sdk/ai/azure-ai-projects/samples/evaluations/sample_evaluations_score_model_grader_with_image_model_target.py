@@ -7,7 +7,8 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
-    `openai.evals.*` methods to create, get and list evaluation and eval runs.
+    `openai.evals.*` methods to create, get and list evaluation and eval runs
+    with image data using a score model grader and a model target.
 
 USAGE:
     python sample_evaluations_score_model_grader_with_image_model_target.py
@@ -47,21 +48,8 @@ load_dotenv()
 file_path = os.path.abspath(__file__)
 folder_path = os.path.dirname(file_path)
 
-endpoint = os.environ.get("AZURE_AI_PROJECT_ENDPOINT")
-model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
-
-if not endpoint:
-    raise EnvironmentError(
-        "AZURE_AI_PROJECT_ENDPOINT environment variable is required but was not found or is empty. "
-        "Set it to your Azure AI Project endpoint, e.g. "
-        "https://<account_name>.services.ai.azure.com/api/projects/<project_name>."
-    )
-
-if not model_deployment_name:
-    raise EnvironmentError(
-        "AZURE_AI_MODEL_DEPLOYMENT_NAME environment variable is required but was not found or is empty. "
-        "Set it to the name of the model deployment to use for evaluation."
-    )
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]
 
 
 def image_to_data_uri(image_path: str) -> str:
@@ -80,21 +68,19 @@ with (
 ):
 
     data_source_config = DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {
-                    "image_url": {"type": "string", "description": "The URL of the image to be evaluated."},
-                    "caption": {"type": "string", "description": "The caption describing the image."},
-                },
-                "required": [
-                    "image_url",
-                    "caption",
-                ],
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {
+                "image_url": {"type": "string", "description": "The URL of the image to be evaluated."},
+                "caption": {"type": "string", "description": "The caption describing the image."},
             },
-            "include_sample_schema": True,
-        }
+            "required": [
+                "image_url",
+                "caption",
+            ],
+        },
+        include_sample_schema=True,
     )
 
     testing_criteria = [
@@ -210,5 +196,5 @@ with (
         time.sleep(5)
         print("Waiting for eval run to complete...")
 
-    # client.evals.delete(eval_id=eval_object.id)
+    client.evals.delete(eval_id=eval_object.id)
     print("Evaluation deleted")

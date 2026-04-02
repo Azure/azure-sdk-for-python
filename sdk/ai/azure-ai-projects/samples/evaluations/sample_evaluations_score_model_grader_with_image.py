@@ -131,7 +131,7 @@ with (
     source_file_content_content2 = SourceFileContentContent(
         item={
             "image_url": "https://ep1.pinkbike.org/p4pb6973204/p4pb6973204.jpg",
-            "caption": "all shots by by person and rider shots can be found on his website.",
+            "caption": "all shots by person and rider shots can be found on his website.",
         },
     )
     source_file_content = SourceFileContent(
@@ -191,5 +191,5 @@ with (
         time.sleep(5)
         print("Waiting for eval run to complete...")
 
-    # client.evals.delete(eval_id=eval_object.id)
+    client.evals.delete(eval_id=eval_object.id)
     print("Evaluation deleted")
