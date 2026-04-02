@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Dict, List, Optional, Union, TYPE_CHECKING
+from typing import Dict, List, Mapping, Optional, Union, TYPE_CHECKING
 from typing_extensions import Literal
 from ._generated.models import (
     CallLocator,
@@ -1190,7 +1190,7 @@ class TeamsPhoneSourceDetails:
     :keyword status: Status of the source entity passing along the call details. Required.
     :paramtype status: str
     :keyword intended_targets: Intended targets of the source entity passing along the call details.
-    :paramtype intended_targets: dict[str,
+    :paramtype intended_targets: Mapping[str,
      ~azure.communication.callautomation.CommunicationIdentifier]
     """
 
@@ -1200,12 +1200,12 @@ class TeamsPhoneSourceDetails:
         source: CommunicationIdentifier,
         language: str,
         status: str,
-        intended_targets: Optional[Dict[str, CommunicationIdentifier]] = None
+        intended_targets: Optional[Mapping[str, CommunicationIdentifier]] = None
     ) -> None:
         self.source = source
         self.language = language
         self.status = status
-        self.intended_targets = intended_targets
+        self.intended_targets = dict(intended_targets) if intended_targets else None
 
     def _to_generated(self):
         return TeamsPhoneSourceDetailsInternal(

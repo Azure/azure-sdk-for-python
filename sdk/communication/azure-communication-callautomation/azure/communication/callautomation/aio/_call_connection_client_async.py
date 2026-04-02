@@ -399,7 +399,7 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
     async def move_participants(
         self,
         target_participants: Sequence["CommunicationIdentifier"],
-        from_call: str,
+        from_call_id: str,
         *,
         operation_context: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
@@ -409,8 +409,8 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
 
         :param target_participants: The participants to move to this call.
         :type target_participants: list[~azure.communication.callautomation.CommunicationIdentifier]
-        :param from_call: The CallConnectionId for the call you want to move the participant from.
-        :type from_call: str
+        :param from_call_id: The CallConnectionId for the call you want to move the participant from.
+        :type from_call_id: str
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str
         :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
@@ -424,7 +424,7 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
         """
         move_participants_request = MoveParticipantsRequest(
             target_participants=[serialize_identifier(participant) for participant in target_participants],
-            from_call=from_call,
+            from_call=from_call_id,
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
         )
