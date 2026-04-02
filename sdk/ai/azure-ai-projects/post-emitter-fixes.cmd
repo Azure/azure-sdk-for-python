@@ -8,7 +8,10 @@ REM
 REM Then run this script to "fix" the emitted code.
 REM
 
-REM Revert this, as we want to keep some edits to these file.
+REM Revert emitted pyprojects.toml, since it overrides the following changes:
+REM - We added "Programming Language :: Python :: 3.14". The emitter removes it.
+REM - The emitter uses lower case "i" in "Ai". I want to keep it upper case in the description field: "Microsoft Corporation Azure AI Projects Client Library for Python".
+REM - We want a vanity link for the "repository" value, deep linking to the SDK folder (not root of repo): https://aka.ms/azsdk/azure-ai-projects-v2/python/code
 git restore pyproject.toml
 
 REM Rename `"items_property": items`, to `"items": items` in search_memories and begin_update_memories methods. "items" is specified in TypeSpec, but Python emitter does not allow it.
