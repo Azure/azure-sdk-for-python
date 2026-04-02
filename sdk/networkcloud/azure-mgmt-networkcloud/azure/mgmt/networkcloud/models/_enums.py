@@ -675,9 +675,9 @@ class FeatureDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class HugepagesSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The size of the hugepages to allocate."""
 
-    ENUM_2M = "2M"
+    TWO_M = "2M"
     """2M hugepages."""
-    ENUM_1G = "1G"
+    ONE_G = "1G"
     """1G hugepages."""
 
 

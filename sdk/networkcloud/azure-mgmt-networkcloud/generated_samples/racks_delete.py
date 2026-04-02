@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.networkcloud import NetworkCloudClient
+from azure.mgmt.networkcloud import NetworkCloudMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.networkcloud import NetworkCloudClient
 
 
 def main():
-    client = NetworkCloudClient(
+    client = NetworkCloudMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

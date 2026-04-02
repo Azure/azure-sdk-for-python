@@ -18,7 +18,7 @@ from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPol
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import NetworkCloudClientConfiguration
+from ._configuration import NetworkCloudMgmtClientConfiguration
 from .operations import (
     AgentPoolsOperations,
     BareMetalMachineKeySetsOperations,
@@ -47,7 +47,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class NetworkCloudClient:  # pylint: disable=too-many-instance-attributes
+class NetworkCloudMgmtClient:  # pylint: disable=too-many-instance-attributes
     """The Network Cloud APIs provide management of the Azure Operator Nexus compute resources such as
     on-premises clusters, hardware resources, and workload infrastructure resources.
 
@@ -129,7 +129,7 @@ class NetworkCloudClient:  # pylint: disable=too-many-instance-attributes
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = NetworkCloudClientConfiguration(
+        self._config = NetworkCloudMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

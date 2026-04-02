@@ -168,7 +168,7 @@ from ...operations._operations import (
     build_volumes_list_by_subscription_request,
     build_volumes_update_request,
 )
-from .._configuration import NetworkCloudClientConfiguration
+from .._configuration import NetworkCloudMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -182,14 +182,14 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudClient`'s
+        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkCloudClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -289,14 +289,14 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudClient`'s
+        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudMgmtClient`'s
         :attr:`bare_metal_machines` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkCloudClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3615,14 +3615,14 @@ class CloudServicesNetworksOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudClient`'s
+        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudMgmtClient`'s
         :attr:`cloud_services_networks` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkCloudClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4652,14 +4652,14 @@ class ClusterManagersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudClient`'s
+        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudMgmtClient`'s
         :attr:`cluster_managers` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkCloudClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5599,14 +5599,14 @@ class ClustersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudClient`'s
+        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudMgmtClient`'s
         :attr:`clusters` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkCloudClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -7607,14 +7607,14 @@ class KubernetesClustersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudClient`'s
+        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudMgmtClient`'s
         :attr:`kubernetes_clusters` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkCloudClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -8879,14 +8879,14 @@ class L2NetworksOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudClient`'s
+        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudMgmtClient`'s
         :attr:`l2_networks` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkCloudClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9818,14 +9818,14 @@ class L3NetworksOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudClient`'s
+        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudMgmtClient`'s
         :attr:`l3_networks` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkCloudClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -10757,14 +10757,14 @@ class RackSkusOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudClient`'s
+        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudMgmtClient`'s
         :attr:`rack_skus` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkCloudClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -10931,14 +10931,14 @@ class RacksOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudClient`'s
+        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudMgmtClient`'s
         :attr:`racks` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkCloudClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -11951,14 +11951,14 @@ class StorageAppliancesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudClient`'s
+        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudMgmtClient`'s
         :attr:`storage_appliances` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkCloudClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -13623,14 +13623,14 @@ class TrunkedNetworksOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudClient`'s
+        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudMgmtClient`'s
         :attr:`trunked_networks` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkCloudClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -14566,14 +14566,14 @@ class VirtualMachinesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudClient`'s
+        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudMgmtClient`'s
         :attr:`virtual_machines` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkCloudClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -16485,14 +16485,14 @@ class VolumesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudClient`'s
+        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudMgmtClient`'s
         :attr:`volumes` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkCloudClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -17424,14 +17424,14 @@ class BareMetalMachineKeySetsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudClient`'s
+        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudMgmtClient`'s
         :attr:`bare_metal_machine_key_sets` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkCloudClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -18404,14 +18404,14 @@ class BmcKeySetsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudClient`'s
+        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudMgmtClient`'s
         :attr:`bmc_key_sets` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkCloudClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -19372,14 +19372,14 @@ class AgentPoolsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudClient`'s
+        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudMgmtClient`'s
         :attr:`agent_pools` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkCloudClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -20340,14 +20340,14 @@ class KubernetesClusterFeaturesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudClient`'s
+        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudMgmtClient`'s
         :attr:`kubernetes_cluster_features` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkCloudClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -21321,14 +21321,14 @@ class ConsolesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudClient`'s
+        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudMgmtClient`'s
         :attr:`consoles` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkCloudClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -22289,14 +22289,14 @@ class MetricsConfigurationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudClient`'s
+        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudMgmtClient`'s
         :attr:`metrics_configurations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkCloudClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
