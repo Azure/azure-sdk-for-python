@@ -294,6 +294,7 @@ class CopilotAdapter:
         """Create a permission handler using the adapter's ACL."""
         acl = self._acl
 
+
         def _on_permission(req, _ctx):
             kind = getattr(req, "kind", "unknown")
             if acl is None:
@@ -742,6 +743,7 @@ class GitHubCopilotAdapter(CopilotAdapter):
             if history:
                 client = await self._ensure_client()
                 config = self._refresh_token_if_needed()
+
                 sdk_config = {k: v for k, v in config.items() if not k.startswith("_")}
 
                 session = await client.create_session(
