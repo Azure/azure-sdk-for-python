@@ -7,12 +7,17 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fix duplicate authentication policy in live metrics exporter causing Unauthorized errors
+  for authenticated Application Insights resources
+  ([#46024](https://github.com/Azure/azure-sdk-for-python/pull/46024))
 - Suppress internal sdkstats HTTP pipeline logs from appearing in user's logs
   ([#45966](https://github.com/Azure/azure-sdk-for-python/pull/45966))
 - Kubernetes pod name takes precedence when populating `cloud_RoleInstance`
   ([#45884](https://github.com/Azure/azure-sdk-for-python/pull/45884))
 
 ### Other Changes
+- Revert custom properties limit to 8kb
+  ([#46066](https://github.com/Azure/azure-sdk-for-python/pull/46066))
 
 ## 1.0.0b49 (2026-03-19)
 
