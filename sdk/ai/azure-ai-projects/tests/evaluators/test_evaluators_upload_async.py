@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+import re
 import tempfile
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -286,7 +287,47 @@ class TestEvaluatorsUploadAsync:
             assert uploaded_names == sorted(["evaluator.py", "utils/__init__.py", "utils/helper.py"])
 
     @pytest.mark.asyncio
-    async def test_upload_skips_pycache_and_pyc_files(self):
+    async def test_upload_skips_pycache_and_pyc_files_with_patterns(self):
+        ops = self._create_operations()
+
+        ops.list_versions.side_effect = ResourceNotFoundError("Not found")
+        ops.pending_upload.return_value = self._mock_pending_upload_response()
+        ops.create_version.return_value = {"name": "test", "version": "1"}
+
+        folder = self._create_temp_folder(
+            {
+                "evaluator.py": b"class Eval: pass",
+                "__pycache__/evaluator.cpython-312.pyc": b"compiled",
+                "other.pyc": b"compiled",
+                "other.pyo": b"optimized",
+            }
+        )
+
+        file_pattern = re.compile(r"^(?!\.).+(?<!\.pyc)(?<!\.pyo)$")
+        folder_exclusions_pattern = re.compile(r"^(\..*|__pycache__|venv|node_modules)$")
+
+        with patch("azure.ai.projects.aio.operations._patch_evaluators_async.ContainerClient") as MockContainerClient:
+            mock_container = AsyncMock()
+            MockContainerClient.from_container_url.return_value = mock_container
+            mock_container.__aenter__ = AsyncMock(return_value=mock_container)
+            mock_container.__aexit__ = AsyncMock(return_value=False)
+
+            await ops.upload(
+                name="test",
+                evaluator_version={"definition": {}},
+                folder=folder,
+                file_pattern=file_pattern,
+                folder_exclusions_pattern=folder_exclusions_pattern,
+            )
+
+            assert mock_container.upload_blob.call_count == 1
+            blob_name = mock_container.upload_blob.call_args.kwargs.get("name") or mock_container.upload_blob.call_args[
+                1
+            ].get("name")
+            assert blob_name == "evaluator.py"
+
+    @pytest.mark.asyncio
+    async def test_upload_uploads_all_files_without_patterns(self):
         ops = self._create_operations()
 
         ops.list_versions.side_effect = ResourceNotFoundError("Not found")
@@ -314,11 +355,8 @@ class TestEvaluatorsUploadAsync:
                 folder=folder,
             )
 
-            assert mock_container.upload_blob.call_count == 1
-            blob_name = mock_container.upload_blob.call_args.kwargs.get("name") or mock_container.upload_blob.call_args[
-                1
-            ].get("name")
-            assert blob_name == "evaluator.py"
+            # All files should be uploaded when no patterns are provided
+            assert mock_container.upload_blob.call_count == 4
 
     # ---------------------------------------------------------------
     # upload() - blob_uri set on evaluator version tests
