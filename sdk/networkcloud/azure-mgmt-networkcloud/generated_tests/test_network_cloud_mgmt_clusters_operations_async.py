@@ -23,7 +23,7 @@ class TestNetworkCloudMgmtClustersOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_clusters_list_by_subscription(self, resource_group):
         response = self.client.clusters.list_by_subscription(
-            api_version="2025-09-01",
+            api_version="2026-01-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestNetworkCloudMgmtClustersOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_clusters_list_by_resource_group(self, resource_group):
         response = self.client.clusters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-09-01",
+            api_version="2026-01-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestNetworkCloudMgmtClustersOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.clusters.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -199,11 +199,12 @@ class TestNetworkCloudMgmtClustersOperationsAsync(AzureMgmtRecordedTestCase):
                         "tenantId": "str",
                         "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                     },
+                    "kind": "str",
                     "managedResourceGroupConfiguration": {"location": "str", "name": "str"},
                     "manualActionCount": 0,
                     "name": "str",
                     "provisioningState": "str",
-                    "runtimeProtectionConfiguration": {"enforcementLevel": "Disabled"},
+                    "runtimeProtectionConfiguration": {"definitionUpdateMode": "str", "enforcementLevel": "str"},
                     "secretArchive": {"keyVaultId": "str", "useKeyVault": "False"},
                     "secretArchiveSettings": {
                         "associatedIdentity": {"identityType": "str", "userAssignedIdentityResourceId": "str"},
@@ -230,7 +231,7 @@ class TestNetworkCloudMgmtClustersOperationsAsync(AzureMgmtRecordedTestCase):
                     "vulnerabilityScanningSettings": {"containerScan": "str"},
                     "workloadResourceIds": ["str"],
                 },
-                api_version="2025-09-01",
+                api_version="2026-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -244,7 +245,7 @@ class TestNetworkCloudMgmtClustersOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.clusters.begin_delete(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
-                api_version="2025-09-01",
+                api_version="2026-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -258,7 +259,7 @@ class TestNetworkCloudMgmtClustersOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.clusters.begin_update(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
-                api_version="2025-09-01",
+                api_version="2026-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -273,7 +274,7 @@ class TestNetworkCloudMgmtClustersOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 cluster_continue_update_version_parameters={"machineGroupTargetingMode": "AlphaByRack"},
-                api_version="2025-09-01",
+                api_version="2026-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -287,7 +288,21 @@ class TestNetworkCloudMgmtClustersOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.clusters.begin_deploy(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
-                api_version="2025-09-01",
+                api_version="2026-01-01-preview",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_clusters_begin_inspect(self, resource_group):
+        response = await (
+            await self.client.clusters.begin_inspect(
+                resource_group_name=resource_group.name,
+                cluster_name="str",
+                api_version="2026-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -301,7 +316,7 @@ class TestNetworkCloudMgmtClustersOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.clusters.begin_scan_runtime(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
-                api_version="2025-09-01",
+                api_version="2026-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -316,7 +331,7 @@ class TestNetworkCloudMgmtClustersOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 cluster_update_version_parameters={"targetClusterVersion": "str"},
-                api_version="2025-09-01",
+                api_version="2026-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

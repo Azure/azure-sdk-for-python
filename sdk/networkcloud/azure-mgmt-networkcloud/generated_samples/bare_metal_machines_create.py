@@ -41,7 +41,7 @@ def main():
             },
             "location": "location",
             "properties": {
-                "bmcConnectionString": "bmcconnectionstring",
+                "bmcConnectionString": "redfish+https://10.10.10.16/redfish/v1/Systems/System.Embedded.1",
                 "bmcCredentials": {"password": "{password}", "username": "bmcuser"},
                 "bmcMacAddress": "00:00:4f:00:57:00",
                 "bootMacAddress": "00:00:4e:00:58:af",
@@ -58,6 +58,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-09-01/examples/BareMetalMachines_Create.json
+# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2026-01-01-preview/examples/BareMetalMachines_Create.json
 if __name__ == "__main__":
     main()

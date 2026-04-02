@@ -46,6 +46,412 @@ class AadConfiguration(_serialization.Model):
         self.admin_group_object_ids = admin_group_object_ids
 
 
+class Resource(_serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.networkcloud.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
+
+
+class TrackedResource(Resource):
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.networkcloud.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+    }
+
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.location = location
+
+
+class AccessBridge(TrackedResource):
+    """AccessBridge represents a managed access bridge resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.networkcloud.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar etag: Resource ETag.
+    :vartype etag: str
+    :ivar extended_location: The extended location of the cluster associated with the resource.
+     Required.
+    :vartype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
+    :ivar detailed_status: The detailed status reported by the access bridge. Known values are:
+     "Running", "Degraded", and "Failed".
+    :vartype detailed_status: str or ~azure.mgmt.networkcloud.models.AccessBridgeDetailedStatus
+    :ivar detailed_status_message: The descriptive message that accompanies the detailed status.
+    :vartype detailed_status_message: str
+    :ivar endpoints: The observed endpoints that clients should use to reach the access bridge.
+    :vartype endpoints: list[~azure.mgmt.networkcloud.models.AccessBridgeEndpoint]
+    :ivar ipv4_connected_prefix: The IPv4 subnet from which the access bridge allocates an address.
+     This subnet must be part of the internal network specified by networkId.
+    :vartype ipv4_connected_prefix: str
+    :ivar ipv6_connected_prefix: The IPv6 subnet from which the access bridge allocates an address.
+     This subnet must be part of the internal network specified by networkId.
+    :vartype ipv6_connected_prefix: str
+    :ivar network_id: The resource ID of the internal network in a layer 3 isolation domain
+     containing the IP subnets to use. Required.
+    :vartype network_id: str
+    :ivar protocol: The protocol advertised by the access bridge endpoints. Known values are: "TCP"
+     and "UDP".
+    :vartype protocol: str or ~azure.mgmt.networkcloud.models.TransportProtocol
+    :ivar provisioning_state: The provisioning state of the access bridge. Known values are:
+     "Accepted", "Canceled", "Failed", "Provisioning", and "Succeeded".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.networkcloud.models.AccessBridgeProvisioningState
+    :ivar security_rules: The list of security rules enforced by the access bridge.
+    :vartype security_rules: list[~azure.mgmt.networkcloud.models.AccessBridgeSecurityRule]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "etag": {"readonly": True},
+        "extended_location": {"required": True},
+        "detailed_status": {"readonly": True},
+        "detailed_status_message": {"readonly": True},
+        "endpoints": {"readonly": True},
+        "network_id": {"required": True},
+        "protocol": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "detailed_status": {"key": "properties.detailedStatus", "type": "str"},
+        "detailed_status_message": {"key": "properties.detailedStatusMessage", "type": "str"},
+        "endpoints": {"key": "properties.endpoints", "type": "[AccessBridgeEndpoint]"},
+        "ipv4_connected_prefix": {"key": "properties.ipv4ConnectedPrefix", "type": "str"},
+        "ipv6_connected_prefix": {"key": "properties.ipv6ConnectedPrefix", "type": "str"},
+        "network_id": {"key": "properties.networkId", "type": "str"},
+        "protocol": {"key": "properties.protocol", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "security_rules": {"key": "properties.securityRules", "type": "[AccessBridgeSecurityRule]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        extended_location: "_models.ExtendedLocation",
+        network_id: str,
+        tags: Optional[dict[str, str]] = None,
+        ipv4_connected_prefix: Optional[str] = None,
+        ipv6_connected_prefix: Optional[str] = None,
+        security_rules: Optional[list["_models.AccessBridgeSecurityRule"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword extended_location: The extended location of the cluster associated with the resource.
+         Required.
+        :paramtype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
+        :keyword ipv4_connected_prefix: The IPv4 subnet from which the access bridge allocates an
+         address. This subnet must be part of the internal network specified by networkId.
+        :paramtype ipv4_connected_prefix: str
+        :keyword ipv6_connected_prefix: The IPv6 subnet from which the access bridge allocates an
+         address. This subnet must be part of the internal network specified by networkId.
+        :paramtype ipv6_connected_prefix: str
+        :keyword network_id: The resource ID of the internal network in a layer 3 isolation domain
+         containing the IP subnets to use. Required.
+        :paramtype network_id: str
+        :keyword security_rules: The list of security rules enforced by the access bridge.
+        :paramtype security_rules: list[~azure.mgmt.networkcloud.models.AccessBridgeSecurityRule]
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.etag: Optional[str] = None
+        self.extended_location = extended_location
+        self.detailed_status: Optional[Union[str, "_models.AccessBridgeDetailedStatus"]] = None
+        self.detailed_status_message: Optional[str] = None
+        self.endpoints: Optional[list["_models.AccessBridgeEndpoint"]] = None
+        self.ipv4_connected_prefix = ipv4_connected_prefix
+        self.ipv6_connected_prefix = ipv6_connected_prefix
+        self.network_id = network_id
+        self.protocol: Optional[Union[str, "_models.TransportProtocol"]] = None
+        self.provisioning_state: Optional[Union[str, "_models.AccessBridgeProvisioningState"]] = None
+        self.security_rules = security_rules
+
+
+class AccessBridgeEndpoint(_serialization.Model):
+    """AccessBridgeEndpoint describes a single advertised service endpoint.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar fqdn: The fully qualified domain name used to describe the certificate name for the
+     endpoint.
+    :vartype fqdn: str
+    :ivar ipv4_address: The IPv4 address associated with the endpoint.
+    :vartype ipv4_address: str
+    :ivar ipv6_address: The IPv6 address associated with the endpoint.
+    :vartype ipv6_address: str
+    :ivar name: The name that identifies the type of endpoint (for example VIP or host).
+    :vartype name: str
+    """
+
+    _validation = {
+        "fqdn": {"readonly": True},
+        "ipv4_address": {"readonly": True},
+        "ipv6_address": {"readonly": True},
+        "name": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "fqdn": {"key": "fqdn", "type": "str"},
+        "ipv4_address": {"key": "ipv4Address", "type": "str"},
+        "ipv6_address": {"key": "ipv6Address", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.fqdn: Optional[str] = None
+        self.ipv4_address: Optional[str] = None
+        self.ipv6_address: Optional[str] = None
+        self.name: Optional[str] = None
+
+
+class AccessBridgeList(_serialization.Model):
+    """AccessBridgeList represents a paged list of access bridges.
+
+    :ivar next_link: The link used to get the next page of operations.
+    :vartype next_link: str
+    :ivar value: The list of access bridge resources.
+    :vartype value: list[~azure.mgmt.networkcloud.models.AccessBridge]
+    """
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[AccessBridge]"},
+    }
+
+    def __init__(
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.AccessBridge"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword next_link: The link used to get the next page of operations.
+        :paramtype next_link: str
+        :keyword value: The list of access bridge resources.
+        :paramtype value: list[~azure.mgmt.networkcloud.models.AccessBridge]
+        """
+        super().__init__(**kwargs)
+        self.next_link = next_link
+        self.value = value
+
+
+class AccessBridgePatchParameters(_serialization.Model):
+    """AccessBridgePatchParameters represents the payload for a PATCH request to an access bridge.
+
+    :ivar tags: The Azure resource tags that will replace the existing ones.
+    :vartype tags: dict[str, str]
+    :ivar security_rules: The list of security rules enforced by the access bridge.
+    :vartype security_rules: list[~azure.mgmt.networkcloud.models.AccessBridgeSecurityRule]
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "security_rules": {"key": "properties.securityRules", "type": "[AccessBridgeSecurityRule]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        security_rules: Optional[list["_models.AccessBridgeSecurityRule"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: The Azure resource tags that will replace the existing ones.
+        :paramtype tags: dict[str, str]
+        :keyword security_rules: The list of security rules enforced by the access bridge.
+        :paramtype security_rules: list[~azure.mgmt.networkcloud.models.AccessBridgeSecurityRule]
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.security_rules = security_rules
+
+
+class AccessBridgeSecurityRule(_serialization.Model):
+    """AccessBridgeSecurityRule captures an individual access rule enforced by the bridge.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar description: The user provided value describing this rule.
+    :vartype description: str
+    :ivar direction: The direction of allowed network traffic based on the rule. Required. Known
+     values are: "Inbound" and "Outbound".
+    :vartype direction: str or ~azure.mgmt.networkcloud.models.SecurityRuleDirection
+    :ivar ipv4_addresses: The set of IPv4 addresses permitted as the source or destination of the
+     security rule. For as single address, utilize a /32 (CIDR notation). One or both Ipv4Addresses
+     and Ipv6Addresses must be specified. Example formats: 10.10.10.10-10.10.10.20 or
+     10.10.10.10/24.
+    :vartype ipv4_addresses: list[str]
+    :ivar ipv6_addresses: The set of IPv6 addresses permitted as the source or destination of the
+     security rule. For as single address, utilize a /128 (CIDR notation). One or both Ipv4Addresses
+     and Ipv6Addresses must be specified. Example formats: 2001:db8:abcd::1-2001:db8:abcd::ff or
+     2001:db8:abcd::1/64.
+    :vartype ipv6_addresses: list[str]
+    :ivar port: The source or destination port or port range. Example 24562 or 24562-24570.
+     Required.
+    :vartype port: str
+    """
+
+    _validation = {
+        "direction": {"required": True},
+        "port": {"required": True},
+    }
+
+    _attribute_map = {
+        "description": {"key": "description", "type": "str"},
+        "direction": {"key": "direction", "type": "str"},
+        "ipv4_addresses": {"key": "ipv4Addresses", "type": "[str]"},
+        "ipv6_addresses": {"key": "ipv6Addresses", "type": "[str]"},
+        "port": {"key": "port", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        direction: Union[str, "_models.SecurityRuleDirection"],
+        port: str,
+        description: Optional[str] = None,
+        ipv4_addresses: Optional[list[str]] = None,
+        ipv6_addresses: Optional[list[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description: The user provided value describing this rule.
+        :paramtype description: str
+        :keyword direction: The direction of allowed network traffic based on the rule. Required. Known
+         values are: "Inbound" and "Outbound".
+        :paramtype direction: str or ~azure.mgmt.networkcloud.models.SecurityRuleDirection
+        :keyword ipv4_addresses: The set of IPv4 addresses permitted as the source or destination of
+         the security rule. For as single address, utilize a /32 (CIDR notation). One or both
+         Ipv4Addresses and Ipv6Addresses must be specified. Example formats: 10.10.10.10-10.10.10.20 or
+         10.10.10.10/24.
+        :paramtype ipv4_addresses: list[str]
+        :keyword ipv6_addresses: The set of IPv6 addresses permitted as the source or destination of
+         the security rule. For as single address, utilize a /128 (CIDR notation). One or both
+         Ipv4Addresses and Ipv6Addresses must be specified. Example formats:
+         2001:db8:abcd::1-2001:db8:abcd::ff or 2001:db8:abcd::1/64.
+        :paramtype ipv6_addresses: list[str]
+        :keyword port: The source or destination port or port range. Example 24562 or 24562-24570.
+         Required.
+        :paramtype port: str
+        """
+        super().__init__(**kwargs)
+        self.description = description
+        self.direction = direction
+        self.ipv4_addresses = ipv4_addresses
+        self.ipv6_addresses = ipv6_addresses
+        self.port = port
+
+
 class ActionState(_serialization.Model):
     """ActionState represents the state of an action taken against a resource. This can be used to
     represent both explicitly and implicitly defined action types.
@@ -239,101 +645,6 @@ class AgentOptions(_serialization.Model):
         super().__init__(**kwargs)
         self.hugepages_count = hugepages_count
         self.hugepages_size = hugepages_size
-
-
-class Resource(_serialization.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.networkcloud.models.SystemData
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
-        self.system_data: Optional["_models.SystemData"] = None
-
-
-class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.networkcloud.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "location": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "location": {"key": "location", "type": "str"},
-    }
-
-    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword location: The geo-location where the resource lives. Required.
-        :paramtype location: str
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-        self.location = location
 
 
 class AgentPool(TrackedResource):
@@ -943,6 +1254,10 @@ class BareMetalMachine(TrackedResource):
     :ivar bmc_credentials: The credentials of the baseboard management controller on this bare
      metal machine. Required.
     :vartype bmc_credentials: ~azure.mgmt.networkcloud.models.AdministrativeCredentials
+    :ivar bmc_ipv4_address: The IPv4 address of the BMC interface for the bare metal machine.
+    :vartype bmc_ipv4_address: str
+    :ivar bmc_ipv6_address: The IPv6 address of the BMC interface for the bare metal machine.
+    :vartype bmc_ipv6_address: str
     :ivar bmc_mac_address: The MAC address of the BMC device. Required.
     :vartype bmc_mac_address: str
     :ivar boot_mac_address: The MAC address of a NIC connected to the PXE network. Required.
@@ -1038,6 +1353,8 @@ class BareMetalMachine(TrackedResource):
         "associated_resource_ids": {"readonly": True},
         "bmc_connection_string": {"required": True},
         "bmc_credentials": {"required": True},
+        "bmc_ipv4_address": {"readonly": True},
+        "bmc_ipv6_address": {"readonly": True},
         "bmc_mac_address": {"required": True, "pattern": r"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"},
         "boot_mac_address": {"required": True, "pattern": r"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"},
         "ca_certificate": {"readonly": True},
@@ -1082,6 +1399,8 @@ class BareMetalMachine(TrackedResource):
         "associated_resource_ids": {"key": "properties.associatedResourceIds", "type": "[str]"},
         "bmc_connection_string": {"key": "properties.bmcConnectionString", "type": "str"},
         "bmc_credentials": {"key": "properties.bmcCredentials", "type": "AdministrativeCredentials"},
+        "bmc_ipv4_address": {"key": "properties.bmcIpv4Address", "type": "str"},
+        "bmc_ipv6_address": {"key": "properties.bmcIpv6Address", "type": "str"},
         "bmc_mac_address": {"key": "properties.bmcMacAddress", "type": "str"},
         "boot_mac_address": {"key": "properties.bootMacAddress", "type": "str"},
         "ca_certificate": {"key": "properties.caCertificate", "type": "CertificateInfo"},
@@ -1179,6 +1498,8 @@ class BareMetalMachine(TrackedResource):
         self.associated_resource_ids: Optional[list[str]] = None
         self.bmc_connection_string = bmc_connection_string
         self.bmc_credentials = bmc_credentials
+        self.bmc_ipv4_address: Optional[str] = None
+        self.bmc_ipv6_address: Optional[str] = None
         self.bmc_mac_address = bmc_mac_address
         self.boot_mac_address = boot_mac_address
         self.ca_certificate: Optional["_models.CertificateInfo"] = None
@@ -2717,6 +3038,11 @@ class Cluster(TrackedResource):
     :vartype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
     :ivar identity: The identity for the resource.
     :vartype identity: ~azure.mgmt.networkcloud.models.ManagedServiceIdentity
+    :ivar kind: The type (kind) of the cluster. When specified, the value must exactly match the
+     kind configured on the cluster manager that manages the cluster. If omitted, the service will
+     default the value to the kind value of the cluster manager. Known values are: "Nexus" and
+     "AzureLocal".
+    :vartype kind: str or ~azure.mgmt.networkcloud.models.DeploymentType
     :ivar action_states: The current state of any in progress or completed actions. The most recent
      known instance of each action type is shown.
     :vartype action_states: list[~azure.mgmt.networkcloud.models.ActionState]
@@ -2856,6 +3182,7 @@ class Cluster(TrackedResource):
         "etag": {"key": "etag", "type": "str"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
         "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "kind": {"key": "kind", "type": "str"},
         "action_states": {"key": "properties.actionStates", "type": "[ActionState]"},
         "aggregator_or_single_rack_definition": {
             "key": "properties.aggregatorOrSingleRackDefinition",
@@ -2918,6 +3245,7 @@ class Cluster(TrackedResource):
         network_fabric_id: str,
         tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
+        kind: Optional[Union[str, "_models.DeploymentType"]] = None,
         analytics_output_settings: Optional["_models.AnalyticsOutputSettings"] = None,
         analytics_workspace_id: Optional[str] = None,
         cluster_location: Optional[str] = None,
@@ -2943,6 +3271,11 @@ class Cluster(TrackedResource):
         :paramtype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
         :keyword identity: The identity for the resource.
         :paramtype identity: ~azure.mgmt.networkcloud.models.ManagedServiceIdentity
+        :keyword kind: The type (kind) of the cluster. When specified, the value must exactly match the
+         kind configured on the cluster manager that manages the cluster. If omitted, the service will
+         default the value to the kind value of the cluster manager. Known values are: "Nexus" and
+         "AzureLocal".
+        :paramtype kind: str or ~azure.mgmt.networkcloud.models.DeploymentType
         :keyword aggregator_or_single_rack_definition: The rack definition that is intended to reflect
          only a single rack in a single rack cluster, or an aggregator rack in a multi-rack cluster.
          Required.
@@ -3001,6 +3334,7 @@ class Cluster(TrackedResource):
         self.etag: Optional[str] = None
         self.extended_location = extended_location
         self.identity = identity
+        self.kind = kind
         self.action_states: Optional[list["_models.ActionState"]] = None
         self.aggregator_or_single_rack_definition = aggregator_or_single_rack_definition
         self.analytics_output_settings = analytics_output_settings
@@ -3258,6 +3592,46 @@ class ClusterDeployParameters(_serialization.Model):
         self.skip_validations_for_machines = skip_validations_for_machines
 
 
+class ClusterInspectParameters(_serialization.Model):
+    """ClusterInspectParameters represents the body of the request to inspect the cluster.
+
+    :ivar additional_actions: Additional actions supplement the default non-disruptive cluster
+     inspection. Additional actions may be disallowed if the cluster is in a deployed and running
+     state.
+    :vartype additional_actions: list[str or
+     ~azure.mgmt.networkcloud.models.ClusterInspectAdditionalAction]
+    :ivar filter_devices: Indicates which devices are included in the inspection. By default, all
+     devices that can be targeted will be included in the inspection.
+    :vartype filter_devices: ~azure.mgmt.networkcloud.models.FilterDevices
+    """
+
+    _attribute_map = {
+        "additional_actions": {"key": "additionalActions", "type": "[str]"},
+        "filter_devices": {"key": "filterDevices", "type": "FilterDevices"},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_actions: Optional[list[Union[str, "_models.ClusterInspectAdditionalAction"]]] = None,
+        filter_devices: Optional["_models.FilterDevices"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_actions: Additional actions supplement the default non-disruptive cluster
+         inspection. Additional actions may be disallowed if the cluster is in a deployed and running
+         state.
+        :paramtype additional_actions: list[str or
+         ~azure.mgmt.networkcloud.models.ClusterInspectAdditionalAction]
+        :keyword filter_devices: Indicates which devices are included in the inspection. By default,
+         all devices that can be targeted will be included in the inspection.
+        :paramtype filter_devices: ~azure.mgmt.networkcloud.models.FilterDevices
+        """
+        super().__init__(**kwargs)
+        self.additional_actions = additional_actions
+        self.filter_devices = filter_devices
+
+
 class ClusterList(_serialization.Model):
     """ClusterList represents a list of clusters.
 
@@ -3312,6 +3686,8 @@ class ClusterManager(TrackedResource):
     :vartype etag: str
     :ivar identity: The identity of the cluster manager.
     :vartype identity: ~azure.mgmt.networkcloud.models.ManagedServiceIdentity
+    :ivar kind: The kind of the cluster manager. Known values are: "Nexus" and "AzureLocal".
+    :vartype kind: str or ~azure.mgmt.networkcloud.models.DeploymentType
     :ivar analytics_workspace_id: The resource ID of the Log Analytics workspace that is used for
      the logs collection.
     :vartype analytics_workspace_id: str
@@ -3342,6 +3718,8 @@ class ClusterManager(TrackedResource):
      "Succeeded", "Failed", "Canceled", "Provisioning", "Accepted", and "Updating".
     :vartype provisioning_state: str or
      ~azure.mgmt.networkcloud.models.ClusterManagerProvisioningState
+    :ivar relay_configuration: The relay configuration for the cluster manager.
+    :vartype relay_configuration: ~azure.mgmt.networkcloud.models.ClusterManagerRelayConfiguration
     :ivar vm_size: The size of the Azure virtual machines to use for hosting the cluster manager
      resource.
     :vartype vm_size: str
@@ -3360,6 +3738,7 @@ class ClusterManager(TrackedResource):
         "fabric_controller_id": {"required": True},
         "manager_extended_location": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "relay_configuration": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3371,6 +3750,7 @@ class ClusterManager(TrackedResource):
         "location": {"key": "location", "type": "str"},
         "etag": {"key": "etag", "type": "str"},
         "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "kind": {"key": "kind", "type": "str"},
         "analytics_workspace_id": {"key": "properties.analyticsWorkspaceId", "type": "str"},
         "availability_zones": {"key": "properties.availabilityZones", "type": "[str]"},
         "cluster_versions": {"key": "properties.clusterVersions", "type": "[ClusterAvailableVersion]"},
@@ -3383,6 +3763,7 @@ class ClusterManager(TrackedResource):
         },
         "manager_extended_location": {"key": "properties.managerExtendedLocation", "type": "ExtendedLocation"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "relay_configuration": {"key": "properties.relayConfiguration", "type": "ClusterManagerRelayConfiguration"},
         "vm_size": {"key": "properties.vmSize", "type": "str"},
     }
 
@@ -3393,6 +3774,7 @@ class ClusterManager(TrackedResource):
         fabric_controller_id: str,
         tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
+        kind: Optional[Union[str, "_models.DeploymentType"]] = None,
         analytics_workspace_id: Optional[str] = None,
         availability_zones: Optional[list[str]] = None,
         managed_resource_group_configuration: Optional["_models.ManagedResourceGroupConfiguration"] = None,
@@ -3406,6 +3788,8 @@ class ClusterManager(TrackedResource):
         :paramtype location: str
         :keyword identity: The identity of the cluster manager.
         :paramtype identity: ~azure.mgmt.networkcloud.models.ManagedServiceIdentity
+        :keyword kind: The kind of the cluster manager. Known values are: "Nexus" and "AzureLocal".
+        :paramtype kind: str or ~azure.mgmt.networkcloud.models.DeploymentType
         :keyword analytics_workspace_id: The resource ID of the Log Analytics workspace that is used
          for the logs collection.
         :paramtype analytics_workspace_id: str
@@ -3426,6 +3810,7 @@ class ClusterManager(TrackedResource):
         super().__init__(tags=tags, location=location, **kwargs)
         self.etag: Optional[str] = None
         self.identity = identity
+        self.kind = kind
         self.analytics_workspace_id = analytics_workspace_id
         self.availability_zones = availability_zones
         self.cluster_versions: Optional[list["_models.ClusterAvailableVersion"]] = None
@@ -3435,6 +3820,7 @@ class ClusterManager(TrackedResource):
         self.managed_resource_group_configuration = managed_resource_group_configuration
         self.manager_extended_location: Optional["_models.ExtendedLocation"] = None
         self.provisioning_state: Optional[Union[str, "_models.ClusterManagerProvisioningState"]] = None
+        self.relay_configuration: Optional["_models.ClusterManagerRelayConfiguration"] = None
         self.vm_size = vm_size
 
 
@@ -3497,6 +3883,84 @@ class ClusterManagerPatchParameters(_serialization.Model):
         super().__init__(**kwargs)
         self.identity = identity
         self.tags = tags
+
+
+class ClusterManagerRelayConfiguration(_serialization.Model):
+    """ClusterManagerRelayConfiguration represents the relay configuration for the cluster manager.
+
+    :ivar relay_namespace_id: The resource ID of the Azure relay namespace managed by the cluster
+     manager.
+    :vartype relay_namespace_id: str
+    """
+
+    _attribute_map = {
+        "relay_namespace_id": {"key": "relayNamespaceId", "type": "str"},
+    }
+
+    def __init__(self, *, relay_namespace_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword relay_namespace_id: The resource ID of the Azure relay namespace managed by the
+         cluster manager.
+        :paramtype relay_namespace_id: str
+        """
+        super().__init__(**kwargs)
+        self.relay_namespace_id = relay_namespace_id
+
+
+class ClusterManagerUpdateRelayPrivateEndpointConnectionParameters(
+    _serialization.Model
+):  # pylint: disable=name-too-long
+    """ClusterManagerUpdateRelayPrivateEndpointConnectionParameters represents the body of the request
+    to approve or reject the relay private endpoint connection for the private relay managed by a
+    cluster manager.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar connection_state: The state to set for the private endpoint connection. Required. Known
+     values are: "Approved" and "Rejected".
+    :vartype connection_state: str or
+     ~azure.mgmt.networkcloud.models.RelayPrivateEndpointConnectionState
+    :ivar description: The description to associate with the private endpoint connection.
+    :vartype description: str
+    :ivar private_endpoint_resource_id: The resource ID of private endpoint to be permitted or
+     denied connection to the relay namespace. Required.
+    :vartype private_endpoint_resource_id: str
+    """
+
+    _validation = {
+        "connection_state": {"required": True},
+        "private_endpoint_resource_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "connection_state": {"key": "connectionState", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "private_endpoint_resource_id": {"key": "privateEndpointResourceId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        connection_state: Union[str, "_models.RelayPrivateEndpointConnectionState"],
+        private_endpoint_resource_id: str,
+        description: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword connection_state: The state to set for the private endpoint connection. Required.
+         Known values are: "Approved" and "Rejected".
+        :paramtype connection_state: str or
+         ~azure.mgmt.networkcloud.models.RelayPrivateEndpointConnectionState
+        :keyword description: The description to associate with the private endpoint connection.
+        :paramtype description: str
+        :keyword private_endpoint_resource_id: The resource ID of private endpoint to be permitted or
+         denied connection to the relay namespace. Required.
+        :paramtype private_endpoint_resource_id: str
+        """
+        super().__init__(**kwargs)
+        self.connection_state = connection_state
+        self.description = description
+        self.private_endpoint_resource_id = private_endpoint_resource_id
 
 
 class ClusterMetricsConfiguration(TrackedResource):
@@ -4659,6 +5123,40 @@ class FeatureStatus(_serialization.Model):
         self.version: Optional[str] = None
 
 
+class FilterDevices(_serialization.Model):
+    """FilterDevices defines the filtered target of the inspection.
+
+    :ivar bare_metal_machine_names: The list of bare metal machine names to include in the
+     inspection.
+    :vartype bare_metal_machine_names: list[str]
+    :ivar rack_names: The list of rack names to include in the inspection.
+    :vartype rack_names: list[str]
+    """
+
+    _attribute_map = {
+        "bare_metal_machine_names": {"key": "bareMetalMachineNames", "type": "[str]"},
+        "rack_names": {"key": "rackNames", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        bare_metal_machine_names: Optional[list[str]] = None,
+        rack_names: Optional[list[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword bare_metal_machine_names: The list of bare metal machine names to include in the
+         inspection.
+        :paramtype bare_metal_machine_names: list[str]
+        :keyword rack_names: The list of rack names to include in the inspection.
+        :paramtype rack_names: list[str]
+        """
+        super().__init__(**kwargs)
+        self.bare_metal_machine_names = bare_metal_machine_names
+        self.rack_names = rack_names
+
+
 class HardwareInventory(_serialization.Model):
     """HardwareInventory represents the hardware configuration of this machine as exposed to the
     customer, including information acquired from the model/sku information and from the ironic
@@ -4745,8 +5243,7 @@ class HardwareValidationStatus(_serialization.Model):
 
     :ivar last_validation_time: The timestamp of the hardware validation execution.
     :vartype last_validation_time: ~datetime.datetime
-    :ivar result: The outcome of the hardware validation. Known values are: "Pass", "Fail", and
-     "Pass".
+    :ivar result: The outcome of the hardware validation. Known values are: "Pass" and "Fail".
     :vartype result: str or
      ~azure.mgmt.networkcloud.models.BareMetalMachineHardwareValidationResult
     """
@@ -5290,7 +5787,7 @@ class KubernetesCluster(TrackedResource):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
         location: str,
@@ -5806,6 +6303,171 @@ class KubernetesLabel(_serialization.Model):
         super().__init__(**kwargs)
         self.key = key
         self.value = value
+
+
+class KubernetesVersion(TrackedResource):
+    """KubernetesVersion represents the available Kubernetes versions for a cluster.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.networkcloud.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar etag: Resource ETag.
+    :vartype etag: str
+    :ivar extended_location: The extended location of the cluster associated with the resource.
+     Required.
+    :vartype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
+    :ivar provisioning_state: The provisioning state of the Kubernetes version resource. Known
+     values are: "Accepted", "Canceled", "Failed", and "Succeeded".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.networkcloud.models.KubernetesVersionProvisioningState
+    :ivar values: The list of available Kubernetes versions.
+    :vartype values: list[~azure.mgmt.networkcloud.models.KubernetesVersionValue]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "etag": {"readonly": True},
+        "extended_location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "values": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "values": {"key": "properties.values", "type": "[KubernetesVersionValue]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        extended_location: "_models.ExtendedLocation",
+        tags: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword extended_location: The extended location of the cluster associated with the resource.
+         Required.
+        :paramtype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.etag: Optional[str] = None
+        self.extended_location = extended_location
+        self.provisioning_state: Optional[Union[str, "_models.KubernetesVersionProvisioningState"]] = None
+        self.values: Optional[list["_models.KubernetesVersionValue"]] = None
+
+
+class KubernetesVersionList(_serialization.Model):
+    """KubernetesVersionList represents a list of Kubernetes version resources.
+
+    :ivar next_link: The link used to get the next page of operations.
+    :vartype next_link: str
+    :ivar value: The list of Kubernetes versions.
+    :vartype value: list[~azure.mgmt.networkcloud.models.KubernetesVersion]
+    """
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[KubernetesVersion]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[list["_models.KubernetesVersion"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword next_link: The link used to get the next page of operations.
+        :paramtype next_link: str
+        :keyword value: The list of Kubernetes versions.
+        :paramtype value: list[~azure.mgmt.networkcloud.models.KubernetesVersion]
+        """
+        super().__init__(**kwargs)
+        self.next_link = next_link
+        self.value = value
+
+
+class KubernetesVersionPatchParameters(_serialization.Model):
+    """KubernetesVersionPatchParameters represents the body of the request to patch Kubernetes version
+    tags.
+
+    :ivar tags: The Azure resource tags that will replace the existing ones.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: The Azure resource tags that will replace the existing ones.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+
+
+class KubernetesVersionValue(_serialization.Model):
+    """KubernetesVersionValue describes a specific Kubernetes version that can be deployed.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar description: Additional description for the Kubernetes version.
+    :vartype description: str
+    :ivar version: The Kubernetes version identifier.
+    :vartype version: str
+    """
+
+    _validation = {
+        "description": {"readonly": True},
+        "version": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "description": {"key": "description", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.description: Optional[str] = None
+        self.version: Optional[str] = None
 
 
 class L2Network(TrackedResource):
@@ -7557,6 +8219,9 @@ class RackSku(Resource):
     :ivar controller_machines: The list of machine SKUs and associated rack slot for the
      control-plane dedicated machines in this rack model.
     :vartype controller_machines: list[~azure.mgmt.networkcloud.models.MachineSkuSlot]
+    :ivar deployment_type: The deployment type supported by the rack SKU. Known values are: "Nexus"
+     and "AzureLocal".
+    :vartype deployment_type: str or ~azure.mgmt.networkcloud.models.DeploymentType
     :ivar description: The free-form text describing the rack.
     :vartype description: str
     :ivar max_cluster_slots: The maximum number of compute racks supported by an aggregator rack. 0
@@ -7581,6 +8246,7 @@ class RackSku(Resource):
         "system_data": {"readonly": True},
         "compute_machines": {"readonly": True},
         "controller_machines": {"readonly": True},
+        "deployment_type": {"readonly": True},
         "description": {"readonly": True},
         "max_cluster_slots": {"readonly": True},
         "provisioning_state": {"readonly": True},
@@ -7596,6 +8262,7 @@ class RackSku(Resource):
         "system_data": {"key": "systemData", "type": "SystemData"},
         "compute_machines": {"key": "properties.computeMachines", "type": "[MachineSkuSlot]"},
         "controller_machines": {"key": "properties.controllerMachines", "type": "[MachineSkuSlot]"},
+        "deployment_type": {"key": "properties.deploymentType", "type": "str"},
         "description": {"key": "properties.description", "type": "str"},
         "max_cluster_slots": {"key": "properties.maxClusterSlots", "type": "int"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
@@ -7609,6 +8276,7 @@ class RackSku(Resource):
         super().__init__(**kwargs)
         self.compute_machines: Optional[list["_models.MachineSkuSlot"]] = None
         self.controller_machines: Optional[list["_models.MachineSkuSlot"]] = None
+        self.deployment_type: Optional[Union[str, "_models.DeploymentType"]] = None
         self.description: Optional[str] = None
         self.max_cluster_slots: Optional[int] = None
         self.provisioning_state: Optional[Union[str, "_models.RackSkuProvisioningState"]] = None
@@ -7648,6 +8316,10 @@ class RackSkuList(_serialization.Model):
 class RuntimeProtectionConfiguration(_serialization.Model):
     """RuntimeProtectionConfiguration represents the runtime protection configuration for the cluster.
 
+    :ivar definition_update_mode: The definition update mode for runtime protection. Known values
+     are: "Automatic" and "None".
+    :vartype definition_update_mode: str or
+     ~azure.mgmt.networkcloud.models.RuntimeProtectionDefinitionUpdateMode
     :ivar enforcement_level: The mode of operation for runtime protection. Known values are:
      "Audit", "Disabled", "OnDemand", "Passive", and "RealTime".
     :vartype enforcement_level: str or
@@ -7655,19 +8327,29 @@ class RuntimeProtectionConfiguration(_serialization.Model):
     """
 
     _attribute_map = {
+        "definition_update_mode": {"key": "definitionUpdateMode", "type": "str"},
         "enforcement_level": {"key": "enforcementLevel", "type": "str"},
     }
 
     def __init__(
-        self, *, enforcement_level: Union[str, "_models.RuntimeProtectionEnforcementLevel"] = "Disabled", **kwargs: Any
+        self,
+        *,
+        definition_update_mode: Optional[Union[str, "_models.RuntimeProtectionDefinitionUpdateMode"]] = None,
+        enforcement_level: Optional[Union[str, "_models.RuntimeProtectionEnforcementLevel"]] = None,
+        **kwargs: Any
     ) -> None:
         """
+        :keyword definition_update_mode: The definition update mode for runtime protection. Known
+         values are: "Automatic" and "None".
+        :paramtype definition_update_mode: str or
+         ~azure.mgmt.networkcloud.models.RuntimeProtectionDefinitionUpdateMode
         :keyword enforcement_level: The mode of operation for runtime protection. Known values are:
          "Audit", "Disabled", "OnDemand", "Passive", and "RealTime".
         :paramtype enforcement_level: str or
          ~azure.mgmt.networkcloud.models.RuntimeProtectionEnforcementLevel
         """
         super().__init__(**kwargs)
+        self.definition_update_mode = definition_update_mode
         self.enforcement_level = enforcement_level
 
 
@@ -7676,10 +8358,29 @@ class RuntimeProtectionStatus(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :ivar agent_health_status: The runtime protection agent health status. Known values are:
+     "Healthy" and "Unhealthy".
+    :vartype agent_health_status: str or
+     ~azure.mgmt.networkcloud.models.RuntimeProtectionAgentHealthStatus
+    :ivar agent_health_status_issues: The runtime protection agent health status issues, if
+     present.
+    :vartype agent_health_status_issues: list[str]
+    :ivar agent_license_status: The runtime protection agent license status. Known values are:
+     "Licensed" and "Unlicensed".
+    :vartype agent_license_status: str or
+     ~azure.mgmt.networkcloud.models.RuntimeProtectionAgentLicenseStatus
+    :ivar definition_update_mode: The definition update mode for runtime protection. Known values
+     are: "Automatic" and "None".
+    :vartype definition_update_mode: str or
+     ~azure.mgmt.networkcloud.models.RuntimeProtectionDefinitionUpdateMode
     :ivar definitions_last_updated: The timestamp when the malware definitions were last updated.
     :vartype definitions_last_updated: ~datetime.datetime
     :ivar definitions_version: The version of the malware definitions.
     :vartype definitions_version: str
+    :ivar enforcement_level: The enforcement level set for the runtime protection on the bare metal
+     machine. Known values are: "Audit", "Disabled", "OnDemand", "Passive", and "RealTime".
+    :vartype enforcement_level: str or
+     ~azure.mgmt.networkcloud.models.RuntimeProtectionEnforcementLevel
     :ivar scan_completed_time: The timestamp of the most recently completed scan, or empty if there
      has never been a scan.
     :vartype scan_completed_time: ~datetime.datetime
@@ -7692,16 +8393,26 @@ class RuntimeProtectionStatus(_serialization.Model):
     """
 
     _validation = {
+        "agent_health_status": {"readonly": True},
+        "agent_health_status_issues": {"readonly": True},
+        "agent_license_status": {"readonly": True},
+        "definition_update_mode": {"readonly": True},
         "definitions_last_updated": {"readonly": True},
         "definitions_version": {"readonly": True},
+        "enforcement_level": {"readonly": True},
         "scan_completed_time": {"readonly": True},
         "scan_scheduled_time": {"readonly": True},
         "scan_started_time": {"readonly": True},
     }
 
     _attribute_map = {
+        "agent_health_status": {"key": "agentHealthStatus", "type": "str"},
+        "agent_health_status_issues": {"key": "agentHealthStatusIssues", "type": "[str]"},
+        "agent_license_status": {"key": "agentLicenseStatus", "type": "str"},
+        "definition_update_mode": {"key": "definitionUpdateMode", "type": "str"},
         "definitions_last_updated": {"key": "definitionsLastUpdated", "type": "iso-8601"},
         "definitions_version": {"key": "definitionsVersion", "type": "str"},
+        "enforcement_level": {"key": "enforcementLevel", "type": "str"},
         "scan_completed_time": {"key": "scanCompletedTime", "type": "iso-8601"},
         "scan_scheduled_time": {"key": "scanScheduledTime", "type": "iso-8601"},
         "scan_started_time": {"key": "scanStartedTime", "type": "iso-8601"},
@@ -7710,8 +8421,13 @@ class RuntimeProtectionStatus(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
+        self.agent_health_status: Optional[Union[str, "_models.RuntimeProtectionAgentHealthStatus"]] = None
+        self.agent_health_status_issues: Optional[list[str]] = None
+        self.agent_license_status: Optional[Union[str, "_models.RuntimeProtectionAgentLicenseStatus"]] = None
+        self.definition_update_mode: Optional[Union[str, "_models.RuntimeProtectionDefinitionUpdateMode"]] = None
         self.definitions_last_updated: Optional[datetime.datetime] = None
         self.definitions_version: Optional[str] = None
+        self.enforcement_level: Optional[Union[str, "_models.RuntimeProtectionEnforcementLevel"]] = None
         self.scan_completed_time: Optional[datetime.datetime] = None
         self.scan_scheduled_time: Optional[datetime.datetime] = None
         self.scan_started_time: Optional[datetime.datetime] = None
@@ -8123,6 +8839,9 @@ class StorageAppliance(TrackedResource):
     :vartype detailed_status: str or ~azure.mgmt.networkcloud.models.StorageApplianceDetailedStatus
     :ivar detailed_status_message: The descriptive message about the current detailed status.
     :vartype detailed_status_message: str
+    :ivar expansion_shelves: The list of expansion shelves connected to the storage appliance.
+    :vartype expansion_shelves:
+     list[~azure.mgmt.networkcloud.models.StorageApplianceExpansionShelf]
     :ivar management_ipv4_address: The endpoint for the management interface of the storage
      appliance.
     :vartype management_ipv4_address: str
@@ -8173,6 +8892,7 @@ class StorageAppliance(TrackedResource):
         "cluster_id": {"readonly": True},
         "detailed_status": {"readonly": True},
         "detailed_status_message": {"readonly": True},
+        "expansion_shelves": {"readonly": True},
         "management_ipv4_address": {"readonly": True},
         "manufacturer": {"readonly": True},
         "model": {"readonly": True},
@@ -8206,6 +8926,7 @@ class StorageAppliance(TrackedResource):
         "cluster_id": {"key": "properties.clusterId", "type": "str"},
         "detailed_status": {"key": "properties.detailedStatus", "type": "str"},
         "detailed_status_message": {"key": "properties.detailedStatusMessage", "type": "str"},
+        "expansion_shelves": {"key": "properties.expansionShelves", "type": "[StorageApplianceExpansionShelf]"},
         "management_ipv4_address": {"key": "properties.managementIpv4Address", "type": "str"},
         "manufacturer": {"key": "properties.manufacturer", "type": "str"},
         "model": {"key": "properties.model", "type": "str"},
@@ -8264,6 +8985,7 @@ class StorageAppliance(TrackedResource):
         self.cluster_id: Optional[str] = None
         self.detailed_status: Optional[Union[str, "_models.StorageApplianceDetailedStatus"]] = None
         self.detailed_status_message: Optional[str] = None
+        self.expansion_shelves: Optional[list["_models.StorageApplianceExpansionShelf"]] = None
         self.management_ipv4_address: Optional[str] = None
         self.manufacturer: Optional[str] = None
         self.model: Optional[str] = None
@@ -8402,6 +9124,32 @@ class StorageApplianceEnableRemoteVendorManagementParameters(_serialization.Mode
         """
         super().__init__(**kwargs)
         self.support_endpoints = support_endpoints
+
+
+class StorageApplianceExpansionShelf(_serialization.Model):
+    """StorageApplianceExpansionShelf represents an expansion shelf connected to a storage appliance.
+
+    :ivar model: The model of the expansion shelf.
+    :vartype model: str
+    :ivar version: The version of the expansion shelf.
+    :vartype version: str
+    """
+
+    _attribute_map = {
+        "model": {"key": "model", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+    }
+
+    def __init__(self, *, model: Optional[str] = None, version: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword model: The model of the expansion shelf.
+        :paramtype model: str
+        :keyword version: The version of the expansion shelf.
+        :paramtype version: str
+        """
+        super().__init__(**kwargs)
+        self.model = model
+        self.version = version
 
 
 class StorageApplianceList(_serialization.Model):

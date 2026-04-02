@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,6 +9,38 @@
 
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
+
+
+class AccessBridgeAllowedName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AccessBridgeAllowedName."""
+
+    BASTION = "Bastion"
+    """The access bridge for bare metal machine bastion access."""
+    PRIVATE_VAULT = "PrivateVault"
+    """The access bridge for cluster access to private vault."""
+    STORAGE_DASHBOARD = "StorageDashboard"
+    """The access bridge for access to the storage dashboard."""
+
+
+class AccessBridgeDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The detailed status reported by the access bridge."""
+
+    RUNNING = "Running"
+    """The access bridge is healthy and operating normally."""
+    DEGRADED = "Degraded"
+    """The access bridge is experiencing degraded performance or partial outages."""
+    FAILED = "Failed"
+    """The access bridge is not operational."""
+
+
+class AccessBridgeProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the access bridge."""
+
+    ACCEPTED = "Accepted"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+    PROVISIONING = "Provisioning"
+    SUCCEEDED = "Succeeded"
 
 
 class ActionStateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -102,7 +135,6 @@ class BareMetalMachineHardwareValidationResult(str, Enum, metaclass=CaseInsensit
 
     PASS = "Pass"
     FAIL = "Fail"
-    PASS_ENUM = "Pass"
 
 
 class BareMetalMachineKeySetDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -242,7 +274,9 @@ class CloudServicesNetworkDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnu
     PROVISIONING = "Provisioning"
 
 
-class CloudServicesNetworkEnableDefaultEgressEndpoints(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class CloudServicesNetworkEnableDefaultEgressEndpoints(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The indicator of whether the platform default endpoints are allowed for the egress traffic."""
 
     TRUE = "True"
@@ -285,7 +319,9 @@ class ClusterConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNDEFINED = "Undefined"
 
 
-class ClusterContinueUpdateVersionMachineGroupTargetingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ClusterContinueUpdateVersionMachineGroupTargetingMode(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The mode by which the cluster will target the next grouping of servers to continue the update."""
 
     ALPHA_BY_RACK = "AlphaByRack"
@@ -303,6 +339,13 @@ class ClusterDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETING = "Deleting"
     DISCONNECTED = "Disconnected"
     FAILED = "Failed"
+
+
+class ClusterInspectAdditionalAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ClusterInspectAdditionalAction."""
+
+    RESET_HARDWARE = "ResetHardware"
+    """Indicates that hardware reset should be performed during inspection."""
 
 
 class ClusterManagerConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -334,7 +377,9 @@ class ClusterManagerProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMe
     UPDATING = "Updating"
 
 
-class ClusterMetricsConfigurationDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ClusterMetricsConfigurationDetailedStatus(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The more detailed status of the metrics configuration."""
 
     PROCESSING = "Processing"
@@ -342,7 +387,9 @@ class ClusterMetricsConfigurationDetailedStatus(str, Enum, metaclass=CaseInsensi
     ERROR = "Error"
 
 
-class ClusterMetricsConfigurationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ClusterMetricsConfigurationProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The provisioning state of the metrics configuration."""
 
     SUCCEEDED = "Succeeded"
@@ -450,6 +497,16 @@ class DefaultGateway(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FALSE = "False"
 
 
+class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type (kind) of the cluster. When specified, the value must exactly match the kind
+    configured on the cluster manager that manages the cluster. If omitted, the service will
+    default the value to the kind value of the cluster manager.
+    """
+
+    NEXUS = "Nexus"
+    AZURE_LOCAL = "AzureLocal"
+
+
 class DeviceConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The connection type of the device."""
 
@@ -521,7 +578,9 @@ class KubernetesClusterDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMe
     PROVISIONING = "Provisioning"
 
 
-class KubernetesClusterFeatureAvailabilityLifecycle(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class KubernetesClusterFeatureAvailabilityLifecycle(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The lifecycle indicator of the feature."""
 
     PREVIEW = "Preview"
@@ -536,7 +595,9 @@ class KubernetesClusterFeatureDetailedStatus(str, Enum, metaclass=CaseInsensitiv
     INSTALLED = "Installed"
 
 
-class KubernetesClusterFeatureProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class KubernetesClusterFeatureProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The provisioning state of the Kubernetes cluster feature."""
 
     ACCEPTED = "Accepted"
@@ -605,6 +666,15 @@ class KubernetesPluginType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     OS_DEVICE = "OSDevice"
     MACVLAN = "MACVLAN"
     IPVLAN = "IPVLAN"
+
+
+class KubernetesVersionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the Kubernetes version resource."""
+
+    ACCEPTED = "Accepted"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
 
 
 class L2NetworkDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -738,6 +808,13 @@ class RackSkuType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SINGLE = "Single"
 
 
+class RelayPrivateEndpointConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state to set for the private endpoint connection."""
+
+    APPROVED = "Approved"
+    REJECTED = "Rejected"
+
+
 class RelayType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The indicator of which relay type the machine should be assigned to use. Platform indicates the
     use of a platform-dedicated relay. Public indicates the use of the standard public relay for
@@ -765,14 +842,53 @@ class RemoteVendorManagementStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     UNSUPPORTED = "Unsupported"
 
 
+class RuntimeProtectionAgentHealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The runtime protection agent health status."""
+
+    HEALTHY = "Healthy"
+    """The runtime protection agent is healthy."""
+    UNHEALTHY = "Unhealthy"
+    """The runtime protection agent has health issues."""
+
+
+class RuntimeProtectionAgentLicenseStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The runtime protection agent license status."""
+
+    LICENSED = "Licensed"
+    """The runtime protection agent license is valid."""
+    UNLICENSED = "Unlicensed"
+    """The runtime protection agent license not valid."""
+
+
+class RuntimeProtectionDefinitionUpdateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The definition update mode for runtime protection."""
+
+    AUTOMATIC = "Automatic"
+    NONE = "None"
+
+
 class RuntimeProtectionEnforcementLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mode of operation for runtime protection."""
 
     AUDIT = "Audit"
+    """Real-time scans detect but do not remediate detected issues."""
     DISABLED = "Disabled"
+    """Real-time scans are disabled and can not be triggered."""
     ON_DEMAND = "OnDemand"
+    """Real-time scans are disabled but can be triggered to remediate detected issues."""
     PASSIVE = "Passive"
+    """Real-time scans are disabled but can be triggered to detect issues without remediation."""
     REAL_TIME = "RealTime"
+    """Real-time scans detect and remediate detected issues."""
+
+
+class SecurityRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The direction of allowed network traffic based on the rule."""
+
+    INBOUND = "Inbound"
+    """Inbound traffic toward the on-premsises cluster."""
+    OUTBOUND = "Outbound"
+    """Outbound traffic from the on-premises cluster."""
 
 
 class SkipShutdown(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -810,6 +926,15 @@ class StorageApplianceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnum
     CANCELED = "Canceled"
     PROVISIONING = "Provisioning"
     ACCEPTED = "Accepted"
+
+
+class TransportProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The protocol advertised by the access bridge endpoints."""
+
+    TCP = "TCP"
+    """The TCP transport protocol."""
+    UDP = "UDP"
+    """The UDP transport protocol."""
 
 
 class TrunkedNetworkDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -895,7 +1020,9 @@ class VirtualMachineIsolateEmulatorThread(str, Enum, metaclass=CaseInsensitiveEn
     FALSE = "False"
 
 
-class VirtualMachinePlacementHintPodAffinityScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class VirtualMachinePlacementHintPodAffinityScope(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The scope for the virtual machine affinity or anti-affinity placement hint. It should always be
     "Machine" in the case of node affinity.
     """
@@ -963,7 +1090,9 @@ class VolumeProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ACCEPTED = "Accepted"
 
 
-class VulnerabilityScanningSettingsContainerScan(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class VulnerabilityScanningSettingsContainerScan(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The mode selection for container vulnerability scanning."""
 
     DISABLED = "Disabled"

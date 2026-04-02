@@ -22,7 +22,7 @@ class TestNetworkCloudMgmtClusterManagersOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_cluster_managers_list_by_subscription(self, resource_group):
         response = self.client.cluster_managers.list_by_subscription(
-            api_version="2025-09-01",
+            api_version="2026-01-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestNetworkCloudMgmtClusterManagersOperations(AzureMgmtRecordedTestCase):
     def test_cluster_managers_list_by_resource_group(self, resource_group):
         response = self.client.cluster_managers.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-09-01",
+            api_version="2026-01-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestNetworkCloudMgmtClusterManagersOperations(AzureMgmtRecordedTestCase):
         response = self.client.cluster_managers.get(
             resource_group_name=resource_group.name,
             cluster_manager_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -73,10 +73,12 @@ class TestNetworkCloudMgmtClusterManagersOperations(AzureMgmtRecordedTestCase):
                     "tenantId": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
+                "kind": "str",
                 "managedResourceGroupConfiguration": {"location": "str", "name": "str"},
                 "managerExtendedLocation": {"name": "str", "type": "str"},
                 "name": "str",
                 "provisioningState": "str",
+                "relayConfiguration": {"relayNamespaceId": "str"},
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -89,7 +91,7 @@ class TestNetworkCloudMgmtClusterManagersOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "vmSize": "str",
             },
-            api_version="2025-09-01",
+            api_version="2026-01-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -101,7 +103,7 @@ class TestNetworkCloudMgmtClusterManagersOperations(AzureMgmtRecordedTestCase):
         response = self.client.cluster_managers.begin_delete(
             resource_group_name=resource_group.name,
             cluster_manager_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -113,8 +115,20 @@ class TestNetworkCloudMgmtClusterManagersOperations(AzureMgmtRecordedTestCase):
         response = self.client.cluster_managers.update(
             resource_group_name=resource_group.name,
             cluster_manager_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01-preview",
         )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_cluster_managers_begin_update_relay_private_endpoint_connection(self, resource_group):
+        response = self.client.cluster_managers.begin_update_relay_private_endpoint_connection(
+            resource_group_name=resource_group.name,
+            cluster_manager_name="str",
+            api_version="2026-01-01-preview",
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

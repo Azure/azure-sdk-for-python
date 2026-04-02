@@ -45,6 +45,7 @@ def main():
                     "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.ManagedIdentity/userAssignedIdentities/userIdentity1": {}
                 },
             },
+            "kind": "AzureLocal",
             "location": "location",
             "properties": {
                 "aggregatorOrSingleRackDefinition": {
@@ -165,7 +166,7 @@ def main():
                 ],
                 "managedResourceGroupConfiguration": {"location": "East US", "name": "my-managed-rg"},
                 "networkFabricId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.ManagedNetworkFabric/networkFabrics/fabricName",
-                "runtimeProtectionConfiguration": {"enforcementLevel": "OnDemand"},
+                "runtimeProtectionConfiguration": {"definitionUpdateMode": "None", "enforcementLevel": "OnDemand"},
                 "secretArchiveSettings": {
                     "associatedIdentity": {
                         "identityType": "UserAssignedIdentity",
@@ -188,6 +189,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-09-01/examples/Clusters_Create.json
+# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2026-01-01-preview/examples/Clusters_Create.json
 if __name__ == "__main__":
     main()
