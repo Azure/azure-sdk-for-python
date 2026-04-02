@@ -2576,7 +2576,8 @@ def _extract_metric_values(
             "score": 4.5,
             "coherence_reason": "Good flow",
             "threshold": 3.0,
-            "sample": {...}
+            "sample": {...},
+            "properties": {"explanation": "Detailed analysis...", "confidence": 0.95}
         }
         expected_metrics = ["score"]
 
@@ -2586,9 +2587,14 @@ def _extract_metric_values(
                 "score": 4.5,
                 "reason": "Good flow",
                 "threshold": 3.0,
-                "sample": {...}
+                "sample": {...},
+                "properties": {"explanation": "Detailed analysis...", "confidence": 0.95}
             }
         }
+
+    Note: If a ``properties`` key is present in the metrics dict and its value is a dict,
+    it is extracted and attached to every per-metric result entry. This allows evaluators
+    to return additional output fields alongside standard score/reason/threshold values.
     """
     result_per_metric = {}
     properties = None
@@ -2878,8 +2884,13 @@ def _create_result_object(
             "reason": "Good logical flow",
             "threshold": 3.0,
             "passed": None,
-            "sample": {"input": "...", "output": "..."}
+            "sample": {"input": "...", "output": "..."},
+            "properties": {"explanation": "...", "confidence": 0.95}
         }
+
+    Note: The ``properties`` field is included only when the evaluator returned a
+    properties dict. It carries additional output fields beyond the standard
+    score/label/reason/threshold/passed values.
     """
     # Extract values
     score = metric_values.get("score")
