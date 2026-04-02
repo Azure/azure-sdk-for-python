@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.purview import PurviewManagementClient
 
 """
@@ -37,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/purview/resource-manager/Microsoft.Purview/stable/2021-07-01/examples/PrivateEndpointConnections_Get.json
+# x-ms-original-file: specification/purview/resource-manager/Microsoft.Purview/preview/2023-05-01-preview/examples/PrivateEndpointConnections_Get.json
 if __name__ == "__main__":
     main()

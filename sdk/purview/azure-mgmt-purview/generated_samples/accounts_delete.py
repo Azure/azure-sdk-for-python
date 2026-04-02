@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.purview import PurviewManagementClient
 
 """
@@ -29,13 +31,12 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.accounts.begin_delete(
+    client.accounts.begin_delete(
         resource_group_name="SampleResourceGroup",
         account_name="account1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/purview/resource-manager/Microsoft.Purview/stable/2021-07-01/examples/Accounts_Delete.json
+# x-ms-original-file: specification/purview/resource-manager/Microsoft.Purview/preview/2023-05-01-preview/examples/Accounts_Delete.json
 if __name__ == "__main__":
     main()
