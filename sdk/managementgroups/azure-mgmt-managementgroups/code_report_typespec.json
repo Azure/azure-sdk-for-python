@@ -457,7 +457,7 @@
                 "param_type": "keyword_only"
               },
               "cache_control": {
-                "default": "none",
+                "default": "str",
                 "param_type": "keyword_only"
               },
               "kwargs": {
@@ -787,7 +787,7 @@
                 "param_type": "positional_or_keyword"
               },
               "cache_control": {
-                "default": "none",
+                "default": "str",
                 "param_type": "keyword_only"
               },
               "kwargs": {
@@ -813,7 +813,7 @@
                 "param_type": "positional_or_keyword"
               },
               "cache_control": {
-                "default": "none",
+                "default": "str",
                 "param_type": "keyword_only"
               },
               "kwargs": {
@@ -839,7 +839,7 @@
                 "param_type": "positional_or_keyword"
               },
               "cache_control": {
-                "default": "none",
+                "default": "str",
                 "param_type": "keyword_only"
               },
               "kwargs": {
@@ -911,7 +911,7 @@
                 "param_type": "positional_or_keyword"
               },
               "cache_control": {
-                "default": "none",
+                "default": "str",
                 "param_type": "keyword_only"
               },
               "kwargs": {
@@ -939,8 +939,8 @@
                     "param_type": "positional_or_keyword"
                   },
                   "cache_control": {
-                    "type": "Optional[str]",
-                    "default": null,
+                    "type": "str",
+                    "default": "no-cache",
                     "param_type": "keyword_only"
                   },
                   "content_type": {
@@ -970,8 +970,8 @@
                     "param_type": "positional_or_keyword"
                   },
                   "cache_control": {
-                    "type": "Optional[str]",
-                    "default": null,
+                    "type": "str",
+                    "default": "no-cache",
                     "param_type": "keyword_only"
                   },
                   "content_type": {
@@ -1001,8 +1001,8 @@
                     "param_type": "positional_or_keyword"
                   },
                   "cache_control": {
-                    "type": "Optional[str]",
-                    "default": null,
+                    "type": "str",
+                    "default": "no-cache",
                     "param_type": "keyword_only"
                   },
                   "content_type": {
@@ -1027,7 +1027,7 @@
                 "param_type": "positional_or_keyword"
               },
               "cache_control": {
-                "default": "none",
+                "default": "str",
                 "param_type": "keyword_only"
               },
               "kwargs": {
@@ -1061,7 +1061,7 @@
                 "param_type": "keyword_only"
               },
               "cache_control": {
-                "default": "none",
+                "default": "str",
                 "param_type": "keyword_only"
               },
               "kwargs": {
@@ -1105,7 +1105,7 @@
                 "param_type": "positional_or_keyword"
               },
               "cache_control": {
-                "default": "none",
+                "default": "str",
                 "param_type": "keyword_only"
               },
               "skiptoken": {
@@ -1135,7 +1135,7 @@
                 "param_type": "positional_or_keyword"
               },
               "cache_control": {
-                "default": "none",
+                "default": "str",
                 "param_type": "keyword_only"
               },
               "kwargs": {
@@ -1163,8 +1163,8 @@
                     "param_type": "positional_or_keyword"
                   },
                   "cache_control": {
-                    "type": "Optional[str]",
-                    "default": null,
+                    "type": "str",
+                    "default": "no-cache",
                     "param_type": "keyword_only"
                   },
                   "content_type": {
@@ -1194,8 +1194,8 @@
                     "param_type": "positional_or_keyword"
                   },
                   "cache_control": {
-                    "type": "Optional[str]",
-                    "default": null,
+                    "type": "str",
+                    "default": "no-cache",
                     "param_type": "keyword_only"
                   },
                   "content_type": {
@@ -1225,8 +1225,8 @@
                     "param_type": "positional_or_keyword"
                   },
                   "cache_control": {
-                    "type": "Optional[str]",
-                    "default": null,
+                    "type": "str",
+                    "default": "no-cache",
                     "param_type": "keyword_only"
                   },
                   "content_type": {
@@ -9957,7 +9957,7 @@
                 "param_type": "keyword_only"
               },
               "cache_control": {
-                "default": "none",
+                "default": "str",
                 "param_type": "keyword_only"
               },
               "kwargs": {
@@ -10287,7 +10287,7 @@
                 "param_type": "positional_or_keyword"
               },
               "cache_control": {
-                "default": "none",
+                "default": "str",
                 "param_type": "keyword_only"
               },
               "kwargs": {
@@ -10313,7 +10313,7 @@
                 "param_type": "positional_or_keyword"
               },
               "cache_control": {
-                "default": "none",
+                "default": "str",
                 "param_type": "keyword_only"
               },
               "kwargs": {
@@ -10339,7 +10339,7 @@
                 "param_type": "positional_or_keyword"
               },
               "cache_control": {
-                "default": "none",
+                "default": "str",
                 "param_type": "keyword_only"
               },
               "kwargs": {
@@ -10411,7 +10411,7 @@
                 "param_type": "positional_or_keyword"
               },
               "cache_control": {
-                "default": "none",
+                "default": "str",
                 "param_type": "keyword_only"
               },
               "kwargs": {
@@ -10439,8 +10439,8 @@
                     "param_type": "positional_or_keyword"
                   },
                   "cache_control": {
-                    "type": "Optional[str]",
-                    "default": null,
+                    "type": "str",
+                    "default": "no-cache",
                     "param_type": "keyword_only"
                   },
                   "content_type": {
@@ -10470,8 +10470,8 @@
                     "param_type": "positional_or_keyword"
                   },
                   "cache_control": {
-                    "type": "Optional[str]",
-                    "default": null,
+                    "type": "str",
+                    "default": "no-cache",
                     "param_type": "keyword_only"
                   },
                   "content_type": {
@@ -10501,8 +10501,8 @@
                     "param_type": "positional_or_keyword"
                   },
                   "cache_control": {
-                    "type": "Optional[str]",
-                    "default": null,
+                    "type": "str",
+                    "default": "no-cache",
                     "param_type": "keyword_only"
                   },
                   "content_type": {
@@ -10527,7 +10527,7 @@
                 "param_type": "positional_or_keyword"
               },
               "cache_control": {
-                "default": "none",
+                "default": "str",
                 "param_type": "keyword_only"
               },
               "kwargs": {
@@ -10561,7 +10561,7 @@
                 "param_type": "keyword_only"
               },
               "cache_control": {
-                "default": "none",
+                "default": "str",
                 "param_type": "keyword_only"
               },
               "kwargs": {
@@ -10605,7 +10605,7 @@
                 "param_type": "positional_or_keyword"
               },
               "cache_control": {
-                "default": "none",
+                "default": "str",
                 "param_type": "keyword_only"
               },
               "skiptoken": {
@@ -10635,7 +10635,7 @@
                 "param_type": "positional_or_keyword"
               },
               "cache_control": {
-                "default": "none",
+                "default": "str",
                 "param_type": "keyword_only"
               },
               "kwargs": {
@@ -10663,8 +10663,8 @@
                     "param_type": "positional_or_keyword"
                   },
                   "cache_control": {
-                    "type": "Optional[str]",
-                    "default": null,
+                    "type": "str",
+                    "default": "no-cache",
                     "param_type": "keyword_only"
                   },
                   "content_type": {
@@ -10694,8 +10694,8 @@
                     "param_type": "positional_or_keyword"
                   },
                   "cache_control": {
-                    "type": "Optional[str]",
-                    "default": null,
+                    "type": "str",
+                    "default": "no-cache",
                     "param_type": "keyword_only"
                   },
                   "content_type": {
@@ -10725,8 +10725,8 @@
                     "param_type": "positional_or_keyword"
                   },
                   "cache_control": {
-                    "type": "Optional[str]",
-                    "default": null,
+                    "type": "str",
+                    "default": "no-cache",
                     "param_type": "keyword_only"
                   },
                   "content_type": {
