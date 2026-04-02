@@ -734,7 +734,7 @@ class PathItem(_Model):
     permissions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The POSIX access permissions."""
     encryption_scope: Optional[str] = rest_field(
-        name="encryptionScope", visibility=["read", "create", "update", "delete", "query"]
+        name="EncryptionScope", visibility=["read", "create", "update", "delete", "query"]
     )
     """The name of the encryption scope under which the blob is encrypted."""
     creation_time: Optional[str] = rest_field(

@@ -23,9 +23,15 @@ def extract_parameter_groups(kwargs: dict) -> None:
     """
     path_http_headers = kwargs.pop("path_http_headers", None)
     if path_http_headers is not None:
-        for attr in ("cache_control", "content_encoding", "content_language",
-                     "content_disposition", "content_type", "content_md5",
-                     "transactional_content_hash"):
+        for attr in (
+            "cache_control",
+            "content_encoding",
+            "content_language",
+            "content_disposition",
+            "content_type",
+            "content_md5",
+            "transactional_content_hash",
+        ):
             value = getattr(path_http_headers, attr, None)
             if value is not None:
                 kwargs.setdefault(attr, value)
@@ -62,8 +68,12 @@ def extract_parameter_groups(kwargs: dict) -> None:
 
     source_modified_access_conditions = kwargs.pop("source_modified_access_conditions", None)
     if source_modified_access_conditions is not None:
-        for attr in ("source_if_match", "source_if_none_match",
-                     "source_if_modified_since", "source_if_unmodified_since"):
+        for attr in (
+            "source_if_match",
+            "source_if_none_match",
+            "source_if_modified_since",
+            "source_if_unmodified_since",
+        ):
             value = getattr(source_modified_access_conditions, attr, None)
             if value is not None:
                 kwargs.setdefault(attr, value)

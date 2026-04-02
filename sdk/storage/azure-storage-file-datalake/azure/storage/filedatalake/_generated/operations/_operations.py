@@ -52,7 +52,7 @@ def build_service_list_file_systems_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -86,7 +86,7 @@ def build_file_system_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = ""
 
@@ -115,7 +115,7 @@ def build_file_system_set_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = ""
 
@@ -142,7 +142,7 @@ def build_file_system_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = ""
 
@@ -168,7 +168,7 @@ def build_file_system_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = ""
 
@@ -201,7 +201,7 @@ def build_file_system_list_paths_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -243,7 +243,7 @@ def build_file_system_list_blob_hierarchy_segment_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -313,7 +313,7 @@ def build_path_create_request(  # pylint: disable=too-many-locals,too-many-state
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = ""
 
@@ -436,7 +436,7 @@ def build_path_update_request(  # pylint: disable=too-many-locals,too-many-state
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -526,7 +526,7 @@ def build_path_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = ""
 
@@ -577,7 +577,7 @@ def build_path_read_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/octet-stream")
 
     # Construct URL
@@ -635,7 +635,7 @@ def build_path_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = ""
 
@@ -681,7 +681,7 @@ def build_path_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = ""
 
@@ -730,7 +730,7 @@ def build_path_set_access_control_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?action=setAccessControl"
 
@@ -777,7 +777,7 @@ def build_path_set_access_control_recursive_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -832,7 +832,7 @@ def build_path_flush_data_request(  # pylint: disable=too-many-locals
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?action=flush"
 
@@ -915,7 +915,7 @@ def build_path_append_data_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?action=append"
 
@@ -976,7 +976,7 @@ def build_path_set_expiry_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=expiry"
 
@@ -999,7 +999,7 @@ def build_path_undelete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
     # Construct URL
     _url = "?comp=undelete"
 
