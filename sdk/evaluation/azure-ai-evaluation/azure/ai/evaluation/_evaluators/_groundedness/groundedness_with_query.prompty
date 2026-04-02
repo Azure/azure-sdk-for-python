@@ -32,73 +32,101 @@ system:
 
 user:
 # Definition
-**Groundedness** refers to how well an answer is anchored in the provided context, evaluating its relevance, accuracy, and completeness based exclusively on that context. It assesses the extent to which the answer directly and fully addresses the question without introducing unrelated or incorrect information.
+**Groundedness** measures whether the **factual claims** in the RESPONSE are directly supported by the provided CONTEXT.
+Groundedness measures **faithfulness** to the context. It does NOT measure whether the response fully answers the query, and it does NOT measure completeness.
 
 > Context is the source of truth for evaluating the response. If it's empty, rely on the tool results in the response and query.
 > Evaluate the groundedness of the response message, not the chat history.
 
+## Key Guidelines
+- A grounded response aligns with the context and does not introduce contradictions or unsupported claims.
+- **Topic transference (critical failure):** If the context is about Topic A (e.g., Facebook password reset) but the response applies that information to a different Topic B (e.g., "any online account"), this is a critical error - score 2 or lower. The response must not reuse context from one entity, product, or topic and present it as applicable to a different one.
+- **Entity / scope mismatch:** If the context discusses a specific entity (e.g., a specific product, company, or platform), the response must not generalize those facts to other entities or broader claims.
+- **Unsupported inferences:** If the response adds claims that go beyond what the context states - even if they sound reasonable - those claims are unsupported and should lower the score.
+- **Conclusions from missing information:** A response cannot assume the answer is "no" or make recommendations just because no evidence is found. Such assumptions should lead to score 2 or lower.
+- Responses directly and accurately reflecting the context should be rated 4 or 5.
+- Responses contradicting the context should be rated 1 or 2.
+- Responses that partially use context but add unsupported details should be rated 2.
+- If the response says it cannot provide an answer and does not make factual claims from the context, the groundedness is 3 (nothing to ground).
+- **Transparent supplementary info:** If the context does not cover the query's topic but the response acknowledges this gap and then offers additional grounded information from the context, evaluate only the factual claims. If those claims are faithful to the context and the response does not pretend they answer the original question, score 4 or 5.
+
 # Ratings
-## [Groundedness: 1] (Completely Unrelated Response)
-**Definition:** An answer that does not relate to the question or the context in any way.
-  - Does not relate to the question or context at all.
-  - Talks about the general topic but does not respond to the query.
+## [Groundedness: 1] (Contradicts Context or Invents Facts)
+**Definition:** An answer that contradicts the context, invents facts not present in the context, or is completely unrelated to the question and context.
 
 **Examples:**
   **Context:** The company's annual meeting will be held next Thursday.
   **Query:** When is the company's annual meeting?
   **Response:** I enjoy hiking in the mountains during summer.
 
-  **Context:** The museum will exhibit modern art pieces from various local artists.
-  **Query:** What kind of art will be exhibited at the museum?
-  **Response:** Museums are important cultural institutions.
+  **Context:** The apple watch costs $50.
+  **Query:** How much does the apple watch cost?
+  **Response:** The apple watch costs $60.
 
-## [Groundedness: 2] (Attempts to Respond but Contains Incorrect Information)
-**Definition:** An answer that attempts to respond to the question but includes incorrect information not supported by the context. It may misstate facts, misinterpret the context, or provide erroneous details. Even if some points are correct, the presence of inaccuracies makes the response unreliable.
+## [Groundedness: 2] (Unsupported, Misapplied, or Inferred Claims)
+**Definition:** An answer that attempts to respond but includes claims not supported by the context. This includes: misstating facts, misinterpreting the context, drawing unsupported inferences, or applying context from one topic/entity to a different topic/entity (topic transference).
 
 **Examples:**
-  **Context:** - The festival starts on June 5th and features international musicians.
+  **Context:** The festival starts on June 5th and features international musicians.
   **Query:** When does the festival start?
   **Response:** The festival starts on July 5th and features local artists.
 
-  **Context:** bakery_menu.txt: - Croissant au Beurre — flaky, buttery croissant
-  **Query:** [{"role":"user","content":"Are there croissants?"}]
-  **Response:** [{"role":"assistant","content":"Yes, Croissant au Beurre is on the menu, served with jam."}]
+  **Context:** Problems with resetting your Facebook password: Try requesting a password reset email. Check your spam folder...
+  **Query:** What should you do if you forget your password for a different online account?
+  **Response:** You should try to reset your password by requesting a password reset email. Check your spam folder...
+  *(Context is about Facebook specifically, but response applies it to "any online account" - topic transference.)*
+
+  **Query:** [{"role":"user","content":"What toppings are available for the margherita pizza?"}]
+  **Response:** [{"role":"tool","content":"tool_result": [{"file_name": "menu.txt", "content": "Margherita pizza - tomato sauce, mozzarella, fresh basil."}]}, {"role":"assistant","content":"The margherita pizza comes with tomato sauce, mozzarella, fresh basil, and a drizzle of olive oil."}]
+  *(Adds "drizzle of olive oil" not found in the tool result - unsupported addition.)*
 
 ## [Groundedness: 3] (Nothing to be Grounded)
-Definition: An answer that does not provide any information that can be evaluated against the context. This includes responses that are asking for clarification, providing polite fillers, or follow-up questions.
+**Definition:** An answer that does not provide any factual information that can be evaluated against the context. This includes responses that are asking for clarification, providing polite fillers, follow-up questions, or stating the context does not contain the answer without adding factual claims.
 
 **Examples:**
   **Context:**
   **Query:** [{"role":"user","content":"How many eggs are needed for the recipe?"}, {"role":"tool","content":"tool_result": [{"file_name": "recipe.txt", "content": "The recipe requires two eggs and one cup of milk."}]}, {"role":"assistant","content":"You need three eggs for the recipe."}, {"role":"user","content":"Thank you."}]
   **Response:** [{"role":"assistant","content":"You're welcome, anything else I can help with?"}]
 
-## [Groundedness: 4] (Partially Correct Response)
-**Definition:** An answer that provides a correct response to the question but is incomplete or lacks specific details mentioned in the context. It captures some of the necessary information but omits key elements needed for a full understanding.
+  **Context:** (WhatsApp Help Center - general topics)
+  **Query:** What is the Digital Security Helpline operated by Access Now?
+  **Response:** The available information does not mention the Digital Security Helpline operated by Access Now.
+  *(Does not make factual claims from context, just acknowledges gap - nothing to ground.)*
+
+## [Groundedness: 4] (All Major Claims Supported; Minor Gaps)
+**Definition:** An answer where every major factual claim is directly supported by the context. Only minor, non-essential details may lack explicit evidence. The response does not introduce unsupported inferences or apply context to a different topic.
 
 **Examples:**
-  **Context:** - store_details.txt: The bookstore offers a 15% discount to students and a 10% discount to senior citizens.
-  **Query:** [{"role":"user","content":"What discount does the bookstore offer to students, if any?"}]
-  **Response:** [{"role":"assistant","content":"Yes, students get a discount at the bookstore."}]
+  **Context:** The bookstore offers a 15% discount to students and a 10% discount to senior citizens.
+  **Query:** What discount does the bookstore offer to students, if any?
+  **Response:** Yes, students get a discount at the bookstore.
+  *(Correct but omits the 15% detail; all stated claims are supported.)*
 
-  **Context:** The company's headquarters are located in Berlin, Germany.
-  **Query:** Where are the company's headquarters?
-  **Response:** The company's headquarters are in Germany.
+  **Query:** [{"role":"user","content":"How do I set up parental controls on Netflix?"}]
+  **Response:** [{"role":"tool","content":"tool_result": [{"file_name": "disney_help.txt", "content": "To set up parental controls on Disney+, go to Profile > Settings > Content Rating."}]}, {"role":"assistant","content":"The available information does not cover Netflix parental controls. However, for Disney+ you can set up parental controls by going to Profile > Settings > Content Rating."}]
+  *(Context is about Disney+, not Netflix. Response transparently acknowledges the gap and the Disney+ claims are grounded.)*
 
-## [Groundedness: 5] (Fully Correct and Complete Response)
-**Definition:** An answer that thoroughly and accurately responds to the question, including all relevant details from the context. It directly addresses the question with precise information, demonstrating complete understanding without adding extraneous information.
+## [Groundedness: 5] (Every Claim Explicitly Supported)
+**Definition:** An answer where every factual claim is explicitly and directly supported by the context. No unsupported details are added.
 
 **Examples:**
   **Context:** Cairo is the capital of Japan.
-  **Query:** [{"role":"user","content":"What is the capital of Japan?"}]
-  **Response:** [{"role":"assistant","content":"The capital of Japan is Cairo."}]
+  **Query:** What is the capital of Japan?
+  **Response:** The capital of Japan is Cairo.
+  *(Matches context exactly, even if context is factually wrong - groundedness measures faithfulness to context.)*
 
   **Context:** The author released her latest novel, 'The Silent Echo', on September 1st.
-  **Query:** [{"role":"user","content":"When was 'The Silent Echo' released?"}]
-  **Response:** [{"role":"assistant","content":"The 'Silent Echo' was released on September 1st."}]
+  **Query:** When was 'The Silent Echo' released?
+  **Response:** The 'Silent Echo' was released on September 1st.
 
-  **Context:** 
-  **Query:** By what date must participants register to receive early bird pricing?
-  **Response:** [{"role":"tool","content":"tool_result": [{"file_name": "store_guidelines.txt", "content": "Participants registering before and including May 31st will be eligible for early bird pricing."}]}, {"role":"assistant","content":"Participants must register by May 31st to receive early bird pricing."}]
+  **Query:** [{"role":"user","content":"What is the store's return policy?"}]
+  **Response:** [{"role":"tool","content":"tool_result": [{"file_name": "store_policy.txt", "content": "Items can be returned within 30 days with a receipt. Refunds are issued to the original payment method."}]}, {"role":"assistant","content":"Items can be returned within 30 days with a receipt, and refunds go to the original payment method."}]
+  *(Every claim matches the tool result exactly.)*
+
+  **Context:** The flu typically causes fever, cough, and fatigue.
+  **Query:** What are the symptoms of the flu?
+  **Response:** The flu causes cough.
+  *(Incomplete but every claim is supported - groundedness is about faithfulness, not completeness.)*
 
 
 # Data
@@ -108,11 +136,16 @@ RESPONSE: {{response}}
 
 
 # Tasks
-## Please provide your assessment Score for the previous RESPONSE message in relation to the CONTEXT, QUERY and RESPONSE tools based on the Definitions above. Your output should include the following information:
-- **ThoughtChain**: To improve the reasoning process, think step by step and include a step-by-step explanation of your thought process as you analyze the data based on the definitions. Keep it brief and start your ThoughtChain with "Let's think step by step:".
-- **Explanation**: a very short explanation of why you think the input Data should get that Score.
-- **Score**: based on your previous analysis, provide your Score. The Score you give MUST be a integer score (i.e., "1", "2"...) based on the levels of the definitions.
+## Evaluate the RESPONSE for groundedness by following these steps:
+1. **Identify claims**: List the major factual claims made in the RESPONSE (not opinions or pleasantries).
+2. **Check topic alignment**: Does the CONTEXT actually cover the same topic, entity, and scope as the QUERY? If not, any claims derived from mismatched context are unsupported.
+3. **Verify each claim**: For each claim, check whether it is explicitly supported by the CONTEXT. Note any claims that are inferred, generalized, or unsupported.
+4. **Assign a score** based on the Ratings above.
 
+## Your output should include:
+- **ThoughtChain**: Think step by step. Start with "Let's think step by step:" and briefly walk through the claims, topic alignment check, and verification.
+- **Explanation**: A very short explanation of why you assigned the Score.
+- **Score**: An integer score ("1", "2", "3", "4", or "5") based on the Ratings.
 
 ## Please provide your answers between the tags: <S0>your chain of thoughts</S0>, <S1>your explanation</S1>, <S2>your Score</S2>.
 # Output
