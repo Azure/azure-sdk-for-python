@@ -25,7 +25,7 @@
 
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
-  - Deleted or renamed client `ManagementGroupsAPI`
+  - Renamed client `ManagementGroupsAPI` to `ManagementGroupsMgmtClient`
   - Model `CreateManagementGroupRequest` moved instance variable `tenant_id`, `display_name`, `details` and `children` under property `properties` whose type is `CreateManagementGroupProperties`
   - Model `CreateOrUpdateSettingsRequest` moved instance variable `require_authorization_for_group_creation` and `default_management_group` under property `properties` whose type is `CreateOrUpdateSettingsProperties`
   - Model `HierarchySettingsInfo` moved instance variable `tenant_id`, `require_authorization_for_group_creation` and `default_management_group` under property `properties` whose type is `HierarchySettingsProperties`
