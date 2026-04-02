@@ -47,8 +47,9 @@ def _get_spans():
 
 def _make_server_with_child_span():
     """Server whose handler creates a child span (simulating a framework)."""
-    with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
-        app = InvocationAgentServerHost()
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
+        with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
+            app = InvocationAgentServerHost()
     child_tracer = trace.get_tracer("test.framework")
 
     @app.invoke_handler
@@ -62,8 +63,9 @@ def _make_server_with_child_span():
 
 def _make_streaming_server_with_child_span():
     """Server with streaming response whose handler creates a child span."""
-    with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
-        app = InvocationAgentServerHost()
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
+        with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
+            app = InvocationAgentServerHost()
     child_tracer = trace.get_tracer("test.framework")
 
     @app.invoke_handler

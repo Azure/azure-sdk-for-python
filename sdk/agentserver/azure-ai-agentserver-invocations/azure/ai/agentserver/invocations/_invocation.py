@@ -24,7 +24,6 @@ from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     Constants,
     create_error_response,
 )
-from azure.ai.agentserver.core._tracing import TracingHelper
 
 from ._constants import InvocationConstants
 
@@ -240,49 +239,20 @@ class InvocationAgentServerHost(AgentServerHost):
         self,
         response: StreamingResponse,
         otel_span: Any,
-        baggage_token: Any,
-        span_token: Any,
     ) -> StreamingResponse:
-        """Wrap a streaming response's body iterator with tracing and context cleanup.
+        """Wrap a streaming response's body iterator with span lifecycle.
 
-        Two layers of wrapping are applied in order:
-
-        1. **Inner (tracing):** ``trace_stream`` wraps the body iterator so
-           the OTel span covers the full streaming duration and records any
-           errors that occur while yielding chunks.
-        2. **Outer (context cleanup):** A second async generator detaches the
-           span context and W3C Baggage context *after* all chunks have been
-           sent (or an error occurs).  This ordering ensures the span is
-           ended before the contexts are detached.
+        ``trace_stream`` wraps the body iterator so the OTel span covers
+        the full streaming duration and is ended when iteration completes.
 
         :param response: The ``StreamingResponse`` returned by the user handler.
         :param otel_span: The OTel span (or *None* when tracing is disabled).
-        :param baggage_token: Token from ``set_baggage`` (or *None*).
-        :param span_token: Token from ``set_current_span`` (or *None*).
         :return: The same response object, with its body_iterator replaced.
         """
-        # When tracing is disabled there is nothing to wrap — skip the
-        # extra async-generator layer to avoid unnecessary overhead on
-        # every streaming chunk.
         if self._tracing is None:
             return response
 
-        # Inner wrap: trace_stream ends the span when iteration completes.
         response.body_iterator = self._tracing.trace_stream(response.body_iterator, otel_span)
-
-        # Outer wrap: detach span context and baggage after all chunks are sent.
-        original_iterator = response.body_iterator
-        tracing = self._tracing  # capture for the closure
-
-        async def _cleanup_iter():  # type: ignore[return-value]
-            try:
-                async for chunk in original_iterator:
-                    yield chunk
-            finally:
-                tracing.detach_context(span_token)
-                tracing.detach_baggage(baggage_token)
-
-        response.body_iterator = _cleanup_iter()
         return response
 
     # ------------------------------------------------------------------
@@ -310,33 +280,14 @@ class InvocationAgentServerHost(AgentServerHost):
         session_id = _sanitize_id(raw_session_id, str(uuid.uuid4()))
         request.state.session_id = session_id
 
-        baggage_token = None
-        span_token = None
-        response: Optional[Response] = None
-        streaming_wrapped = False
-
-        try:
-            otel_span = None
-            if self._tracing is not None:
-                otel_span = self._tracing.start_request_span(
-                    request.headers,
-                    invocation_id,
-                    span_operation="invoke_agent",
-                    operation_name="invoke_agent",
-                    session_id=session_id,
-                )
-                # Make the span the current span in context so that
-                # child spans created by framework handlers are correctly
-                # parented under this span instead of appearing as siblings.
-                span_token = self._tracing.set_current_span(otel_span)
-                self._safe_set_attrs(otel_span, {
-                    InvocationConstants.ATTR_SPAN_INVOCATION_ID: invocation_id,
-                    InvocationConstants.ATTR_SPAN_SESSION_ID: session_id,
-                })
-                baggage_token = self._tracing.set_baggage({
-                    InvocationConstants.ATTR_BAGGAGE_INVOCATION_ID: invocation_id,
-                    InvocationConstants.ATTR_BAGGAGE_SESSION_ID: session_id,
-                })
+        with self._request_span(
+            request.headers, invocation_id, "invoke_agent",
+            operation_name="invoke_agent", session_id=session_id,
+        ) as otel_span:
+            self._safe_set_attrs(otel_span, {
+                InvocationConstants.ATTR_SPAN_INVOCATION_ID: invocation_id,
+                InvocationConstants.ATTR_SPAN_SESSION_ID: session_id,
+            })
 
             try:
                 response = await self._dispatch_invoke(request)
@@ -378,24 +329,31 @@ class InvocationAgentServerHost(AgentServerHost):
                 )
 
             if isinstance(response, StreamingResponse):
-                wrapped = self._wrap_streaming_response(response, otel_span, baggage_token, span_token)
-                streaming_wrapped = True
-                return wrapped
+                # trace_stream will end the span when streaming completes
+                return self._wrap_streaming_response(response, otel_span)
 
-            # Non-streaming: end the span immediately.
+            # Non-streaming: end span now
             if self._tracing is not None:
                 self._tracing.end_span(otel_span)
 
             return response
-        finally:
-            # For non-streaming responses (or error paths that returned
-            # before reaching _wrap_streaming_response), detach context
-            # and baggage immediately.  Streaming responses handle this in
-            # _wrap_streaming_response's cleanup iterator instead.
-            if not streaming_wrapped:
-                if self._tracing is not None:
-                    self._tracing.detach_context(span_token)
-                    self._tracing.detach_baggage(baggage_token)
+
+    def _request_span(
+        self,
+        headers: Any,
+        invocation_id: str,
+        span_operation: str,
+        operation_name: Optional[str] = None,
+        session_id: str = "",
+    ) -> Any:
+        """Create a request span — returns a no-op context manager when tracing is off."""
+        if self._tracing is not None:
+            return self._tracing.request_span(
+                headers, invocation_id, span_operation,
+                operation_name=operation_name, session_id=session_id,
+                end_on_exit=False,
+            )
+        return contextlib.nullcontext(None)
 
     async def _traced_invocation_endpoint(
         self,
