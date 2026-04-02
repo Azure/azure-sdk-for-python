@@ -421,17 +421,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         lease = kwargs.pop('lease', None)
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modify_conditions(kwargs)
-        # Container delete doesn't support etag/match_condition/if_tags at the REST level;
-        # pop to prevent leaking to the transport.
-        mod_conditions.pop('etag', None)
-        mod_conditions.pop('match_condition', None)
-        mod_conditions.pop('if_tags', None)
         timeout = kwargs.pop('timeout', None)
         try:
             self._client.container.delete(
                 timeout=timeout,
+                if_modified_since=mod_conditions.get('if_modified_since'),
+                if_unmodified_since=mod_conditions.get('if_unmodified_since'),
                 **access_conditions,
-                **mod_conditions,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -637,8 +633,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
+                if_modified_since=mod_conditions.get('if_modified_since'),
                 **access_conditions,
-                **mod_conditions,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -791,8 +787,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 timeout=timeout,
                 access=public_access,
                 cls=return_response_headers,
+                if_modified_since=mod_conditions.get('if_modified_since'),
+                if_unmodified_since=mod_conditions.get('if_unmodified_since'),
                 **access_conditions,
-                **mod_conditions,
                 **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)

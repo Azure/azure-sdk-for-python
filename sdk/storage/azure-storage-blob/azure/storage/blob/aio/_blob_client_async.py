@@ -2055,7 +2055,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
                 timeout=kwargs.pop('timeout', None),
                 snapshot=self.snapshot,
                 version_id=version_id,
-                **mod_conditions,
+                if_tags=mod_conditions.get('if_tags'),
                 **access_conditions,
                 **kwargs)
         except HttpResponseError as error:
@@ -2248,8 +2248,8 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
                 list_type=block_list_type,
                 snapshot=self.snapshot,
                 timeout=kwargs.pop('timeout', None),
+                if_tags=mod_conditions.get('if_tags'),
                 **access_conditions,
-                **mod_conditions,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -2405,8 +2405,8 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
                 tier=premium_page_blob_tier,
                 timeout=kwargs.pop('timeout', None),
                 snapshot=self.snapshot,
+                if_tags=mod_conditions.get('if_tags'),
                 **access_conditions,
-                **mod_conditions,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
