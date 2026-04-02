@@ -110,17 +110,15 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         Keyword arguments are passed to the OpenAI client constructor.
 
         The OpenAI client constructor is called with:
-        * ``base_url`` set to the endpoint provided to the AIProjectClient constructor, with "/openai/v1" appended.
-        Can be overridden by passing ``base_url`` as a keyword argument.
-        * If :class:`~azure.ai.projects.AIProjectClient` was constructed with a bearer token, ``api_key`` is set
-        to a get_bearer_token_provider() callable that uses the TokenCredential provided to the AIProjectClient
-        constructor, with scope ``https://ai.azure.com/.default``.
-        Can be overridden by passing ``api_key`` as a keyword argument.
-        * If :class:`~azure.ai.projects.AIProjectClient` was constructed with ``api-key``, it is passed to the
-        OpenAI constructor as is.
-        Can be overridden by passing ``api_key`` as a keyword argument.
 
-        .. note:: The packages ``openai`` and ``azure.identity`` must be installed prior to calling this method.
+        * ``base_url`` set to the endpoint provided to the AIProjectClient constructor, with "/openai/v1" appended.
+          Can be overridden by passing ``base_url`` as a keyword argument.
+        * If :class:`~azure.ai.projects.AIProjectClient` was constructed with a bearer token, ``api_key`` is set
+          to a get_bearer_token_provider() callable that uses the TokenCredential provided to the AIProjectClient
+          constructor, with scope ``https://ai.azure.com/.default``.
+          Can be overridden by passing ``api_key`` as a keyword argument.
+        * If :class:`~azure.ai.projects.AIProjectClient` was constructed with ``api-key``, it is passed to the
+          OpenAI constructor as is. Can be overridden by passing ``api_key`` as a keyword argument.
 
         :return: An authenticated OpenAI client
         :rtype: ~openai.OpenAI
