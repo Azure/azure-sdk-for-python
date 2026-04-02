@@ -41,7 +41,6 @@ from .._utils.utils import ClientMixinABC
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -778,7 +777,7 @@ def build_application_portal_registry_package_request(**kwargs: Any) -> HttpRequ
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_application_list_request(**kwargs: Any) -> HttpRequest:
+def build_application_list_operations_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1499,7 +1498,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Application]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.Application]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1551,7 +1550,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.Application],
+                list[_models.Application],
                 deserialized.get("value", []),
             )
             if cls:
@@ -1590,7 +1589,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Application]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.Application]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1641,7 +1640,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.Application],
+                list[_models.Application],
                 deserialized.get("value", []),
             )
             if cls:
@@ -1806,7 +1805,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Plan]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.Plan]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1859,7 +1858,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.Plan],
+                list[_models.Plan],
                 deserialized.get("value", []),
             )
             if cls:
@@ -2223,7 +2222,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[List[_models.ManagedIdentityToken]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.ManagedIdentityToken]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2284,7 +2283,7 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.ManagedIdentityToken],
+                list[_models.ManagedIdentityToken],
                 deserialized.get("value", []),
             )
             if cls:
@@ -3429,7 +3428,7 @@ class ApplicationDefinitionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.ApplicationDefinition]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.ApplicationDefinition]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3481,7 +3480,7 @@ class ApplicationDefinitionsOperations:
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.ApplicationDefinition],
+                list[_models.ApplicationDefinition],
                 deserialized.get("value", []),
             )
             if cls:
@@ -3521,7 +3520,7 @@ class ApplicationDefinitionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.ApplicationDefinition]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.ApplicationDefinition]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3572,7 +3571,7 @@ class ApplicationDefinitionsOperations:
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.ApplicationDefinition],
+                list[_models.ApplicationDefinition],
                 deserialized.get("value", []),
             )
             if cls:
@@ -4428,7 +4427,7 @@ class _ApplicationClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> ItemPaged["_models.Operation"]:
+    def list_operations(self, **kwargs: Any) -> ItemPaged["_models.Operation"]:
         """Lists all of the available Microsoft.Solutions REST API operations.
 
         :return: An iterator like instance of Operation
@@ -4438,7 +4437,7 @@ class _ApplicationClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Operation]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.Operation]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4451,7 +4450,7 @@ class _ApplicationClientOperationsMixin(
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_application_list_request(
+                _request = build_application_list_operations_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -4488,7 +4487,7 @@ class _ApplicationClientOperationsMixin(
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.Operation],
+                list[_models.Operation],
                 deserialized.get("value", []),
             )
             if cls:

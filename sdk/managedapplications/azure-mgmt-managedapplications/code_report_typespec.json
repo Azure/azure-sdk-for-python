@@ -44,7 +44,7 @@
             "is_async": false,
             "overloads": []
           },
-          "list": {
+          "list_operations": {
             "parameters": {
               "self": {
                 "default": null,
@@ -13259,7 +13259,7 @@
             "is_async": true,
             "overloads": []
           },
-          "list": {
+          "list_operations": {
             "parameters": {
               "self": {
                 "default": null,

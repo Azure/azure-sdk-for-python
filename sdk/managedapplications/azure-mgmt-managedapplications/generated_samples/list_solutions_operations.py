@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.list()
+    response = client.list_operations()
     for item in response:
         print(item)
 

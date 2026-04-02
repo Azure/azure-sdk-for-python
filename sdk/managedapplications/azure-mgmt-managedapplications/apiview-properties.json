@@ -119,7 +119,7 @@
         "azure.mgmt.managedapplications.aio.operations.JitRequestsOperations.list_by_subscription": "Microsoft.Solutions.JitRequestDefinitions.listBySubscription",
         "azure.mgmt.managedapplications.ApplicationClient.portal_registry_package": "Microsoft.Solutions.portalRegistryPackage",
         "azure.mgmt.managedapplications.aio.ApplicationClient.portal_registry_package": "Microsoft.Solutions.portalRegistryPackage",
-        "azure.mgmt.managedapplications.ApplicationClient.list": "Microsoft.Solutions.Operations.list",
-        "azure.mgmt.managedapplications.aio.ApplicationClient.list": "Microsoft.Solutions.Operations.list"
+        "azure.mgmt.managedapplications.ApplicationClient.list_operations": "Microsoft.Solutions.Operations.list",
+        "azure.mgmt.managedapplications.aio.ApplicationClient.list_operations": "Microsoft.Solutions.Operations.list"
     }
 }
