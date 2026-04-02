@@ -15,7 +15,7 @@ from azure.mgmt.managementgroups import ManagementGroupsMgmtClient
     pip install azure-identity
     pip install azure-mgmt-managementgroups
 # USAGE
-    python get_management_group_with_expand.py
+    python patch_hierarchy_settings.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,12 +29,18 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.management_groups.get(
-        group_id="20000000-0001-0000-0000-000000000000",
+    response = client.hierarchy_settings.update(
+        group_id="root",
+        create_tenant_settings_request={
+            "properties": {
+                "defaultManagementGroup": "/providers/Microsoft.Management/managementGroups/DefaultGroup",
+                "requireAuthorizationForGroupCreation": True,
+            }
+        },
     )
     print(response)
 
 
-# x-ms-original-file: 2023-04-01/GetManagementGroupWithExpand.json
+# x-ms-original-file: 2023-04-01/PatchHierarchySettings.json
 if __name__ == "__main__":
     main()
