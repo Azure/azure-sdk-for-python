@@ -51,7 +51,7 @@ class TestRunsOperations(_GeneratedTestRunsOperations):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self._config = _ReportingEndpointConfig(self._config)
+        self._config = _ReportingEndpointConfig(self._config)  # type: ignore[assignment]
 
 
 class BrowserSessionsOperations(_GeneratedBrowserSessionsOperations):
@@ -66,7 +66,7 @@ class BrowserSessionsOperations(_GeneratedBrowserSessionsOperations):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self._config = _ReportingEndpointConfig(self._config)
+        self._config = _ReportingEndpointConfig(self._config)  # type: ignore[assignment]
 
 
 __all__: list[str] = [

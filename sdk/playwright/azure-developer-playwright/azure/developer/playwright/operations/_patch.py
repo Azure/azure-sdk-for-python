@@ -22,6 +22,10 @@ def _to_reporting_endpoint(endpoint: str) -> str:
     (e.g. https://{region}.reporting.api.playwright.microsoft.com) while
     all other operations use the base subdomain
     (e.g. https://{region}.api.playwright.microsoft.com).
+
+    :param str endpoint: The base API endpoint URL.
+    :returns: The reporting API endpoint URL.
+    :rtype: str
     """
     return endpoint.replace(".api.playwright.", ".reporting.api.playwright.")
 
@@ -80,7 +84,7 @@ class TestRunsOperations(_GeneratedTestRunsOperations):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self._config = _ReportingEndpointConfig(self._config)
+        self._config = _ReportingEndpointConfig(self._config)  # type: ignore[assignment]
 
 
 class BrowserSessionsOperations(_GeneratedBrowserSessionsOperations):
@@ -95,7 +99,7 @@ class BrowserSessionsOperations(_GeneratedBrowserSessionsOperations):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self._config = _ReportingEndpointConfig(self._config)
+        self._config = _ReportingEndpointConfig(self._config)  # type: ignore[assignment]
 
 
 __all__: list[str] = [

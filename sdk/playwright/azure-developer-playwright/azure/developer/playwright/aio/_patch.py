@@ -20,6 +20,8 @@ class PlaywrightClient(_GeneratedPlaywrightClient):
 
     The generated scope (playwright.microsoft.com) is incorrect due to a
     spec bug. This override sets the working scope until the spec is fixed.
+
+    :keyword str api_version: The API version to use for this operation.
     """
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
