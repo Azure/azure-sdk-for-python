@@ -236,13 +236,14 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # Reformat tool_calls for cleaner evaluation.
         # Reconstruct a proper message structure from the already-extracted tool call dicts:
-        # - one assistant message containing all tool_call content items (no text)
+        # - one assistant message per tool_call content item
         # - one role="tool" message per tool call that has an attached tool_result
         #   (only present when response was parsed via _parse_tools_from_response)
         if isinstance(eval_input.get("tool_calls"), list):
             tool_call_items = eval_input["tool_calls"]
-            messages = [{"role": "assistant", "content": tool_call_items}]
+            messages = []
             for tc in tool_call_items:
+                messages.append({"role": "assistant", "content": [tc]})
                 if "tool_result" in tc:
                     messages.append({
                         "role": "tool",
