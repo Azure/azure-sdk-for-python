@@ -1251,12 +1251,6 @@ class TestEvaluate:
             expected_results_json = json.load(f)
         assert converted_results_json == expected_results_json
 
-        builtin_results = converted_results["_evaluation_results_list"][0]["results"]
-        labelgrader_result = next(result for result in builtin_results if result["name"] == "labelgrader")
-        fluency_result = next(result for result in builtin_results if result["name"] == "Fluency")
-        assert labelgrader_result["properties"] == {"type": None}
-        assert fluency_result["properties"] == {"gpt_fluency": 1.0}
-
         # Verify metrics preserved
         assert converted_results["metrics"]["overall_score"] == 0.75
 
@@ -1370,12 +1364,15 @@ class TestEvaluate:
                 "rows": [
                     {
                         "inputs.query": "test query",
-                        "outputs.friendly_evaluator_gh4y.custom_score": 4.5,
-                        "outputs.friendly_evaluator_gh4y.custom_threshold": 3,
+                        "outputs.friendly_evaluator_gh4y.score": 4.5,
+                        "outputs.friendly_evaluator_gh4y.threshold": 3,
                         "outputs.friendly_evaluator_gh4y.label": False,
-                        "outputs.friendly_evaluator_gh4y.custom_observation_flag": False,
-                        "outputs.friendly_evaluator_gh4y.explanation": "Detailed attack reasoning",
-                        "outputs.friendly_evaluator_gh4y.attack_phase": "probe",
+                        "outputs.friendly_evaluator_gh4y.reason": "The response was warm",
+                        "outputs.friendly_evaluator_gh4y.properties": {
+                            "observation_flag": False,
+                            "explanation": "Detailed attack reasoning",
+                            "attack_phase": "probe",
+                        },
                     }
                 ],
                 "studio_url": None,
@@ -1394,7 +1391,7 @@ class TestEvaluate:
                         "name": "friendly_evaluator_gh4y",
                         "type": "quality",
                         "metrics": ["score"],
-                        "evaluator_name": "builtin.friendly_evaluator_gh4y",
+                        "evaluator_name": "friendly_evaluator_gh4y",
                     }
                 ]
             },
@@ -1407,7 +1404,7 @@ class TestEvaluate:
             "attack_phase": "probe",
         }
         assert property_result["score"] == 4.5
-        assert property_result["reason"] is None
+        assert property_result["reason"] == "The response was warm"
         assert "explanation" not in property_result
         assert property_result["threshold"] == 3
         assert property_result["label"] is False

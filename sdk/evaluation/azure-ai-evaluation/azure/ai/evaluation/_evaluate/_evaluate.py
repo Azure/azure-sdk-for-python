@@ -2712,14 +2712,11 @@ def _update_metric_value(
     result_name_nested_child_level = None
     derived_passed = None
 
-    property_name = None if metric_key == metric else _get_result_property_name(metric_key)
-    if property_name and include_property_bag:
-        _ensure_properties_dict(metric_dict)
-        metric_dict["properties"][property_name] = metric_value
+    if metric_key == "properties" and isinstance(metric_value, dict):
+        metric_dict["properties"] = metric_value
         result_name = "properties"
-        result_name_child_level = property_name
 
-    if metric_key.endswith("_score") or metric_key == "score":
+    elif metric_key.endswith("_score") or metric_key == "score":
         metric_dict["score"] = metric_value
         result_name = "score"
     elif metric_key == "passed":

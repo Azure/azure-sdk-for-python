@@ -208,9 +208,6 @@
                         "temperature": 1.0,
                         "top_p": 1.0,
                         "max_completions_tokens": 4096
-                    },
-                    "properties": {
-                        "type": null
                     }
                 },
                 {
@@ -273,9 +270,6 @@
                                 "content": "<S0>Let's think step by step: The response \"washington, d.c.\" is extremely brief and lacks any sentence structure, grammatical context, or vocabulary range. It does not convey a clear idea or message, making it difficult to understand. Based on the definitions, this aligns with Emergent Fluency as it shows minimal command of the language and is largely incomprehensible.</S0>  \n<S1>The response is fragmented and does not demonstrate any fluency traits such as grammar, vocabulary, or coherence. It is incomprehensible as a standalone statement.</S1>  \n<S2>1</S2>  "
                             }
                         ]
-                    },
-                    "properties": {
-                        "gpt_fluency": 1.0
                     }
                 },
                 {
@@ -404,9 +398,6 @@
                         "temperature": 1.0,
                         "top_p": 1.0,
                         "max_completions_tokens": 4096
-                    },
-                    "properties": {
-                        "type": null
                     }
                 },
                 {
