@@ -27,15 +27,8 @@ from typing import Any, AsyncGenerator, Dict, Optional, Union
 from copilot import CopilotClient
 from copilot.generated.session_events import SessionEventType
 
-# These types move between SDK versions/platforms. Try multiple paths.
-try:
-    from copilot import PermissionRequestResult, ProviderConfig
-except ImportError:
-    try:
-        from copilot.types import PermissionRequestResult, ProviderConfig
-    except ImportError:
-        PermissionRequestResult = None
-        ProviderConfig = dict
+# Import types from copilot SDK
+from copilot.session import PermissionRequestResult, ProviderConfig
 
 from azure.ai.agentserver.core.constants import Constants
 from azure.ai.agentserver.core.logger import get_logger
@@ -302,9 +295,7 @@ class CopilotAdapter(FoundryCBAgent):
         acl = self._acl
 
         def _perm_result(**kwargs):
-            if PermissionRequestResult is not None:
-                return PermissionRequestResult(**kwargs)
-            return kwargs
+            return PermissionRequestResult(**kwargs)
 
         def _on_permission(req, _ctx):
             kind = getattr(req, "kind", "unknown")
@@ -898,27 +889,13 @@ class GitHubCopilotAdapter(CopilotAdapter):
             if history:
                 client = await self._ensure_client()
                 config = self._refresh_token_if_needed()
-                acl = self._acl
-
-                def _perm_result_boot(**kwargs):
-                    if PermissionRequestResult is not None:
-                        return PermissionRequestResult(**kwargs)
-                    return kwargs
-
-                def _on_permission_boot(req, _ctx):
-                    kind = getattr(req, "kind", "unknown")
-                    if acl is None:
-                        return _perm_result_boot(kind="approved")
-                    req_dict = vars(req) if not isinstance(req, dict) else req
-                    if acl.is_allowed(req_dict):
-                        return _perm_result_boot(kind="approved")
-                    logger.warning(f"ACL denied tool request during history bootstrap: kind={kind}")
-                    return _perm_result_boot(kind="denied-by-rules", rules=[])
+                def _approve_all(req, _ctx):
+                    return PermissionRequestResult(kind="approved")
 
                 sdk_config = {k: v for k, v in config.items() if not k.startswith("_")}
                 session = await client.create_session(
                     **sdk_config,
-                    on_permission_request=_on_permission_boot,
+                    on_permission_request=_approve_all,
                     streaming=True,
                 )
                 preamble = (
