@@ -53,7 +53,6 @@ def _convert_mod_error(error):
 
 
 def _any_conditions(blob_kwargs):
-    """Check if any access conditions are set in the blob-level kwargs."""
     return any([
         blob_kwargs.get('if_modified_since'),
         blob_kwargs.get('if_unmodified_since'),

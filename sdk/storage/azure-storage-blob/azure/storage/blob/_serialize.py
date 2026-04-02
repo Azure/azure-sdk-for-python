@@ -101,11 +101,6 @@ def get_access_conditions(lease: Optional[Union["BlobLeaseClient", str]]) -> Dic
 
 
 def _pop_etag_match_condition(kwargs: Dict[str, Any]) -> Dict[str, Any]:
-    """Pop etag/match_condition from kwargs, converting legacy if_match/if_none_match.
-
-    Returns a dict with 'etag' and/or 'match_condition' if set.
-    Raises ValueError if etag is provided without match_condition.
-    """
     result: Dict[str, Any] = {}
     match_condition = kwargs.pop('match_condition', None)
     etag = kwargs.pop('etag', None)
@@ -140,11 +135,6 @@ def _pop_etag_match_condition(kwargs: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def get_modify_conditions(kwargs: Dict[str, Any]) -> Dict[str, Any]:
-    """Extract modify conditions from kwargs.
-
-    Converts user-facing etag/match_condition (and legacy if_match/if_none_match)
-    into the etag/match_condition format expected by the generated operations.
-    """
     result = _pop_etag_match_condition(kwargs)
     val = kwargs.pop('if_modified_since', None)
     if val is not None:
@@ -159,12 +149,6 @@ def get_modify_conditions(kwargs: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def get_blob_modify_conditions(kwargs: Dict[str, Any]) -> Dict[str, Any]:
-    """Extract blob modify conditions from kwargs (no if_tags).
-
-    Uses if_match/if_none_match (not etag/match_condition) because the generated
-    operations that use BlobModifiedAccessConditions (set_tags, get_tags) accept
-    if_match/if_none_match directly.
-    """
     if_match, if_none_match = _get_match_headers(kwargs, 'match_condition', 'etag')
     result: Dict[str, Any] = {}
     val = kwargs.pop('if_modified_since', None)
