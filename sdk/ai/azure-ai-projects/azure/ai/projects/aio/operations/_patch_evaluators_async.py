@@ -65,14 +65,14 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         :param folder: Path to the local folder containing files to upload.
         :type folder: str
         :param file_pattern: Optional regex pattern to filter files. Only files
-            whose name matches this pattern will be uploaded.
+         whose name matches this pattern will be uploaded.
         :type file_pattern: Optional[re.Pattern]
         :param folder_exclusions_pattern: Optional regex pattern to exclude
-            directories. Directories whose name matches this pattern will be skipped.
+         directories. Directories whose name matches this pattern will be skipped.
         :type folder_exclusions_pattern: Optional[re.Pattern]
         :raises ValueError: If the folder contains no uploadable files.
         :raises HttpResponseError: Re-raised with a friendlier message on
-            ``AuthorizationPermissionMismatch``.
+         ``AuthorizationPermissionMismatch``.
         """
         files_uploaded = False
 
