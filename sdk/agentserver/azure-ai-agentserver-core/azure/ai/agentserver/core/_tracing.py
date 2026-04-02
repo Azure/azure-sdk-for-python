@@ -144,7 +144,8 @@ class TracingHelper:
             trace_provider.add_span_processor(enrichment)
 
         if connection_string:
-            self._setup_azure_monitor(connection_string, resource, trace_provider)
+            self._setup_azure_monitor(
+                connection_string, resource, trace_provider)
 
         # OTLP exporter
         otlp_endpoint = _config.resolve_otlp_endpoint()
@@ -185,7 +186,8 @@ class TracingHelper:
         if not baggage_header:
             return ctx
 
-        leaf_span_id = _parse_baggage_key(baggage_header, _LEAF_CUSTOMER_SPAN_ID)
+        leaf_span_id = _parse_baggage_key(
+            baggage_header, _LEAF_CUSTOMER_SPAN_ID)
         if not leaf_span_id:
             return ctx
 
@@ -807,9 +809,10 @@ def _setup_log_export(resource: Any, connection_string: str) -> None:
     log_provider = LoggerProvider(resource=resource)
     set_logger_provider(log_provider)
     log_exporter = AzureMonitorLogExporter(connection_string=connection_string)
-    log_provider.add_log_record_processor(BatchLogRecordProcessor(log_exporter))
+    log_provider.add_log_record_processor(
+        BatchLogRecordProcessor(log_exporter))
     handler = LoggingHandler(logger_provider=log_provider)
-    logging.getLogger("azure.ai.agentserver").addHandler(handler)
+    logging.getLogger().addHandler(handler)
     _az_log_export_configured = True
     logger.info("Application Insights log exporter configured.")
 
@@ -878,7 +881,8 @@ def _setup_otlp_log_export(resource: Any, endpoint: str) -> None:
         set_logger_provider(log_provider)
 
     log_exporter = OTLPLogExporter(endpoint=endpoint)
-    log_provider.add_log_record_processor(BatchLogRecordProcessor(log_exporter))  # type: ignore[union-attr]
+    log_provider.add_log_record_processor(
+        BatchLogRecordProcessor(log_exporter))  # type: ignore[union-attr]
     _otlp_log_export_configured = True
     logger.info("OTLP log exporter configured (endpoint=%s).", endpoint)
 
@@ -900,7 +904,8 @@ def _extract_w3c_carrier(headers: Mapping[str, str]) -> dict[str, str]:
         in *headers*.
     :rtype: dict[str, str]
     """
-    result: dict[str, str] = {k: v for k in _W3C_HEADERS if (v := headers.get(k)) is not None}
+    result: dict[str, str] = {k: v for k in _W3C_HEADERS if (
+        v := headers.get(k)) is not None}
     return result
 
 
@@ -965,13 +970,15 @@ def _override_parent_span_id(ctx: Any, hex_span_id: str) -> Any:
 
     # A valid OTel span ID is exactly 16 hex characters (8 bytes).
     if len(hex_span_id) != 16:
-        logger.warning("Invalid leaf_customer_span_id length in baggage: %r (expected 16 hex chars)", hex_span_id)
+        logger.warning(
+            "Invalid leaf_customer_span_id length in baggage: %r (expected 16 hex chars)", hex_span_id)
         return ctx
 
     try:
         new_span_id = int(hex_span_id, 16)
     except (ValueError, TypeError):
-        logger.warning("Invalid leaf_customer_span_id in baggage: %r", hex_span_id)
+        logger.warning(
+            "Invalid leaf_customer_span_id in baggage: %r", hex_span_id)
         return ctx
 
     if new_span_id == 0:
