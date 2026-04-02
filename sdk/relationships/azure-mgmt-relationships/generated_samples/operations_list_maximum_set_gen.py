@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.relationships import RelationshipsClient
+from azure.mgmt.relationships import RelationshipsMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.relationships import RelationshipsClient
 
 
 def main():
-    client = RelationshipsClient(
+    client = RelationshipsMgmtClient(
         credential=DefaultAzureCredential(),
     )
 

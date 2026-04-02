@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import RelationshipsClientConfiguration
+from ._configuration import RelationshipsMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import DependencyOfRelationshipsOperations, Operations, ServiceGroupMemberRelationshipsOperations
 
@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class RelationshipsClient:
+class RelationshipsMgmtClient:
     """Microsoft.Relationships Resource Provider management API.
 
     :ivar operations: Operations operations
@@ -66,7 +66,7 @@ class RelationshipsClient:
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = RelationshipsClientConfiguration(
+        self._config = RelationshipsMgmtClientConfiguration(
             credential=credential,
             base_url=cast(str, base_url),
             cloud_setting=cloud_setting,

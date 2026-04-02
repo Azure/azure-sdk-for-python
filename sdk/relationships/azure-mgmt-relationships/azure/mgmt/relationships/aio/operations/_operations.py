@@ -45,7 +45,7 @@ from ...operations._operations import (
     build_service_group_member_relationships_delete_request,
     build_service_group_member_relationships_get_request,
 )
-from .._configuration import RelationshipsClientConfiguration
+from .._configuration import RelationshipsMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -59,14 +59,14 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.relationships.aio.RelationshipsClient`'s
+        :class:`~azure.mgmt.relationships.aio.RelationshipsMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: RelationshipsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: RelationshipsMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -166,14 +166,14 @@ class DependencyOfRelationshipsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.relationships.aio.RelationshipsClient`'s
+        :class:`~azure.mgmt.relationships.aio.RelationshipsMgmtClient`'s
         :attr:`dependency_of_relationships` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: RelationshipsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: RelationshipsMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -597,14 +597,14 @@ class ServiceGroupMemberRelationshipsOperations:  # pylint: disable=name-too-lon
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.relationships.aio.RelationshipsClient`'s
+        :class:`~azure.mgmt.relationships.aio.RelationshipsMgmtClient`'s
         :attr:`service_group_member_relationships` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: RelationshipsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: RelationshipsMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

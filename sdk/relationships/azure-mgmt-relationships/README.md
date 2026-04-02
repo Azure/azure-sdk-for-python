@@ -34,9 +34,9 @@ With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.relationships import RelationshipsClient
+from azure.mgmt.relationships import RelationshipsMgmtClient
 
-client = RelationshipsClient(credential=DefaultAzureCredential())
+client = RelationshipsMgmtClient(credential=DefaultAzureCredential())
 ```
 
 ## Examples
