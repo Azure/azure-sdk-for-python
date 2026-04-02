@@ -49,7 +49,7 @@ class FriendlyEvaluator:
 
         :param query: The original user query.
         :param response: The response to evaluate.
-        :return: A dict with score, label, reason, and explanation.
+        :return: A dict with score, label, reason, threshold, passed, and properties.
         """
         messages = build_evaluation_messages(query, response)
 
