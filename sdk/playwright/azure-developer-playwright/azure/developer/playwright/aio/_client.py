@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING, Union
+from typing import Any, Awaitable, TYPE_CHECKING, Union  # pylint: disable=unused-import
 from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient

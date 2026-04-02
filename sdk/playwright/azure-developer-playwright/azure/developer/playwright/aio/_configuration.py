@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING, Union
+from typing import Any, TYPE_CHECKING, Union  # pylint: disable=unused-import
 
 from azure.core.pipeline import policies
 
