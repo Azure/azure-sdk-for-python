@@ -50,6 +50,23 @@ def add_sanitizers(test_proxy):
     playwright_workspace_id = os.environ.get("PLAYWRIGHT_WORKSPACE_ID", "00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=playwright_workspace_id, value="00000000-0000-0000-0000-000000000000")
 
+    # Sanitize browser session test endpoint (separate workspace)
+    session_endpoint = os.environ.get("PLAYWRIGHT_SESSION_ENDPOINT", "")
+    if session_endpoint:
+        session_hostname = session_endpoint.replace("https://", "").replace("http://", "")
+        session_reporting_hostname = session_hostname.replace(".api.playwright.", ".reporting.api.playwright.")
+        add_general_string_sanitizer(
+            target=session_reporting_hostname,
+            value="fake.reporting.api.playwright.microsoft.com",
+        )
+        add_general_string_sanitizer(target=session_hostname, value="fake.api.playwright.microsoft.com")
+
+    session_workspace_id = os.environ.get("PLAYWRIGHT_SESSION_WORKSPACE_ID", "00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=session_workspace_id, value="00000000-0000-0000-0000-000000000000")
+
+    session_id = os.environ.get("PLAYWRIGHT_SESSION_ID", "00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=session_id, value="00000000-0000-0000-0000-000000000000")
+
     # Sanitize cookies and tokens
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")

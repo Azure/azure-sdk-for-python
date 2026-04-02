@@ -3,6 +3,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
+import os
+
 import pytest
 from devtools_testutils import recorded_by_proxy
 
@@ -18,15 +20,15 @@ class TestPlaywrightWorkspacesOperations(PlaywrightClientTestBase):
             workspace_id=playwright_workspace_id,
         )
         assert response is not None
-        assert "workspaceId" in response
+        assert "id" in response
 
     @pytest.mark.live_test_only
-    @PlaywrightPreparer()
-    @recorded_by_proxy
-    def test_workspaces_get_browsers(self, playwright_endpoint, playwright_workspace_id):
-        client = self.create_client(endpoint=playwright_endpoint)
+    def test_workspaces_get_browsers(self):
+        endpoint = os.environ["PLAYWRIGHT_ENDPOINT"]
+        workspace_id = os.environ["PLAYWRIGHT_WORKSPACE_ID"]
+        client = self.create_client(endpoint=endpoint)
         response = client.workspaces.get_browsers(
-            workspace_id=playwright_workspace_id,
+            workspace_id=workspace_id,
             os="Linux",
         )
         assert response is None

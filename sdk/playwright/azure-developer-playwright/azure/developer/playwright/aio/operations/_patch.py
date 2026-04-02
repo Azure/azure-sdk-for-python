@@ -9,6 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import Any, Optional, Union
 
+from ._operations import BrowserSessionsOperations as _GeneratedBrowserSessionsOperations
 from ._operations import TestRunsOperations as _GeneratedTestRunsOperations
 from ._operations import WorkspacesOperations as _GeneratedWorkspacesOperations
 from ... import models as _models
@@ -53,9 +54,25 @@ class TestRunsOperations(_GeneratedTestRunsOperations):
         self._config = _ReportingEndpointConfig(self._config)
 
 
+class BrowserSessionsOperations(_GeneratedBrowserSessionsOperations):
+    """Customized BrowserSessionsOperations that routes requests to the reporting subdomain.
+
+    The browser-sessions API is served from a different subdomain
+    (*.reporting.api.playwright.microsoft.com) than the main API
+    (*.api.playwright.microsoft.com). This override wraps the shared
+    config with a proxy that returns the reporting endpoint, without
+    copying or mutating the original config object.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self._config = _ReportingEndpointConfig(self._config)
+
+
 __all__: list[str] = [
     "WorkspacesOperations",
     "TestRunsOperations",
+    "BrowserSessionsOperations",
 ]
 
 
