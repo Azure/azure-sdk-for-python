@@ -18,6 +18,7 @@
     (`gen_ai.voice.input_audio_format`, `gen_ai.voice.output_audio_format`).
   - **First-token latency**: Time from `response.create` to first `response.audio.delta` or
     `response.text.delta`, recorded as `gen_ai.voice.first_token_latency_ms`.
+    `response.text.delta` is used for latency detection only and is not tracked as a normal recv event.
   - **Turn count**: Number of completed responses (`response.done`) per session
     (`gen_ai.voice.turn_count`).
   - **Interruption count**: Number of `response.cancel` sends per session

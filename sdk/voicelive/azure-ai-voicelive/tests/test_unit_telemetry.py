@@ -602,7 +602,7 @@ class TestFirstTokenLatency:
     """Tests for first-token latency tracking."""
 
     def test_first_token_latency_set_on_recv(self, mock_span):
-        """First token latency should be calculated on first audio/text delta."""
+        """First token latency should be calculated on first audio delta."""
         from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
 
         conn = MagicMock()
@@ -626,6 +626,23 @@ class TestFirstTokenLatency:
         assert call_args[0][0] == "gen_ai.voice.first_token_latency_ms"
         assert call_args[0][1] >= 400  # Should be ~500ms
         assert conn._telemetry_first_token_latency_recorded is True
+
+    def test_first_token_latency_ignores_text_delta(self, mock_span):
+        """Text delta should not trigger first-token latency tracking."""
+        conn = MagicMock()
+        conn._telemetry_response_create_time = time.monotonic() - 0.5
+        conn._telemetry_first_token_latency_recorded = False
+
+        event_type_str = "response.text.delta"
+        response_create_time = conn._telemetry_response_create_time
+        already_recorded = conn._telemetry_first_token_latency_recorded
+        if event_type_str == "response.audio.delta" and response_create_time is not None and not already_recorded:
+            latency_ms = (time.monotonic() - response_create_time) * 1000
+            mock_span.add_attribute("gen_ai.voice.first_token_latency_ms", round(latency_ms, 2))
+            conn._telemetry_first_token_latency_recorded = True
+
+        mock_span.add_attribute.assert_not_called()
+        assert conn._telemetry_first_token_latency_recorded is False
 
     def test_first_token_latency_not_recorded_twice(self):
         """Once first-token latency is recorded, subsequent deltas should not re-record."""

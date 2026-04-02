@@ -660,6 +660,25 @@ class _VoiceLiveInstrumentorPreview:
 
                     event_type_str = str(event_type) if event_type else ""
 
+                    # --- First-token latency ---
+                    if event_type_str in (ServerEventType.RESPONSE_AUDIO_DELTA, ServerEventType.RESPONSE_TEXT_DELTA):
+                        response_create_time = getattr(conn_self, "_telemetry_response_create_time", None)
+                        already_recorded = getattr(conn_self, "_telemetry_first_token_latency_recorded", True)
+                        if response_create_time is not None and not already_recorded:
+                            latency_ms = (time.monotonic() - response_create_time) * 1000
+                            span.add_attribute(GEN_AI_VOICE_FIRST_TOKEN_LATENCY_MS, round(latency_ms, 2))
+                            # Also record on the parent connect span
+                            connect_span = getattr(conn_self, "_telemetry_span", None)
+                            if connect_span is not None:
+                                connect_span.add_attribute(GEN_AI_VOICE_FIRST_TOKEN_LATENCY_MS, round(latency_ms, 2))
+                            conn_self._telemetry_first_token_latency_recorded = True
+
+                    # We intentionally do not track text delta as a normal recv event
+                    # to keep telemetry volume lower, while still allowing it to set
+                    # first-token latency above.
+                    if event_type_str == ServerEventType.RESPONSE_TEXT_DELTA:
+                        return result
+
                     if event_type:
                         span.add_attribute("gen_ai.voice.event_type", event_type_str)
                         # Update span name to include event type (e.g. "recv session.created")
@@ -698,19 +717,6 @@ class _VoiceLiveInstrumentorPreview:
                         instrumentor._extract_session_id(conn_self, result)
                         instrumentor._extract_audio_format_from_recv(conn_self, result)
                         instrumentor._extract_agent_config_from_session(conn_self, result)
-
-                    # --- First-token latency ---
-                    if event_type_str in (ServerEventType.RESPONSE_AUDIO_DELTA, ServerEventType.RESPONSE_TEXT_DELTA):
-                        response_create_time = getattr(conn_self, "_telemetry_response_create_time", None)
-                        already_recorded = getattr(conn_self, "_telemetry_first_token_latency_recorded", True)
-                        if response_create_time is not None and not already_recorded:
-                            latency_ms = (time.monotonic() - response_create_time) * 1000
-                            span.add_attribute(GEN_AI_VOICE_FIRST_TOKEN_LATENCY_MS, round(latency_ms, 2))
-                            # Also record on the parent connect span
-                            connect_span = getattr(conn_self, "_telemetry_span", None)
-                            if connect_span is not None:
-                                connect_span.add_attribute(GEN_AI_VOICE_FIRST_TOKEN_LATENCY_MS, round(latency_ms, 2))
-                            conn_self._telemetry_first_token_latency_recorded = True
 
                     # --- Audio bytes received ---
                     if event_type_str == ServerEventType.RESPONSE_AUDIO_DELTA:
@@ -1344,7 +1350,7 @@ class _VoiceLiveInstrumentorPreview:
             logger.debug("Failed to initialize VoiceLive metrics", exc_info=True)
 
     @staticmethod
-    def _record_operation_duration(  # pylint: disable=too-many-arguments,too-many-positional-arguments
+    def _record_operation_duration(  # pylint: disable=too-many-arguments
         duration: float,
         operation_name: str,
         server_address: Optional[str] = None,
