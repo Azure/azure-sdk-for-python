@@ -32,9 +32,9 @@ class TestPlaywrightBrowserSessionsOperations(PlaywrightClientTestBase):
         PLAYWRIGHT_SESSION_ENDPOINT, PLAYWRIGHT_SESSION_WORKSPACE_ID, and
         PLAYWRIGHT_SESSION_ID environment variables.
         """
-        endpoint = os.environ["PLAYWRIGHT_SESSION_ENDPOINT"]
-        workspace_id = os.environ["PLAYWRIGHT_SESSION_WORKSPACE_ID"]
-        session_id = os.environ["PLAYWRIGHT_SESSION_ID"]
+        endpoint = os.environ.get("PLAYWRIGHT_SESSION_ENDPOINT", "https://fake.api.playwright.microsoft.com")
+        workspace_id = os.environ.get("PLAYWRIGHT_SESSION_WORKSPACE_ID", "00000000-0000-0000-0000-000000000000")
+        session_id = os.environ.get("PLAYWRIGHT_SESSION_ID", "00000000-0000-0000-0000-000000000000")
 
         client = self.create_client(endpoint=endpoint)
         response = client.browser_sessions.get(
