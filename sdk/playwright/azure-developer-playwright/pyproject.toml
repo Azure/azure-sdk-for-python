@@ -46,6 +46,9 @@ repository = "https://github.com/Azure/azure-sdk-for-python"
 version = {attr = "azure.developer.playwright._version.VERSION"}
 readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
+[tool.azure-sdk-build]
+type_check_samples = false
+
 [tool.setuptools.packages.find]
 exclude = [
     "tests*",
