@@ -1424,16 +1424,55 @@ class ResultProcessor:
         return formatted_thresholds
 
     @staticmethod
-    def _compute_result_count(output_items: List[Dict[str, Any]]) -> Dict[str, int]:
+    def _extract_expected_total(red_team_info: Optional[Dict]) -> Optional[int]:
+        """Extract the total expected objective count from red_team_info.
+
+        Each strategy/risk-category entry may carry an ``expected_count`` field
+        set by the execution layer.  Since the same risk category can appear
+        under multiple strategies (e.g. baseline + crescendo), we de-duplicate
+        by risk category to avoid double-counting.
+
+        :param red_team_info: The red_team_info tracking dictionary
+        :return: Total expected objectives, or None if information is unavailable
+        """
+        if not isinstance(red_team_info, dict):
+            return None
+
+        # Collect the max expected_count per risk category across strategies
+        per_risk: Dict[str, int] = {}
+        for risk_data in red_team_info.values():
+            if not isinstance(risk_data, dict):
+                continue
+            for risk_category, details in risk_data.items():
+                if not isinstance(details, dict):
+                    continue
+                count = details.get("expected_count")
+                if count is not None:
+                    try:
+                        per_risk[risk_category] = max(per_risk.get(risk_category, 0), int(count))
+                    except (ValueError, TypeError):
+                        continue
+
+        if not per_risk:
+            return None
+
+        return sum(per_risk.values())
+
+    @staticmethod
+    def _compute_result_count(
+        output_items: List[Dict[str, Any]],
+        expected_total: Optional[int] = None,
+    ) -> Dict[str, int]:
         """Aggregate run-level pass/fail counts from individual output items.
 
         Counts reflect attack success rate (ASR) semantics:
         - passed: attacks that were unsuccessful (system defended successfully)
         - failed: attacks that were successful (system was compromised)
-        - errored: rows that failed to process due to errors
+        - errored: rows that failed to process due to errors, plus any
+          objectives that never produced output items (expected vs actual delta)
         """
 
-        total = len(output_items)
+        actual_total = len(output_items)
         passed = failed = errored = 0
 
         for item in output_items:
@@ -1473,6 +1512,15 @@ class ResultProcessor:
                 passed += 1
             else:
                 errored += 1
+
+        # Account for objectives that never produced output items (e.g., attack
+        # execution errors that were caught and swallowed, or risk categories
+        # with zero objectives prepared).
+        if expected_total is not None and expected_total > actual_total:
+            missing = expected_total - actual_total
+            errored += missing
+
+        total = expected_total if expected_total is not None and expected_total > actual_total else actual_total
 
         return {
             "total": total,
@@ -1675,7 +1723,7 @@ class ResultProcessor:
                     if not isinstance(details, dict):
                         continue
                     status = details.get("status", "").lower()
-                    if status in ("incomplete", "failed", "timeout", "pending", "running"):
+                    if status in ("incomplete", "failed", "timeout", "pending", "running", "partial_failure"):
                         return "failed"
 
         return "completed"
@@ -1769,7 +1817,10 @@ class ResultProcessor:
         if run_name is None:
             run_name = scan_name or f"redteam-run-{run_id[:8]}"
 
-        result_count = self._compute_result_count(output_items)
+        result_count = self._compute_result_count(
+            output_items,
+            expected_total=self._extract_expected_total(red_team_info),
+        )
         per_testing_results = self._compute_per_testing_criteria(output_items)
         data_source = self._build_data_source_section(parameters, red_team_info)
         status = self._determine_run_status(scan_result, red_team_info, output_items)

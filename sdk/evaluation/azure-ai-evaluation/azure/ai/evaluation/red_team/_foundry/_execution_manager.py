@@ -122,7 +122,37 @@ class FoundryExecutionManager:
                 objectives = objectives_by_risk.get(risk_value, [])
 
                 if not objectives:
-                    self.logger.info(f"No objectives for {risk_value}, skipping")
+                    self.logger.info(f"No objectives for {risk_value}, recording as failed")
+                    # Record zero-objective categories for every requested strategy
+                    # so _determine_run_status detects the failure and errored
+                    # counts reflect the gap.
+                    from .._utils.formatting_utils import get_strategy_name
+
+                    failed_entry = {
+                        "data_file": "",
+                        "status": "failed",
+                        "error": "No attack objectives could be prepared for this risk category",
+                        "asr": 0.0,
+                        "expected_count": 0,
+                    }
+                    foundry_strats, special_strats = StrategyMapper.filter_for_foundry(attack_strategies)
+                    for strategy in foundry_strats:
+                        strategy_key = get_strategy_name(strategy)
+                        if strategy_key not in red_team_info:
+                            red_team_info[strategy_key] = {}
+                        red_team_info[strategy_key][risk_value] = {**failed_entry}
+                    for strategy in special_strats:
+                        flat = strategy if not isinstance(strategy, list) else strategy[0]
+                        if flat != AttackStrategy.Baseline:
+                            strategy_key = get_strategy_name(strategy)
+                            if strategy_key not in red_team_info:
+                                red_team_info[strategy_key] = {}
+                            red_team_info[strategy_key][risk_value] = {**failed_entry}
+                    if include_baseline:
+                        strategy_key = get_strategy_name(AttackStrategy.Baseline)
+                        if strategy_key not in red_team_info:
+                            red_team_info[strategy_key] = {}
+                        red_team_info[strategy_key][risk_value] = {**failed_entry}
                     continue
 
                 self.logger.info(f"Processing {len(objectives)} objectives for {risk_value}")
@@ -186,6 +216,7 @@ class FoundryExecutionManager:
                             "error": str(e),
                             "partial_failure": True,
                             "asr": 0.0,
+                            "expected_count": len(objectives),
                         }
                     else:
                         self.logger.error(f"Error executing attacks for {risk_value}: {e}")
@@ -197,6 +228,7 @@ class FoundryExecutionManager:
                             "status": "failed",
                             "error": str(e),
                             "asr": 0.0,
+                            "expected_count": len(objectives),
                         }
                         continue
 
@@ -223,6 +255,7 @@ class FoundryExecutionManager:
                     output_path=output_path,
                     attack_strategies=attack_strategies,
                     include_baseline=include_baseline,
+                    num_objectives=len(objectives),
                 )
 
                 for strategy_name, strategy_data in strategy_results.items():
@@ -357,6 +390,7 @@ class FoundryExecutionManager:
         output_path: str,
         attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]],
         include_baseline: bool,
+        num_objectives: int = 0,
     ) -> Dict[str, Dict[str, Any]]:
         """Group attack results by strategy for red_team_info format.
 
@@ -375,6 +409,8 @@ class FoundryExecutionManager:
         :type attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]]
         :param include_baseline: Whether baseline was included in execution
         :type include_baseline: bool
+        :param num_objectives: Number of objectives sent for this risk category
+        :type num_objectives: int
         :return: Dictionary mapping strategy name to result data
         :rtype: Dict[str, Dict[str, Any]]
         """
@@ -395,6 +431,7 @@ class FoundryExecutionManager:
                 "data_file": output_path,
                 "status": "completed",
                 "asr": overall_asr,
+                "expected_count": num_objectives,
             }
 
         # Add entries for special strategies that were executed (e.g., IndirectJailbreak via XPIA)
@@ -407,6 +444,7 @@ class FoundryExecutionManager:
                     "data_file": output_path,
                     "status": "completed",
                     "asr": overall_asr,
+                    "expected_count": num_objectives,
                 }
 
         # Add baseline entry if it was included
@@ -415,6 +453,7 @@ class FoundryExecutionManager:
                 "data_file": output_path,
                 "status": "completed",
                 "asr": overall_asr,
+                "expected_count": num_objectives,
             }
 
         # Fallback if no strategies produced results
@@ -423,6 +462,7 @@ class FoundryExecutionManager:
                 "data_file": output_path,
                 "status": "completed",
                 "asr": overall_asr,
+                "expected_count": num_objectives,
             }
 
         return results
