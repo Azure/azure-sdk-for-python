@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2026-03-01-preview",
+  "apiVersions": {
+    "Microsoft.ServiceFabric": "2026-03-01-preview"
+  },
+  "commit": "a3fd1efe038ca9c4a0042c3ee3afe6b279079ff6",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/servicefabric/resource-manager/Microsoft.ServiceFabric/ServiceFabric",
+  "emitterVersion": "0.61.2"
+}
