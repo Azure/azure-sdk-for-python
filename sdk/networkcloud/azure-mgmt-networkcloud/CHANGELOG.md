@@ -42,21 +42,21 @@
 
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
-  - Model `AgentPoolPatchParameters` moved instance variable `administrator_configuration`, `count` and `upgrade_settings` under property `properties`
-  - Model `BareMetalMachineKeySetPatchParameters` moved instance variable `expiration`, `jump_hosts_allowed` and `user_list` under property `properties`
-  - Model `BareMetalMachinePatchParameters` moved instance variable `machine_details` under property `properties`
-  - Model `BmcKeySetPatchParameters` moved instance variable `expiration` and `user_list` under property `properties`
-  - Model `CloudServicesNetworkPatchParameters` moved instance variable `additional_egress_endpoints`, `enable_default_egress_endpoints` and `storage_options` under property `properties`
-  - Model `ClusterMetricsConfigurationPatchParameters` moved instance variable `collection_interval` and `enabled_metrics` under property `properties`
-  - Model `ClusterPatchParameters` moved instance variable `aggregator_or_single_rack_definition`, `analytics_output_settings`, `cluster_location`, `cluster_service_principal`, `command_output_settings`, `compute_deployment_threshold`, `compute_rack_definitions`, `runtime_protection_configuration`, `secret_archive`, `secret_archive_settings`, `update_strategy` and `vulnerability_scanning_settings` under property `properties`
-  - Model `ConsolePatchParameters` moved instance variable `enabled`, `expiration` and `ssh_public_key` under property `properties`
-  - Model `KubernetesClusterFeaturePatchParameters` moved instance variable `options` under property `properties`
-  - Model `KubernetesClusterPatchParameters` moved instance variable `administrator_configuration`, `control_plane_node_configuration` and `kubernetes_version` under property `properties`
-  - Model `MachineSkuSlot` moved instance variable `bootstrap_protocol`, `cpu_cores`, `cpu_sockets`, `disks`, `generation`, `hardware_version`, `memory_capacity_gb`, `model`, `network_interfaces`, `total_threads` and `vendor` under property `properties`
-  - Model `RackPatchParameters` moved instance variable `rack_location` and `rack_serial_number` under property `properties`
-  - Model `StorageAppliancePatchParameters` moved instance variable `serial_number` under property `properties`
-  - Model `StorageApplianceSkuSlot` moved instance variable `capacity_gb` and `model` under property `properties`
-  - Model `VirtualMachinePatchParameters` moved instance variable `vm_image_repository_credentials` under property `properties`
+  - Model `AgentPoolPatchParameters` moved instance variable `administrator_configuration`, `count` and `upgrade_settings` under property `properties` whose type is `AgentPoolPatchProperties`
+  - Model `BareMetalMachineKeySetPatchParameters` moved instance variable `expiration`, `jump_hosts_allowed` and `user_list` under property `properties` whose type is `BareMetalMachineKeySetPatchProperties`
+  - Model `BareMetalMachinePatchParameters` moved instance variable `machine_details` under property `properties` whose type is `BareMetalMachinePatchProperties`
+  - Model `BmcKeySetPatchParameters` moved instance variable `expiration` and `user_list` under property `properties` whose type is `BmcKeySetPatchProperties`
+  - Model `CloudServicesNetworkPatchParameters` moved instance variable `additional_egress_endpoints`, `enable_default_egress_endpoints` and `storage_options` under property `properties` whose type is `CloudServicesNetworkPatchProperties`
+  - Model `ClusterMetricsConfigurationPatchParameters` moved instance variable `collection_interval` and `enabled_metrics` under property `properties` whose type is `ClusterMetricsConfigurationPatchProperties`
+  - Model `ClusterPatchParameters` moved instance variable `aggregator_or_single_rack_definition`, `analytics_output_settings`, `cluster_location`, `cluster_service_principal`, `command_output_settings`, `compute_deployment_threshold`, `compute_rack_definitions`, `runtime_protection_configuration`, `secret_archive`, `secret_archive_settings`, `update_strategy` and `vulnerability_scanning_settings` under property `properties` whose type is `ClusterPatchProperties`
+  - Model `ConsolePatchParameters` moved instance variable `enabled`, `expiration` and `ssh_public_key` under property `properties` whose type is `ConsolePatchProperties`
+  - Model `KubernetesClusterFeaturePatchParameters` moved instance variable `options` under property `properties` whose type is `KubernetesClusterFeaturePatchProperties`
+  - Model `KubernetesClusterPatchParameters` moved instance variable `administrator_configuration`, `control_plane_node_configuration` and `kubernetes_version` under property `properties` whose type is `KubernetesClusterPatchProperties`
+  - Model `MachineSkuSlot` moved instance variable `bootstrap_protocol`, `cpu_cores`, `cpu_sockets`, `disks`, `generation`, `hardware_version`, `memory_capacity_gb`, `model`, `network_interfaces`, `total_threads` and `vendor` under property `properties` whose type is `MachineSkuProperties`
+  - Model `RackPatchParameters` moved instance variable `rack_location` and `rack_serial_number` under property `properties` whose type is `RacksPatchProperties`
+  - Model `StorageAppliancePatchParameters` moved instance variable `serial_number` under property `properties` whose type is `StorageAppliancePatchProperties`
+  - Model `StorageApplianceSkuSlot` moved instance variable `capacity_gb` and `model` under property `properties` whose type is `StorageApplianceSkuProperties`
+  - Model `VirtualMachinePatchParameters` moved instance variable `vm_image_repository_credentials` under property `properties` whose type is `VirtualMachinePatchProperties`
   - Deleted or renamed model `AgentPoolConfiguration`
   - Deleted or renamed model `TagsParameter`
   - Method `AgentPoolsOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
