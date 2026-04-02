@@ -429,42 +429,6 @@ async def test_namespaced_invocation_id_attribute():
 
 
 # ---------------------------------------------------------------------------
-# Baggage tests
-# ---------------------------------------------------------------------------
-
-@pytest.mark.asyncio
-async def test_baggage_leaf_customer_span_id():
-    """Baggage leaf_customer_span_id overrides parent span ID."""
-    server = _make_tracing_server()
-    transport = ASGITransport(app=server.app)
-
-    trace_id_hex = uuid.uuid4().hex
-    original_span_id = uuid.uuid4().hex[:16]
-    leaf_span_id = uuid.uuid4().hex[:16]
-    traceparent = f"00-{trace_id_hex}-{original_span_id}-01"
-    baggage = f"leaf_customer_span_id={leaf_span_id}"
-
-    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
-        await client.post(
-            "/invocations",
-            content=b"test",
-            headers={
-                "traceparent": traceparent,
-                "baggage": baggage,
-            },
-        )
-
-    spans = _get_spans()
-    invoke_spans = [s for s in spans if "invoke_agent" in s.name]
-    assert len(invoke_spans) >= 1
-    span = invoke_spans[0]
-    # The parent span ID should be overridden to leaf_span_id
-    if span.parent is not None:
-        actual_parent_span_id = format(span.parent.span_id, "016x")
-        assert actual_parent_span_id == leaf_span_id
-
-
-# ---------------------------------------------------------------------------
 # Agent name/version in span names
 # ---------------------------------------------------------------------------
 
