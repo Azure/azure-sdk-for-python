@@ -42,6 +42,9 @@ from .partition_key import PartitionKey
 
 logger = logging.getLogger("azure.cosmos.SessionContainer")
 
+# Keep an asyncio module attribute for test patching compatibility without direct import.
+asyncio = importlib.import_module("asyncio")
+
 class SessionContainer(object):
     def __init__(self):
         self.collection_name_to_rid = {}
@@ -284,7 +287,7 @@ class SessionContainer(object):
                     refresh_result = client_connection.refresh_routing_map_provider()
                     if inspect.iscoroutine(refresh_result):
                         try:
-                            importlib.import_module("asyncio").get_running_loop().create_task(refresh_result)
+                            asyncio.get_running_loop().create_task(refresh_result)
                         except RuntimeError:
                             # No running loop means we cannot schedule async refresh from this sync path.
                             refresh_result.close()
