@@ -15,9 +15,8 @@ if TYPE_CHECKING:
 from ._operations import Operations  # type: ignore
 from ._operations import ApplicationsOperations  # type: ignore
 from ._operations import ApplicationDefinitionsOperations  # type: ignore
-from ._operations import JitRequestsOperations  # type: ignore
 from ._operations import jitRequestsOperations  # type: ignore
-from ._operations import _SolutionsClientOperationsMixin  # type: ignore # pylint: disable=unused-import
+from ._operations import _ApplicationClientOperationsMixin  # type: ignore # pylint: disable=unused-import
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -27,7 +26,6 @@ __all__ = [
     "Operations",
     "ApplicationsOperations",
     "ApplicationDefinitionsOperations",
-    "JitRequestsOperations",
     "jitRequestsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

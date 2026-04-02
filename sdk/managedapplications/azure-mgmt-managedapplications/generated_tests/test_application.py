@@ -6,23 +6,24 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.managedapplications.aio import SolutionsClient
+from azure.mgmt.managedapplications import ApplicationClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
-from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestSolutionsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestApplication(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(SolutionsClient, is_async=True)
+        self.client = self.create_mgmt_client(ApplicationClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_operations_list(self, resource_group):
-        response = self.client.operations.list()
-        result = [r async for r in response]
+    @recorded_by_proxy
+    def test_portal_registry_package(self, resource_group):
+        response = self.client.portal_registry_package(
+            parameters={"offer": "str", "plan": "str", "publisher": "str", "version": "str"},
+        )
+
         # please add some check logic here by yourself
         # ...

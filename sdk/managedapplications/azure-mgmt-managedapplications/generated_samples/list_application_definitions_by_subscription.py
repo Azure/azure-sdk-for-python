@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.managedapplications import SolutionsClient
+from azure.mgmt.managedapplications import ApplicationClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.managedapplications import SolutionsClient
 
 
 def main():
-    client = SolutionsClient(
+    client = ApplicationClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

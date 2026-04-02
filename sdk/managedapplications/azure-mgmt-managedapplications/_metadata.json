@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.Solutions": "2023-12-01-preview"
   },
-  "commit": "7d82f01671ac5c71727730fe8b0500ae037245ff",
+  "commit": "b574787d108f4f4a3d0ec50464ddf13a13683137",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/solutions/Solutions.Management",
   "emitterVersion": "0.61.2"

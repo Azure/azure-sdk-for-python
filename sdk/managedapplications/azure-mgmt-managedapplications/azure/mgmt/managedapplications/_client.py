@@ -17,14 +17,13 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import SolutionsClientConfiguration
+from ._configuration import ApplicationClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     ApplicationDefinitionsOperations,
     ApplicationsOperations,
-    JitRequestsOperations,
     Operations,
-    _SolutionsClientOperationsMixin,
+    _ApplicationClientOperationsMixin,
     jitRequestsOperations,
 )
 
@@ -33,7 +32,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class SolutionsClient(_SolutionsClientOperationsMixin):
+class ApplicationClient(_ApplicationClientOperationsMixin):
     """ARM applications.
 
     :ivar operations: Operations operations
@@ -43,8 +42,6 @@ class SolutionsClient(_SolutionsClientOperationsMixin):
     :ivar application_definitions: ApplicationDefinitionsOperations operations
     :vartype application_definitions:
      azure.mgmt.managedapplications.operations.ApplicationDefinitionsOperations
-    :ivar jit_requests: JitRequestsOperations operations
-    :vartype jit_requests: azure.mgmt.managedapplications.operations.JitRequestsOperations
     :ivar jit_requests: jitRequestsOperations operations
     :vartype jit_requests: azure.mgmt.managedapplications.operations.jitRequestsOperations
     :param credential: Credential used to authenticate requests to the service. Required.
@@ -79,7 +76,7 @@ class SolutionsClient(_SolutionsClientOperationsMixin):
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = SolutionsClientConfiguration(
+        self._config = ApplicationClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),
@@ -116,7 +113,6 @@ class SolutionsClient(_SolutionsClientOperationsMixin):
         self.application_definitions = ApplicationDefinitionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.jit_requests = JitRequestsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.jit_requests = jitRequestsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:

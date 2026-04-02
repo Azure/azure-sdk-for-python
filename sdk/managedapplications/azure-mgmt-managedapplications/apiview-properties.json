@@ -107,19 +107,19 @@
         "azure.mgmt.managedapplications.aio.operations.ApplicationDefinitionsOperations.list_by_resource_group": "Microsoft.Solutions.ApplicationDefinitions.listByResourceGroup",
         "azure.mgmt.managedapplications.operations.ApplicationDefinitionsOperations.list_by_subscription": "Microsoft.Solutions.ApplicationDefinitions.listBySubscription",
         "azure.mgmt.managedapplications.aio.operations.ApplicationDefinitionsOperations.list_by_subscription": "Microsoft.Solutions.ApplicationDefinitions.listBySubscription",
-        "azure.mgmt.managedapplications.operations.JitRequestsOperations.get": "Microsoft.Solutions.JitRequestDefinitions.get",
-        "azure.mgmt.managedapplications.aio.operations.JitRequestsOperations.get": "Microsoft.Solutions.JitRequestDefinitions.get",
-        "azure.mgmt.managedapplications.operations.JitRequestsOperations.update": "Microsoft.Solutions.JitRequestDefinitions.update",
-        "azure.mgmt.managedapplications.aio.operations.JitRequestsOperations.update": "Microsoft.Solutions.JitRequestDefinitions.update",
+        "azure.mgmt.managedapplications.operations.jitRequestsOperations.get": "Microsoft.Solutions.JitRequestDefinitions.get",
+        "azure.mgmt.managedapplications.aio.operations.jitRequestsOperations.get": "Microsoft.Solutions.JitRequestDefinitions.get",
         "azure.mgmt.managedapplications.operations.jitRequestsOperations.begin_create_or_update": "Microsoft.Solutions.JitRequestDefinitions.createOrUpdate",
         "azure.mgmt.managedapplications.aio.operations.jitRequestsOperations.begin_create_or_update": "Microsoft.Solutions.JitRequestDefinitions.createOrUpdate",
+        "azure.mgmt.managedapplications.operations.jitRequestsOperations.update": "Microsoft.Solutions.JitRequestDefinitions.update",
+        "azure.mgmt.managedapplications.aio.operations.jitRequestsOperations.update": "Microsoft.Solutions.JitRequestDefinitions.update",
         "azure.mgmt.managedapplications.operations.jitRequestsOperations.delete": "Microsoft.Solutions.JitRequestDefinitions.delete",
         "azure.mgmt.managedapplications.aio.operations.jitRequestsOperations.delete": "Microsoft.Solutions.JitRequestDefinitions.delete",
         "azure.mgmt.managedapplications.operations.jitRequestsOperations.list_by_resource_group": "Microsoft.Solutions.JitRequestDefinitions.listByResourceGroup",
         "azure.mgmt.managedapplications.aio.operations.jitRequestsOperations.list_by_resource_group": "Microsoft.Solutions.JitRequestDefinitions.listByResourceGroup",
         "azure.mgmt.managedapplications.operations.jitRequestsOperations.list_by_subscription": "Microsoft.Solutions.JitRequestDefinitions.listBySubscription",
         "azure.mgmt.managedapplications.aio.operations.jitRequestsOperations.list_by_subscription": "Microsoft.Solutions.JitRequestDefinitions.listBySubscription",
-        "azure.mgmt.managedapplications.SolutionsClient.portal_registry_package": "Microsoft.Solutions.portalRegistryPackage",
-        "azure.mgmt.managedapplications.aio.SolutionsClient.portal_registry_package": "Microsoft.Solutions.portalRegistryPackage"
+        "azure.mgmt.managedapplications.ApplicationClient.portal_registry_package": "Microsoft.Solutions.portalRegistryPackage",
+        "azure.mgmt.managedapplications.aio.ApplicationClient.portal_registry_package": "Microsoft.Solutions.portalRegistryPackage"
     }
 }

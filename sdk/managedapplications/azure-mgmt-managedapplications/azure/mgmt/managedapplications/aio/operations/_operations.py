@@ -44,6 +44,7 @@ from ...operations._operations import (
     build_application_definitions_list_by_resource_group_request,
     build_application_definitions_list_by_subscription_request,
     build_application_definitions_update_request,
+    build_application_portal_registry_package_request,
     build_applications_create_or_update_by_id_request,
     build_applications_create_or_update_request,
     build_applications_delete_by_id_request,
@@ -65,9 +66,8 @@ from ...operations._operations import (
     build_jit_requests_list_by_subscription_request,
     build_jit_requests_update_request,
     build_operations_list_request,
-    build_solutions_portal_registry_package_request,
 )
-from .._configuration import SolutionsClientConfiguration
+from .._configuration import ApplicationClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -81,14 +81,14 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managedapplications.aio.SolutionsClient`'s
+        :class:`~azure.mgmt.managedapplications.aio.ApplicationClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SolutionsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ApplicationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -189,14 +189,14 @@ class ApplicationsOperations:  # pylint: disable=too-many-public-methods
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managedapplications.aio.SolutionsClient`'s
+        :class:`~azure.mgmt.managedapplications.aio.ApplicationClient`'s
         :attr:`applications` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SolutionsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ApplicationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2313,14 +2313,14 @@ class ApplicationDefinitionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managedapplications.aio.SolutionsClient`'s
+        :class:`~azure.mgmt.managedapplications.aio.ApplicationClient`'s
         :attr:`application_definitions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SolutionsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ApplicationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2993,20 +2993,20 @@ class ApplicationDefinitionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class JitRequestsOperations:
+class jitRequestsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managedapplications.aio.SolutionsClient`'s
+        :class:`~azure.mgmt.managedapplications.aio.ApplicationClient`'s
         :attr:`jit_requests` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SolutionsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ApplicationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3084,195 +3084,6 @@ class JitRequestsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    @overload
-    async def update(
-        self,
-        resource_group_name: str,
-        jit_request_name: str,
-        parameters: _models.JitRequestPatchable,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.JitRequestDefinition:
-        """Updates the JIT request.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param jit_request_name: The name of the JIT request. Required.
-        :type jit_request_name: str
-        :param parameters: Parameters supplied to the update JIT request. Required.
-        :type parameters: ~azure.mgmt.managedapplications.models.JitRequestPatchable
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: JitRequestDefinition. The JitRequestDefinition is compatible with MutableMapping
-        :rtype: ~azure.mgmt.managedapplications.models.JitRequestDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update(
-        self,
-        resource_group_name: str,
-        jit_request_name: str,
-        parameters: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.JitRequestDefinition:
-        """Updates the JIT request.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param jit_request_name: The name of the JIT request. Required.
-        :type jit_request_name: str
-        :param parameters: Parameters supplied to the update JIT request. Required.
-        :type parameters: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: JitRequestDefinition. The JitRequestDefinition is compatible with MutableMapping
-        :rtype: ~azure.mgmt.managedapplications.models.JitRequestDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update(
-        self,
-        resource_group_name: str,
-        jit_request_name: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.JitRequestDefinition:
-        """Updates the JIT request.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param jit_request_name: The name of the JIT request. Required.
-        :type jit_request_name: str
-        :param parameters: Parameters supplied to the update JIT request. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: JitRequestDefinition. The JitRequestDefinition is compatible with MutableMapping
-        :rtype: ~azure.mgmt.managedapplications.models.JitRequestDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def update(
-        self,
-        resource_group_name: str,
-        jit_request_name: str,
-        parameters: Union[_models.JitRequestPatchable, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.JitRequestDefinition:
-        """Updates the JIT request.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param jit_request_name: The name of the JIT request. Required.
-        :type jit_request_name: str
-        :param parameters: Parameters supplied to the update JIT request. Is one of the following
-         types: JitRequestPatchable, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.managedapplications.models.JitRequestPatchable or JSON or
-         IO[bytes]
-        :return: JitRequestDefinition. The JitRequestDefinition is compatible with MutableMapping
-        :rtype: ~azure.mgmt.managedapplications.models.JitRequestDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.JitRequestDefinition] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_jit_requests_update_request(
-            resource_group_name=resource_group_name,
-            jit_request_name=jit_request_name,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.JitRequestDefinition, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class jitRequestsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.managedapplications.aio.SolutionsClient`'s
-        :attr:`jit_requests` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SolutionsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     async def _create_or_update_initial(
         self,
@@ -3515,6 +3326,177 @@ class jitRequestsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        jit_request_name: str,
+        parameters: _models.JitRequestPatchable,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.JitRequestDefinition:
+        """Updates the JIT request.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param jit_request_name: The name of the JIT request. Required.
+        :type jit_request_name: str
+        :param parameters: Parameters supplied to the update JIT request. Required.
+        :type parameters: ~azure.mgmt.managedapplications.models.JitRequestPatchable
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: JitRequestDefinition. The JitRequestDefinition is compatible with MutableMapping
+        :rtype: ~azure.mgmt.managedapplications.models.JitRequestDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        jit_request_name: str,
+        parameters: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.JitRequestDefinition:
+        """Updates the JIT request.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param jit_request_name: The name of the JIT request. Required.
+        :type jit_request_name: str
+        :param parameters: Parameters supplied to the update JIT request. Required.
+        :type parameters: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: JitRequestDefinition. The JitRequestDefinition is compatible with MutableMapping
+        :rtype: ~azure.mgmt.managedapplications.models.JitRequestDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        jit_request_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.JitRequestDefinition:
+        """Updates the JIT request.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param jit_request_name: The name of the JIT request. Required.
+        :type jit_request_name: str
+        :param parameters: Parameters supplied to the update JIT request. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: JitRequestDefinition. The JitRequestDefinition is compatible with MutableMapping
+        :rtype: ~azure.mgmt.managedapplications.models.JitRequestDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def update(
+        self,
+        resource_group_name: str,
+        jit_request_name: str,
+        parameters: Union[_models.JitRequestPatchable, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.JitRequestDefinition:
+        """Updates the JIT request.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param jit_request_name: The name of the JIT request. Required.
+        :type jit_request_name: str
+        :param parameters: Parameters supplied to the update JIT request. Is one of the following
+         types: JitRequestPatchable, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.managedapplications.models.JitRequestPatchable or JSON or
+         IO[bytes]
+        :return: JitRequestDefinition. The JitRequestDefinition is compatible with MutableMapping
+        :rtype: ~azure.mgmt.managedapplications.models.JitRequestDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.JitRequestDefinition] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_jit_requests_update_request(
+            resource_group_name=resource_group_name,
+            jit_request_name=jit_request_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.JitRequestDefinition, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
     @distributed_trace_async
     async def delete(self, resource_group_name: str, jit_request_name: str, **kwargs: Any) -> None:
         """Deletes the JIT request.
@@ -3707,8 +3689,8 @@ class jitRequestsOperations:
         return deserialized  # type: ignore
 
 
-class _SolutionsClientOperationsMixin(
-    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], SolutionsClientConfiguration]
+class _ApplicationClientOperationsMixin(
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], ApplicationClientConfiguration]
 ):
 
     @overload
@@ -3794,7 +3776,7 @@ class _SolutionsClientOperationsMixin(
         else:
             _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_solutions_portal_registry_package_request(
+        _request = build_application_portal_registry_package_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,

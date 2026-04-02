@@ -1,7 +1,7 @@
 {
   "azure.mgmt.managedapplications": {
     "class_nodes": {
-      "SolutionsClient": {
+      "ApplicationClient": {
         "type": null,
         "methods": {
           "__init__": {
@@ -1374,172 +1374,6 @@
         },
         "properties": {}
       },
-      "JitRequestsOperations": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "get": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "jit_request_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "update": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "jit_request_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "parameters": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": [
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "jit_request_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "parameters": {
-                    "type": "JitRequestPatchable",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": null
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "jit_request_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "parameters": {
-                    "type": "JSON",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": null
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "jit_request_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "parameters": {
-                    "type": "IO[bytes]",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": null
-              }
-            ]
-          }
-        },
-        "properties": {}
-      },
       "Operations": {
         "type": null,
         "methods": {
@@ -1741,6 +1575,28 @@
             "is_async": false,
             "overloads": []
           },
+          "get": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "jit_request_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          },
           "list_by_resource_group": {
             "parameters": {
               "self": {
@@ -1772,6 +1628,126 @@
             },
             "is_async": false,
             "overloads": []
+          },
+          "update": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "jit_request_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "parameters": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": [
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "jit_request_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "parameters": {
+                    "type": "JitRequestPatchable",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": null
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "jit_request_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "parameters": {
+                    "type": "JSON",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": null
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "jit_request_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "parameters": {
+                    "type": "IO[bytes]",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": null
+              }
+            ]
           }
         },
         "properties": {}
@@ -13267,7 +13243,7 @@
   },
   "azure.mgmt.managedapplications.aio": {
     "class_nodes": {
-      "SolutionsClient": {
+      "ApplicationClient": {
         "type": null,
         "methods": {
           "__init__": {
@@ -14640,172 +14616,6 @@
         },
         "properties": {}
       },
-      "JitRequestsOperations": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "get": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "jit_request_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": true,
-            "overloads": []
-          },
-          "update": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "jit_request_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "parameters": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": true,
-            "overloads": [
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "jit_request_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "parameters": {
-                    "type": "JitRequestPatchable",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": true,
-                "return_type": null
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "jit_request_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "parameters": {
-                    "type": "JSON",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": true,
-                "return_type": null
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "jit_request_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "parameters": {
-                    "type": "IO[bytes]",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": true,
-                "return_type": null
-              }
-            ]
-          }
-        },
-        "properties": {}
-      },
       "Operations": {
         "type": null,
         "methods": {
@@ -15007,6 +14817,28 @@
             "is_async": true,
             "overloads": []
           },
+          "get": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "jit_request_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": true,
+            "overloads": []
+          },
           "list_by_resource_group": {
             "parameters": {
               "self": {
@@ -15038,6 +14870,126 @@
             },
             "is_async": true,
             "overloads": []
+          },
+          "update": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "jit_request_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "parameters": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": true,
+            "overloads": [
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "jit_request_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "parameters": {
+                    "type": "JitRequestPatchable",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": true,
+                "return_type": null
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "jit_request_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "parameters": {
+                    "type": "JSON",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": true,
+                "return_type": null
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "jit_request_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "parameters": {
+                    "type": "IO[bytes]",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": true,
+                "return_type": null
+              }
+            ]
           }
         },
         "properties": {}
