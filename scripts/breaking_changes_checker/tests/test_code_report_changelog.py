@@ -111,12 +111,19 @@ def _generate_and_compare_changelog(
 
         expected_path = os.path.join(DATA_DIR, expected_changelog_file)
 
-        if not os.path.isfile(expected_path) or os.environ.get("UPDATE_EXPECTED"):
+        # If UPDATE_EXPECTED is set, (re)generate the expected changelog file.
+        if os.environ.get("UPDATE_EXPECTED"):
             os.makedirs(DATA_DIR, exist_ok=True)
             with open(expected_path, "w", encoding="utf-8", newline="\n") as f:
                 f.write(actual_changelog + "\n")
             return
 
+        # Without UPDATE_EXPECTED, the expected file must already exist; otherwise, fail explicitly.
+        if not os.path.isfile(expected_path):
+            raise AssertionError(
+                f"Expected changelog file not found: {expected_path}. "
+                "Set UPDATE_EXPECTED=1 to generate or update expected outputs."
+            )
         with open(expected_path, encoding="utf-8") as f:
             expected_changelog = f.read().strip()
 
