@@ -31,6 +31,18 @@ from .._utils.metric_mapping import (
 )
 from ._foundry_result_processor import _read_seed_content
 
+# Mapping tables for normalizing token-usage keys returned by the sync eval
+# API.  Raw JSON responses use camelCase; SDK model objects use snake_case.
+# We normalize to snake_case so downstream consumers always see a consistent
+# format.
+_CAMEL_TO_SNAKE: Dict[str, str] = {
+    "promptTokens": "prompt_tokens",
+    "completionTokens": "completion_tokens",
+    "totalTokens": "total_tokens",
+    "cachedTokens": "cached_tokens",
+}
+_SNAKE_KEYS = ("prompt_tokens", "completion_tokens", "total_tokens", "cached_tokens")
+
 
 class RAIServiceScorer(TrueFalseScorer):
     """Custom scorer using Azure RAI Service for Foundry scenarios.
@@ -372,6 +384,15 @@ class RAIServiceScorer(TrueFalseScorer):
         """
         token_usage: Dict[str, Any] = {}
 
+        def _extract_from_dict(src: Dict[str, Any]) -> None:
+            """Copy token values from *src* into *token_usage*, accepting both key styles."""
+            for key in _SNAKE_KEYS:
+                if key in src and src[key] is not None:
+                    token_usage[key] = src[key]
+            for camel_key, snake_key in _CAMEL_TO_SNAKE.items():
+                if snake_key not in token_usage and camel_key in src and src[camel_key] is not None:
+                    token_usage[snake_key] = src[camel_key]
+
         # Try sample.usage (EvalRunOutputItem structure)
         sample = None
         if hasattr(eval_result, "sample"):
@@ -383,9 +404,7 @@ class RAIServiceScorer(TrueFalseScorer):
             usage = sample.get("usage") if isinstance(sample, dict) else getattr(sample, "usage", None)
             if usage:
                 usage_dict = usage if isinstance(usage, dict) else getattr(usage, "__dict__", {})
-                for key in ("prompt_tokens", "completion_tokens", "total_tokens", "cached_tokens"):
-                    if key in usage_dict and usage_dict[key] is not None:
-                        token_usage[key] = usage_dict[key]
+                _extract_from_dict(usage_dict)
 
         # Fallback: check result-level properties.metrics
         if not token_usage:
@@ -414,9 +433,7 @@ class RAIServiceScorer(TrueFalseScorer):
                         if isinstance(props, dict):
                             metrics = props.get("metrics", {})
                             if isinstance(metrics, dict):
-                                for key in ("prompt_tokens", "completion_tokens", "total_tokens", "cached_tokens"):
-                                    if key in metrics and metrics[key] is not None:
-                                        token_usage[key] = metrics[key]
+                                _extract_from_dict(metrics)
                         break
 
         return token_usage
