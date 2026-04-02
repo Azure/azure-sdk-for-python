@@ -7,8 +7,17 @@
 
 import os
 import json
+import sys
 import pytest
-from checkers.added_method_overloads_checker import AddedMethodOverloadChecker
+
+PACKAGE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+SCRIPTS_DIR = os.path.dirname(PACKAGE_DIR)
+
+for path in (SCRIPTS_DIR, PACKAGE_DIR):
+    if path not in sys.path:
+        sys.path.insert(0, path)
+
+from breaking_changes_checker.checkers.added_method_overloads_checker import AddedMethodOverloadChecker
 from breaking_changes_checker.changelog_tracker import ChangelogTracker, BreakingChangesTracker
 from breaking_changes_checker.detect_breaking_changes import main
 from breaking_changes_checker.detect_breaking_changes import test_compare_reports as compare_reports
