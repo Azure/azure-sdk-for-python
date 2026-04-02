@@ -204,7 +204,7 @@ class UserProxy:
     def create_permission(self, body: dict[str, Any], **kwargs: Any) -> Permission:
         """Create a permission for the user.
 
-        To update or replace an existing permision, use the :func:`UserProxy.upsert_permission` method.
+        To update or replace an existing permission, use the :func:`UserProxy.upsert_permission` method.
 
         :param dict[str, Any] body: A dict-like object representing the permission to create.
         :keyword Callable response_hook: A callable invoked with the response metadata.

@@ -14,7 +14,7 @@ class TestQuerySanitization(unittest.TestCase):
     """Test query sanitization logic per OpenTelemetry semantic conventions."""
 
     def test_sanitize_parameterized_query(self):
-        """Parameterized queries should NOT be sanitized."""
+        """Parameterized queries without inline literals should remain unchanged."""
         query = "SELECT * FROM c WHERE c.userId = @userId AND c.age > @minAge"
         parameters = [{"name": "@userId", "value": "12345"}, {"name": "@minAge", "value": 25}]
 
@@ -22,6 +22,16 @@ class TestQuerySanitization(unittest.TestCase):
 
         # Should return unchanged since it uses parameters
         self.assertEqual(result, query)
+
+    def test_sanitize_parameterized_query_with_inline_literals(self):
+        """Inline literals should still be sanitized when parameters are supplied."""
+        query = "SELECT * FROM c WHERE c.userId = @userId AND c.status = 'active' AND c.age > 21"
+        parameters = [{"name": "@userId", "value": "12345"}]
+
+        result = sanitize_query(query, parameters)
+
+        expected = "SELECT * FROM c WHERE c.userId = @userId AND c.status = '?' AND c.age > ?"
+        self.assertEqual(result, expected)
 
     def test_sanitize_string_literals(self):
         """String literals should be replaced with '?'."""

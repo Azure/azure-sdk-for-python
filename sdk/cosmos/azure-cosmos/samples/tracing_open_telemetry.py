@@ -19,7 +19,8 @@
 # ----------------------------------------------------------------------------------------------------------
 
 import os
-from azure.cosmos.cosmos_client import CosmosClient
+
+from azure.cosmos import ContainerProxy, CosmosClient, DatabaseProxy
 
 # Declare OpenTelemetry as enabled tracing plugin for Azure SDKs
 from azure.core.settings import settings
@@ -33,6 +34,19 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
 from opentelemetry.sdk.trace.sampling import TraceIdRatioBased, ParentBased
 
+
+def _get_sample_container() -> tuple[CosmosClient, DatabaseProxy, ContainerProxy]:
+    """Create Cosmos client objects from environment variables."""
+    account_url = os.environ["COSMOS_ACCOUNT_URL"]
+    credential = os.environ["COSMOS_CREDENTIAL"]
+    database_name = os.environ["DATABASE_NAME"]
+    container_name = os.environ["CONTAINER_NAME"]
+
+    client = CosmosClient(url=account_url, credential=credential)
+    database = client.get_database_client(database_name)
+    container = database.get_container_client(container_name)
+    return client, database, container
+
 # ------------------------------------
 # Example 1: Basic Setup with Console Exporter
 # ------------------------------------
@@ -41,34 +55,43 @@ def basic_tracing_example():
     # Simple console exporter
     exporter = ConsoleSpanExporter()
 
-    trace.set_tracer_provider(TracerProvider())
+    provider = TracerProvider()
+    trace.set_tracer_provider(provider)
     tracer = trace.get_tracer(__name__)
-    trace.get_tracer_provider().add_span_processor(
-        SimpleSpanProcessor(exporter)
-    )
-
-    # Example with Cosmos SDK
-    account_url = os.environ["COSMOS_ACCOUNT_URL"]
-    credential = os.environ["COSMOS_CREDENTIAL"]
-    database_name = os.environ["DATABASE_NAME"]
-    container_name = os.environ["CONTAINER_NAME"]
+    provider.add_span_processor(SimpleSpanProcessor(exporter))
 
     with tracer.start_as_current_span(name="MyApplication"):
-        client = CosmosClient(url=account_url, credential=credential)
-        database = client.get_database_client(database_name)
-        container = database.get_container_client(container_name)
+        _client, _database, container = _get_sample_container()
 
-        # Create an item - will be traced with Cosmos DB semantic convention attributes
-        # Captured attributes include:
+        # Upsert an item - the emitted span includes Cosmos DB semantic attributes such as:
         #   - db.system = "cosmosdb"
-        #   - db.operation.name = "create_item" (actual SDK method name)
-        #   - db.cosmosdb.operation_type = "create" (standardized operation type)
+        #   - db.operation.name = "upsert_item" (the actual SDK method name)
+        #   - db.cosmosdb.operation_type = "upsert" (the standardized operation type)
         #   - db.namespace = database name
         #   - db.collection.name = container name
         #   - db.cosmosdb.connection_mode = "gateway" or "direct"
         #   - db.cosmosdb.request_charge = RU cost
         #   - db.cosmosdb.client_id = unique client identifier
-        container.create_item({"id": "item1", "value": "test"})
+        container.upsert_item({"id": "otel-sample-item", "pk": "otel-sample", "value": 100})
+
+        # Query spans also include db.query.text. Fully parameterized placeholders are preserved.
+        list(
+            container.query_items(
+                query="SELECT * FROM c WHERE c.pk = @pk",
+                parameters=[{"name": "@pk", "value": "otel-sample"}],
+                enable_cross_partition_query=True,
+            )
+        )
+
+        # Inline literals are sanitized before being added to db.query.text.
+        # Example emitted text: SELECT * FROM c WHERE c.pk = @pk AND c.value > ?
+        list(
+            container.query_items(
+                query="SELECT * FROM c WHERE c.pk = @pk AND c.value > 50",
+                parameters=[{"name": "@pk", "value": "otel-sample"}],
+                enable_cross_partition_query=True,
+            )
+        )
 
 
 # ------------------------------------
@@ -89,30 +112,29 @@ def head_sampling_example():
     )
 
     # Create tracer provider with the sampler
-    trace.set_tracer_provider(TracerProvider(sampler=sampler))
+    provider = TracerProvider(sampler=sampler)
+    trace.set_tracer_provider(provider)
 
     # Set up exporter
     exporter = ConsoleSpanExporter()
-    trace.get_tracer_provider().add_span_processor(
-        SimpleSpanProcessor(exporter)
-    )
+    provider.add_span_processor(SimpleSpanProcessor(exporter))
 
     tracer = trace.get_tracer(__name__)
 
-    # Example with Cosmos SDK
-    account_url = os.environ["COSMOS_ACCOUNT_URL"]
-    credential = os.environ["COSMOS_CREDENTIAL"]
-    database_name = os.environ["DATABASE_NAME"]
-    container_name = os.environ["CONTAINER_NAME"]
-
     with tracer.start_as_current_span(name="MyApplication"):
-        client = CosmosClient(url=account_url, credential=credential)
-        database = client.get_database_client(database_name)
-        container = database.get_container_client(container_name)
+        _client, _database, container = _get_sample_container()
 
-        # Only ~10% of these operations will be sampled and traced
-        for i in range(100):
-            container.read_item(item=f"item{i}", partition_key=f"pk{i}")
+        # Only ~10% of these root traces will be sampled and exported.
+        # When a span is not recording, Cosmos-specific enrichment returns early,
+        # so query sanitization work is skipped as well.
+        for i in range(5):
+            list(
+                container.query_items(
+                    query="SELECT * FROM c WHERE c.id = @id AND c.value = 100",
+                    parameters=[{"name": "@id", "value": f"item{i}"}],
+                    enable_cross_partition_query=True,
+                )
+            )
 
 
 # ------------------------------------
@@ -132,13 +154,19 @@ def azure_monitor_example():
     # # Optional: Configure sampling for Azure Monitor
     # sampler = ParentBased(root=TraceIdRatioBased(0.5))  # 50% sampling
     #
-    # trace.set_tracer_provider(TracerProvider(sampler=sampler))
-    # trace.get_tracer_provider().add_span_processor(
-    #     SimpleSpanProcessor(exporter)
-    # )
+    # provider = TracerProvider(sampler=sampler)
+    # trace.set_tracer_provider(provider)
+    # provider.add_span_processor(SimpleSpanProcessor(exporter))
     #
     # # Your Cosmos DB operations here
-    # client = CosmosClient(url=account_url, credential=credential)
+    # _client, _database, container = _get_sample_container()
+    # list(
+    #     container.query_items(
+    #         query="SELECT * FROM c WHERE c.pk = @pk AND c.status = 'active'",
+    #         parameters=[{"name": "@pk", "value": "otel-sample"}],
+    #         enable_cross_partition_query=True,
+    #     )
+    # )
     # # ... operations will be sent to Azure Monitor
     pass
 

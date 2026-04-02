@@ -744,4 +744,3 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
         return result
-

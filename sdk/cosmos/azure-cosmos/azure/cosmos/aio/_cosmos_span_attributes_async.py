@@ -3,11 +3,16 @@
 
 """Async decorator to add Cosmos DB semantic convention attributes to OpenTelemetry spans."""
 
-from .._cosmos_span_attributes import _add_cosmos_telemetry, _add_cosmos_error_telemetry
 import functools
 from typing import Any, Callable, Mapping, Optional, TypeVar, cast
 
-__all__ = ["cosmos_span_attributes_async"]
+from .._cosmos_span_attributes import (
+    _add_cosmos_error_telemetry,
+    _add_cosmos_telemetry,
+    sanitize_query,
+)
+
+__all__ = ["cosmos_span_attributes_async", "sanitize_query"]
 
 F = TypeVar("F", bound=Callable[..., Any])
 
@@ -32,6 +37,12 @@ def cosmos_span_attributes_async(
 
     :param __func: The async function to decorate
     :type __func: Optional[Callable]
+    :keyword name_of_span: Unused compatibility argument.
+    :paramtype name_of_span: Optional[str]
+    :keyword kind: Unused compatibility argument.
+    :paramtype kind: Optional[Any]
+    :keyword tracing_attributes: Unused compatibility argument.
+    :paramtype tracing_attributes: Optional[Mapping[str, Any]]
     :keyword operation_type: The Cosmos DB operation type from the spec table (e.g., "create", "read")
     :paramtype operation_type: Optional[str]
     :return: The decorated async function
@@ -45,6 +56,7 @@ def cosmos_span_attributes_async(
             # ... implementation
             return result
     """
+    del name_of_span, kind, tracing_attributes, kwargs
 
     def decorator(func: F) -> F:
         @functools.wraps(func)
@@ -53,15 +65,15 @@ def cosmos_span_attributes_async(
             method_name = func.__name__
 
             # Extract query and parameters BEFORE the function runs (for telemetry)
-            query_for_telemetry = func_kwargs.get('query')
-            parameters_for_telemetry = func_kwargs.get('parameters')
+            query_for_telemetry = func_kwargs.get("query")
+            parameters_for_telemetry = func_kwargs.get("parameters")
 
             # Handle dict-style query with embedded parameters
             if isinstance(query_for_telemetry, dict):
-                if 'query' in query_for_telemetry:
-                    actual_query = query_for_telemetry['query']
+                if "query" in query_for_telemetry:
+                    actual_query = query_for_telemetry["query"]
                     if parameters_for_telemetry is None:
-                        parameters_for_telemetry = query_for_telemetry.get('parameters')
+                        parameters_for_telemetry = query_for_telemetry.get("parameters")
                     query_for_telemetry = actual_query
 
             # Execute the async function (the parent @distributed_trace_async will create the span)
@@ -72,11 +84,17 @@ def cosmos_span_attributes_async(
                 # Create a copy of kwargs with the query/parameters we saved
                 telemetry_kwargs = dict(func_kwargs)
                 if query_for_telemetry is not None:
-                    telemetry_kwargs['query'] = query_for_telemetry
+                    telemetry_kwargs["query"] = query_for_telemetry
                 if parameters_for_telemetry is not None:
-                    telemetry_kwargs['parameters'] = parameters_for_telemetry
+                    telemetry_kwargs["parameters"] = parameters_for_telemetry
 
-                _add_cosmos_telemetry(method_name, operation_type, args, telemetry_kwargs, result)
+                _add_cosmos_telemetry(
+                    method_name,
+                    operation_type,
+                    args,
+                    telemetry_kwargs,
+                    result,
+                )
 
                 return result
             except Exception as error:

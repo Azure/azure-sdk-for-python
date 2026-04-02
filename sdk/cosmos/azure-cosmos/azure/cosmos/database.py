@@ -1382,4 +1382,3 @@ class DatabaseProxy(object):
             **kwargs
         )
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
-
