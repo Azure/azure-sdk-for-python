@@ -1,4 +1,4 @@
-# azure-ai-agentserver-github — Getting Started
+# azure-ai-agentserver-githubcopilot — Getting Started
 
 Instructions for using, testing, and contributing to the GitHub Copilot SDK adapter package for Azure AI Agent Server.
 
@@ -11,7 +11,7 @@ This package bridges the GitHub Copilot SDK to Azure AI Foundry's hosted agent p
 **Hero code sample:**
 
 ```python
-from azure.ai.agentserver.github import GitHubCopilotAdapter
+from azure.ai.agentserver.githubcopilot import GitHubCopilotAdapter
 
 adapter = GitHubCopilotAdapter.from_project(".")
 adapter.run()
@@ -24,8 +24,8 @@ That's it — skill discovery, session management, auth, and RAPI event mapping 
 ## Package Structure
 
 ```
-azure-ai-agentserver-github/
-├── azure/ai/agentserver/github/
+azure-ai-agentserver-githubcopilot/
+├── azure/ai/agentserver/githubcopilot/
 │   ├── __init__.py                    ← Public API: GitHubCopilotAdapter, CopilotAdapter, ToolAcl
 │   ├── _copilot_adapter.py            ← Core + convenience adapter classes
 │   ├── _copilot_request_converter.py  ← RAPI request → Copilot prompt + attachments
@@ -54,8 +54,8 @@ This package is the **production home** for the adapter code that previously liv
 | | foundry-declarative-agent | This package |
 |---|---|---|
 | **Purpose** | Reference repo with example agents, deploy scripts, skills | The adapter library itself |
-| **Adapter code** | Vendored in `.foundry/runtime/vendor/` | First-party in `azure/ai/agentserver/github/` |
-| **How agents use it** | Copies vendor code into container | `pip install azure-ai-agentserver-github` |
+| **Adapter code** | Vendored in `.foundry/runtime/vendor/` | First-party in `azure/ai/agentserver/githubcopilot/` |
+| **How agents use it** | Copies vendor code into container | `pip install azure-ai-agentserver-githubcopilot` |
 | **Where it ships** | Not shipped — internal reference | Ships via Azure SDK pipeline |
 
 Going forward, adapter code changes should be made here. The foundry-declarative-agent repo will eventually consume this package via `pip install` instead of vendoring.
@@ -93,7 +93,7 @@ Going forward, adapter code changes should be made here. The foundry-declarative
 Install the package and its dependencies locally for validation and testing:
 
 ```bash
-cd sdk/agentserver/azure-ai-agentserver-github
+cd sdk/agentserver/azure-ai-agentserver-githubcopilot
 pip install --pre -e ".[dev]" 2>/dev/null || pip install --pre azure-ai-agentserver-core github-copilot-sdk==0.2.0 azure-identity PyYAML python-dotenv
 ```
 
@@ -105,17 +105,17 @@ Always run these checks before any deploy:
 # Syntax check
 python -c "
 import py_compile, sys
-for f in ['azure/ai/agentserver/github/_copilot_adapter.py',
-          'azure/ai/agentserver/github/_copilot_response_converter.py',
-          'azure/ai/agentserver/github/_copilot_request_converter.py',
-          'azure/ai/agentserver/github/_tool_acl.py']:
+for f in ['azure/ai/agentserver/githubcopilot/_copilot_adapter.py',
+          'azure/ai/agentserver/githubcopilot/_copilot_response_converter.py',
+          'azure/ai/agentserver/githubcopilot/_copilot_request_converter.py',
+          'azure/ai/agentserver/githubcopilot/_tool_acl.py']:
     py_compile.compile(f, doraise=True)
     print(f'  OK  {f}')
 print('Syntax OK')
 "
 
 # Import check (catches missing deps, broken references)
-python -c "from azure.ai.agentserver.github import GitHubCopilotAdapter; print('Imports OK')"
+python -c "from azure.ai.agentserver.githubcopilot import GitHubCopilotAdapter; print('Imports OK')"
 ```
 
 ---
@@ -180,7 +180,7 @@ from dotenv import load_dotenv
 load_dotenv(override=False)
 logging.basicConfig(level=getattr(logging, os.environ.get("LOG_LEVEL", "INFO").upper(), logging.INFO))
 
-from azure.ai.agentserver.github import GitHubCopilotAdapter
+from azure.ai.agentserver.githubcopilot import GitHubCopilotAdapter
 adapter = GitHubCopilotAdapter.from_project(".")
 adapter.run()
 ```
@@ -197,7 +197,7 @@ my-agent/
 │   ├── my-skill/SKILL.md
 │   └── another/SKILL.md
 ├── Dockerfile
-├── requirements.txt       ← includes azure-ai-agentserver-github
+├── requirements.txt       ← includes azure-ai-agentserver-githubcopilot
 └── .env
 ```
 
@@ -273,9 +273,9 @@ Bump the version deliberately and test before merging.
 ## Contributing
 
 1. Get access: follow steps at `aka.ms/jointhesdk` (join Microsoft + Azure orgs, request Azure SDK Partners)
-2. Branch from `feature/agentserver-github`
+2. Branch from `feature/agentserver-githubcopilot`
 3. Make changes, validate locally (syntax + import checks)
 4. Deploy and test on ADC before pushing
 5. PR against the feature branch
 
-The adapter code is in `azure/ai/agentserver/github/`. Files prefixed with `_` are private implementation. The public API is exported from `__init__.py`.
+The adapter code is in `azure/ai/agentserver/githubcopilot/`. Files prefixed with `_` are private implementation. The public API is exported from `__init__.py`.

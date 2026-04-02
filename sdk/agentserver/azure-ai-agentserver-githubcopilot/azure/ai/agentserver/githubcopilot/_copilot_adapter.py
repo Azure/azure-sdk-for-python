@@ -595,7 +595,7 @@ class CopilotAdapter(FoundryCBAgent):
 
     def get_trace_attributes(self):
         attrs = super().get_trace_attributes()
-        attrs["service.namespace"] = "azure.ai.agentserver.github"
+        attrs["service.namespace"] = "azure.ai.agentserver.githubcopilot"
         return attrs
 
     def get_agent_identifier(self) -> str:

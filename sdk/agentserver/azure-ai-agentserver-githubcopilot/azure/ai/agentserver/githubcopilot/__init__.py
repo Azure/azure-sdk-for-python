@@ -10,7 +10,7 @@ Foundry Responses API (RAPI) protocol.
 
 Usage::
 
-    from azure.ai.agentserver.github import GitHubCopilotAdapter
+    from azure.ai.agentserver.githubcopilot import GitHubCopilotAdapter
 
     adapter = GitHubCopilotAdapter.from_project(".")
     adapter.run()

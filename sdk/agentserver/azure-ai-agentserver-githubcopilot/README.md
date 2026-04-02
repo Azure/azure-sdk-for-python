@@ -18,7 +18,7 @@ event model and the Foundry Responses API (RAPI) protocol.
 ### Install the package
 
 ```bash
-pip install azure-ai-agentserver-github
+pip install azure-ai-agentserver-githubcopilot
 ```
 
 ### Quick start
@@ -27,7 +27,7 @@ pip install azure-ai-agentserver-github
 from dotenv import load_dotenv
 load_dotenv()
 
-from azure.ai.agentserver.github import GitHubCopilotAdapter
+from azure.ai.agentserver.githubcopilot import GitHubCopilotAdapter
 
 adapter = GitHubCopilotAdapter.from_project(".")
 adapter.run()
@@ -108,7 +108,7 @@ rules:
 from dotenv import load_dotenv
 load_dotenv()
 
-from azure.ai.agentserver.github import GitHubCopilotAdapter
+from azure.ai.agentserver.githubcopilot import GitHubCopilotAdapter
 
 adapter = GitHubCopilotAdapter.from_project(".")
 adapter.run()
@@ -118,7 +118,7 @@ adapter.run()
 
 ```python
 from azure.identity import ManagedIdentityCredential
-from azure.ai.agentserver.github import GitHubCopilotAdapter
+from azure.ai.agentserver.githubcopilot import GitHubCopilotAdapter
 
 credential = ManagedIdentityCredential()
 adapter = GitHubCopilotAdapter.from_project(".", credential=credential)
@@ -128,7 +128,7 @@ adapter.run()
 ### With explicit skill directories
 
 ```python
-from azure.ai.agentserver.github import GitHubCopilotAdapter
+from azure.ai.agentserver.githubcopilot import GitHubCopilotAdapter
 
 adapter = GitHubCopilotAdapter(
     skill_directories=["/app/skills"],

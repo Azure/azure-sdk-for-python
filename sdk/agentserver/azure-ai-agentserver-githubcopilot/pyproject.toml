@@ -1,5 +1,5 @@
 [project]
-name = "azure-ai-agentserver-github"
+name = "azure-ai-agentserver-githubcopilot"
 dynamic = ["version", "readme"]
 description = "GitHub Copilot SDK adapter for Azure AI Agent Server"
 requires-python = ">=3.11"
@@ -41,7 +41,7 @@ exclude = [
 ]
 
 [tool.setuptools.dynamic]
-version = { attr = "azure.ai.agentserver.github._version.VERSION" }
+version = { attr = "azure.ai.agentserver.githubcopilot._version.VERSION" }
 readme = { file = ["README.md"], content-type = "text/markdown" }
 
 [tool.setuptools.package-data]
@@ -55,7 +55,7 @@ lint.ignore = []
 fix = false
 
 [tool.ruff.lint.isort]
-known-first-party = ["azure.ai.agentserver.github"]
+known-first-party = ["azure.ai.agentserver.githubcopilot"]
 combine-as-imports = true
 
 [tool.azure-sdk-build]

@@ -13,7 +13,7 @@ import os
 import pytest
 
 from azure.ai.agentserver.core.models import CreateResponse
-from azure.ai.agentserver.github._copilot_request_converter import (
+from azure.ai.agentserver.githubcopilot._copilot_request_converter import (
     CopilotRequestConverter,
     ConvertedAttachments,
 )
