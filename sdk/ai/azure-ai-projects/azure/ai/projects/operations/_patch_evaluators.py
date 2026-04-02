@@ -50,9 +50,15 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
     ) -> None:
         """Walk *folder* and upload every eligible file to the blob container.
 
-        Skips directories starting with ``.`` (e.g. ``.git``, ``.venv``),
-        ``__pycache__``, ``venv``, ``node_modules``
-        directories and ``.pyc`` / ``.pyo`` files.
+        By default all files and directories are included. Use *file_pattern*
+        and *folder_exclusions_pattern* to control what gets uploaded.
+
+        Recommended excludes for typical Python evaluator projects::
+
+            file_pattern = re.compile(r"^(?!\\.).+(?<!\\.pyc)(?<!\\.pyo)$")
+            folder_exclusions_pattern = re.compile(
+                r"^(\\..*|__pycache__|venv|node_modules)$"
+            )
 
         :param container_client: The blob container client to upload files to.
         :type container_client: ~azure.storage.blob.ContainerClient
@@ -68,20 +74,12 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         :raises HttpResponseError: Re-raised with a friendlier message on
             ``AuthorizationPermissionMismatch``.
         """
-        skip_dirs = {"__pycache__", "venv", "node_modules"}
-        skip_extensions = {".pyc", ".pyo"}
         files_uploaded = False
 
         for root, dirs, files in os.walk(folder):
-            dirs[:] = [
-                d for d in dirs
-                if d not in skip_dirs
-                and not d.startswith(".")
-                and not (folder_exclusions_pattern and folder_exclusions_pattern.search(d))
-            ]
+            if folder_exclusions_pattern:
+                dirs[:] = [d for d in dirs if not folder_exclusions_pattern.search(d)]
             for file_name in files:
-                if file_name.startswith('.') or any(file_name.endswith(ext) for ext in skip_extensions):
-                    continue
                 if file_pattern and not file_pattern.search(file_name):
                     continue
                 file_path = os.path.join(root, file_name)
@@ -231,6 +229,15 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         to blob storage, then creates an evaluator version referencing the uploaded blob.
 
         The version is automatically determined by incrementing the latest existing version.
+
+        By default all files and directories are uploaded. Use *file_pattern* and
+        *folder_exclusions_pattern* to control what gets included. Recommended excludes
+        for typical Python evaluator projects::
+
+            file_pattern = re.compile(r"^(?!\\.).+(?<!\\.pyc)(?<!\\.pyo)$")
+            folder_exclusions_pattern = re.compile(
+                r"^(\\..*|__pycache__|venv|node_modules)$"
+            )
 
         :param name: The name of the evaluator. Required.
         :type name: str
