@@ -2732,10 +2732,7 @@ def _update_metric_value(
             passed = str(metric_value).lower() in ["pass", "true"]
             metric_dict["passed"] = passed
             derived_passed = passed
-    elif (
-        (metric_key.endswith("_reason") and not metric_key.endswith("_finish_reason"))
-        or metric_key == "reason"
-    ):
+    elif (metric_key.endswith("_reason") and not metric_key.endswith("_finish_reason")) or metric_key == "reason":
         metric_dict["reason"] = metric_value
         result_name = "reason"
     elif metric_key.endswith("_threshold") or metric_key == "threshold":
