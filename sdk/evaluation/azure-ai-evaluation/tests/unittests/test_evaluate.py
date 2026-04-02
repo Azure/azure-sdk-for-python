@@ -1403,11 +1403,12 @@ class TestEvaluate:
         property_result = property_results["_evaluation_results_list"][0]["results"][0]
         assert property_result["properties"] == {
             "observation_flag": False,
+            "explanation": "Detailed attack reasoning",
             "attack_phase": "probe",
         }
         assert property_result["score"] == 4.5
         assert property_result["reason"] is None
-        assert property_result["explanation"] == "Detailed attack reasoning"
+        assert "explanation" not in property_result
         assert property_result["threshold"] == 3
         assert property_result["label"] is False
 

@@ -2738,9 +2738,6 @@ def _update_metric_value(
     ):
         metric_dict["reason"] = metric_value
         result_name = "reason"
-    elif metric_key == "explanation":
-        metric_dict["explanation"] = metric_value
-        result_name = "explanation"
     elif metric_key.endswith("_threshold") or metric_key == "threshold":
         metric_dict["threshold"] = metric_value
         result_name = "threshold"
@@ -2871,7 +2868,7 @@ def _should_include_property_bag(evaluator_name: Optional[str], metrics: Dict[st
 def _get_result_property_name(metric_key: str) -> Optional[str]:
     """Return the result property name for fields that should be preserved in properties."""
     result_property_prefix = "custom_"
-    standard_metric_keys = {"score", "passed", "result", "label", "reason", "explanation", "threshold", "sample"}
+    standard_metric_keys = {"score", "passed", "result", "label", "reason", "threshold", "sample"}
 
     if metric_key.startswith(result_property_prefix) and len(metric_key) > len(result_property_prefix):
         if any(metric_key.endswith(suffix) for suffix in _RESULT_PROPERTY_SUFFIXES):
@@ -2948,7 +2945,6 @@ def _create_result_object(
     score = metric_values.get("score")
     label = metric_values.get("label")
     reason = metric_values.get("reason")
-    explanation = metric_values.get("explanation")
     threshold = metric_values.get("threshold")
     passed = metric_values.get("passed")
     sample = metric_values.get("sample")
@@ -2966,7 +2962,6 @@ def _create_result_object(
         "score": score if not (score is None or (isinstance(score, float) and math.isnan(score))) else None,
         "label": label,
         "reason": reason,
-        "explanation": explanation,
         "threshold": threshold,
         "passed": passed,
     }
