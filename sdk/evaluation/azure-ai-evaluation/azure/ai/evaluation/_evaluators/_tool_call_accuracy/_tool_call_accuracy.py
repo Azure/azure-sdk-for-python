@@ -245,11 +245,13 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             for tc in tool_call_items:
                 messages.append({"role": "assistant", "content": [tc]})
                 if "tool_result" in tc:
-                    messages.append({
-                        "role": "tool",
-                        "tool_call_id": tc.get("tool_call_id"),
-                        "content": [{"type": "tool_result", "tool_result": tc["tool_result"]}],
-                    })
+                    messages.append(
+                        {
+                            "role": "tool",
+                            "tool_call_id": tc.get("tool_call_id"),
+                            "content": [{"type": "tool_result", "tool_result": tc["tool_result"]}],
+                        }
+                    )
             eval_input["tool_calls"] = reformat_agent_response(messages, include_tool_messages=True)
 
         # Single LLM call for all tool calls

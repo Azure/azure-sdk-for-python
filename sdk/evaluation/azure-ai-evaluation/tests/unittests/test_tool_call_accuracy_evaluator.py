@@ -4,7 +4,6 @@ import pytest
 from azure.ai.evaluation import ToolCallAccuracyEvaluator
 from azure.ai.evaluation._exceptions import EvaluationException
 
-
 # This mock should return a dictionary that mimics the output of the prompty (the _flow call),
 # which is then processed by the _do_eval method.
 import re as _re
@@ -813,9 +812,7 @@ class TestToolCallAccuracyEvaluator:
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
                     "type": "object",
-                    "properties": {
-                        "location": {"type": "string", "description": "The location to fetch weather for."}
-                    },
+                    "properties": {"location": {"type": "string", "description": "The location to fetch weather for."}},
                 },
             }
         ]
@@ -875,9 +872,7 @@ class TestToolCallAccuracyEvaluator:
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
                     "type": "object",
-                    "properties": {
-                        "location": {"type": "string", "description": "The location to fetch weather for."}
-                    },
+                    "properties": {"location": {"type": "string", "description": "The location to fetch weather for."}},
                 },
             }
         ]
@@ -930,9 +925,7 @@ class TestToolCallAccuracyEvaluator:
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
                     "type": "object",
-                    "properties": {
-                        "location": {"type": "string", "description": "The location to fetch weather for."}
-                    },
+                    "properties": {"location": {"type": "string", "description": "The location to fetch weather for."}},
                 },
             }
         ]
@@ -941,9 +934,9 @@ class TestToolCallAccuracyEvaluator:
 
         # tool_calls should be a reformatted string, not a raw list
         tool_calls_sent = captured_kwargs.get("tool_calls")
-        assert isinstance(tool_calls_sent, str), (
-            f"Expected tool_calls to be a reformatted string, got {type(tool_calls_sent)}"
-        )
+        assert isinstance(
+            tool_calls_sent, str
+        ), f"Expected tool_calls to be a reformatted string, got {type(tool_calls_sent)}"
         assert "[TOOL_CALL]" in tool_calls_sent
         assert "fetch_weather" in tool_calls_sent
         assert "Paris" in tool_calls_sent
@@ -970,9 +963,7 @@ class TestToolCallAccuracyEvaluator:
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
                     "type": "object",
-                    "properties": {
-                        "location": {"type": "string", "description": "The location to fetch weather for."}
-                    },
+                    "properties": {"location": {"type": "string", "description": "The location to fetch weather for."}},
                 },
             }
         ]
@@ -1000,11 +991,15 @@ class TestToolCallAccuracyEvaluator:
             },
         ]
 
-        evaluator(query="What's the weather in Paris?", response=response_with_result, tool_definitions=tool_definitions)
+        evaluator(
+            query="What's the weather in Paris?", response=response_with_result, tool_definitions=tool_definitions
+        )
         tool_calls_sent = captured_kwargs.get("tool_calls")
         assert isinstance(tool_calls_sent, str)
         assert "[TOOL_CALL]" in tool_calls_sent
-        assert "[TOOL_RESULT]" in tool_calls_sent, "Tool result should be included when response contains a tool result message"
+        assert (
+            "[TOOL_RESULT]" in tool_calls_sent
+        ), "Tool result should be included when response contains a tool result message"
         assert "15C" in tool_calls_sent
 
         # Case 2: tool_calls passed directly (no tool_result field) — [TOOL_RESULT] must not appear
@@ -1024,4 +1019,6 @@ class TestToolCallAccuracyEvaluator:
         tool_calls_sent = captured_kwargs.get("tool_calls")
         assert isinstance(tool_calls_sent, str)
         assert "[TOOL_CALL]" in tool_calls_sent
-        assert "[TOOL_RESULT]" not in tool_calls_sent, "Tool result must not appear when tool_calls has no attached result"
+        assert (
+            "[TOOL_RESULT]" not in tool_calls_sent
+        ), "Tool result must not appear when tool_calls has no attached result"
