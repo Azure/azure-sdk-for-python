@@ -319,7 +319,17 @@ class _VoiceLiveInstrumentorPreview:
         operation_name: OperationName,
         span_name: Optional[str] = None,
     ) -> Optional["AbstractSpan"]:
-        """Start a child span under the connection span context when available."""
+        """Start a child span under the connection span context when available.
+
+        :param conn_self: The active ``VoiceLiveConnection`` instance.
+        :type conn_self: any
+        :param operation_name: Logical operation name for span attributes.
+        :type operation_name: ~azure.ai.voicelive.telemetry._utils.OperationName
+        :param span_name: Optional explicit span name override.
+        :type span_name: str or None
+        :return: The started span, or ``None`` if tracing is unavailable.
+        :rtype: ~azure.core.tracing.AbstractSpan or None
+        """
         parent_span = getattr(conn_self, "_telemetry_span", None)
         parent_token = None
         if parent_span is not None and set_span_in_context is not None and otel_context is not None:
@@ -340,7 +350,13 @@ class _VoiceLiveInstrumentorPreview:
 
     @staticmethod
     def _add_connection_context_attributes(span: "AbstractSpan", conn_self: Any) -> None:
-        """Add common connection attributes present on send/recv/close spans."""
+        """Add common connection attributes present on send/recv/close spans.
+
+        :param span: The active child span.
+        :type span: ~azure.core.tracing.AbstractSpan
+        :param conn_self: The active ``VoiceLiveConnection`` instance.
+        :type conn_self: any
+        """
         session_id = getattr(conn_self, "_telemetry_session_id", None)
         if session_id:
             span.add_attribute(GEN_AI_VOICE_SESSION_ID, session_id)
@@ -351,7 +367,16 @@ class _VoiceLiveInstrumentorPreview:
 
     @staticmethod
     def _serialize_content_and_size(payload: Any) -> Tuple[Optional[str], Optional[int]]:
-        """Serialize event payload (dict/model) and compute message size."""
+        """Serialize payload content and compute payload size.
+
+        When content recording is disabled, content may be ``None`` while size is
+        still computed from the serializable payload.
+
+        :param payload: Event payload (dict or model instance).
+        :type payload: any
+        :return: A tuple ``(content_str, message_size)``.
+        :rtype: tuple[str or None, int or None]
+        """
         content_str = None
         if _trace_voicelive_content:
             try:
@@ -376,7 +401,13 @@ class _VoiceLiveInstrumentorPreview:
 
     @staticmethod
     def _extract_session_audio_attributes(conn_self: Any, session: Any) -> None:
-        """Extract input/output audio format and sampling rate from a session object."""
+        """Extract input/output audio format and sampling rate from a session object.
+
+        :param conn_self: The active ``VoiceLiveConnection`` instance.
+        :type conn_self: any
+        :param session: Session payload object from send/recv events.
+        :type session: any
+        """
         get = _VoiceLiveInstrumentorPreview._get_field
         connect_span = getattr(conn_self, "_telemetry_span", None)
 
@@ -499,6 +530,8 @@ class _VoiceLiveInstrumentorPreview:
                     contents.append(part_payload)
             return contents
 
+        done_content: Optional[str] = None
+
         if event_type == ServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE:
             name = get(result, "name")
             arguments = get(result, "arguments")
@@ -511,19 +544,19 @@ class _VoiceLiveInstrumentorPreview:
                 except (ValueError, TypeError):
                     fc_payload["arguments"] = str(arguments)
             if fc_payload:
-                return json.dumps(fc_payload, ensure_ascii=False)
+                done_content = json.dumps(fc_payload, ensure_ascii=False)
 
-        if event_type == ServerEventType.RESPONSE_TEXT_DONE:
+        elif event_type == ServerEventType.RESPONSE_TEXT_DONE:
             text = get(result, "text")
             if text:
-                return json.dumps({"text": text}, ensure_ascii=False)
+                done_content = json.dumps({"text": text}, ensure_ascii=False)
 
-        if event_type == ServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DONE:
+        elif event_type == ServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DONE:
             transcript = get(result, "transcript")
             if transcript:
-                return json.dumps({"transcript": transcript}, ensure_ascii=False)
+                done_content = json.dumps({"transcript": transcript}, ensure_ascii=False)
 
-        if event_type == ServerEventType.RESPONSE_CONTENT_PART_DONE:
+        elif event_type == ServerEventType.RESPONSE_CONTENT_PART_DONE:
             part = get(result, "part")
             if part:
                 text = get(part, "text")
@@ -534,15 +567,15 @@ class _VoiceLiveInstrumentorPreview:
                 if transcript:
                     payload["transcript"] = transcript
                 if payload:
-                    return json.dumps(payload, ensure_ascii=False)
+                    done_content = json.dumps(payload, ensure_ascii=False)
 
-        if event_type == ServerEventType.RESPONSE_OUTPUT_ITEM_DONE:
+        elif event_type == ServerEventType.RESPONSE_OUTPUT_ITEM_DONE:
             item = get(result, "item")
             item_contents = _collect_text_or_transcript_from_item(item)
             if item_contents:
-                return json.dumps({"messages": item_contents}, ensure_ascii=False)
+                done_content = json.dumps({"messages": item_contents}, ensure_ascii=False)
 
-        if event_type == ServerEventType.RESPONSE_DONE:
+        elif event_type == ServerEventType.RESPONSE_DONE:
             response = get(result, "response")
             output_items = get(response, "output") if response is not None else None
             if output_items:
@@ -550,9 +583,9 @@ class _VoiceLiveInstrumentorPreview:
                 for output_item in output_items:
                     messages.extend(_collect_text_or_transcript_from_item(output_item))
                 if messages:
-                    return json.dumps({"messages": messages}, ensure_ascii=False)
+                    done_content = json.dumps({"messages": messages}, ensure_ascii=False)
 
-        return None
+        return done_content
 
     # ------------------------------------------------------------------ #
     #  Tracing wrappers for connection lifecycle                          #
