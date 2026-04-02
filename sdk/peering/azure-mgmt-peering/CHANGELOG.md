@@ -1,5 +1,53 @@
 # Release History
 
+## 2.0.0b2 (2026-03-27)
+
+### Features Added
+
+  - Client `PeeringManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `PeeringManagementClient` added method `send_request`
+  - Model `CdnPeeringPrefix` added property `system_data`
+  - Model `ConnectionMonitorTest` added property `system_data`
+  - Enum `ConnectionState` added member `EXTERNAL_BLOCKER`
+  - Enum `DirectPeeringType` added member `PEER_PROP`
+  - Model `ErrorDetail` added property `target`
+  - Model `ErrorDetail` added property `details`
+  - Model `ErrorDetail` added property `additional_info`
+  - Model `PeerAsn` added property `system_data`
+  - Model `Peering` added property `system_data`
+  - Model `PeeringLocation` added property `system_data`
+  - Enum `PeeringLocationsDirectPeeringType` added member `PEER_PROP`
+  - Model `PeeringRegisteredAsn` added property `system_data`
+  - Model `PeeringRegisteredPrefix` added property `system_data`
+  - Model `PeeringService` added property `system_data`
+  - Model `PeeringServiceCountry` added property `system_data`
+  - Model `PeeringServiceLocation` added property `system_data`
+  - Model `PeeringServicePrefix` added property `system_data`
+  - Model `PeeringServiceProvider` added property `system_data`
+  - Enum `ProvisioningState` added member `CANCELED`
+  - Model `Resource` added property `system_data`
+  - Added model `ConnectivityProbe`
+  - Added enum `CreatedByType`
+  - Added model `ErrorAdditionalInfo`
+  - Added enum `Protocol`
+  - Added model `ProxyResource`
+  - Added model `SystemData`
+  - Added model `TrackedResource`
+
+### Breaking Changes
+
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Method `CdnPeeringPrefixesOperations.list` changed its parameter `peering_location` from `positional_or_keyword` to `keyword_only`
+  - Method `LegacyPeeringsOperations.list` changed its parameter `peering_location`/`kind`/`asn`/`direct_peering_type` from `positional_or_keyword` to `keyword_only`
+  - Method `LookingGlassOperations.invoke` changed its parameter `command`/`source_type`/`source_location`/`destination_ip` from `positional_or_keyword` to `keyword_only`
+  - Method `PeeringLocationsOperations.list` changed its parameter `kind`/`direct_peering_type` from `positional_or_keyword` to `keyword_only`
+  - Method `PeeringServiceLocationsOperations.list` changed its parameter `country` from `positional_or_keyword` to `keyword_only`
+  - Method `PrefixesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PrefixesOperations.list_by_peering_service` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ReceivedRoutesOperations.list_by_peering` changed its parameter `prefix`/`as_path`/`origin_as_validation_state`/`rpki_validation_state`/`skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `RpUnbilledPrefixesOperations.list` changed its parameter `consolidate` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed model `PeeringManagementClientOperationsMixin`
+
 ## 2.0.0b1 (2022-11-01)
 
 ### Features Added

@@ -365,15 +365,17 @@ class Credentials(_Model):
     """The Credentials.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureKeyVaultSmbCredentials
+    AzureKeyVaultS3WithHmacCredentials, AzureKeyVaultSmbCredentials
 
-    :ivar type: The Credentials type. Required. "AzureKeyVaultSmb"
+    :ivar type: The Credentials type. Required. Known values are: "AzureKeyVaultSmb" and
+     "AzureKeyVaultS3WithHMAC".
     :vartype type: str or ~azure.mgmt.storagemover.models.CredentialType
     """
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create"])
-    """The Credentials type. Required. \"AzureKeyVaultSmb\""""
+    """The Credentials type. Required. Known values are: \"AzureKeyVaultSmb\" and
+     \"AzureKeyVaultS3WithHMAC\"."""
 
     @overload
     def __init__(
@@ -393,6 +395,52 @@ class Credentials(_Model):
         super().__init__(*args, **kwargs)
 
 
+class AzureKeyVaultS3WithHmacCredentials(Credentials, discriminator="AzureKeyVaultS3WithHMAC"):
+    """The Azure Key Vault secret URIs which store the credentials.
+
+    :ivar access_key_uri: The Azure Key Vault secret URI which stores the username. Use empty
+     string to clean-up existing value.
+    :vartype access_key_uri: str
+    :ivar secret_key_uri: The Azure Key Vault secret URI which stores the password. Use empty
+     string to clean-up existing value.
+    :vartype secret_key_uri: str
+    :ivar type: The Credentials type. Required. AZURE_KEY_VAULT_S3_WITH_HMAC.
+    :vartype type: str or ~azure.mgmt.storagemover.models.AZURE_KEY_VAULT_S3_WITH_HMAC
+    """
+
+    access_key_uri: Optional[str] = rest_field(
+        name="accessKeyUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Key Vault secret URI which stores the username. Use empty string to clean-up existing
+     value."""
+    secret_key_uri: Optional[str] = rest_field(
+        name="secretKeyUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Key Vault secret URI which stores the password. Use empty string to clean-up existing
+     value."""
+    type: Literal[CredentialType.AZURE_KEY_VAULT_S3_WITH_HMAC] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Credentials type. Required. AZURE_KEY_VAULT_S3_WITH_HMAC."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        access_key_uri: Optional[str] = None,
+        secret_key_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = CredentialType.AZURE_KEY_VAULT_S3_WITH_HMAC  # type: ignore
+
+
 class AzureKeyVaultSmbCredentials(Credentials, discriminator="AzureKeyVaultSmb"):
     """The Azure Key Vault secret URIs which store the credentials.
 
@@ -402,7 +450,7 @@ class AzureKeyVaultSmbCredentials(Credentials, discriminator="AzureKeyVaultSmb")
     :ivar password_uri: The Azure Key Vault secret URI which stores the password. Use empty string
      to clean-up existing value.
     :vartype password_uri: str
-    :ivar type: The Credentials type. Required.
+    :ivar type: The Credentials type. Required. AZURE_KEY_VAULT_SMB.
     :vartype type: str or ~azure.mgmt.storagemover.models.AZURE_KEY_VAULT_SMB
     """
 
@@ -417,7 +465,7 @@ class AzureKeyVaultSmbCredentials(Credentials, discriminator="AzureKeyVaultSmb")
     """The Azure Key Vault secret URI which stores the password. Use empty string to clean-up existing
      value."""
     type: Literal[CredentialType.AZURE_KEY_VAULT_SMB] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Credentials type. Required."""
+    """The Credentials type. Required. AZURE_KEY_VAULT_SMB."""
 
     @overload
     def __init__(
@@ -435,7 +483,8 @@ class AzureKeyVaultSmbCredentials(Credentials, discriminator="AzureKeyVaultSmb")
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=CredentialType.AZURE_KEY_VAULT_SMB, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = CredentialType.AZURE_KEY_VAULT_SMB  # type: ignore
 
 
 class EndpointBaseProperties(_Model):
@@ -444,14 +493,17 @@ class EndpointBaseProperties(_Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureMultiCloudConnectorEndpointProperties, AzureStorageBlobContainerEndpointProperties,
     AzureStorageNfsFileShareEndpointProperties, AzureStorageSmbFileShareEndpointProperties,
-    NfsMountEndpointProperties, SmbMountEndpointProperties
+    NfsMountEndpointProperties, S3WithHmacEndpointProperties, SmbMountEndpointProperties
 
     :ivar endpoint_type: The Endpoint resource type. Required. Known values are:
      "AzureStorageBlobContainer", "NfsMount", "AzureStorageSmbFileShare", "SmbMount",
-     "AzureMultiCloudConnector", and "AzureStorageNfsFileShare".
+     "AzureMultiCloudConnector", "AzureStorageNfsFileShare", and "S3WithHMAC".
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.EndpointType
     :ivar description: A description for the Endpoint.
     :vartype description: str
+    :ivar endpoint_kind: The Endpoint resource kind source or target. Known values are: "Source"
+     and "Target".
+    :vartype endpoint_kind: str or ~azure.mgmt.storagemover.models.EndpointKind
     :ivar provisioning_state: The provisioning state of this resource. Known values are:
      "Succeeded", "Canceled", "Failed", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
@@ -460,10 +512,14 @@ class EndpointBaseProperties(_Model):
     __mapping__: dict[str, _Model] = {}
     endpoint_type: str = rest_discriminator(name="endpointType", visibility=["read", "create"])
     """The Endpoint resource type. Required. Known values are: \"AzureStorageBlobContainer\",
-     \"NfsMount\", \"AzureStorageSmbFileShare\", \"SmbMount\", \"AzureMultiCloudConnector\", and
-     \"AzureStorageNfsFileShare\"."""
+     \"NfsMount\", \"AzureStorageSmbFileShare\", \"SmbMount\", \"AzureMultiCloudConnector\",
+     \"AzureStorageNfsFileShare\", and \"S3WithHMAC\"."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A description for the Endpoint."""
+    endpoint_kind: Optional[Union[str, "_models.EndpointKind"]] = rest_field(
+        name="endpointKind", visibility=["read", "create"]
+    )
+    """The Endpoint resource kind source or target. Known values are: \"Source\" and \"Target\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -476,6 +532,7 @@ class EndpointBaseProperties(_Model):
         *,
         endpoint_type: str,
         description: Optional[str] = None,
+        endpoint_kind: Optional[Union[str, "_models.EndpointKind"]] = None,
     ) -> None: ...
 
     @overload
@@ -496,6 +553,9 @@ class AzureMultiCloudConnectorEndpointProperties(
 
     :ivar description: A description for the Endpoint.
     :vartype description: str
+    :ivar endpoint_kind: The Endpoint resource kind source or target. Known values are: "Source"
+     and "Target".
+    :vartype endpoint_kind: str or ~azure.mgmt.storagemover.models.EndpointKind
     :ivar provisioning_state: The provisioning state of this resource. Known values are:
      "Succeeded", "Canceled", "Failed", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
@@ -504,7 +564,7 @@ class AzureMultiCloudConnectorEndpointProperties(
     :vartype multi_cloud_connector_id: str
     :ivar aws_s3_bucket_id: The AWS S3 bucket ARM resource Id. Required.
     :vartype aws_s3_bucket_id: str
-    :ivar endpoint_type: The Endpoint resource type. Required.
+    :ivar endpoint_type: The Endpoint resource type. Required. AZURE_MULTI_CLOUD_CONNECTOR.
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.AZURE_MULTI_CLOUD_CONNECTOR
     """
 
@@ -513,7 +573,7 @@ class AzureMultiCloudConnectorEndpointProperties(
     aws_s3_bucket_id: str = rest_field(name="awsS3BucketId", visibility=["read", "create", "update", "delete", "query"])
     """The AWS S3 bucket ARM resource Id. Required."""
     endpoint_type: Literal[EndpointType.AZURE_MULTI_CLOUD_CONNECTOR] = rest_discriminator(name="endpointType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Endpoint resource type. Required."""
+    """The Endpoint resource type. Required. AZURE_MULTI_CLOUD_CONNECTOR."""
 
     @overload
     def __init__(
@@ -522,6 +582,7 @@ class AzureMultiCloudConnectorEndpointProperties(
         multi_cloud_connector_id: str,
         aws_s3_bucket_id: str,
         description: Optional[str] = None,
+        endpoint_kind: Optional[Union[str, "_models.EndpointKind"]] = None,
     ) -> None: ...
 
     @overload
@@ -532,7 +593,8 @@ class AzureMultiCloudConnectorEndpointProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.AZURE_MULTI_CLOUD_CONNECTOR, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.AZURE_MULTI_CLOUD_CONNECTOR  # type: ignore
 
 
 class EndpointBaseUpdateProperties(_Model):
@@ -543,11 +605,11 @@ class EndpointBaseUpdateProperties(_Model):
     AzureStorageBlobContainerEndpointUpdateProperties,
     AzureStorageNfsFileShareEndpointUpdateProperties,
     AzureStorageSmbFileShareEndpointUpdateProperties, NfsMountEndpointUpdateProperties,
-    SmbMountEndpointUpdateProperties
+    S3WithHmacEndpointUpdateProperties, SmbMountEndpointUpdateProperties
 
     :ivar endpoint_type: The Endpoint resource type. Required. Known values are:
      "AzureStorageBlobContainer", "NfsMount", "AzureStorageSmbFileShare", "SmbMount",
-     "AzureMultiCloudConnector", and "AzureStorageNfsFileShare".
+     "AzureMultiCloudConnector", "AzureStorageNfsFileShare", and "S3WithHMAC".
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.EndpointType
     :ivar description: A description for the Endpoint.
     :vartype description: str
@@ -556,8 +618,8 @@ class EndpointBaseUpdateProperties(_Model):
     __mapping__: dict[str, _Model] = {}
     endpoint_type: str = rest_discriminator(name="endpointType", visibility=["read", "create"])
     """The Endpoint resource type. Required. Known values are: \"AzureStorageBlobContainer\",
-     \"NfsMount\", \"AzureStorageSmbFileShare\", \"SmbMount\", \"AzureMultiCloudConnector\", and
-     \"AzureStorageNfsFileShare\"."""
+     \"NfsMount\", \"AzureStorageSmbFileShare\", \"SmbMount\", \"AzureMultiCloudConnector\",
+     \"AzureStorageNfsFileShare\", and \"S3WithHMAC\"."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A description for the Endpoint."""
 
@@ -587,12 +649,12 @@ class AzureMultiCloudConnectorEndpointUpdateProperties(
 
     :ivar description: A description for the Endpoint.
     :vartype description: str
-    :ivar endpoint_type: The Endpoint resource type. Required.
+    :ivar endpoint_type: The Endpoint resource type. Required. AZURE_MULTI_CLOUD_CONNECTOR.
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.AZURE_MULTI_CLOUD_CONNECTOR
     """
 
     endpoint_type: Literal[EndpointType.AZURE_MULTI_CLOUD_CONNECTOR] = rest_discriminator(name="endpointType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Endpoint resource type. Required."""
+    """The Endpoint resource type. Required. AZURE_MULTI_CLOUD_CONNECTOR."""
 
     @overload
     def __init__(
@@ -609,7 +671,8 @@ class AzureMultiCloudConnectorEndpointUpdateProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.AZURE_MULTI_CLOUD_CONNECTOR, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.AZURE_MULTI_CLOUD_CONNECTOR  # type: ignore
 
 
 class AzureStorageBlobContainerEndpointProperties(
@@ -619,6 +682,9 @@ class AzureStorageBlobContainerEndpointProperties(
 
     :ivar description: A description for the Endpoint.
     :vartype description: str
+    :ivar endpoint_kind: The Endpoint resource kind source or target. Known values are: "Source"
+     and "Target".
+    :vartype endpoint_kind: str or ~azure.mgmt.storagemover.models.EndpointKind
     :ivar provisioning_state: The provisioning state of this resource. Known values are:
      "Succeeded", "Canceled", "Failed", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
@@ -628,7 +694,7 @@ class AzureStorageBlobContainerEndpointProperties(
     :ivar blob_container_name: The name of the Storage blob container that is the target
      destination. Required.
     :vartype blob_container_name: str
-    :ivar endpoint_type: The Endpoint resource type. Required.
+    :ivar endpoint_type: The Endpoint resource type. Required. AZURE_STORAGE_BLOB_CONTAINER.
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.AZURE_STORAGE_BLOB_CONTAINER
     """
 
@@ -637,7 +703,7 @@ class AzureStorageBlobContainerEndpointProperties(
     blob_container_name: str = rest_field(name="blobContainerName", visibility=["read", "create"])
     """The name of the Storage blob container that is the target destination. Required."""
     endpoint_type: Literal[EndpointType.AZURE_STORAGE_BLOB_CONTAINER] = rest_discriminator(name="endpointType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Endpoint resource type. Required."""
+    """The Endpoint resource type. Required. AZURE_STORAGE_BLOB_CONTAINER."""
 
     @overload
     def __init__(
@@ -646,6 +712,7 @@ class AzureStorageBlobContainerEndpointProperties(
         storage_account_resource_id: str,
         blob_container_name: str,
         description: Optional[str] = None,
+        endpoint_kind: Optional[Union[str, "_models.EndpointKind"]] = None,
     ) -> None: ...
 
     @overload
@@ -656,7 +723,8 @@ class AzureStorageBlobContainerEndpointProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.AZURE_STORAGE_BLOB_CONTAINER, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.AZURE_STORAGE_BLOB_CONTAINER  # type: ignore
 
 
 class AzureStorageBlobContainerEndpointUpdateProperties(
@@ -666,12 +734,12 @@ class AzureStorageBlobContainerEndpointUpdateProperties(
 
     :ivar description: A description for the Endpoint.
     :vartype description: str
-    :ivar endpoint_type: The Endpoint resource type. Required.
+    :ivar endpoint_type: The Endpoint resource type. Required. AZURE_STORAGE_BLOB_CONTAINER.
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.AZURE_STORAGE_BLOB_CONTAINER
     """
 
     endpoint_type: Literal[EndpointType.AZURE_STORAGE_BLOB_CONTAINER] = rest_discriminator(name="endpointType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Endpoint resource type. Required."""
+    """The Endpoint resource type. Required. AZURE_STORAGE_BLOB_CONTAINER."""
 
     @overload
     def __init__(
@@ -688,7 +756,8 @@ class AzureStorageBlobContainerEndpointUpdateProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.AZURE_STORAGE_BLOB_CONTAINER, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.AZURE_STORAGE_BLOB_CONTAINER  # type: ignore
 
 
 class AzureStorageNfsFileShareEndpointProperties(
@@ -698,6 +767,9 @@ class AzureStorageNfsFileShareEndpointProperties(
 
     :ivar description: A description for the Endpoint.
     :vartype description: str
+    :ivar endpoint_kind: The Endpoint resource kind source or target. Known values are: "Source"
+     and "Target".
+    :vartype endpoint_kind: str or ~azure.mgmt.storagemover.models.EndpointKind
     :ivar provisioning_state: The provisioning state of this resource. Known values are:
      "Succeeded", "Canceled", "Failed", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
@@ -705,7 +777,7 @@ class AzureStorageNfsFileShareEndpointProperties(
     :vartype storage_account_resource_id: str
     :ivar file_share_name: The name of the Azure Storage NFS file share. Required.
     :vartype file_share_name: str
-    :ivar endpoint_type: The Endpoint resource type. Required.
+    :ivar endpoint_type: The Endpoint resource type. Required. AZURE_STORAGE_NFS_FILE_SHARE.
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.AZURE_STORAGE_NFS_FILE_SHARE
     """
 
@@ -714,7 +786,7 @@ class AzureStorageNfsFileShareEndpointProperties(
     file_share_name: str = rest_field(name="fileShareName", visibility=["read", "create"])
     """The name of the Azure Storage NFS file share. Required."""
     endpoint_type: Literal[EndpointType.AZURE_STORAGE_NFS_FILE_SHARE] = rest_discriminator(name="endpointType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Endpoint resource type. Required."""
+    """The Endpoint resource type. Required. AZURE_STORAGE_NFS_FILE_SHARE."""
 
     @overload
     def __init__(
@@ -723,6 +795,7 @@ class AzureStorageNfsFileShareEndpointProperties(
         storage_account_resource_id: str,
         file_share_name: str,
         description: Optional[str] = None,
+        endpoint_kind: Optional[Union[str, "_models.EndpointKind"]] = None,
     ) -> None: ...
 
     @overload
@@ -733,7 +806,8 @@ class AzureStorageNfsFileShareEndpointProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.AZURE_STORAGE_NFS_FILE_SHARE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.AZURE_STORAGE_NFS_FILE_SHARE  # type: ignore
 
 
 class AzureStorageNfsFileShareEndpointUpdateProperties(
@@ -743,12 +817,12 @@ class AzureStorageNfsFileShareEndpointUpdateProperties(
 
     :ivar description: A description for the Endpoint.
     :vartype description: str
-    :ivar endpoint_type: The Endpoint resource type. Required.
+    :ivar endpoint_type: The Endpoint resource type. Required. AZURE_STORAGE_NFS_FILE_SHARE.
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.AZURE_STORAGE_NFS_FILE_SHARE
     """
 
     endpoint_type: Literal[EndpointType.AZURE_STORAGE_NFS_FILE_SHARE] = rest_discriminator(name="endpointType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Endpoint resource type. Required."""
+    """The Endpoint resource type. Required. AZURE_STORAGE_NFS_FILE_SHARE."""
 
     @overload
     def __init__(
@@ -765,7 +839,8 @@ class AzureStorageNfsFileShareEndpointUpdateProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.AZURE_STORAGE_NFS_FILE_SHARE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.AZURE_STORAGE_NFS_FILE_SHARE  # type: ignore
 
 
 class AzureStorageSmbFileShareEndpointProperties(
@@ -775,6 +850,9 @@ class AzureStorageSmbFileShareEndpointProperties(
 
     :ivar description: A description for the Endpoint.
     :vartype description: str
+    :ivar endpoint_kind: The Endpoint resource kind source or target. Known values are: "Source"
+     and "Target".
+    :vartype endpoint_kind: str or ~azure.mgmt.storagemover.models.EndpointKind
     :ivar provisioning_state: The provisioning state of this resource. Known values are:
      "Succeeded", "Canceled", "Failed", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
@@ -782,7 +860,7 @@ class AzureStorageSmbFileShareEndpointProperties(
     :vartype storage_account_resource_id: str
     :ivar file_share_name: The name of the Azure Storage file share. Required.
     :vartype file_share_name: str
-    :ivar endpoint_type: The Endpoint resource type. Required.
+    :ivar endpoint_type: The Endpoint resource type. Required. AZURE_STORAGE_SMB_FILE_SHARE.
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.AZURE_STORAGE_SMB_FILE_SHARE
     """
 
@@ -791,7 +869,7 @@ class AzureStorageSmbFileShareEndpointProperties(
     file_share_name: str = rest_field(name="fileShareName", visibility=["read", "create"])
     """The name of the Azure Storage file share. Required."""
     endpoint_type: Literal[EndpointType.AZURE_STORAGE_SMB_FILE_SHARE] = rest_discriminator(name="endpointType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Endpoint resource type. Required."""
+    """The Endpoint resource type. Required. AZURE_STORAGE_SMB_FILE_SHARE."""
 
     @overload
     def __init__(
@@ -800,6 +878,7 @@ class AzureStorageSmbFileShareEndpointProperties(
         storage_account_resource_id: str,
         file_share_name: str,
         description: Optional[str] = None,
+        endpoint_kind: Optional[Union[str, "_models.EndpointKind"]] = None,
     ) -> None: ...
 
     @overload
@@ -810,7 +889,8 @@ class AzureStorageSmbFileShareEndpointProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.AZURE_STORAGE_SMB_FILE_SHARE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.AZURE_STORAGE_SMB_FILE_SHARE  # type: ignore
 
 
 class AzureStorageSmbFileShareEndpointUpdateProperties(
@@ -820,12 +900,12 @@ class AzureStorageSmbFileShareEndpointUpdateProperties(
 
     :ivar description: A description for the Endpoint.
     :vartype description: str
-    :ivar endpoint_type: The Endpoint resource type. Required.
+    :ivar endpoint_type: The Endpoint resource type. Required. AZURE_STORAGE_SMB_FILE_SHARE.
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.AZURE_STORAGE_SMB_FILE_SHARE
     """
 
     endpoint_type: Literal[EndpointType.AZURE_STORAGE_SMB_FILE_SHARE] = rest_discriminator(name="endpointType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Endpoint resource type. Required."""
+    """The Endpoint resource type. Required. AZURE_STORAGE_SMB_FILE_SHARE."""
 
     @overload
     def __init__(
@@ -842,7 +922,113 @@ class AzureStorageSmbFileShareEndpointUpdateProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.AZURE_STORAGE_SMB_FILE_SHARE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.AZURE_STORAGE_SMB_FILE_SHARE  # type: ignore
+
+
+class Connection(ProxyResource):
+    """The Connection resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storagemover.models.SystemData
+    :ivar properties: Connection properties. Required.
+    :vartype properties: ~azure.mgmt.storagemover.models.ConnectionProperties
+    """
+
+    properties: "_models.ConnectionProperties" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Connection properties. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: "_models.ConnectionProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConnectionProperties(_Model):
+    """Properties of the Connection resource.
+
+    :ivar description: A description for the Connection.
+    :vartype description: str
+    :ivar connection_status: The connection status. Known values are: "Approved", "Rejected",
+     "Disconnected", "Pending", and "Stale".
+    :vartype connection_status: str or ~azure.mgmt.storagemover.models.ConnectionStatus
+    :ivar private_link_service_id: The PrivateLinkServiceId for the connection. Required.
+    :vartype private_link_service_id: str
+    :ivar private_endpoint_name: The PrivateEndpointName associated with the connection.
+    :vartype private_endpoint_name: str
+    :ivar private_endpoint_resource_id: The privateEndpoint resource Id.
+    :vartype private_endpoint_resource_id: str
+    :ivar job_list: List of job definitions associated with this connection.
+    :vartype job_list: list[str]
+    :ivar provisioning_state: The provisioning state of this resource. Known values are:
+     "Succeeded", "Canceled", "Failed", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
+    """
+
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A description for the Connection."""
+    connection_status: Optional[Union[str, "_models.ConnectionStatus"]] = rest_field(
+        name="connectionStatus", visibility=["read"]
+    )
+    """The connection status. Known values are: \"Approved\", \"Rejected\", \"Disconnected\",
+     \"Pending\", and \"Stale\"."""
+    private_link_service_id: str = rest_field(
+        name="privateLinkServiceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The PrivateLinkServiceId for the connection. Required."""
+    private_endpoint_name: Optional[str] = rest_field(name="privateEndpointName", visibility=["read"])
+    """The PrivateEndpointName associated with the connection."""
+    private_endpoint_resource_id: Optional[str] = rest_field(name="privateEndpointResourceId", visibility=["read"])
+    """The privateEndpoint resource Id."""
+    job_list: Optional[list[str]] = rest_field(
+        name="jobList", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of job definitions associated with this connection."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of this resource. Known values are: \"Succeeded\", \"Canceled\",
+     \"Failed\", and \"Deleting\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        private_link_service_id: str,
+        description: Optional[str] = None,
+        job_list: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class Endpoint(ProxyResource):
@@ -1045,6 +1231,10 @@ class JobDefinition(ProxyResource):
         "agent_resource_id",
         "source_target_map",
         "provisioning_state",
+        "connections",
+        "schedule",
+        "data_integrity_validation",
+        "preserve_permissions",
     ]
 
     @overload
@@ -1125,6 +1315,16 @@ class JobDefinitionProperties(_Model):
     :ivar provisioning_state: The provisioning state of this resource. Known values are:
      "Succeeded", "Canceled", "Failed", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
+    :ivar connections: List of connections associated to this job.
+    :vartype connections: list[str]
+    :ivar schedule: Schedule information for the Job Definition.
+    :vartype schedule: ~azure.mgmt.storagemover.models.ScheduleInfo
+    :ivar data_integrity_validation: The checksum validation mode for the job definition. Known
+     values are: "SaveVerifyFileMD5", "SaveFileMD5", and "None".
+    :vartype data_integrity_validation: str or
+     ~azure.mgmt.storagemover.models.DataIntegrityValidation
+    :ivar preserve_permissions: Boolean to preserve permissions or not.
+    :vartype preserve_permissions: bool
     """
 
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1173,6 +1373,19 @@ class JobDefinitionProperties(_Model):
     )
     """The provisioning state of this resource. Known values are: \"Succeeded\", \"Canceled\",
      \"Failed\", and \"Deleting\"."""
+    connections: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """List of connections associated to this job."""
+    schedule: Optional["_models.ScheduleInfo"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Schedule information for the Job Definition."""
+    data_integrity_validation: Optional[Union[str, "_models.DataIntegrityValidation"]] = rest_field(
+        name="dataIntegrityValidation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The checksum validation mode for the job definition. Known values are: \"SaveVerifyFileMD5\",
+     \"SaveFileMD5\", and \"None\"."""
+    preserve_permissions: Optional[bool] = rest_field(
+        name="preservePermissions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Boolean to preserve permissions or not."""
 
     @overload
     def __init__(
@@ -1187,6 +1400,10 @@ class JobDefinitionProperties(_Model):
         target_subpath: Optional[str] = None,
         agent_name: Optional[str] = None,
         source_target_map: Optional["_models.JobDefinitionPropertiesSourceTargetMap"] = None,
+        connections: Optional[list[str]] = None,
+        schedule: Optional["_models.ScheduleInfo"] = None,
+        data_integrity_validation: Optional[Union[str, "_models.DataIntegrityValidation"]] = None,
+        preserve_permissions: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -1222,7 +1439,7 @@ class JobDefinitionUpdateParameters(_Model):
     )
     """Job definition properties."""
 
-    __flattened_items = ["description", "copy_mode", "agent_name"]
+    __flattened_items = ["description", "copy_mode", "agent_name", "connections", "data_integrity_validation"]
 
     @overload
     def __init__(
@@ -1269,6 +1486,12 @@ class JobDefinitionUpdateProperties(_Model):
     :vartype copy_mode: str or ~azure.mgmt.storagemover.models.CopyMode
     :ivar agent_name: Name of the Agent to assign for new Job Runs of this Job Definition.
     :vartype agent_name: str
+    :ivar connections: List of connections associated to this job.
+    :vartype connections: list[str]
+    :ivar data_integrity_validation: Data Integrity Validation mode. Known values are:
+     "SaveVerifyFileMD5", "SaveFileMD5", and "None".
+    :vartype data_integrity_validation: str or
+     ~azure.mgmt.storagemover.models.DataIntegrityValidation
     """
 
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1279,6 +1502,13 @@ class JobDefinitionUpdateProperties(_Model):
     """Strategy to use for copy. Known values are: \"Additive\" and \"Mirror\"."""
     agent_name: Optional[str] = rest_field(name="agentName", visibility=["read", "create", "update", "delete", "query"])
     """Name of the Agent to assign for new Job Runs of this Job Definition."""
+    connections: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """List of connections associated to this job."""
+    data_integrity_validation: Optional[Union[str, "_models.DataIntegrityValidation"]] = rest_field(
+        name="dataIntegrityValidation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Data Integrity Validation mode. Known values are: \"SaveVerifyFileMD5\", \"SaveFileMD5\", and
+     \"None\"."""
 
     @overload
     def __init__(
@@ -1287,6 +1517,8 @@ class JobDefinitionUpdateProperties(_Model):
         description: Optional[str] = None,
         copy_mode: Optional[Union[str, "_models.CopyMode"]] = None,
         agent_name: Optional[str] = None,
+        connections: Optional[list[str]] = None,
+        data_integrity_validation: Optional[Union[str, "_models.DataIntegrityValidation"]] = None,
     ) -> None: ...
 
     @overload
@@ -1330,6 +1562,8 @@ class JobRun(ProxyResource):
         "agent_resource_id",
         "execution_start_time",
         "execution_end_time",
+        "trigger_type",
+        "scheduled_execution_time",
         "last_status_update",
         "items_scanned",
         "items_excluded",
@@ -1351,6 +1585,7 @@ class JobRun(ProxyResource):
         "target_properties",
         "job_definition_properties",
         "error",
+        "warnings",
         "provisioning_state",
     ]
 
@@ -1448,6 +1683,11 @@ class JobRunProperties(_Model):
     :ivar execution_end_time: End time of the run. Null if Agent has not reported that the job has
      ended.
     :vartype execution_end_time: ~datetime.datetime
+    :ivar trigger_type: Trigger type for the job run. Default is manual. Known values are: "Manual"
+     and "Scheduled".
+    :vartype trigger_type: str or ~azure.mgmt.storagemover.models.TriggerType
+    :ivar scheduled_execution_time: Scheduled execution time. Null if Trigger type is manual.
+    :vartype scheduled_execution_time: ~datetime.datetime
     :ivar last_status_update: The last updated time of the Job Run.
     :vartype last_status_update: ~datetime.datetime
     :ivar items_scanned: Number of items scanned so far in source.
@@ -1500,6 +1740,8 @@ class JobRunProperties(_Model):
     :vartype job_definition_properties: any
     :ivar error: Error details.
     :vartype error: ~azure.mgmt.storagemover.models.JobRunError
+    :ivar warnings: Warning details.
+    :vartype warnings: list[~azure.mgmt.storagemover.models.JobRunWarning]
     :ivar provisioning_state: The provisioning state of this resource. Known values are:
      "Succeeded", "Canceled", "Failed", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
@@ -1524,6 +1766,13 @@ class JobRunProperties(_Model):
         name="executionEndTime", visibility=["read"], format="rfc3339"
     )
     """End time of the run. Null if Agent has not reported that the job has ended."""
+    trigger_type: Optional[Union[str, "_models.TriggerType"]] = rest_field(name="triggerType", visibility=["read"])
+    """Trigger type for the job run. Default is manual. Known values are: \"Manual\" and
+     \"Scheduled\"."""
+    scheduled_execution_time: Optional[datetime.datetime] = rest_field(
+        name="scheduledExecutionTime", visibility=["read"], format="rfc3339"
+    )
+    """Scheduled execution time. Null if Trigger type is manual."""
     last_status_update: Optional[datetime.datetime] = rest_field(
         name="lastStatusUpdate", visibility=["read"], format="rfc3339"
     )
@@ -1570,6 +1819,8 @@ class JobRunProperties(_Model):
     """Copy of parent Job Definition's properties at time of Job Run creation."""
     error: Optional["_models.JobRunError"] = rest_field(visibility=["read"])
     """Error details."""
+    warnings: Optional[list["_models.JobRunWarning"]] = rest_field(visibility=["read"])
+    """Warning details."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -1586,6 +1837,44 @@ class JobRunResourceId(_Model):
 
     job_run_resource_id: Optional[str] = rest_field(name="jobRunResourceId", visibility=["read"])
     """Fully qualified resource id of the Job Run."""
+
+
+class JobRunWarning(_Model):
+    """Warning type.
+
+    :ivar code: Error code of the given entry.
+    :vartype code: str
+    :ivar message: Warning message of the given entry.
+    :vartype message: str
+    :ivar target: Target of the given error entry.
+    :vartype target: str
+    """
+
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Error code of the given entry."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Warning message of the given entry."""
+    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Target of the given error entry."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Optional[str] = None,
+        message: Optional[str] = None,
+        target: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ManagedServiceIdentity(_Model):
@@ -1645,6 +1934,9 @@ class NfsMountEndpointProperties(EndpointBaseProperties, discriminator="NfsMount
 
     :ivar description: A description for the Endpoint.
     :vartype description: str
+    :ivar endpoint_kind: The Endpoint resource kind source or target. Known values are: "Source"
+     and "Target".
+    :vartype endpoint_kind: str or ~azure.mgmt.storagemover.models.EndpointKind
     :ivar provisioning_state: The provisioning state of this resource. Known values are:
      "Succeeded", "Canceled", "Failed", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
@@ -1654,7 +1946,7 @@ class NfsMountEndpointProperties(EndpointBaseProperties, discriminator="NfsMount
     :vartype nfs_version: str or ~azure.mgmt.storagemover.models.NfsVersion
     :ivar export: The directory being exported from the server. Required.
     :vartype export: str
-    :ivar endpoint_type: The Endpoint resource type. Required.
+    :ivar endpoint_type: The Endpoint resource type. Required. NFS_MOUNT.
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.NFS_MOUNT
     """
 
@@ -1667,7 +1959,7 @@ class NfsMountEndpointProperties(EndpointBaseProperties, discriminator="NfsMount
     export: str = rest_field(visibility=["read", "create"])
     """The directory being exported from the server. Required."""
     endpoint_type: Literal[EndpointType.NFS_MOUNT] = rest_discriminator(name="endpointType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Endpoint resource type. Required."""
+    """The Endpoint resource type. Required. NFS_MOUNT."""
 
     @overload
     def __init__(
@@ -1676,6 +1968,7 @@ class NfsMountEndpointProperties(EndpointBaseProperties, discriminator="NfsMount
         host: str,
         export: str,
         description: Optional[str] = None,
+        endpoint_kind: Optional[Union[str, "_models.EndpointKind"]] = None,
         nfs_version: Optional[Union[str, "_models.NfsVersion"]] = None,
     ) -> None: ...
 
@@ -1687,7 +1980,8 @@ class NfsMountEndpointProperties(EndpointBaseProperties, discriminator="NfsMount
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.NFS_MOUNT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.NFS_MOUNT  # type: ignore
 
 
 class NfsMountEndpointUpdateProperties(EndpointBaseUpdateProperties, discriminator="NfsMount"):
@@ -1695,12 +1989,12 @@ class NfsMountEndpointUpdateProperties(EndpointBaseUpdateProperties, discriminat
 
     :ivar description: A description for the Endpoint.
     :vartype description: str
-    :ivar endpoint_type: The Endpoint resource type. Required.
+    :ivar endpoint_type: The Endpoint resource type. Required. NFS_MOUNT.
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.NFS_MOUNT
     """
 
     endpoint_type: Literal[EndpointType.NFS_MOUNT] = rest_discriminator(name="endpointType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Endpoint resource type. Required."""
+    """The Endpoint resource type. Required. NFS_MOUNT."""
 
     @overload
     def __init__(
@@ -1717,7 +2011,8 @@ class NfsMountEndpointUpdateProperties(EndpointBaseUpdateProperties, discriminat
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.NFS_MOUNT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.NFS_MOUNT  # type: ignore
 
 
 class Operation(_Model):
@@ -1778,7 +2073,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -2022,11 +2317,197 @@ class Recurrence(_Model):
         super().__init__(*args, **kwargs)
 
 
+class S3WithHmacEndpointProperties(EndpointBaseProperties, discriminator="S3WithHMAC"):
+    """The properties of S3WithHmac share endpoint.
+
+    :ivar description: A description for the Endpoint.
+    :vartype description: str
+    :ivar endpoint_kind: The Endpoint resource kind source or target. Known values are: "Source"
+     and "Target".
+    :vartype endpoint_kind: str or ~azure.mgmt.storagemover.models.EndpointKind
+    :ivar provisioning_state: The provisioning state of this resource. Known values are:
+     "Succeeded", "Canceled", "Failed", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
+    :ivar credentials: The Azure Key Vault credentials which stores the access key and secret key.
+     Use empty string to clean-up existing value.
+    :vartype credentials: ~azure.mgmt.storagemover.models.AzureKeyVaultS3WithHmacCredentials
+    :ivar source_uri: The  URI which points to the source.
+    :vartype source_uri: str
+    :ivar source_type: The source type of S3WithHmac endpoint. Known values are: "MINIO",
+     "BACKBLAZE", "IBM", "CLOUDFLARE", and "GCS".
+    :vartype source_type: str or ~azure.mgmt.storagemover.models.S3WithHmacSourceType
+    :ivar other_source_type_description: The description for other source type of S3WithHmac
+     endpoint.
+    :vartype other_source_type_description: str
+    :ivar endpoint_type: The Endpoint resource type. Required. S3_WITH_HMAC.
+    :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.S3_WITH_HMAC
+    """
+
+    credentials: Optional["_models.AzureKeyVaultS3WithHmacCredentials"] = rest_field(visibility=["read", "create"])
+    """The Azure Key Vault credentials which stores the access key and secret key. Use empty string to
+     clean-up existing value."""
+    source_uri: Optional[str] = rest_field(name="sourceUri", visibility=["read", "create"])
+    """The  URI which points to the source."""
+    source_type: Optional[Union[str, "_models.S3WithHmacSourceType"]] = rest_field(
+        name="sourceType", visibility=["read", "create"]
+    )
+    """The source type of S3WithHmac endpoint. Known values are: \"MINIO\", \"BACKBLAZE\", \"IBM\",
+     \"CLOUDFLARE\", and \"GCS\"."""
+    other_source_type_description: Optional[str] = rest_field(
+        name="otherSourceTypeDescription", visibility=["read", "create"]
+    )
+    """The description for other source type of S3WithHmac endpoint."""
+    endpoint_type: Literal[EndpointType.S3_WITH_HMAC] = rest_discriminator(name="endpointType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Endpoint resource type. Required. S3_WITH_HMAC."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        endpoint_kind: Optional[Union[str, "_models.EndpointKind"]] = None,
+        credentials: Optional["_models.AzureKeyVaultS3WithHmacCredentials"] = None,
+        source_uri: Optional[str] = None,
+        source_type: Optional[Union[str, "_models.S3WithHmacSourceType"]] = None,
+        other_source_type_description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.S3_WITH_HMAC  # type: ignore
+
+
+class S3WithHmacEndpointUpdateProperties(EndpointBaseUpdateProperties, discriminator="S3WithHMAC"):
+    """S3WithHmacEndpointUpdateProperties.
+
+    :ivar description: A description for the Endpoint.
+    :vartype description: str
+    :ivar credentials: The Azure Key Vault secret URIs which store the required credentials to
+     access the S3.
+    :vartype credentials: ~azure.mgmt.storagemover.models.AzureKeyVaultS3WithHmacCredentials
+    :ivar endpoint_type: The Endpoint resource type. Required. S3_WITH_HMAC.
+    :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.S3_WITH_HMAC
+    """
+
+    credentials: Optional["_models.AzureKeyVaultS3WithHmacCredentials"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Key Vault secret URIs which store the required credentials to access the S3."""
+    endpoint_type: Literal[EndpointType.S3_WITH_HMAC] = rest_discriminator(name="endpointType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Endpoint resource type. Required. S3_WITH_HMAC."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        credentials: Optional["_models.AzureKeyVaultS3WithHmacCredentials"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.S3_WITH_HMAC  # type: ignore
+
+
+class ScheduleInfo(_Model):
+    """Schedule information for the Job Definition.
+
+    :ivar frequency: Type of schedule — Monthly, Weekly, or Daily. Required. Known values are:
+     "Monthly", "Weekly", "Daily", and "Onetime".
+    :vartype frequency: str or ~azure.mgmt.storagemover.models.Frequency
+    :ivar is_active: Whether the schedule is currently active. Required.
+    :vartype is_active: bool
+    :ivar execution_time: Time of day to execute (hours and minutes).
+    :vartype execution_time: ~azure.mgmt.storagemover.models.Time
+    :ivar start_date: Specific one-time execution date and time.
+    :vartype start_date: ~datetime.datetime
+    :ivar days_of_week: Days of the week for weekly schedules.
+    :vartype days_of_week: list[str]
+    :ivar days_of_month: Days of the month for monthly schedules.
+    :vartype days_of_month: list[int]
+    :ivar cron_expression: Optional CRON expression for advanced scheduling.
+    :vartype cron_expression: str
+    :ivar end_date: End time of the schedule (in UTC).
+    :vartype end_date: ~datetime.datetime
+    """
+
+    frequency: Union[str, "_models.Frequency"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Type of schedule — Monthly, Weekly, or Daily. Required. Known values are: \"Monthly\",
+     \"Weekly\", \"Daily\", and \"Onetime\"."""
+    is_active: bool = rest_field(name="isActive", visibility=["read", "create", "update", "delete", "query"])
+    """Whether the schedule is currently active. Required."""
+    execution_time: Optional["_models.Time"] = rest_field(
+        name="executionTime", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Time of day to execute (hours and minutes)."""
+    start_date: Optional[datetime.datetime] = rest_field(
+        name="startDate", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Specific one-time execution date and time."""
+    days_of_week: Optional[list[str]] = rest_field(
+        name="daysOfWeek", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Days of the week for weekly schedules."""
+    days_of_month: Optional[list[int]] = rest_field(
+        name="daysOfMonth", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Days of the month for monthly schedules."""
+    cron_expression: Optional[str] = rest_field(
+        name="cronExpression", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional CRON expression for advanced scheduling."""
+    end_date: Optional[datetime.datetime] = rest_field(
+        name="endDate", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """End time of the schedule (in UTC)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        frequency: Union[str, "_models.Frequency"],
+        is_active: bool,
+        execution_time: Optional["_models.Time"] = None,
+        start_date: Optional[datetime.datetime] = None,
+        days_of_week: Optional[list[str]] = None,
+        days_of_month: Optional[list[int]] = None,
+        cron_expression: Optional[str] = None,
+        end_date: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class SmbMountEndpointProperties(EndpointBaseProperties, discriminator="SmbMount"):
     """The properties of SMB share endpoint.
 
     :ivar description: A description for the Endpoint.
     :vartype description: str
+    :ivar endpoint_kind: The Endpoint resource kind source or target. Known values are: "Source"
+     and "Target".
+    :vartype endpoint_kind: str or ~azure.mgmt.storagemover.models.EndpointKind
     :ivar provisioning_state: The provisioning state of this resource. Known values are:
      "Succeeded", "Canceled", "Failed", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
@@ -2037,7 +2518,7 @@ class SmbMountEndpointProperties(EndpointBaseProperties, discriminator="SmbMount
     :ivar credentials: The Azure Key Vault secret URIs which store the required credentials to
      access the SMB share.
     :vartype credentials: ~azure.mgmt.storagemover.models.AzureKeyVaultSmbCredentials
-    :ivar endpoint_type: The Endpoint resource type. Required.
+    :ivar endpoint_type: The Endpoint resource type. Required. SMB_MOUNT.
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.SMB_MOUNT
     """
 
@@ -2050,7 +2531,7 @@ class SmbMountEndpointProperties(EndpointBaseProperties, discriminator="SmbMount
     )
     """The Azure Key Vault secret URIs which store the required credentials to access the SMB share."""
     endpoint_type: Literal[EndpointType.SMB_MOUNT] = rest_discriminator(name="endpointType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Endpoint resource type. Required."""
+    """The Endpoint resource type. Required. SMB_MOUNT."""
 
     @overload
     def __init__(
@@ -2059,6 +2540,7 @@ class SmbMountEndpointProperties(EndpointBaseProperties, discriminator="SmbMount
         host: str,
         share_name: str,
         description: Optional[str] = None,
+        endpoint_kind: Optional[Union[str, "_models.EndpointKind"]] = None,
         credentials: Optional["_models.AzureKeyVaultSmbCredentials"] = None,
     ) -> None: ...
 
@@ -2070,7 +2552,8 @@ class SmbMountEndpointProperties(EndpointBaseProperties, discriminator="SmbMount
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.SMB_MOUNT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.SMB_MOUNT  # type: ignore
 
 
 class SmbMountEndpointUpdateProperties(EndpointBaseUpdateProperties, discriminator="SmbMount"):
@@ -2081,7 +2564,7 @@ class SmbMountEndpointUpdateProperties(EndpointBaseUpdateProperties, discriminat
     :ivar credentials: The Azure Key Vault secret URIs which store the required credentials to
      access the SMB share.
     :vartype credentials: ~azure.mgmt.storagemover.models.AzureKeyVaultSmbCredentials
-    :ivar endpoint_type: The Endpoint resource type. Required.
+    :ivar endpoint_type: The Endpoint resource type. Required. SMB_MOUNT.
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.SMB_MOUNT
     """
 
@@ -2090,7 +2573,7 @@ class SmbMountEndpointUpdateProperties(EndpointBaseUpdateProperties, discriminat
     )
     """The Azure Key Vault secret URIs which store the required credentials to access the SMB share."""
     endpoint_type: Literal[EndpointType.SMB_MOUNT] = rest_discriminator(name="endpointType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Endpoint resource type. Required."""
+    """The Endpoint resource type. Required. SMB_MOUNT."""
 
     @overload
     def __init__(
@@ -2108,7 +2591,8 @@ class SmbMountEndpointUpdateProperties(EndpointBaseUpdateProperties, discriminat
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.SMB_MOUNT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.SMB_MOUNT  # type: ignore
 
 
 class SourceEndpoint(_Model):
