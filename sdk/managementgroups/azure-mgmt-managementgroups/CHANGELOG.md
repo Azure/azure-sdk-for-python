@@ -2,7 +2,66 @@
 
 ## 1.2.0b1 (2026-04-02)
 
-skip changelog generation
+### Features Added
+
+  - Model `CreateManagementGroupRequest` added property `properties`
+  - Model `HierarchySettings` added property `system_data`
+  - Model `HierarchySettingsInfo` added property `properties`
+  - Model `ManagementGroup` added property `system_data`
+  - Enum `ManagementGroupChildType` added member `SUBSCRIPTIONS`
+  - Model `Operation` added property `is_data_action`
+  - Model `Operation` added property `origin`
+  - Model `Operation` added property `action_type`
+  - Model `SubscriptionUnderManagementGroup` added property `system_data`
+  - Added enum `ActionType`
+  - Added model `CreateManagementGroupProperties`
+  - Added model `CreateOrUpdateSettingsProperties`
+  - Added enum `CreatedByType`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `OperationDisplay`
+  - Added enum `Origin`
+  - Added model `ProxyResource`
+  - Added model `Resource`
+  - Added model `SystemData`
+
+### Breaking Changes
+
+  - Deleted or renamed model `ManagementGroupsAPI`
+  - Model `CreateManagementGroupRequest` deleted or renamed its instance variable `tenant_id`
+  - Model `CreateManagementGroupRequest` deleted or renamed its instance variable `display_name`
+  - Model `CreateManagementGroupRequest` deleted or renamed its instance variable `details`
+  - Model `CreateManagementGroupRequest` deleted or renamed its instance variable `children`
+  - Model `CreateOrUpdateSettingsRequest` deleted or renamed its instance variable `require_authorization_for_group_creation`
+  - Model `CreateOrUpdateSettingsRequest` deleted or renamed its instance variable `default_management_group`
+  - Model `HierarchySettingsInfo` deleted or renamed its instance variable `tenant_id`
+  - Model `HierarchySettingsInfo` deleted or renamed its instance variable `require_authorization_for_group_creation`
+  - Model `HierarchySettingsInfo` deleted or renamed its instance variable `default_management_group`
+  - Deleted or renamed model `AzureAsyncOperationResults`
+  - Deleted or renamed model `EntityHierarchyItem`
+  - Deleted or renamed model `ErrorDetails`
+  - Deleted or renamed model `ListSubscriptionUnderManagementGroup`
+  - Deleted or renamed model `OperationDisplayProperties`
+  - Deleted or renamed model `OperationResults`
+  - Method `EntitiesOperations.list` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `EntitiesOperations.list` changed its parameter `select` from `positional_or_keyword` to `keyword_only`
+  - Method `EntitiesOperations.list` changed its parameter `search` from `positional_or_keyword` to `keyword_only`
+  - Method `EntitiesOperations.list` changed its parameter `view` from `positional_or_keyword` to `keyword_only`
+  - Method `EntitiesOperations.list` changed its parameter `group_name` from `positional_or_keyword` to `keyword_only`
+  - Method `EntitiesOperations.list` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupSubscriptionsOperations.create` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupSubscriptionsOperations.delete` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupSubscriptionsOperations.get_subscription` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupSubscriptionsOperations.get_subscriptions_under_management_group` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.begin_create_or_update` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.begin_delete` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.get` changed its parameter `recurse` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.get` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.get_descendants` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.list` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.list` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.update` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
 
 ## 1.2.0 (2026-04-02)
 
