@@ -58,6 +58,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             assert client["message"] == "hi"
             assert client["my_json"]["key"] == "value"
             assert client["trimmed"] == "key"
+            assert "test.trimmed" not in client
             assert FEATURE_MANAGEMENT_KEY in client
             assert has_feature_flag(client, "Alpha")
 
