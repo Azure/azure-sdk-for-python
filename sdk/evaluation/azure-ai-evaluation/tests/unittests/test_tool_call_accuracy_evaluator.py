@@ -7,45 +7,63 @@ from azure.ai.evaluation._exceptions import EvaluationException
 
 # This mock should return a dictionary that mimics the output of the prompty (the _flow call),
 # which is then processed by the _do_eval method.
+import re as _re
+
+
+def _parse_tool_names_from_string(tool_calls_str):
+    """Parse tool names from reformatted [TOOL_CALL] lines."""
+    pattern = r"\[TOOL_CALL\]\s+(\S+)\("
+    return _re.findall(pattern, tool_calls_str)
+
+
+_BUILTIN_TOOL_NAMES = [
+    "bing_custom_search",
+    "bing_grounding",
+    "file_search",
+    "azure_ai_search",
+    "fabric_dataagent",
+    "code_interpreter",
+    "sharepoint_grounding",
+    "openapi",
+]
+
+
 async def flow_side_effect(timeout, **kwargs):
     tool_calls = kwargs.get("tool_calls", [])
     query = kwargs.get("query", "")
 
-    # Handle built-in tool calls first - count them as relevant
-    builtin_calls = 0
-    custom_function_calls = []
+    # Handle reformatted string tool_calls (after reformat_agent_response)
+    if isinstance(tool_calls, str):
+        tool_names = _parse_tool_names_from_string(tool_calls)
+        builtin_calls = sum(1 for n in tool_names if n in _BUILTIN_TOOL_NAMES)
+        custom_names = [n for n in tool_names if n not in _BUILTIN_TOOL_NAMES]
+        good_calls = sum(1 for n in custom_names if "good" in n)
+        bad_calls = sum(1 for n in custom_names if "bad" in n)
+        invalid_calls = sum(1 for n in custom_names if "invalid" in n)
+        total_calls = len(tool_names)
+        total_good_calls = good_calls + builtin_calls
+    else:
+        # Handle dict-based tool_calls (legacy path)
+        builtin_calls = 0
+        custom_function_calls = []
 
-    for tc in tool_calls:
-        tool_type = tc.get("type", "")
-        tool_name = tc.get("name", "")
+        for tc in tool_calls:
+            tool_type = tc.get("type", "")
+            tool_name = tc.get("name", "")
 
-        # Only support converter format: {type: "tool_call", name: "tool_name", arguments: {...}}
-        if tool_type == "tool_call":
-            if tool_name in [
-                "bing_custom_search",
-                "bing_grounding",
-                "file_search",
-                "azure_ai_search",
-                "fabric_dataagent",
-                "code_interpreter",
-                "sharepoint_grounding",
-                "openapi",
-            ]:
-                builtin_calls += 1
-            else:
-                # custom function tool call
-                custom_function_calls.append(tc)
+            if tool_type == "tool_call":
+                if tool_name in _BUILTIN_TOOL_NAMES:
+                    builtin_calls += 1
+                else:
+                    custom_function_calls.append(tc)
 
-    # Handle traditional function tool calls with tool_call_id only for non-built-in tools
-    good_calls = sum(1 for tc in custom_function_calls if "good" in tc.get("tool_call_id", ""))
-    bad_calls = sum(1 for tc in custom_function_calls if "bad" in tc.get("tool_call_id", ""))
-    invalid_calls = sum(1 for tc in custom_function_calls if "invalid" in tc.get("tool_call_id", ""))
-
-    total_calls = len(tool_calls)
-    total_good_calls = good_calls + builtin_calls
+        good_calls = sum(1 for tc in custom_function_calls if "good" in tc.get("name", ""))
+        bad_calls = sum(1 for tc in custom_function_calls if "bad" in tc.get("name", ""))
+        invalid_calls = sum(1 for tc in custom_function_calls if "invalid" in tc.get("name", ""))
+        total_calls = len(tool_calls)
+        total_good_calls = good_calls + builtin_calls
 
     if invalid_calls > 0:
-        # Return a non-numeric score to trigger an exception in the evaluator's check_score_is_valid
         return {
             "llm_output": {
                 "chain_of_thought": "The tool calls were very correct that I returned a huge number!",
@@ -85,20 +103,20 @@ class TestToolCallAccuracyEvaluator:
         tool_calls = [
             {
                 "type": "tool_call",
-                "tool_call_id": "call_good",
-                "name": "fetch_weather",
+                "tool_call_id": "call_1",
+                "name": "fetch_weather_good",
                 "arguments": {"location": "Paris"},
             },
             {
                 "type": "tool_call",
-                "tool_call_id": "call_bad",
-                "name": "buy_jacket",
+                "tool_call_id": "call_2",
+                "name": "buy_jacket_bad",
                 "arguments": {"type": "raincoat"},
             },
         ]
         tool_definitions = [
             {
-                "name": "fetch_weather",
+                "name": "fetch_weather_good",
                 "type": "function",
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
@@ -112,7 +130,7 @@ class TestToolCallAccuracyEvaluator:
                 },
             },
             {
-                "name": "buy_jacket",
+                "name": "buy_jacket_bad",
                 "type": "function",
                 "description": "Buy a jacket of the given type.",
                 "parameters": {
@@ -147,20 +165,20 @@ class TestToolCallAccuracyEvaluator:
         tool_calls = [
             {
                 "type": "tool_call",
-                "tool_call_id": "call_bad",
-                "name": "fetch_weather",
+                "tool_call_id": "call_1",
+                "name": "fetch_weather_bad",
                 "arguments": {"location": "Tokyo"},
             },
             {
                 "type": "tool_call",
-                "tool_call_id": "call_bad",
-                "name": "buy_jacket",
+                "tool_call_id": "call_2",
+                "name": "buy_jacket_bad",
                 "arguments": {"type": "raincoat"},
             },
         ]
         tool_definitions = [
             {
-                "name": "fetch_weather",
+                "name": "fetch_weather_bad",
                 "type": "function",
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
@@ -174,7 +192,7 @@ class TestToolCallAccuracyEvaluator:
                 },
             },
             {
-                "name": "buy_jacket",
+                "name": "buy_jacket_bad",
                 "type": "function",
                 "description": "Buy a jacket of the given type.",
                 "parameters": {
@@ -209,20 +227,20 @@ class TestToolCallAccuracyEvaluator:
         tool_calls = [
             {
                 "type": "tool_call",
-                "tool_call_id": "call_good",
-                "name": "fetch_weather",
+                "tool_call_id": "call_1",
+                "name": "fetch_weather_good",
                 "arguments": {"location": "Paris"},
             },
             {
                 "type": "tool_call",
-                "tool_call_id": "call_good",
-                "name": "buy_jacket",
+                "tool_call_id": "call_2",
+                "name": "buy_jacket_good",
                 "arguments": {"type": "jacket"},
             },
         ]
         tool_definitions = [
             {
-                "name": "fetch_weather",
+                "name": "fetch_weather_good",
                 "type": "function",
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
@@ -236,7 +254,7 @@ class TestToolCallAccuracyEvaluator:
                 },
             },
             {
-                "name": "buy_jacket",
+                "name": "buy_jacket_good",
                 "type": "function",
                 "description": "Buy a jacket of the given type.",
                 "parameters": {
@@ -272,14 +290,14 @@ class TestToolCallAccuracyEvaluator:
             tool_calls = [
                 {
                     "type": "tool_call",
-                    "tool_call_id": "call_invalid",
-                    "name": "fetch_weather",
+                    "tool_call_id": "call_1",
+                    "name": "fetch_weather_invalid",
                     "arguments": {"location": "Tokyo"},
                 },
             ]
             tool_definitions = [
                 {
-                    "name": "fetch_weather",
+                    "name": "fetch_weather_invalid",
                     "type": "function",
                     "description": "Fetches the weather information for the specified location.",
                     "parameters": {
@@ -306,20 +324,20 @@ class TestToolCallAccuracyEvaluator:
         tool_calls = [
             {
                 "type": "tool_call",
-                "tool_call_id": "call_good",
-                "name": "fetch_weather",
+                "tool_call_id": "call_1",
+                "name": "fetch_weather_good",
                 "arguments": {"location": "Tokyo"},
             },
             {
                 "type": "tool_call",
-                "tool_call_id": "call_bad",
-                "name": "buy_jacket",
+                "tool_call_id": "call_2",
+                "name": "buy_jacket_bad",
                 "arguments": {"type": "raincoat"},
             },
         ]
         tool_definitions = [
             {
-                "name": "fetch_weather",
+                "name": "fetch_weather_good",
                 "type": "function",
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
@@ -331,7 +349,7 @@ class TestToolCallAccuracyEvaluator:
                         }
                     },
                 },
-            },  # buy_jacket definition is missing
+            },  # buy_jacket_bad definition is missing
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
@@ -354,14 +372,14 @@ class TestToolCallAccuracyEvaluator:
         tool_calls = [
             {
                 "type": "tool_call",
-                "tool_call_id": "call_good",
-                "name": "fetch_weather",
+                "tool_call_id": "call_1",
+                "name": "fetch_weather_good",
                 "arguments": {"location": "Tokyo"},
             },
         ]
         tool_definitions = [
             {
-                "name": "fetch_weather",
+                "name": "fetch_weather_good",
                 "type": "some_built_in",  # Not a 'function' type but shouldn't be filtered out
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
@@ -664,8 +682,8 @@ class TestToolCallAccuracyEvaluator:
         tool_calls = [
             {
                 "type": "tool_call",
-                "tool_call_id": "call_builtin_good",
-                "name": "get_countries_LookupCountryByCurrency",
+                "tool_call_id": "call_1",
+                "name": "get_countries_LookupCountryByCurrency_good",
                 "arguments": {"currency": "GBP"},
             },
         ]
@@ -711,7 +729,7 @@ class TestToolCallAccuracyEvaluator:
                 "auth": {"type": "anonymous", "security_scheme": {}},
                 "functions": [
                     {
-                        "name": "get_countries_LookupCountryByCurrency",
+                        "name": "get_countries_LookupCountryByCurrency_good",
                         "type": "function",
                         "description": "Search by currency.",
                         "parameters": {
@@ -740,14 +758,14 @@ class TestToolCallAccuracyEvaluator:
         tool_calls = [
             {
                 "type": "tool_call",
-                "tool_call_id": "call_good",
-                "name": "get_weather",
+                "tool_call_id": "call_1",
+                "name": "get_weather_good",
                 "arguments": {"location": "Paris"},
             }
         ]
         tool_definitions = [
             {
-                "name": "get_weather",
+                "name": "get_weather_good",
                 "type": "function",
                 "description": "Get weather information",
                 "parameters": {
@@ -783,14 +801,14 @@ class TestToolCallAccuracyEvaluator:
         tool_calls = [
             {
                 "type": "tool_call",
-                "tool_call_id": "call_good",
-                "name": "fetch_weather",
+                "tool_call_id": "call_1",
+                "name": "fetch_weather_good",
                 "arguments": {"location": "Paris"},
             }
         ]
         tool_definitions = [
             {
-                "name": "fetch_weather",
+                "name": "fetch_weather_good",
                 "type": "function",
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
@@ -929,3 +947,81 @@ class TestToolCallAccuracyEvaluator:
         assert "[TOOL_CALL]" in tool_calls_sent
         assert "fetch_weather" in tool_calls_sent
         assert "Paris" in tool_calls_sent
+
+    def test_tool_result_included_in_reformatted_tool_calls(self, mock_model_config):
+        """Verify that tool results are included in reformatted tool_calls when response
+        contains a role=tool message, and are absent when tool_calls is passed directly."""
+        captured_kwargs = {}
+
+        async def capturing_flow(timeout, **kwargs):
+            captured_kwargs.update(kwargs)
+            return {
+                "llm_output": {
+                    "chain_of_thought": "Evaluated.",
+                    "tool_calls_success_level": 5,
+                    "details": {"tool_calls_made_by_agent": 1, "correct_tool_calls_made_by_agent": 1},
+                }
+            }
+
+        tool_definitions = [
+            {
+                "name": "fetch_weather",
+                "type": "function",
+                "description": "Fetches the weather information for the specified location.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "location": {"type": "string", "description": "The location to fetch weather for."}
+                    },
+                },
+            }
+        ]
+
+        # Case 1: response includes a tool result message — [TOOL_RESULT] should appear
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=capturing_flow)
+
+        response_with_result = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_123",
+                        "name": "fetch_weather",
+                        "arguments": {"location": "Paris"},
+                    }
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "call_123",
+                "content": [{"type": "tool_result", "tool_result": '{"temperature": "15C", "condition": "sunny"}'}],
+            },
+        ]
+
+        evaluator(query="What's the weather in Paris?", response=response_with_result, tool_definitions=tool_definitions)
+        tool_calls_sent = captured_kwargs.get("tool_calls")
+        assert isinstance(tool_calls_sent, str)
+        assert "[TOOL_CALL]" in tool_calls_sent
+        assert "[TOOL_RESULT]" in tool_calls_sent, "Tool result should be included when response contains a tool result message"
+        assert "15C" in tool_calls_sent
+
+        # Case 2: tool_calls passed directly (no tool_result field) — [TOOL_RESULT] must not appear
+        captured_kwargs.clear()
+        evaluator._flow = MagicMock(side_effect=capturing_flow)
+
+        direct_tool_calls = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_1",
+                "name": "fetch_weather",
+                "arguments": {"location": "Paris"},
+            }
+        ]
+
+        evaluator(query="What's the weather in Paris?", tool_calls=direct_tool_calls, tool_definitions=tool_definitions)
+        tool_calls_sent = captured_kwargs.get("tool_calls")
+        assert isinstance(tool_calls_sent, str)
+        assert "[TOOL_CALL]" in tool_calls_sent
+        assert "[TOOL_RESULT]" not in tool_calls_sent, "Tool result must not appear when tool_calls has no attached result"
