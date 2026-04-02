@@ -42,10 +42,10 @@
   - Model `JitRequestDefinition` deleted or renamed its instance variable `updated_by`
   - Deleted or renamed model `AllowedUpgradePlansResult`
   - Deleted or renamed model `ManagedIdentityTokenResult`
-  - Deleted or renamed method `ApplicationDefinitionsOperations.create_or_update_by_id`
-  - Deleted or renamed method `ApplicationDefinitionsOperations.delete_by_id`
-  - Deleted or renamed method `ApplicationDefinitionsOperations.get_by_id`
-  - Deleted or renamed method `ApplicationDefinitionsOperations.update_by_id`
+  - Renamed method `ApplicationDefinitionsOperations.create_or_update_by_id` to `begin_create_or_update_by_id`
+  - Renamed method `ApplicationDefinitionsOperations.delete_by_id` to `begin_delete_by_id`
+  - Renamed method `ApplicationDefinitionsOperations.get_by_id` to `begin_get_by_id`
+  - Renamed method `ApplicationDefinitionsOperations.update_by_id` to `begin_update_by_id`
 
 ## 1.0.0b1 (2023-09-20)
 
