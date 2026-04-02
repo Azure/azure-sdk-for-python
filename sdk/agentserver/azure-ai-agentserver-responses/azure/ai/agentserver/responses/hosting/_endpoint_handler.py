@@ -160,6 +160,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         response: StreamingResponse,
         otel_span: Any,
         baggage_token: Any,
+        span_context_token: Any = None,
     ) -> StreamingResponse:
         """Wrap a streaming response's body iterator with tracing and baggage cleanup.
 
@@ -178,6 +179,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :type otel_span: Any
         :param baggage_token: Token from ``set_baggage`` (or *None*).
         :type baggage_token: Any
+        :param span_context_token: Token from ``set_current_span`` (or *None*).
+        :type span_context_token: Any
         :return: The same response object, with its body_iterator replaced.
         :rtype: StreamingResponse
         """
@@ -197,6 +200,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     yield chunk
             finally:
                 tracing.detach_baggage(baggage_token)
+                tracing.detach_context(span_context_token)
 
         response.body_iterator = _cleanup_iter()
         return response
@@ -342,6 +346,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         # Start tracing span using hosting's TracingHelper
         otel_span = None
         baggage_token = None
+        span_context_token = None
         streaming_wrapped = False
 
         # Also maintain CreateSpanHook for backward compat (tests etc.)
@@ -393,22 +398,19 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         request_id = extract_request_id(request.headers)
 
         # Start OTel request span now that we have the response_id.
-        # Span display name: "create_response {model}" per spec.
         if self._tracing is not None:
             otel_span = self._tracing.start_request_span(
                 request.headers,
                 response_id,
-                span_operation="create_response",
+                span_operation="invoke_agent",
                 operation_name="invoke_agent",
             )
-            _span_name = f"create_response {ctx.model}".strip() if ctx.model else "create_response"
-            if otel_span is not None:
-                try:
-                    otel_span.update_name(_span_name)
-                except Exception:  # pylint: disable=broad-exception-caught
-                    pass
             self._safe_set_attrs(otel_span, build_create_otel_attrs(ctx, request_id=request_id))
             baggage_token = self._tracing.set_baggage(build_create_baggage(ctx, request_id=request_id))
+            # Set the OTel span as the current context so that child spans
+            # created by user handler code (e.g. Agent Framework) become
+            # children of this span rather than separate root spans.
+            span_context_token = self._tracing.set_current_span(otel_span)
 
         span.set_tags(build_create_span_tags(ctx, request_id=request_id))
 
@@ -419,7 +421,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     media_type="text/event-stream",
                     headers=self._sse_headers,
                 )
-                wrapped = self._wrap_streaming_response(sse_response, otel_span, baggage_token)
+                wrapped = self._wrap_streaming_response(sse_response, otel_span, baggage_token, span_context_token)
                 streaming_wrapped = True
                 return wrapped
 
@@ -458,6 +460,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             if not streaming_wrapped:
                 if self._tracing is not None:
                     self._tracing.detach_baggage(baggage_token)
+                    self._tracing.detach_context(span_context_token)
 
     async def handle_get(self, request: Request) -> Response:  # pylint: disable=too-many-return-statements
         """Route handler for ``GET /responses/{response_id}``.
