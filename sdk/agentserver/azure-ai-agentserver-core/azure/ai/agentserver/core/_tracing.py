@@ -142,7 +142,8 @@ class TracingHelper:
             trace_provider.add_span_processor(enrichment)
 
         if connection_string:
-            self._setup_azure_monitor(connection_string, resource, trace_provider)
+            self._setup_azure_monitor(
+                connection_string, resource, trace_provider)
 
         # OTLP exporter
         otlp_endpoint = _config.resolve_otlp_endpoint()
@@ -782,9 +783,10 @@ def _setup_log_export(resource: Any, connection_string: str) -> None:
     log_provider = LoggerProvider(resource=resource)
     set_logger_provider(log_provider)
     log_exporter = AzureMonitorLogExporter(connection_string=connection_string)
-    log_provider.add_log_record_processor(BatchLogRecordProcessor(log_exporter))
+    log_provider.add_log_record_processor(
+        BatchLogRecordProcessor(log_exporter))
     handler = LoggingHandler(logger_provider=log_provider)
-    logging.getLogger("azure.ai.agentserver").addHandler(handler)
+    logging.getLogger().addHandler(handler)
     _az_log_export_configured = True
     logger.info("Application Insights log exporter configured.")
 
@@ -853,7 +855,8 @@ def _setup_otlp_log_export(resource: Any, endpoint: str) -> None:
         set_logger_provider(log_provider)
 
     log_exporter = OTLPLogExporter(endpoint=endpoint)
-    log_provider.add_log_record_processor(BatchLogRecordProcessor(log_exporter))  # type: ignore[union-attr]
+    log_provider.add_log_record_processor(
+        BatchLogRecordProcessor(log_exporter))  # type: ignore[union-attr]
     _otlp_log_export_configured = True
     logger.info("OTLP log exporter configured (endpoint=%s).", endpoint)
 
@@ -875,5 +878,6 @@ def _extract_w3c_carrier(headers: Mapping[str, str]) -> dict[str, str]:
         in *headers*.
     :rtype: dict[str, str]
     """
-    result: dict[str, str] = {k: v for k in _W3C_HEADERS if (v := headers.get(k)) is not None}
+    result: dict[str, str] = {k: v for k in _W3C_HEADERS if (
+        v := headers.get(k)) is not None}
     return result
