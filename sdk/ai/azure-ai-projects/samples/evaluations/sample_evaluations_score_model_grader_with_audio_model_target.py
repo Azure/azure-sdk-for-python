@@ -113,7 +113,7 @@ with (
 
     print("Creating evaluation")
     eval_object = client.evals.create(
-        name="OpenAI graders test - model target",
+        name="OpenAI graders test audio - model target",
         data_source_config=data_source_config,
         testing_criteria=testing_criteria,  # type: ignore
     )
@@ -200,5 +200,5 @@ with (
         time.sleep(5)
         print("Waiting for eval run to complete...")
 
-    client.evals.delete(eval_id=eval_object.id)
+    # client.evals.delete(eval_id=eval_object.id)
     print("Evaluation deleted")
