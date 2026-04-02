@@ -66,7 +66,7 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         for root, dirs, files in os.walk(folder):
             dirs[:] = [d for d in dirs if d not in skip_dirs and not d.startswith(".")]
             for file_name in files:
-                if any(file_name.endswith(ext) for ext in skip_extensions):
+                if file_name.startswith('.') or any(file_name.endswith(ext) for ext in skip_extensions):
                     continue
                 file_path = os.path.join(root, file_name)
                 blob_name = os.path.relpath(file_path, folder).replace("\\", "/")
