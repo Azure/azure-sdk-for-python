@@ -16,6 +16,8 @@
   ([#45884](https://github.com/Azure/azure-sdk-for-python/pull/45884))
 
 ### Other Changes
+- Revert custom properties limit to 8kb
+  ([#46066](https://github.com/Azure/azure-sdk-for-python/pull/46066))
 
 ## 1.0.0b49 (2026-03-19)
 
