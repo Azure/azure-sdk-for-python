@@ -1,0 +1,11 @@
+{
+  "commit": "320ddd253d1d03ec996aeca7b704eb7afdcc61e5",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "autorest": "3.10.2",
+  "use": [
+    "@autorest/python@6.50.0",
+    "@autorest/modelerfour@4.27.0"
+  ],
+  "autorest_command": "autorest specification/maps/resource-manager/Microsoft.Maps/Maps/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=C:\\dev\\worktrees\\sdk-azure-mgmt-maps\\sdk --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "readme": "specification/maps/resource-manager/Microsoft.Maps/Maps/readme.md"
+}

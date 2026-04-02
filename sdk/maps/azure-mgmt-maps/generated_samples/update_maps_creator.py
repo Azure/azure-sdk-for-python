@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.maps import AzureMapsManagementClient
 
 """
@@ -33,11 +35,17 @@ def main():
         resource_group_name="myResourceGroup",
         account_name="myMapsAccount",
         creator_name="myCreator",
-        creator_update_parameters={"properties": {"storageUnits": 10}, "tags": {"specialTag": "true"}},
+        creator_update_parameters={
+            "consumedStorageUnitSizeInBytes": 0,
+            "provisioningState": "str",
+            "storageUnits": 0,
+            "tags": {"str": "str"},
+            "totalStorageUnitSizeInBytes": 0,
+        },
     )
     print(response)
 
 
-# x-ms-original-file: specification/maps/resource-manager/Microsoft.Maps/stable/2023-06-01/examples/UpdateMapsCreator.json
+# x-ms-original-file: specification/maps/resource-manager/Microsoft.Maps/Maps/preview/2025-10-01-preview/examples/UpdateMapsCreator.json
 if __name__ == "__main__":
     main()

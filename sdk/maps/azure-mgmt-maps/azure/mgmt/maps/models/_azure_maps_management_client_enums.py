@@ -10,6 +10,12 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
+
+    INTERNAL = "Internal"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -19,8 +25,12 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
-class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Values can be systemAssignedIdentity or userAssignedIdentity."""
+class EncryptionCustomerManagedKeyEncryptionKeyIdentityType(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The type of identity to use. Values can be systemAssignedIdentity, userAssignedIdentity, or
+    delegatedResourceIdentity.
+    """
 
     SYSTEM_ASSIGNED_IDENTITY = "systemAssignedIdentity"
     USER_ASSIGNED_IDENTITY = "userAssignedIdentity"
@@ -28,7 +38,10 @@ class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class InfrastructureEncryption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Values are enabled and disabled."""
+    """(Optional) Discouraged to include in resource definition. Only needed where it is possible to
+    disable platform (AKA infrastructure) encryption. Azure SQL TDE is an example of this. Values
+    are enabled and disabled.
+    """
 
     ENABLED = "enabled"
     DISABLED = "disabled"
@@ -44,7 +57,6 @@ class KeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Kind of the Maps Account."""
 
-    GEN1 = "Gen1"
     GEN2 = "Gen2"
 
 
@@ -56,21 +68,58 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
-    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
 
 class Name(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The name of the SKU, in standard format (such as S0)."""
+    """The name of the SKU, in standard format (such as G2)."""
 
-    S0 = "S0"
-    S1 = "S1"
     G2 = "G2"
 
 
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+    logs UX. Default value is "user,system".
+    """
+
+    USER = "user"
+    SYSTEM = "system"
+    USER_SYSTEM = "user,system"
+
+
+class PrivateEndpointConnectionProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The current provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    FAILED = "Failed"
+
+
+class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The private endpoint connection status."""
+
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    REJECTED = "Rejected"
+
+
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Property to specify whether the Maps Account will accept traffic from public internet. If set
+    to 'disabled' all traffic except private endpoint traffic and that that originates from trusted
+    services will be blocked.
+    """
+
+    ENABLED = "enabled"
+    DISABLED = "disabled"
+
+
 class SigningKey(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The Map account key to use for signing. Picking ``primaryKey`` or ``secondaryKey`` will use the
-    Map account Shared Keys, and using ``managedIdentity`` will use the auto-renewed private key to
-    sign the SAS.
+    """The Maps account key to use for signing. Picking ``primaryKey`` or ``secondaryKey`` will use
+    the Maps account Shared Keys, and using ``managedIdentity`` will use the auto-renewed private
+    key to sign the SAS.
     """
 
     PRIMARY_KEY = "primaryKey"
