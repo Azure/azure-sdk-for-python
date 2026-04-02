@@ -1,10 +1,6 @@
 # Release History
 
-## 1.0.0b50 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.0.0b50 (2026-04-03)
 
 ### Bugs Fixed
 - Fix duplicate authentication policy in live metrics exporter causing Unauthorized errors
