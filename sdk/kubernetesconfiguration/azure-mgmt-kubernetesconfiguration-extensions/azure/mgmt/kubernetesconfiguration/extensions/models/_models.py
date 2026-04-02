@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,6 +15,88 @@ from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
+
+
+class AccessDetail(_Model):
+    """Metadata about the access details of the managing entity of the extension.
+
+    :ivar entity: The entity to which the access details apply.
+    :vartype entity: str
+    :ivar allowed_actions: The list of allowed actions for the entity.
+    :vartype allowed_actions: list[str]
+    :ivar description: The description of the entity.
+    :vartype description: str
+    """
+
+    entity: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The entity to which the access details apply."""
+    allowed_actions: Optional[list[str]] = rest_field(
+        name="allowedActions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of allowed actions for the entity."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The description of the entity."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        entity: Optional[str] = None,
+        allowed_actions: Optional[list[str]] = None,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AdditionalDetails(_Model):
+    """Additional details provided by the publisher of the extension.
+
+    :ivar docs: Documentation for the extension.
+    :vartype docs: str
+    :ivar release_notes: Release Notes of the extension.
+    :vartype release_notes: str
+    :ivar troubleshooting_guide: Troubleshooting guide for the extension.
+    :vartype troubleshooting_guide: str
+    """
+
+    docs: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Documentation for the extension."""
+    release_notes: Optional[str] = rest_field(
+        name="releaseNotes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Release Notes of the extension."""
+    troubleshooting_guide: Optional[str] = rest_field(
+        name="troubleshootingGuide", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Troubleshooting guide for the extension."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        docs: Optional[str] = None,
+        release_notes: Optional[str] = None,
+        troubleshooting_guide: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ErrorAdditionalInfo(_Model):
@@ -153,6 +235,11 @@ class Extension(ProxyResource):
     :vartype properties: ~azure.mgmt.kubernetesconfiguration.extensions.models.ExtensionProperties
     :ivar identity: Identity of the Extension resource.
     :vartype identity: ~azure.mgmt.kubernetesconfiguration.extensions.models.Identity
+    :ivar managed_by: The fully qualified resource ID of the resource that manages this resource.
+     Indicates if this resource is managed by another Azure resource. If this is present, complete
+     mode deployment will not delete the resource if it is removed from the template since it is
+     managed by another resource.
+    :vartype managed_by: str
     :ivar plan: Details of the resource plan.
     :vartype plan: ~azure.mgmt.kubernetesconfiguration.extensions.models.Plan
     """
@@ -163,6 +250,11 @@ class Extension(ProxyResource):
     """Properties of an Extension resource."""
     identity: Optional["_models.Identity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Identity of the Extension resource."""
+    managed_by: Optional[str] = rest_field(name="managedBy", visibility=["read", "create"])
+    """The fully qualified resource ID of the resource that manages this resource. Indicates if this
+     resource is managed by another Azure resource. If this is present, complete mode deployment
+     will not delete the resource if it is removed from the template since it is managed by another
+     resource."""
     plan: Optional["_models.Plan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Details of the resource plan."""
 
@@ -182,6 +274,10 @@ class Extension(ProxyResource):
         "package_uri",
         "aks_assigned_identity",
         "is_system_extension",
+        "auto_upgrade_mode",
+        "management_details",
+        "additional_details",
+        "extension_state",
     ]
 
     @overload
@@ -190,6 +286,7 @@ class Extension(ProxyResource):
         *,
         properties: Optional["_models.ExtensionProperties"] = None,
         identity: Optional["_models.Identity"] = None,
+        managed_by: Optional[str] = None,
         plan: Optional["_models.Plan"] = None,
     ) -> None: ...
 
@@ -265,6 +362,18 @@ class ExtensionProperties(_Model):
      ~azure.mgmt.kubernetesconfiguration.extensions.models.ExtensionPropertiesAksAssignedIdentity
     :ivar is_system_extension: Flag to note if this extension is a system extension.
     :vartype is_system_extension: bool
+    :ivar auto_upgrade_mode: The upgrade mode for auto upgrade. The default is "compatible". Known
+     values are: "none", "patch", and "compatible".
+    :vartype auto_upgrade_mode: str or
+     ~azure.mgmt.kubernetesconfiguration.extensions.models.AutoUpgradeMode
+    :ivar management_details: Management details of the extension.
+    :vartype management_details:
+     ~azure.mgmt.kubernetesconfiguration.extensions.models.ManagementDetails
+    :ivar additional_details: Additional details provided by the publisher of the extension.
+    :vartype additional_details:
+     ~azure.mgmt.kubernetesconfiguration.extensions.models.AdditionalDetails
+    :ivar extension_state: State of the extension on the cluster.
+    :vartype extension_state: str
     """
 
     extension_type: Optional[str] = rest_field(
@@ -317,6 +426,21 @@ class ExtensionProperties(_Model):
     """Identity of the Extension resource in an AKS cluster."""
     is_system_extension: Optional[bool] = rest_field(name="isSystemExtension", visibility=["read"])
     """Flag to note if this extension is a system extension."""
+    auto_upgrade_mode: Optional[Union[str, "_models.AutoUpgradeMode"]] = rest_field(
+        name="autoUpgradeMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The upgrade mode for auto upgrade. The default is \"compatible\". Known values are: \"none\",
+     \"patch\", and \"compatible\"."""
+    management_details: Optional["_models.ManagementDetails"] = rest_field(
+        name="managementDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Management details of the extension."""
+    additional_details: Optional["_models.AdditionalDetails"] = rest_field(
+        name="additionalDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional details provided by the publisher of the extension."""
+    extension_state: Optional[str] = rest_field(name="extensionState", visibility=["read"])
+    """State of the extension on the cluster."""
 
     @overload
     def __init__(
@@ -331,6 +455,9 @@ class ExtensionProperties(_Model):
         configuration_protected_settings: Optional[dict[str, str]] = None,
         statuses: Optional[list["_models.ExtensionStatus"]] = None,
         aks_assigned_identity: Optional["_models.ExtensionPropertiesAksAssignedIdentity"] = None,
+        auto_upgrade_mode: Optional[Union[str, "_models.AutoUpgradeMode"]] = None,
+        management_details: Optional["_models.ManagementDetails"] = None,
+        additional_details: Optional["_models.AdditionalDetails"] = None,
     ) -> None: ...
 
     @overload
@@ -351,8 +478,15 @@ class ExtensionPropertiesAksAssignedIdentity(_Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: The identity type. Known values are: "SystemAssigned" and "UserAssigned".
+    :ivar type: The identity type. Known values are: "SystemAssigned", "UserAssigned", and
+     "Workload".
     :vartype type: str or ~azure.mgmt.kubernetesconfiguration.extensions.models.AKSIdentityType
+    :ivar object_id: The object ID of resource identity.
+    :vartype object_id: str
+    :ivar client_id: The client ID of resource identity.
+    :vartype client_id: str
+    :ivar resource_id: The ID of the resource identity.
+    :vartype resource_id: str
     """
 
     principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
@@ -362,13 +496,24 @@ class ExtensionPropertiesAksAssignedIdentity(_Model):
     type: Optional[Union[str, "_models.AKSIdentityType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The identity type. Known values are: \"SystemAssigned\" and \"UserAssigned\"."""
+    """The identity type. Known values are: \"SystemAssigned\", \"UserAssigned\", and \"Workload\"."""
+    object_id: Optional[str] = rest_field(name="objectId", visibility=["read", "create", "update", "delete", "query"])
+    """The object ID of resource identity."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read", "create", "update", "delete", "query"])
+    """The client ID of resource identity."""
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ID of the resource identity."""
 
     @overload
     def __init__(
         self,
         *,
         type: Optional[Union[str, "_models.AKSIdentityType"]] = None,
+        object_id: Optional[str] = None,
+        client_id: Optional[str] = None,
+        resource_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -473,6 +618,42 @@ class Identity(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ManagementDetails(_Model):
+    """Metadata about the managing entity of the extension and the permitted operations.
+
+    :ivar category: The category of the managing entity.
+    :vartype category: str
+    :ivar access_details: The list of access details of the managing entity.
+    :vartype access_details:
+     list[~azure.mgmt.kubernetesconfiguration.extensions.models.AccessDetail]
+    """
+
+    category: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The category of the managing entity."""
+    access_details: Optional[list["_models.AccessDetail"]] = rest_field(
+        name="accessDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of access details of the managing entity."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        category: Optional[str] = None,
+        access_details: Optional[list["_models.AccessDetail"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class OperationStatusResult(_Model):
     """The current status of an async operation.
 
@@ -535,6 +716,7 @@ class PatchExtension(_Model):
 
     __flattened_items = [
         "auto_upgrade_minor_version",
+        "auto_upgrade_mode",
         "release_train",
         "version",
         "configuration_settings",
@@ -583,6 +765,10 @@ class PatchExtensionProperties(_Model):
     :ivar auto_upgrade_minor_version: Flag to note if this extension participates in auto upgrade
      of minor version, or not.
     :vartype auto_upgrade_minor_version: bool
+    :ivar auto_upgrade_mode: The upgrade mode for auto upgrade. The default is "compatible". Known
+     values are: "none", "patch", and "compatible".
+    :vartype auto_upgrade_mode: str or
+     ~azure.mgmt.kubernetesconfiguration.extensions.models.AutoUpgradeMode
     :ivar release_train: ReleaseTrain this extension participates in for auto-upgrade (e.g. Stable,
      Preview, etc.) - only if autoUpgradeMinorVersion is 'true'.
     :vartype release_train: str
@@ -601,6 +787,11 @@ class PatchExtensionProperties(_Model):
         name="autoUpgradeMinorVersion", visibility=["read", "create", "update", "delete", "query"]
     )
     """Flag to note if this extension participates in auto upgrade of minor version, or not."""
+    auto_upgrade_mode: Optional[Union[str, "_models.AutoUpgradeMode"]] = rest_field(
+        name="autoUpgradeMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The upgrade mode for auto upgrade. The default is \"compatible\". Known values are: \"none\",
+     \"patch\", and \"compatible\"."""
     release_train: Optional[str] = rest_field(
         name="releaseTrain", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -623,6 +814,7 @@ class PatchExtensionProperties(_Model):
         self,
         *,
         auto_upgrade_minor_version: Optional[bool] = None,
+        auto_upgrade_mode: Optional[Union[str, "_models.AutoUpgradeMode"]] = None,
         release_train: Optional[str] = None,
         version: Optional[str] = None,
         configuration_settings: Optional[dict[str, str]] = None,
