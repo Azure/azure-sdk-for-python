@@ -37,380 +37,116 @@
   - Added model `StorageAppliancePatchProperties`
   - Added model `StorageApplianceSkuProperties`
   - Added model `VirtualMachinePatchProperties`
-  - Model `AgentPoolsOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `AgentPoolsOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `AgentPoolsOperations` added parameter `etag` in method `begin_delete`
-  - Model `AgentPoolsOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `AgentPoolsOperations` added parameter `etag` in method `begin_update`
-  - Model `AgentPoolsOperations` added parameter `match_condition` in method `begin_update`
-  - Model `BareMetalMachineKeySetsOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `BareMetalMachineKeySetsOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `BareMetalMachineKeySetsOperations` added parameter `etag` in method `begin_delete`
-  - Model `BareMetalMachineKeySetsOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `BareMetalMachineKeySetsOperations` added parameter `etag` in method `begin_update`
-  - Model `BareMetalMachineKeySetsOperations` added parameter `match_condition` in method `begin_update`
-  - Model `BareMetalMachinesOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `BareMetalMachinesOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `BareMetalMachinesOperations` added parameter `etag` in method `begin_delete`
-  - Model `BareMetalMachinesOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `BareMetalMachinesOperations` added parameter `etag` in method `begin_update`
-  - Model `BareMetalMachinesOperations` added parameter `match_condition` in method `begin_update`
-  - Model `BmcKeySetsOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `BmcKeySetsOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `BmcKeySetsOperations` added parameter `etag` in method `begin_delete`
-  - Model `BmcKeySetsOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `BmcKeySetsOperations` added parameter `etag` in method `begin_update`
-  - Model `BmcKeySetsOperations` added parameter `match_condition` in method `begin_update`
-  - Model `CloudServicesNetworksOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `CloudServicesNetworksOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `CloudServicesNetworksOperations` added parameter `etag` in method `begin_delete`
-  - Model `CloudServicesNetworksOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `CloudServicesNetworksOperations` added parameter `etag` in method `begin_update`
-  - Model `CloudServicesNetworksOperations` added parameter `match_condition` in method `begin_update`
-  - Model `ClusterManagersOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `ClusterManagersOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `ClusterManagersOperations` added parameter `etag` in method `begin_delete`
-  - Model `ClusterManagersOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `ClusterManagersOperations` added parameter `etag` in method `update`
-  - Model `ClusterManagersOperations` added parameter `match_condition` in method `update`
-  - Model `ClustersOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `ClustersOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `ClustersOperations` added parameter `etag` in method `begin_delete`
-  - Model `ClustersOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `ClustersOperations` added parameter `etag` in method `begin_update`
-  - Model `ClustersOperations` added parameter `match_condition` in method `begin_update`
-  - Model `ConsolesOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `ConsolesOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `ConsolesOperations` added parameter `etag` in method `begin_delete`
-  - Model `ConsolesOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `ConsolesOperations` added parameter `etag` in method `begin_update`
-  - Model `ConsolesOperations` added parameter `match_condition` in method `begin_update`
-  - Model `KubernetesClusterFeaturesOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `KubernetesClusterFeaturesOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `KubernetesClusterFeaturesOperations` added parameter `etag` in method `begin_delete`
-  - Model `KubernetesClusterFeaturesOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `KubernetesClusterFeaturesOperations` added parameter `etag` in method `begin_update`
-  - Model `KubernetesClusterFeaturesOperations` added parameter `match_condition` in method `begin_update`
-  - Model `KubernetesClustersOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `KubernetesClustersOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `KubernetesClustersOperations` added parameter `etag` in method `begin_delete`
-  - Model `KubernetesClustersOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `KubernetesClustersOperations` added parameter `etag` in method `begin_update`
-  - Model `KubernetesClustersOperations` added parameter `match_condition` in method `begin_update`
-  - Model `L2NetworksOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `L2NetworksOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `L2NetworksOperations` added parameter `etag` in method `begin_delete`
-  - Model `L2NetworksOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `L2NetworksOperations` added parameter `etag` in method `update`
-  - Model `L2NetworksOperations` added parameter `match_condition` in method `update`
-  - Model `L3NetworksOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `L3NetworksOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `L3NetworksOperations` added parameter `etag` in method `begin_delete`
-  - Model `L3NetworksOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `L3NetworksOperations` added parameter `etag` in method `update`
-  - Model `L3NetworksOperations` added parameter `match_condition` in method `update`
-  - Model `MetricsConfigurationsOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `MetricsConfigurationsOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `MetricsConfigurationsOperations` added parameter `etag` in method `begin_delete`
-  - Model `MetricsConfigurationsOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `MetricsConfigurationsOperations` added parameter `etag` in method `begin_update`
-  - Model `MetricsConfigurationsOperations` added parameter `match_condition` in method `begin_update`
-  - Model `RacksOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `RacksOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `RacksOperations` added parameter `etag` in method `begin_delete`
-  - Model `RacksOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `RacksOperations` added parameter `etag` in method `begin_update`
-  - Model `RacksOperations` added parameter `match_condition` in method `begin_update`
-  - Model `StorageAppliancesOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `StorageAppliancesOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `StorageAppliancesOperations` added parameter `etag` in method `begin_delete`
-  - Model `StorageAppliancesOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `StorageAppliancesOperations` added parameter `etag` in method `begin_update`
-  - Model `StorageAppliancesOperations` added parameter `match_condition` in method `begin_update`
-  - Model `TrunkedNetworksOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `TrunkedNetworksOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `TrunkedNetworksOperations` added parameter `etag` in method `begin_delete`
-  - Model `TrunkedNetworksOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `TrunkedNetworksOperations` added parameter `etag` in method `update`
-  - Model `TrunkedNetworksOperations` added parameter `match_condition` in method `update`
-  - Model `VirtualMachinesOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `VirtualMachinesOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `VirtualMachinesOperations` added parameter `etag` in method `begin_delete`
-  - Model `VirtualMachinesOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `VirtualMachinesOperations` added parameter `etag` in method `begin_update`
-  - Model `VirtualMachinesOperations` added parameter `match_condition` in method `begin_update`
-  - Model `VolumesOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `VolumesOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `VolumesOperations` added parameter `etag` in method `begin_delete`
-  - Model `VolumesOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `VolumesOperations` added parameter `etag` in method `update`
-  - Model `VolumesOperations` added parameter `match_condition` in method `update`
 
 ### Breaking Changes
 
-  - Model `AgentPoolPatchParameters` deleted or renamed its instance variable `administrator_configuration`
-  - Model `AgentPoolPatchParameters` deleted or renamed its instance variable `count`
-  - Model `AgentPoolPatchParameters` deleted or renamed its instance variable `upgrade_settings`
-  - Model `BareMetalMachineKeySetPatchParameters` deleted or renamed its instance variable `expiration`
-  - Model `BareMetalMachineKeySetPatchParameters` deleted or renamed its instance variable `jump_hosts_allowed`
-  - Model `BareMetalMachineKeySetPatchParameters` deleted or renamed its instance variable `user_list`
-  - Model `BareMetalMachinePatchParameters` deleted or renamed its instance variable `machine_details`
-  - Model `BmcKeySetPatchParameters` deleted or renamed its instance variable `expiration`
-  - Model `BmcKeySetPatchParameters` deleted or renamed its instance variable `user_list`
-  - Model `CloudServicesNetworkPatchParameters` deleted or renamed its instance variable `additional_egress_endpoints`
-  - Model `CloudServicesNetworkPatchParameters` deleted or renamed its instance variable `enable_default_egress_endpoints`
-  - Model `CloudServicesNetworkPatchParameters` deleted or renamed its instance variable `storage_options`
-  - Model `ClusterMetricsConfigurationPatchParameters` deleted or renamed its instance variable `collection_interval`
-  - Model `ClusterMetricsConfigurationPatchParameters` deleted or renamed its instance variable `enabled_metrics`
-  - Model `ClusterPatchParameters` deleted or renamed its instance variable `aggregator_or_single_rack_definition`
-  - Model `ClusterPatchParameters` deleted or renamed its instance variable `analytics_output_settings`
-  - Model `ClusterPatchParameters` deleted or renamed its instance variable `cluster_location`
-  - Model `ClusterPatchParameters` deleted or renamed its instance variable `cluster_service_principal`
-  - Model `ClusterPatchParameters` deleted or renamed its instance variable `command_output_settings`
-  - Model `ClusterPatchParameters` deleted or renamed its instance variable `compute_deployment_threshold`
-  - Model `ClusterPatchParameters` deleted or renamed its instance variable `compute_rack_definitions`
-  - Model `ClusterPatchParameters` deleted or renamed its instance variable `runtime_protection_configuration`
-  - Model `ClusterPatchParameters` deleted or renamed its instance variable `secret_archive`
-  - Model `ClusterPatchParameters` deleted or renamed its instance variable `secret_archive_settings`
-  - Model `ClusterPatchParameters` deleted or renamed its instance variable `update_strategy`
-  - Model `ClusterPatchParameters` deleted or renamed its instance variable `vulnerability_scanning_settings`
-  - Model `ConsolePatchParameters` deleted or renamed its instance variable `enabled`
-  - Model `ConsolePatchParameters` deleted or renamed its instance variable `expiration`
-  - Model `ConsolePatchParameters` deleted or renamed its instance variable `ssh_public_key`
-  - Model `KubernetesClusterFeaturePatchParameters` deleted or renamed its instance variable `options`
-  - Model `KubernetesClusterPatchParameters` deleted or renamed its instance variable `administrator_configuration`
-  - Model `KubernetesClusterPatchParameters` deleted or renamed its instance variable `control_plane_node_configuration`
-  - Model `KubernetesClusterPatchParameters` deleted or renamed its instance variable `kubernetes_version`
-  - Model `MachineSkuSlot` deleted or renamed its instance variable `bootstrap_protocol`
-  - Model `MachineSkuSlot` deleted or renamed its instance variable `cpu_cores`
-  - Model `MachineSkuSlot` deleted or renamed its instance variable `cpu_sockets`
-  - Model `MachineSkuSlot` deleted or renamed its instance variable `disks`
-  - Model `MachineSkuSlot` deleted or renamed its instance variable `generation`
-  - Model `MachineSkuSlot` deleted or renamed its instance variable `hardware_version`
-  - Model `MachineSkuSlot` deleted or renamed its instance variable `memory_capacity_gb`
-  - Model `MachineSkuSlot` deleted or renamed its instance variable `model`
-  - Model `MachineSkuSlot` deleted or renamed its instance variable `network_interfaces`
-  - Model `MachineSkuSlot` deleted or renamed its instance variable `total_threads`
-  - Model `MachineSkuSlot` deleted or renamed its instance variable `vendor`
-  - Model `RackPatchParameters` deleted or renamed its instance variable `rack_location`
-  - Model `RackPatchParameters` deleted or renamed its instance variable `rack_serial_number`
-  - Model `StorageAppliancePatchParameters` deleted or renamed its instance variable `serial_number`
-  - Model `StorageApplianceSkuSlot` deleted or renamed its instance variable `capacity_gb`
-  - Model `StorageApplianceSkuSlot` deleted or renamed its instance variable `model`
-  - Model `VirtualMachinePatchParameters` deleted or renamed its instance variable `vm_image_repository_credentials`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `AgentPoolPatchParameters` moved instance variable `administrator_configuration`, `count` and `upgrade_settings` under property `properties`
+  - Model `BareMetalMachineKeySetPatchParameters` moved instance variable `expiration`, `jump_hosts_allowed` and `user_list` under property `properties`
+  - Model `BareMetalMachinePatchParameters` moved instance variable `machine_details` under property `properties`
+  - Model `BmcKeySetPatchParameters` moved instance variable `expiration` and `user_list` under property `properties`
+  - Model `CloudServicesNetworkPatchParameters` moved instance variable `additional_egress_endpoints`, `enable_default_egress_endpoints` and `storage_options` under property `properties`
+  - Model `ClusterMetricsConfigurationPatchParameters` moved instance variable `collection_interval` and `enabled_metrics` under property `properties`
+  - Model `ClusterPatchParameters` moved instance variable `aggregator_or_single_rack_definition`, `analytics_output_settings`, `cluster_location`, `cluster_service_principal`, `command_output_settings`, `compute_deployment_threshold`, `compute_rack_definitions`, `runtime_protection_configuration`, `secret_archive`, `secret_archive_settings`, `update_strategy` and `vulnerability_scanning_settings` under property `properties`
+  - Model `ConsolePatchParameters` moved instance variable `enabled`, `expiration` and `ssh_public_key` under property `properties`
+  - Model `KubernetesClusterFeaturePatchParameters` moved instance variable `options` under property `properties`
+  - Model `KubernetesClusterPatchParameters` moved instance variable `administrator_configuration`, `control_plane_node_configuration` and `kubernetes_version` under property `properties`
+  - Model `MachineSkuSlot` moved instance variable `bootstrap_protocol`, `cpu_cores`, `cpu_sockets`, `disks`, `generation`, `hardware_version`, `memory_capacity_gb`, `model`, `network_interfaces`, `total_threads` and `vendor` under property `properties`
+  - Model `RackPatchParameters` moved instance variable `rack_location` and `rack_serial_number` under property `properties`
+  - Model `StorageAppliancePatchParameters` moved instance variable `serial_number` under property `properties`
+  - Model `StorageApplianceSkuSlot` moved instance variable `capacity_gb` and `model` under property `properties`
+  - Model `VirtualMachinePatchParameters` moved instance variable `vm_image_repository_credentials` under property `properties`
   - Deleted or renamed model `AgentPoolConfiguration`
-  - Deleted or renamed model `AgentPoolList`
-  - Deleted or renamed model `BareMetalMachineKeySetList`
-  - Deleted or renamed model `BareMetalMachineList`
-  - Deleted or renamed model `BmcKeySetList`
-  - Deleted or renamed model `CloudServicesNetworkList`
-  - Deleted or renamed model `ClusterList`
-  - Deleted or renamed model `ClusterManagerList`
-  - Deleted or renamed model `ClusterMetricsConfigurationList`
-  - Deleted or renamed model `ConsoleList`
-  - Deleted or renamed model `KubernetesClusterFeatureList`
-  - Deleted or renamed model `KubernetesClusterList`
-  - Deleted or renamed model `L2NetworkList`
-  - Deleted or renamed model `L3NetworkList`
-  - Deleted or renamed model `RackList`
-  - Deleted or renamed model `RackSkuList`
-  - Deleted or renamed model `StorageApplianceList`
   - Deleted or renamed model `TagsParameter`
-  - Deleted or renamed model `TrunkedNetworkList`
-  - Deleted or renamed model `VirtualMachineList`
-  - Deleted or renamed model `VolumeList`
-  - Method `AgentPoolsOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `AgentPoolsOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `AgentPoolsOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `AgentPoolsOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `AgentPoolsOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `AgentPoolsOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `AgentPoolsOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `AgentPoolsOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `AgentPoolsOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
   - Method `AgentPoolsOperations.list_by_kubernetes_cluster` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `BareMetalMachineKeySetsOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `BareMetalMachineKeySetsOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `BareMetalMachineKeySetsOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `BareMetalMachineKeySetsOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `BareMetalMachineKeySetsOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `BareMetalMachineKeySetsOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `BareMetalMachineKeySetsOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `BareMetalMachineKeySetsOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `BareMetalMachineKeySetsOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
   - Method `BareMetalMachineKeySetsOperations.list_by_cluster` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `BareMetalMachinesOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `BareMetalMachinesOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `BareMetalMachinesOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `BareMetalMachinesOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `BareMetalMachinesOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `BareMetalMachinesOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `BareMetalMachinesOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `BareMetalMachinesOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `BareMetalMachinesOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
   - Method `BareMetalMachinesOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `BareMetalMachinesOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `BmcKeySetsOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `BmcKeySetsOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `BmcKeySetsOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `BmcKeySetsOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `BmcKeySetsOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `BmcKeySetsOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `BmcKeySetsOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `BmcKeySetsOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `BmcKeySetsOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
   - Method `BmcKeySetsOperations.list_by_cluster` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `CloudServicesNetworksOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `CloudServicesNetworksOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `CloudServicesNetworksOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `CloudServicesNetworksOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `CloudServicesNetworksOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `CloudServicesNetworksOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `CloudServicesNetworksOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `CloudServicesNetworksOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `CloudServicesNetworksOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
   - Method `CloudServicesNetworksOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `CloudServicesNetworksOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `ClusterManagersOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ClusterManagersOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `ClusterManagersOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ClusterManagersOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `ClusterManagersOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `ClusterManagersOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
   - Method `ClusterManagersOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `ClusterManagersOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `ClusterManagersOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ClusterManagersOperations.update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `ClustersOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ClustersOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `ClustersOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ClustersOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `ClustersOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ClustersOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `ClusterManagersOperations.update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `ClustersOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `ClustersOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `ClustersOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
   - Method `ClustersOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `ClustersOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `ConsolesOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ConsolesOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `ConsolesOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ConsolesOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `ConsolesOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ConsolesOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `ConsolesOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `ConsolesOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `ConsolesOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
   - Method `ConsolesOperations.list_by_virtual_machine` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `KubernetesClusterFeaturesOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `KubernetesClusterFeaturesOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `KubernetesClusterFeaturesOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `KubernetesClusterFeaturesOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `KubernetesClusterFeaturesOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `KubernetesClusterFeaturesOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `KubernetesClusterFeaturesOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `KubernetesClusterFeaturesOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `KubernetesClusterFeaturesOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
   - Method `KubernetesClusterFeaturesOperations.list_by_kubernetes_cluster` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `KubernetesClustersOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `KubernetesClustersOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `KubernetesClustersOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `KubernetesClustersOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `KubernetesClustersOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `KubernetesClustersOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `KubernetesClustersOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `KubernetesClustersOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `KubernetesClustersOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
   - Method `KubernetesClustersOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `KubernetesClustersOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `L2NetworksOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `L2NetworksOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `L2NetworksOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `L2NetworksOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `L2NetworksOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `L2NetworksOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
   - Method `L2NetworksOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `L2NetworksOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `L2NetworksOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `L2NetworksOperations.update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `L3NetworksOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `L3NetworksOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `L3NetworksOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `L3NetworksOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `L2NetworksOperations.update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `L3NetworksOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `L3NetworksOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
   - Method `L3NetworksOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `L3NetworksOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `L3NetworksOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `L3NetworksOperations.update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `MetricsConfigurationsOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `MetricsConfigurationsOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `MetricsConfigurationsOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `MetricsConfigurationsOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `MetricsConfigurationsOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `MetricsConfigurationsOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `L3NetworksOperations.update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `MetricsConfigurationsOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `MetricsConfigurationsOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `MetricsConfigurationsOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
   - Method `MetricsConfigurationsOperations.list_by_cluster` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `RacksOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `RacksOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `RacksOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `RacksOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `RacksOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `RacksOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `RacksOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `RacksOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `RacksOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
   - Method `RacksOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `RacksOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `StorageAppliancesOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `StorageAppliancesOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `StorageAppliancesOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `StorageAppliancesOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `StorageAppliancesOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `StorageAppliancesOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `StorageAppliancesOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `StorageAppliancesOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `StorageAppliancesOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
   - Method `StorageAppliancesOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `StorageAppliancesOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `TrunkedNetworksOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `TrunkedNetworksOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `TrunkedNetworksOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `TrunkedNetworksOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `TrunkedNetworksOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `TrunkedNetworksOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
   - Method `TrunkedNetworksOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `TrunkedNetworksOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `TrunkedNetworksOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `TrunkedNetworksOperations.update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `VirtualMachinesOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `VirtualMachinesOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `VirtualMachinesOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `VirtualMachinesOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `VirtualMachinesOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `VirtualMachinesOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `TrunkedNetworksOperations.update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `VirtualMachinesOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `VirtualMachinesOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `VirtualMachinesOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
   - Method `VirtualMachinesOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `VirtualMachinesOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `VolumesOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `VolumesOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `VolumesOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `VolumesOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `VolumesOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `VolumesOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
   - Method `VolumesOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `VolumesOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `VolumesOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `VolumesOperations.update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `VolumesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'volume_name', 'volume_parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'volume_name', 'volume_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `VolumesOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'volume_name', 'if_match', 'if_none_match', 'volume_update_parameters', 'kwargs']` to `['self', 'resource_group_name', 'volume_name', 'volume_update_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `VolumesOperations.begin_delete` re-ordered its parameters from `['self', 'resource_group_name', 'volume_name', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'volume_name', 'etag', 'match_condition', 'kwargs']`
-  - Method `BmcKeySetsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'cluster_name', 'bmc_key_set_name', 'bmc_key_set_parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'cluster_name', 'bmc_key_set_name', 'bmc_key_set_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `BmcKeySetsOperations.begin_delete` re-ordered its parameters from `['self', 'resource_group_name', 'cluster_name', 'bmc_key_set_name', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'cluster_name', 'bmc_key_set_name', 'etag', 'match_condition', 'kwargs']`
-  - Method `BmcKeySetsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'cluster_name', 'bmc_key_set_name', 'if_match', 'if_none_match', 'bmc_key_set_update_parameters', 'kwargs']` to `['self', 'resource_group_name', 'cluster_name', 'bmc_key_set_name', 'bmc_key_set_update_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `AgentPoolsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'kubernetes_cluster_name', 'agent_pool_name', 'agent_pool_parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'kubernetes_cluster_name', 'agent_pool_name', 'agent_pool_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `AgentPoolsOperations.begin_delete` re-ordered its parameters from `['self', 'resource_group_name', 'kubernetes_cluster_name', 'agent_pool_name', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'kubernetes_cluster_name', 'agent_pool_name', 'etag', 'match_condition', 'kwargs']`
-  - Method `AgentPoolsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'kubernetes_cluster_name', 'agent_pool_name', 'if_match', 'if_none_match', 'agent_pool_update_parameters', 'kwargs']` to `['self', 'resource_group_name', 'kubernetes_cluster_name', 'agent_pool_name', 'agent_pool_update_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `L2NetworksOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'l2_network_name', 'l2_network_parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'l2_network_name', 'l2_network_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `L2NetworksOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'l2_network_name', 'if_match', 'if_none_match', 'l2_network_update_parameters', 'kwargs']` to `['self', 'resource_group_name', 'l2_network_name', 'l2_network_update_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `L2NetworksOperations.begin_delete` re-ordered its parameters from `['self', 'resource_group_name', 'l2_network_name', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'l2_network_name', 'etag', 'match_condition', 'kwargs']`
-  - Method `KubernetesClusterFeaturesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'kubernetes_cluster_name', 'feature_name', 'kubernetes_cluster_feature_parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'kubernetes_cluster_name', 'feature_name', 'kubernetes_cluster_feature_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `KubernetesClusterFeaturesOperations.begin_delete` re-ordered its parameters from `['self', 'resource_group_name', 'kubernetes_cluster_name', 'feature_name', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'kubernetes_cluster_name', 'feature_name', 'etag', 'match_condition', 'kwargs']`
-  - Method `KubernetesClusterFeaturesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'kubernetes_cluster_name', 'feature_name', 'if_match', 'if_none_match', 'kubernetes_cluster_feature_update_parameters', 'kwargs']` to `['self', 'resource_group_name', 'kubernetes_cluster_name', 'feature_name', 'kubernetes_cluster_feature_update_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `TrunkedNetworksOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'trunked_network_name', 'trunked_network_parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'trunked_network_name', 'trunked_network_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `TrunkedNetworksOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'trunked_network_name', 'if_match', 'if_none_match', 'trunked_network_update_parameters', 'kwargs']` to `['self', 'resource_group_name', 'trunked_network_name', 'trunked_network_update_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `TrunkedNetworksOperations.begin_delete` re-ordered its parameters from `['self', 'resource_group_name', 'trunked_network_name', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'trunked_network_name', 'etag', 'match_condition', 'kwargs']`
-  - Method `ClustersOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'cluster_name', 'cluster_parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'cluster_name', 'cluster_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `ClustersOperations.begin_delete` re-ordered its parameters from `['self', 'resource_group_name', 'cluster_name', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'cluster_name', 'etag', 'match_condition', 'kwargs']`
-  - Method `ClustersOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'cluster_name', 'if_match', 'if_none_match', 'cluster_update_parameters', 'kwargs']` to `['self', 'resource_group_name', 'cluster_name', 'cluster_update_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `MetricsConfigurationsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'cluster_name', 'metrics_configuration_name', 'metrics_configuration_parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'cluster_name', 'metrics_configuration_name', 'metrics_configuration_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `MetricsConfigurationsOperations.begin_delete` re-ordered its parameters from `['self', 'resource_group_name', 'cluster_name', 'metrics_configuration_name', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'cluster_name', 'metrics_configuration_name', 'etag', 'match_condition', 'kwargs']`
-  - Method `MetricsConfigurationsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'cluster_name', 'metrics_configuration_name', 'if_match', 'if_none_match', 'metrics_configuration_update_parameters', 'kwargs']` to `['self', 'resource_group_name', 'cluster_name', 'metrics_configuration_name', 'metrics_configuration_update_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `L3NetworksOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'l3_network_name', 'l3_network_parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'l3_network_name', 'l3_network_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `L3NetworksOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'l3_network_name', 'if_match', 'if_none_match', 'l3_network_update_parameters', 'kwargs']` to `['self', 'resource_group_name', 'l3_network_name', 'l3_network_update_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `L3NetworksOperations.begin_delete` re-ordered its parameters from `['self', 'resource_group_name', 'l3_network_name', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'l3_network_name', 'etag', 'match_condition', 'kwargs']`
-  - Method `RacksOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'rack_name', 'rack_parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'rack_name', 'rack_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `RacksOperations.begin_delete` re-ordered its parameters from `['self', 'resource_group_name', 'rack_name', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'rack_name', 'etag', 'match_condition', 'kwargs']`
-  - Method `RacksOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'rack_name', 'if_match', 'if_none_match', 'rack_update_parameters', 'kwargs']` to `['self', 'resource_group_name', 'rack_name', 'rack_update_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `StorageAppliancesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'storage_appliance_name', 'storage_appliance_parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'storage_appliance_name', 'storage_appliance_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `StorageAppliancesOperations.begin_delete` re-ordered its parameters from `['self', 'resource_group_name', 'storage_appliance_name', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'storage_appliance_name', 'etag', 'match_condition', 'kwargs']`
-  - Method `StorageAppliancesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'storage_appliance_name', 'if_match', 'if_none_match', 'storage_appliance_update_parameters', 'kwargs']` to `['self', 'resource_group_name', 'storage_appliance_name', 'storage_appliance_update_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `CloudServicesNetworksOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'cloud_services_network_name', 'cloud_services_network_parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'cloud_services_network_name', 'cloud_services_network_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `CloudServicesNetworksOperations.begin_delete` re-ordered its parameters from `['self', 'resource_group_name', 'cloud_services_network_name', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'cloud_services_network_name', 'etag', 'match_condition', 'kwargs']`
-  - Method `CloudServicesNetworksOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'cloud_services_network_name', 'if_match', 'if_none_match', 'cloud_services_network_update_parameters', 'kwargs']` to `['self', 'resource_group_name', 'cloud_services_network_name', 'cloud_services_network_update_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `ConsolesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'virtual_machine_name', 'console_name', 'console_parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'virtual_machine_name', 'console_name', 'console_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `ConsolesOperations.begin_delete` re-ordered its parameters from `['self', 'resource_group_name', 'virtual_machine_name', 'console_name', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'virtual_machine_name', 'console_name', 'etag', 'match_condition', 'kwargs']`
-  - Method `ConsolesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'virtual_machine_name', 'console_name', 'if_match', 'if_none_match', 'console_update_parameters', 'kwargs']` to `['self', 'resource_group_name', 'virtual_machine_name', 'console_name', 'console_update_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `BareMetalMachinesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'bare_metal_machine_name', 'bare_metal_machine_parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'bare_metal_machine_name', 'bare_metal_machine_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `BareMetalMachinesOperations.begin_delete` re-ordered its parameters from `['self', 'resource_group_name', 'bare_metal_machine_name', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'bare_metal_machine_name', 'etag', 'match_condition', 'kwargs']`
-  - Method `BareMetalMachinesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'bare_metal_machine_name', 'if_match', 'if_none_match', 'bare_metal_machine_update_parameters', 'kwargs']` to `['self', 'resource_group_name', 'bare_metal_machine_name', 'bare_metal_machine_update_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `VirtualMachinesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'virtual_machine_name', 'virtual_machine_parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'virtual_machine_name', 'virtual_machine_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `VirtualMachinesOperations.begin_delete` re-ordered its parameters from `['self', 'resource_group_name', 'virtual_machine_name', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'virtual_machine_name', 'etag', 'match_condition', 'kwargs']`
-  - Method `VirtualMachinesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'virtual_machine_name', 'if_match', 'if_none_match', 'virtual_machine_update_parameters', 'kwargs']` to `['self', 'resource_group_name', 'virtual_machine_name', 'virtual_machine_update_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `ClusterManagersOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'cluster_manager_name', 'cluster_manager_parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'cluster_manager_name', 'cluster_manager_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `ClusterManagersOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'cluster_manager_name', 'if_match', 'if_none_match', 'cluster_manager_update_parameters', 'kwargs']` to `['self', 'resource_group_name', 'cluster_manager_name', 'cluster_manager_update_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `ClusterManagersOperations.begin_delete` re-ordered its parameters from `['self', 'resource_group_name', 'cluster_manager_name', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'cluster_manager_name', 'etag', 'match_condition', 'kwargs']`
-  - Method `KubernetesClustersOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'kubernetes_cluster_name', 'kubernetes_cluster_parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'kubernetes_cluster_name', 'kubernetes_cluster_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `KubernetesClustersOperations.begin_delete` re-ordered its parameters from `['self', 'resource_group_name', 'kubernetes_cluster_name', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'kubernetes_cluster_name', 'etag', 'match_condition', 'kwargs']`
-  - Method `KubernetesClustersOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'kubernetes_cluster_name', 'if_match', 'if_none_match', 'kubernetes_cluster_update_parameters', 'kwargs']` to `['self', 'resource_group_name', 'kubernetes_cluster_name', 'kubernetes_cluster_update_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `BareMetalMachineKeySetsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'cluster_name', 'bare_metal_machine_key_set_name', 'bare_metal_machine_key_set_parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'cluster_name', 'bare_metal_machine_key_set_name', 'bare_metal_machine_key_set_parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `BareMetalMachineKeySetsOperations.begin_delete` re-ordered its parameters from `['self', 'resource_group_name', 'cluster_name', 'bare_metal_machine_key_set_name', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'cluster_name', 'bare_metal_machine_key_set_name', 'etag', 'match_condition', 'kwargs']`
-  - Method `BareMetalMachineKeySetsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'cluster_name', 'bare_metal_machine_key_set_name', 'if_match', 'if_none_match', 'bare_metal_machine_key_set_update_parameters', 'kwargs']` to `['self', 'resource_group_name', 'cluster_name', 'bare_metal_machine_key_set_name', 'bare_metal_machine_key_set_update_parameters', 'etag', 'match_condition', 'kwargs']`
+  - Method `VolumesOperations.update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+
+### Other Changes
+
+  - Deleted model `AgentPoolList`/`BareMetalMachineKeySetList`/`BareMetalMachineList`/`BmcKeySetList`/`CloudServicesNetworkList`/`ClusterList`/`ClusterManagerList`/`ClusterMetricsConfigurationList`/`ConsoleList`/`KubernetesClusterFeatureList`/`KubernetesClusterList`/`L2NetworkList`/`L3NetworkList`/`RackList`/`RackSkuList`/`StorageApplianceList`/`TrunkedNetworkList`/`VirtualMachineList`/`VolumeList` which actually were not used by SDK users
 
 ## 2.2.0 (2025-12-22)
 
