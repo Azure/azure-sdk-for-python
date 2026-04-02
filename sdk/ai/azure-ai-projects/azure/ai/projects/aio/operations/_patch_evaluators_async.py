@@ -23,6 +23,7 @@ from ...models._models import (
     CodeBasedEvaluatorDefinition,
     EvaluatorVersion,
 )
+from ...operations._patch_evaluators import _GIT_DIR, _load_gitignore_spec, _is_ignored
 
 logger = logging.getLogger(__name__)
 
@@ -47,8 +48,11 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
     ) -> None:
         """Walk *folder* and upload every eligible file to the blob container.
 
-        Skips ``__pycache__``, ``.git``, ``.venv``, ``venv``, ``node_modules``
-        directories and ``.pyc`` / ``.pyo`` files.
+        Files and directories matching patterns in *folder/.gitignore* (or
+        *folder/.git/info/exclude*) are skipped.  The ``.git`` directory is
+        always excluded as a safety measure regardless of ``.gitignore`` contents.
+        When no ``.gitignore`` is present, all files (except those inside
+        ``.git``) are uploaded.
 
         :param container_client: The blob container client to upload files to.
         :type container_client: ~azure.storage.blob.ContainerClient
@@ -58,19 +62,25 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         :raises HttpResponseError: Re-raised with a friendlier message on
             ``AuthorizationPermissionMismatch``.
         """
-        skip_dirs = {"__pycache__", ".git", ".venv", "venv", "node_modules"}
-        skip_extensions = {".pyc", ".pyo"}
+        root_path = Path(folder)
+        spec = _load_gitignore_spec(root_path)
         files_uploaded = False
 
         for root, dirs, files in os.walk(folder):
-            dirs[:] = [d for d in dirs if d not in skip_dirs]
+            # Always skip .git; also skip any directory that matches .gitignore patterns.
+            dirs[:] = [
+                d
+                for d in dirs
+                if d != _GIT_DIR and not _is_ignored(spec, root_path, Path(root) / d)
+            ]
             for file_name in files:
-                if any(file_name.endswith(ext) for ext in skip_extensions):
+                file_path = Path(root) / file_name
+                if _is_ignored(spec, root_path, file_path):
                     continue
-                file_path = os.path.join(root, file_name)
-                blob_name = os.path.relpath(file_path, folder).replace("\\", "/")
-                logger.debug("[upload] Start uploading file `%s` as blob `%s`.", file_path, blob_name)
-                with open(file=file_path, mode="rb") as data:
+                file_path_str = str(file_path)
+                blob_name = os.path.relpath(file_path_str, folder).replace("\\", "/")
+                logger.debug("[upload] Start uploading file `%s` as blob `%s`.", file_path_str, blob_name)
+                with open(file=file_path_str, mode="rb") as data:
                     try:
                         await container_client.upload_blob(name=str(blob_name), data=data, **kwargs)
                     except HttpResponseError as e:
