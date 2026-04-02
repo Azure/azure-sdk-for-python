@@ -2630,12 +2630,12 @@ def _extract_metric_values(
 
         result_name, result_name_child_level, result_name_nested_child_level, derived_passed = _update_metric_value(
             criteria_type,
-            include_property_bag,
             result_per_metric[metric],
             metric_key,
             metric,
             metric_value,
             logger,
+            include_property_bag=include_property_bag,
         )
         if result_name is not None:
             _append_indirect_attachments_to_results(
@@ -2661,12 +2661,12 @@ def _extract_metric_values(
 
 def _update_metric_value(
     criteria_type: str,
-    include_property_bag: bool,
     metric_dict: Dict[str, Any],
     metric_key: str,
     metric: str,
     metric_value: Any,
     logger: logging.Logger,
+    include_property_bag: bool = False,
 ) -> Tuple[str, str, str]:
     """Update metric dictionary with the appropriate field based on metric key.
 
@@ -2676,6 +2676,10 @@ def _update_metric_value(
 
     :param criteria_type: Type of the evaluation criteria (e.g. 'azure_ai_evaluator')
     :type criteria_type: str
+    :param include_property_bag: Whether non-standard metric fields should be preserved under
+        the AOAI result properties bag. This defaults to False for backwards compatibility
+        with direct helper callers; the AOAI conversion path passes the explicit value.
+    :type include_property_bag: bool
     :param metric_dict: Dictionary to update with metric values
     :type metric_dict: Dict[str, Any]
     :param metric_key: Key name of the metric (determines field assignment)

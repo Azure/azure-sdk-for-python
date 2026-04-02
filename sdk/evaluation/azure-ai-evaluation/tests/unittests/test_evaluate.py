@@ -1885,6 +1885,33 @@ class TestUpdateMetricValueTokenCoercion:
         token_key = suffix.lstrip("_")
         assert result["sample"]["usage"][token_key] is None
 
+    def test_legacy_helper_call_does_not_create_properties_bag(self):
+        metric_dict = {}
+        _update_metric_value(
+            criteria_type="azure_ai_evaluator",
+            metric_dict=metric_dict,
+            metric_key="custom_observation_flag",
+            metric="score",
+            metric_value=False,
+            logger=logging.getLogger("test"),
+        )
+
+        assert "properties" not in metric_dict
+
+    def test_include_property_bag_preserves_custom_fields(self):
+        metric_dict = {}
+        _update_metric_value(
+            criteria_type="azure_ai_evaluator",
+            include_property_bag=True,
+            metric_dict=metric_dict,
+            metric_key="custom_observation_flag",
+            metric="score",
+            metric_value=False,
+            logger=logging.getLogger("test"),
+        )
+
+        assert metric_dict["properties"] == {"observation_flag": False}
+
 
 @pytest.mark.unittest
 class TestBuildInternalLogAttributesThreshold:
