@@ -13,7 +13,6 @@ from azure.ai.agentserver.core._config import (
     resolve_appinsights_connection_string,
 )
 from azure.ai.agentserver.core._constants import Constants
-from azure.ai.agentserver.core._tracing import _parse_baggage_key
 
 
 # ------------------------------------------------------------------ #
@@ -184,41 +183,3 @@ class TestAgentIdentityResolution:
         env.pop(Constants.FOUNDRY_AGENT_VERSION, None)
         with mock.patch.dict(os.environ, env, clear=True):
             assert resolve_agent_version() == ""
-
-
-# ------------------------------------------------------------------ #
-# Baggage parsing (unit tests for _parse_baggage_key)
-# ------------------------------------------------------------------ #
-
-
-class TestParseBaggageKey:
-    """Unit tests for _parse_baggage_key()."""
-
-    def test_single_key(self) -> None:
-        assert _parse_baggage_key("leaf_customer_span_id=abc123", "leaf_customer_span_id") == "abc123"
-
-    def test_multiple_keys(self) -> None:
-        baggage = "key1=val1,leaf_customer_span_id=def456,key2=val2"
-        assert _parse_baggage_key(baggage, "leaf_customer_span_id") == "def456"
-
-    def test_key_not_found(self) -> None:
-        assert _parse_baggage_key("key1=val1,key2=val2", "leaf_customer_span_id") is None
-
-    def test_empty_baggage(self) -> None:
-        assert _parse_baggage_key("", "leaf_customer_span_id") is None
-
-    def test_key_with_properties(self) -> None:
-        baggage = "leaf_customer_span_id=abc123;prop1=x"
-        assert _parse_baggage_key(baggage, "leaf_customer_span_id") == "abc123"
-
-    def test_whitespace_handling(self) -> None:
-        baggage = " leaf_customer_span_id = abc123 , other = val "
-        assert _parse_baggage_key(baggage, "leaf_customer_span_id") == "abc123"
-
-    def test_value_with_equals(self) -> None:
-        baggage = "leaf_customer_span_id=abc=123"
-        assert _parse_baggage_key(baggage, "leaf_customer_span_id") == "abc=123"
-
-    def test_no_equals_in_member(self) -> None:
-        baggage = "malformed_entry,leaf_customer_span_id=good"
-        assert _parse_baggage_key(baggage, "leaf_customer_span_id") == "good"
