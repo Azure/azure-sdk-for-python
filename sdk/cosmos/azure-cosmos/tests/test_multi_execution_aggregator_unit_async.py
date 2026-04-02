@@ -174,6 +174,28 @@ class TestMultiExecutionAggregatorUnitAsync(unittest.IsolatedAsyncioTestCase):
         self.assertIn("child1", ids_in_heap)
         self.assertIn("child2", ids_in_heap)
 
+    async def test_rebuild_priority_queue_repairs_on_partition_gone_async(self):
+        aggregator = object.__new__(_MultiExecutionContextAggregator)
+        aggregator._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
+        aggregator._document_producer_comparator = _AsyncOrderComparator()
+        aggregator._MAX_REBUILD_SPLIT_RETRIES = 3
+
+        calls = {"count": 0, "context": None, "retry": None}
+
+        async def _repair(failed_query_ex_context=None, split_retry_count=0):
+            calls["count"] += 1
+            calls["context"] = failed_query_ex_context
+            calls["retry"] = split_retry_count
+
+        aggregator._repair_document_producer = _repair
+
+        producer = _AsyncSplitOnPeekProducer({"id": "doc-1"})
+        await aggregator._rebuild_priority_queue([producer], split_retry_count=0)
+
+        self.assertEqual(calls["count"], 1)
+        self.assertIs(calls["context"], producer)
+        self.assertEqual(calls["retry"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

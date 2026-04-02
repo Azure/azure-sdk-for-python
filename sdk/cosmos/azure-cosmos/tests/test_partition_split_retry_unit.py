@@ -722,6 +722,70 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
 
         mock_provider_ctor.assert_not_called()
 
+    @patch('azure.cosmos._retry_utility._container_recreate_retry_policy.ContainerRecreateRetryPolicy', _NoRetryPolicy)
+    @patch('azure.cosmos._retry_utility._service_unavailable_retry_policy._ServiceUnavailableRetryPolicy', _NoRetryPolicy)
+    @patch('azure.cosmos._retry_utility._service_request_retry_policy.ServiceRequestRetryPolicy', _NoRetryPolicy)
+    @patch('azure.cosmos._retry_utility._service_response_retry_policy.ServiceResponseRetryPolicy', _NoRetryPolicy)
+    @patch('azure.cosmos._retry_utility._timeout_failover_retry_policy._TimeoutFailoverRetryPolicy', _NoRetryPolicy)
+    @patch('azure.cosmos._retry_utility._session_retry_policy._SessionRetryPolicy', _NoRetryPolicy)
+    @patch('azure.cosmos._retry_utility._default_retry_policy.DefaultRetryPolicy', _NoRetryPolicy)
+    @patch('azure.cosmos._retry_utility._resource_throttle_retry_policy.ResourceThrottleRetryPolicy', _NoRetryResourceThrottlePolicy)
+    @patch('azure.cosmos._retry_utility._health_check_retry_policy.HealthCheckRetryPolicy', _NoRetryPolicy)
+    @patch('azure.cosmos._retry_utility._endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy', _NoRetryPolicy)
+    @patch('azure.cosmos._retry_utility._gone_retry_policy.PartitionKeyRangeGoneRetryPolicy')
+    def test_execute_410_path_uses_targeted_refresh_when_collection_link_exists_without_previous_map(self, mock_gone_policy):
+        """Execute() should still do targeted refresh when collection link exists and previous map is None."""
+        mock_client = MagicMock()
+        mock_client.connection_policy = MagicMock()
+        mock_client.connection_policy.RetryOptions = MagicMock(
+            MaxRetryAttemptCount=0,
+            FixedRetryIntervalInMilliseconds=0,
+            MaxWaitTimeInSeconds=0,
+        )
+        mock_client.connection_policy.EnableEndpointDiscovery = False
+        mock_client.last_response_headers = {}
+        mock_client._container_properties_cache = {}
+        mock_client._enable_diagnostics_logging = False
+        mock_client.session = None
+        mock_client._UpdateSessionIfRequired = MagicMock()
+        mock_client.refresh_routing_map_provider = MagicMock()
+
+        request_obj = MagicMock()
+        request_obj.should_clear_session_token_on_session_read_failure = False
+        request_obj.headers = {HttpHeaders.IntendedCollectionRID: "rid1"}
+
+        request = MagicMock()
+        request.headers = {HttpHeaders.IntendedCollectionRID: "rid1"}
+
+        targeted_collection = "dbs/db1/colls/coll1"
+        feed_options = {"x-ms-documentdb-collection-rid": "rid1"}
+
+        gone_policy = mock_gone_policy.return_value
+        gone_policy.pop_refresh_context.return_value = (targeted_collection, None, feed_options)
+        gone_policy.ShouldRetry.return_value = False
+        gone_policy.retry_after_in_milliseconds = 0
+
+        def always_410(*args, **kwargs):
+            raise create_410_partition_split_error()
+
+        with pytest.raises(exceptions.CosmosHttpResponseError) as exc_info:
+            _retry_utility.Execute(
+                mock_client,
+                MockGlobalEndpointManager(),
+                always_410,
+                request_obj,
+                None,
+                None,
+                request,
+            )
+
+        assert exc_info.value.status_code == StatusCodes.GONE
+        mock_client.refresh_routing_map_provider.assert_called_once_with(
+            targeted_collection,
+            None,
+            feed_options,
+        )
+        gone_policy.pop_refresh_context.assert_called_once()
 
 if __name__ == "__main__":
     unittest.main()

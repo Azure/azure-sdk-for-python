@@ -67,13 +67,17 @@ class ScriptsProxy:
             return
         if self.container_link not in self.client_connection._container_properties_cache:
             await self.client_connection._refresh_container_properties_cache(self.container_link)
-        options[Constants.ContainerRID] = self.client_connection._container_properties_cache[self.container_link]["_rid"]
+        options[Constants.ContainerRID] = self.client_connection._container_properties_cache[
+            self.container_link
+        ]["_rid"]
 
     def _try_set_container_rid(self, options: dict[str, Any]) -> None:
         if Constants.ContainerRID in options:
             return
         if self.container_link in self.client_connection._container_properties_cache:
-            options[Constants.ContainerRID] = self.client_connection._container_properties_cache[self.container_link]["_rid"]
+            options[Constants.ContainerRID] = self.client_connection._container_properties_cache[
+                self.container_link
+            ]["_rid"]
 
     @distributed_trace
     def list_stored_procedures(

@@ -206,7 +206,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
             elif exceptions._partition_range_is_gone(e):
                 retry_policy = partition_key_range_gone_retry_policy
                 collection_link, previous_routing_map, feed_options = retry_policy.pop_refresh_context()
-                if collection_link and previous_routing_map is not None:
+                if collection_link:
                     client.refresh_routing_map_provider(collection_link, previous_routing_map, feed_options)
                 elif request is not None:
                     # Request-based path: keep prior behavior and fall back to a global refresh

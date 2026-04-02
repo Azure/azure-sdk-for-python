@@ -409,7 +409,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 captured_headers_list.append(headers.copy())
                 TestRoutingMapProviderAsync._capture_internal_headers(kwargs, f'"etag-{call_count["count"]}"')
                 data = ([{'id': '99', 'minInclusive': '', 'maxExclusive': 'FF',
-                          'parents': ['MISSING']}] if call_count['count'] == 1 else full_ranges)
+                          'parents': ['MISSING']}] if call_count['count'] <= 2 else full_ranges)
 
                 async def _gen():
                     for r in data:
@@ -430,13 +430,16 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         )
 
         self.assertIsNotNone(result)
-        self.assertEqual(len(captured_headers_list), 2)
+        self.assertEqual(len(captured_headers_list), 3)
 
         # First call (incremental) should have IfNoneMatch
         self.assertIn(http_constants.HttpHeaders.IfNoneMatch, captured_headers_list[0])
 
-        # Second call (full load fallback) should NOT have IfNoneMatch
-        self.assertNotIn(http_constants.HttpHeaders.IfNoneMatch, captured_headers_list[1])
+        # Second call is incremental retry, so it should still carry IfNoneMatch.
+        self.assertIn(http_constants.HttpHeaders.IfNoneMatch, captured_headers_list[1])
+
+        # Third call is full-load fallback and must clear stale IfNoneMatch.
+        self.assertNotIn(http_constants.HttpHeaders.IfNoneMatch, captured_headers_list[2])
 
     async def test_fetch_routing_map_merge_parents0_evicted_later_parent_cached_async(self):
         """Merge where parents[0] is an evicted grandparent but a later parent IS in cache.
@@ -612,7 +615,11 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         )
 
         self.assertIsNotNone(result, "Should succeed via full refresh fallback")
-        self.assertEqual(call_count['count'], 2, "Should call service twice (incremental + full fallback)")
+        self.assertEqual(
+            call_count['count'],
+            3,
+            "Should call service three times (incremental + incremental retry + full fallback)",
+        )
         ranges = list(result._orderedPartitionKeyRanges)
         self.assertEqual(len(ranges), 5)
         ids = [r['id'] for r in ranges]
@@ -677,17 +684,11 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         # range_info for '3' should come from '1A' (first cached parent), not '1' (evicted)
         self.assertEqual(result._orderedPartitionInfo[1], 'info_1A')
 
-    async def test_force_refresh_without_previous_map_skips_redundant_fetch_async(self):
-        """force_refresh=True without previous_routing_map should NOT trigger a redundant fetch.
+    async def test_force_refresh_without_previous_map_triggers_targeted_fetch_async(self):
+        """force_refresh=True without previous_routing_map should still trigger a targeted fetch.
 
-        This validates that `and` is correct: force_refresh=True alone is NOT sufficient
-        to trigger a fetch when the cache is already populated. The `_is_cache_stale()` check
-        returns False when no previous_routing_map is provided, so `and` short-circuits to False.
-        The `is_initial_load` check handles the empty-cache case separately.
-
-        No production caller ever calls get_routing_map(force_refresh=True) without also
-        providing a previous_routing_map. The gone retry policy always provides both, and
-        all other callers take the global nuke path (replacing the entire provider).
+        This guards the 410 path where collection_link is known but previous_routing_map
+        is not available. The refresh must not become a no-op when cache already exists.
         """
         call_count = {'count': 0}
         original_ranges = self.partition_key_ranges
@@ -711,14 +712,12 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(call_count['count'], 1)
         self.assertIsNotNone(result1)
 
-        # force_refresh=True without previous_routing_map — should NOT re-fetch
-        # because _is_cache_stale() returns False (no previous_routing_map to compare),
-        # and the cache is already populated (is_initial_load is False).
+        # force_refresh=True without previous_routing_map should still fetch once.
         result2 = await provider.get_routing_map(
             collection_link, feed_options={},
             force_refresh=True
         )
-        self.assertEqual(call_count['count'], 1, "force_refresh=True without previous_routing_map should skip fetch")
+        self.assertEqual(call_count['count'], 2, "force_refresh=True without previous_routing_map should trigger fetch")
         self.assertIsNotNone(result2)
 
     async def test_concurrent_refresh_serialized_by_lock_async(self):

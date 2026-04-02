@@ -22,6 +22,8 @@
 """Session Consistency Tracking in the Azure Cosmos database service.
 """
 
+import asyncio
+import inspect
 import logging
 import sys
 import traceback
@@ -279,7 +281,21 @@ class SessionContainer(object):
                     collection_ranges = \
                         client_connection._routing_map_provider._collection_routing_map_by_item.get(collection_name)
                 if collection_ranges and not collection_ranges._rangeById.get(partition_key_range_id):
-                    client_connection.refresh_routing_map_provider()
+                    refresh_result = client_connection.refresh_routing_map_provider()
+                    if inspect.iscoroutine(refresh_result):
+                        try:
+                            asyncio.get_running_loop().create_task(refresh_result)
+                        except RuntimeError:
+                            # No running loop means we cannot schedule async refresh from this sync path.
+                            refresh_result.close()
+                            logger.warning(
+                                "Async routing-map refresh could not be scheduled because no event loop is running."
+                            )
+                    elif inspect.isawaitable(refresh_result):
+                        logger.warning(
+                            "Async routing-map refresh returned a non-coroutine awaitable and cannot be scheduled "
+                            "from this sync path."
+                        )
             except ValueError:
                 return
             except Exception:  # pylint: disable=broad-except

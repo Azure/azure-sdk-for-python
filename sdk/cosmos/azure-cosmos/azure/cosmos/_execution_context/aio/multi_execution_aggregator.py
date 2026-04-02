@@ -61,6 +61,8 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         def size(self):
             return len(self._heap)
 
+    _MAX_REBUILD_SPLIT_RETRIES = 3
+
     def __init__(self, client, resource_link, query, options, partitioned_query_ex_info,
                  response_hook, raw_response_hook):
         super(_MultiExecutionContextAggregator, self).__init__(client, options)
@@ -118,10 +120,13 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
 
         raise NotImplementedError("You should use pipeline's fetch_next_block.")
 
-    async def _repair_document_producer(self, failed_query_ex_context=None):
+    async def _repair_document_producer(self, failed_query_ex_context=None, split_retry_count=0):
         """Repairs the document producer context by using the re-initialized routing map provider in the client,
         which loads in a refreshed partition key range cache to re-create the partition key ranges.
         After loading this new cache, the document producers get re-created with the new valid ranges.
+
+        :param failed_query_ex_context: The producer context that hit a split during iteration.
+            When None, rebuild all producer contexts.
         """
         # refresh the routing provider to get the newly initialized one post-refresh
         self._routing_provider = self._client._routing_map_provider
@@ -136,7 +141,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
                 self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
                 for partitionTargetRange in targetPartitionRanges
             ]
-            await self._rebuild_priority_queue(rebuilt_contexts)
+            await self._rebuild_priority_queue(rebuilt_contexts, split_retry_count)
             return
 
         # Iteration-time split: only rebuild producers for the failed range and preserve unaffected producers.
@@ -156,9 +161,9 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
             self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
             for partitionTargetRange in repaired_ranges
         ]
-        await self._rebuild_priority_queue(existing_contexts + rebuilt_failed_contexts)
+        await self._rebuild_priority_queue(existing_contexts + rebuilt_failed_contexts, split_retry_count)
 
-    async def _rebuild_priority_queue(self, query_contexts):
+    async def _rebuild_priority_queue(self, query_contexts, split_retry_count=0):
         self._orderByPQ = self.PriorityQueue()
         for targetQueryExContext in query_contexts:
             try:
@@ -166,6 +171,13 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
                 await targetQueryExContext.peek()
                 await self._orderByPQ.push_async(targetQueryExContext, self._document_producer_comparator)
 
+            except exceptions.CosmosHttpResponseError as e:
+                if exceptions._partition_range_is_gone(e):
+                    if split_retry_count >= self._MAX_REBUILD_SPLIT_RETRIES:
+                        raise
+                    await self._repair_document_producer(targetQueryExContext, split_retry_count + 1)
+                    return
+                raise
             except StopAsyncIteration:
                 continue
 

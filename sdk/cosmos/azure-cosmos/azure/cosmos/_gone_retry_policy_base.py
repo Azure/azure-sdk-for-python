@@ -19,12 +19,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import logging
 from typing import Any, Optional, Tuple
 
 from azure.cosmos import _base, http_constants
 from azure.cosmos._constants import _Constants as Constants
 
 # pylint: disable=protected-access
+
+_LOGGER = logging.getLogger(__name__)
 
 class _PartitionKeyRangeGoneRetryPolicyBase:
     """Base class with shared logic for partition key range gone retry policies."""
@@ -73,7 +76,10 @@ class _PartitionKeyRangeGoneRetryPolicyBase:
                     lookup_key = _base.GetResourceIdOrFullNameFromLink(collection_link)
                 except Exception:  # pylint: disable=broad-except
                     # Keep existing resilient behavior for unexpected link formats.
-                    pass
+                    _LOGGER.debug(
+                        "Could not normalize collection_link '%s'; using raw value.",
+                        collection_link,
+                    )
                 return self.client._routing_map_provider._collection_routing_map_by_item.get(lookup_key)
         return None
 

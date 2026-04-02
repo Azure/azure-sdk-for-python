@@ -1386,10 +1386,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     ) -> CosmosDict:
         """Replaces a collection and return it.
 
-        :param str collection_link:
-            The link to the collection entity.
+        :param str database_link:
+            The link to the database.
         :param dict collection:
-            The collection to be used.
+            The Azure Cosmos collection to create.
         :param dict options:
             The request options for the request.
         :return:
@@ -3470,7 +3470,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     "Falling back to full refresh.",
                     collection_link,
                 )
-                pass
             except exceptions.CosmosHttpResponseError as e:
                 status_code = e.status_code
                 is_transient = (

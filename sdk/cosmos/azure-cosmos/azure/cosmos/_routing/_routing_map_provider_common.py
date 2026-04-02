@@ -270,8 +270,14 @@ def determine_refresh_action(
     should_refresh_unchanged_cache = force_refresh and is_cache_unchanged_since_previous(
         collection_routing_map_by_item, collection_id, previous_routing_map
     )
+    # Force-refresh callers may not have a previous map (for example, first 410 on
+    # a collection when context only includes collection_link). Still issue a
+    # targeted fetch so this does not degrade into a no-op.
+    should_force_refresh_without_previous = (
+        force_refresh and existing_routing_map is not None and previous_routing_map is None
+    )
 
-    if not (is_initial_load or should_refresh_unchanged_cache):
+    if not (is_initial_load or should_refresh_unchanged_cache or should_force_refresh_without_previous):
         return False, None
 
     if should_refresh_unchanged_cache and previous_routing_map:

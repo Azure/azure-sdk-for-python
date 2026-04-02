@@ -3603,7 +3603,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     "Falling back to full refresh.",
                     collection_link,
                 )
-                pass
             except exceptions.CosmosHttpResponseError as e:
                 status_code = e.status_code
                 is_transient = (
