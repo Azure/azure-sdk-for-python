@@ -22,7 +22,7 @@
 """Session Consistency Tracking in the Azure Cosmos database service.
 """
 
-import asyncio
+import importlib
 import inspect
 import logging
 import sys
@@ -284,7 +284,7 @@ class SessionContainer(object):
                     refresh_result = client_connection.refresh_routing_map_provider()
                     if inspect.iscoroutine(refresh_result):
                         try:
-                            asyncio.get_running_loop().create_task(refresh_result)
+                            importlib.import_module("asyncio").get_running_loop().create_task(refresh_result)
                         except RuntimeError:
                             # No running loop means we cannot schedule async refresh from this sync path.
                             refresh_result.close()

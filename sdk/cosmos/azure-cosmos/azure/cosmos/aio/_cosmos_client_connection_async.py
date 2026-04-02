@@ -1386,8 +1386,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     ) -> CosmosDict:
         """Replaces a collection and return it.
 
-        :param str database_link:
-            The link to the database.
+        :param str collection_link:
+            The link to the collection.
         :param dict collection:
             The Azure Cosmos collection to create.
         :param dict options:

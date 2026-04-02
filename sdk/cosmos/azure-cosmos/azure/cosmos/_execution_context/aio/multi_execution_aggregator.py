@@ -127,6 +127,8 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
 
         :param failed_query_ex_context: The producer context that hit a split during iteration.
             When None, rebuild all producer contexts.
+        :type failed_query_ex_context: Optional[~azure.cosmos._execution_context.aio.document_producer.DocumentProducer]
+        :param int split_retry_count: Number of split-repair retries already attempted.
         """
         # refresh the routing provider to get the newly initialized one post-refresh
         self._routing_provider = self._client._routing_map_provider
