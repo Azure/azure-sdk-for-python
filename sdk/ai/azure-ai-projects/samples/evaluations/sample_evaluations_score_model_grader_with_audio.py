@@ -48,9 +48,9 @@ load_dotenv()
 file_path = os.path.abspath(__file__)
 folder_path = os.path.dirname(file_path)
 
-endpoint = os.getenv("AZURE_AI_PROJECT_ENDPOINT")
-model_deployment_name = os.getenv("AZURE_AI_MODEL_DEPLOYMENT_NAME")
-model_deployment_name_for_audio = os.getenv("AZURE_AI_MODEL_DEPLOYMENT_NAME_FOR_AUDIO")
+endpoint = os.environ.get("AZURE_AI_PROJECT_ENDPOINT", "")
+model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")
+model_deployment_name_for_audio = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME_FOR_AUDIO", "")
 
 missing_env_vars = [
     name
