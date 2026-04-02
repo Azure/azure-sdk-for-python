@@ -81,10 +81,7 @@ with (
             entry_point="answer_length_evaluator:AnswerLengthEvaluator",
             init_parameters={
                 "type": "object",
-                "properties": {
-                    "config": {"type": "string"}, 
-                    "threshold": {"type": "number"}
-                },
+                "properties": {"config": {"type": "string"}, "threshold": {"type": "number"}},
                 "required": ["config", "threshold"],
             },
             data_schema={
