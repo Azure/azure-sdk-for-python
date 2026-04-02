@@ -52,12 +52,13 @@ def _convert_mod_error(error):
     raise overwrite_error
 
 
-def _any_conditions(**kwargs):
+def _any_conditions(blob_kwargs):
+    """Check if any access conditions are set in the blob-level kwargs."""
     return any([
-        kwargs.get('if_modified_since'),
-        kwargs.get('if_unmodified_since'),
-        kwargs.get('etag'),
-        kwargs.get('match_condition')
+        blob_kwargs.get('if_modified_since'),
+        blob_kwargs.get('if_unmodified_since'),
+        blob_kwargs.get('etag'),
+        blob_kwargs.get('match_condition')
     ])
 
 
@@ -74,8 +75,12 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
     **kwargs: Any
 ) -> Dict[str, Any]:
     try:
-        if not overwrite and not _any_conditions(**kwargs):
-            kwargs['match_condition'] = MatchConditions.IfMissing
+        # Stage block generated operation does not accept access conditions or content headers
+        # upload and commit_block_list do accept those
+        # so we need to pop them from kwargs before staging blocks
+        blob_kwargs = kwargs.pop('blob_kwargs', {})
+        if not overwrite and not _any_conditions(blob_kwargs):
+            blob_kwargs['match_condition'] = MatchConditions.IfMissing
         adjusted_count = length
         if (encryption_options.get('key') is not None) and (adjusted_count is not None):
             adjusted_count = get_adjusted_upload_size(adjusted_count, encryption_options['version'])
@@ -112,6 +117,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
                 immutability_policy_expiry=immutability_policy_expiry,
                 immutability_policy_mode=immutability_policy_mode,
                 legal_hold=legal_hold,
+                **blob_kwargs,
                 **kwargs)
 
             if progress_hook:
@@ -186,6 +192,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
             immutability_policy_expiry=immutability_policy_expiry,
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
+            **blob_kwargs,
             **kwargs))
     except HttpResponseError as error:
         try:
@@ -209,7 +216,10 @@ def upload_page_blob(
     **kwargs: Any
 ) -> Dict[str, Any]:
     try:
-        if not overwrite and not _any_conditions(**kwargs):
+        # Page/append blob operations accept all access conditions as named params,
+        # so merge blob_kwargs back into kwargs.
+        kwargs.update(kwargs.pop('blob_kwargs', {}))
+        if not overwrite and not _any_conditions(kwargs):
             kwargs['match_condition'] = MatchConditions.IfMissing
         if length is None or length < 0:
             raise ValueError("A content length must be specified for a Page Blob.")
@@ -288,6 +298,9 @@ def upload_append_blob(  # pylint: disable=unused-argument
     **kwargs: Any
 ) -> Dict[str, Any]:
     try:
+        # Page/append blob operations accept all access conditions as named params,
+        # so merge blob_kwargs back into kwargs.
+        kwargs.update(kwargs.pop('blob_kwargs', {}))
         if length == 0:
             return {}
         kwargs.pop('blob_headers', None)

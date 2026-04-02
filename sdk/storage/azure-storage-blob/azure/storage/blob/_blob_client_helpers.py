@@ -146,15 +146,23 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))
     kwargs.update(get_access_conditions(kwargs.pop('lease', None)))
-    kwargs.update(get_modify_conditions(kwargs))
+    mod_conditions = get_modify_conditions(kwargs)
     kwargs.update(get_cpk_scope_info(kwargs))
+
+    # Build the dict of kwargs that apply to the blob as a whole (access conditions,
+    # content headers). For block blobs these only go to upload (single put) and
+    # commit_block_list — NOT stage_block. For page/append blobs all operations
+    # accept these, so they get merged back into kwargs.
+    blob_kwargs: Dict[str, Any] = {}
+    blob_kwargs.update(mod_conditions)
     if content_settings:
-        kwargs['blob_cache_control'] = content_settings.cache_control
-        kwargs['blob_content_type'] = content_settings.content_type
-        kwargs['blob_content_md5'] = content_settings.content_md5
-        kwargs['blob_content_encoding'] = content_settings.content_encoding
-        kwargs['blob_content_language'] = content_settings.content_language
-        kwargs['blob_content_disposition'] = content_settings.content_disposition
+        blob_kwargs['blob_cache_control'] = content_settings.cache_control
+        blob_kwargs['blob_content_type'] = content_settings.content_type
+        blob_kwargs['blob_content_md5'] = content_settings.content_md5
+        blob_kwargs['blob_content_encoding'] = content_settings.content_encoding
+        blob_kwargs['blob_content_language'] = content_settings.content_language
+        blob_kwargs['blob_content_disposition'] = content_settings.content_disposition
+    kwargs['blob_kwargs'] = blob_kwargs
     kwargs['blob_tags_string'] = serialize_blob_tags_header(kwargs.pop('tags', None))
     kwargs['stream'] = stream
     kwargs['length'] = length
@@ -232,7 +240,7 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
     options.update(get_source_conditions(kwargs))
     options.update(get_cpk_scope_info(kwargs))
     options.update(kwargs)
-    if not overwrite and not _any_conditions(**options):
+    if not overwrite and not _any_conditions(options):
         options['match_condition'] = MatchConditions.IfMissing
     return options
 

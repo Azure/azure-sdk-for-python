@@ -51,13 +51,11 @@ def upload_data_chunks(
     progress_hook=None,
     **kwargs,
 ):
-    # Back compat for filedatalake
+
     parallel = max_concurrency > 1
-    if parallel:
+    if parallel and "modified_access_conditions" in kwargs:
         # Access conditions do not work with parallelism
-        kwargs.pop("modified_access_conditions", None)
-        kwargs.pop("etag", None)
-        kwargs.pop("match_condition", None)
+        kwargs["modified_access_conditions"] = None
 
     uploader = uploader_class(
         service=service,
@@ -95,11 +93,9 @@ def upload_substream_blocks(
     **kwargs,
 ):
     parallel = max_concurrency > 1
-    if parallel:
+    if parallel and "modified_access_conditions" in kwargs:
         # Access conditions do not work with parallelism
-        kwargs.pop("modified_access_conditions", None)
-        kwargs.pop("etag", None)
-        kwargs.pop("match_condition", None)
+        kwargs["modified_access_conditions"] = None
     uploader = uploader_class(
         service=service,
         total_size=total_size,
@@ -256,16 +252,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
 
 class BlockBlobChunkUploader(_ChunkUploader):
 
-    # Fields that are only relevant for upload/commit_block_list, not stage_block
-    _STRIP_KWARGS = (
-        "modified_access_conditions", "etag", "match_condition",
-        "blob_cache_control", "blob_content_type", "blob_content_md5",
-        "blob_content_encoding", "blob_content_language", "blob_content_disposition",
-    )
-
     def __init__(self, *args, **kwargs):
-        for key in self._STRIP_KWARGS:
-            kwargs.pop(key, None)
         super(BlockBlobChunkUploader, self).__init__(*args, **kwargs)
         self.current_length = None
 
