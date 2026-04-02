@@ -9,6 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 import os
+import re
 import logging
 from typing import Any, Final, IO, Tuple, Optional, Union
 from pathlib import Path
@@ -43,6 +44,8 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
     async def _upload_folder_to_blob(
         container_client: ContainerClient,
         folder: str,
+        file_pattern: Optional[re.Pattern] = None,
+        folder_exclusions_pattern: Optional[re.Pattern] = None,
         **kwargs: Any,
     ) -> None:
         """Walk *folder* and upload every eligible file to the blob container.
@@ -55,6 +58,12 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         :type container_client: ~azure.storage.blob.ContainerClient
         :param folder: Path to the local folder containing files to upload.
         :type folder: str
+        :param file_pattern: Optional regex pattern to filter files. Only files
+            whose name matches this pattern will be uploaded.
+        :type file_pattern: Optional[re.Pattern]
+        :param folder_exclusions_pattern: Optional regex pattern to exclude
+            directories. Directories whose name matches this pattern will be skipped.
+        :type folder_exclusions_pattern: Optional[re.Pattern]
         :raises ValueError: If the folder contains no uploadable files.
         :raises HttpResponseError: Re-raised with a friendlier message on
             ``AuthorizationPermissionMismatch``.
@@ -64,9 +73,16 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         files_uploaded = False
 
         for root, dirs, files in os.walk(folder):
-            dirs[:] = [d for d in dirs if d not in skip_dirs and not d.startswith(".")]
+            dirs[:] = [
+                d for d in dirs
+                if d not in skip_dirs
+                and not d.startswith(".")
+                and not (folder_exclusions_pattern and folder_exclusions_pattern.search(d))
+            ]
             for file_name in files:
                 if file_name.startswith('.') or any(file_name.endswith(ext) for ext in skip_extensions):
+                    continue
+                if file_pattern and not file_pattern.search(file_name):
                     continue
                 file_path = os.path.join(root, file_name)
                 blob_name = os.path.relpath(file_path, folder).replace("\\", "/")
@@ -204,6 +220,8 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         *,
         folder: str,
         connection_name: Optional[str] = None,
+        file_pattern: Optional[re.Pattern] = None,
+        folder_exclusions_pattern: Optional[re.Pattern] = None,
         **kwargs: Any,
     ) -> EvaluatorVersion:
         """Upload all files in a folder to blob storage and create a code-based evaluator version
@@ -226,6 +244,12 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
          should be uploaded. If not specified, the default Azure Storage Account connection will be
          used. Optional.
         :paramtype connection_name: str
+        :keyword file_pattern: Optional regex pattern to filter files. Only files whose name
+         matches this pattern will be uploaded. Optional.
+        :paramtype file_pattern: Optional[re.Pattern]
+        :keyword folder_exclusions_pattern: Optional regex pattern to exclude directories.
+         Directories whose name matches this pattern will be skipped during upload. Optional.
+        :paramtype folder_exclusions_pattern: Optional[re.Pattern]
         :return: The created evaluator version.
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
@@ -247,7 +271,7 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         )
 
         async with container_client:
-            await self._upload_folder_to_blob(container_client, folder, **kwargs)
+            await self._upload_folder_to_blob(container_client, folder, file_pattern, folder_exclusions_pattern, **kwargs)
             self._set_blob_uri(evaluator_version, blob_uri)
 
             result = await self.create_version(
