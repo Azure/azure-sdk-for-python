@@ -1,11 +1,10 @@
 {
-  "commit": "313ca227e879d1b5f6f59d9f68442a6c28fd3279",
+  "apiVersion": "2026-01-01-preview",
+  "apiVersions": {
+    "Microsoft.NetworkCloud": "2026-01-01-preview"
+  },
+  "commit": "dfc0b2356c41c538250f3309f1a35f4cb1bf4e34",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.10.2",
-  "use": [
-    "@autorest/python@6.50.0",
-    "@autorest/modelerfour@4.27.0"
-  ],
-  "autorest_command": "autorest specification/networkcloud/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=C:\\dev\\worktrees\\sdk-azure-mgmt-networkcloud\\sdk --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/networkcloud/resource-manager/readme.md"
+  "typespec_src": "specification/networkcloud/NetworkCloud.Management",
+  "emitterVersion": "0.61.2"
 }
