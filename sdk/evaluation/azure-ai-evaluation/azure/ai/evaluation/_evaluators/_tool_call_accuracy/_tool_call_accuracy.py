@@ -250,9 +250,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                         "content": [{"type": "tool_result", "tool_result": tc["tool_result"]}],
                     })
             eval_input["tool_calls"] = reformat_agent_response(messages, include_tool_messages=True)
-        
-        print("QUERY:", eval_input["query"])
-        print("TOOL_CALLS:", eval_input["tool_calls"])
+
         # Single LLM call for all tool calls
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
