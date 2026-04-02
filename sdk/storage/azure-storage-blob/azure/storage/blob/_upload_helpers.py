@@ -84,7 +84,6 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
         adjusted_count = length
         if (encryption_options.get('key') is not None) and (adjusted_count is not None):
             adjusted_count = get_adjusted_upload_size(adjusted_count, encryption_options['version'])
-        kwargs.pop('blob_headers', None)
         tier = kwargs.pop('standard_blob_tier', None)
         blob_tags_string = kwargs.pop('blob_tags_string', None)
 
@@ -241,7 +240,6 @@ def upload_page_blob(
             headers['x-ms-meta-encryptiondata'] = encryption_data
 
         blob_tags_string = kwargs.pop('blob_tags_string', None)
-        kwargs.pop('blob_headers', None)
         progress_hook = kwargs.pop('progress_hook', None)
 
         response = cast(Dict[str, Any], client.create(
@@ -303,7 +301,6 @@ def upload_append_blob(  # pylint: disable=unused-argument
         kwargs.update(kwargs.pop('blob_kwargs', {}))
         if length == 0:
             return {}
-        kwargs.pop('blob_headers', None)
         maxsize_condition = kwargs.pop('maxsize_condition', None)
         blob_tags_string = kwargs.pop('blob_tags_string', None)
         progress_hook = kwargs.pop('progress_hook', None)

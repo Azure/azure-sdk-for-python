@@ -253,6 +253,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
 class BlockBlobChunkUploader(_ChunkUploader):
 
     def __init__(self, *args, **kwargs):
+        kwargs.pop("modified_access_conditions", None)
         super(BlockBlobChunkUploader, self).__init__(*args, **kwargs)
         self.current_length = None
 
