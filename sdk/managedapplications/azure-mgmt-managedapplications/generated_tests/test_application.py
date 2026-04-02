@@ -27,3 +27,11 @@ class TestApplication(AzureMgmtRecordedTestCase):
 
         # please add some check logic here by yourself
         # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_list(self, resource_group):
+        response = self.client.list()
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...

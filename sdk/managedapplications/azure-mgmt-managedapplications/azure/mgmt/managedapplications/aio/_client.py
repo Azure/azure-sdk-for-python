@@ -22,9 +22,8 @@ from ._configuration import ApplicationClientConfiguration
 from .operations import (
     ApplicationDefinitionsOperations,
     ApplicationsOperations,
-    Operations,
+    JitRequestsOperations,
     _ApplicationClientOperationsMixin,
-    jitRequestsOperations,
 )
 
 if TYPE_CHECKING:
@@ -35,15 +34,13 @@ if TYPE_CHECKING:
 class ApplicationClient(_ApplicationClientOperationsMixin):
     """ARM applications.
 
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.managedapplications.aio.operations.Operations
     :ivar applications: ApplicationsOperations operations
     :vartype applications: azure.mgmt.managedapplications.aio.operations.ApplicationsOperations
     :ivar application_definitions: ApplicationDefinitionsOperations operations
     :vartype application_definitions:
      azure.mgmt.managedapplications.aio.operations.ApplicationDefinitionsOperations
-    :ivar jit_requests: jitRequestsOperations operations
-    :vartype jit_requests: azure.mgmt.managedapplications.aio.operations.jitRequestsOperations
+    :ivar jit_requests: JitRequestsOperations operations
+    :vartype jit_requests: azure.mgmt.managedapplications.aio.operations.JitRequestsOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -110,12 +107,11 @@ class ApplicationClient(_ApplicationClientOperationsMixin):
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.applications = ApplicationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.application_definitions = ApplicationDefinitionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.jit_requests = jitRequestsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.jit_requests = JitRequestsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

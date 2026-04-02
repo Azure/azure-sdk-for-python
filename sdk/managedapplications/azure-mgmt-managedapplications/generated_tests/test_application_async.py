@@ -28,3 +28,11 @@ class TestApplicationAsync(AzureMgmtRecordedTestCase):
 
         # please add some check logic here by yourself
         # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_list(self, resource_group):
+        response = self.client.list()
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...

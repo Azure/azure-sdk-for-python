@@ -44,6 +44,20 @@
             "is_async": false,
             "overloads": []
           },
+          "list": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          },
           "portal_registry_package": {
             "parameters": {
               "self": {
@@ -153,9 +167,6 @@
           "client_side_validation": {
             "attr_type": false
           },
-          "operations": {
-            "attr_type": "Operations"
-          },
           "applications": {
             "attr_type": "ApplicationsOperations"
           },
@@ -163,7 +174,7 @@
             "attr_type": "ApplicationDefinitionsOperations"
           },
           "jit_requests": {
-            "attr_type": "jitRequestsOperations"
+            "attr_type": "JitRequestsOperations"
           }
         }
       }
@@ -1374,45 +1385,7 @@
         },
         "properties": {}
       },
-      "Operations": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "list": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          }
-        },
-        "properties": {}
-      },
-      "jitRequestsOperations": {
+      "JitRequestsOperations": {
         "type": null,
         "methods": {
           "__init__": {
@@ -13286,6 +13259,20 @@
             "is_async": true,
             "overloads": []
           },
+          "list": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          },
           "portal_registry_package": {
             "parameters": {
               "self": {
@@ -13395,9 +13382,6 @@
           "client_side_validation": {
             "attr_type": false
           },
-          "operations": {
-            "attr_type": "Operations"
-          },
           "applications": {
             "attr_type": "ApplicationsOperations"
           },
@@ -13405,7 +13389,7 @@
             "attr_type": "ApplicationDefinitionsOperations"
           },
           "jit_requests": {
-            "attr_type": "jitRequestsOperations"
+            "attr_type": "JitRequestsOperations"
           }
         }
       }
@@ -14616,45 +14600,7 @@
         },
         "properties": {}
       },
-      "Operations": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "list": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          }
-        },
-        "properties": {}
-      },
-      "jitRequestsOperations": {
+      "JitRequestsOperations": {
         "type": null,
         "methods": {
           "__init__": {
