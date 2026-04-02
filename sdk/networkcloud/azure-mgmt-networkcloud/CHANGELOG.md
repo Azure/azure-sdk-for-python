@@ -5,38 +5,8 @@
 ### Features Added
 
   - Client `NetworkCloudMgmtClient` added method `send_request`
-  - Model `AgentPoolPatchParameters` added property `properties`
-  - Model `BareMetalMachineKeySetPatchParameters` added property `properties`
-  - Model `BareMetalMachinePatchParameters` added property `properties`
-  - Model `BmcKeySetPatchParameters` added property `properties`
-  - Model `CloudServicesNetworkPatchParameters` added property `properties`
-  - Model `ClusterMetricsConfigurationPatchParameters` added property `properties`
-  - Model `ClusterPatchParameters` added property `properties`
-  - Model `ConsolePatchParameters` added property `properties`
-  - Model `KubernetesClusterFeaturePatchParameters` added property `properties`
-  - Model `KubernetesClusterPatchParameters` added property `properties`
-  - Model `MachineSkuSlot` added property `properties`
-  - Model `RackPatchParameters` added property `properties`
-  - Model `StorageAppliancePatchParameters` added property `properties`
-  - Model `StorageApplianceSkuSlot` added property `properties`
-  - Model `VirtualMachinePatchParameters` added property `properties`
-  - Added model `AgentPoolPatchProperties`
-  - Added model `BareMetalMachineKeySetPatchProperties`
-  - Added model `BareMetalMachinePatchProperties`
-  - Added model `BmcKeySetPatchProperties`
-  - Added model `CloudServicesNetworkPatchProperties`
-  - Added model `ClusterMetricsConfigurationPatchProperties`
-  - Added model `ClusterPatchProperties`
-  - Added model `ConsolePatchProperties`
   - Added enum `ExtendedLocationType`
-  - Added model `KubernetesClusterFeaturePatchProperties`
-  - Added model `KubernetesClusterPatchProperties`
-  - Added model `MachineSkuProperties`
   - Added model `ProxyResource`
-  - Added model `RacksPatchProperties`
-  - Added model `StorageAppliancePatchProperties`
-  - Added model `StorageApplianceSkuProperties`
-  - Added model `VirtualMachinePatchProperties`
 
 ### Breaking Changes
 
