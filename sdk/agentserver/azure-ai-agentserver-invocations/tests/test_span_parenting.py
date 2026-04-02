@@ -2,14 +2,19 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 """Tests that the invoke_agent span is set as the current span in context,
-so that child spans created by framework handlers are correctly parented."""
+so that child spans created by framework handlers are correctly parented.
+
+These tests call the endpoint handler directly (bypassing ASGI transport)
+because HTTPX's ASGITransport runs the app in a different async context,
+which prevents OTel ContextVar propagation from working correctly.
+"""
 import os
 from unittest.mock import patch
 
 import pytest
-from httpx import ASGITransport, AsyncClient
 from starlette.requests import Request
 from starlette.responses import Response, StreamingResponse
+from starlette.testclient import TestClient
 
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
@@ -54,7 +59,6 @@ def _make_server_with_child_span():
 
     @app.invoke_handler
     async def handle(request: Request) -> Response:
-        # Simulate a framework creating its own invoke_agent span
         with child_tracer.start_as_current_span("framework_invoke_agent") as _span:
             return Response(content=b"ok")
 
@@ -78,17 +82,9 @@ def _make_streaming_server_with_child_span():
     return app
 
 
-@pytest.mark.asyncio
-async def test_framework_span_is_child_of_invoke_span():
-    """A span created inside the handler should be a child of the
-    agentserver invoke_agent span, not a sibling."""
-    server = _make_server_with_child_span()
-    transport = ASGITransport(app=server)
-    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
-        await client.post("/invocations", content=b"test")
-
-    spans = _get_spans()
-    parent_spans = [s for s in spans if "invoke_agent" in s.name]
+def _assert_child_parented(spans, streaming: bool = False):
+    """Assert the framework span is a child of the invoke_agent span."""
+    parent_spans = [s for s in spans if "invoke_agent" in s.name and s.name != "framework_invoke_agent"]
     child_spans = [s for s in spans if s.name == "framework_invoke_agent"]
 
     assert len(parent_spans) >= 1, f"Expected invoke_agent span, got: {[s.name for s in spans]}"
@@ -97,33 +93,33 @@ async def test_framework_span_is_child_of_invoke_span():
     parent = parent_spans[0]
     child = child_spans[0]
 
-    # The child span's parent should be the agentserver invoke_agent span
-    assert child.parent is not None, "Framework span has no parent — it's a root span (sibling)"
+    label = "streaming" if streaming else "non-streaming"
+    assert child.parent is not None, f"Framework span has no parent in {label} case"
     assert child.parent.span_id == parent.context.span_id, (
         f"Framework span parent ({format(child.parent.span_id, '016x')}) "
         f"!= invoke_agent span ({format(parent.context.span_id, '016x')}). "
-        "Spans are siblings, not parent-child."
+        f"Spans are siblings, not parent-child ({label})."
     )
 
 
-@pytest.mark.asyncio
-async def test_framework_span_is_child_streaming():
+def test_framework_span_is_child_of_invoke_span():
+    """A span created inside the handler should be a child of the
+    agentserver invoke_agent span, not a sibling."""
+    server = _make_server_with_child_span()
+    # TestClient runs synchronously in the same thread context,
+    # so OTel ContextVar propagation works correctly.
+    client = TestClient(server)
+    resp = client.post("/invocations", content=b"test")
+    assert resp.status_code == 200
+
+    _assert_child_parented(_get_spans(), streaming=False)
+
+
+def test_framework_span_is_child_streaming():
     """Same parent-child relationship holds for streaming responses."""
     server = _make_streaming_server_with_child_span()
-    transport = ASGITransport(app=server)
-    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
-        resp = await client.post("/invocations", content=b"test")
-        assert resp.status_code == 200
+    client = TestClient(server)
+    resp = client.post("/invocations", content=b"test")
+    assert resp.status_code == 200
 
-    spans = _get_spans()
-    parent_spans = [s for s in spans if "invoke_agent" in s.name]
-    child_spans = [s for s in spans if s.name == "framework_invoke_agent"]
-
-    assert len(parent_spans) >= 1
-    assert len(child_spans) == 1
-
-    parent = parent_spans[0]
-    child = child_spans[0]
-
-    assert child.parent is not None, "Framework span has no parent in streaming case"
-    assert child.parent.span_id == parent.context.span_id
+    _assert_child_parented(_get_spans(), streaming=True)
