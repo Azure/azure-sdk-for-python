@@ -1,10 +1,6 @@
 # Release History
 
-## 1.0.0b50 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.0.0b50 (2026-04-03)
 
 ### Bugs Fixed
 - Fix duplicate authentication policy in live metrics exporter causing Unauthorized errors
@@ -16,6 +12,8 @@
   ([#45884](https://github.com/Azure/azure-sdk-for-python/pull/45884))
 
 ### Other Changes
+- Revert custom properties limit to 8kb
+  ([#46066](https://github.com/Azure/azure-sdk-for-python/pull/46066))
 
 ## 1.0.0b49 (2026-03-19)
 

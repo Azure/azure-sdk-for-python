@@ -7,11 +7,21 @@
 
 import os
 import json
+import re
 import sys
 import subprocess
 import tempfile
+from pathlib import Path
 import pytest
-from breaking_changes_checker.breaking_changes_tracker import BreakingChangesTracker
+
+PACKAGE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+SCRIPTS_DIR = os.path.dirname(PACKAGE_DIR)
+
+for path in (SCRIPTS_DIR, PACKAGE_DIR):
+    if path not in sys.path:
+        sys.path.insert(0, path)
+
+from breaking_changes_checker.breaking_changes_tracker import BreakingChangesTracker, BreakingChangeType
 from breaking_changes_checker.detect_breaking_changes import main
 from breaking_changes_checker.checkers.removed_method_overloads_checker import RemovedMethodOverloadChecker
 
@@ -24,6 +34,13 @@ def format_breaking_changes(breaking_changes):
     formatted += "\nSee aka.ms/azsdk/breaking-changes-tool to resolve " \
                     "any reported breaking changes or false positives.\n"
     return formatted
+
+
+def normalize_breaking_changes_report(report):
+    def replace_enum_name(match):
+        return f"({BreakingChangeType[match.group(1)].value}):"
+
+    return re.sub(r"\(BreakingChangeType\.([A-Z_]+)\):", replace_enum_name, report)
 
 EXPECTED = [
     "(RemovedOrRenamedInstanceAttribute): Model `Metrics` deleted or renamed its instance variable `retention_policy`",
@@ -57,7 +74,7 @@ def test_multiple_checkers():
     bc = BreakingChangesTracker(stable, current, "azure-storage-queue")
     bc.run_checks()
 
-    changes = bc.report_changes()
+    changes = normalize_breaking_changes_report(bc.report_changes())
 
     expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
@@ -79,7 +96,7 @@ def test_ignore_checks():
     bc = BreakingChangesTracker(stable, current, "azure-storage-queue", ignore=ignore)
     bc.run_checks()
 
-    changes = bc.report_changes()
+    changes = normalize_breaking_changes_report(bc.report_changes())
 
     expected_msg = format_breaking_changes(EXPECTED[:-1])
     assert len(bc.breaking_changes)+1 == len(EXPECTED)
@@ -102,7 +119,7 @@ def test_ignore_with_wildcard_checks():
     bc = BreakingChangesTracker(stable, current, "azure-storage-queue", ignore=ignore)
     bc.run_checks()
 
-    changes = bc.report_changes()
+    changes = normalize_breaking_changes_report(bc.report_changes())
 
     expected_msg = format_breaking_changes(EXPECTED[:-2])
     assert len(bc.breaking_changes)+2 == len(EXPECTED)
@@ -189,7 +206,7 @@ def test_replace_all_params():
     bc = BreakingChangesTracker(stable, current, "azure-storage-queue")
     bc.run_checks()
 
-    changes = bc.report_changes()
+    changes = normalize_breaking_changes_report(bc.report_changes())
 
     expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
@@ -276,7 +293,7 @@ def test_replace_all_functions():
     bc = BreakingChangesTracker(stable, current, "azure-storage-queue")
     bc.run_checks()
 
-    changes = bc.report_changes()
+    changes = normalize_breaking_changes_report(bc.report_changes())
 
     expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
@@ -349,7 +366,7 @@ def test_replace_all_classes():
     bc = BreakingChangesTracker(stable, current, "azure-storage-queue")
     bc.run_checks()
 
-    changes = bc.report_changes()
+    changes = normalize_breaking_changes_report(bc.report_changes())
 
     expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
@@ -375,7 +392,7 @@ def test_replace_all_modules():
     bc = BreakingChangesTracker(stable, current, "azure-storage-queue")
     bc.run_checks()
 
-    changes = bc.report_changes()
+    changes = normalize_breaking_changes_report(bc.report_changes())
 
     expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
@@ -384,11 +401,11 @@ def test_replace_all_modules():
 
 @pytest.mark.skip(reason="We need to regenerate the code reports for these tests and update the expected results")
 def test_pass_custom_reports_breaking(capsys):
-    source_report = "test_stable.json"
-    target_report = "test_current.json"
+    source_report = Path("test_stable.json")
+    target_report = Path("test_current.json")
 
     try:
-        main(None, None, None, None, "tests", False, False, False, source_report, target_report)
+        main("", "", "", False, "tests", False, False, False, source_report, target_report)
     except SystemExit as e:
         if e.code == 1:
             out, _ = capsys.readouterr()
@@ -432,7 +449,7 @@ def test_removed_operation_group():
     bc = BreakingChangesTracker(stable, current, "azure-storage-queue")
     bc.run_checks()
 
-    changes = bc.report_changes()
+    changes = normalize_breaking_changes_report(bc.report_changes())
 
     expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
