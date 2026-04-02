@@ -187,12 +187,12 @@ class TestWorkspaceOperation:
     def test_begin_diagnose_no_wait(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
         mock_workspace_operation.begin_diagnose(name="random_name")
         mock_workspace_operation._operation.begin_diagnose.assert_called_once()
-        mocker.patch("azure.ai.ml._restclient.v2022_10_01.models.DiagnoseRequestProperties", return_value=None)
+        mocker.patch("azure.ai.ml._restclient.arm_ml_service.models.DiagnoseRequestProperties", return_value=None)
 
     def test_begin_diagnose_wait(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
         mock_workspace_operation.begin_diagnose(name="random_name")
         mock_workspace_operation._operation.begin_diagnose.assert_called_once()
-        mocker.patch("azure.ai.ml._restclient.v2022_10_01.models.DiagnoseRequestProperties", return_value=None)
+        mocker.patch("azure.ai.ml._restclient.arm_ml_service.models.DiagnoseRequestProperties", return_value=None)
 
     def test_load_uai_workspace_from_yaml(self, mock_workspace_operation: WorkspaceOperations):
         params_override = []
