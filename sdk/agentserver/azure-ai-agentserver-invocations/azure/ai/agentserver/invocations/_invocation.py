@@ -89,14 +89,13 @@ class InvocationAgentServerHost(AgentServerHost):
         openapi_spec: Optional[dict[str, Any]] = None,
         **kwargs: Any,
     ) -> None:
-        super().__init__(**kwargs)
         self._invoke_fn: Optional[Callable] = None
         self._get_invocation_fn: Optional[Callable] = None
         self._cancel_invocation_fn: Optional[Callable] = None
         self._openapi_spec = openapi_spec
 
-        # Add invocation protocol routes
-        self.routes.extend([
+        # Build invocation routes and pass to parent via routes kwarg
+        invocation_routes = [
             Route(
                 "/invocations/docs/openapi.json",
                 self._get_openapi_spec_endpoint,
@@ -121,7 +120,11 @@ class InvocationAgentServerHost(AgentServerHost):
                 methods=["POST"],
                 name="cancel_invocation",
             ),
-        ])
+        ]
+
+        # Merge with any routes from sibling mixins via cooperative init
+        existing = list(kwargs.pop("routes", None) or [])
+        super().__init__(routes=existing + invocation_routes, **kwargs)
 
     # ------------------------------------------------------------------
     # Handler decorators

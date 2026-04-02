@@ -46,10 +46,11 @@ class SelfHostedInvocationHost(AgentServerHost):
     """Custom invocation host that implements the protocol directly."""
 
     def __init__(self, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
-        self.routes.append(
+        custom_routes = [
             Route("/invocations", self._invoke, methods=["POST"]),
-        )
+        ]
+        existing = list(kwargs.pop("routes", None) or [])
+        super().__init__(routes=existing + custom_routes, **kwargs)
 
     async def _invoke(self, request: Request) -> Response:
         """POST /invocations — handle an invocation request with tracing."""

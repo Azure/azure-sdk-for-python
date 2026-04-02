@@ -26,7 +26,6 @@ from ._tracing import TracingHelper
 from ._version import VERSION
 
 __all__ = [
-    "get_logger",
     "AgentServerHost",
     "Constants",
     "create_error_response",

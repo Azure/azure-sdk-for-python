@@ -91,6 +91,7 @@ class AgentServerHost(Starlette):
         application_insights_connection_string: Optional[str] = None,
         graceful_shutdown_timeout: Optional[int] = None,
         log_level: Optional[str] = None,
+        routes: Optional[list[Route]] = None,
         **kwargs: Any,
     ) -> None:
         # Shutdown handler slot (server-level lifecycle) -------------------
@@ -149,11 +150,15 @@ class AgentServerHost(Starlette):
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.exception("Error in on_shutdown")
 
-        # Initialize Starlette with health route, lifespan, and middleware
+        # Merge routes: subclass routes (if any) + health endpoint
+        all_routes: list[Any] = list(routes or [])
+        all_routes.append(
+            Route("/readiness", self._readiness_endpoint, methods=["GET"], name="readiness"),
+        )
+
+        # Initialize Starlette with combined routes, lifespan, and middleware
         super().__init__(
-            routes=[
-                Route("/readiness", self._readiness_endpoint, methods=["GET"], name="readiness"),
-            ],
+            routes=all_routes,
             lifespan=_lifespan,
             middleware=[Middleware(_PlatformHeaderMiddleware)],
             **kwargs,

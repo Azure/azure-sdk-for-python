@@ -76,10 +76,9 @@ from starlette.routing import Route
 
 class MyAgentHost(AgentServerHost):
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.routes.append(
-            Route("/my-endpoint", self._handle, methods=["POST"]),
-        )
+        my_routes = [Route("/my-endpoint", self._handle, methods=["POST"])]
+        existing = list(kwargs.pop("routes", None) or [])
+        super().__init__(routes=existing + my_routes, **kwargs)
 
     async def _handle(self, request: Request):
         return JSONResponse({"status": "ok"})
