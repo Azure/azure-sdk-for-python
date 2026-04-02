@@ -5,22 +5,22 @@
 import pytest
 import httpx
 
-from azure.ai.agentserver.core import AgentHost
+from azure.ai.agentserver.core import AgentServerHost
 
 
 @pytest.fixture()
-def agent() -> AgentHost:
-    """Create a bare AgentHost with no protocol routes.
+def agent() -> AgentServerHost:
+    """Create a bare AgentServerHost with no protocol routes.
 
     Tracing is disabled to avoid requiring opentelemetry in the test env.
     """
-    return AgentHost()
+    return AgentServerHost()
 
 
 @pytest.fixture()
-def client(agent: AgentHost) -> httpx.AsyncClient:
-    """Create an httpx.AsyncClient bound to the AgentHost's ASGI app."""
+def client(agent: AgentServerHost) -> httpx.AsyncClient:
+    """Create an httpx.AsyncClient bound to the AgentServerHost's ASGI app."""
     return httpx.AsyncClient(
-        transport=httpx.ASGITransport(app=agent.app),
+        transport=httpx.ASGITransport(app=agent),
         base_url="http://testserver",
     )

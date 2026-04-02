@@ -6,7 +6,7 @@ import contextlib
 import os
 from unittest import mock
 
-from azure.ai.agentserver.core import AgentHost
+from azure.ai.agentserver.core import AgentServerHost
 from azure.ai.agentserver.core._config import (
     resolve_agent_name,
     resolve_agent_version,
@@ -29,7 +29,7 @@ class TestTracingToggle:
         env.pop(Constants.APPLICATIONINSIGHTS_CONNECTION_STRING, None)
         env.pop(Constants.OTEL_EXPORTER_OTLP_ENDPOINT, None)
         with mock.patch.dict(os.environ, env, clear=True):
-            agent = AgentHost()
+            agent = AgentServerHost()
             assert agent.tracing is None
 
     def test_tracing_enabled_via_appinsights_env_var(self) -> None:
@@ -38,7 +38,7 @@ class TestTracingToggle:
                 "azure.ai.agentserver.core._tracing.TracingHelper.__init__",
                 return_value=None,
             ):
-                agent = AgentHost()
+                agent = AgentServerHost()
                 assert agent.tracing is not None
 
     def test_tracing_enabled_via_otlp_env_var(self) -> None:
@@ -47,7 +47,7 @@ class TestTracingToggle:
                 "azure.ai.agentserver.core._tracing.TracingHelper.__init__",
                 return_value=None,
             ):
-                agent = AgentHost()
+                agent = AgentServerHost()
                 assert agent.tracing is not None
 
     def test_tracing_enabled_via_constructor_connection_string(self) -> None:
@@ -55,7 +55,7 @@ class TestTracingToggle:
             "azure.ai.agentserver.core._tracing.TracingHelper.__init__",
             return_value=None,
         ):
-            agent = AgentHost(application_insights_connection_string="InstrumentationKey=ctor")
+            agent = AgentServerHost(application_insights_connection_string="InstrumentationKey=ctor")
             assert agent.tracing is not None
 
 
@@ -144,14 +144,14 @@ class TestSetupAzureMonitor:
 
 
 class TestConstructorConnectionString:
-    """Verify AgentHost forwards the connection string to TracingHelper."""
+    """Verify AgentServerHost forwards the connection string to TracingHelper."""
 
     def test_constructor_passes_connection_string(self) -> None:
         with mock.patch(
             "azure.ai.agentserver.core._tracing.TracingHelper.__init__",
             return_value=None,
         ) as mock_init:
-            AgentHost(
+            AgentServerHost(
                 application_insights_connection_string="InstrumentationKey=ctor",
             )
             mock_init.assert_called_once_with(connection_string="InstrumentationKey=ctor")

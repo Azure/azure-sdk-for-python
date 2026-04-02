@@ -35,12 +35,10 @@ Usage::
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.invocations import InvocationHandler
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 
-server = AgentHost()
-invocations = InvocationHandler(server)
+app = InvocationAgentServerHost()
 
 # In-memory session store — keyed by session ID.
 _sessions: dict[str, list[dict[str, str]]] = {}
@@ -70,7 +68,7 @@ def _build_reply(history: list[dict[str, str]]) -> str:
     )
 
 
-@invocations.invoke_handler
+@app.invoke_handler
 async def handle_invoke(request: Request) -> Response:
     """Process a conversational turn, accumulating session context.
 
@@ -101,4 +99,4 @@ async def handle_invoke(request: Request) -> Response:
 
 
 if __name__ == "__main__":
-    server.run()
+    app.run()

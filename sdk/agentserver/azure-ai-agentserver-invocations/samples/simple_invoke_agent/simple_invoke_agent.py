@@ -14,15 +14,13 @@ Usage::
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.invocations import InvocationHandler
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 
-server = AgentHost()
-invocations = InvocationHandler(server)
+app = InvocationAgentServerHost()
 
 
-@invocations.invoke_handler
+@app.invoke_handler
 async def handle_invoke(request: Request) -> Response:
     """Process the invocation by echoing a greeting.
 
@@ -37,4 +35,4 @@ async def handle_invoke(request: Request) -> Response:
 
 
 if __name__ == "__main__":
-    server.run()
+    app.run()

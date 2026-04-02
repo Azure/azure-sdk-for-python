@@ -7,8 +7,8 @@ from httpx import ASGITransport, AsyncClient
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.invocations import InvocationHandler
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
+
 
 
 # ---------------------------------------------------------------------------
@@ -80,24 +80,23 @@ async def test_get_after_cancel_returns_404(async_storage_client):
 
 
 # ---------------------------------------------------------------------------
-# GET error returns 500 (inline AgentHost)
+# GET error returns 500 (inline InvocationAgentServerHost)
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
 async def test_get_invocation_error_returns_500():
     """GET handler raising an exception returns 500."""
-    server = AgentHost()
-    invocations = InvocationHandler(server)
+    app = InvocationAgentServerHost()
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> Response:
         return Response(content=b"ok")
 
-    @invocations.get_invocation_handler
+    @app.get_invocation_handler
     async def get_handler(request: Request) -> Response:
         raise RuntimeError("get failed")
 
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.get("/invocations/some-id")
     assert resp.status_code == 500
@@ -105,24 +104,23 @@ async def test_get_invocation_error_returns_500():
 
 
 # ---------------------------------------------------------------------------
-# Cancel error returns 500 (inline AgentHost)
+# Cancel error returns 500 (inline InvocationAgentServerHost)
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
 async def test_cancel_invocation_error_returns_500():
     """Cancel handler raising an exception returns 500."""
-    server = AgentHost()
-    invocations = InvocationHandler(server)
+    app = InvocationAgentServerHost()
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> Response:
         return Response(content=b"ok")
 
-    @invocations.cancel_invocation_handler
+    @app.cancel_invocation_handler
     async def cancel_handler(request: Request) -> Response:
         raise RuntimeError("cancel failed")
 
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations/some-id/cancel")
     assert resp.status_code == 500

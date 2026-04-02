@@ -25,12 +25,10 @@ from collections.abc import AsyncGenerator  # pylint: disable=import-error
 from starlette.requests import Request
 from starlette.responses import Response, StreamingResponse
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.invocations import InvocationHandler
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 
-server = AgentHost()
-invocations = InvocationHandler(server)
+app = InvocationAgentServerHost()
 
 # Simulated tokens — in production these would come from a model.
 _SIMULATED_TOKENS = [
@@ -63,7 +61,7 @@ async def _generate_tokens(
     yield f"event: done\ndata: {done_payload}\n\n".encode()
 
 
-@invocations.invoke_handler
+@app.invoke_handler
 async def handle_invoke(request: Request) -> Response:
     """Stream code-generation tokens back to the caller via SSE.
 
@@ -84,4 +82,4 @@ async def handle_invoke(request: Request) -> Response:
 
 
 if __name__ == "__main__":
-    server.run()
+    app.run()

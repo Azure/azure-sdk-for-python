@@ -11,8 +11,8 @@ from httpx import ASGITransport, AsyncClient
 from starlette.requests import Request
 from starlette.responses import Response, StreamingResponse
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.invocations import InvocationHandler
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
+
 
 try:
     from opentelemetry import trace
@@ -48,34 +48,32 @@ def _get_spans():
 def _make_server_with_child_span():
     """Server whose handler creates a child span (simulating a framework)."""
     with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
-        server = AgentHost()
-    invocations = InvocationHandler(server)
+        app = InvocationAgentServerHost()
     child_tracer = trace.get_tracer("test.framework")
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> Response:
         # Simulate a framework creating its own invoke_agent span
         with child_tracer.start_as_current_span("framework_invoke_agent") as _span:
             return Response(content=b"ok")
 
-    return server
+    return app
 
 
 def _make_streaming_server_with_child_span():
     """Server with streaming response whose handler creates a child span."""
     with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
-        server = AgentHost()
-    invocations = InvocationHandler(server)
+        app = InvocationAgentServerHost()
     child_tracer = trace.get_tracer("test.framework")
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> StreamingResponse:
         with child_tracer.start_as_current_span("framework_invoke_agent"):
             async def generate():
                 yield b"chunk\n"
             return StreamingResponse(generate(), media_type="text/plain")
 
-    return server
+    return app
 
 
 @pytest.mark.asyncio
@@ -83,7 +81,7 @@ async def test_framework_span_is_child_of_invoke_span():
     """A span created inside the handler should be a child of the
     agentserver invoke_agent span, not a sibling."""
     server = _make_server_with_child_span()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         await client.post("/invocations", content=b"test")
 
@@ -110,7 +108,7 @@ async def test_framework_span_is_child_of_invoke_span():
 async def test_framework_span_is_child_streaming():
     """Same parent-child relationship holds for streaming responses."""
     server = _make_streaming_server_with_child_span()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations", content=b"test")
         assert resp.status_code == 200

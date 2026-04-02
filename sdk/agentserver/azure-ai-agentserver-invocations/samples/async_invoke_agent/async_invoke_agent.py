@@ -44,16 +44,14 @@ import json
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.invocations import InvocationHandler
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 
 # In-memory state for demo purposes (see module docstring for production caveats)
 _tasks: dict[str, asyncio.Task] = {}
 _results: dict[str, bytes] = {}
 
-server = AgentHost()
-invocations = InvocationHandler(server)
+app = InvocationAgentServerHost()
 
 
 async def _do_work(invocation_id: str, data: dict) -> bytes:
@@ -76,7 +74,7 @@ async def _do_work(invocation_id: str, data: dict) -> bytes:
     return result
 
 
-@invocations.invoke_handler
+@app.invoke_handler
 async def handle_invoke(request: Request) -> Response:
     """Start a long-running invocation in a background task.
 
@@ -97,7 +95,7 @@ async def handle_invoke(request: Request) -> Response:
     })
 
 
-@invocations.get_invocation_handler
+@app.get_invocation_handler
 async def handle_get_invocation(request: Request) -> Response:
     """Retrieve a previous invocation result.
 
@@ -126,7 +124,7 @@ async def handle_get_invocation(request: Request) -> Response:
     return JSONResponse({"error": "not found"}, status_code=404)
 
 
-@invocations.cancel_invocation_handler
+@app.cancel_invocation_handler
 async def handle_cancel_invocation(request: Request) -> Response:
     """Cancel a running invocation.
 
@@ -167,4 +165,4 @@ async def handle_cancel_invocation(request: Request) -> Response:
 
 
 if __name__ == "__main__":
-    server.run()
+    app.run()

@@ -1,10 +1,10 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Invocation protocol handler for AgentHost.
+"""Invocation protocol host for Azure AI Hosted Agents.
 
-Provides the invocation protocol endpoints and handler decorators.
-Registers routes with the ``AgentHost`` on construction.
+Provides the invocation protocol endpoints and handler decorators
+as a :class:`~azure.ai.agentserver.core.AgentServerHost` subclass.
 """
 import contextlib
 import inspect
@@ -12,20 +12,19 @@ import os
 import re
 import uuid
 from collections.abc import Awaitable, Callable  # pylint: disable=import-error
-from typing import TYPE_CHECKING, Any, Optional
+from typing import Any, Optional
 
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 from starlette.routing import Route
 
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
+    AgentServerHost,
     get_logger,
     Constants,
     create_error_response,
 )
-
-if TYPE_CHECKING:
-    from azure.ai.agentserver.core import AgentHost, TracingHelper
+from azure.ai.agentserver.core._tracing import TracingHelper
 
 from ._constants import InvocationConstants
 
@@ -55,34 +54,30 @@ def _sanitize_id(value: str, fallback: str) -> str:
     return value
 
 
-class InvocationHandler:
-    """Invocation protocol handler that plugs into an ``AgentHost``.
+class InvocationAgentServerHost(AgentServerHost):
+    """Invocation protocol host for Azure AI Hosted Agents.
 
-    Creates the invocation protocol endpoints and registers them with
-    the server.  Use the decorator methods to wire handler functions
-    to the endpoints.
+    A :class:`~azure.ai.agentserver.core.AgentServerHost` subclass that adds
+    the invocation protocol endpoints.  Use the decorator methods to wire
+    handler functions to the endpoints.
 
-    This design supports multi-protocol composition — multiple protocol
-    handlers (e.g. ``InvocationHandler``, ``ResponseHandler``) can be
-    mounted onto the same ``AgentHost``.
+    For multi-protocol agents, compose via cooperative inheritance::
+
+        class MyHost(InvocationAgentServerHost, ResponsesAgentServerHost):
+            pass
 
     Usage::
 
-        from azure.ai.agentserver.core import AgentHost
-        from azure.ai.agentserver.invocations import InvocationHandler
+        from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
-        server = AgentHost()
-        invocations = InvocationHandler(server)
+        app = InvocationAgentServerHost()
 
-        @invocations.invoke_handler
+        @app.invoke_handler
         async def handle(request):
             return JSONResponse({"ok": True})
 
-        server.run()
+        app.run()
 
-    :param server: The ``AgentHost`` to register invocation protocol
-        routes with.
-    :type server: AgentHost
     :param openapi_spec: Optional OpenAPI spec dict.  When provided, the spec
         is served at ``GET /invocations/docs/openapi.json``.
     :type openapi_spec: Optional[dict[str, Any]]
@@ -90,18 +85,18 @@ class InvocationHandler:
 
     def __init__(
         self,
-        server: "AgentHost",
         *,
         openapi_spec: Optional[dict[str, Any]] = None,
+        **kwargs: Any,
     ) -> None:
-        self._tracing: Optional["TracingHelper"] = server.tracing
+        super().__init__(**kwargs)
         self._invoke_fn: Optional[Callable] = None
         self._get_invocation_fn: Optional[Callable] = None
         self._cancel_invocation_fn: Optional[Callable] = None
         self._openapi_spec = openapi_spec
 
-        # Build and cache routes once
-        self._routes: list[Route] = [
+        # Add invocation protocol routes
+        self.routes.extend([
             Route(
                 "/invocations/docs/openapi.json",
                 self._get_openapi_spec_endpoint,
@@ -126,23 +121,7 @@ class InvocationHandler:
                 methods=["POST"],
                 name="cancel_invocation",
             ),
-        ]
-
-        # Register routes with the server
-        server.register_routes(self._routes)
-
-    # ------------------------------------------------------------------
-    # Routes
-    # ------------------------------------------------------------------
-
-    @property
-    def routes(self) -> list[Route]:
-        """Starlette routes for the invocation protocol.
-
-        :return: A list of Route objects for the invocation endpoints.
-        :rtype: list[Route]
-        """
-        return self._routes
+        ])
 
     # ------------------------------------------------------------------
     # Handler decorators

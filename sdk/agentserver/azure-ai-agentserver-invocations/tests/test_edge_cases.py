@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Edge-case tests for AgentHost + InvocationHandler."""
+"""Edge-case tests for InvocationAgentServerHost + InvocationAgentServerHost."""
 import asyncio
 import uuid
 
@@ -10,8 +10,8 @@ from httpx import ASGITransport, AsyncClient
 from starlette.requests import Request
 from starlette.responses import Response, StreamingResponse
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.invocations import InvocationHandler
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
+
 from conftest import SAMPLE_OPENAPI_SPEC
 
 
@@ -20,26 +20,24 @@ from conftest import SAMPLE_OPENAPI_SPEC
 # ---------------------------------------------------------------------------
 
 
-def _make_custom_header_agent() -> AgentHost:
+def _make_custom_header_agent() -> InvocationAgentServerHost:
     """Agent whose handler sets its own x-agent-invocation-id (should be overwritten)."""
-    server = AgentHost()
-    invocations = InvocationHandler(server)
+    app = InvocationAgentServerHost()
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> Response:
         resp = Response(content=b"ok")
         resp.headers["x-agent-invocation-id"] = "custom-id-from-handler"
         return resp
 
-    return server
+    return app
 
 
-def _make_empty_streaming_agent() -> AgentHost:
+def _make_empty_streaming_agent() -> InvocationAgentServerHost:
     """Agent that returns an empty streaming response."""
-    server = AgentHost()
-    invocations = InvocationHandler(server)
+    app = InvocationAgentServerHost()
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> StreamingResponse:
         async def generate():
             return
@@ -47,20 +45,19 @@ def _make_empty_streaming_agent() -> AgentHost:
 
         return StreamingResponse(generate(), media_type="text/plain")
 
-    return server
+    return app
 
 
-def _make_large_payload_agent() -> AgentHost:
+def _make_large_payload_agent() -> InvocationAgentServerHost:
     """Agent that echoes large payloads."""
-    server = AgentHost()
-    invocations = InvocationHandler(server)
+    app = InvocationAgentServerHost()
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> Response:
         body = await request.body()
         return Response(content=body, media_type="application/octet-stream")
 
-    return server
+    return app
 
 
 # ---------------------------------------------------------------------------
@@ -70,14 +67,13 @@ def _make_large_payload_agent() -> AgentHost:
 @pytest.mark.asyncio
 async def test_get_invocations_returns_405():
     """GET /invocations returns 405 Method Not Allowed."""
-    server = AgentHost()
-    invocations = InvocationHandler(server)
+    app = InvocationAgentServerHost()
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> Response:
         return Response(content=b"ok")
 
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.get("/invocations")
     assert resp.status_code == 405
@@ -86,14 +82,13 @@ async def test_get_invocations_returns_405():
 @pytest.mark.asyncio
 async def test_put_invocations_returns_405():
     """PUT /invocations returns 405 Method Not Allowed."""
-    server = AgentHost()
-    invocations = InvocationHandler(server)
+    app = InvocationAgentServerHost()
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> Response:
         return Response(content=b"ok")
 
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.put("/invocations", content=b"test")
     assert resp.status_code == 405
@@ -102,14 +97,13 @@ async def test_put_invocations_returns_405():
 @pytest.mark.asyncio
 async def test_delete_invocation_returns_405():
     """DELETE /invocations/{id} returns 405 Method Not Allowed."""
-    server = AgentHost()
-    invocations = InvocationHandler(server)
+    app = InvocationAgentServerHost()
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> Response:
         return Response(content=b"ok")
 
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.delete("/invocations/some-id")
     assert resp.status_code == 405
@@ -118,14 +112,13 @@ async def test_delete_invocation_returns_405():
 @pytest.mark.asyncio
 async def test_post_openapi_json_returns_405():
     """POST /invocations/docs/openapi.json returns 405."""
-    server = AgentHost()
-    invocations = InvocationHandler(server, openapi_spec=SAMPLE_OPENAPI_SPEC)
+    app = InvocationAgentServerHost(openapi_spec=SAMPLE_OPENAPI_SPEC)
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> Response:
         return Response(content=b"ok")
 
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations/docs/openapi.json", content=b"{}")
     assert resp.status_code == 405
@@ -139,7 +132,7 @@ async def test_post_openapi_json_returns_405():
 async def test_custom_invocation_id_overwritten():
     """Handler-set x-agent-invocation-id is overwritten by the server."""
     server = _make_custom_header_agent()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations", content=b"test")
     # Server overwrites handler's value with a generated UUID
@@ -187,7 +180,7 @@ async def test_invocation_id_generated_when_empty(echo_client):
 async def test_large_payload():
     """Large payload (1MB) is handled correctly."""
     server = _make_large_payload_agent()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     payload = b"x" * (1024 * 1024)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations", content=payload)
@@ -221,7 +214,7 @@ async def test_binary_payload(echo_client):
 async def test_empty_streaming():
     """Empty streaming response doesn't crash."""
     server = _make_empty_streaming_agent()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations", content=b"test")
     assert resp.status_code == 200
@@ -231,17 +224,16 @@ async def test_empty_streaming():
 @pytest.mark.asyncio
 async def test_streaming_has_invocation_id():
     """Streaming response has x-agent-invocation-id header."""
-    server = AgentHost()
-    invocations = InvocationHandler(server)
+    app = InvocationAgentServerHost()
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> StreamingResponse:
         async def generate():
             yield b"chunk1"
 
         return StreamingResponse(generate(), media_type="text/plain")
 
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations", content=b"test")
     assert "x-agent-invocation-id" in resp.headers
@@ -294,14 +286,13 @@ async def test_invoke_cancel_get(async_storage_client):
 @pytest.mark.asyncio
 async def test_concurrent_invocations_get_unique_ids():
     """10 concurrent POSTs each get unique invocation IDs."""
-    server = AgentHost()
-    invocations = InvocationHandler(server)
+    app = InvocationAgentServerHost()
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> Response:
         return Response(content=b"ok")
 
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         tasks = [client.post("/invocations", content=b"test") for _ in range(10)]
         responses = await asyncio.gather(*tasks)
