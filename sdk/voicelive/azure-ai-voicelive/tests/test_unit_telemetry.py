@@ -410,6 +410,160 @@ class TestEventHelpers:
         call_kwargs = mock_span.span_instance.add_event.call_args
         assert call_kwargs[1]["name"] == "gen_ai.output.messages"
 
+    def test_add_connection_context_attributes(self, mock_span):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        conn = MagicMock()
+        conn._telemetry_session_id = "session-123"
+        conn._telemetry_conversation_id = "conv-456"
+
+        _VoiceLiveInstrumentorPreview._add_connection_context_attributes(mock_span, conn)
+
+        mock_span.add_attribute.assert_any_call("gen_ai.voice.session_id", "session-123")
+        mock_span.add_attribute.assert_any_call("gen_ai.conversation.id", "conv-456")
+
+    def test_serialize_content_and_size_for_dict(self):
+        import azure.ai.voicelive.telemetry._voicelive_instrumentor as mod
+
+        old_flag = mod._trace_voicelive_content
+        mod._trace_voicelive_content = True
+        try:
+            payload = {"type": "session.created", "session": {"id": "abc"}}
+            content, size = mod._VoiceLiveInstrumentorPreview._serialize_content_and_size(payload)
+            assert content is not None
+            assert size == len(content)
+        finally:
+            mod._trace_voicelive_content = old_flag
+
+    def test_add_recv_event_with_forced_content(self, mock_span):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        impl = _VoiceLiveInstrumentorPreview()
+        impl._add_recv_event(
+            mock_span,
+            "response.text.done",
+            '{"text":"hello"}',
+            force_content=True,
+        )
+        call_kwargs = mock_span.span_instance.add_event.call_args
+        assert call_kwargs[1]["name"] == "gen_ai.output.messages"
+        assert call_kwargs[1]["attributes"]["gen_ai.event.content"] == '{"text":"hello"}'
+
+
+class TestDoneEventContentExtraction:
+    """Tests for done-event message/transcript extraction."""
+
+    def test_extract_text_done_content(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        result = {"type": "response.text.done", "text": "done text"}
+        content = _VoiceLiveInstrumentorPreview._extract_done_event_content(result, "response.text.done")
+        assert content == '{"text": "done text"}'
+
+    def test_extract_audio_transcript_done_content(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        result = {"type": "response.audio_transcript.done", "transcript": "done transcript"}
+        content = _VoiceLiveInstrumentorPreview._extract_done_event_content(
+            result,
+            "response.audio_transcript.done",
+        )
+        assert content == '{"transcript": "done transcript"}'
+
+    def test_extract_content_part_done_content(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        result = {
+            "type": "response.content_part.done",
+            "part": {"type": "audio", "transcript": "final transcript"},
+        }
+        content = _VoiceLiveInstrumentorPreview._extract_done_event_content(result, "response.content_part.done")
+        assert content == '{"transcript": "final transcript"}'
+
+    def test_extract_output_item_done_content(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        result = {
+            "type": "response.output_item.done",
+            "item": {
+                "type": "message",
+                "content": [{"type": "text", "text": "hello world"}],
+            },
+        }
+        content = _VoiceLiveInstrumentorPreview._extract_done_event_content(result, "response.output_item.done")
+        assert content == '{"messages": [{"text": "hello world"}]}'
+
+    def test_extract_response_done_content(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        result = {
+            "type": "response.done",
+            "response": {
+                "output": [
+                    {"type": "message", "content": [{"type": "audio", "transcript": "goodbye"}]},
+                ]
+            },
+        }
+        content = _VoiceLiveInstrumentorPreview._extract_done_event_content(result, "response.done")
+        assert content == '{"messages": [{"transcript": "goodbye"}]}'
+
+    def test_extract_function_call_arguments_done_content(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        result = {
+            "type": "response.function_call_arguments.done",
+            "name": "get_current_weather",
+            "arguments": '{"location": "Seattle"}',
+            "call_id": "call_abc123",
+        }
+        content = _VoiceLiveInstrumentorPreview._extract_done_event_content(
+            result, "response.function_call_arguments.done"
+        )
+        import json as _json
+        parsed = _json.loads(content)
+        assert parsed["name"] == "get_current_weather"
+        assert parsed["arguments"] == {"location": "Seattle"}
+
+    def test_extract_output_item_done_function_call(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        result = {
+            "type": "response.output_item.done",
+            "item": {
+                "type": "function_call",
+                "name": "get_current_weather",
+                "arguments": '{"location": "Seattle"}',
+                "call_id": "call_abc123",
+            },
+        }
+        content = _VoiceLiveInstrumentorPreview._extract_done_event_content(result, "response.output_item.done")
+        import json as _json
+        parsed = _json.loads(content)
+        assert parsed["messages"][0]["name"] == "get_current_weather"
+        assert parsed["messages"][0]["arguments"] == {"location": "Seattle"}
+
+    def test_extract_response_done_function_call_item(self):
+        from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
+
+        result = {
+            "type": "response.done",
+            "response": {
+                "output": [
+                    {
+                        "type": "function_call",
+                        "name": "get_current_weather",
+                        "arguments": '{"location": "Seattle"}',
+                        "call_id": "call_abc123",
+                    }
+                ]
+            },
+        }
+        content = _VoiceLiveInstrumentorPreview._extract_done_event_content(result, "response.done")
+        import json as _json
+        parsed = _json.loads(content)
+        assert parsed["messages"][0]["name"] == "get_current_weather"
+        assert parsed["messages"][0]["arguments"] == {"location": "Seattle"}
+
 
 # ------------------------------------------------------------------ #
 #  Session ID extraction                                              #

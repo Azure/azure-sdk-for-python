@@ -92,6 +92,43 @@ __all__ = ["VoiceLiveInstrumentor"]
 _voicelive_traces_enabled: bool = False
 _trace_voicelive_content: bool = False
 
+_ITEM_BEARING_EVENTS = frozenset(
+    {
+        ServerEventType.CONVERSATION_ITEM_CREATED,
+        ServerEventType.CONVERSATION_ITEM_RETRIEVED,
+        ServerEventType.RESPONSE_OUTPUT_ITEM_ADDED,
+        ServerEventType.RESPONSE_OUTPUT_ITEM_DONE,
+    }
+)
+
+_SESSION_EVENT_TYPES = frozenset(
+    {
+        ServerEventType.SESSION_CREATED,
+        ServerEventType.SESSION_UPDATED,
+    }
+)
+
+_DELTA_SKIP_EVENT_TYPES = frozenset(
+    {
+        ServerEventType.RESPONSE_TEXT_DELTA,
+        ServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DELTA,
+    }
+)
+
+_MCP_CALL_EVENT_TYPES = frozenset(
+    {
+        ServerEventType.RESPONSE_MCP_CALL_COMPLETED,
+        ServerEventType.RESPONSE_MCP_CALL_FAILED,
+    }
+)
+
+_MCP_LIST_TOOLS_EVENT_TYPES = frozenset(
+    {
+        ServerEventType.MCP_LIST_TOOLS_COMPLETED,
+        ServerEventType.MCP_LIST_TOOLS_FAILED,
+    }
+)
+
 # Metrics instruments
 _operation_duration_histogram = None
 _token_usage_histogram = None
@@ -276,6 +313,91 @@ class _VoiceLiveInstrumentorPreview:
         error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
         self._set_attributes(span, (ERROR_TYPE, error_type), (ERROR_MESSAGE, str(exc)))
 
+    @staticmethod
+    def _start_connection_child_span(
+        conn_self: Any,
+        operation_name: OperationName,
+        span_name: Optional[str] = None,
+    ) -> Optional["AbstractSpan"]:
+        """Start a child span under the connection span context when available."""
+        parent_span = getattr(conn_self, "_telemetry_span", None)
+        parent_token = None
+        if parent_span is not None and set_span_in_context is not None and otel_context is not None:
+            parent_ctx = set_span_in_context(parent_span.span_instance)
+            parent_token = otel_context.attach(parent_ctx)
+
+        try:
+            return start_span(
+                operation_name,
+                server_address=getattr(conn_self, "_telemetry_server_address", None),
+                port=getattr(conn_self, "_telemetry_port", None),
+                model=getattr(conn_self, "_telemetry_model", None),
+                span_name=span_name,
+            )
+        finally:
+            if parent_token is not None:
+                otel_context.detach(parent_token)  # pyright: ignore[reportOptionalMemberAccess]
+
+    @staticmethod
+    def _add_connection_context_attributes(span: "AbstractSpan", conn_self: Any) -> None:
+        """Add common connection attributes present on send/recv/close spans."""
+        session_id = getattr(conn_self, "_telemetry_session_id", None)
+        if session_id:
+            span.add_attribute(GEN_AI_VOICE_SESSION_ID, session_id)
+
+        conv_id = getattr(conn_self, "_telemetry_conversation_id", None)
+        if conv_id:
+            span.add_attribute(GEN_AI_CONVERSATION_ID, conv_id)
+
+    @staticmethod
+    def _serialize_content_and_size(payload: Any) -> Tuple[Optional[str], Optional[int]]:
+        """Serialize event payload (dict/model) and compute message size."""
+        content_str = None
+        if _trace_voicelive_content:
+            try:
+                if hasattr(payload, "as_dict"):
+                    content_str = json.dumps(payload.as_dict(), default=str)
+                elif isinstance(payload, dict):
+                    content_str = json.dumps(payload, default=str)
+            except (TypeError, ValueError):
+                pass
+
+        message_size = len(content_str) if content_str else None
+        if message_size is None:
+            try:
+                if isinstance(payload, dict):
+                    message_size = len(json.dumps(payload, default=str))
+                elif hasattr(payload, "as_dict"):
+                    message_size = len(json.dumps(payload.as_dict(), default=str))
+            except (TypeError, ValueError):
+                pass
+
+        return content_str, message_size
+
+    @staticmethod
+    def _extract_session_audio_attributes(conn_self: Any, session: Any) -> None:
+        """Extract input/output audio format and sampling rate from a session object."""
+        get = _VoiceLiveInstrumentorPreview._get_field
+        connect_span = getattr(conn_self, "_telemetry_span", None)
+
+        input_audio_format = get(session, "input_audio_format")
+        if input_audio_format:
+            input_fmt_str = str(input_audio_format)
+            conn_self._telemetry_input_audio_format = input_fmt_str  # pylint: disable=protected-access
+            if connect_span is not None:
+                connect_span.add_attribute(GEN_AI_VOICE_INPUT_AUDIO_FORMAT, input_fmt_str)
+
+        input_sampling_rate = get(session, "input_audio_sampling_rate")
+        if input_sampling_rate is not None and connect_span is not None:
+            connect_span.add_attribute(GEN_AI_VOICE_INPUT_SAMPLE_RATE, input_sampling_rate)
+
+        output_audio_format = get(session, "output_audio_format")
+        if output_audio_format:
+            output_fmt_str = str(output_audio_format)
+            conn_self._telemetry_output_audio_format = output_fmt_str  # pylint: disable=protected-access
+            if connect_span is not None:
+                connect_span.add_attribute(GEN_AI_VOICE_OUTPUT_AUDIO_FORMAT, output_fmt_str)
+
     def _add_send_event(
         self,
         span: "AbstractSpan",
@@ -304,6 +426,7 @@ class _VoiceLiveInstrumentorPreview:
         span: "AbstractSpan",
         event_type: Optional[str],
         content: Optional[str],
+        force_content: bool = False,
     ) -> None:
         """Add a ``gen_ai.output.messages`` event to the span.
 
@@ -314,13 +437,122 @@ class _VoiceLiveInstrumentorPreview:
         :param content: Serialized event payload. Only attached when content
             recording is enabled.
         :type content: str or None
+        :param force_content: Whether to include content even when content
+            recording is disabled.
+        :type force_content: bool
         """
         attrs: Dict[str, Any] = {GEN_AI_SYSTEM: AZ_AI_VOICELIVE_SYSTEM}
         if event_type:
             attrs["gen_ai.voice.event_type"] = event_type
-        if _trace_voicelive_content and content:
+        if (_trace_voicelive_content or force_content) and content:
             attrs[GEN_AI_EVENT_CONTENT] = content
         span.span_instance.add_event(name="gen_ai.output.messages", attributes=attrs)
+
+    @staticmethod
+    def _extract_done_event_content(result: Any, event_type: str) -> Optional[str]:
+        """Extract text/transcript payload from selected ``response.*.done`` events.
+
+        Returns a compact JSON string suitable for ``gen_ai.event.content`` or
+        ``None`` if no message/transcript content is available.
+
+        :param result: The received server event.
+        :type result: any
+        :param event_type: The resolved event type string.
+        :type event_type: str
+        :return: JSON-serialized done content, if available.
+        :rtype: str or None
+        """
+        get = _VoiceLiveInstrumentorPreview._get_field
+
+        def _collect_text_or_transcript_from_item(item_obj: Any) -> list[Dict[str, Any]]:
+            contents: list[Dict[str, Any]] = []
+            if item_obj is None:
+                return contents
+            # function_call items carry payload in name/arguments, not content parts
+            item_type = get(item_obj, "type")
+            if item_type == "function_call":
+                name = get(item_obj, "name")
+                arguments = get(item_obj, "arguments")
+                fc_payload: Dict[str, Any] = {}
+                if name:
+                    fc_payload["name"] = str(name)
+                if arguments:
+                    try:
+                        fc_payload["arguments"] = json.loads(arguments)
+                    except (ValueError, TypeError):
+                        fc_payload["arguments"] = str(arguments)
+                if fc_payload:
+                    contents.append(fc_payload)
+                return contents
+            content_parts = get(item_obj, "content")
+            if not content_parts:
+                return contents
+            for part in content_parts:
+                text = get(part, "text")
+                transcript = get(part, "transcript")
+                part_payload: Dict[str, str] = {}
+                if text:
+                    part_payload["text"] = str(text)
+                if transcript:
+                    part_payload["transcript"] = str(transcript)
+                if part_payload:
+                    contents.append(part_payload)
+            return contents
+
+        if event_type == ServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE:
+            name = get(result, "name")
+            arguments = get(result, "arguments")
+            fc_payload: Dict[str, Any] = {}
+            if name:
+                fc_payload["name"] = str(name)
+            if arguments:
+                try:
+                    fc_payload["arguments"] = json.loads(arguments)
+                except (ValueError, TypeError):
+                    fc_payload["arguments"] = str(arguments)
+            if fc_payload:
+                return json.dumps(fc_payload, ensure_ascii=False)
+
+        if event_type == ServerEventType.RESPONSE_TEXT_DONE:
+            text = get(result, "text")
+            if text:
+                return json.dumps({"text": text}, ensure_ascii=False)
+
+        if event_type == ServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DONE:
+            transcript = get(result, "transcript")
+            if transcript:
+                return json.dumps({"transcript": transcript}, ensure_ascii=False)
+
+        if event_type == ServerEventType.RESPONSE_CONTENT_PART_DONE:
+            part = get(result, "part")
+            if part:
+                text = get(part, "text")
+                transcript = get(part, "transcript")
+                payload: Dict[str, Any] = {}
+                if text:
+                    payload["text"] = text
+                if transcript:
+                    payload["transcript"] = transcript
+                if payload:
+                    return json.dumps(payload, ensure_ascii=False)
+
+        if event_type == ServerEventType.RESPONSE_OUTPUT_ITEM_DONE:
+            item = get(result, "item")
+            item_contents = _collect_text_or_transcript_from_item(item)
+            if item_contents:
+                return json.dumps({"messages": item_contents}, ensure_ascii=False)
+
+        if event_type == ServerEventType.RESPONSE_DONE:
+            response = get(result, "response")
+            output_items = get(response, "output") if response is not None else None
+            if output_items:
+                messages: list[Dict[str, Any]] = []
+                for output_item in output_items:
+                    messages.extend(_collect_text_or_transcript_from_item(output_item))
+                if messages:
+                    return json.dumps({"messages": messages}, ensure_ascii=False)
+
+        return None
 
     # ------------------------------------------------------------------ #
     #  Tracing wrappers for connection lifecycle                          #
@@ -491,32 +723,8 @@ class _VoiceLiveInstrumentorPreview:
 
             # Determine event type string
             event_type = None
-            content_str = None
-            if hasattr(event, "get"):
-                event_type = event.get("type")
-            elif hasattr(event, "type"):
-                event_type = getattr(event, "type", None)
-
-            # Build content for content recording
-            if _trace_voicelive_content:
-                try:
-                    if hasattr(event, "as_dict"):
-                        content_str = json.dumps(event.as_dict(), default=str)
-                    elif isinstance(event, dict):
-                        content_str = json.dumps(event, default=str)
-                except (TypeError, ValueError):
-                    pass
-
-            # Compute message size
-            message_size = len(content_str) if content_str else None
-            if message_size is None:
-                try:
-                    if isinstance(event, dict):
-                        message_size = len(json.dumps(event, default=str))
-                    elif hasattr(event, "as_dict"):
-                        message_size = len(json.dumps(event.as_dict(), default=str))
-                except (TypeError, ValueError):
-                    pass
+            event_type = instrumentor._get_field(event, "type")
+            content_str, message_size = instrumentor._serialize_content_and_size(event)
 
             # Track audio bytes for input_audio_buffer.append
             event_type_str = str(event_type) if event_type else ""
@@ -554,37 +762,14 @@ class _VoiceLiveInstrumentorPreview:
 
             # Ensure the send span is parented under the connect span,
             # even when called from a different asyncio task.
-            parent_span = getattr(conn_self, "_telemetry_span", None)
-            parent_token = None
-            if parent_span is not None and set_span_in_context is not None and otel_context is not None:
-                parent_ctx = set_span_in_context(parent_span.span_instance)
-                parent_token = otel_context.attach(parent_ctx)
-
-            try:
-                span = start_span(
-                    op_name,
-                    server_address=getattr(conn_self, "_telemetry_server_address", None),
-                    port=getattr(conn_self, "_telemetry_port", None),
-                    model=getattr(conn_self, "_telemetry_model", None),
-                    span_name=span_name,
-                )
-            finally:
-                if parent_token is not None:
-                    otel_context.detach(parent_token)  # pyright: ignore[reportOptionalMemberAccess]
+            span = instrumentor._start_connection_child_span(conn_self, op_name, span_name)
 
             if span is None:
                 return await original_send(conn_self, event, *args, **kwargs)
 
             try:
                 with span:
-                    # Add session_id if available
-                    session_id = getattr(conn_self, "_telemetry_session_id", None)
-                    if session_id:
-                        span.add_attribute(GEN_AI_VOICE_SESSION_ID, session_id)
-                    # Add conversation_id if available
-                    conv_id = getattr(conn_self, "_telemetry_conversation_id", None)
-                    if conv_id:
-                        span.add_attribute(GEN_AI_CONVERSATION_ID, conv_id)
+                    instrumentor._add_connection_context_attributes(span, conn_self)
                     if event_type:
                         span.add_attribute("gen_ai.voice.event_type", event_type)
                     if message_size is not None:
@@ -618,45 +803,19 @@ class _VoiceLiveInstrumentorPreview:
 
             # Ensure the recv span is parented under the connect span,
             # even when called from a different asyncio task.
-            parent_span = getattr(conn_self, "_telemetry_span", None)
-            parent_token = None
-            if parent_span is not None and set_span_in_context is not None and otel_context is not None:
-                parent_ctx = set_span_in_context(parent_span.span_instance)
-                parent_token = otel_context.attach(parent_ctx)
-
-            try:
-                span = start_span(
-                    OperationName.RECV,
-                    server_address=getattr(conn_self, "_telemetry_server_address", None),
-                    port=getattr(conn_self, "_telemetry_port", None),
-                    model=getattr(conn_self, "_telemetry_model", None),
-                )
-            finally:
-                if parent_token is not None:
-                    otel_context.detach(parent_token)  # pyright: ignore[reportOptionalMemberAccess]
+            span = instrumentor._start_connection_child_span(conn_self, OperationName.RECV)
 
             if span is None:
                 return await original_recv(conn_self, *args, **kwargs)
 
             try:
                 with span:
-                    # Add session_id if available
-                    session_id = getattr(conn_self, "_telemetry_session_id", None)
-                    if session_id:
-                        span.add_attribute(GEN_AI_VOICE_SESSION_ID, session_id)
-                    # Add conversation_id if available
-                    conv_id = getattr(conn_self, "_telemetry_conversation_id", None)
-                    if conv_id:
-                        span.add_attribute(GEN_AI_CONVERSATION_ID, conv_id)
+                    instrumentor._add_connection_context_attributes(span, conn_self)
 
                     result = await original_recv(conn_self, *args, **kwargs)
                     # Extract event type from the result
-                    event_type = None
-                    content_str = None
-                    if hasattr(result, "get"):
-                        event_type = result.get("type")
-                    elif hasattr(result, "type"):
-                        event_type = getattr(result, "type", None)
+                    event_type = instrumentor._get_field(result, "type")
+                    content_str, message_size = instrumentor._serialize_content_and_size(result)
 
                     event_type_str = str(event_type) if event_type else ""
 
@@ -673,10 +832,10 @@ class _VoiceLiveInstrumentorPreview:
                                 connect_span.add_attribute(GEN_AI_VOICE_FIRST_TOKEN_LATENCY_MS, round(latency_ms, 2))
                             conn_self._telemetry_first_token_latency_recorded = True
 
-                    # We intentionally do not track text delta as a normal recv event
-                    # to keep telemetry volume lower, while still allowing it to set
-                    # first-token latency above.
-                    if event_type_str == ServerEventType.RESPONSE_TEXT_DELTA:
+                    # We intentionally do not track text/audio-transcript delta as
+                    # normal recv events to keep telemetry volume lower, while still
+                    # allowing text delta to set first-token latency above.
+                    if event_type_str in _DELTA_SKIP_EVENT_TYPES:
                         return result
 
                     if event_type:
@@ -684,36 +843,22 @@ class _VoiceLiveInstrumentorPreview:
                         # Update span name to include event type (e.g. "recv session.created")
                         span.span_instance.update_name(f"recv {event_type_str}")
 
-                    # Compute and record message size
-                    message_size = None
-                    if _trace_voicelive_content:
-                        try:
-                            if hasattr(result, "as_dict"):
-                                content_str = json.dumps(result.as_dict(), default=str)
-                            elif isinstance(result, dict):
-                                content_str = json.dumps(result, default=str)
-                        except (TypeError, ValueError):
-                            pass
-                        if content_str:
-                            message_size = len(content_str)
-                    if message_size is None:
-                        try:
-                            if isinstance(result, dict):
-                                message_size = len(json.dumps(result, default=str))
-                            elif hasattr(result, "as_dict"):
-                                message_size = len(json.dumps(result.as_dict(), default=str))
-                        except (TypeError, ValueError):
-                            pass
                     if message_size is not None:
                         span.add_attribute(GEN_AI_VOICE_MESSAGE_SIZE, message_size)
 
-                    instrumentor._add_recv_event(span, event_type_str if event_type else None, content_str)
+                    done_content = instrumentor._extract_done_event_content(result, event_type_str)
+                    instrumentor._add_recv_event(
+                        span,
+                        event_type_str if event_type else None,
+                        content_str or done_content,
+                        force_content=done_content is not None,
+                    )
 
                     # --- Extract response_id, call_id, conversation_id from top-level fields ---
                     instrumentor._extract_event_ids(conn_self, result, span)
 
                     # --- Session ID and audio format tracking ---
-                    if event_type_str in (ServerEventType.SESSION_CREATED, ServerEventType.SESSION_UPDATED):
+                    if event_type_str in _SESSION_EVENT_TYPES:
                         instrumentor._extract_session_id(conn_self, result)
                         instrumentor._extract_audio_format_from_recv(conn_self, result)
                         instrumentor._extract_agent_config_from_session(conn_self, result)
@@ -745,27 +890,17 @@ class _VoiceLiveInstrumentorPreview:
                         instrumentor._add_rate_limit_event(span, event_type_str, result)
 
                     # --- MCP call count ---
-                    if event_type_str in (
-                        ServerEventType.RESPONSE_MCP_CALL_COMPLETED,
-                        ServerEventType.RESPONSE_MCP_CALL_FAILED,
-                    ):
+                    if event_type_str in _MCP_CALL_EVENT_TYPES:
                         current = getattr(conn_self, "_telemetry_mcp_call_count", 0)
                         conn_self._telemetry_mcp_call_count = current + 1
 
                     # --- MCP list tools count ---
-                    if event_type_str in (
-                        ServerEventType.MCP_LIST_TOOLS_COMPLETED,
-                        ServerEventType.MCP_LIST_TOOLS_FAILED,
-                    ):
+                    if event_type_str in _MCP_LIST_TOOLS_EVENT_TYPES:
                         current = getattr(conn_self, "_telemetry_mcp_list_tools_count", 0)
                         conn_self._telemetry_mcp_list_tools_count = current + 1
 
                     # Capture token usage if present on the event
-                    usage = None
-                    if hasattr(result, "get"):
-                        usage = result.get("usage")
-                    elif hasattr(result, "usage"):
-                        usage = getattr(result, "usage", None)
+                    usage = instrumentor._get_field(result, "usage")
 
                     if usage:
                         input_tokens = getattr(usage, "input_tokens", None) or (
@@ -815,35 +950,14 @@ class _VoiceLiveInstrumentorPreview:
 
             # Ensure the close span is parented under the connect span,
             # even when called from a different asyncio task.
-            parent_span = getattr(conn_self, "_telemetry_span", None)
-            parent_token = None
-            if parent_span is not None and set_span_in_context is not None and otel_context is not None:
-                parent_ctx = set_span_in_context(parent_span.span_instance)
-                parent_token = otel_context.attach(parent_ctx)
-
-            try:
-                span = start_span(
-                    OperationName.CLOSE,
-                    server_address=getattr(conn_self, "_telemetry_server_address", None),
-                    port=getattr(conn_self, "_telemetry_port", None),
-                )
-            finally:
-                if parent_token is not None:
-                    otel_context.detach(parent_token)  # pyright: ignore[reportOptionalMemberAccess]
+            span = instrumentor._start_connection_child_span(conn_self, OperationName.CLOSE)
 
             if span is None:
                 return await original_close(conn_self, *args, **kwargs)
 
             try:
                 with span:
-                    # Add session_id if available
-                    session_id = getattr(conn_self, "_telemetry_session_id", None)
-                    if session_id:
-                        span.add_attribute(GEN_AI_VOICE_SESSION_ID, session_id)
-                    # Add conversation_id if available
-                    conv_id = getattr(conn_self, "_telemetry_conversation_id", None)
-                    if conv_id:
-                        span.add_attribute(GEN_AI_CONVERSATION_ID, conv_id)
+                    instrumentor._add_connection_context_attributes(span, conn_self)
                     return await original_close(conn_self, *args, **kwargs)
             except Exception as exc:
                 instrumentor.record_error(span, exc)
@@ -866,18 +980,11 @@ class _VoiceLiveInstrumentorPreview:
         :param result: The received event object.
         :type result: any
         """
-        session = None
-        if hasattr(result, "get"):
-            session = result.get("session")
-        elif hasattr(result, "session"):
-            session = getattr(result, "session", None)
+        get = _VoiceLiveInstrumentorPreview._get_field
+        session = get(result, "session")
 
         if session is not None:
-            session_id = None
-            if hasattr(session, "get"):
-                session_id = session.get("id")
-            elif hasattr(session, "id"):
-                session_id = getattr(session, "id", None)
+            session_id = get(session, "id")
 
             if session_id:
                 conn_self._telemetry_session_id = session_id  # pylint: disable=protected-access
@@ -927,49 +1034,11 @@ class _VoiceLiveInstrumentorPreview:
         :param event: The event being sent.
         :type event: any
         """
-        session = None
-        if hasattr(event, "get"):
-            session = event.get("session")
-        elif hasattr(event, "session"):
-            session = getattr(event, "session", None)
+        session = _VoiceLiveInstrumentorPreview._get_field(event, "session")
 
         if session is None:
             return
-
-        connect_span = getattr(conn_self, "_telemetry_span", None)
-
-        # Input audio format
-        input_audio_format = None
-        if hasattr(session, "get"):
-            input_audio_format = session.get("input_audio_format")
-        elif hasattr(session, "input_audio_format"):
-            input_audio_format = getattr(session, "input_audio_format", None)
-        if input_audio_format:
-            input_fmt_str = str(input_audio_format)
-            conn_self._telemetry_input_audio_format = input_fmt_str  # pylint: disable=protected-access
-            if connect_span is not None:
-                connect_span.add_attribute(GEN_AI_VOICE_INPUT_AUDIO_FORMAT, input_fmt_str)
-
-        # Input audio sampling rate (explicit field on the session model)
-        input_sampling_rate = None
-        if hasattr(session, "get"):
-            input_sampling_rate = session.get("input_audio_sampling_rate")
-        elif hasattr(session, "input_audio_sampling_rate"):
-            input_sampling_rate = getattr(session, "input_audio_sampling_rate", None)
-        if input_sampling_rate is not None and connect_span is not None:
-            connect_span.add_attribute(GEN_AI_VOICE_INPUT_SAMPLE_RATE, input_sampling_rate)
-
-        # Output audio format
-        output_audio_format = None
-        if hasattr(session, "get"):
-            output_audio_format = session.get("output_audio_format")
-        elif hasattr(session, "output_audio_format"):
-            output_audio_format = getattr(session, "output_audio_format", None)
-        if output_audio_format:
-            output_fmt_str = str(output_audio_format)
-            conn_self._telemetry_output_audio_format = output_fmt_str  # pylint: disable=protected-access
-            if connect_span is not None:
-                connect_span.add_attribute(GEN_AI_VOICE_OUTPUT_AUDIO_FORMAT, output_fmt_str)
+        _VoiceLiveInstrumentorPreview._extract_session_audio_attributes(conn_self, session)
 
     @staticmethod
     def _extract_audio_format_from_recv(conn_self: Any, result: Any) -> None:  # pylint: disable=too-many-branches
@@ -982,49 +1051,11 @@ class _VoiceLiveInstrumentorPreview:
         :param result: The received server event.
         :type result: any
         """
-        session = None
-        if hasattr(result, "get"):
-            session = result.get("session")
-        elif hasattr(result, "session"):
-            session = getattr(result, "session", None)
+        session = _VoiceLiveInstrumentorPreview._get_field(result, "session")
 
         if session is None:
             return
-
-        connect_span = getattr(conn_self, "_telemetry_span", None)
-
-        # Input audio format
-        input_audio_format = None
-        if hasattr(session, "get"):
-            input_audio_format = session.get("input_audio_format")
-        elif hasattr(session, "input_audio_format"):
-            input_audio_format = getattr(session, "input_audio_format", None)
-        if input_audio_format:
-            input_fmt_str = str(input_audio_format)
-            conn_self._telemetry_input_audio_format = input_fmt_str  # pylint: disable=protected-access
-            if connect_span is not None:
-                connect_span.add_attribute(GEN_AI_VOICE_INPUT_AUDIO_FORMAT, input_fmt_str)
-
-        # Input audio sampling rate (explicit field on the session model)
-        input_sampling_rate = None
-        if hasattr(session, "get"):
-            input_sampling_rate = session.get("input_audio_sampling_rate")
-        elif hasattr(session, "input_audio_sampling_rate"):
-            input_sampling_rate = getattr(session, "input_audio_sampling_rate", None)
-        if input_sampling_rate is not None and connect_span is not None:
-            connect_span.add_attribute(GEN_AI_VOICE_INPUT_SAMPLE_RATE, input_sampling_rate)
-
-        # Output audio format
-        output_audio_format = None
-        if hasattr(session, "get"):
-            output_audio_format = session.get("output_audio_format")
-        elif hasattr(session, "output_audio_format"):
-            output_audio_format = getattr(session, "output_audio_format", None)
-        if output_audio_format:
-            output_fmt_str = str(output_audio_format)
-            conn_self._telemetry_output_audio_format = output_fmt_str  # pylint: disable=protected-access
-            if connect_span is not None:
-                connect_span.add_attribute(GEN_AI_VOICE_OUTPUT_AUDIO_FORMAT, output_fmt_str)
+        _VoiceLiveInstrumentorPreview._extract_session_audio_attributes(conn_self, session)
 
     @staticmethod
     def _extract_session_config_from_send(conn_self: Any, event: Any) -> None:  # pylint: disable=too-many-branches
@@ -1039,11 +1070,8 @@ class _VoiceLiveInstrumentorPreview:
         :param event: The session.update event being sent.
         :type event: any
         """
-        session = None
-        if hasattr(event, "get"):
-            session = event.get("session")
-        elif hasattr(event, "session"):
-            session = getattr(event, "session", None)
+        get = _VoiceLiveInstrumentorPreview._get_field
+        session = get(event, "session")
 
         if session is None:
             return
@@ -1051,11 +1079,7 @@ class _VoiceLiveInstrumentorPreview:
         connect_span = getattr(conn_self, "_telemetry_span", None)
 
         # System instructions
-        instructions = None
-        if hasattr(session, "get"):
-            instructions = session.get("instructions")
-        elif hasattr(session, "instructions"):
-            instructions = getattr(session, "instructions", None)
+        instructions = get(session, "instructions")
         if instructions and connect_span is not None:
             connect_span.add_attribute(GEN_AI_SYSTEM_MESSAGE, instructions)
             # Emit system instructions event when content recording is enabled
@@ -1069,29 +1093,17 @@ class _VoiceLiveInstrumentorPreview:
                 )
 
         # Temperature
-        temperature = None
-        if hasattr(session, "get"):
-            temperature = session.get("temperature")
-        elif hasattr(session, "temperature"):
-            temperature = getattr(session, "temperature", None)
+        temperature = get(session, "temperature")
         if temperature is not None and connect_span is not None:
             connect_span.add_attribute(GEN_AI_REQUEST_TEMPERATURE, str(temperature))
 
         # Max output tokens
-        max_output_tokens = None
-        if hasattr(session, "get"):
-            max_output_tokens = session.get("max_response_output_tokens")
-        elif hasattr(session, "max_response_output_tokens"):
-            max_output_tokens = getattr(session, "max_response_output_tokens", None)
+        max_output_tokens = get(session, "max_response_output_tokens")
         if max_output_tokens is not None and connect_span is not None:
             connect_span.add_attribute(GEN_AI_REQUEST_MAX_OUTPUT_TOKENS, max_output_tokens)
 
         # Tools
-        tools = None
-        if hasattr(session, "get"):
-            tools = session.get("tools")
-        elif hasattr(session, "tools"):
-            tools = getattr(session, "tools", None)
+        tools = get(session, "tools")
         if tools and connect_span is not None:
             try:
                 if isinstance(tools, list):
@@ -1180,14 +1192,8 @@ class _VoiceLiveInstrumentorPreview:
         # Nested item – only extract from events known to carry a ResponseItem.
         # This guards against future events reusing the ``item`` field name
         # for something semantically different.
-        item_bearing_events = frozenset({
-            ServerEventType.CONVERSATION_ITEM_CREATED,
-            ServerEventType.CONVERSATION_ITEM_RETRIEVED,
-            ServerEventType.RESPONSE_OUTPUT_ITEM_ADDED,
-            ServerEventType.RESPONSE_OUTPUT_ITEM_DONE,
-        })
         event_type = str(get(result, "type") or "")
-        if event_type in item_bearing_events:
+        if event_type in _ITEM_BEARING_EVENTS:
             item_obj = get(result, "item")
             if item_obj:
                 # item.id → item_id (if not already set from top-level)
