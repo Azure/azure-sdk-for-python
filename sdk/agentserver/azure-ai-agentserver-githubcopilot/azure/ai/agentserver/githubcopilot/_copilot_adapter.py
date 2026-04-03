@@ -965,7 +965,9 @@ class GitHubCopilotAdapter(CopilotAdapter):
                 logger.warning("Failed to clear model cache", exc_info=True)
         else:
             # Non-Foundry mode: reset to environment-based default
-            default_model = os.getenv("AZURE_AI_FOUNDRY_MODEL") or os.getenv("COPILOT_MODEL") or "gpt-5"
+            # Reuse _build_session_config() to ensure consistent default-model resolution
+            default_config = _build_session_config()
+            default_model = default_config.get("model")
             self._session_config["model"] = default_model
             logger.info(f"Reset model to environment default: {default_model}")
 

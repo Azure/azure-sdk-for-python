@@ -54,7 +54,7 @@ class TestClearDefaultModel:
 
     def test_clear_model_without_foundry_resource(self):
         """clear_default_model() resets to environment default when no Foundry resource."""
-        with patch.dict(os.environ, {"COPILOT_MODEL": "gpt-4"}, clear=False):
+        with patch.dict(os.environ, {"COPILOT_MODEL": "gpt-4"}, clear=True):
             adapter = GitHubCopilotAdapter(session_config={"model": "gpt-4o"})
             assert adapter.get_model() == "gpt-4o"
 
@@ -112,7 +112,7 @@ class TestClearDefaultModel:
 
     def test_clear_model_idempotent_non_foundry(self):
         """clear_default_model() can be called multiple times safely (non-Foundry)."""
-        with patch.dict(os.environ, {"COPILOT_MODEL": "gpt-4"}, clear=False):
+        with patch.dict(os.environ, {"COPILOT_MODEL": "gpt-4"}, clear=True):
             adapter = GitHubCopilotAdapter(session_config={"model": "gpt-4o"})
 
             adapter.clear_default_model()
