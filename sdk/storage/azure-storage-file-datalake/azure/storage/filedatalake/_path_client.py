@@ -14,7 +14,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.storage.blob import BlobClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._deserialize import process_storage_error
-from ._generated import AzureDataLakeStorageRESTAPI
+from ._generated import DataLakeClient as AzureDataLakeStorageRESTAPI
 from ._models import (
     AccessControlChangeCounters,
     AccessControlChangeFailure,

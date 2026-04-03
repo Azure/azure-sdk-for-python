@@ -15,7 +15,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.storage.blob.aio import BlobServiceClient
 from .._data_lake_service_client_helpers import _format_url, _parse_url
 from .._deserialize import get_datalake_service_properties
-from .._generated.aio import AzureDataLakeStorageRESTAPI
+from .._generated.aio import DataLakeClient as AzureDataLakeStorageRESTAPI
 from .._models import DirectoryProperties, FileProperties, FileSystemProperties, LocationMode, UserDelegationKey
 from .._serialize import convert_dfs_url_to_blob_url, get_api_version
 from .._shared.base_client import parse_query, StorageAccountHostsMixin

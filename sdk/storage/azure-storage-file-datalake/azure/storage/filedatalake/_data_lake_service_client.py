@@ -17,7 +17,7 @@ from ._data_lake_file_client import DataLakeFileClient
 from ._data_lake_service_client_helpers import _format_url, _parse_url
 from ._deserialize import get_datalake_service_properties
 from ._file_system_client import FileSystemClient
-from ._generated import AzureDataLakeStorageRESTAPI
+from ._generated import DataLakeClient as AzureDataLakeStorageRESTAPI
 from ._models import (
     DirectoryProperties,
     FileProperties,

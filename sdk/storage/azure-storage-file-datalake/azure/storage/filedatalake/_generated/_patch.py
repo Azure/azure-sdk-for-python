@@ -51,7 +51,7 @@ class DataLakeClientConfiguration(GeneratedDataLakeClientConfiguration):
         self._configure(**kwargs)
 
 
-class AzureDataLakeStorageRESTAPI(GeneratedDataLakeClient):
+class DataLakeClient(GeneratedDataLakeClient):
     """Subclass of the generated DataLakeClient that allows optional credentials,
     accepts a pre-built pipeline, and injects the RangeHeaderPolicy.
     """
@@ -102,7 +102,7 @@ class AzureDataLakeStorageRESTAPI(GeneratedDataLakeClient):
         self.path = PathOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
-__all__: list[str] = ["AzureDataLakeStorageRESTAPI"]
+__all__: list[str] = ["DataLakeClient"]
 
 
 def patch_sdk():

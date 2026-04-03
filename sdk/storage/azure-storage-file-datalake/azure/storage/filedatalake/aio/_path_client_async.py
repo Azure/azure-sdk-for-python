@@ -13,7 +13,7 @@ from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.storage.blob.aio import BlobClient
 from .._deserialize import process_storage_error
-from .._generated.aio import AzureDataLakeStorageRESTAPI
+from .._generated.aio import DataLakeClient as AzureDataLakeStorageRESTAPI
 from .._models import (
     AccessControlChangeCounters,
     AccessControlChangeFailure,
