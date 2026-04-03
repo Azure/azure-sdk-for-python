@@ -1,10 +1,11 @@
 # The MIT License (MIT)
 # Copyright (c) 2024 Microsoft Corporation
 
-"""Async decorator to add Cosmos DB semantic convention attributes to OpenTelemetry spans."""
+"""Decorator to add Cosmos DB semantic convention attributes to aio client spans."""
 
 import functools
-from typing import Any, Callable, Mapping, Optional, TypeVar, cast
+import inspect
+from typing import Any, Awaitable, Callable, Mapping, Optional, TypeVar, cast
 
 from .._cosmos_span_attributes import (
     _add_cosmos_error_telemetry,
@@ -17,8 +18,68 @@ __all__ = ["cosmos_span_attributes_async", "sanitize_query"]
 F = TypeVar("F", bound=Callable[..., Any])
 
 
+def _build_telemetry_kwargs(func_kwargs: Mapping[str, Any]) -> dict[str, Any]:
+    """Copy kwargs and normalize query metadata for telemetry.
+
+    :param Mapping[str, Any] func_kwargs: The keyword arguments passed to the decorated method.
+    :returns: A copied kwargs mapping with normalized query and parameters values for telemetry.
+    :rtype: dict[str, Any]
+    """
+    query_for_telemetry = func_kwargs.get("query")
+    parameters_for_telemetry = func_kwargs.get("parameters")
+
+    if isinstance(query_for_telemetry, dict) and "query" in query_for_telemetry:
+        if parameters_for_telemetry is None:
+            parameters_for_telemetry = query_for_telemetry.get("parameters")
+        query_for_telemetry = query_for_telemetry["query"]
+
+    telemetry_kwargs = dict(func_kwargs)
+    if query_for_telemetry is not None:
+        telemetry_kwargs["query"] = query_for_telemetry
+    if parameters_for_telemetry is not None:
+        telemetry_kwargs["parameters"] = parameters_for_telemetry
+    return telemetry_kwargs
+
+
+def _add_success_telemetry(
+    method_name: str,
+    operation_type: Optional[str],
+    args: tuple[Any, ...],
+    func_kwargs: Mapping[str, Any],
+    result: Any,
+) -> None:
+    """Add success telemetry for the decorated aio method.
+
+    :param method_name: The decorated method name.
+    :type method_name: str
+    :param operation_type: The Cosmos DB operation type from the semantic conventions table.
+    :type operation_type: Optional[str]
+    :param args: Positional arguments passed to the decorated method.
+    :type args: tuple[Any, ...]
+    :param func_kwargs: Keyword arguments passed to the decorated method.
+    :type func_kwargs: Mapping[str, Any]
+    :param result: The method result.
+    :type result: Any
+    """
+    _add_cosmos_telemetry(
+        method_name,
+        operation_type,
+        args,
+        _build_telemetry_kwargs(func_kwargs),
+        result,
+    )
+
+
+def _add_error_telemetry(error: Exception) -> None:
+    """Add error telemetry for the decorated aio method.
+
+    :param Exception error: The raised exception.
+    """
+    _add_cosmos_error_telemetry(error)
+
+
 def cosmos_span_attributes_async(
-    __func: Optional[Callable] = None,
+    __func: Optional[Callable[..., Any]] = None,
     *,
     name_of_span: Optional[str] = None,
     kind: Optional[Any] = None,
@@ -27,15 +88,21 @@ def cosmos_span_attributes_async(
     **kwargs: Any,
 ) -> Any:
     """
-    Async decorator that adds Cosmos DB semantic convention attributes to the current OpenTelemetry span.
+    Decorator that adds Cosmos DB semantic convention attributes to the current OpenTelemetry span.
 
     The operation name (db.operation.name) is automatically derived from the function name.
     The operation_type (db.cosmosdb.operation_type) should be provided from the spec table values.
 
-    This decorator should be used in conjunction with @distributed_trace_async to enrich
-    the trace span with Cosmos-specific attributes following the OpenTelemetry semantic conventions.
+    This decorator is intended for aio client methods and supports two shapes:
 
-    :param __func: The async function to decorate
+    * ``async def`` methods used with ``@distributed_trace_async``
+    * synchronous pager-factory methods used with ``@distributed_trace`` that return
+      async iterables consumed via ``async for``
+
+    Preserving the original callable shape is required so async-pager factory methods continue
+    to return async iterables directly instead of coroutines.
+
+    :param __func: The function to decorate.
     :type __func: Optional[Callable]
     :keyword name_of_span: Unused compatibility argument.
     :paramtype name_of_span: Optional[str]
@@ -45,7 +112,7 @@ def cosmos_span_attributes_async(
     :paramtype tracing_attributes: Optional[Mapping[str, Any]]
     :keyword operation_type: The Cosmos DB operation type from the spec table (e.g., "create", "read")
     :paramtype operation_type: Optional[str]
-    :return: The decorated async function
+    :return: The decorated function.
     :rtype: Any
 
     Example usage::
@@ -59,49 +126,47 @@ def cosmos_span_attributes_async(
     del name_of_span, kind, tracing_attributes, kwargs
 
     def decorator(func: F) -> F:
+        method_name = func.__name__
+
+        if inspect.iscoroutinefunction(func):
+            coroutine_func = cast(Callable[..., Awaitable[Any]], func)
+
+            @functools.wraps(func)
+            async def async_wrapper(*args: Any, **func_kwargs: Any) -> Any:
+                """Wrap coroutine methods and enrich the active span after invocation.
+
+                :param args: Positional arguments passed to the decorated method.
+                :type args: Any
+                :return: The wrapped coroutine result.
+                :rtype: Any
+                """
+                try:
+                    result = await coroutine_func(*args, **func_kwargs)
+                    _add_success_telemetry(method_name, operation_type, args, func_kwargs, result)
+                    return result
+                except Exception as error:
+                    _add_error_telemetry(error)
+                    raise
+
+            return async_wrapper
+
         @functools.wraps(func)
-        async def async_wrapper(*args: Any, **func_kwargs: Any) -> Any:
-            # Auto-derive method name from the function name
-            method_name = func.__name__
+        def sync_wrapper(*args: Any, **func_kwargs: Any) -> Any:
+            """Wrap pager-factory methods and enrich the active span after invocation.
 
-            # Extract query and parameters BEFORE the function runs (for telemetry)
-            query_for_telemetry = func_kwargs.get("query")
-            parameters_for_telemetry = func_kwargs.get("parameters")
-
-            # Handle dict-style query with embedded parameters
-            if isinstance(query_for_telemetry, dict):
-                if "query" in query_for_telemetry:
-                    actual_query = query_for_telemetry["query"]
-                    if parameters_for_telemetry is None:
-                        parameters_for_telemetry = query_for_telemetry.get("parameters")
-                    query_for_telemetry = actual_query
-
-            # Execute the async function (the parent @distributed_trace_async will create the span)
+            :param args: Positional arguments passed to the decorated method.
+            :type args: Any
+            :return: The wrapped method result.
+            :rtype: Any
+            """
             try:
-                result = await func(*args, **func_kwargs)
-
-                # Add Cosmos-specific attributes (only if span exists)
-                # Create a copy of kwargs with the query/parameters we saved
-                telemetry_kwargs = dict(func_kwargs)
-                if query_for_telemetry is not None:
-                    telemetry_kwargs["query"] = query_for_telemetry
-                if parameters_for_telemetry is not None:
-                    telemetry_kwargs["parameters"] = parameters_for_telemetry
-
-                _add_cosmos_telemetry(
-                    method_name,
-                    operation_type,
-                    args,
-                    telemetry_kwargs,
-                    result,
-                )
-
+                result = func(*args, **func_kwargs)
+                _add_success_telemetry(method_name, operation_type, args, func_kwargs, result)
                 return result
             except Exception as error:
-                # Add error attributes if we have a span
-                _add_cosmos_error_telemetry(error)
+                _add_error_telemetry(error)
                 raise
 
-        return cast(F, async_wrapper)
+        return sync_wrapper
 
     return decorator if __func is None else decorator(__func)

@@ -1,11 +1,27 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-"""Unit tests for query sanitization in async cosmos_span_attributes_async decorator."""
+"""Unit tests for query sanitization and async pager tracing behavior."""
 
+import inspect
 import unittest
+from unittest.mock import Mock, patch
 
+from azure.core.tracing.decorator import distributed_trace
+from azure.cosmos._constants import _Constants
+from azure.cosmos.aio._container import ContainerProxy
+from azure.cosmos.aio._cosmos_client import CosmosClient
 from azure.cosmos.aio._cosmos_span_attributes_async import sanitize_query
+from azure.cosmos.aio._database import DatabaseProxy
+from azure.cosmos.aio._user import UserProxy
+
+
+class _EmptyAsyncIterable:
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        raise StopAsyncIteration
 
 
 class TestQuerySanitizationAsync(unittest.TestCase):
@@ -122,6 +138,90 @@ class TestQuerySanitizationAsync(unittest.TestCase):
         query = "SELECT * FROM c WHERE c.accountId = 'ACC-12345' AND c.balance > 50000.00"
         result = sanitize_query(query, None)
         self.assertEqual(result, "SELECT * FROM c WHERE c.accountId = '?' AND c.balance > ?")
+
+
+class TestAsyncPagerTracingRegression(unittest.TestCase):
+    """Regression tests for aio pager factory tracing behavior."""
+
+    def test_cosmos_async_span_decorator_preserves_async_iterable_factories(self):
+        """Sync aio pager factories must remain directly iterable with async for."""
+
+        from azure.cosmos.aio._cosmos_span_attributes_async import cosmos_span_attributes_async
+
+        @distributed_trace
+        @cosmos_span_attributes_async(operation_type=_Constants.OpenTelemetryOperationTypes.QUERY)
+        def pager_factory():
+            return _EmptyAsyncIterable()
+
+        result = pager_factory()
+
+        self.assertFalse(inspect.isawaitable(result))
+        self.assertTrue(hasattr(result, "__aiter__"))
+
+    def test_aio_pager_factory_methods_are_not_coroutines(self):
+        """Aio methods used with async for must not become coroutine functions."""
+        pager_methods = [
+            CosmosClient.list_databases,
+            CosmosClient.query_databases,
+            DatabaseProxy.list_containers,
+            DatabaseProxy.query_containers,
+            DatabaseProxy.list_users,
+            DatabaseProxy.query_users,
+            ContainerProxy.read_all_items,
+            ContainerProxy.query_items,
+            ContainerProxy.query_items_change_feed,
+            ContainerProxy.list_conflicts,
+            ContainerProxy.query_conflicts,
+            ContainerProxy.read_feed_ranges,
+            UserProxy.list_permissions,
+            UserProxy.query_permissions,
+        ]
+
+        for method in pager_methods:
+            with self.subTest(method=method.__qualname__):
+                self.assertFalse(inspect.iscoroutinefunction(method))
+
+    def test_true_aio_coroutine_methods_remain_coroutines(self):
+        """Actual aio coroutine methods must remain coroutine functions."""
+        coroutine_methods = [
+            CosmosClient.create_database,
+            DatabaseProxy.create_container,
+            ContainerProxy.create_item,
+            ContainerProxy.read_item,
+            UserProxy.create_permission,
+        ]
+
+        for method in coroutine_methods:
+            with self.subTest(method=method.__qualname__):
+                self.assertTrue(inspect.iscoroutinefunction(method))
+
+    @patch('azure.cosmos.aio._cosmos_span_attributes_async._add_cosmos_telemetry')
+    @patch('azure.cosmos.aio._cosmos_span_attributes_async._add_cosmos_error_telemetry')
+    @patch('azure.cosmos._cosmos_span_attributes.settings')
+    def test_async_decorator_normalizes_dict_query_payload(
+        self,
+        mock_settings,
+        _mock_add_error_telemetry,
+        mock_add_cosmos_telemetry,
+    ):
+        """Decorator should normalize dict-style query payloads before telemetry is emitted."""
+        mock_span_impl = Mock()
+        mock_span = Mock()
+        mock_span.is_recording.return_value = True
+        mock_span_impl.get_current_span.return_value = mock_span
+        mock_settings.tracing_implementation.return_value = mock_span_impl
+
+        from azure.cosmos.aio._cosmos_span_attributes_async import cosmos_span_attributes_async
+
+        @cosmos_span_attributes_async(operation_type=_Constants.OpenTelemetryOperationTypes.QUERY)
+        def pager_factory(**kwargs):
+            return _EmptyAsyncIterable()
+
+        pager_factory(query={"query": "SELECT * FROM c WHERE c.id = @id", "parameters": [{"name": "@id", "value": "1"}]})
+
+        telemetry_kwargs = mock_add_cosmos_telemetry.call_args.args[3]
+        self.assertEqual(telemetry_kwargs["query"], "SELECT * FROM c WHERE c.id = @id")
+        self.assertEqual(telemetry_kwargs["parameters"], [{"name": "@id", "value": "1"}])
 
 
 if __name__ == "__main__":

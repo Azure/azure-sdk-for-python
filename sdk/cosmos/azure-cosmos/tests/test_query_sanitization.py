@@ -297,6 +297,26 @@ class TestDecoratorIntegration(unittest.TestCase):
         with self.assertRaises(ValueError):
             test_function()
 
+    @patch('azure.cosmos._cosmos_span_attributes._add_cosmos_telemetry')
+    @patch('azure.cosmos._cosmos_span_attributes.settings')
+    def test_sync_decorator_normalizes_dict_query_payload(self, mock_settings, mock_add_cosmos_telemetry):
+        """Decorator should normalize dict-style query payloads before telemetry is emitted."""
+        mock_span_impl = Mock()
+        mock_span = Mock()
+        mock_span.is_recording.return_value = True
+        mock_span_impl.get_current_span.return_value = mock_span
+        mock_settings.tracing_implementation.return_value = mock_span_impl
+
+        @cosmos_span_attributes(operation_type=_Constants.OpenTelemetryOperationTypes.QUERY)
+        def test_function(**kwargs):
+            return ["ok"]
+
+        test_function(query={"query": "SELECT * FROM c WHERE c.id = @id", "parameters": [{"name": "@id", "value": "1"}]})
+
+        telemetry_kwargs = mock_add_cosmos_telemetry.call_args.args[3]
+        self.assertEqual(telemetry_kwargs["query"], "SELECT * FROM c WHERE c.id = @id")
+        self.assertEqual(telemetry_kwargs["parameters"], [{"name": "@id", "value": "1"}])
+
 
 if __name__ == '__main__':
     unittest.main()

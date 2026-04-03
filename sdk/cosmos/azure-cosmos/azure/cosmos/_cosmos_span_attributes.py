@@ -19,6 +19,29 @@ __all__ = ["cosmos_span_attributes", "sanitize_query"]
 F = TypeVar("F", bound=Callable[..., Any])
 
 
+def _build_telemetry_kwargs(func_kwargs: Mapping[str, Any]) -> dict[str, Any]:
+    """Copy kwargs and normalize query metadata for telemetry.
+
+    :param Mapping[str, Any] func_kwargs: The keyword arguments passed to the decorated method.
+    :returns: A copied kwargs mapping with normalized query and parameters values for telemetry.
+    :rtype: dict[str, Any]
+    """
+    query_for_telemetry = func_kwargs.get("query")
+    parameters_for_telemetry = func_kwargs.get("parameters")
+
+    if isinstance(query_for_telemetry, dict) and "query" in query_for_telemetry:
+        if parameters_for_telemetry is None:
+            parameters_for_telemetry = query_for_telemetry.get("parameters")
+        query_for_telemetry = query_for_telemetry["query"]
+
+    telemetry_kwargs = dict(func_kwargs)
+    if query_for_telemetry is not None:
+        telemetry_kwargs["query"] = query_for_telemetry
+    if parameters_for_telemetry is not None:
+        telemetry_kwargs["parameters"] = parameters_for_telemetry
+    return telemetry_kwargs
+
+
 def sanitize_query(query: str, parameters: Optional[list]) -> str:
     """
     Sanitize query text according to OpenTelemetry semantic conventions.
@@ -100,32 +123,20 @@ def cosmos_span_attributes(
     del name_of_span, kind, tracing_attributes, kwargs
 
     def decorator(func: F) -> F:
+        method_name = func.__name__
+
         @functools.wraps(func)
         def wrapper(*args: Any, **func_kwargs: Any) -> Any:
-            # Auto-derive method name from the function name
-            method_name = func.__name__
-
-            # Extract query and parameters BEFORE the function runs (for telemetry)
-            query_for_telemetry = func_kwargs.get("query")
-            parameters_for_telemetry = func_kwargs.get("parameters")
-
             # Execute the function (the parent @distributed_trace will create the span)
             try:
                 result = func(*args, **func_kwargs)
 
                 # Add Cosmos-specific attributes (only if span exists)
-                # Create a copy of kwargs with the query/parameters we saved
-                telemetry_kwargs = dict(func_kwargs)
-                if query_for_telemetry is not None:
-                    telemetry_kwargs["query"] = query_for_telemetry
-                if parameters_for_telemetry is not None:
-                    telemetry_kwargs["parameters"] = parameters_for_telemetry
-
                 _add_cosmos_telemetry(
                     method_name,
                     operation_type,
                     args,
-                    telemetry_kwargs,
+                    _build_telemetry_kwargs(func_kwargs),
                     result,
                 )
 
