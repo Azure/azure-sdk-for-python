@@ -1,16 +1,23 @@
-FROM mcr.microsoft.com/mirror/docker/library/python:3.11-slim
+FROM python:3.11-slim
 
 WORKDIR /app
 
+# Install git (needed for some pip dependencies)
+RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
+
+# Install new agentserver packages from pre-downloaded wheels
+COPY _wheels/ /tmp/wheels/
+RUN pip install --no-cache-dir /tmp/wheels/*.whl && rm -rf /tmp/wheels
+
 # Copy the package source for local install (not on PyPI yet)
-COPY _package/ /tmp/azure-ai-agentserver-github/
+COPY _package/ /tmp/azure-ai-agentserver-githubcopilot/
 
 # Copy the test agent
 COPY . /app/
 
 # Install the package from local source + agent deps
-RUN pip install --pre /tmp/azure-ai-agentserver-github/ -r requirements.txt && \
-    rm -rf /tmp/azure-ai-agentserver-github/
+RUN pip install --no-cache-dir --pre /tmp/azure-ai-agentserver-githubcopilot/ -r requirements.txt && \
+    rm -rf /tmp/azure-ai-agentserver-githubcopilot/
 
 EXPOSE 8088
 

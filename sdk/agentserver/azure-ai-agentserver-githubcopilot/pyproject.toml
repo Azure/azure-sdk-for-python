@@ -20,9 +20,9 @@ classifiers = [
 keywords = ["azure", "azure sdk"]
 
 dependencies = [
-    "azure-ai-agentserver-core>=1.0.0b14,<1.0.0b18",
+    "azure-ai-agentserver-core>=2.0.0a1",
+    "azure-ai-agentserver-responses>=1.0.0a1",
     "github-copilot-sdk>=0.2.0,<0.3.0",
-    "opentelemetry-exporter-otlp-proto-http",
     "azure-identity",
     "pyyaml>=6.0",
 ]
