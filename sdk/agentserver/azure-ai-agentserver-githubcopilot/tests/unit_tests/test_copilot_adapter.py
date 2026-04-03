@@ -30,9 +30,11 @@ class TestGetModel:
         assert adapter.get_model() == "gpt-4o"
 
     def test_get_model_when_not_configured(self):
-        """get_model() returns None when no model is configured."""
-        adapter = GitHubCopilotAdapter(session_config={})
-        assert adapter.get_model() is None
+        """get_model() returns default when no model is explicitly configured."""
+        with patch.dict(os.environ, {}, clear=True):
+            adapter = GitHubCopilotAdapter(session_config={})
+            # _build_session_config() sets a default model (gpt-5)
+            assert adapter.get_model() == "gpt-5"
 
     def test_get_model_with_default_config(self):
         """get_model() works with default session config."""
@@ -167,6 +169,9 @@ class TestClearAndReinitialize:
         adapter = GitHubCopilotAdapter(session_config={
             "_foundry_resource_url": resource_url,
         })
+
+        # Remove default model so initialize() will check cache
+        adapter._session_config.pop("model", None)
 
         # Mock credential
         mock_credential = MagicMock()
