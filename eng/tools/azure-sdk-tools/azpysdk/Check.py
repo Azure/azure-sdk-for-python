@@ -116,7 +116,11 @@ class Check(abc.ABC):
         return sys.executable
 
     def get_executable(
-        self, isolate: bool, check_name: str, executable: str, package_folder: str,
+        self,
+        isolate: bool,
+        check_name: str,
+        executable: str,
+        package_folder: str,
         python_version: Optional[str] = None,
     ) -> Tuple[str, str]:
         """Get the Python executable that should be used for this check."""

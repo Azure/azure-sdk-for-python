@@ -89,7 +89,10 @@ def build_parser() -> argparse.ArgumentParser:
     # allow --isolate to be specified after the subcommand as well
     # use SUPPRESS so the subparser default doesn't overwrite a value set by the global parser
     common.add_argument(
-        "--isolate", action="store_true", default=argparse.SUPPRESS, help="If set, run in an isolated virtual environment."
+        "--isolate",
+        action="store_true",
+        default=argparse.SUPPRESS,
+        help="If set, run in an isolated virtual environment.",
     )
     common.add_argument(
         "--python",
@@ -173,13 +176,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if python_version:
         isolate = getattr(args, "isolate", False)
         if not isolate:
-            parser.error("--python requires --isolate to create a virtual environment with the specified Python version.")
+            parser.error(
+                "--python requires --isolate to create a virtual environment with the specified Python version."
+            )
 
         pip_impl = os.environ.get("TOX_PIP_IMPL", "pip").lower()
         if pip_impl != "uv":
-            parser.error(
-                "--python requires uv as the backend. Install uv or set TOX_PIP_IMPL=uv."
-            )
+            parser.error("--python requires uv as the backend. Install uv or set TOX_PIP_IMPL=uv.")
 
     try:
         result = args.func(args)

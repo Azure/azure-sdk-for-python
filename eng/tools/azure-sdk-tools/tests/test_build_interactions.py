@@ -36,4 +36,5 @@ def test_venv_helpers_importable():
 
     # Verify re-exports from ci_tools.functions still work
     from ci_tools.functions import get_venv_call as f_get_venv_call
+
     assert f_get_venv_call is get_venv_call

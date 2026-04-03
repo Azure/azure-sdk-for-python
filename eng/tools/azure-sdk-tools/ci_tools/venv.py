@@ -28,9 +28,7 @@ def get_venv_call(python_exe: Optional[str] = None, python_version: Optional[str
     pip_impl = os.environ.get("TOX_PIP_IMPL", "pip").lower()
 
     if python_version and pip_impl != "uv":
-        raise ValueError(
-            "--python requires uv as the backend. Install uv or set TOX_PIP_IMPL=uv."
-        )
+        raise ValueError("--python requires uv as the backend. Install uv or set TOX_PIP_IMPL=uv.")
 
     # soon we will change this to default to uv
     if pip_impl == "uv":
