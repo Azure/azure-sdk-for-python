@@ -80,9 +80,11 @@ steps:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - pwsh: |
+      uv pip install pip
       python -m pip --version
       python -m pip install ruff==0.12.7 -v
     displayName: "Try installing using pip directly"
+    continueOnError: true
 
   - template: /eng/common/pipelines/templates/steps/save-package-properties.yml
     parameters:
