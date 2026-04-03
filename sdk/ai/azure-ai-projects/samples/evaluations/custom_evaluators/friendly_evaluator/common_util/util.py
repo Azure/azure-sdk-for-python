@@ -20,24 +20,26 @@ You MUST respond in the following JSON format only:
 """
 
 
-def build_evaluation_messages(query: str, response: str) -> list:
-    """Build the messages list for the LLM evaluation call.
+def build_evaluation_instructions() -> str:
+    """Return the system instructions for the LLM evaluation call.
+
+    :return: The system prompt string for the Responses API.
+    """
+    return FRIENDLINESS_SYSTEM_PROMPT
+
+
+def build_evaluation_input(query: str, response: str) -> str:
+    """Build the user input for the LLM evaluation call.
 
     :param query: The original user query.
     :param response: The response to evaluate for friendliness.
-    :return: A list of message dicts for the chat completion API.
+    :return: A string prompt for the Responses API.
     """
-    return [
-        {"role": "system", "content": FRIENDLINESS_SYSTEM_PROMPT},
-        {
-            "role": "user",
-            "content": (
-                f"Please evaluate the friendliness of the following response.\n\n"
-                f"Original query: {query}\n\n"
-                f"Response to evaluate: {response}"
-            ),
-        },
-    ]
+    return (
+        f"Please evaluate the friendliness of the following response.\n\n"
+        f"Original query: {query}\n\n"
+        f"Response to evaluate: {response}"
+    )
 
 
 def parse_evaluation_result(raw_result: str, threshold: int = 3) -> dict:
@@ -80,8 +82,8 @@ def parse_evaluation_result(raw_result: str, threshold: int = 3) -> dict:
     except (json.JSONDecodeError, ValueError, KeyError):
         return {
             "score": threshold,
-            "label": "Pass",
+            "label": "Fail",
             "reason": "Could not parse LLM response",
             "threshold": threshold,
-            "passed": True,
+            "passed": False,
         }

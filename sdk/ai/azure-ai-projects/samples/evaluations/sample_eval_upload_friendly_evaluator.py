@@ -90,19 +90,17 @@ with (
             init_parameters={
                 "type": "object",
                 "properties": {
-                    "model_config": {
-                        "type": "object",
-                        "description": "Azure OpenAI configuration for the LLM judge",
-                        "properties": {
-                            "azure_endpoint": {"type": "string"},
-                            "api_version": {"type": "string"},
-                            "api_key": {"type": "string"},
-                        },
-                        "required": ["azure_endpoint", "api_key"],
+                    "api_key": {
+                        "type": "string",
+                        "description": "OpenAI API key for the LLM judge",
+                    },
+                    "model": {
+                        "type": "string",
+                        "description": "Model name to use for evaluation (e.g. gpt-4o)",
                     },
                     "threshold": {"type": "number"},
                 },
-                "required": ["model_config", "threshold"],
+                "required": ["api_key", "model", "threshold"],
             },
             data_schema={
                 "type": "object",
@@ -158,7 +156,7 @@ with (
             "name": evaluator_name,
             "evaluator_name": evaluator_name,
             "initialization_parameters": {
-                 "deployment_name": f"{model_deployment_name}", # provide model_config or, deployment name passed is used to construct the model_config for the evaluator. 
+                 "deployment_name": f"{model_deployment_name}",  # service converts deployment_name to api_key/model for the evaluator
                  "threshold": 3,
             },
         }
