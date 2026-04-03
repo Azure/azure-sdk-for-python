@@ -5,16 +5,21 @@ WORKDIR /app
 # Install git (needed for some pip dependencies)
 RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 
+# Install Ravi's new base packages from Azure DevOps feed FIRST (separate pip call
+# to avoid the feed interfering with github-copilot-sdk from PyPI).
+RUN pip install --no-cache-dir --no-input --pre \
+    --extra-index-url https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/ \
+    "azure-ai-agentserver-core[tracing]>=2.0.0a1" \
+    "azure-ai-agentserver-responses>=1.0.0a1"
+
 # Copy the package source for local install (not on PyPI yet)
 COPY _package/ /tmp/azure-ai-agentserver-githubcopilot/
 
 # Copy the test agent
 COPY . /app/
 
-# Install the package from local source + agent deps.
-# --no-input prevents pip from prompting for auth on the Azure DevOps feed.
-# --extra-index-url in requirements.txt provides access to Ravi's new base packages.
-RUN pip install --no-cache-dir --no-input --pre \
+# Install the package from local source + agent deps (PyPI only — no dev feed).
+RUN pip install --no-cache-dir --pre \
     /tmp/azure-ai-agentserver-githubcopilot/ \
     -r requirements.txt && \
     rm -rf /tmp/azure-ai-agentserver-githubcopilot/
