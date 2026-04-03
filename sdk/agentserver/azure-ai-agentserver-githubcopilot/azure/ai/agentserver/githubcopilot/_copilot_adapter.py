@@ -42,7 +42,7 @@ from ._tool_acl import ToolAcl
 logger = logging.getLogger("azure.ai.agentserver.githubcopilot")
 
 # Version canary — proves which code is deployed. Change this string with every deploy-affecting commit.
-_BUILD_TAG = "replat-v2-multiturn-rawbody-fix"
+_BUILD_TAG = "replat-v3-conversation-id-from-rawbody"
 logger.info(f"Adapter loaded: {_BUILD_TAG}")
 
 
@@ -375,7 +375,13 @@ class CopilotAdapter:
         if not conversation_id:
             raw_body = getattr(context, "raw_body", None)
             if isinstance(raw_body, dict):
+                # Try session_id first (direct Responses API callers),
+                # then conversation.id (Playground via Chat Completions translation)
                 conversation_id = raw_body.get("session_id")
+                if not conversation_id:
+                    conv = raw_body.get("conversation")
+                    if isinstance(conv, dict):
+                        conversation_id = conv.get("id")
             if conversation_id:
                 # Also set on context so downstream code (e.g. history bootstrap) sees it
                 context.conversation_id = conversation_id
