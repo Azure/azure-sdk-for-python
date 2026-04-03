@@ -939,19 +939,23 @@ class GitHubCopilotAdapter(CopilotAdapter):
         """
         return self._session_config.get("model")
 
-    def clear_default_model(self):
+    def clear_default_model(self) -> None:
         """Clear the default model from session config and cache.
 
-        Forces the adapter to re-discover and select a model on the next
-        ``initialize()`` call.  The model cache is also cleared for the
-        current Foundry resource URL.
-        """
-        # Clear from session config
-        self._session_config.pop("model", None)
+        For Foundry mode (when ``_foundry_resource_url`` is configured):
+        forces the adapter to re-discover and select a model on the next
+        ``initialize()`` call by clearing both the session config and the
+        model cache.
 
-        # Clear from cache if using Foundry
+        For non-Foundry mode: resets the model to the environment-based
+        default (from ``AZURE_AI_FOUNDRY_MODEL`` or ``COPILOT_MODEL`` env
+        vars, or ``gpt-5`` if neither is set).
+        """
         resource_url = self._session_config.get("_foundry_resource_url")
+
         if resource_url:
+            # Foundry mode: clear model to force re-discovery on next initialize()
+            self._session_config.pop("model", None)
             try:
                 from ._model_cache import ModelCache
                 cache = ModelCache()
@@ -959,6 +963,11 @@ class GitHubCopilotAdapter(CopilotAdapter):
                 logger.info(f"Cleared model cache for resource: {resource_url}")
             except Exception:
                 logger.warning("Failed to clear model cache", exc_info=True)
+        else:
+            # Non-Foundry mode: reset to environment-based default
+            default_model = os.getenv("AZURE_AI_FOUNDRY_MODEL") or os.getenv("COPILOT_MODEL") or "gpt-5"
+            self._session_config["model"] = default_model
+            logger.info(f"Reset model to environment default: {default_model}")
 
 
 # ---------------------------------------------------------------------------
