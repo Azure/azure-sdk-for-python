@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 from os import PathLike
 from pathlib import Path
 from typing import Any, List, Optional, Union
+from urllib.parse import urlparse
 
 from azure.core.paging import ItemPaged
 
@@ -118,8 +119,8 @@ class TrainingJobsOperations(_GeneratedTrainingJobsOps):
             _logger.debug("[TrainingJobsOperations] Resolved '%s' → '%s'.", uri, result.data_uri)
             return result.id
 
-        if ":" in uri and "://" not in uri:
-            # name:version short form, optionally prefixed with "azureai:"
+        parsed = urlparse(uri)
+        if parsed.scheme and not parsed.netloc:
             raw = uri[len("azureai:") :] if uri.startswith("azureai:") else uri
             ds_name, ds_version = raw.split(":", 1)
             _logger.debug("[TrainingJobsOperations] Resolving name:version '%s' to dataset URI.", uri)
