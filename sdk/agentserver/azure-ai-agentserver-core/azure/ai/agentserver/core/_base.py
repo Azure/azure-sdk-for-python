@@ -88,7 +88,7 @@ class AgentServerHost(Starlette):
     def __init__(
         self,
         *,
-        application_insights_connection_string: Optional[str] = None,
+        applicationinsights_connection_string: Optional[str] = None,
         graceful_shutdown_timeout: Optional[int] = None,
         log_level: Optional[str] = None,
         routes: Optional[list[Route]] = None,
