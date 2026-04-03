@@ -61,7 +61,7 @@ load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 openai_api_key = os.environ["OPENAI_API_KEY"]
-openai_model = os.environ.get("OPENAI_MODEL", "gpt-4o")
+openai_model = os.environ.get("OPENAI_MODEL")
 
 # Add the evaluator folder to sys.path so we can import it for local testing
 evaluator_folder = str(Path(__file__).parent / "custom_evaluators" / "friendly_evaluator")
