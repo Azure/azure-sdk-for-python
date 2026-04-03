@@ -72,12 +72,14 @@ def parse_evaluation_result(raw_result: str, threshold: int = 3) -> dict:
         properties = {k: v for k, v in result.items() if k not in top_level_keys}
 
         return {
+            # --- Required fields (must be present for the evaluation service) ---
             "score": score,
             "label": "Pass" if passed else "Fail",
             "reason": result.get("reason", "No reason provided"),
+            # --- Optional fields ---
             "threshold": threshold,
             "passed": passed,
-            "properties": properties,
+            "properties": properties,  # extra metadata surfaced in the evaluation results
         }
     except (json.JSONDecodeError, ValueError, KeyError):
         return {
