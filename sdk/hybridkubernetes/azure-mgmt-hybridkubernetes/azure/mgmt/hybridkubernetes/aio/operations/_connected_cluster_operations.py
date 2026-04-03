@@ -128,7 +128,7 @@ class ConnectedClusterOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)  # pylint: disable=protected-access
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -515,7 +515,7 @@ class ConnectedClusterOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)  # pylint: disable=protected-access
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
