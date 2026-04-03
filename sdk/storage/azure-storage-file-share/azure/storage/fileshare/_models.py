@@ -242,12 +242,12 @@ class ShareSmbSettings(GeneratedShareSmbSettings):
     """Sets the encryption in transit settings."""
 
     def __init__(
-        self,
+        self,  # pylint: disable=unused-argument
         *,
         multichannel: Optional[SmbMultichannel] = None,
         encryption_in_transit: Optional[SmbEncryptionInTransit] = None,
         **kwargs: Any
-    ) -> None:  # pylint: disable=unused-argument
+    ) -> None:
         self.multichannel = multichannel
         self.encryption_in_transit = encryption_in_transit
         if self.multichannel is None and self.encryption_in_transit is None:
@@ -295,12 +295,12 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings):
     """Sets the NFS settings."""
 
     def __init__(
-        self,
+        self,  # pylint: disable=unused-argument
         *,
         smb: Optional[ShareSmbSettings] = None,
         nfs: Optional[ShareNfsSettings] = None,
         **kwargs: Any
-    ) -> None:  # pylint: disable=unused-argument
+    ) -> None:
         self.smb = smb
         self.nfs = nfs
         if self.smb is None and self.nfs is None:
