@@ -2,7 +2,30 @@ steps:
   - pwsh: |
       Write-Host "python -m pip install -r eng/scripts/docs/py2docfx_requirements.txt"
       python -m pip install -r eng/scripts/docs/py2docfx_requirements.txt
-      # After install py2docfx,
+
+      # Patch py2docfx to add --no-build-isolation to pip download commands.
+      # When py2docfx downloads sdists with --no-binary=:all:, pip enters build isolation
+      # and spawns nested subprocesses that inherit --extra-index-url. These nested
+      # subprocesses hit the Azure DevOps feed without auth, causing 401 errors that
+      # result in EOFError when pip tries to prompt for credentials in a non-interactive
+      # environment. Adding --no-build-isolation makes pip reuse the already-installed
+      # setuptools and wheel from the outer environment, avoiding the auth cascade.
+      $pipUtilsPath = python -c "import py2docfx.convert_prepare.pip_utils as m; print(m.__file__)"
+      Write-Host "Patching py2docfx pip_utils.py at: $pipUtilsPath"
+      $content = Get-Content -Raw $pipUtilsPath
+      $original = '        download_param.append("--no-binary=:all:")'
+      $patched = @"
+        download_param.append("--no-binary=:all:")
+        download_param.append("--no-build-isolation")
+      "@
+      if ($content.Contains($original)) {
+        $content = $content.Replace($original, $patched)
+        Set-Content -Path $pipUtilsPath -Value $content -NoNewline
+        Write-Host "Successfully patched py2docfx to add --no-build-isolation"
+      } else {
+        Write-Host "##vso[task.logissue type=warning]Could not find expected pattern in pip_utils.py to patch. py2docfx may have been updated."
+      }
+
       Write-Host "Testing the install. Running python -m py2docfx -h to display the help"
       python -m py2docfx -h
     displayName: Install py2docfx for package validation
