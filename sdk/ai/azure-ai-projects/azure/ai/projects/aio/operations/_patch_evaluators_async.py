@@ -278,7 +278,9 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         )
 
         async with container_client:
-            await self._upload_folder_to_blob(container_client, folder, file_pattern, folder_exclusions_pattern, **kwargs)
+            await self._upload_folder_to_blob(
+                container_client, folder, file_pattern, folder_exclusions_pattern, **kwargs
+            )
             self._set_blob_uri(evaluator_version, blob_uri)
 
             result = await self.create_version(
