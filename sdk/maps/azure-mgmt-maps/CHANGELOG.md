@@ -2,7 +2,34 @@
 
 ## 2.2.0b1 (2026-04-03)
 
-skip changelog generation
+### Features Added
+
+  - Client `AzureMapsManagementClient` added method `send_request`
+  - Model `CreatorUpdateParameters` added property `properties`
+  - Model `MapsAccountUpdateParameters` added property `properties`
+  - Added model `ProxyResource`
+  - Model `OperationResultOperations` added method `begin_get`
+
+### Breaking Changes
+
+  - Model `CreatorUpdateParameters` deleted or renamed its instance variable `provisioning_state`
+  - Model `CreatorUpdateParameters` deleted or renamed its instance variable `storage_units`
+  - Model `CreatorUpdateParameters` deleted or renamed its instance variable `total_storage_unit_size_in_bytes`
+  - Model `CreatorUpdateParameters` deleted or renamed its instance variable `consumed_storage_unit_size_in_bytes`
+  - Model `MapsAccountUpdateParameters` deleted or renamed its instance variable `unique_id`
+  - Model `MapsAccountUpdateParameters` deleted or renamed its instance variable `disable_local_auth`
+  - Model `MapsAccountUpdateParameters` deleted or renamed its instance variable `provisioning_state`
+  - Model `MapsAccountUpdateParameters` deleted or renamed its instance variable `linked_resources`
+  - Model `MapsAccountUpdateParameters` deleted or renamed its instance variable `cors`
+  - Model `MapsAccountUpdateParameters` deleted or renamed its instance variable `encryption`
+  - Model `MapsAccountUpdateParameters` deleted or renamed its instance variable `locations`
+  - Model `MapsAccountUpdateParameters` deleted or renamed its instance variable `private_endpoint_connections`
+  - Model `MapsAccountUpdateParameters` deleted or renamed its instance variable `public_network_access`
+  - Deleted or renamed model `CreatorList`
+  - Deleted or renamed model `MapsAccounts`
+  - Deleted or renamed model `PrivateEndpointConnectionList`
+  - Deleted or renamed model `PrivateLinkResourceList`
+  - Deleted or renamed method `OperationResultOperations.get`
 
 ## 2.1.0 (2023-09-11)
 
