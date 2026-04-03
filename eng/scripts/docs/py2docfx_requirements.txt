@@ -1,1 +1,3 @@
 py2docfx==0.1.24
+setuptools==77.0.3
+wheel==0.45.1
