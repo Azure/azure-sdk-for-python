@@ -56,9 +56,8 @@ from azure.ai.projects.models import (
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME")
-azure_openai_endpoint = os.environ["AZURE_OPENAI_ENDPOINT"]
-azure_openai_api_key = os.environ["AZURE_OPENAI_API_KEY"]
+openai_api_key = os.environ["OPENAI_API_KEY"]
+openai_model = os.environ.get("OPENAI_MODEL", "gpt-4.1")
 
 # The folder containing the FriendlyEvaluator code, including common_util/ subfolder
 local_upload_folder = str(Path(__file__).parent / "custom_evaluators" / "friendly_evaluator")
@@ -96,7 +95,7 @@ with (
                     },
                     "model": {
                         "type": "string",
-                        "description": "Model name to use for evaluation (e.g. gpt-4o)",
+                        "description": "Model name to use for evaluation (e.g. gpt-4.1)",
                     },
                     "threshold": {"type": "number"},
                 },
@@ -156,7 +155,8 @@ with (
             "name": evaluator_name,
             "evaluator_name": evaluator_name,
             "initialization_parameters": {
-                 "deployment_name": f"{model_deployment_name}",  # service converts deployment_name to api_key/model for the evaluator
+                 "api_key": openai_api_key,
+                 "model": openai_model,
                  "threshold": 3,
             },
         }
