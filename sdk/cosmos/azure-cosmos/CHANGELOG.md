@@ -7,10 +7,11 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed bug where container-focused requests using name-based addressing did not consistently populate the `x-ms-cosmos-intended-collection-rid` header. See [PR 44080](https://github.com/Azure/azure-sdk-for-python/pull/44080)
 
 #### Other Changes
 * Enhanced telemetry logging to include cosmos specific attributes and added a sample on how to use head sampling to reduce telemetry volume. See [PR 45343](https://github.com/Azure/azure-sdk-for-python/pull/45343)
-
+* Updated partition key range routing map refresh to use change-feed-based refresh flow instead of feed-range reads, improving internal refresh behavior for split/stale routing scenarios. See [PR 44080](https://github.com/Azure/azure-sdk-for-python/pull/44080)
 
 ### 4.16.0b1 (2026-03-21)
 

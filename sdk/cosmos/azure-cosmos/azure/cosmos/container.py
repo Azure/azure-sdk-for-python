@@ -24,7 +24,7 @@ import threading
 import warnings
 from concurrent.futures.thread import ThreadPoolExecutor
 from datetime import datetime
-from typing import Any, Callable, cast, Iterable, Mapping, Optional, overload, Sequence, Tuple, Union
+from typing import Any, Callable, cast, Iterable, Mapping, Optional, overload, Sequence, Tuple, Union, Dict
 from typing_extensions import Literal
 
 from azure.core import MatchConditions
@@ -302,7 +302,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
         return self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
     @distributed_trace
@@ -372,6 +372,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         kwargs['max_concurrency'] = max_concurrency
         query_options = build_options(kwargs)
         self._get_properties_with_options(query_options)
+        query_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
         query_options["enableCrossPartitionQuery"] = True
         query_options[Constants.TimeoutScope] = TimeoutScope.OPERATION
 
@@ -457,7 +458,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             response_hook.clear()
 
         self._get_properties_with_options(feed_options)
-        feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         items = self.client_connection.ReadItems(
             collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs)
@@ -728,7 +729,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             change_feed_state_context["continuation"] = feed_options.pop("continuation")
 
         feed_options["changeFeedStateContext"] = change_feed_state_context
-        feed_options["containerRID"] = container_properties["_rid"]
+        feed_options[Constants.ContainerRID] = container_properties["_rid"]
 
         # populate availability_strategy
         if (Constants.Kwargs.AVAILABILITY_STRATEGY in feed_options
@@ -1071,7 +1072,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 _validate_request_hedging_strategy(feed_options.pop(Constants.Kwargs.AVAILABILITY_STRATEGY))
 
         feed_options["correlatedActivityId"] = GenerateGuidId()
-        feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         # Set query with 'query' and 'parameters' from kwargs
         query_str = kwargs.pop("query", None)
@@ -1256,7 +1257,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["populateQueryMetrics"] = populate_query_metrics
 
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
         result = self.client_connection.ReplaceItem(
             document_link=item_link,
             new_document=body,
@@ -1357,7 +1358,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.UpsertItem(
                 database_or_container_link=self.container_link,
@@ -1472,7 +1473,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if indexing_directive is not None:
             request_options["indexingDirective"] = indexing_directive
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
         result = self.client_connection.CreateItem(
                 database_or_container_link=self.container_link, document=body, options=request_options, **kwargs)
         return result
@@ -1576,7 +1577,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["filterPredicate"] = filter_predicate
 
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
         item_link = self._get_document_link(item)
         result = self.client_connection.PatchItem(
             document_link=item_link,
@@ -1669,7 +1670,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options["partitionKey"] = self._set_partition_key(partition_key)
         request_options["disableAutomaticIdGeneration"] = True
         container_properties = self._get_properties_with_options(request_options)
-        request_options["containerRID"] = container_properties["_rid"]
+        request_options[Constants.ContainerRID] = container_properties["_rid"]
         return self.client_connection.Batch(
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
 
@@ -1765,7 +1766,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
         document_link = self._get_document_link(item)
         self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
 
@@ -1811,7 +1812,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        options = {"containerRID": properties["_rid"]}
+        options: Dict[str, Any] = {Constants.ContainerRID: properties["_rid"]}
+
         throughput_properties = list(self.client_connection.QueryOffers(query_spec, options, **kwargs))
 
         if response_hook:
@@ -1848,7 +1850,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        options = {"containerRID": properties["_rid"]}
+        options: Dict[str, Any] = {Constants.ContainerRID: properties["_rid"]}
         throughput_properties = list(self.client_connection.QueryOffers(query_spec, options, **kwargs))
         new_throughput_properties = throughput_properties[0].copy()
         _replace_throughput(throughput=throughput, new_throughput_properties=new_throughput_properties)
@@ -1877,8 +1879,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        self._get_properties_with_options(feed_options)
+        feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.ReadConflicts(
             collection_link=self.container_link, feed_options=feed_options, **kwargs
@@ -1925,8 +1927,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
         if partition_key is not None:
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
-        if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        self._get_properties_with_options(feed_options)
+        feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.QueryConflicts(
             collection_link=self.container_link,
@@ -1962,8 +1964,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
-        if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        self._get_properties_with_options(request_options)
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         return self.client_connection.ReadConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
@@ -1995,8 +1997,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
-        if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        self._get_properties_with_options(request_options)
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         self.client_connection.DeleteConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
@@ -2064,7 +2066,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         # regardless if partition key is valid we set it as invalid partition keys are set to a default empty value
         request_options["partitionKey"] = self._set_partition_key(partition_key)
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         self.client_connection.DeleteAllItemsByPartitionKey(
             collection_link=self.container_link, options=request_options, **kwargs)
@@ -2092,11 +2094,16 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if force_refresh is True:
             self.client_connection.refresh_routing_map_provider()
 
+        # Ensure container properties cache is populated so we can get the container RID.
+        self._get_properties_with_options()
+        feed_options = {Constants.ContainerRID: self.__get_client_container_caches()[self.container_link]["_rid"]}
+
         def get_next(continuation_token:str) -> list[dict[str, Any]]: # pylint: disable=unused-argument
             partition_key_ranges = \
                 self.client_connection._routing_map_provider.get_overlapping_ranges( # pylint: disable=protected-access
                     self.container_link,
                     [Range("", "FF", True, False)],  # default to full range
+                    feed_options,
                     **kwargs)
 
             feed_ranges = [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()
