@@ -3062,7 +3062,218 @@
           "properties": "Optional"
         }
       },
-      "CustomerManagedKeyEncryption": {
+      "Encryption": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": [
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "infrastructure_encryption": {
+                    "type": "Optional[Union[str, _models.InfrastructureEncryption]]",
+                    "default": null,
+                    "param_type": "keyword_only"
+                  },
+                  "customer_managed_key_encryption": {
+                    "type": "Optional[_models.EncryptionCustomerManagedKeyEncryption]",
+                    "default": null,
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": null
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "mapping": {
+                    "type": "Mapping[str, Any]",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  }
+                },
+                "is_async": false,
+                "return_type": null
+              }
+            ]
+          },
+          "as_dict": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "exclude_readonly": {
+                "default": "bool",
+                "param_type": "keyword_only"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          },
+          "clear": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          },
+          "copy": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          },
+          "get": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "default": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          },
+          "items": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          },
+          "keys": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          },
+          "pop": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "default": {
+                "default": "object",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          },
+          "popitem": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          },
+          "setdefault": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "default": {
+                "default": "object",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          },
+          "update": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          },
+          "values": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "overloads": []
+          }
+        },
+        "properties": {
+          "infrastructure_encryption": "Optional",
+          "customer_managed_key_encryption": "Optional"
+        }
+      },
+      "EncryptionCustomerManagedKeyEncryption": {
         "type": null,
         "methods": {
           "__init__": {
@@ -3090,7 +3301,7 @@
                     "param_type": "positional_or_keyword"
                   },
                   "key_encryption_key_identity": {
-                    "type": "Optional[_models.CustomerManagedKeyEncryptionKeyIdentity]",
+                    "type": "Optional[_models.EncryptionCustomerManagedKeyEncryptionKeyIdentity]",
                     "default": null,
                     "param_type": "keyword_only"
                   },
@@ -3273,7 +3484,7 @@
           "key_encryption_key_url": "Optional"
         }
       },
-      "CustomerManagedKeyEncryptionKeyIdentity": {
+      "EncryptionCustomerManagedKeyEncryptionKeyIdentity": {
         "type": null,
         "methods": {
           "__init__": {
@@ -3301,7 +3512,7 @@
                     "param_type": "positional_or_keyword"
                   },
                   "identity_type": {
-                    "type": "Optional[Union[str, _models.IdentityType]]",
+                    "type": "Optional[Union[str, _models.EncryptionCustomerManagedKeyEncryptionKeyIdentityType]]",
                     "default": null,
                     "param_type": "keyword_only"
                   },
@@ -3496,215 +3707,60 @@
           "delegated_identity_client_id": "Optional"
         }
       },
-      "Encryption": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": [
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "infrastructure_encryption": {
-                    "type": "Optional[Union[str, _models.InfrastructureEncryption]]",
-                    "default": null,
-                    "param_type": "keyword_only"
-                  },
-                  "customer_managed_key_encryption": {
-                    "type": "Optional[_models.CustomerManagedKeyEncryption]",
-                    "default": null,
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": null
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "mapping": {
-                    "type": "Mapping[str, Any]",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  }
-                },
-                "is_async": false,
-                "return_type": null
-              }
-            ]
-          },
-          "as_dict": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "exclude_readonly": {
-                "default": "bool",
-                "param_type": "keyword_only"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "clear": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "copy": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "get": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "key": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "default": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "items": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "keys": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "pop": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "key": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "default": {
-                "default": "object",
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "popitem": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "setdefault": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "key": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "default": {
-                "default": "object",
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "update": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          },
-          "values": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "overloads": []
-          }
-        },
+      "EncryptionCustomerManagedKeyEncryptionKeyIdentityType": {
+        "type": "Enum",
+        "methods": {},
         "properties": {
-          "infrastructure_encryption": "Optional",
-          "customer_managed_key_encryption": "Optional"
+          "DELEGATED_RESOURCE_IDENTITY": "DELEGATED_RESOURCE_IDENTITY",
+          "SYSTEM_ASSIGNED_IDENTITY": "SYSTEM_ASSIGNED_IDENTITY",
+          "USER_ASSIGNED_IDENTITY": "USER_ASSIGNED_IDENTITY",
+          "capitalize": "capitalize",
+          "casefold": "casefold",
+          "center": "center",
+          "count": "count",
+          "encode": "encode",
+          "endswith": "endswith",
+          "expandtabs": "expandtabs",
+          "find": "find",
+          "format": "format",
+          "format_map": "format_map",
+          "index": "index",
+          "isalnum": "isalnum",
+          "isalpha": "isalpha",
+          "isascii": "isascii",
+          "isdecimal": "isdecimal",
+          "isdigit": "isdigit",
+          "isidentifier": "isidentifier",
+          "islower": "islower",
+          "isnumeric": "isnumeric",
+          "isprintable": "isprintable",
+          "isspace": "isspace",
+          "istitle": "istitle",
+          "isupper": "isupper",
+          "join": "join",
+          "ljust": "ljust",
+          "lower": "lower",
+          "lstrip": "lstrip",
+          "maketrans": "maketrans",
+          "partition": "partition",
+          "removeprefix": "removeprefix",
+          "removesuffix": "removesuffix",
+          "replace": "replace",
+          "rfind": "rfind",
+          "rindex": "rindex",
+          "rjust": "rjust",
+          "rpartition": "rpartition",
+          "rsplit": "rsplit",
+          "rstrip": "rstrip",
+          "split": "split",
+          "splitlines": "splitlines",
+          "startswith": "startswith",
+          "strip": "strip",
+          "swapcase": "swapcase",
+          "title": "title",
+          "translate": "translate",
+          "upper": "upper",
+          "zfill": "zfill"
         }
       },
       "ErrorAdditionalInfo": {
@@ -4259,62 +4315,6 @@
         },
         "properties": {
           "error": "Optional"
-        }
-      },
-      "IdentityType": {
-        "type": "Enum",
-        "methods": {},
-        "properties": {
-          "DELEGATED_RESOURCE_IDENTITY": "DELEGATED_RESOURCE_IDENTITY",
-          "SYSTEM_ASSIGNED_IDENTITY": "SYSTEM_ASSIGNED_IDENTITY",
-          "USER_ASSIGNED_IDENTITY": "USER_ASSIGNED_IDENTITY",
-          "capitalize": "capitalize",
-          "casefold": "casefold",
-          "center": "center",
-          "count": "count",
-          "encode": "encode",
-          "endswith": "endswith",
-          "expandtabs": "expandtabs",
-          "find": "find",
-          "format": "format",
-          "format_map": "format_map",
-          "index": "index",
-          "isalnum": "isalnum",
-          "isalpha": "isalpha",
-          "isascii": "isascii",
-          "isdecimal": "isdecimal",
-          "isdigit": "isdigit",
-          "isidentifier": "isidentifier",
-          "islower": "islower",
-          "isnumeric": "isnumeric",
-          "isprintable": "isprintable",
-          "isspace": "isspace",
-          "istitle": "istitle",
-          "isupper": "isupper",
-          "join": "join",
-          "ljust": "ljust",
-          "lower": "lower",
-          "lstrip": "lstrip",
-          "maketrans": "maketrans",
-          "partition": "partition",
-          "removeprefix": "removeprefix",
-          "removesuffix": "removesuffix",
-          "replace": "replace",
-          "rfind": "rfind",
-          "rindex": "rindex",
-          "rjust": "rjust",
-          "rpartition": "rpartition",
-          "rsplit": "rsplit",
-          "rstrip": "rstrip",
-          "split": "split",
-          "splitlines": "splitlines",
-          "startswith": "startswith",
-          "strip": "strip",
-          "swapcase": "swapcase",
-          "title": "title",
-          "translate": "translate",
-          "upper": "upper",
-          "zfill": "zfill"
         }
       },
       "InfrastructureEncryption": {

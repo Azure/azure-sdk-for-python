@@ -398,13 +398,55 @@ class CreatorUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class CustomerManagedKeyEncryption(_Model):
+class Encryption(_Model):
+    """(Optional) Discouraged to include in resource definition. Only needed where it is possible to
+    disable platform (AKA infrastructure) encryption. Azure SQL TDE is an example of this. Values
+    are enabled and disabled.
+
+    :ivar infrastructure_encryption: Values are enabled and disabled. Known values are: "enabled"
+     and "disabled".
+    :vartype infrastructure_encryption: str or ~azure.mgmt.maps.models.InfrastructureEncryption
+    :ivar customer_managed_key_encryption: All Customer-managed key encryption properties for the
+     resource.
+    :vartype customer_managed_key_encryption:
+     ~azure.mgmt.maps.models.EncryptionCustomerManagedKeyEncryption
+    """
+
+    infrastructure_encryption: Optional[Union[str, "_models.InfrastructureEncryption"]] = rest_field(
+        name="infrastructureEncryption", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Values are enabled and disabled. Known values are: \"enabled\" and \"disabled\"."""
+    customer_managed_key_encryption: Optional["_models.EncryptionCustomerManagedKeyEncryption"] = rest_field(
+        name="customerManagedKeyEncryption", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """All Customer-managed key encryption properties for the resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        infrastructure_encryption: Optional[Union[str, "_models.InfrastructureEncryption"]] = None,
+        customer_managed_key_encryption: Optional["_models.EncryptionCustomerManagedKeyEncryption"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EncryptionCustomerManagedKeyEncryption(_Model):
     """Customer-managed key encryption properties for the resource.
 
     :ivar key_encryption_key_identity: All identity configuration for Customer-managed key settings
      defining which identity should be used to auth to Key Vault.
     :vartype key_encryption_key_identity:
-     ~azure.mgmt.maps.models.CustomerManagedKeyEncryptionKeyIdentity
+     ~azure.mgmt.maps.models.EncryptionCustomerManagedKeyEncryptionKeyIdentity
     :ivar key_encryption_key_url: key encryption key Url, versioned or non-versioned. Ex:
      `https://contosovault.vault.azure.net/keys/contosokek/562a4bb76b524a1493a6afe8e536ee78
      <https://contosovault.vault.azure.net/keys/contosokek/562a4bb76b524a1493a6afe8e536ee78>`_ or
@@ -413,7 +455,7 @@ class CustomerManagedKeyEncryption(_Model):
     :vartype key_encryption_key_url: str
     """
 
-    key_encryption_key_identity: Optional["_models.CustomerManagedKeyEncryptionKeyIdentity"] = rest_field(
+    key_encryption_key_identity: Optional["_models.EncryptionCustomerManagedKeyEncryptionKeyIdentity"] = rest_field(
         name="keyEncryptionKeyIdentity", visibility=["read", "create", "update", "delete", "query"]
     )
     """All identity configuration for Customer-managed key settings defining which identity should be
@@ -431,7 +473,7 @@ class CustomerManagedKeyEncryption(_Model):
     def __init__(
         self,
         *,
-        key_encryption_key_identity: Optional["_models.CustomerManagedKeyEncryptionKeyIdentity"] = None,
+        key_encryption_key_identity: Optional["_models.EncryptionCustomerManagedKeyEncryptionKeyIdentity"] = None,
         key_encryption_key_url: Optional[str] = None,
     ) -> None: ...
 
@@ -446,14 +488,15 @@ class CustomerManagedKeyEncryption(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomerManagedKeyEncryptionKeyIdentity(_Model):
+class EncryptionCustomerManagedKeyEncryptionKeyIdentity(_Model):  # pylint: disable=name-too-long
     """All identity configuration for Customer-managed key settings defining which identity should be
     used to auth to Key Vault.
 
     :ivar identity_type: The type of identity to use. Values can be systemAssignedIdentity,
      userAssignedIdentity, or delegatedResourceIdentity. Known values are: "systemAssignedIdentity",
      "userAssignedIdentity", and "delegatedResourceIdentity".
-    :vartype identity_type: str or ~azure.mgmt.maps.models.IdentityType
+    :vartype identity_type: str or
+     ~azure.mgmt.maps.models.EncryptionCustomerManagedKeyEncryptionKeyIdentityType
     :ivar user_assigned_identity_resource_id: User assigned identity to use for accessing key
      encryption key Url. Ex:
      /subscriptions/fa5fc227-a624-475e-b696-cdd604c735bc/resourceGroups/<resource
@@ -470,7 +513,7 @@ class CustomerManagedKeyEncryptionKeyIdentity(_Model):
     :vartype delegated_identity_client_id: str
     """
 
-    identity_type: Optional[Union[str, "_models.IdentityType"]] = rest_field(
+    identity_type: Optional[Union[str, "_models.EncryptionCustomerManagedKeyEncryptionKeyIdentityType"]] = rest_field(
         name="identityType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The type of identity to use. Values can be systemAssignedIdentity, userAssignedIdentity, or
@@ -500,51 +543,10 @@ class CustomerManagedKeyEncryptionKeyIdentity(_Model):
     def __init__(
         self,
         *,
-        identity_type: Optional[Union[str, "_models.IdentityType"]] = None,
+        identity_type: Optional[Union[str, "_models.EncryptionCustomerManagedKeyEncryptionKeyIdentityType"]] = None,
         user_assigned_identity_resource_id: Optional[str] = None,
         federated_client_id: Optional[str] = None,
         delegated_identity_client_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class Encryption(_Model):
-    """(Optional) Discouraged to include in resource definition. Only needed where it is possible to
-    disable platform (AKA infrastructure) encryption. Azure SQL TDE is an example of this. Values
-    are enabled and disabled.
-
-    :ivar infrastructure_encryption: Values are enabled and disabled. Known values are: "enabled"
-     and "disabled".
-    :vartype infrastructure_encryption: str or ~azure.mgmt.maps.models.InfrastructureEncryption
-    :ivar customer_managed_key_encryption: All Customer-managed key encryption properties for the
-     resource.
-    :vartype customer_managed_key_encryption: ~azure.mgmt.maps.models.CustomerManagedKeyEncryption
-    """
-
-    infrastructure_encryption: Optional[Union[str, "_models.InfrastructureEncryption"]] = rest_field(
-        name="infrastructureEncryption", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Values are enabled and disabled. Known values are: \"enabled\" and \"disabled\"."""
-    customer_managed_key_encryption: Optional["_models.CustomerManagedKeyEncryption"] = rest_field(
-        name="customerManagedKeyEncryption", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """All Customer-managed key encryption properties for the resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        infrastructure_encryption: Optional[Union[str, "_models.InfrastructureEncryption"]] = None,
-        customer_managed_key_encryption: Optional["_models.CustomerManagedKeyEncryption"] = None,
     ) -> None: ...
 
     @overload

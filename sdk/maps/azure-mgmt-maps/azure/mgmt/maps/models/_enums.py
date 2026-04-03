@@ -32,7 +32,9 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a key."""
 
 
-class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class EncryptionCustomerManagedKeyEncryptionKeyIdentityType(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The type of identity to use."""
 
     SYSTEM_ASSIGNED_IDENTITY = "systemAssignedIdentity"
