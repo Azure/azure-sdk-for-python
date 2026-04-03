@@ -1041,7 +1041,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_client = await self._create_file_and_return_client()
 
-        with pytest.raises(ResourceModifiedError):
+        with pytest.raises(ResourceExistsError):
             await file_client.set_access_control(permissions='0777', match_condition=MatchConditions.IfMissing)
 
     @DataLakePreparer()
