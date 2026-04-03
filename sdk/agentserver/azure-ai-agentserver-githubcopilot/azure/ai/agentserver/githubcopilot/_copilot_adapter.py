@@ -41,6 +41,57 @@ from ._tool_acl import ToolAcl
 
 logger = logging.getLogger("azure.ai.agentserver.githubcopilot")
 
+
+def _extract_input_with_attachments(request) -> str:
+    """Extract text from a RAPI request, including any file/image attachments.
+
+    ``get_input_text`` only returns the text portion of the request input.
+    This helper also checks for ``input_file`` and ``input_image`` items and
+    appends their content to the prompt so the Copilot SDK (which only accepts
+    a string prompt) can still reason about attachments.
+    """
+    text = get_input_text(request)
+
+    # Check for attachment items in the request input
+    input_items = getattr(request, "input", None)
+    if not isinstance(input_items, list):
+        return text
+
+    attachment_parts = []
+    for item in input_items:
+        item_type = None
+        if isinstance(item, dict):
+            item_type = item.get("type")
+        else:
+            item_type = getattr(item, "type", None)
+
+        if item_type == "input_file":
+            filename = (item.get("filename") if isinstance(item, dict) else getattr(item, "filename", None)) or "file"
+            file_data = (item.get("file_data") if isinstance(item, dict) else getattr(item, "file_data", None)) or ""
+            if file_data:
+                # base64 content — decode if possible, otherwise include raw
+                import base64
+                try:
+                    decoded = base64.b64decode(file_data).decode("utf-8", errors="replace")
+                    attachment_parts.append(f"\n[Attached file: {filename}]\n{decoded}")
+                except Exception:
+                    attachment_parts.append(f"\n[Attached file: {filename} (binary, {len(file_data)} chars base64)]")
+
+        elif item_type == "input_image":
+            image_url = (item.get("image_url") if isinstance(item, dict) else getattr(item, "image_url", None)) or ""
+            if isinstance(image_url, dict):
+                image_url = image_url.get("url", "")
+            elif hasattr(image_url, "url"):
+                image_url = image_url.url
+            if image_url:
+                attachment_parts.append(f"\n[Attached image: {image_url[:200]}]")
+
+    if attachment_parts:
+        logger.info("Extracted %d attachment(s) from request input", len(attachment_parts))
+        return text + "".join(attachment_parts)
+
+    return text
+
 _COGNITIVE_SERVICES_SCOPE = "https://cognitiveservices.azure.com/.default"
 
 
@@ -262,15 +313,16 @@ class CopilotAdapter:
         client = await self._ensure_client()
         config = self._refresh_token_if_needed()
 
-        # Filter out internal flags (starting with _) before passing to SDK
+        # Filter out internal flags (starting with _) before passing to SDK.
+        # skill_directories and tools are already in _session_config when
+        # GitHubCopilotAdapter discovers them, so they flow through here
+        # automatically — no need to pass them as separate kwargs.
         sdk_config = {k: v for k, v in config.items() if not k.startswith("_")}
 
         session = await client.create_session(
             **sdk_config,
             on_permission_request=self._make_permission_handler(),
             streaming=True,
-            skill_directories=self._session_config.get("skill_directories"),
-            tools=self._session_config.get("tools"),
         )
 
         if conversation_id:
@@ -309,7 +361,7 @@ class CopilotAdapter:
 
     async def _handle_create(self, request, context, cancellation_signal):
         """Handle POST /responses — bridge Copilot SDK events to RAPI stream."""
-        input_text = get_input_text(request)
+        input_text = _extract_input_with_attachments(request)
         conversation_id = getattr(context, "conversation_id", None)
         response_id = getattr(context, "response_id", None) or "unknown"
 
@@ -353,6 +405,11 @@ class CopilotAdapter:
             usage = None
 
             while True:
+                # Check if the client disconnected
+                if cancellation_signal is not None and cancellation_signal.is_set():
+                    logger.info("Client disconnected — ending response early")
+                    break
+
                 try:
                     event = await asyncio.wait_for(queue.get(), timeout=idle_timeout)
                 except asyncio.TimeoutError:
@@ -610,44 +667,47 @@ class GitHubCopilotAdapter(CopilotAdapter):
             from openai import AsyncOpenAI
 
             cred = AsyncDefaultCredential()
-            token_provider = get_bearer_token_provider(cred, "https://ai.azure.com/.default")
-            token = await token_provider()
-            openai_client = AsyncOpenAI(
-                base_url=f"{project_endpoint}/openai",
-                api_key=token,
-                default_query={"api-version": "2025-11-15-preview"},
-            )
+            try:
+                token_provider = get_bearer_token_provider(cred, "https://ai.azure.com/.default")
+                token = await token_provider()
+                openai_client = AsyncOpenAI(
+                    base_url=f"{project_endpoint}/openai",
+                    api_key=token,
+                    default_query={"api-version": "2025-11-15-preview"},
+                )
 
-            items = []
-            async for item in openai_client.conversations.items.list(conversation_id):
-                items.append(item)
-            items.reverse()  # API returns reverse chronological
+                items = []
+                async for item in openai_client.conversations.items.list(conversation_id):
+                    items.append(item)
+                items.reverse()  # API returns reverse chronological
 
-            if not items:
-                return None
+                if not items:
+                    return None
 
-            lines = []
-            for item in items:
-                role = getattr(item, "role", None)
-                content = getattr(item, "content", None)
-                if isinstance(content, str):
-                    text = content
-                elif isinstance(content, list):
-                    text_parts = []
-                    for part in content:
-                        if isinstance(part, dict):
-                            text_parts.append(part.get("text", ""))
-                        elif hasattr(part, "text"):
-                            text_parts.append(part.text)
-                    text = " ".join(p for p in text_parts if p)
-                else:
-                    continue
-                if not text:
-                    continue
-                label = "User" if role == "user" else "Assistant"
-                lines.append(f"{label}: {text}")
+                lines = []
+                for item in items:
+                    role = getattr(item, "role", None)
+                    content = getattr(item, "content", None)
+                    if isinstance(content, str):
+                        text = content
+                    elif isinstance(content, list):
+                        text_parts = []
+                        for part in content:
+                            if isinstance(part, dict):
+                                text_parts.append(part.get("text", ""))
+                            elif hasattr(part, "text"):
+                                text_parts.append(part.text)
+                        text = " ".join(p for p in text_parts if p)
+                    else:
+                        continue
+                    if not text:
+                        continue
+                    label = "User" if role == "user" else "Assistant"
+                    lines.append(f"{label}: {text}")
 
-            return "\n".join(lines) if lines else None
+                return "\n".join(lines) if lines else None
+            finally:
+                await cred.close()
         except Exception:
             logger.warning("Failed to load conversation history for %s", conversation_id, exc_info=True)
             return None
@@ -665,8 +725,6 @@ class GitHubCopilotAdapter(CopilotAdapter):
                     **sdk_config,
                     on_permission_request=self._make_permission_handler(),
                     streaming=True,
-                    skill_directories=self._session_config.get("skill_directories"),
-                    tools=self._session_config.get("tools"),
                 )
                 preamble = (
                     "The following is the prior conversation history. "
