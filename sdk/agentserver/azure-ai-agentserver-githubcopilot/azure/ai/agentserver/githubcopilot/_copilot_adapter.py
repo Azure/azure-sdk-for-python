@@ -297,12 +297,15 @@ class CopilotAdapter:
             ),
         )
 
-        # Register the create handler — captures self for adapter state
+        # Register the create handler — captures self for adapter state.
+        # The handler must be an async generator (yields events), not a function
+        # that returns one. We use `async for` to delegate to _handle_create.
         adapter = self
 
         @self._responses.create_handler
         async def handle_create(request, context, cancellation_signal):
-            return adapter._handle_create(request, context, cancellation_signal)
+            async for event in adapter._handle_create(request, context, cancellation_signal):
+                yield event
 
     async def _handle_create(self, request, context, cancellation_signal):
         """Handle POST /responses — bridge Copilot SDK events to RAPI stream."""
