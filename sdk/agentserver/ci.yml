@@ -45,5 +45,5 @@ extends:
       safeName: azureaiagentservercore
     - name: azure-ai-agentserver-agentframework
       safeName: azureaiagentserveragentframework
-    - name: azure-ai-agentserver-github
-      safeName: azureaiagentservergithub
+    - name: azure-ai-agentserver-githubcopilot
+      safeName: azureaiagentservergithubcopilot
