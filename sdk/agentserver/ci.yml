@@ -29,6 +29,7 @@ extends:
   template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: agentserver
+    BuildTargetingString: "azure-ai-agentserver-[cgri]*"
     TestProxy: true
     BuildDocs: true
     TestTimeoutInMinutes: 60
@@ -43,7 +44,5 @@ extends:
     Artifacts:
     - name: azure-ai-agentserver-core
       safeName: azureaiagentservercore
-    - name: azure-ai-agentserver-agentframework
-      safeName: azureaiagentserveragentframework
     - name: azure-ai-agentserver-githubcopilot
       safeName: azureaiagentservergithubcopilot
