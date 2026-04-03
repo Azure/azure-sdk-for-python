@@ -280,6 +280,7 @@
 
 # PRLabel: %Hosted Agents
 /sdk/agentserver/    @JC-386 @lusu-msft
+# PRLabel: %Hosted Agents
 /sdk/agentserver/azure-ai-agentserver-githubcopilot/    @jodeklotzms @pradeepkintali @tendau @ganeshyb @code-vicar
 
 # ServiceLabel: %Hosted Agents
