@@ -620,7 +620,7 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_type, "EventData")
         self.assertEqual(envelope.data.base_data.name, "event_name")
         self.assertEqual(envelope.data.base_data.properties["event_key"], "event_attribute")
-        self.assertEqual(self._log_data_custom_event.instrumentation_scope.name, "custom-event-logger")
+        self.assertEqual(envelope.data.base_data.properties.get("logger_name"), "custom-event-logger")
 
     def test_log_to_envelope_timestamp(self):
         exporter = self._exporter
