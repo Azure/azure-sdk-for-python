@@ -563,14 +563,18 @@ class _WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMix
             roles = kwargs.pop("roles", None)
             minutes_to_expire = kwargs.pop("minutes_to_expire", None)
             groups = kwargs.pop("groups", None)
-            token = super().generate_client_token(
-                user_id=user_id,
-                role=roles,
-                minutes_to_expire=minutes_to_expire,
-                group=groups,
-                client_type=client_protocol,
-                **kwargs
-            ).get("token")
+            token = (
+                super()
+                .generate_client_token(
+                    user_id=user_id,
+                    role=roles,
+                    minutes_to_expire=minutes_to_expire,
+                    group=groups,
+                    client_type=client_protocol,
+                    **kwargs
+                )
+                .get("token")
+            )
         return {
             "baseUrl": client_url,
             "token": token,
@@ -1274,15 +1278,9 @@ class _WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMix
         if cls:
             return cls(pipeline_response, None, {})
 
-
     @distributed_trace
     def has_permission(
-        self,
-        permission: str,
-        connection_id: str,
-        *,
-        target_name: Optional[str] = None,
-        **kwargs: Any
+        self, permission: str, connection_id: str, *, target_name: Optional[str] = None, **kwargs: Any
     ) -> bool:
         """Check if a connection has permission to the specified action.
 
@@ -1302,10 +1300,7 @@ class _WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMix
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return super().check_permission(
-            permission=permission,
-            connection_id=connection_id,
-            target_name=target_name,
-            **kwargs
+            permission=permission, connection_id=connection_id, target_name=target_name, **kwargs
         )
 
 

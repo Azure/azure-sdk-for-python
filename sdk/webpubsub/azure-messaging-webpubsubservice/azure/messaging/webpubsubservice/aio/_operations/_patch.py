@@ -841,12 +841,7 @@ class _WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMix
 
     @distributed_trace_async
     async def has_permission(
-        self,
-        permission: str,
-        connection_id: str,
-        *,
-        target_name: Optional[str] = None,
-        **kwargs: Any
+        self, permission: str, connection_id: str, *, target_name: Optional[str] = None, **kwargs: Any
     ) -> bool:
         """Check if a connection has permission to the specified action.
 
@@ -866,10 +861,7 @@ class _WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMix
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return await super().check_permission(
-            permission=permission,
-            connection_id=connection_id,
-            target_name=target_name,
-            **kwargs
+            permission=permission, connection_id=connection_id, target_name=target_name, **kwargs
         )
 
 
