@@ -14,6 +14,7 @@ from websockets.sync.client import connect as ws_connect
 from testcase import WebpubsubPowerShellPreparer, WebpubsubTest
 
 
+@pytest.mark.live_test_only
 class TestLiveApiCoverage(WebpubsubTest):
     def _find_connection_id(self, client, group_name, user_id):
         for _ in range(10):
@@ -27,6 +28,9 @@ class TestLiveApiCoverage(WebpubsubTest):
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy
     def test_live_api_coverage_all_apis_and_parameters(self, webpubsub_endpoint, webpubsub_connection_string):
+        if not getattr(self, "is_live", False):
+            pytest.skip("Live WebSocket coverage test is skipped in playback mode")
+
         client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
         aad_client = self.create_client(endpoint=webpubsub_endpoint, hub="hub")
 

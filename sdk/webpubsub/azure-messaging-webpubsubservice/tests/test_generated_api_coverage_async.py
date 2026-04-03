@@ -5,6 +5,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import pytest
+from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils.aio import recorded_by_proxy_async
 from testcase import WebpubsubPowerShellPreparer
 from testcase_async import WebpubsubAsyncTest
@@ -129,6 +130,53 @@ class TestGeneratedApiCoverageAsync(WebpubsubAsyncTest):
     async def test_send_to_user_binary(self, webpubsub_connection_string):
         client = self.create_client(connection_string=webpubsub_connection_string, hub="apicoverage")
         await client.send_to_user(user_id="user1", message=b"hello", content_type="application/octet-stream")
+
+    @WebpubsubPowerShellPreparer()
+    @recorded_by_proxy_async
+    async def test_send_to_connection_with_fake_connection_id(self, webpubsub_connection_string):
+        client = self.create_client(connection_string=webpubsub_connection_string, hub="apicoverage")
+        await client.send_to_connection(
+            connection_id="fake-connection-id",
+            message={"hello": "world"},
+            content_type="application/json",
+        )
+
+    @WebpubsubPowerShellPreparer()
+    @recorded_by_proxy_async
+    async def test_close_connection_with_fake_connection_id(self, webpubsub_connection_string):
+        client = self.create_client(connection_string=webpubsub_connection_string, hub="apicoverage")
+        await client.close_connection(connection_id="fake-connection-id", reason="test")
+
+    @WebpubsubPowerShellPreparer()
+    @recorded_by_proxy_async
+    async def test_add_connection_to_group_not_found(self, webpubsub_connection_string):
+        client = self.create_client(connection_string=webpubsub_connection_string, hub="apicoverage")
+        with pytest.raises(ResourceNotFoundError):
+            await client.add_connection_to_group(group="group1", connection_id="fake-connection-id")
+
+    @WebpubsubPowerShellPreparer()
+    @recorded_by_proxy_async
+    async def test_grant_permission_not_found(self, webpubsub_connection_string):
+        client = self.create_client(connection_string=webpubsub_connection_string, hub="apicoverage")
+        with pytest.raises(ResourceNotFoundError):
+            await client.grant_permission(
+                permission="sendToGroup", connection_id="fake-connection-id", target_name="group1"
+            )
+
+    @WebpubsubPowerShellPreparer()
+    @recorded_by_proxy_async
+    async def test_revoke_permission_with_fake_connection_id(self, webpubsub_connection_string):
+        client = self.create_client(connection_string=webpubsub_connection_string, hub="apicoverage")
+        await client.revoke_permission(
+            permission="sendToGroup", connection_id="fake-connection-id", target_name="group1"
+        )
+
+    @WebpubsubPowerShellPreparer()
+    @recorded_by_proxy_async
+    async def test_add_user_to_group_not_found(self, webpubsub_connection_string):
+        client = self.create_client(connection_string=webpubsub_connection_string, hub="apicoverage")
+        with pytest.raises(ResourceNotFoundError):
+            await client.add_user_to_group(group="group1", user_id="fake-user")
 
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy_async

@@ -15,6 +15,7 @@ from testcase import WebpubsubPowerShellPreparer
 from testcase_async import WebpubsubAsyncTest
 
 
+@pytest.mark.live_test_only
 @pytest.mark.asyncio
 class TestLiveApiCoverageAsync(WebpubsubAsyncTest):
     async def _find_connection_id(self, client, group_name, user_id):
@@ -29,6 +30,9 @@ class TestLiveApiCoverageAsync(WebpubsubAsyncTest):
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_live_api_coverage_all_apis_and_parameters_async(self, webpubsub_endpoint, webpubsub_connection_string):
+        if not getattr(self, "is_live", False):
+            pytest.skip("Live WebSocket coverage test is skipped in playback mode")
+
         client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
         aad_client = self.create_client(endpoint=webpubsub_endpoint, hub="hub")
 
