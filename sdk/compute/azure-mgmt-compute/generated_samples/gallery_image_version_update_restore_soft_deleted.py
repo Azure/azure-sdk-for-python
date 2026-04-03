@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.compute import ComputeClient
+from azure.mgmt.compute import ComputeManagementClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.compute import ComputeClient
 
 
 def main():
-    client = ComputeClient(
+    client = ComputeManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
@@ -36,7 +36,6 @@ def main():
         gallery_image_name="myGalleryImageName",
         gallery_image_version_name="1.0.0",
         gallery_image_version={"properties": {"restore": True, "storageProfile": {}}},
-        api_version="2025-03-03",
     ).result()
     print(response)
 

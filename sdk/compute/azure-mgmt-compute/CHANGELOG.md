@@ -1,9 +1,10 @@
 # Release History
 
-## 38.0.0b1 (2026-04-01)
+## 38.0.0b1 (2026-04-03)
 
 ### Features Added
 
+  - Client `ComputeManagementClient` added method `send_request`
   - Model `AvailabilitySetUpdate` added property `properties`
   - Model `CapacityReservationGroupUpdate` added property `properties`
   - Model `CapacityReservationUpdate` added property `properties`
@@ -43,104 +44,6 @@
   - Added enum `PassNames`
   - Added model `SharedGalleryIdentifier`
   - Model `CapacityReservationsOperations` added parameter `expand` in method `list_by_capacity_reservation_group`
-  - Model `CommunityGalleriesOperations` added parameter `api_version` in method `get`
-  - Model `CommunityGalleryImageVersionsOperations` added parameter `api_version` in method `get`
-  - Model `CommunityGalleryImageVersionsOperations` added parameter `api_version` in method `list`
-  - Model `CommunityGalleryImagesOperations` added parameter `api_version` in method `get`
-  - Model `CommunityGalleryImagesOperations` added parameter `api_version` in method `list`
-  - Model `DiskAccessesOperations` added parameter `api_version` in method `begin_create_or_update`
-  - Model `DiskAccessesOperations` added parameter `api_version` in method `begin_delete`
-  - Model `DiskAccessesOperations` added parameter `api_version` in method `begin_delete_a_private_endpoint_connection`
-  - Model `DiskAccessesOperations` added parameter `api_version` in method `begin_update`
-  - Model `DiskAccessesOperations` added parameter `api_version` in method `begin_update_a_private_endpoint_connection`
-  - Model `DiskAccessesOperations` added parameter `api_version` in method `get`
-  - Model `DiskAccessesOperations` added parameter `api_version` in method `get_a_private_endpoint_connection`
-  - Model `DiskAccessesOperations` added parameter `api_version` in method `get_private_link_resources`
-  - Model `DiskAccessesOperations` added parameter `api_version` in method `list`
-  - Model `DiskAccessesOperations` added parameter `api_version` in method `list_by_resource_group`
-  - Model `DiskAccessesOperations` added parameter `api_version` in method `list_private_endpoint_connections`
-  - Model `DiskEncryptionSetsOperations` added parameter `api_version` in method `begin_create_or_update`
-  - Model `DiskEncryptionSetsOperations` added parameter `api_version` in method `begin_delete`
-  - Model `DiskEncryptionSetsOperations` added parameter `api_version` in method `begin_update`
-  - Model `DiskEncryptionSetsOperations` added parameter `api_version` in method `get`
-  - Model `DiskEncryptionSetsOperations` added parameter `api_version` in method `list`
-  - Model `DiskEncryptionSetsOperations` added parameter `api_version` in method `list_associated_resources`
-  - Model `DiskEncryptionSetsOperations` added parameter `api_version` in method `list_by_resource_group`
-  - Model `DiskRestorePointOperations` added parameter `api_version` in method `begin_grant_access`
-  - Model `DiskRestorePointOperations` added parameter `api_version` in method `begin_revoke_access`
-  - Model `DiskRestorePointOperations` added parameter `api_version` in method `get`
-  - Model `DiskRestorePointOperations` added parameter `api_version` in method `list_by_restore_point`
-  - Model `DisksOperations` added parameter `api_version` in method `begin_create_or_update`
-  - Model `DisksOperations` added parameter `api_version` in method `begin_delete`
-  - Model `DisksOperations` added parameter `api_version` in method `begin_grant_access`
-  - Model `DisksOperations` added parameter `api_version` in method `begin_revoke_access`
-  - Model `DisksOperations` added parameter `api_version` in method `begin_update`
-  - Model `DisksOperations` added parameter `api_version` in method `get`
-  - Model `DisksOperations` added parameter `api_version` in method `list`
-  - Model `DisksOperations` added parameter `api_version` in method `list_by_resource_group`
-  - Model `GalleriesOperations` added parameter `api_version` in method `begin_create_or_update`
-  - Model `GalleriesOperations` added parameter `api_version` in method `begin_delete`
-  - Model `GalleriesOperations` added parameter `api_version` in method `begin_update`
-  - Model `GalleriesOperations` added parameter `api_version` in method `get`
-  - Model `GalleriesOperations` added parameter `api_version` in method `list`
-  - Model `GalleriesOperations` added parameter `api_version` in method `list_by_resource_group`
-  - Model `GalleryApplicationVersionsOperations` added parameter `api_version` in method `begin_create_or_update`
-  - Model `GalleryApplicationVersionsOperations` added parameter `api_version` in method `begin_delete`
-  - Model `GalleryApplicationVersionsOperations` added parameter `api_version` in method `begin_update`
-  - Model `GalleryApplicationVersionsOperations` added parameter `api_version` in method `get`
-  - Model `GalleryApplicationVersionsOperations` added parameter `api_version` in method `list_by_gallery_application`
-  - Model `GalleryApplicationsOperations` added parameter `api_version` in method `begin_create_or_update`
-  - Model `GalleryApplicationsOperations` added parameter `api_version` in method `begin_delete`
-  - Model `GalleryApplicationsOperations` added parameter `api_version` in method `begin_update`
-  - Model `GalleryApplicationsOperations` added parameter `api_version` in method `get`
-  - Model `GalleryApplicationsOperations` added parameter `api_version` in method `list_by_gallery`
-  - Model `GalleryImageVersionsOperations` added parameter `api_version` in method `begin_create_or_update`
-  - Model `GalleryImageVersionsOperations` added parameter `api_version` in method `begin_delete`
-  - Model `GalleryImageVersionsOperations` added parameter `api_version` in method `begin_update`
-  - Model `GalleryImageVersionsOperations` added parameter `api_version` in method `get`
-  - Model `GalleryImageVersionsOperations` added parameter `api_version` in method `list_by_gallery_image`
-  - Model `GalleryImagesOperations` added parameter `api_version` in method `begin_create_or_update`
-  - Model `GalleryImagesOperations` added parameter `api_version` in method `begin_delete`
-  - Model `GalleryImagesOperations` added parameter `api_version` in method `begin_update`
-  - Model `GalleryImagesOperations` added parameter `api_version` in method `get`
-  - Model `GalleryImagesOperations` added parameter `api_version` in method `list_by_gallery`
-  - Model `GalleryInVMAccessControlProfileVersionsOperations` added parameter `api_version` in method `begin_create_or_update`
-  - Model `GalleryInVMAccessControlProfileVersionsOperations` added parameter `api_version` in method `begin_delete`
-  - Model `GalleryInVMAccessControlProfileVersionsOperations` added parameter `api_version` in method `begin_update`
-  - Model `GalleryInVMAccessControlProfileVersionsOperations` added parameter `api_version` in method `get`
-  - Model `GalleryInVMAccessControlProfileVersionsOperations` added parameter `api_version` in method `list_by_gallery_in_vm_access_control_profile`
-  - Model `GalleryInVMAccessControlProfilesOperations` added parameter `api_version` in method `begin_create_or_update`
-  - Model `GalleryInVMAccessControlProfilesOperations` added parameter `api_version` in method `begin_delete`
-  - Model `GalleryInVMAccessControlProfilesOperations` added parameter `api_version` in method `begin_update`
-  - Model `GalleryInVMAccessControlProfilesOperations` added parameter `api_version` in method `get`
-  - Model `GalleryInVMAccessControlProfilesOperations` added parameter `api_version` in method `list_by_gallery`
-  - Model `GalleryScriptVersionsOperations` added parameter `api_version` in method `begin_create_or_update`
-  - Model `GalleryScriptVersionsOperations` added parameter `api_version` in method `begin_delete`
-  - Model `GalleryScriptVersionsOperations` added parameter `api_version` in method `begin_update`
-  - Model `GalleryScriptVersionsOperations` added parameter `api_version` in method `get`
-  - Model `GalleryScriptVersionsOperations` added parameter `api_version` in method `list_by_gallery_script`
-  - Model `GalleryScriptsOperations` added parameter `api_version` in method `begin_create_or_update`
-  - Model `GalleryScriptsOperations` added parameter `api_version` in method `begin_delete`
-  - Model `GalleryScriptsOperations` added parameter `api_version` in method `begin_update`
-  - Model `GalleryScriptsOperations` added parameter `api_version` in method `get`
-  - Model `GalleryScriptsOperations` added parameter `api_version` in method `list_by_gallery`
-  - Model `GallerySharingProfileOperations` added parameter `api_version` in method `begin_update`
-  - Model `ResourceSkusOperations` added parameter `api_version` in method `list`
-  - Model `SharedGalleriesOperations` added parameter `api_version` in method `get`
-  - Model `SharedGalleriesOperations` added parameter `api_version` in method `list`
-  - Model `SharedGalleryImageVersionsOperations` added parameter `api_version` in method `get`
-  - Model `SharedGalleryImageVersionsOperations` added parameter `api_version` in method `list`
-  - Model `SharedGalleryImagesOperations` added parameter `api_version` in method `get`
-  - Model `SharedGalleryImagesOperations` added parameter `api_version` in method `list`
-  - Model `SnapshotsOperations` added parameter `api_version` in method `begin_create_or_update`
-  - Model `SnapshotsOperations` added parameter `api_version` in method `begin_delete`
-  - Model `SnapshotsOperations` added parameter `api_version` in method `begin_grant_access`
-  - Model `SnapshotsOperations` added parameter `api_version` in method `begin_revoke_access`
-  - Model `SnapshotsOperations` added parameter `api_version` in method `begin_update`
-  - Model `SnapshotsOperations` added parameter `api_version` in method `get`
-  - Model `SnapshotsOperations` added parameter `api_version` in method `list`
-  - Model `SnapshotsOperations` added parameter `api_version` in method `list_by_resource_group`
-  - Model `SoftDeletedResourceOperations` added parameter `api_version` in method `list_by_artifact_name`
   - Model `VirtualMachineScaleSetVMsOperations` added parameter `etag` in method `begin_update`
   - Model `VirtualMachineScaleSetVMsOperations` added parameter `match_condition` in method `begin_update`
   - Model `VirtualMachineScaleSetsOperations` added parameter `etag` in method `begin_create_or_update`
@@ -154,7 +57,11 @@
 
 ### Breaking Changes
 
-  - Deleted or renamed client `ComputeManagementClient`
+  - Deleted or renamed client operation group `ComputeManagementClient.cloud_service_role_instances`
+  - Deleted or renamed client operation group `ComputeManagementClient.cloud_service_roles`
+  - Deleted or renamed client operation group `ComputeManagementClient.cloud_services`
+  - Deleted or renamed client operation group `ComputeManagementClient.cloud_services_update_domain`
+  - Deleted or renamed client operation group `ComputeManagementClient.cloud_service_operating_systems`
   - Model `AvailabilitySetUpdate` deleted or renamed its instance variable `platform_update_domain_count`
   - Model `AvailabilitySetUpdate` deleted or renamed its instance variable `platform_fault_domain_count`
   - Model `AvailabilitySetUpdate` deleted or renamed its instance variable `virtual_machines`
@@ -494,13 +401,13 @@
   - Deleted or renamed model `CloudServiceRolesOperations`
   - Deleted or renamed model `CloudServicesOperations`
   - Deleted or renamed model `CloudServicesUpdateDomainOperations`
-  - Method `VirtualMachineScaleSetVMsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'instance_id', 'parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'instance_id', 'parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `VirtualMachineScaleSetsOperations.begin_deallocate` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'hibernate', 'vm_instance_i_ds', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'vm_instance_i_ds', 'hibernate', 'kwargs']`
   - Method `VirtualMachineScaleSetsOperations.begin_power_off` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'skip_shutdown', 'vm_instance_i_ds', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'vm_instance_i_ds', 'skip_shutdown', 'kwargs']`
   - Method `VirtualMachineScaleSetsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'parameters', 'etag', 'match_condition', 'kwargs']`
+  - Method `VirtualMachineScaleSetsOperations.begin_deallocate` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'hibernate', 'vm_instance_i_ds', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'vm_instance_i_ds', 'hibernate', 'kwargs']`
   - Method `VirtualMachineScaleSetsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'parameters', 'etag', 'match_condition', 'kwargs']`
   - Method `VirtualMachinesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_name', 'parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'vm_name', 'parameters', 'etag', 'match_condition', 'kwargs']`
   - Method `VirtualMachinesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_name', 'parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'vm_name', 'parameters', 'etag', 'match_condition', 'kwargs']`
+  - Method `VirtualMachineScaleSetVMsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'instance_id', 'parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'instance_id', 'parameters', 'etag', 'match_condition', 'kwargs']`
 
 ## 37.3.0b1 (2026-03-31)
 

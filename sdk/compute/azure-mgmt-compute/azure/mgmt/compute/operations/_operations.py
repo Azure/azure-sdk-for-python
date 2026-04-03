@@ -33,7 +33,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
-from .._configuration import ComputeClientConfiguration
+from .._configuration import ComputeManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import prep_if_match, prep_if_none_match
@@ -4318,11 +4318,12 @@ def build_virtual_machine_scale_set_vm_run_commands_list_request(  # pylint: dis
 
 
 def build_disks_get_request(
-    resource_group_name: str, disk_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, disk_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4345,11 +4346,12 @@ def build_disks_get_request(
 
 
 def build_disks_create_or_update_request(
-    resource_group_name: str, disk_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, disk_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -4375,11 +4377,12 @@ def build_disks_create_or_update_request(
 
 
 def build_disks_update_request(
-    resource_group_name: str, disk_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, disk_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -4405,10 +4408,11 @@ def build_disks_update_request(
 
 
 def build_disks_delete_request(
-    resource_group_name: str, disk_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, disk_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/disks/{diskName}"
     path_format_arguments = {
@@ -4426,11 +4430,12 @@ def build_disks_delete_request(
 
 
 def build_disks_list_by_resource_group_request(  # pylint: disable=name-too-long
-    resource_group_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4451,10 +4456,11 @@ def build_disks_list_by_resource_group_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_disks_list_request(subscription_id: str, *, api_version: str, **kwargs: Any) -> HttpRequest:
+def build_disks_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4475,11 +4481,12 @@ def build_disks_list_request(subscription_id: str, *, api_version: str, **kwargs
 
 
 def build_disks_grant_access_request(
-    resource_group_name: str, disk_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, disk_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -4505,10 +4512,11 @@ def build_disks_grant_access_request(
 
 
 def build_disks_revoke_access_request(
-    resource_group_name: str, disk_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, disk_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/disks/{diskName}/endGetAccess"
     path_format_arguments = {
@@ -4526,11 +4534,12 @@ def build_disks_revoke_access_request(
 
 
 def build_disk_accesses_get_request(
-    resource_group_name: str, disk_access_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, disk_access_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4553,11 +4562,12 @@ def build_disk_accesses_get_request(
 
 
 def build_disk_accesses_create_or_update_request(  # pylint: disable=name-too-long
-    resource_group_name: str, disk_access_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, disk_access_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -4583,11 +4593,12 @@ def build_disk_accesses_create_or_update_request(  # pylint: disable=name-too-lo
 
 
 def build_disk_accesses_update_request(
-    resource_group_name: str, disk_access_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, disk_access_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -4613,10 +4624,11 @@ def build_disk_accesses_update_request(
 
 
 def build_disk_accesses_delete_request(
-    resource_group_name: str, disk_access_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, disk_access_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/diskAccesses/{diskAccessName}"
     path_format_arguments = {
@@ -4634,11 +4646,12 @@ def build_disk_accesses_delete_request(
 
 
 def build_disk_accesses_list_by_resource_group_request(  # pylint: disable=name-too-long
-    resource_group_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4659,10 +4672,11 @@ def build_disk_accesses_list_by_resource_group_request(  # pylint: disable=name-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_disk_accesses_list_request(subscription_id: str, *, api_version: str, **kwargs: Any) -> HttpRequest:
+def build_disk_accesses_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4683,11 +4697,12 @@ def build_disk_accesses_list_request(subscription_id: str, *, api_version: str, 
 
 
 def build_disk_accesses_get_private_link_resources_request(  # pylint: disable=name-too-long
-    resource_group_name: str, disk_access_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, disk_access_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4714,13 +4729,12 @@ def build_disk_accesses_get_a_private_endpoint_connection_request(  # pylint: di
     disk_access_name: str,
     private_endpoint_connection_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4750,13 +4764,12 @@ def build_disk_accesses_update_a_private_endpoint_connection_request(  # pylint:
     disk_access_name: str,
     private_endpoint_connection_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -4789,12 +4802,11 @@ def build_disk_accesses_delete_a_private_endpoint_connection_request(  # pylint:
     disk_access_name: str,
     private_endpoint_connection_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/diskAccesses/{diskAccessName}/privateEndpointConnections/{privateEndpointConnectionName}"
     path_format_arguments = {
@@ -4815,11 +4827,12 @@ def build_disk_accesses_delete_a_private_endpoint_connection_request(  # pylint:
 
 
 def build_disk_accesses_list_private_endpoint_connections_request(  # pylint: disable=name-too-long
-    resource_group_name: str, disk_access_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, disk_access_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4842,11 +4855,12 @@ def build_disk_accesses_list_private_endpoint_connections_request(  # pylint: di
 
 
 def build_disk_encryption_sets_get_request(
-    resource_group_name: str, disk_encryption_set_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, disk_encryption_set_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4869,11 +4883,12 @@ def build_disk_encryption_sets_get_request(
 
 
 def build_disk_encryption_sets_create_or_update_request(  # pylint: disable=name-too-long
-    resource_group_name: str, disk_encryption_set_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, disk_encryption_set_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -4899,11 +4914,12 @@ def build_disk_encryption_sets_create_or_update_request(  # pylint: disable=name
 
 
 def build_disk_encryption_sets_update_request(  # pylint: disable=name-too-long
-    resource_group_name: str, disk_encryption_set_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, disk_encryption_set_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -4929,10 +4945,11 @@ def build_disk_encryption_sets_update_request(  # pylint: disable=name-too-long
 
 
 def build_disk_encryption_sets_delete_request(  # pylint: disable=name-too-long
-    resource_group_name: str, disk_encryption_set_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, disk_encryption_set_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/diskEncryptionSets/{diskEncryptionSetName}"
     path_format_arguments = {
@@ -4950,11 +4967,12 @@ def build_disk_encryption_sets_delete_request(  # pylint: disable=name-too-long
 
 
 def build_disk_encryption_sets_list_by_resource_group_request(  # pylint: disable=name-too-long
-    resource_group_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4975,10 +4993,11 @@ def build_disk_encryption_sets_list_by_resource_group_request(  # pylint: disabl
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_disk_encryption_sets_list_request(subscription_id: str, *, api_version: str, **kwargs: Any) -> HttpRequest:
+def build_disk_encryption_sets_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4999,11 +5018,12 @@ def build_disk_encryption_sets_list_request(subscription_id: str, *, api_version
 
 
 def build_disk_encryption_sets_list_associated_resources_request(  # pylint: disable=name-too-long
-    resource_group_name: str, disk_encryption_set_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, disk_encryption_set_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5026,11 +5046,12 @@ def build_disk_encryption_sets_list_associated_resources_request(  # pylint: dis
 
 
 def build_snapshots_get_request(
-    resource_group_name: str, snapshot_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, snapshot_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5053,11 +5074,12 @@ def build_snapshots_get_request(
 
 
 def build_snapshots_create_or_update_request(
-    resource_group_name: str, snapshot_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, snapshot_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -5083,11 +5105,12 @@ def build_snapshots_create_or_update_request(
 
 
 def build_snapshots_update_request(
-    resource_group_name: str, snapshot_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, snapshot_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -5113,10 +5136,11 @@ def build_snapshots_update_request(
 
 
 def build_snapshots_delete_request(
-    resource_group_name: str, snapshot_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, snapshot_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/snapshots/{snapshotName}"
     path_format_arguments = {
@@ -5134,11 +5158,12 @@ def build_snapshots_delete_request(
 
 
 def build_snapshots_list_by_resource_group_request(  # pylint: disable=name-too-long
-    resource_group_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5159,10 +5184,11 @@ def build_snapshots_list_by_resource_group_request(  # pylint: disable=name-too-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_snapshots_list_request(subscription_id: str, *, api_version: str, **kwargs: Any) -> HttpRequest:
+def build_snapshots_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5183,11 +5209,12 @@ def build_snapshots_list_request(subscription_id: str, *, api_version: str, **kw
 
 
 def build_snapshots_grant_access_request(
-    resource_group_name: str, snapshot_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, snapshot_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -5213,10 +5240,11 @@ def build_snapshots_grant_access_request(
 
 
 def build_snapshots_revoke_access_request(
-    resource_group_name: str, snapshot_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, snapshot_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/snapshots/{snapshotName}/endGetAccess"
     path_format_arguments = {
@@ -5238,7 +5266,6 @@ def build_galleries_get_request(
     gallery_name: str,
     subscription_id: str,
     *,
-    api_version: str,
     select: Optional[Union[str, _models.SelectPermissions]] = None,
     expand: Optional[Union[str, _models.GalleryExpandParams]] = None,
     **kwargs: Any
@@ -5246,6 +5273,7 @@ def build_galleries_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5272,11 +5300,12 @@ def build_galleries_get_request(
 
 
 def build_galleries_create_or_update_request(
-    resource_group_name: str, gallery_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, gallery_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -5302,11 +5331,12 @@ def build_galleries_create_or_update_request(
 
 
 def build_galleries_update_request(
-    resource_group_name: str, gallery_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, gallery_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -5332,10 +5362,11 @@ def build_galleries_update_request(
 
 
 def build_galleries_delete_request(
-    resource_group_name: str, gallery_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, gallery_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}"
     path_format_arguments = {
@@ -5353,11 +5384,12 @@ def build_galleries_delete_request(
 
 
 def build_galleries_list_by_resource_group_request(  # pylint: disable=name-too-long
-    resource_group_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5378,10 +5410,11 @@ def build_galleries_list_by_resource_group_request(  # pylint: disable=name-too-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_galleries_list_request(subscription_id: str, *, api_version: str, **kwargs: Any) -> HttpRequest:
+def build_galleries_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5402,17 +5435,12 @@ def build_galleries_list_request(subscription_id: str, *, api_version: str, **kw
 
 
 def build_gallery_images_get_request(
-    resource_group_name: str,
-    gallery_name: str,
-    gallery_image_name: str,
-    subscription_id: str,
-    *,
-    api_version: str,
-    **kwargs: Any
+    resource_group_name: str, gallery_name: str, gallery_image_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5436,17 +5464,12 @@ def build_gallery_images_get_request(
 
 
 def build_gallery_images_create_or_update_request(  # pylint: disable=name-too-long
-    resource_group_name: str,
-    gallery_name: str,
-    gallery_image_name: str,
-    subscription_id: str,
-    *,
-    api_version: str,
-    **kwargs: Any
+    resource_group_name: str, gallery_name: str, gallery_image_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -5473,17 +5496,12 @@ def build_gallery_images_create_or_update_request(  # pylint: disable=name-too-l
 
 
 def build_gallery_images_update_request(
-    resource_group_name: str,
-    gallery_name: str,
-    gallery_image_name: str,
-    subscription_id: str,
-    *,
-    api_version: str,
-    **kwargs: Any
+    resource_group_name: str, gallery_name: str, gallery_image_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -5510,16 +5528,11 @@ def build_gallery_images_update_request(
 
 
 def build_gallery_images_delete_request(
-    resource_group_name: str,
-    gallery_name: str,
-    gallery_image_name: str,
-    subscription_id: str,
-    *,
-    api_version: str,
-    **kwargs: Any
+    resource_group_name: str, gallery_name: str, gallery_image_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}"
     path_format_arguments = {
@@ -5538,11 +5551,12 @@ def build_gallery_images_delete_request(
 
 
 def build_gallery_images_list_by_gallery_request(  # pylint: disable=name-too-long
-    resource_group_name: str, gallery_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, gallery_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5571,13 +5585,13 @@ def build_gallery_image_versions_get_request(
     gallery_image_version_name: str,
     subscription_id: str,
     *,
-    api_version: str,
     expand: Optional[Union[str, _models.ReplicationStatusTypes]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5609,13 +5623,12 @@ def build_gallery_image_versions_create_or_update_request(  # pylint: disable=na
     gallery_image_name: str,
     gallery_image_version_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -5648,13 +5661,12 @@ def build_gallery_image_versions_update_request(  # pylint: disable=name-too-lon
     gallery_image_name: str,
     gallery_image_version_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -5687,12 +5699,11 @@ def build_gallery_image_versions_delete_request(  # pylint: disable=name-too-lon
     gallery_image_name: str,
     gallery_image_version_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}/versions/{galleryImageVersionName}"
     path_format_arguments = {
@@ -5712,17 +5723,12 @@ def build_gallery_image_versions_delete_request(  # pylint: disable=name-too-lon
 
 
 def build_gallery_image_versions_list_by_gallery_image_request(  # pylint: disable=name-too-long
-    resource_group_name: str,
-    gallery_name: str,
-    gallery_image_name: str,
-    subscription_id: str,
-    *,
-    api_version: str,
-    **kwargs: Any
+    resource_group_name: str, gallery_name: str, gallery_image_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5746,17 +5752,12 @@ def build_gallery_image_versions_list_by_gallery_image_request(  # pylint: disab
 
 
 def build_gallery_applications_get_request(
-    resource_group_name: str,
-    gallery_name: str,
-    gallery_application_name: str,
-    subscription_id: str,
-    *,
-    api_version: str,
-    **kwargs: Any
+    resource_group_name: str, gallery_name: str, gallery_application_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5780,17 +5781,12 @@ def build_gallery_applications_get_request(
 
 
 def build_gallery_applications_create_or_update_request(  # pylint: disable=name-too-long
-    resource_group_name: str,
-    gallery_name: str,
-    gallery_application_name: str,
-    subscription_id: str,
-    *,
-    api_version: str,
-    **kwargs: Any
+    resource_group_name: str, gallery_name: str, gallery_application_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -5817,17 +5813,12 @@ def build_gallery_applications_create_or_update_request(  # pylint: disable=name
 
 
 def build_gallery_applications_update_request(  # pylint: disable=name-too-long
-    resource_group_name: str,
-    gallery_name: str,
-    gallery_application_name: str,
-    subscription_id: str,
-    *,
-    api_version: str,
-    **kwargs: Any
+    resource_group_name: str, gallery_name: str, gallery_application_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -5854,16 +5845,11 @@ def build_gallery_applications_update_request(  # pylint: disable=name-too-long
 
 
 def build_gallery_applications_delete_request(  # pylint: disable=name-too-long
-    resource_group_name: str,
-    gallery_name: str,
-    gallery_application_name: str,
-    subscription_id: str,
-    *,
-    api_version: str,
-    **kwargs: Any
+    resource_group_name: str, gallery_name: str, gallery_application_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/applications/{galleryApplicationName}"
     path_format_arguments = {
@@ -5882,11 +5868,12 @@ def build_gallery_applications_delete_request(  # pylint: disable=name-too-long
 
 
 def build_gallery_applications_list_by_gallery_request(  # pylint: disable=name-too-long
-    resource_group_name: str, gallery_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, gallery_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5915,13 +5902,13 @@ def build_gallery_application_versions_get_request(  # pylint: disable=name-too-
     gallery_application_version_name: str,
     subscription_id: str,
     *,
-    api_version: str,
     expand: Optional[Union[str, _models.ReplicationStatusTypes]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5955,13 +5942,12 @@ def build_gallery_application_versions_create_or_update_request(  # pylint: disa
     gallery_application_name: str,
     gallery_application_version_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -5996,13 +5982,12 @@ def build_gallery_application_versions_update_request(  # pylint: disable=name-t
     gallery_application_name: str,
     gallery_application_version_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -6037,12 +6022,11 @@ def build_gallery_application_versions_delete_request(  # pylint: disable=name-t
     gallery_application_name: str,
     gallery_application_version_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/applications/{galleryApplicationName}/versions/{galleryApplicationVersionName}"
     path_format_arguments = {
@@ -6064,17 +6048,12 @@ def build_gallery_application_versions_delete_request(  # pylint: disable=name-t
 
 
 def build_gallery_application_versions_list_by_gallery_application_request(  # pylint: disable=name-too-long
-    resource_group_name: str,
-    gallery_name: str,
-    gallery_application_name: str,
-    subscription_id: str,
-    *,
-    api_version: str,
-    **kwargs: Any
+    resource_group_name: str, gallery_name: str, gallery_application_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6098,17 +6077,12 @@ def build_gallery_application_versions_list_by_gallery_application_request(  # p
 
 
 def build_gallery_scripts_get_request(
-    resource_group_name: str,
-    gallery_name: str,
-    gallery_script_name: str,
-    subscription_id: str,
-    *,
-    api_version: str,
-    **kwargs: Any
+    resource_group_name: str, gallery_name: str, gallery_script_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6132,17 +6106,12 @@ def build_gallery_scripts_get_request(
 
 
 def build_gallery_scripts_create_or_update_request(  # pylint: disable=name-too-long
-    resource_group_name: str,
-    gallery_name: str,
-    gallery_script_name: str,
-    subscription_id: str,
-    *,
-    api_version: str,
-    **kwargs: Any
+    resource_group_name: str, gallery_name: str, gallery_script_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -6169,17 +6138,12 @@ def build_gallery_scripts_create_or_update_request(  # pylint: disable=name-too-
 
 
 def build_gallery_scripts_update_request(
-    resource_group_name: str,
-    gallery_name: str,
-    gallery_script_name: str,
-    subscription_id: str,
-    *,
-    api_version: str,
-    **kwargs: Any
+    resource_group_name: str, gallery_name: str, gallery_script_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -6206,16 +6170,11 @@ def build_gallery_scripts_update_request(
 
 
 def build_gallery_scripts_delete_request(
-    resource_group_name: str,
-    gallery_name: str,
-    gallery_script_name: str,
-    subscription_id: str,
-    *,
-    api_version: str,
-    **kwargs: Any
+    resource_group_name: str, gallery_name: str, gallery_script_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/scripts/{galleryScriptName}"
     path_format_arguments = {
@@ -6234,11 +6193,12 @@ def build_gallery_scripts_delete_request(
 
 
 def build_gallery_scripts_list_by_gallery_request(  # pylint: disable=name-too-long
-    resource_group_name: str, gallery_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, gallery_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6266,13 +6226,12 @@ def build_gallery_script_versions_get_request(  # pylint: disable=name-too-long
     gallery_script_name: str,
     gallery_script_version_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6302,13 +6261,12 @@ def build_gallery_script_versions_create_or_update_request(  # pylint: disable=n
     gallery_script_name: str,
     gallery_script_version_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -6341,13 +6299,12 @@ def build_gallery_script_versions_update_request(  # pylint: disable=name-too-lo
     gallery_script_name: str,
     gallery_script_version_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -6380,12 +6337,11 @@ def build_gallery_script_versions_delete_request(  # pylint: disable=name-too-lo
     gallery_script_name: str,
     gallery_script_version_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/scripts/{galleryScriptName}/versions/{galleryScriptVersionName}"
     path_format_arguments = {
@@ -6405,17 +6361,12 @@ def build_gallery_script_versions_delete_request(  # pylint: disable=name-too-lo
 
 
 def build_gallery_script_versions_list_by_gallery_script_request(  # pylint: disable=name-too-long
-    resource_group_name: str,
-    gallery_name: str,
-    gallery_script_name: str,
-    subscription_id: str,
-    *,
-    api_version: str,
-    **kwargs: Any
+    resource_group_name: str, gallery_name: str, gallery_script_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6443,13 +6394,12 @@ def build_gallery_in_vm_access_control_profiles_get_request(  # pylint: disable=
     gallery_name: str,
     in_vm_access_control_profile_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6479,13 +6429,12 @@ def build_gallery_in_vm_access_control_profiles_create_or_update_request(  # pyl
     gallery_name: str,
     in_vm_access_control_profile_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -6518,13 +6467,12 @@ def build_gallery_in_vm_access_control_profiles_update_request(  # pylint: disab
     gallery_name: str,
     in_vm_access_control_profile_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -6557,12 +6505,11 @@ def build_gallery_in_vm_access_control_profiles_delete_request(  # pylint: disab
     gallery_name: str,
     in_vm_access_control_profile_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/inVMAccessControlProfiles/{inVMAccessControlProfileName}"
     path_format_arguments = {
@@ -6583,11 +6530,12 @@ def build_gallery_in_vm_access_control_profiles_delete_request(  # pylint: disab
 
 
 def build_gallery_in_vm_access_control_profiles_list_by_gallery_request(  # pylint: disable=name-too-long
-    resource_group_name: str, gallery_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, gallery_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6615,13 +6563,12 @@ def build_gallery_in_vm_access_control_profile_versions_get_request(  # pylint: 
     in_vm_access_control_profile_name: str,
     in_vm_access_control_profile_version_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6655,13 +6602,12 @@ def build_gallery_in_vm_access_control_profile_versions_create_or_update_request
     in_vm_access_control_profile_name: str,
     in_vm_access_control_profile_version_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -6698,13 +6644,12 @@ def build_gallery_in_vm_access_control_profile_versions_update_request(  # pylin
     in_vm_access_control_profile_name: str,
     in_vm_access_control_profile_version_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -6741,12 +6686,11 @@ def build_gallery_in_vm_access_control_profile_versions_delete_request(  # pylin
     in_vm_access_control_profile_name: str,
     in_vm_access_control_profile_version_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/inVMAccessControlProfiles/{inVMAccessControlProfileName}/versions/{inVMAccessControlProfileVersionName}"
     path_format_arguments = {
@@ -6774,13 +6718,12 @@ def build_gallery_in_vm_access_control_profile_versions_list_by_gallery_in_vm_ac
     gallery_name: str,
     in_vm_access_control_profile_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6806,11 +6749,12 @@ def build_gallery_in_vm_access_control_profile_versions_list_by_gallery_in_vm_ac
 
 
 def build_shared_galleries_get_request(
-    location: str, gallery_unique_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    location: str, gallery_unique_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6836,13 +6780,13 @@ def build_shared_galleries_list_request(
     location: str,
     subscription_id: str,
     *,
-    api_version: str,
     shared_to: Optional[Union[str, _models.SharedToValues]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6866,17 +6810,12 @@ def build_shared_galleries_list_request(
 
 
 def build_shared_gallery_images_get_request(
-    location: str,
-    gallery_unique_name: str,
-    gallery_image_name: str,
-    subscription_id: str,
-    *,
-    api_version: str,
-    **kwargs: Any
+    location: str, gallery_unique_name: str, gallery_image_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6904,13 +6843,13 @@ def build_shared_gallery_images_list_request(
     gallery_unique_name: str,
     subscription_id: str,
     *,
-    api_version: str,
     shared_to: Optional[Union[str, _models.SharedToValues]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6940,13 +6879,12 @@ def build_shared_gallery_image_versions_get_request(  # pylint: disable=name-too
     gallery_image_name: str,
     gallery_image_version_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6976,13 +6914,13 @@ def build_shared_gallery_image_versions_list_request(  # pylint: disable=name-to
     gallery_image_name: str,
     subscription_id: str,
     *,
-    api_version: str,
     shared_to: Optional[Union[str, _models.SharedToValues]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7008,11 +6946,12 @@ def build_shared_gallery_image_versions_list_request(  # pylint: disable=name-to
 
 
 def build_community_galleries_get_request(
-    location: str, public_gallery_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    location: str, public_gallery_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7035,17 +6974,12 @@ def build_community_galleries_get_request(
 
 
 def build_community_gallery_images_get_request(  # pylint: disable=name-too-long
-    location: str,
-    public_gallery_name: str,
-    gallery_image_name: str,
-    subscription_id: str,
-    *,
-    api_version: str,
-    **kwargs: Any
+    location: str, public_gallery_name: str, gallery_image_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7069,11 +7003,12 @@ def build_community_gallery_images_get_request(  # pylint: disable=name-too-long
 
 
 def build_community_gallery_images_list_request(  # pylint: disable=name-too-long
-    location: str, public_gallery_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    location: str, public_gallery_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7101,13 +7036,12 @@ def build_community_gallery_image_versions_get_request(  # pylint: disable=name-
     gallery_image_name: str,
     gallery_image_version_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7132,17 +7066,12 @@ def build_community_gallery_image_versions_get_request(  # pylint: disable=name-
 
 
 def build_community_gallery_image_versions_list_request(  # pylint: disable=name-too-long
-    location: str,
-    public_gallery_name: str,
-    gallery_image_name: str,
-    subscription_id: str,
-    *,
-    api_version: str,
-    **kwargs: Any
+    location: str, public_gallery_name: str, gallery_image_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7168,7 +7097,6 @@ def build_community_gallery_image_versions_list_request(  # pylint: disable=name
 def build_resource_skus_list_request(
     subscription_id: str,
     *,
-    api_version: str,
     filter: Optional[str] = None,
     include_extended_locations: Optional[str] = None,
     **kwargs: Any
@@ -7176,6 +7104,7 @@ def build_resource_skus_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8548,13 +8477,12 @@ def build_disk_restore_point_get_request(
     vm_restore_point_name: str,
     disk_restore_point_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8585,13 +8513,12 @@ def build_disk_restore_point_list_by_restore_point_request(  # pylint: disable=n
     restore_point_collection_name: str,
     vm_restore_point_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8622,13 +8549,12 @@ def build_disk_restore_point_grant_access_request(  # pylint: disable=name-too-l
     vm_restore_point_name: str,
     disk_restore_point_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -8663,12 +8589,11 @@ def build_disk_restore_point_revoke_access_request(  # pylint: disable=name-too-
     vm_restore_point_name: str,
     disk_restore_point_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/restorePointCollections/{restorePointCollectionName}/restorePoints/{vmRestorePointName}/diskRestorePoints/{diskRestorePointName}/endGetAccess"
     path_format_arguments = {
@@ -8695,13 +8620,12 @@ def build_soft_deleted_resource_list_by_artifact_name_request(  # pylint: disabl
     artifact_type: str,
     artifact_name: str,
     subscription_id: str,
-    *,
-    api_version: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8726,11 +8650,12 @@ def build_soft_deleted_resource_list_by_artifact_name_request(  # pylint: disabl
 
 
 def build_gallery_sharing_profile_update_request(  # pylint: disable=name-too-long
-    resource_group_name: str, gallery_name: str, subscription_id: str, *, api_version: str, **kwargs: Any
+    resource_group_name: str, gallery_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -8761,14 +8686,14 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -8858,14 +8783,14 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`virtual_machine_scale_sets` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -13724,14 +13649,14 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`virtual_machine_scale_set_extensions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -14567,14 +14492,14 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`virtual_machine_scale_set_vm_extensions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -15447,14 +15372,14 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`virtual_machines` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -19486,14 +19411,14 @@ class VirtualMachineExtensionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`virtual_machine_extensions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -20309,14 +20234,14 @@ class VirtualMachineExtensionImagesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`virtual_machine_extension_images` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -20570,14 +20495,14 @@ class AvailabilitySetsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`availability_sets` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -21958,14 +21883,14 @@ class ProximityPlacementGroupsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`proximity_placement_groups` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -22632,14 +22557,14 @@ class DedicatedHostGroupsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`dedicated_host_groups` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -23316,14 +23241,14 @@ class DedicatedHostsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`dedicated_hosts` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -24500,14 +24425,14 @@ class ImagesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`images` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -25353,14 +25278,14 @@ class RestorePointCollectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`restore_point_collections` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -26100,14 +26025,14 @@ class RestorePointsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`restore_points` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -26590,14 +26515,14 @@ class CapacityReservationGroupsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`capacity_reservation_groups` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -27323,14 +27248,14 @@ class CapacityReservationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`capacity_reservations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -28180,14 +28105,14 @@ class VirtualMachineRunCommandsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`virtual_machine_run_commands` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -29174,14 +29099,14 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`virtual_machine_scale_set_vm_run_commands` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -30055,19 +29980,19 @@ class DisksOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`disks` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(self, resource_group_name: str, disk_name: str, *, api_version: str, **kwargs: Any) -> _models.Disk:
+    def get(self, resource_group_name: str, disk_name: str, **kwargs: Any) -> _models.Disk:
         """Gets information about a disk.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -30077,8 +30002,6 @@ class DisksOperations:
          after the disk is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The
          maximum name length is 80 characters. Required.
         :type disk_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: Disk. The Disk is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.Disk
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -30092,8 +30015,9 @@ class DisksOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[_models.Disk] = kwargs.pop("cls", None)
 
         _request = build_disks_get_request(
@@ -30141,13 +30065,7 @@ class DisksOperations:
         return deserialized  # type: ignore
 
     def _create_or_update_initial(
-        self,
-        resource_group_name: str,
-        disk_name: str,
-        disk: Union[_models.Disk, JSON, IO[bytes]],
-        *,
-        api_version: str,
-        **kwargs: Any
+        self, resource_group_name: str, disk_name: str, disk: Union[_models.Disk, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -30158,8 +30076,9 @@ class DisksOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -30224,7 +30143,6 @@ class DisksOperations:
         disk_name: str,
         disk: _models.Disk,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.Disk]:
@@ -30239,8 +30157,6 @@ class DisksOperations:
         :type disk_name: str
         :param disk: Disk object supplied in the body of the Put disk operation. Required.
         :type disk: ~azure.mgmt.compute.models.Disk
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30256,7 +30172,6 @@ class DisksOperations:
         disk_name: str,
         disk: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.Disk]:
@@ -30271,8 +30186,6 @@ class DisksOperations:
         :type disk_name: str
         :param disk: Disk object supplied in the body of the Put disk operation. Required.
         :type disk: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30288,7 +30201,6 @@ class DisksOperations:
         disk_name: str,
         disk: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.Disk]:
@@ -30303,8 +30215,6 @@ class DisksOperations:
         :type disk_name: str
         :param disk: Disk object supplied in the body of the Put disk operation. Required.
         :type disk: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30315,13 +30225,7 @@ class DisksOperations:
 
     @distributed_trace
     def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        disk_name: str,
-        disk: Union[_models.Disk, JSON, IO[bytes]],
-        *,
-        api_version: str,
-        **kwargs: Any
+        self, resource_group_name: str, disk_name: str, disk: Union[_models.Disk, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.Disk]:
         """Creates or updates a disk.
 
@@ -30335,15 +30239,14 @@ class DisksOperations:
         :param disk: Disk object supplied in the body of the Put disk operation. Is one of the
          following types: Disk, JSON, IO[bytes] Required.
         :type disk: ~azure.mgmt.compute.models.Disk or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns Disk. The Disk is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.Disk]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Disk] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -30395,13 +30298,7 @@ class DisksOperations:
         )
 
     def _update_initial(
-        self,
-        resource_group_name: str,
-        disk_name: str,
-        disk: Union[_models.DiskUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
-        **kwargs: Any
+        self, resource_group_name: str, disk_name: str, disk: Union[_models.DiskUpdate, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -30412,8 +30309,9 @@ class DisksOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -30478,7 +30376,6 @@ class DisksOperations:
         disk_name: str,
         disk: _models.DiskUpdate,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.Disk]:
@@ -30493,8 +30390,6 @@ class DisksOperations:
         :type disk_name: str
         :param disk: Disk object supplied in the body of the Patch disk operation. Required.
         :type disk: ~azure.mgmt.compute.models.DiskUpdate
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30510,7 +30405,6 @@ class DisksOperations:
         disk_name: str,
         disk: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.Disk]:
@@ -30525,8 +30419,6 @@ class DisksOperations:
         :type disk_name: str
         :param disk: Disk object supplied in the body of the Patch disk operation. Required.
         :type disk: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30542,7 +30434,6 @@ class DisksOperations:
         disk_name: str,
         disk: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.Disk]:
@@ -30557,8 +30448,6 @@ class DisksOperations:
         :type disk_name: str
         :param disk: Disk object supplied in the body of the Patch disk operation. Required.
         :type disk: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30569,13 +30458,7 @@ class DisksOperations:
 
     @distributed_trace
     def begin_update(
-        self,
-        resource_group_name: str,
-        disk_name: str,
-        disk: Union[_models.DiskUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
-        **kwargs: Any
+        self, resource_group_name: str, disk_name: str, disk: Union[_models.DiskUpdate, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.Disk]:
         """Updates (patches) a disk.
 
@@ -30589,15 +30472,14 @@ class DisksOperations:
         :param disk: Disk object supplied in the body of the Patch disk operation. Is one of the
          following types: DiskUpdate, JSON, IO[bytes] Required.
         :type disk: ~azure.mgmt.compute.models.DiskUpdate or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns Disk. The Disk is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.Disk]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Disk] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -30648,9 +30530,7 @@ class DisksOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    def _delete_initial(
-        self, resource_group_name: str, disk_name: str, *, api_version: str, **kwargs: Any
-    ) -> Iterator[bytes]:
+    def _delete_initial(self, resource_group_name: str, disk_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -30660,8 +30540,9 @@ class DisksOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_disks_delete_request(
@@ -30710,9 +30591,7 @@ class DisksOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def begin_delete(
-        self, resource_group_name: str, disk_name: str, *, api_version: str, **kwargs: Any
-    ) -> LROPoller[None]:
+    def begin_delete(self, resource_group_name: str, disk_name: str, **kwargs: Any) -> LROPoller[None]:
         """Deletes a disk.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -30722,15 +30601,14 @@ class DisksOperations:
          after the disk is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The
          maximum name length is 80 characters. Required.
         :type disk_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -30774,23 +30652,20 @@ class DisksOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(
-        self, resource_group_name: str, *, api_version: str, **kwargs: Any
-    ) -> ItemPaged["_models.Disk"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.Disk"]:
         """Lists all the disks under a resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of Disk
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.Disk]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[List[_models.Disk]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -30861,18 +30736,17 @@ class DisksOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, *, api_version: str, **kwargs: Any) -> ItemPaged["_models.Disk"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_models.Disk"]:
         """Lists all the disks under a subscription.
 
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of Disk
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.Disk]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[List[_models.Disk]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -30946,8 +30820,6 @@ class DisksOperations:
         resource_group_name: str,
         disk_name: str,
         grant_access_data: Union[_models.GrantAccessData, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -30959,8 +30831,9 @@ class DisksOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -31025,7 +30898,6 @@ class DisksOperations:
         disk_name: str,
         grant_access_data: _models.GrantAccessData,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.AccessUri]:
@@ -31041,8 +30913,6 @@ class DisksOperations:
         :param grant_access_data: Access data object supplied in the body of the get disk access
          operation. Required.
         :type grant_access_data: ~azure.mgmt.compute.models.GrantAccessData
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31059,7 +30929,6 @@ class DisksOperations:
         disk_name: str,
         grant_access_data: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.AccessUri]:
@@ -31075,8 +30944,6 @@ class DisksOperations:
         :param grant_access_data: Access data object supplied in the body of the get disk access
          operation. Required.
         :type grant_access_data: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31093,7 +30960,6 @@ class DisksOperations:
         disk_name: str,
         grant_access_data: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.AccessUri]:
@@ -31109,8 +30975,6 @@ class DisksOperations:
         :param grant_access_data: Access data object supplied in the body of the get disk access
          operation. Required.
         :type grant_access_data: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31126,8 +30990,6 @@ class DisksOperations:
         resource_group_name: str,
         disk_name: str,
         grant_access_data: Union[_models.GrantAccessData, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.AccessUri]:
         """Grants access to a disk.
@@ -31142,16 +31004,15 @@ class DisksOperations:
         :param grant_access_data: Access data object supplied in the body of the get disk access
          operation. Is one of the following types: GrantAccessData, JSON, IO[bytes] Required.
         :type grant_access_data: ~azure.mgmt.compute.models.GrantAccessData or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns AccessUri. The AccessUri is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.AccessUri]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AccessUri] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -31206,9 +31067,7 @@ class DisksOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    def _revoke_access_initial(
-        self, resource_group_name: str, disk_name: str, *, api_version: str, **kwargs: Any
-    ) -> Iterator[bytes]:
+    def _revoke_access_initial(self, resource_group_name: str, disk_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -31218,8 +31077,9 @@ class DisksOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_disks_revoke_access_request(
@@ -31268,9 +31128,7 @@ class DisksOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def begin_revoke_access(
-        self, resource_group_name: str, disk_name: str, *, api_version: str, **kwargs: Any
-    ) -> LROPoller[None]:
+    def begin_revoke_access(self, resource_group_name: str, disk_name: str, **kwargs: Any) -> LROPoller[None]:
         """Revokes access to a disk.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -31280,15 +31138,14 @@ class DisksOperations:
          after the disk is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The
          maximum name length is 80 characters. Required.
         :type disk_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -31338,21 +31195,19 @@ class DiskAccessesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`disk_accesses` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(
-        self, resource_group_name: str, disk_access_name: str, *, api_version: str, **kwargs: Any
-    ) -> _models.DiskAccess:
+    def get(self, resource_group_name: str, disk_access_name: str, **kwargs: Any) -> _models.DiskAccess:
         """Gets information about a disk access resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -31362,8 +31217,6 @@ class DiskAccessesOperations:
          can't be changed after the disk encryption set is created. Supported characters for the name
          are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_access_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: DiskAccess. The DiskAccess is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.DiskAccess
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -31377,8 +31230,9 @@ class DiskAccessesOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[_models.DiskAccess] = kwargs.pop("cls", None)
 
         _request = build_disk_accesses_get_request(
@@ -31430,8 +31284,6 @@ class DiskAccessesOperations:
         resource_group_name: str,
         disk_access_name: str,
         disk_access: Union[_models.DiskAccess, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -31443,8 +31295,9 @@ class DiskAccessesOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -31509,7 +31362,6 @@ class DiskAccessesOperations:
         disk_access_name: str,
         disk_access: _models.DiskAccess,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.DiskAccess]:
@@ -31525,8 +31377,6 @@ class DiskAccessesOperations:
         :param disk_access: disk access object supplied in the body of the Put disk access operation.
          Required.
         :type disk_access: ~azure.mgmt.compute.models.DiskAccess
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31543,7 +31393,6 @@ class DiskAccessesOperations:
         disk_access_name: str,
         disk_access: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.DiskAccess]:
@@ -31559,8 +31408,6 @@ class DiskAccessesOperations:
         :param disk_access: disk access object supplied in the body of the Put disk access operation.
          Required.
         :type disk_access: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31577,7 +31424,6 @@ class DiskAccessesOperations:
         disk_access_name: str,
         disk_access: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.DiskAccess]:
@@ -31593,8 +31439,6 @@ class DiskAccessesOperations:
         :param disk_access: disk access object supplied in the body of the Put disk access operation.
          Required.
         :type disk_access: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31610,8 +31454,6 @@ class DiskAccessesOperations:
         resource_group_name: str,
         disk_access_name: str,
         disk_access: Union[_models.DiskAccess, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.DiskAccess]:
         """Creates or updates a disk access resource.
@@ -31626,16 +31468,15 @@ class DiskAccessesOperations:
         :param disk_access: disk access object supplied in the body of the Put disk access operation.
          Is one of the following types: DiskAccess, JSON, IO[bytes] Required.
         :type disk_access: ~azure.mgmt.compute.models.DiskAccess or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns DiskAccess. The DiskAccess is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.DiskAccess]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DiskAccess] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -31691,8 +31532,6 @@ class DiskAccessesOperations:
         resource_group_name: str,
         disk_access_name: str,
         disk_access: Union[_models.DiskAccessUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -31704,8 +31543,9 @@ class DiskAccessesOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -31770,7 +31610,6 @@ class DiskAccessesOperations:
         disk_access_name: str,
         disk_access: _models.DiskAccessUpdate,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.DiskAccess]:
@@ -31786,8 +31625,6 @@ class DiskAccessesOperations:
         :param disk_access: disk access object supplied in the body of the Patch disk access operation.
          Required.
         :type disk_access: ~azure.mgmt.compute.models.DiskAccessUpdate
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31804,7 +31641,6 @@ class DiskAccessesOperations:
         disk_access_name: str,
         disk_access: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.DiskAccess]:
@@ -31820,8 +31656,6 @@ class DiskAccessesOperations:
         :param disk_access: disk access object supplied in the body of the Patch disk access operation.
          Required.
         :type disk_access: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31838,7 +31672,6 @@ class DiskAccessesOperations:
         disk_access_name: str,
         disk_access: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.DiskAccess]:
@@ -31854,8 +31687,6 @@ class DiskAccessesOperations:
         :param disk_access: disk access object supplied in the body of the Patch disk access operation.
          Required.
         :type disk_access: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31871,8 +31702,6 @@ class DiskAccessesOperations:
         resource_group_name: str,
         disk_access_name: str,
         disk_access: Union[_models.DiskAccessUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.DiskAccess]:
         """Updates (patches) a disk access resource.
@@ -31887,16 +31716,15 @@ class DiskAccessesOperations:
         :param disk_access: disk access object supplied in the body of the Patch disk access operation.
          Is one of the following types: DiskAccessUpdate, JSON, IO[bytes] Required.
         :type disk_access: ~azure.mgmt.compute.models.DiskAccessUpdate or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns DiskAccess. The DiskAccess is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.DiskAccess]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DiskAccess] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -31947,9 +31775,7 @@ class DiskAccessesOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    def _delete_initial(
-        self, resource_group_name: str, disk_access_name: str, *, api_version: str, **kwargs: Any
-    ) -> Iterator[bytes]:
+    def _delete_initial(self, resource_group_name: str, disk_access_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -31959,8 +31785,9 @@ class DiskAccessesOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_disk_accesses_delete_request(
@@ -32009,9 +31836,7 @@ class DiskAccessesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def begin_delete(
-        self, resource_group_name: str, disk_access_name: str, *, api_version: str, **kwargs: Any
-    ) -> LROPoller[None]:
+    def begin_delete(self, resource_group_name: str, disk_access_name: str, **kwargs: Any) -> LROPoller[None]:
         """Deletes a disk access resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -32021,15 +31846,14 @@ class DiskAccessesOperations:
          can't be changed after the disk encryption set is created. Supported characters for the name
          are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_access_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -32073,23 +31897,20 @@ class DiskAccessesOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(
-        self, resource_group_name: str, *, api_version: str, **kwargs: Any
-    ) -> ItemPaged["_models.DiskAccess"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.DiskAccess"]:
         """Lists all the disk access resources under a resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of DiskAccess
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.DiskAccess]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[List[_models.DiskAccess]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -32160,18 +31981,17 @@ class DiskAccessesOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, *, api_version: str, **kwargs: Any) -> ItemPaged["_models.DiskAccess"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_models.DiskAccess"]:
         """Lists all the disk access resources under a subscription.
 
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of DiskAccess
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.DiskAccess]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[List[_models.DiskAccess]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -32242,7 +32062,7 @@ class DiskAccessesOperations:
 
     @distributed_trace
     def get_private_link_resources(
-        self, resource_group_name: str, disk_access_name: str, *, api_version: str, **kwargs: Any
+        self, resource_group_name: str, disk_access_name: str, **kwargs: Any
     ) -> _models.PrivateLinkResourceListResult:
         """Gets the private link resources possible under disk access resource.
 
@@ -32253,8 +32073,6 @@ class DiskAccessesOperations:
          can't be changed after the disk encryption set is created. Supported characters for the name
          are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_access_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: PrivateLinkResourceListResult. The PrivateLinkResourceListResult is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.compute.models.PrivateLinkResourceListResult
@@ -32269,8 +32087,9 @@ class DiskAccessesOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[_models.PrivateLinkResourceListResult] = kwargs.pop("cls", None)
 
         _request = build_disk_accesses_get_private_link_resources_request(
@@ -32319,13 +32138,7 @@ class DiskAccessesOperations:
 
     @distributed_trace
     def get_a_private_endpoint_connection(
-        self,
-        resource_group_name: str,
-        disk_access_name: str,
-        private_endpoint_connection_name: str,
-        *,
-        api_version: str,
-        **kwargs: Any
+        self, resource_group_name: str, disk_access_name: str, private_endpoint_connection_name: str, **kwargs: Any
     ) -> _models.PrivateEndpointConnection:
         """Gets information about a private endpoint connection under a disk access resource.
 
@@ -32338,8 +32151,6 @@ class DiskAccessesOperations:
         :type disk_access_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: PrivateEndpointConnection. The PrivateEndpointConnection is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.compute.models.PrivateEndpointConnection
@@ -32354,8 +32165,9 @@ class DiskAccessesOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[_models.PrivateEndpointConnection] = kwargs.pop("cls", None)
 
         _request = build_disk_accesses_get_a_private_endpoint_connection_request(
@@ -32409,8 +32221,6 @@ class DiskAccessesOperations:
         disk_access_name: str,
         private_endpoint_connection_name: str,
         private_endpoint_connection: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -32422,8 +32232,9 @@ class DiskAccessesOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -32490,7 +32301,6 @@ class DiskAccessesOperations:
         private_endpoint_connection_name: str,
         private_endpoint_connection: _models.PrivateEndpointConnection,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.PrivateEndpointConnection]:
@@ -32509,8 +32319,6 @@ class DiskAccessesOperations:
         :param private_endpoint_connection: private endpoint connection object supplied in the body of
          the Put private endpoint connection operation. Required.
         :type private_endpoint_connection: ~azure.mgmt.compute.models.PrivateEndpointConnection
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -32528,7 +32336,6 @@ class DiskAccessesOperations:
         private_endpoint_connection_name: str,
         private_endpoint_connection: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.PrivateEndpointConnection]:
@@ -32547,8 +32354,6 @@ class DiskAccessesOperations:
         :param private_endpoint_connection: private endpoint connection object supplied in the body of
          the Put private endpoint connection operation. Required.
         :type private_endpoint_connection: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -32566,7 +32371,6 @@ class DiskAccessesOperations:
         private_endpoint_connection_name: str,
         private_endpoint_connection: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.PrivateEndpointConnection]:
@@ -32585,8 +32389,6 @@ class DiskAccessesOperations:
         :param private_endpoint_connection: private endpoint connection object supplied in the body of
          the Put private endpoint connection operation. Required.
         :type private_endpoint_connection: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -32603,8 +32405,6 @@ class DiskAccessesOperations:
         disk_access_name: str,
         private_endpoint_connection_name: str,
         private_endpoint_connection: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.PrivateEndpointConnection]:
         """Approve or reject a private endpoint connection under disk access resource, this can't be used
@@ -32624,16 +32424,15 @@ class DiskAccessesOperations:
          PrivateEndpointConnection, JSON, IO[bytes] Required.
         :type private_endpoint_connection: ~azure.mgmt.compute.models.PrivateEndpointConnection or JSON
          or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns PrivateEndpointConnection. The
          PrivateEndpointConnection is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.PrivateEndpointConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PrivateEndpointConnection] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -32686,13 +32485,7 @@ class DiskAccessesOperations:
         )
 
     def _delete_a_private_endpoint_connection_initial(  # pylint: disable=name-too-long
-        self,
-        resource_group_name: str,
-        disk_access_name: str,
-        private_endpoint_connection_name: str,
-        *,
-        api_version: str,
-        **kwargs: Any
+        self, resource_group_name: str, disk_access_name: str, private_endpoint_connection_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -32703,8 +32496,9 @@ class DiskAccessesOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_disk_accesses_delete_a_private_endpoint_connection_request(
@@ -32755,13 +32549,7 @@ class DiskAccessesOperations:
 
     @distributed_trace
     def begin_delete_a_private_endpoint_connection(  # pylint: disable=name-too-long
-        self,
-        resource_group_name: str,
-        disk_access_name: str,
-        private_endpoint_connection_name: str,
-        *,
-        api_version: str,
-        **kwargs: Any
+        self, resource_group_name: str, disk_access_name: str, private_endpoint_connection_name: str, **kwargs: Any
     ) -> LROPoller[None]:
         """Deletes a private endpoint connection under a disk access resource.
 
@@ -32774,15 +32562,14 @@ class DiskAccessesOperations:
         :type disk_access_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -32828,7 +32615,7 @@ class DiskAccessesOperations:
 
     @distributed_trace
     def list_private_endpoint_connections(
-        self, resource_group_name: str, disk_access_name: str, *, api_version: str, **kwargs: Any
+        self, resource_group_name: str, disk_access_name: str, **kwargs: Any
     ) -> ItemPaged["_models.PrivateEndpointConnection"]:
         """List information about private endpoint connections under a disk access resource.
 
@@ -32839,15 +32626,14 @@ class DiskAccessesOperations:
          can't be changed after the disk encryption set is created. Supported characters for the name
          are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_access_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of PrivateEndpointConnection
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.PrivateEndpointConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[List[_models.PrivateEndpointConnection]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -32925,21 +32711,19 @@ class DiskEncryptionSetsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`disk_encryption_sets` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(
-        self, resource_group_name: str, disk_encryption_set_name: str, *, api_version: str, **kwargs: Any
-    ) -> _models.DiskEncryptionSet:
+    def get(self, resource_group_name: str, disk_encryption_set_name: str, **kwargs: Any) -> _models.DiskEncryptionSet:
         """Gets information about a disk encryption set.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -32949,8 +32733,6 @@ class DiskEncryptionSetsOperations:
          name can't be changed after the disk encryption set is created. Supported characters for the
          name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_encryption_set_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: DiskEncryptionSet. The DiskEncryptionSet is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.DiskEncryptionSet
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -32964,8 +32746,9 @@ class DiskEncryptionSetsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[_models.DiskEncryptionSet] = kwargs.pop("cls", None)
 
         _request = build_disk_encryption_sets_get_request(
@@ -33017,8 +32800,6 @@ class DiskEncryptionSetsOperations:
         resource_group_name: str,
         disk_encryption_set_name: str,
         disk_encryption_set: Union[_models.DiskEncryptionSet, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -33030,8 +32811,9 @@ class DiskEncryptionSetsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -33096,7 +32878,6 @@ class DiskEncryptionSetsOperations:
         disk_encryption_set_name: str,
         disk_encryption_set: _models.DiskEncryptionSet,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.DiskEncryptionSet]:
@@ -33112,8 +32893,6 @@ class DiskEncryptionSetsOperations:
         :param disk_encryption_set: disk encryption set object supplied in the body of the Put disk
          encryption set operation. Required.
         :type disk_encryption_set: ~azure.mgmt.compute.models.DiskEncryptionSet
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -33130,7 +32909,6 @@ class DiskEncryptionSetsOperations:
         disk_encryption_set_name: str,
         disk_encryption_set: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.DiskEncryptionSet]:
@@ -33146,8 +32924,6 @@ class DiskEncryptionSetsOperations:
         :param disk_encryption_set: disk encryption set object supplied in the body of the Put disk
          encryption set operation. Required.
         :type disk_encryption_set: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -33164,7 +32940,6 @@ class DiskEncryptionSetsOperations:
         disk_encryption_set_name: str,
         disk_encryption_set: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.DiskEncryptionSet]:
@@ -33180,8 +32955,6 @@ class DiskEncryptionSetsOperations:
         :param disk_encryption_set: disk encryption set object supplied in the body of the Put disk
          encryption set operation. Required.
         :type disk_encryption_set: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -33197,8 +32970,6 @@ class DiskEncryptionSetsOperations:
         resource_group_name: str,
         disk_encryption_set_name: str,
         disk_encryption_set: Union[_models.DiskEncryptionSet, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.DiskEncryptionSet]:
         """Creates or updates a disk encryption set.
@@ -33214,16 +32985,15 @@ class DiskEncryptionSetsOperations:
          encryption set operation. Is one of the following types: DiskEncryptionSet, JSON, IO[bytes]
          Required.
         :type disk_encryption_set: ~azure.mgmt.compute.models.DiskEncryptionSet or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns DiskEncryptionSet. The DiskEncryptionSet is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.DiskEncryptionSet]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DiskEncryptionSet] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -33279,8 +33049,6 @@ class DiskEncryptionSetsOperations:
         resource_group_name: str,
         disk_encryption_set_name: str,
         disk_encryption_set: Union[_models.DiskEncryptionSetUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -33292,8 +33060,9 @@ class DiskEncryptionSetsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -33358,7 +33127,6 @@ class DiskEncryptionSetsOperations:
         disk_encryption_set_name: str,
         disk_encryption_set: _models.DiskEncryptionSetUpdate,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.DiskEncryptionSet]:
@@ -33374,8 +33142,6 @@ class DiskEncryptionSetsOperations:
         :param disk_encryption_set: disk encryption set object supplied in the body of the Patch disk
          encryption set operation. Required.
         :type disk_encryption_set: ~azure.mgmt.compute.models.DiskEncryptionSetUpdate
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -33392,7 +33158,6 @@ class DiskEncryptionSetsOperations:
         disk_encryption_set_name: str,
         disk_encryption_set: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.DiskEncryptionSet]:
@@ -33408,8 +33173,6 @@ class DiskEncryptionSetsOperations:
         :param disk_encryption_set: disk encryption set object supplied in the body of the Patch disk
          encryption set operation. Required.
         :type disk_encryption_set: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -33426,7 +33189,6 @@ class DiskEncryptionSetsOperations:
         disk_encryption_set_name: str,
         disk_encryption_set: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.DiskEncryptionSet]:
@@ -33442,8 +33204,6 @@ class DiskEncryptionSetsOperations:
         :param disk_encryption_set: disk encryption set object supplied in the body of the Patch disk
          encryption set operation. Required.
         :type disk_encryption_set: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -33459,8 +33219,6 @@ class DiskEncryptionSetsOperations:
         resource_group_name: str,
         disk_encryption_set_name: str,
         disk_encryption_set: Union[_models.DiskEncryptionSetUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.DiskEncryptionSet]:
         """Updates (patches) a disk encryption set.
@@ -33477,16 +33235,15 @@ class DiskEncryptionSetsOperations:
          IO[bytes] Required.
         :type disk_encryption_set: ~azure.mgmt.compute.models.DiskEncryptionSetUpdate or JSON or
          IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns DiskEncryptionSet. The DiskEncryptionSet is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.DiskEncryptionSet]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DiskEncryptionSet] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -33538,7 +33295,7 @@ class DiskEncryptionSetsOperations:
         )
 
     def _delete_initial(
-        self, resource_group_name: str, disk_encryption_set_name: str, *, api_version: str, **kwargs: Any
+        self, resource_group_name: str, disk_encryption_set_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -33549,8 +33306,9 @@ class DiskEncryptionSetsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_disk_encryption_sets_delete_request(
@@ -33599,9 +33357,7 @@ class DiskEncryptionSetsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def begin_delete(
-        self, resource_group_name: str, disk_encryption_set_name: str, *, api_version: str, **kwargs: Any
-    ) -> LROPoller[None]:
+    def begin_delete(self, resource_group_name: str, disk_encryption_set_name: str, **kwargs: Any) -> LROPoller[None]:
         """Deletes a disk encryption set.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -33611,15 +33367,14 @@ class DiskEncryptionSetsOperations:
          name can't be changed after the disk encryption set is created. Supported characters for the
          name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_encryption_set_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -33663,23 +33418,20 @@ class DiskEncryptionSetsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(
-        self, resource_group_name: str, *, api_version: str, **kwargs: Any
-    ) -> ItemPaged["_models.DiskEncryptionSet"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.DiskEncryptionSet"]:
         """Lists all the disk encryption sets under a resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of DiskEncryptionSet
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.DiskEncryptionSet]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[List[_models.DiskEncryptionSet]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -33750,18 +33502,17 @@ class DiskEncryptionSetsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, *, api_version: str, **kwargs: Any) -> ItemPaged["_models.DiskEncryptionSet"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_models.DiskEncryptionSet"]:
         """Lists all the disk encryption sets under a subscription.
 
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of DiskEncryptionSet
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.DiskEncryptionSet]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[List[_models.DiskEncryptionSet]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -33832,7 +33583,7 @@ class DiskEncryptionSetsOperations:
 
     @distributed_trace
     def list_associated_resources(
-        self, resource_group_name: str, disk_encryption_set_name: str, *, api_version: str, **kwargs: Any
+        self, resource_group_name: str, disk_encryption_set_name: str, **kwargs: Any
     ) -> ItemPaged[str]:
         """Lists all resources that are encrypted with this disk encryption set.
 
@@ -33843,15 +33594,14 @@ class DiskEncryptionSetsOperations:
          name can't be changed after the disk encryption set is created. Supported characters for the
          name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_encryption_set_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of str
         :rtype: ~azure.core.paging.ItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[List[str]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -33929,19 +33679,19 @@ class SnapshotsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`snapshots` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(self, resource_group_name: str, snapshot_name: str, *, api_version: str, **kwargs: Any) -> _models.Snapshot:
+    def get(self, resource_group_name: str, snapshot_name: str, **kwargs: Any) -> _models.Snapshot:
         """Gets information about a snapshot.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -33951,8 +33701,6 @@ class SnapshotsOperations:
          after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -.
          The max name length is 80 characters. Required.
         :type snapshot_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: Snapshot. The Snapshot is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.Snapshot
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -33966,8 +33714,9 @@ class SnapshotsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[_models.Snapshot] = kwargs.pop("cls", None)
 
         _request = build_snapshots_get_request(
@@ -34019,8 +33768,6 @@ class SnapshotsOperations:
         resource_group_name: str,
         snapshot_name: str,
         snapshot: Union[_models.Snapshot, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -34032,8 +33779,9 @@ class SnapshotsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -34098,7 +33846,6 @@ class SnapshotsOperations:
         snapshot_name: str,
         snapshot: _models.Snapshot,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.Snapshot]:
@@ -34113,8 +33860,6 @@ class SnapshotsOperations:
         :type snapshot_name: str
         :param snapshot: Snapshot object supplied in the body of the Put disk operation. Required.
         :type snapshot: ~azure.mgmt.compute.models.Snapshot
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34131,7 +33876,6 @@ class SnapshotsOperations:
         snapshot_name: str,
         snapshot: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.Snapshot]:
@@ -34146,8 +33890,6 @@ class SnapshotsOperations:
         :type snapshot_name: str
         :param snapshot: Snapshot object supplied in the body of the Put disk operation. Required.
         :type snapshot: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34164,7 +33906,6 @@ class SnapshotsOperations:
         snapshot_name: str,
         snapshot: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.Snapshot]:
@@ -34179,8 +33920,6 @@ class SnapshotsOperations:
         :type snapshot_name: str
         :param snapshot: Snapshot object supplied in the body of the Put disk operation. Required.
         :type snapshot: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34196,8 +33935,6 @@ class SnapshotsOperations:
         resource_group_name: str,
         snapshot_name: str,
         snapshot: Union[_models.Snapshot, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.Snapshot]:
         """Creates or updates a snapshot.
@@ -34212,16 +33949,15 @@ class SnapshotsOperations:
         :param snapshot: Snapshot object supplied in the body of the Put disk operation. Is one of the
          following types: Snapshot, JSON, IO[bytes] Required.
         :type snapshot: ~azure.mgmt.compute.models.Snapshot or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns Snapshot. The Snapshot is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.Snapshot]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Snapshot] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -34277,8 +34013,6 @@ class SnapshotsOperations:
         resource_group_name: str,
         snapshot_name: str,
         snapshot: Union[_models.SnapshotUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -34290,8 +34024,9 @@ class SnapshotsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -34356,7 +34091,6 @@ class SnapshotsOperations:
         snapshot_name: str,
         snapshot: _models.SnapshotUpdate,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.Snapshot]:
@@ -34372,8 +34106,6 @@ class SnapshotsOperations:
         :param snapshot: Snapshot object supplied in the body of the Patch snapshot operation.
          Required.
         :type snapshot: ~azure.mgmt.compute.models.SnapshotUpdate
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34390,7 +34122,6 @@ class SnapshotsOperations:
         snapshot_name: str,
         snapshot: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.Snapshot]:
@@ -34406,8 +34137,6 @@ class SnapshotsOperations:
         :param snapshot: Snapshot object supplied in the body of the Patch snapshot operation.
          Required.
         :type snapshot: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34424,7 +34153,6 @@ class SnapshotsOperations:
         snapshot_name: str,
         snapshot: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.Snapshot]:
@@ -34440,8 +34168,6 @@ class SnapshotsOperations:
         :param snapshot: Snapshot object supplied in the body of the Patch snapshot operation.
          Required.
         :type snapshot: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34457,8 +34183,6 @@ class SnapshotsOperations:
         resource_group_name: str,
         snapshot_name: str,
         snapshot: Union[_models.SnapshotUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.Snapshot]:
         """Updates (patches) a snapshot.
@@ -34473,16 +34197,15 @@ class SnapshotsOperations:
         :param snapshot: Snapshot object supplied in the body of the Patch snapshot operation. Is one
          of the following types: SnapshotUpdate, JSON, IO[bytes] Required.
         :type snapshot: ~azure.mgmt.compute.models.SnapshotUpdate or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns Snapshot. The Snapshot is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.Snapshot]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Snapshot] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -34533,9 +34256,7 @@ class SnapshotsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    def _delete_initial(
-        self, resource_group_name: str, snapshot_name: str, *, api_version: str, **kwargs: Any
-    ) -> Iterator[bytes]:
+    def _delete_initial(self, resource_group_name: str, snapshot_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -34545,8 +34266,9 @@ class SnapshotsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_snapshots_delete_request(
@@ -34595,9 +34317,7 @@ class SnapshotsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def begin_delete(
-        self, resource_group_name: str, snapshot_name: str, *, api_version: str, **kwargs: Any
-    ) -> LROPoller[None]:
+    def begin_delete(self, resource_group_name: str, snapshot_name: str, **kwargs: Any) -> LROPoller[None]:
         """Deletes a snapshot.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -34607,15 +34327,14 @@ class SnapshotsOperations:
          after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -.
          The max name length is 80 characters. Required.
         :type snapshot_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -34659,23 +34378,20 @@ class SnapshotsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(
-        self, resource_group_name: str, *, api_version: str, **kwargs: Any
-    ) -> ItemPaged["_models.Snapshot"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.Snapshot"]:
         """Lists snapshots under a resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of Snapshot
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.Snapshot]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[List[_models.Snapshot]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -34746,18 +34462,17 @@ class SnapshotsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, *, api_version: str, **kwargs: Any) -> ItemPaged["_models.Snapshot"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_models.Snapshot"]:
         """Lists snapshots under a subscription.
 
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of Snapshot
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.Snapshot]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[List[_models.Snapshot]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -34831,8 +34546,6 @@ class SnapshotsOperations:
         resource_group_name: str,
         snapshot_name: str,
         grant_access_data: Union[_models.GrantAccessData, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -34844,8 +34557,9 @@ class SnapshotsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -34910,7 +34624,6 @@ class SnapshotsOperations:
         snapshot_name: str,
         grant_access_data: _models.GrantAccessData,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.AccessUri]:
@@ -34926,8 +34639,6 @@ class SnapshotsOperations:
         :param grant_access_data: Access data object supplied in the body of the get snapshot access
          operation. Required.
         :type grant_access_data: ~azure.mgmt.compute.models.GrantAccessData
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34944,7 +34655,6 @@ class SnapshotsOperations:
         snapshot_name: str,
         grant_access_data: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.AccessUri]:
@@ -34960,8 +34670,6 @@ class SnapshotsOperations:
         :param grant_access_data: Access data object supplied in the body of the get snapshot access
          operation. Required.
         :type grant_access_data: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34978,7 +34686,6 @@ class SnapshotsOperations:
         snapshot_name: str,
         grant_access_data: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.AccessUri]:
@@ -34994,8 +34701,6 @@ class SnapshotsOperations:
         :param grant_access_data: Access data object supplied in the body of the get snapshot access
          operation. Required.
         :type grant_access_data: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35011,8 +34716,6 @@ class SnapshotsOperations:
         resource_group_name: str,
         snapshot_name: str,
         grant_access_data: Union[_models.GrantAccessData, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.AccessUri]:
         """Grants access to a snapshot.
@@ -35027,16 +34730,15 @@ class SnapshotsOperations:
         :param grant_access_data: Access data object supplied in the body of the get snapshot access
          operation. Is one of the following types: GrantAccessData, JSON, IO[bytes] Required.
         :type grant_access_data: ~azure.mgmt.compute.models.GrantAccessData or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns AccessUri. The AccessUri is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.AccessUri]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AccessUri] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -35091,9 +34793,7 @@ class SnapshotsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    def _revoke_access_initial(
-        self, resource_group_name: str, snapshot_name: str, *, api_version: str, **kwargs: Any
-    ) -> Iterator[bytes]:
+    def _revoke_access_initial(self, resource_group_name: str, snapshot_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -35103,8 +34803,9 @@ class SnapshotsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_snapshots_revoke_access_request(
@@ -35153,9 +34854,7 @@ class SnapshotsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def begin_revoke_access(
-        self, resource_group_name: str, snapshot_name: str, *, api_version: str, **kwargs: Any
-    ) -> LROPoller[None]:
+    def begin_revoke_access(self, resource_group_name: str, snapshot_name: str, **kwargs: Any) -> LROPoller[None]:
         """Revokes access to a snapshot.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -35165,15 +34864,14 @@ class SnapshotsOperations:
          after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -.
          The max name length is 80 characters. Required.
         :type snapshot_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -35223,14 +34921,14 @@ class GalleriesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`galleries` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -35240,7 +34938,6 @@ class GalleriesOperations:
         resource_group_name: str,
         gallery_name: str,
         *,
-        api_version: str,
         select: Optional[Union[str, _models.SelectPermissions]] = None,
         expand: Optional[Union[str, _models.GalleryExpandParams]] = None,
         **kwargs: Any
@@ -35252,8 +34949,6 @@ class GalleriesOperations:
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery. Required.
         :type gallery_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword select: The select expression to apply on the operation. "Permissions" Default value
          is None.
         :paramtype select: str or ~azure.mgmt.compute.models.SelectPermissions
@@ -35273,17 +34968,18 @@ class GalleriesOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[_models.Gallery] = kwargs.pop("cls", None)
 
         _request = build_galleries_get_request(
             resource_group_name=resource_group_name,
             gallery_name=gallery_name,
             subscription_id=self._config.subscription_id,
-            api_version=api_version,
             select=select,
             expand=expand,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -35328,8 +35024,6 @@ class GalleriesOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery: Union[_models.Gallery, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -35341,8 +35035,9 @@ class GalleriesOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -35411,7 +35106,6 @@ class GalleriesOperations:
         gallery_name: str,
         gallery: _models.Gallery,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.Gallery]:
@@ -35425,8 +35119,6 @@ class GalleriesOperations:
         :param gallery: Parameters supplied to the create or update Shared Image Gallery operation.
          Required.
         :type gallery: ~azure.mgmt.compute.models.Gallery
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35443,7 +35135,6 @@ class GalleriesOperations:
         gallery_name: str,
         gallery: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.Gallery]:
@@ -35457,8 +35148,6 @@ class GalleriesOperations:
         :param gallery: Parameters supplied to the create or update Shared Image Gallery operation.
          Required.
         :type gallery: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35475,7 +35164,6 @@ class GalleriesOperations:
         gallery_name: str,
         gallery: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.Gallery]:
@@ -35489,8 +35177,6 @@ class GalleriesOperations:
         :param gallery: Parameters supplied to the create or update Shared Image Gallery operation.
          Required.
         :type gallery: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35506,8 +35192,6 @@ class GalleriesOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery: Union[_models.Gallery, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.Gallery]:
         """Create or update a Shared Image Gallery.
@@ -35520,16 +35204,15 @@ class GalleriesOperations:
         :param gallery: Parameters supplied to the create or update Shared Image Gallery operation. Is
          one of the following types: Gallery, JSON, IO[bytes] Required.
         :type gallery: ~azure.mgmt.compute.models.Gallery or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns Gallery. The Gallery is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.Gallery]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Gallery] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -35585,8 +35268,6 @@ class GalleriesOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery: Union[_models.GalleryUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -35598,8 +35279,9 @@ class GalleriesOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -35663,7 +35345,6 @@ class GalleriesOperations:
         gallery_name: str,
         gallery: _models.GalleryUpdate,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.Gallery]:
@@ -35676,8 +35357,6 @@ class GalleriesOperations:
         :type gallery_name: str
         :param gallery: Parameters supplied to the update Shared Image Gallery operation. Required.
         :type gallery: ~azure.mgmt.compute.models.GalleryUpdate
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35694,7 +35373,6 @@ class GalleriesOperations:
         gallery_name: str,
         gallery: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.Gallery]:
@@ -35707,8 +35385,6 @@ class GalleriesOperations:
         :type gallery_name: str
         :param gallery: Parameters supplied to the update Shared Image Gallery operation. Required.
         :type gallery: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35725,7 +35401,6 @@ class GalleriesOperations:
         gallery_name: str,
         gallery: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.Gallery]:
@@ -35738,8 +35413,6 @@ class GalleriesOperations:
         :type gallery_name: str
         :param gallery: Parameters supplied to the update Shared Image Gallery operation. Required.
         :type gallery: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35755,8 +35428,6 @@ class GalleriesOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery: Union[_models.GalleryUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.Gallery]:
         """Update a Shared Image Gallery.
@@ -35769,16 +35440,15 @@ class GalleriesOperations:
         :param gallery: Parameters supplied to the update Shared Image Gallery operation. Is one of the
          following types: GalleryUpdate, JSON, IO[bytes] Required.
         :type gallery: ~azure.mgmt.compute.models.GalleryUpdate or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns Gallery. The Gallery is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.Gallery]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Gallery] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -35833,9 +35503,7 @@ class GalleriesOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    def _delete_initial(
-        self, resource_group_name: str, gallery_name: str, *, api_version: str, **kwargs: Any
-    ) -> Iterator[bytes]:
+    def _delete_initial(self, resource_group_name: str, gallery_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -35845,8 +35513,9 @@ class GalleriesOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_galleries_delete_request(
@@ -35895,9 +35564,7 @@ class GalleriesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def begin_delete(
-        self, resource_group_name: str, gallery_name: str, *, api_version: str, **kwargs: Any
-    ) -> LROPoller[None]:
+    def begin_delete(self, resource_group_name: str, gallery_name: str, **kwargs: Any) -> LROPoller[None]:
         """Delete a Shared Image Gallery.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -35905,15 +35572,14 @@ class GalleriesOperations:
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery. Required.
         :type gallery_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -35957,23 +35623,20 @@ class GalleriesOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(
-        self, resource_group_name: str, *, api_version: str, **kwargs: Any
-    ) -> ItemPaged["_models.Gallery"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.Gallery"]:
         """List galleries under a resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of Gallery
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.Gallery]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[List[_models.Gallery]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -36044,18 +35707,17 @@ class GalleriesOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, *, api_version: str, **kwargs: Any) -> ItemPaged["_models.Gallery"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_models.Gallery"]:
         """List galleries under a subscription.
 
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of Gallery
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.Gallery]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[List[_models.Gallery]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -36131,20 +35793,20 @@ class GalleryImagesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`gallery_images` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def get(
-        self, resource_group_name: str, gallery_name: str, gallery_image_name: str, *, api_version: str, **kwargs: Any
+        self, resource_group_name: str, gallery_name: str, gallery_image_name: str, **kwargs: Any
     ) -> _models.GalleryImage:
         """Retrieves information about a gallery image definition.
 
@@ -36155,8 +35817,6 @@ class GalleryImagesOperations:
         :type gallery_name: str
         :param gallery_image_name: The name of the gallery image definition to be retrieved. Required.
         :type gallery_image_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: GalleryImage. The GalleryImage is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.GalleryImage
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -36170,8 +35830,9 @@ class GalleryImagesOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[_models.GalleryImage] = kwargs.pop("cls", None)
 
         _request = build_gallery_images_get_request(
@@ -36225,8 +35886,6 @@ class GalleryImagesOperations:
         gallery_name: str,
         gallery_image_name: str,
         gallery_image: Union[_models.GalleryImage, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -36238,8 +35897,9 @@ class GalleryImagesOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -36310,7 +35970,6 @@ class GalleryImagesOperations:
         gallery_image_name: str,
         gallery_image: _models.GalleryImage,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryImage]:
@@ -36326,8 +35985,6 @@ class GalleryImagesOperations:
         :param gallery_image: Parameters supplied to the create or update gallery image operation.
          Required.
         :type gallery_image: ~azure.mgmt.compute.models.GalleryImage
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -36345,7 +36002,6 @@ class GalleryImagesOperations:
         gallery_image_name: str,
         gallery_image: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryImage]:
@@ -36361,8 +36017,6 @@ class GalleryImagesOperations:
         :param gallery_image: Parameters supplied to the create or update gallery image operation.
          Required.
         :type gallery_image: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -36380,7 +36034,6 @@ class GalleryImagesOperations:
         gallery_image_name: str,
         gallery_image: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryImage]:
@@ -36396,8 +36049,6 @@ class GalleryImagesOperations:
         :param gallery_image: Parameters supplied to the create or update gallery image operation.
          Required.
         :type gallery_image: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -36414,8 +36065,6 @@ class GalleryImagesOperations:
         gallery_name: str,
         gallery_image_name: str,
         gallery_image: Union[_models.GalleryImage, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.GalleryImage]:
         """Create or update a gallery image definition.
@@ -36430,16 +36079,15 @@ class GalleryImagesOperations:
         :param gallery_image: Parameters supplied to the create or update gallery image operation. Is
          one of the following types: GalleryImage, JSON, IO[bytes] Required.
         :type gallery_image: ~azure.mgmt.compute.models.GalleryImage or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns GalleryImage. The GalleryImage is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.GalleryImage]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryImage] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -36497,8 +36145,6 @@ class GalleryImagesOperations:
         gallery_name: str,
         gallery_image_name: str,
         gallery_image: Union[_models.GalleryImageUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -36510,8 +36156,9 @@ class GalleryImagesOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -36577,7 +36224,6 @@ class GalleryImagesOperations:
         gallery_image_name: str,
         gallery_image: _models.GalleryImageUpdate,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryImage]:
@@ -36592,8 +36238,6 @@ class GalleryImagesOperations:
         :type gallery_image_name: str
         :param gallery_image: Parameters supplied to the update gallery image operation. Required.
         :type gallery_image: ~azure.mgmt.compute.models.GalleryImageUpdate
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -36611,7 +36255,6 @@ class GalleryImagesOperations:
         gallery_image_name: str,
         gallery_image: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryImage]:
@@ -36626,8 +36269,6 @@ class GalleryImagesOperations:
         :type gallery_image_name: str
         :param gallery_image: Parameters supplied to the update gallery image operation. Required.
         :type gallery_image: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -36645,7 +36286,6 @@ class GalleryImagesOperations:
         gallery_image_name: str,
         gallery_image: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryImage]:
@@ -36660,8 +36300,6 @@ class GalleryImagesOperations:
         :type gallery_image_name: str
         :param gallery_image: Parameters supplied to the update gallery image operation. Required.
         :type gallery_image: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -36678,8 +36316,6 @@ class GalleryImagesOperations:
         gallery_name: str,
         gallery_image_name: str,
         gallery_image: Union[_models.GalleryImageUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.GalleryImage]:
         """Update a gallery image definition.
@@ -36694,16 +36330,15 @@ class GalleryImagesOperations:
         :param gallery_image: Parameters supplied to the update gallery image operation. Is one of the
          following types: GalleryImageUpdate, JSON, IO[bytes] Required.
         :type gallery_image: ~azure.mgmt.compute.models.GalleryImageUpdate or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns GalleryImage. The GalleryImage is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.GalleryImage]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryImage] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -36760,7 +36395,7 @@ class GalleryImagesOperations:
         )
 
     def _delete_initial(
-        self, resource_group_name: str, gallery_name: str, gallery_image_name: str, *, api_version: str, **kwargs: Any
+        self, resource_group_name: str, gallery_name: str, gallery_image_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -36771,8 +36406,9 @@ class GalleryImagesOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_gallery_images_delete_request(
@@ -36823,7 +36459,7 @@ class GalleryImagesOperations:
 
     @distributed_trace
     def begin_delete(
-        self, resource_group_name: str, gallery_name: str, gallery_image_name: str, *, api_version: str, **kwargs: Any
+        self, resource_group_name: str, gallery_name: str, gallery_image_name: str, **kwargs: Any
     ) -> LROPoller[None]:
         """Delete a gallery image.
 
@@ -36834,15 +36470,14 @@ class GalleryImagesOperations:
         :type gallery_name: str
         :param gallery_image_name: The name of the gallery image definition to be retrieved. Required.
         :type gallery_image_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -36888,7 +36523,7 @@ class GalleryImagesOperations:
 
     @distributed_trace
     def list_by_gallery(
-        self, resource_group_name: str, gallery_name: str, *, api_version: str, **kwargs: Any
+        self, resource_group_name: str, gallery_name: str, **kwargs: Any
     ) -> ItemPaged["_models.GalleryImage"]:
         """List gallery image definitions in a gallery.
 
@@ -36897,15 +36532,14 @@ class GalleryImagesOperations:
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery. Required.
         :type gallery_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of GalleryImage
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.GalleryImage]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[List[_models.GalleryImage]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -36983,14 +36617,14 @@ class GalleryImageVersionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`gallery_image_versions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -37002,7 +36636,6 @@ class GalleryImageVersionsOperations:
         gallery_image_name: str,
         gallery_image_version_name: str,
         *,
-        api_version: str,
         expand: Optional[Union[str, _models.ReplicationStatusTypes]] = None,
         **kwargs: Any
     ) -> _models.GalleryImageVersion:
@@ -37018,8 +36651,6 @@ class GalleryImageVersionsOperations:
         :param gallery_image_version_name: The name of the gallery image version to be retrieved.
          Required.
         :type gallery_image_version_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword expand: The expand expression to apply on the operation. Known values are:
          "ReplicationStatus" and "UefiSettings". Default value is None.
         :paramtype expand: str or ~azure.mgmt.compute.models.ReplicationStatusTypes
@@ -37036,8 +36667,9 @@ class GalleryImageVersionsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[_models.GalleryImageVersion] = kwargs.pop("cls", None)
 
         _request = build_gallery_image_versions_get_request(
@@ -37046,8 +36678,8 @@ class GalleryImageVersionsOperations:
             gallery_image_name=gallery_image_name,
             gallery_image_version_name=gallery_image_version_name,
             subscription_id=self._config.subscription_id,
-            api_version=api_version,
             expand=expand,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -37094,8 +36726,6 @@ class GalleryImageVersionsOperations:
         gallery_image_name: str,
         gallery_image_version_name: str,
         gallery_image_version: Union[_models.GalleryImageVersion, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -37107,8 +36737,9 @@ class GalleryImageVersionsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -37181,7 +36812,6 @@ class GalleryImageVersionsOperations:
         gallery_image_version_name: str,
         gallery_image_version: _models.GalleryImageVersion,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryImageVersion]:
@@ -37200,8 +36830,6 @@ class GalleryImageVersionsOperations:
         :param gallery_image_version: Parameters supplied to the create or update gallery image version
          operation. Required.
         :type gallery_image_version: ~azure.mgmt.compute.models.GalleryImageVersion
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37220,7 +36848,6 @@ class GalleryImageVersionsOperations:
         gallery_image_version_name: str,
         gallery_image_version: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryImageVersion]:
@@ -37239,8 +36866,6 @@ class GalleryImageVersionsOperations:
         :param gallery_image_version: Parameters supplied to the create or update gallery image version
          operation. Required.
         :type gallery_image_version: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37259,7 +36884,6 @@ class GalleryImageVersionsOperations:
         gallery_image_version_name: str,
         gallery_image_version: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryImageVersion]:
@@ -37278,8 +36902,6 @@ class GalleryImageVersionsOperations:
         :param gallery_image_version: Parameters supplied to the create or update gallery image version
          operation. Required.
         :type gallery_image_version: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37297,8 +36919,6 @@ class GalleryImageVersionsOperations:
         gallery_image_name: str,
         gallery_image_version_name: str,
         gallery_image_version: Union[_models.GalleryImageVersion, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.GalleryImageVersion]:
         """Create or update a gallery image version.
@@ -37317,16 +36937,15 @@ class GalleryImageVersionsOperations:
          operation. Is one of the following types: GalleryImageVersion, JSON, IO[bytes] Required.
         :type gallery_image_version: ~azure.mgmt.compute.models.GalleryImageVersion or JSON or
          IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns GalleryImageVersion. The GalleryImageVersion is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.GalleryImageVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryImageVersion] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -37386,8 +37005,6 @@ class GalleryImageVersionsOperations:
         gallery_image_name: str,
         gallery_image_version_name: str,
         gallery_image_version: Union[_models.GalleryImageVersionUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -37399,8 +37016,9 @@ class GalleryImageVersionsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -37468,7 +37086,6 @@ class GalleryImageVersionsOperations:
         gallery_image_version_name: str,
         gallery_image_version: _models.GalleryImageVersionUpdate,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryImageVersion]:
@@ -37487,8 +37104,6 @@ class GalleryImageVersionsOperations:
         :param gallery_image_version: Parameters supplied to the update gallery image version
          operation. Required.
         :type gallery_image_version: ~azure.mgmt.compute.models.GalleryImageVersionUpdate
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37507,7 +37122,6 @@ class GalleryImageVersionsOperations:
         gallery_image_version_name: str,
         gallery_image_version: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryImageVersion]:
@@ -37526,8 +37140,6 @@ class GalleryImageVersionsOperations:
         :param gallery_image_version: Parameters supplied to the update gallery image version
          operation. Required.
         :type gallery_image_version: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37546,7 +37158,6 @@ class GalleryImageVersionsOperations:
         gallery_image_version_name: str,
         gallery_image_version: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryImageVersion]:
@@ -37565,8 +37176,6 @@ class GalleryImageVersionsOperations:
         :param gallery_image_version: Parameters supplied to the update gallery image version
          operation. Required.
         :type gallery_image_version: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37584,8 +37193,6 @@ class GalleryImageVersionsOperations:
         gallery_image_name: str,
         gallery_image_version_name: str,
         gallery_image_version: Union[_models.GalleryImageVersionUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.GalleryImageVersion]:
         """Update a gallery image version.
@@ -37604,16 +37211,15 @@ class GalleryImageVersionsOperations:
          operation. Is one of the following types: GalleryImageVersionUpdate, JSON, IO[bytes] Required.
         :type gallery_image_version: ~azure.mgmt.compute.models.GalleryImageVersionUpdate or JSON or
          IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns GalleryImageVersion. The GalleryImageVersion is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.GalleryImageVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryImageVersion] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -37676,8 +37282,6 @@ class GalleryImageVersionsOperations:
         gallery_name: str,
         gallery_image_name: str,
         gallery_image_version_name: str,
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -37689,8 +37293,9 @@ class GalleryImageVersionsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_gallery_image_versions_delete_request(
@@ -37747,8 +37352,6 @@ class GalleryImageVersionsOperations:
         gallery_name: str,
         gallery_image_name: str,
         gallery_image_version_name: str,
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Delete a gallery image version.
@@ -37763,15 +37366,14 @@ class GalleryImageVersionsOperations:
         :param gallery_image_version_name: The name of the gallery image version to be retrieved.
          Required.
         :type gallery_image_version_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -37818,7 +37420,7 @@ class GalleryImageVersionsOperations:
 
     @distributed_trace
     def list_by_gallery_image(
-        self, resource_group_name: str, gallery_name: str, gallery_image_name: str, *, api_version: str, **kwargs: Any
+        self, resource_group_name: str, gallery_name: str, gallery_image_name: str, **kwargs: Any
     ) -> ItemPaged["_models.GalleryImageVersion"]:
         """List gallery image versions in a gallery image definition.
 
@@ -37829,15 +37431,14 @@ class GalleryImageVersionsOperations:
         :type gallery_name: str
         :param gallery_image_name: The name of the gallery image definition to be retrieved. Required.
         :type gallery_image_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of GalleryImageVersion
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.GalleryImageVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[List[_models.GalleryImageVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -37916,26 +37517,20 @@ class GalleryApplicationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`gallery_applications` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def get(
-        self,
-        resource_group_name: str,
-        gallery_name: str,
-        gallery_application_name: str,
-        *,
-        api_version: str,
-        **kwargs: Any
+        self, resource_group_name: str, gallery_name: str, gallery_application_name: str, **kwargs: Any
     ) -> _models.GalleryApplication:
         """Retrieves information about a gallery Application Definition.
 
@@ -37947,8 +37542,6 @@ class GalleryApplicationsOperations:
         :param gallery_application_name: The name of the gallery Application Definition to be
          retrieved. Required.
         :type gallery_application_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: GalleryApplication. The GalleryApplication is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.GalleryApplication
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -37962,8 +37555,9 @@ class GalleryApplicationsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[_models.GalleryApplication] = kwargs.pop("cls", None)
 
         _request = build_gallery_applications_get_request(
@@ -38017,8 +37611,6 @@ class GalleryApplicationsOperations:
         gallery_name: str,
         gallery_application_name: str,
         gallery_application: Union[_models.GalleryApplication, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -38030,8 +37622,9 @@ class GalleryApplicationsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -38102,7 +37695,6 @@ class GalleryApplicationsOperations:
         gallery_application_name: str,
         gallery_application: _models.GalleryApplication,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryApplication]:
@@ -38119,8 +37711,6 @@ class GalleryApplicationsOperations:
         :param gallery_application: Parameters supplied to the create or update gallery Application
          operation. Required.
         :type gallery_application: ~azure.mgmt.compute.models.GalleryApplication
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -38138,7 +37728,6 @@ class GalleryApplicationsOperations:
         gallery_application_name: str,
         gallery_application: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryApplication]:
@@ -38155,8 +37744,6 @@ class GalleryApplicationsOperations:
         :param gallery_application: Parameters supplied to the create or update gallery Application
          operation. Required.
         :type gallery_application: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -38174,7 +37761,6 @@ class GalleryApplicationsOperations:
         gallery_application_name: str,
         gallery_application: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryApplication]:
@@ -38191,8 +37777,6 @@ class GalleryApplicationsOperations:
         :param gallery_application: Parameters supplied to the create or update gallery Application
          operation. Required.
         :type gallery_application: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -38209,8 +37793,6 @@ class GalleryApplicationsOperations:
         gallery_name: str,
         gallery_application_name: str,
         gallery_application: Union[_models.GalleryApplication, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.GalleryApplication]:
         """Create or update a gallery Application Definition.
@@ -38226,16 +37808,15 @@ class GalleryApplicationsOperations:
         :param gallery_application: Parameters supplied to the create or update gallery Application
          operation. Is one of the following types: GalleryApplication, JSON, IO[bytes] Required.
         :type gallery_application: ~azure.mgmt.compute.models.GalleryApplication or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns GalleryApplication. The GalleryApplication is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.GalleryApplication]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryApplication] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -38293,8 +37874,6 @@ class GalleryApplicationsOperations:
         gallery_name: str,
         gallery_application_name: str,
         gallery_application: Union[_models.GalleryApplicationUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -38306,8 +37885,9 @@ class GalleryApplicationsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -38373,7 +37953,6 @@ class GalleryApplicationsOperations:
         gallery_application_name: str,
         gallery_application: _models.GalleryApplicationUpdate,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryApplication]:
@@ -38390,8 +37969,6 @@ class GalleryApplicationsOperations:
         :param gallery_application: Parameters supplied to the update gallery Application operation.
          Required.
         :type gallery_application: ~azure.mgmt.compute.models.GalleryApplicationUpdate
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -38409,7 +37986,6 @@ class GalleryApplicationsOperations:
         gallery_application_name: str,
         gallery_application: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryApplication]:
@@ -38426,8 +38002,6 @@ class GalleryApplicationsOperations:
         :param gallery_application: Parameters supplied to the update gallery Application operation.
          Required.
         :type gallery_application: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -38445,7 +38019,6 @@ class GalleryApplicationsOperations:
         gallery_application_name: str,
         gallery_application: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryApplication]:
@@ -38462,8 +38035,6 @@ class GalleryApplicationsOperations:
         :param gallery_application: Parameters supplied to the update gallery Application operation.
          Required.
         :type gallery_application: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -38480,8 +38051,6 @@ class GalleryApplicationsOperations:
         gallery_name: str,
         gallery_application_name: str,
         gallery_application: Union[_models.GalleryApplicationUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.GalleryApplication]:
         """Update a gallery Application Definition.
@@ -38498,16 +38067,15 @@ class GalleryApplicationsOperations:
          one of the following types: GalleryApplicationUpdate, JSON, IO[bytes] Required.
         :type gallery_application: ~azure.mgmt.compute.models.GalleryApplicationUpdate or JSON or
          IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns GalleryApplication. The GalleryApplication is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.GalleryApplication]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryApplication] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -38564,13 +38132,7 @@ class GalleryApplicationsOperations:
         )
 
     def _delete_initial(
-        self,
-        resource_group_name: str,
-        gallery_name: str,
-        gallery_application_name: str,
-        *,
-        api_version: str,
-        **kwargs: Any
+        self, resource_group_name: str, gallery_name: str, gallery_application_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -38581,8 +38143,9 @@ class GalleryApplicationsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_gallery_applications_delete_request(
@@ -38633,13 +38196,7 @@ class GalleryApplicationsOperations:
 
     @distributed_trace
     def begin_delete(
-        self,
-        resource_group_name: str,
-        gallery_name: str,
-        gallery_application_name: str,
-        *,
-        api_version: str,
-        **kwargs: Any
+        self, resource_group_name: str, gallery_name: str, gallery_application_name: str, **kwargs: Any
     ) -> LROPoller[None]:
         """Delete a gallery Application.
 
@@ -38651,15 +38208,14 @@ class GalleryApplicationsOperations:
         :param gallery_application_name: The name of the gallery Application Definition to be
          retrieved. Required.
         :type gallery_application_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -38705,7 +38261,7 @@ class GalleryApplicationsOperations:
 
     @distributed_trace
     def list_by_gallery(
-        self, resource_group_name: str, gallery_name: str, *, api_version: str, **kwargs: Any
+        self, resource_group_name: str, gallery_name: str, **kwargs: Any
     ) -> ItemPaged["_models.GalleryApplication"]:
         """List gallery Application Definitions in a gallery.
 
@@ -38714,15 +38270,14 @@ class GalleryApplicationsOperations:
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery. Required.
         :type gallery_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of GalleryApplication
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.GalleryApplication]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[List[_models.GalleryApplication]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -38800,14 +38355,14 @@ class GalleryApplicationVersionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`gallery_application_versions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -38819,7 +38374,6 @@ class GalleryApplicationVersionsOperations:
         gallery_application_name: str,
         gallery_application_version_name: str,
         *,
-        api_version: str,
         expand: Optional[Union[str, _models.ReplicationStatusTypes]] = None,
         **kwargs: Any
     ) -> _models.GalleryApplicationVersion:
@@ -38836,8 +38390,6 @@ class GalleryApplicationVersionsOperations:
         :param gallery_application_version_name: The name of the gallery Application Version to be
          retrieved. Required.
         :type gallery_application_version_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword expand: The expand expression to apply on the operation. Known values are:
          "ReplicationStatus" and "UefiSettings". Default value is None.
         :paramtype expand: str or ~azure.mgmt.compute.models.ReplicationStatusTypes
@@ -38855,8 +38407,9 @@ class GalleryApplicationVersionsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[_models.GalleryApplicationVersion] = kwargs.pop("cls", None)
 
         _request = build_gallery_application_versions_get_request(
@@ -38865,8 +38418,8 @@ class GalleryApplicationVersionsOperations:
             gallery_application_name=gallery_application_name,
             gallery_application_version_name=gallery_application_version_name,
             subscription_id=self._config.subscription_id,
-            api_version=api_version,
             expand=expand,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -38913,8 +38466,6 @@ class GalleryApplicationVersionsOperations:
         gallery_application_name: str,
         gallery_application_version_name: str,
         gallery_application_version: Union[_models.GalleryApplicationVersion, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -38926,8 +38477,9 @@ class GalleryApplicationVersionsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -39000,7 +38552,6 @@ class GalleryApplicationVersionsOperations:
         gallery_application_version_name: str,
         gallery_application_version: _models.GalleryApplicationVersion,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryApplicationVersion]:
@@ -39020,8 +38571,6 @@ class GalleryApplicationVersionsOperations:
         :param gallery_application_version: Parameters supplied to the create or update gallery
          Application Version operation. Required.
         :type gallery_application_version: ~azure.mgmt.compute.models.GalleryApplicationVersion
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -39040,7 +38589,6 @@ class GalleryApplicationVersionsOperations:
         gallery_application_version_name: str,
         gallery_application_version: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryApplicationVersion]:
@@ -39060,8 +38608,6 @@ class GalleryApplicationVersionsOperations:
         :param gallery_application_version: Parameters supplied to the create or update gallery
          Application Version operation. Required.
         :type gallery_application_version: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -39080,7 +38626,6 @@ class GalleryApplicationVersionsOperations:
         gallery_application_version_name: str,
         gallery_application_version: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryApplicationVersion]:
@@ -39100,8 +38645,6 @@ class GalleryApplicationVersionsOperations:
         :param gallery_application_version: Parameters supplied to the create or update gallery
          Application Version operation. Required.
         :type gallery_application_version: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -39119,8 +38662,6 @@ class GalleryApplicationVersionsOperations:
         gallery_application_name: str,
         gallery_application_version_name: str,
         gallery_application_version: Union[_models.GalleryApplicationVersion, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.GalleryApplicationVersion]:
         """Create or update a gallery Application Version.
@@ -39141,16 +38682,15 @@ class GalleryApplicationVersionsOperations:
          IO[bytes] Required.
         :type gallery_application_version: ~azure.mgmt.compute.models.GalleryApplicationVersion or JSON
          or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns GalleryApplicationVersion. The
          GalleryApplicationVersion is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.GalleryApplicationVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryApplicationVersion] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -39210,8 +38750,6 @@ class GalleryApplicationVersionsOperations:
         gallery_application_name: str,
         gallery_application_version_name: str,
         gallery_application_version: Union[_models.GalleryApplicationVersionUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -39223,8 +38761,9 @@ class GalleryApplicationVersionsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -39292,7 +38831,6 @@ class GalleryApplicationVersionsOperations:
         gallery_application_version_name: str,
         gallery_application_version: _models.GalleryApplicationVersionUpdate,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryApplicationVersion]:
@@ -39312,8 +38850,6 @@ class GalleryApplicationVersionsOperations:
         :param gallery_application_version: Parameters supplied to the update gallery Application
          Version operation. Required.
         :type gallery_application_version: ~azure.mgmt.compute.models.GalleryApplicationVersionUpdate
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -39332,7 +38868,6 @@ class GalleryApplicationVersionsOperations:
         gallery_application_version_name: str,
         gallery_application_version: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryApplicationVersion]:
@@ -39352,8 +38887,6 @@ class GalleryApplicationVersionsOperations:
         :param gallery_application_version: Parameters supplied to the update gallery Application
          Version operation. Required.
         :type gallery_application_version: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -39372,7 +38905,6 @@ class GalleryApplicationVersionsOperations:
         gallery_application_version_name: str,
         gallery_application_version: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryApplicationVersion]:
@@ -39392,8 +38924,6 @@ class GalleryApplicationVersionsOperations:
         :param gallery_application_version: Parameters supplied to the update gallery Application
          Version operation. Required.
         :type gallery_application_version: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -39411,8 +38941,6 @@ class GalleryApplicationVersionsOperations:
         gallery_application_name: str,
         gallery_application_version_name: str,
         gallery_application_version: Union[_models.GalleryApplicationVersionUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.GalleryApplicationVersion]:
         """Update a gallery Application Version.
@@ -39433,16 +38961,15 @@ class GalleryApplicationVersionsOperations:
          IO[bytes] Required.
         :type gallery_application_version: ~azure.mgmt.compute.models.GalleryApplicationVersionUpdate
          or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns GalleryApplicationVersion. The
          GalleryApplicationVersion is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.GalleryApplicationVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryApplicationVersion] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -39505,8 +39032,6 @@ class GalleryApplicationVersionsOperations:
         gallery_name: str,
         gallery_application_name: str,
         gallery_application_version_name: str,
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -39518,8 +39043,9 @@ class GalleryApplicationVersionsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_gallery_application_versions_delete_request(
@@ -39576,8 +39102,6 @@ class GalleryApplicationVersionsOperations:
         gallery_name: str,
         gallery_application_name: str,
         gallery_application_version_name: str,
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Delete a gallery Application Version.
@@ -39593,15 +39117,14 @@ class GalleryApplicationVersionsOperations:
         :param gallery_application_version_name: The name of the gallery Application Version to be
          retrieved. Required.
         :type gallery_application_version_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -39648,13 +39171,7 @@ class GalleryApplicationVersionsOperations:
 
     @distributed_trace
     def list_by_gallery_application(
-        self,
-        resource_group_name: str,
-        gallery_name: str,
-        gallery_application_name: str,
-        *,
-        api_version: str,
-        **kwargs: Any
+        self, resource_group_name: str, gallery_name: str, gallery_application_name: str, **kwargs: Any
     ) -> ItemPaged["_models.GalleryApplicationVersion"]:
         """List gallery Application Versions in a gallery Application Definition.
 
@@ -39666,15 +39183,14 @@ class GalleryApplicationVersionsOperations:
         :param gallery_application_name: The name of the gallery Application Definition to be
          retrieved. Required.
         :type gallery_application_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of GalleryApplicationVersion
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.GalleryApplicationVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[List[_models.GalleryApplicationVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -39753,20 +39269,34 @@ class GalleryScriptsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`gallery_scripts` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-03-03",
+        params_added_on={
+            "2025-03-03": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "gallery_name",
+                "gallery_script_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-03-03"],
+    )
     def get(
-        self, resource_group_name: str, gallery_name: str, gallery_script_name: str, *, api_version: str, **kwargs: Any
+        self, resource_group_name: str, gallery_name: str, gallery_script_name: str, **kwargs: Any
     ) -> _models.GalleryScript:
         """Retrieves information about a gallery script definition.
 
@@ -39778,8 +39308,6 @@ class GalleryScriptsOperations:
         :param gallery_script_name: The name of the gallery Script Definition to be retrieved.
          Required.
         :type gallery_script_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: GalleryScript. The GalleryScript is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.GalleryScript
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -39793,8 +39321,9 @@ class GalleryScriptsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[_models.GalleryScript] = kwargs.pop("cls", None)
 
         _request = build_gallery_scripts_get_request(
@@ -39842,14 +39371,27 @@ class GalleryScriptsOperations:
 
         return deserialized  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2025-03-03",
+        params_added_on={
+            "2025-03-03": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "gallery_name",
+                "gallery_script_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-03-03"],
+    )
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         gallery_name: str,
         gallery_script_name: str,
         gallery_script: Union[_models.GalleryScript, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -39861,8 +39403,9 @@ class GalleryScriptsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -39929,7 +39472,6 @@ class GalleryScriptsOperations:
         gallery_script_name: str,
         gallery_script: _models.GalleryScript,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[None]:
@@ -39947,8 +39489,6 @@ class GalleryScriptsOperations:
         :param gallery_script: Parameters supplied to the create or update gallery Script operation.
          Required.
         :type gallery_script: ~azure.mgmt.compute.models.GalleryScript
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -39965,7 +39505,6 @@ class GalleryScriptsOperations:
         gallery_script_name: str,
         gallery_script: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[None]:
@@ -39983,8 +39522,6 @@ class GalleryScriptsOperations:
         :param gallery_script: Parameters supplied to the create or update gallery Script operation.
          Required.
         :type gallery_script: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40001,7 +39538,6 @@ class GalleryScriptsOperations:
         gallery_script_name: str,
         gallery_script: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[None]:
@@ -40019,8 +39555,6 @@ class GalleryScriptsOperations:
         :param gallery_script: Parameters supplied to the create or update gallery Script operation.
          Required.
         :type gallery_script: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40030,14 +39564,27 @@ class GalleryScriptsOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-03-03",
+        params_added_on={
+            "2025-03-03": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "gallery_name",
+                "gallery_script_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-03-03"],
+    )
     def begin_create_or_update(
         self,
         resource_group_name: str,
         gallery_name: str,
         gallery_script_name: str,
         gallery_script: Union[_models.GalleryScript, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Create or update a Gallery Script Definition. Gallery scripts allow the storage, sharing and
@@ -40054,15 +39601,14 @@ class GalleryScriptsOperations:
         :param gallery_script: Parameters supplied to the create or update gallery Script operation. Is
          one of the following types: GalleryScript, JSON, IO[bytes] Required.
         :type gallery_script: ~azure.mgmt.compute.models.GalleryScript or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -40109,14 +39655,27 @@ class GalleryScriptsOperations:
             )
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2025-03-03",
+        params_added_on={
+            "2025-03-03": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "gallery_name",
+                "gallery_script_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-03-03"],
+    )
     def _update_initial(
         self,
         resource_group_name: str,
         gallery_name: str,
         gallery_script_name: str,
         gallery_script: Union[_models.GalleryScriptUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -40128,8 +39687,9 @@ class GalleryScriptsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -40196,7 +39756,6 @@ class GalleryScriptsOperations:
         gallery_script_name: str,
         gallery_script: _models.GalleryScriptUpdate,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[None]:
@@ -40212,8 +39771,6 @@ class GalleryScriptsOperations:
         :type gallery_script_name: str
         :param gallery_script: Parameters supplied to the update gallery Script operation. Required.
         :type gallery_script: ~azure.mgmt.compute.models.GalleryScriptUpdate
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40230,7 +39787,6 @@ class GalleryScriptsOperations:
         gallery_script_name: str,
         gallery_script: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[None]:
@@ -40246,8 +39802,6 @@ class GalleryScriptsOperations:
         :type gallery_script_name: str
         :param gallery_script: Parameters supplied to the update gallery Script operation. Required.
         :type gallery_script: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40264,7 +39818,6 @@ class GalleryScriptsOperations:
         gallery_script_name: str,
         gallery_script: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[None]:
@@ -40280,8 +39833,6 @@ class GalleryScriptsOperations:
         :type gallery_script_name: str
         :param gallery_script: Parameters supplied to the update gallery Script operation. Required.
         :type gallery_script: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40291,14 +39842,27 @@ class GalleryScriptsOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-03-03",
+        params_added_on={
+            "2025-03-03": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "gallery_name",
+                "gallery_script_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-03-03"],
+    )
     def begin_update(
         self,
         resource_group_name: str,
         gallery_name: str,
         gallery_script_name: str,
         gallery_script: Union[_models.GalleryScriptUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Update a gallery Script Definition.
@@ -40314,15 +39878,14 @@ class GalleryScriptsOperations:
         :param gallery_script: Parameters supplied to the update gallery Script operation. Is one of
          the following types: GalleryScriptUpdate, JSON, IO[bytes] Required.
         :type gallery_script: ~azure.mgmt.compute.models.GalleryScriptUpdate or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -40369,8 +39932,21 @@ class GalleryScriptsOperations:
             )
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2025-03-03",
+        params_added_on={
+            "2025-03-03": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "gallery_name",
+                "gallery_script_name",
+            ]
+        },
+        api_versions_list=["2025-03-03"],
+    )
     def _delete_initial(
-        self, resource_group_name: str, gallery_name: str, gallery_script_name: str, *, api_version: str, **kwargs: Any
+        self, resource_group_name: str, gallery_name: str, gallery_script_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -40381,8 +39957,9 @@ class GalleryScriptsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_gallery_scripts_delete_request(
@@ -40432,8 +40009,21 @@ class GalleryScriptsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-03-03",
+        params_added_on={
+            "2025-03-03": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "gallery_name",
+                "gallery_script_name",
+            ]
+        },
+        api_versions_list=["2025-03-03"],
+    )
     def begin_delete(
-        self, resource_group_name: str, gallery_name: str, gallery_script_name: str, *, api_version: str, **kwargs: Any
+        self, resource_group_name: str, gallery_name: str, gallery_script_name: str, **kwargs: Any
     ) -> LROPoller[None]:
         """Delete a gallery Script Definition.
 
@@ -40445,15 +40035,14 @@ class GalleryScriptsOperations:
         :param gallery_script_name: The name of the gallery Script Definition to be retrieved.
          Required.
         :type gallery_script_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -40498,8 +40087,15 @@ class GalleryScriptsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-03-03",
+        params_added_on={
+            "2025-03-03": ["api_version", "subscription_id", "resource_group_name", "gallery_name", "accept"]
+        },
+        api_versions_list=["2025-03-03"],
+    )
     def list_by_gallery(
-        self, resource_group_name: str, gallery_name: str, *, api_version: str, **kwargs: Any
+        self, resource_group_name: str, gallery_name: str, **kwargs: Any
     ) -> ItemPaged["_models.GalleryScript"]:
         """List gallery Script Definitions in a gallery.
 
@@ -40508,15 +40104,14 @@ class GalleryScriptsOperations:
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery. Required.
         :type gallery_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of GalleryScript
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.GalleryScript]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[List[_models.GalleryScript]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -40594,26 +40189,39 @@ class GalleryScriptVersionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`gallery_script_versions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-03-03",
+        params_added_on={
+            "2025-03-03": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "gallery_name",
+                "gallery_script_name",
+                "gallery_script_version_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-03-03"],
+    )
     def get(
         self,
         resource_group_name: str,
         gallery_name: str,
         gallery_script_name: str,
         gallery_script_version_name: str,
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> _models.GalleryScriptVersion:
         """Custom ArmResourceRead operation template with CloudError as Error.
@@ -40629,8 +40237,6 @@ class GalleryScriptVersionsOperations:
         :param gallery_script_version_name: The name of the gallery Script Version to be retrieved.
          Required.
         :type gallery_script_version_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: GalleryScriptVersion. The GalleryScriptVersion is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.GalleryScriptVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -40644,8 +40250,9 @@ class GalleryScriptVersionsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[_models.GalleryScriptVersion] = kwargs.pop("cls", None)
 
         _request = build_gallery_script_versions_get_request(
@@ -40694,6 +40301,22 @@ class GalleryScriptVersionsOperations:
 
         return deserialized  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2025-03-03",
+        params_added_on={
+            "2025-03-03": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "gallery_name",
+                "gallery_script_name",
+                "gallery_script_version_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-03-03"],
+    )
     def _create_or_update_initial(
         self,
         resource_group_name: str,
@@ -40701,8 +40324,6 @@ class GalleryScriptVersionsOperations:
         gallery_script_name: str,
         gallery_script_version_name: str,
         gallery_script_version: Union[_models.GalleryScriptVersion, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -40714,8 +40335,9 @@ class GalleryScriptVersionsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -40787,7 +40409,6 @@ class GalleryScriptVersionsOperations:
         gallery_script_version_name: str,
         gallery_script_version: _models.GalleryScriptVersion,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryScriptVersion]:
@@ -40807,8 +40428,6 @@ class GalleryScriptVersionsOperations:
         :param gallery_script_version: Parameters supplied to the create or update gallery Script
          Version operation. Required.
         :type gallery_script_version: ~azure.mgmt.compute.models.GalleryScriptVersion
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40827,7 +40446,6 @@ class GalleryScriptVersionsOperations:
         gallery_script_version_name: str,
         gallery_script_version: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryScriptVersion]:
@@ -40847,8 +40465,6 @@ class GalleryScriptVersionsOperations:
         :param gallery_script_version: Parameters supplied to the create or update gallery Script
          Version operation. Required.
         :type gallery_script_version: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40867,7 +40483,6 @@ class GalleryScriptVersionsOperations:
         gallery_script_version_name: str,
         gallery_script_version: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryScriptVersion]:
@@ -40887,8 +40502,6 @@ class GalleryScriptVersionsOperations:
         :param gallery_script_version: Parameters supplied to the create or update gallery Script
          Version operation. Required.
         :type gallery_script_version: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40899,6 +40512,22 @@ class GalleryScriptVersionsOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-03-03",
+        params_added_on={
+            "2025-03-03": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "gallery_name",
+                "gallery_script_name",
+                "gallery_script_version_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-03-03"],
+    )
     def begin_create_or_update(
         self,
         resource_group_name: str,
@@ -40906,8 +40535,6 @@ class GalleryScriptVersionsOperations:
         gallery_script_name: str,
         gallery_script_version_name: str,
         gallery_script_version: Union[_models.GalleryScriptVersion, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.GalleryScriptVersion]:
         """Create or update a gallery Script Version.
@@ -40928,16 +40555,15 @@ class GalleryScriptVersionsOperations:
          Required.
         :type gallery_script_version: ~azure.mgmt.compute.models.GalleryScriptVersion or JSON or
          IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns GalleryScriptVersion. The GalleryScriptVersion
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.GalleryScriptVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryScriptVersion] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -40990,6 +40616,22 @@ class GalleryScriptVersionsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2025-03-03",
+        params_added_on={
+            "2025-03-03": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "gallery_name",
+                "gallery_script_name",
+                "gallery_script_version_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-03-03"],
+    )
     def _update_initial(
         self,
         resource_group_name: str,
@@ -40997,8 +40639,6 @@ class GalleryScriptVersionsOperations:
         gallery_script_name: str,
         gallery_script_version_name: str,
         gallery_script_version: Union[_models.GalleryScriptVersionUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -41010,8 +40650,9 @@ class GalleryScriptVersionsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -41083,7 +40724,6 @@ class GalleryScriptVersionsOperations:
         gallery_script_version_name: str,
         gallery_script_version: _models.GalleryScriptVersionUpdate,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryScriptVersion]:
@@ -41103,8 +40743,6 @@ class GalleryScriptVersionsOperations:
         :param gallery_script_version: Parameters supplied to the update gallery Script Version
          operation. Required.
         :type gallery_script_version: ~azure.mgmt.compute.models.GalleryScriptVersionUpdate
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41123,7 +40761,6 @@ class GalleryScriptVersionsOperations:
         gallery_script_version_name: str,
         gallery_script_version: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryScriptVersion]:
@@ -41143,8 +40780,6 @@ class GalleryScriptVersionsOperations:
         :param gallery_script_version: Parameters supplied to the update gallery Script Version
          operation. Required.
         :type gallery_script_version: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41163,7 +40798,6 @@ class GalleryScriptVersionsOperations:
         gallery_script_version_name: str,
         gallery_script_version: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryScriptVersion]:
@@ -41183,8 +40817,6 @@ class GalleryScriptVersionsOperations:
         :param gallery_script_version: Parameters supplied to the update gallery Script Version
          operation. Required.
         :type gallery_script_version: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41195,6 +40827,22 @@ class GalleryScriptVersionsOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-03-03",
+        params_added_on={
+            "2025-03-03": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "gallery_name",
+                "gallery_script_name",
+                "gallery_script_version_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-03-03"],
+    )
     def begin_update(
         self,
         resource_group_name: str,
@@ -41202,8 +40850,6 @@ class GalleryScriptVersionsOperations:
         gallery_script_name: str,
         gallery_script_version_name: str,
         gallery_script_version: Union[_models.GalleryScriptVersionUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.GalleryScriptVersion]:
         """Update a gallery Script Version.
@@ -41223,16 +40869,15 @@ class GalleryScriptVersionsOperations:
          operation. Is one of the following types: GalleryScriptVersionUpdate, JSON, IO[bytes] Required.
         :type gallery_script_version: ~azure.mgmt.compute.models.GalleryScriptVersionUpdate or JSON or
          IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns GalleryScriptVersion. The GalleryScriptVersion
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.GalleryScriptVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryScriptVersion] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -41285,14 +40930,26 @@ class GalleryScriptVersionsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2025-03-03",
+        params_added_on={
+            "2025-03-03": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "gallery_name",
+                "gallery_script_name",
+                "gallery_script_version_name",
+            ]
+        },
+        api_versions_list=["2025-03-03"],
+    )
     def _delete_initial(
         self,
         resource_group_name: str,
         gallery_name: str,
         gallery_script_name: str,
         gallery_script_version_name: str,
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -41304,8 +40961,9 @@ class GalleryScriptVersionsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_gallery_script_versions_delete_request(
@@ -41359,14 +41017,26 @@ class GalleryScriptVersionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-03-03",
+        params_added_on={
+            "2025-03-03": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "gallery_name",
+                "gallery_script_name",
+                "gallery_script_version_name",
+            ]
+        },
+        api_versions_list=["2025-03-03"],
+    )
     def begin_delete(
         self,
         resource_group_name: str,
         gallery_name: str,
         gallery_script_name: str,
         gallery_script_version_name: str,
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.GalleryScriptVersion]:
         """Delete a gallery Script Version.
@@ -41382,16 +41052,15 @@ class GalleryScriptVersionsOperations:
         :param gallery_script_version_name: The name of the gallery Script Version to be retrieved.
          Required.
         :type gallery_script_version_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns GalleryScriptVersion. The GalleryScriptVersion
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.GalleryScriptVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[_models.GalleryScriptVersion] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -41449,8 +41118,22 @@ class GalleryScriptVersionsOperations:
         )
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-03-03",
+        params_added_on={
+            "2025-03-03": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "gallery_name",
+                "gallery_script_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-03-03"],
+    )
     def list_by_gallery_script(
-        self, resource_group_name: str, gallery_name: str, gallery_script_name: str, *, api_version: str, **kwargs: Any
+        self, resource_group_name: str, gallery_name: str, gallery_script_name: str, **kwargs: Any
     ) -> ItemPaged["_models.GalleryScriptVersion"]:
         """List gallery Script Versions in a gallery Script Definition.
 
@@ -41462,15 +41145,14 @@ class GalleryScriptVersionsOperations:
         :param gallery_script_name: The name of the gallery Script Definition to be retrieved.
          Required.
         :type gallery_script_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of GalleryScriptVersion
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.GalleryScriptVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[List[_models.GalleryScriptVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -41549,26 +41231,20 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`gallery_in_vm_access_control_profiles` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def get(
-        self,
-        resource_group_name: str,
-        gallery_name: str,
-        in_vm_access_control_profile_name: str,
-        *,
-        api_version: str,
-        **kwargs: Any
+        self, resource_group_name: str, gallery_name: str, in_vm_access_control_profile_name: str, **kwargs: Any
     ) -> _models.GalleryInVMAccessControlProfile:
         """Retrieves information about a gallery inVMAccessControlProfile.
 
@@ -41580,8 +41256,6 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         :param in_vm_access_control_profile_name: The name of the gallery inVMAccessControlProfile to
          be retrieved. Required.
         :type in_vm_access_control_profile_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: GalleryInVMAccessControlProfile. The GalleryInVMAccessControlProfile is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.compute.models.GalleryInVMAccessControlProfile
@@ -41596,8 +41270,9 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[_models.GalleryInVMAccessControlProfile] = kwargs.pop("cls", None)
 
         _request = build_gallery_in_vm_access_control_profiles_get_request(
@@ -41651,8 +41326,6 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         gallery_name: str,
         in_vm_access_control_profile_name: str,
         gallery_in_vm_access_control_profile: Union[_models.GalleryInVMAccessControlProfile, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -41664,8 +41337,9 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -41732,7 +41406,6 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         in_vm_access_control_profile_name: str,
         gallery_in_vm_access_control_profile: _models.GalleryInVMAccessControlProfile,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryInVMAccessControlProfile]:
@@ -41750,8 +41423,6 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
          gallery inVMAccessControlProfile operation. Required.
         :type gallery_in_vm_access_control_profile:
          ~azure.mgmt.compute.models.GalleryInVMAccessControlProfile
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41770,7 +41441,6 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         in_vm_access_control_profile_name: str,
         gallery_in_vm_access_control_profile: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryInVMAccessControlProfile]:
@@ -41787,8 +41457,6 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         :param gallery_in_vm_access_control_profile: Parameters supplied to the create or update
          gallery inVMAccessControlProfile operation. Required.
         :type gallery_in_vm_access_control_profile: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41807,7 +41475,6 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         in_vm_access_control_profile_name: str,
         gallery_in_vm_access_control_profile: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryInVMAccessControlProfile]:
@@ -41824,8 +41491,6 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         :param gallery_in_vm_access_control_profile: Parameters supplied to the create or update
          gallery inVMAccessControlProfile operation. Required.
         :type gallery_in_vm_access_control_profile: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41843,8 +41508,6 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         gallery_name: str,
         in_vm_access_control_profile_name: str,
         gallery_in_vm_access_control_profile: Union[_models.GalleryInVMAccessControlProfile, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.GalleryInVMAccessControlProfile]:
         """Create or update a gallery inVMAccessControlProfile.
@@ -41862,8 +41525,6 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
          GalleryInVMAccessControlProfile, JSON, IO[bytes] Required.
         :type gallery_in_vm_access_control_profile:
          ~azure.mgmt.compute.models.GalleryInVMAccessControlProfile or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns GalleryInVMAccessControlProfile. The
          GalleryInVMAccessControlProfile is compatible with MutableMapping
         :rtype:
@@ -41871,8 +41532,9 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryInVMAccessControlProfile] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -41930,8 +41592,6 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         gallery_name: str,
         in_vm_access_control_profile_name: str,
         gallery_in_vm_access_control_profile: Union[_models.GalleryInVMAccessControlProfileUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -41943,8 +41603,9 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -42010,7 +41671,6 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         in_vm_access_control_profile_name: str,
         gallery_in_vm_access_control_profile: _models.GalleryInVMAccessControlProfileUpdate,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryInVMAccessControlProfile]:
@@ -42028,8 +41688,6 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
          inVMAccessControlProfile operation. Required.
         :type gallery_in_vm_access_control_profile:
          ~azure.mgmt.compute.models.GalleryInVMAccessControlProfileUpdate
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42048,7 +41706,6 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         in_vm_access_control_profile_name: str,
         gallery_in_vm_access_control_profile: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryInVMAccessControlProfile]:
@@ -42065,8 +41722,6 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         :param gallery_in_vm_access_control_profile: Parameters supplied to the update gallery
          inVMAccessControlProfile operation. Required.
         :type gallery_in_vm_access_control_profile: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42085,7 +41740,6 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         in_vm_access_control_profile_name: str,
         gallery_in_vm_access_control_profile: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryInVMAccessControlProfile]:
@@ -42102,8 +41756,6 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         :param gallery_in_vm_access_control_profile: Parameters supplied to the update gallery
          inVMAccessControlProfile operation. Required.
         :type gallery_in_vm_access_control_profile: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42121,8 +41773,6 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         gallery_name: str,
         in_vm_access_control_profile_name: str,
         gallery_in_vm_access_control_profile: Union[_models.GalleryInVMAccessControlProfileUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.GalleryInVMAccessControlProfile]:
         """Update a gallery inVMAccessControlProfile.
@@ -42140,8 +41790,6 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
          GalleryInVMAccessControlProfileUpdate, JSON, IO[bytes] Required.
         :type gallery_in_vm_access_control_profile:
          ~azure.mgmt.compute.models.GalleryInVMAccessControlProfileUpdate or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns GalleryInVMAccessControlProfile. The
          GalleryInVMAccessControlProfile is compatible with MutableMapping
         :rtype:
@@ -42149,8 +41797,9 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryInVMAccessControlProfile] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -42207,13 +41856,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         )
 
     def _delete_initial(
-        self,
-        resource_group_name: str,
-        gallery_name: str,
-        in_vm_access_control_profile_name: str,
-        *,
-        api_version: str,
-        **kwargs: Any
+        self, resource_group_name: str, gallery_name: str, in_vm_access_control_profile_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -42224,8 +41867,9 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_gallery_in_vm_access_control_profiles_delete_request(
@@ -42278,13 +41922,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
 
     @distributed_trace
     def begin_delete(
-        self,
-        resource_group_name: str,
-        gallery_name: str,
-        in_vm_access_control_profile_name: str,
-        *,
-        api_version: str,
-        **kwargs: Any
+        self, resource_group_name: str, gallery_name: str, in_vm_access_control_profile_name: str, **kwargs: Any
     ) -> LROPoller[None]:
         """Delete a gallery inVMAccessControlProfile.
 
@@ -42296,15 +41934,14 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         :param in_vm_access_control_profile_name: The name of the gallery inVMAccessControlProfile to
          be retrieved. Required.
         :type in_vm_access_control_profile_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -42350,7 +41987,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
 
     @distributed_trace
     def list_by_gallery(
-        self, resource_group_name: str, gallery_name: str, *, api_version: str, **kwargs: Any
+        self, resource_group_name: str, gallery_name: str, **kwargs: Any
     ) -> ItemPaged["_models.GalleryInVMAccessControlProfile"]:
         """List gallery inVMAccessControlProfiles in a gallery.
 
@@ -42359,16 +41996,15 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery. Required.
         :type gallery_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of GalleryInVMAccessControlProfile
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.GalleryInVMAccessControlProfile]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[List[_models.GalleryInVMAccessControlProfile]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -42446,14 +42082,14 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`gallery_in_vm_access_control_profile_versions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -42464,8 +42100,6 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         gallery_name: str,
         in_vm_access_control_profile_name: str,
         in_vm_access_control_profile_version_name: str,
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> _models.GalleryInVMAccessControlProfileVersion:
         """Retrieves information about a gallery inVMAccessControlProfile version.
@@ -42481,8 +42115,6 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         :param in_vm_access_control_profile_version_name: The name of the gallery
          inVMAccessControlProfile version to be retrieved. Required.
         :type in_vm_access_control_profile_version_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: GalleryInVMAccessControlProfileVersion. The GalleryInVMAccessControlProfileVersion is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.GalleryInVMAccessControlProfileVersion
@@ -42497,8 +42129,9 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[_models.GalleryInVMAccessControlProfileVersion] = kwargs.pop("cls", None)
 
         _request = build_gallery_in_vm_access_control_profile_versions_get_request(
@@ -42556,8 +42189,6 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         gallery_in_vm_access_control_profile_version: Union[
             _models.GalleryInVMAccessControlProfileVersion, JSON, IO[bytes]
         ],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -42569,8 +42200,9 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -42639,7 +42271,6 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         in_vm_access_control_profile_version_name: str,
         gallery_in_vm_access_control_profile_version: _models.GalleryInVMAccessControlProfileVersion,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryInVMAccessControlProfileVersion]:
@@ -42660,8 +42291,6 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
          update gallery inVMAccessControlProfile version operation. Required.
         :type gallery_in_vm_access_control_profile_version:
          ~azure.mgmt.compute.models.GalleryInVMAccessControlProfileVersion
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42681,7 +42310,6 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         in_vm_access_control_profile_version_name: str,
         gallery_in_vm_access_control_profile_version: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryInVMAccessControlProfileVersion]:
@@ -42701,8 +42329,6 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         :param gallery_in_vm_access_control_profile_version: Parameters supplied to the create or
          update gallery inVMAccessControlProfile version operation. Required.
         :type gallery_in_vm_access_control_profile_version: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42722,7 +42348,6 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         in_vm_access_control_profile_version_name: str,
         gallery_in_vm_access_control_profile_version: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryInVMAccessControlProfileVersion]:
@@ -42742,8 +42367,6 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         :param gallery_in_vm_access_control_profile_version: Parameters supplied to the create or
          update gallery inVMAccessControlProfile version operation. Required.
         :type gallery_in_vm_access_control_profile_version: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42764,8 +42387,6 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         gallery_in_vm_access_control_profile_version: Union[
             _models.GalleryInVMAccessControlProfileVersion, JSON, IO[bytes]
         ],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.GalleryInVMAccessControlProfileVersion]:
         """Create or update a gallery inVMAccessControlProfile version.
@@ -42786,8 +42407,6 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
          GalleryInVMAccessControlProfileVersion, JSON, IO[bytes] Required.
         :type gallery_in_vm_access_control_profile_version:
          ~azure.mgmt.compute.models.GalleryInVMAccessControlProfileVersion or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns GalleryInVMAccessControlProfileVersion. The
          GalleryInVMAccessControlProfileVersion is compatible with MutableMapping
         :rtype:
@@ -42795,8 +42414,9 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryInVMAccessControlProfileVersion] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -42858,8 +42478,6 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         gallery_in_vm_access_control_profile_version: Union[
             _models.GalleryInVMAccessControlProfileVersionUpdate, JSON, IO[bytes]
         ],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -42871,8 +42489,9 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -42940,7 +42559,6 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         in_vm_access_control_profile_version_name: str,
         gallery_in_vm_access_control_profile_version: _models.GalleryInVMAccessControlProfileVersionUpdate,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryInVMAccessControlProfileVersion]:
@@ -42961,8 +42579,6 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
          inVMAccessControlProfile version operation. Required.
         :type gallery_in_vm_access_control_profile_version:
          ~azure.mgmt.compute.models.GalleryInVMAccessControlProfileVersionUpdate
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42982,7 +42598,6 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         in_vm_access_control_profile_version_name: str,
         gallery_in_vm_access_control_profile_version: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryInVMAccessControlProfileVersion]:
@@ -43002,8 +42617,6 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         :param gallery_in_vm_access_control_profile_version: Parameters supplied to the update gallery
          inVMAccessControlProfile version operation. Required.
         :type gallery_in_vm_access_control_profile_version: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -43023,7 +42636,6 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         in_vm_access_control_profile_version_name: str,
         gallery_in_vm_access_control_profile_version: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GalleryInVMAccessControlProfileVersion]:
@@ -43043,8 +42655,6 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         :param gallery_in_vm_access_control_profile_version: Parameters supplied to the update gallery
          inVMAccessControlProfile version operation. Required.
         :type gallery_in_vm_access_control_profile_version: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -43065,8 +42675,6 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         gallery_in_vm_access_control_profile_version: Union[
             _models.GalleryInVMAccessControlProfileVersionUpdate, JSON, IO[bytes]
         ],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.GalleryInVMAccessControlProfileVersion]:
         """Update a gallery inVMAccessControlProfile version.
@@ -43087,8 +42695,6 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
          GalleryInVMAccessControlProfileVersionUpdate, JSON, IO[bytes] Required.
         :type gallery_in_vm_access_control_profile_version:
          ~azure.mgmt.compute.models.GalleryInVMAccessControlProfileVersionUpdate or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns GalleryInVMAccessControlProfileVersion. The
          GalleryInVMAccessControlProfileVersion is compatible with MutableMapping
         :rtype:
@@ -43096,8 +42702,9 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryInVMAccessControlProfileVersion] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -43160,8 +42767,6 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         gallery_name: str,
         in_vm_access_control_profile_name: str,
         in_vm_access_control_profile_version_name: str,
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -43173,8 +42778,9 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_gallery_in_vm_access_control_profile_versions_delete_request(
@@ -43233,8 +42839,6 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         gallery_name: str,
         in_vm_access_control_profile_name: str,
         in_vm_access_control_profile_version_name: str,
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Delete a gallery inVMAccessControlProfile version.
@@ -43250,15 +42854,14 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         :param in_vm_access_control_profile_version_name: The name of the gallery
          inVMAccessControlProfile version to be retrieved. Required.
         :type in_vm_access_control_profile_version_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -43305,13 +42908,7 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
 
     @distributed_trace
     def list_by_gallery_in_vm_access_control_profile(  # pylint: disable=name-too-long
-        self,
-        resource_group_name: str,
-        gallery_name: str,
-        in_vm_access_control_profile_name: str,
-        *,
-        api_version: str,
-        **kwargs: Any
+        self, resource_group_name: str, gallery_name: str, in_vm_access_control_profile_name: str, **kwargs: Any
     ) -> ItemPaged["_models.GalleryInVMAccessControlProfileVersion"]:
         """List gallery inVMAccessControlProfile versions in a gallery inVMAccessControlProfile.
 
@@ -43323,16 +42920,15 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         :param in_vm_access_control_profile_name: The name of the gallery inVMAccessControlProfile to
          be retrieved. Required.
         :type in_vm_access_control_profile_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of GalleryInVMAccessControlProfileVersion
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.GalleryInVMAccessControlProfileVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[List[_models.GalleryInVMAccessControlProfileVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -43411,27 +43007,25 @@ class SharedGalleriesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`shared_galleries` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(self, location: str, gallery_unique_name: str, *, api_version: str, **kwargs: Any) -> _models.SharedGallery:
+    def get(self, location: str, gallery_unique_name: str, **kwargs: Any) -> _models.SharedGallery:
         """Get a shared gallery by subscription id or tenant id.
 
         :param location: The name of the Azure region. Required.
         :type location: str
         :param gallery_unique_name: The unique name of the Shared Gallery. Required.
         :type gallery_unique_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: SharedGallery. The SharedGallery is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.SharedGallery
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -43445,8 +43039,9 @@ class SharedGalleriesOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[_models.SharedGallery] = kwargs.pop("cls", None)
 
         _request = build_shared_galleries_get_request(
@@ -43495,19 +43090,12 @@ class SharedGalleriesOperations:
 
     @distributed_trace
     def list(
-        self,
-        location: str,
-        *,
-        api_version: str,
-        shared_to: Optional[Union[str, _models.SharedToValues]] = None,
-        **kwargs: Any
+        self, location: str, *, shared_to: Optional[Union[str, _models.SharedToValues]] = None, **kwargs: Any
     ) -> ItemPaged["_models.SharedGallery"]:
         """List shared galleries by subscription id or tenant id.
 
         :param location: The name of the Azure region. Required.
         :type location: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword shared_to: The query parameter to decide what shared galleries to fetch when doing
          listing operations. "tenant" Default value is None.
         :paramtype shared_to: str or ~azure.mgmt.compute.models.SharedToValues
@@ -43516,8 +43104,9 @@ class SharedGalleriesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[List[_models.SharedGallery]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -43534,8 +43123,8 @@ class SharedGalleriesOperations:
                 _request = build_shared_galleries_list_request(
                     location=location,
                     subscription_id=self._config.subscription_id,
-                    api_version=api_version,
                     shared_to=shared_to,
+                    api_version=api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -43595,20 +43184,20 @@ class SharedGalleryImagesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`shared_gallery_images` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def get(
-        self, location: str, gallery_unique_name: str, gallery_image_name: str, *, api_version: str, **kwargs: Any
+        self, location: str, gallery_unique_name: str, gallery_image_name: str, **kwargs: Any
     ) -> _models.SharedGalleryImage:
         """Get a shared gallery image by subscription id or tenant id.
 
@@ -43619,8 +43208,6 @@ class SharedGalleryImagesOperations:
         :param gallery_image_name: The name of the Shared Gallery Image Definition from which the Image
          Versions are to be listed. Required.
         :type gallery_image_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: SharedGalleryImage. The SharedGalleryImage is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.SharedGalleryImage
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -43634,8 +43221,9 @@ class SharedGalleryImagesOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[_models.SharedGalleryImage] = kwargs.pop("cls", None)
 
         _request = build_shared_gallery_images_get_request(
@@ -43689,7 +43277,6 @@ class SharedGalleryImagesOperations:
         location: str,
         gallery_unique_name: str,
         *,
-        api_version: str,
         shared_to: Optional[Union[str, _models.SharedToValues]] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.SharedGalleryImage"]:
@@ -43699,8 +43286,6 @@ class SharedGalleryImagesOperations:
         :type location: str
         :param gallery_unique_name: The unique name of the Shared Gallery. Required.
         :type gallery_unique_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword shared_to: The query parameter to decide what shared galleries to fetch when doing
          listing operations. "tenant" Default value is None.
         :paramtype shared_to: str or ~azure.mgmt.compute.models.SharedToValues
@@ -43709,8 +43294,9 @@ class SharedGalleryImagesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[List[_models.SharedGalleryImage]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -43728,8 +43314,8 @@ class SharedGalleryImagesOperations:
                     location=location,
                     gallery_unique_name=gallery_unique_name,
                     subscription_id=self._config.subscription_id,
-                    api_version=api_version,
                     shared_to=shared_to,
+                    api_version=api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -43789,14 +43375,14 @@ class SharedGalleryImageVersionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`shared_gallery_image_versions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -43807,8 +43393,6 @@ class SharedGalleryImageVersionsOperations:
         gallery_unique_name: str,
         gallery_image_name: str,
         gallery_image_version_name: str,
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> _models.SharedGalleryImageVersion:
         """Get a shared gallery image version by subscription id or tenant id.
@@ -43825,8 +43409,6 @@ class SharedGalleryImageVersionsOperations:
          must be within the range of a 32-bit integer. Format: <MajorVersion>.<MinorVersion>.<Patch>.
          Required.
         :type gallery_image_version_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: SharedGalleryImageVersion. The SharedGalleryImageVersion is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.compute.models.SharedGalleryImageVersion
@@ -43841,8 +43423,9 @@ class SharedGalleryImageVersionsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[_models.SharedGalleryImageVersion] = kwargs.pop("cls", None)
 
         _request = build_shared_gallery_image_versions_get_request(
@@ -43898,7 +43481,6 @@ class SharedGalleryImageVersionsOperations:
         gallery_unique_name: str,
         gallery_image_name: str,
         *,
-        api_version: str,
         shared_to: Optional[Union[str, _models.SharedToValues]] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.SharedGalleryImageVersion"]:
@@ -43911,8 +43493,6 @@ class SharedGalleryImageVersionsOperations:
         :param gallery_image_name: The name of the Shared Gallery Image Definition from which the Image
          Versions are to be listed. Required.
         :type gallery_image_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword shared_to: The query parameter to decide what shared galleries to fetch when doing
          listing operations. "tenant" Default value is None.
         :paramtype shared_to: str or ~azure.mgmt.compute.models.SharedToValues
@@ -43921,8 +43501,9 @@ class SharedGalleryImageVersionsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[List[_models.SharedGalleryImageVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -43941,8 +43522,8 @@ class SharedGalleryImageVersionsOperations:
                     gallery_unique_name=gallery_unique_name,
                     gallery_image_name=gallery_image_name,
                     subscription_id=self._config.subscription_id,
-                    api_version=api_version,
                     shared_to=shared_to,
+                    api_version=api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -44002,29 +43583,25 @@ class CommunityGalleriesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`community_galleries` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(
-        self, location: str, public_gallery_name: str, *, api_version: str, **kwargs: Any
-    ) -> _models.CommunityGallery:
+    def get(self, location: str, public_gallery_name: str, **kwargs: Any) -> _models.CommunityGallery:
         """Get a community gallery by gallery public name.
 
         :param location: The name of the Azure region. Required.
         :type location: str
         :param public_gallery_name: The public name of the community gallery. Required.
         :type public_gallery_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: CommunityGallery. The CommunityGallery is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.CommunityGallery
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -44038,8 +43615,9 @@ class CommunityGalleriesOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[_models.CommunityGallery] = kwargs.pop("cls", None)
 
         _request = build_community_galleries_get_request(
@@ -44093,20 +43671,20 @@ class CommunityGalleryImagesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`community_gallery_images` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def get(
-        self, location: str, public_gallery_name: str, gallery_image_name: str, *, api_version: str, **kwargs: Any
+        self, location: str, public_gallery_name: str, gallery_image_name: str, **kwargs: Any
     ) -> _models.CommunityGalleryImage:
         """Get a community gallery image.
 
@@ -44116,8 +43694,6 @@ class CommunityGalleryImagesOperations:
         :type public_gallery_name: str
         :param gallery_image_name: The name of the community gallery image definition. Required.
         :type gallery_image_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: CommunityGalleryImage. The CommunityGalleryImage is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.CommunityGalleryImage
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -44131,8 +43707,9 @@ class CommunityGalleryImagesOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[_models.CommunityGalleryImage] = kwargs.pop("cls", None)
 
         _request = build_community_gallery_images_get_request(
@@ -44182,7 +43759,7 @@ class CommunityGalleryImagesOperations:
 
     @distributed_trace
     def list(
-        self, location: str, public_gallery_name: str, *, api_version: str, **kwargs: Any
+        self, location: str, public_gallery_name: str, **kwargs: Any
     ) -> ItemPaged["_models.CommunityGalleryImage"]:
         """List community gallery images inside a gallery.
 
@@ -44190,15 +43767,14 @@ class CommunityGalleryImagesOperations:
         :type location: str
         :param public_gallery_name: The public name of the community gallery. Required.
         :type public_gallery_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of CommunityGalleryImage
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.CommunityGalleryImage]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[List[_models.CommunityGalleryImage]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -44276,14 +43852,14 @@ class CommunityGalleryImageVersionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`community_gallery_image_versions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -44294,8 +43870,6 @@ class CommunityGalleryImageVersionsOperations:
         public_gallery_name: str,
         gallery_image_name: str,
         gallery_image_version_name: str,
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> _models.CommunityGalleryImageVersion:
         """Get a community gallery image version.
@@ -44311,8 +43885,6 @@ class CommunityGalleryImageVersionsOperations:
          be within the range of a 32-bit integer. Format: <MajorVersion>.<MinorVersion>.<Patch>.
          Required.
         :type gallery_image_version_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: CommunityGalleryImageVersion. The CommunityGalleryImageVersion is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.compute.models.CommunityGalleryImageVersion
@@ -44327,8 +43899,9 @@ class CommunityGalleryImageVersionsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[_models.CommunityGalleryImageVersion] = kwargs.pop("cls", None)
 
         _request = build_community_gallery_image_versions_get_request(
@@ -44379,7 +43952,7 @@ class CommunityGalleryImageVersionsOperations:
 
     @distributed_trace
     def list(
-        self, location: str, public_gallery_name: str, gallery_image_name: str, *, api_version: str, **kwargs: Any
+        self, location: str, public_gallery_name: str, gallery_image_name: str, **kwargs: Any
     ) -> ItemPaged["_models.CommunityGalleryImageVersion"]:
         """List community gallery image versions inside an image.
 
@@ -44389,15 +43962,14 @@ class CommunityGalleryImageVersionsOperations:
         :type public_gallery_name: str
         :param gallery_image_name: The name of the community gallery image definition. Required.
         :type gallery_image_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of CommunityGalleryImageVersion
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.CommunityGalleryImageVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[List[_models.CommunityGalleryImageVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -44476,30 +44048,23 @@ class ResourceSkusOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`resource_skus` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def list(
-        self,
-        *,
-        api_version: str,
-        filter: Optional[str] = None,
-        include_extended_locations: Optional[str] = None,
-        **kwargs: Any
+        self, *, filter: Optional[str] = None, include_extended_locations: Optional[str] = None, **kwargs: Any
     ) -> ItemPaged["_models.ResourceSku"]:
         """Gets the list of Microsoft.Compute SKUs available for your Subscription.
 
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword filter: The filter to apply on the operation. Only **location** filter is supported
          currently. Default value is None.
         :paramtype filter: str
@@ -44511,8 +44076,9 @@ class ResourceSkusOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01"))
         cls: ClsType[List[_models.ResourceSku]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -44528,9 +44094,9 @@ class ResourceSkusOperations:
 
                 _request = build_resource_skus_list_request(
                     subscription_id=self._config.subscription_id,
-                    api_version=api_version,
                     filter=filter,
                     include_extended_locations=include_extended_locations,
+                    api_version=api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -44590,14 +44156,14 @@ class VirtualMachineScaleSetRollingUpgradesOperations:  # pylint: disable=name-t
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`virtual_machine_scale_set_rolling_upgrades` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -45051,14 +44617,14 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`virtual_machine_scale_set_vms` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -47750,14 +47316,14 @@ class SshPublicKeysOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`ssh_public_keys` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -48597,14 +48163,14 @@ class UsageOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`usage` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -48699,14 +48265,14 @@ class VirtualMachineSizesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`virtual_machine_sizes` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -48801,14 +48367,14 @@ class VirtualMachineImagesEdgeZoneOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`virtual_machine_images_edge_zone` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -49233,14 +48799,14 @@ class VirtualMachineImagesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`virtual_machine_images` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -49810,14 +49376,14 @@ class LogAnalyticsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`log_analytics` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -50259,14 +49825,14 @@ class DiskRestorePointOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`disk_restore_point` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -50277,8 +49843,6 @@ class DiskRestorePointOperations:
         restore_point_collection_name: str,
         vm_restore_point_name: str,
         disk_restore_point_name: str,
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> _models.DiskRestorePoint:
         """Get disk restorePoint resource.
@@ -50294,8 +49858,6 @@ class DiskRestorePointOperations:
         :type vm_restore_point_name: str
         :param disk_restore_point_name: The name of the DiskRestorePoint. Required.
         :type disk_restore_point_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: DiskRestorePoint. The DiskRestorePoint is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.DiskRestorePoint
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -50309,8 +49871,9 @@ class DiskRestorePointOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[_models.DiskRestorePoint] = kwargs.pop("cls", None)
 
         _request = build_disk_restore_point_get_request(
@@ -50361,13 +49924,7 @@ class DiskRestorePointOperations:
 
     @distributed_trace
     def list_by_restore_point(
-        self,
-        resource_group_name: str,
-        restore_point_collection_name: str,
-        vm_restore_point_name: str,
-        *,
-        api_version: str,
-        **kwargs: Any
+        self, resource_group_name: str, restore_point_collection_name: str, vm_restore_point_name: str, **kwargs: Any
     ) -> ItemPaged["_models.DiskRestorePoint"]:
         """Lists diskRestorePoints under a vmRestorePoint.
 
@@ -50380,15 +49937,14 @@ class DiskRestorePointOperations:
         :param vm_restore_point_name: The name of the vm restore point that the disk disk restore point
          belongs. Required.
         :type vm_restore_point_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of DiskRestorePoint
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.DiskRestorePoint]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[List[_models.DiskRestorePoint]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -50467,8 +50023,6 @@ class DiskRestorePointOperations:
         vm_restore_point_name: str,
         disk_restore_point_name: str,
         grant_access_data: Union[_models.GrantAccessData, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -50480,8 +50034,9 @@ class DiskRestorePointOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -50550,7 +50105,6 @@ class DiskRestorePointOperations:
         disk_restore_point_name: str,
         grant_access_data: _models.GrantAccessData,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.AccessUri]:
@@ -50570,8 +50124,6 @@ class DiskRestorePointOperations:
         :param grant_access_data: Access data object supplied in the body of the get disk access
          operation. Required.
         :type grant_access_data: ~azure.mgmt.compute.models.GrantAccessData
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -50590,7 +50142,6 @@ class DiskRestorePointOperations:
         disk_restore_point_name: str,
         grant_access_data: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.AccessUri]:
@@ -50610,8 +50161,6 @@ class DiskRestorePointOperations:
         :param grant_access_data: Access data object supplied in the body of the get disk access
          operation. Required.
         :type grant_access_data: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -50630,7 +50179,6 @@ class DiskRestorePointOperations:
         disk_restore_point_name: str,
         grant_access_data: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.AccessUri]:
@@ -50650,8 +50198,6 @@ class DiskRestorePointOperations:
         :param grant_access_data: Access data object supplied in the body of the get disk access
          operation. Required.
         :type grant_access_data: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -50669,8 +50215,6 @@ class DiskRestorePointOperations:
         vm_restore_point_name: str,
         disk_restore_point_name: str,
         grant_access_data: Union[_models.GrantAccessData, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.AccessUri]:
         """Grants access to a diskRestorePoint.
@@ -50689,16 +50233,15 @@ class DiskRestorePointOperations:
         :param grant_access_data: Access data object supplied in the body of the get disk access
          operation. Is one of the following types: GrantAccessData, JSON, IO[bytes] Required.
         :type grant_access_data: ~azure.mgmt.compute.models.GrantAccessData or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns AccessUri. The AccessUri is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.AccessUri]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AccessUri] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -50761,8 +50304,6 @@ class DiskRestorePointOperations:
         restore_point_collection_name: str,
         vm_restore_point_name: str,
         disk_restore_point_name: str,
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -50774,8 +50315,9 @@ class DiskRestorePointOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_disk_restore_point_revoke_access_request(
@@ -50832,8 +50374,6 @@ class DiskRestorePointOperations:
         restore_point_collection_name: str,
         vm_restore_point_name: str,
         disk_restore_point_name: str,
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Revokes access to a diskRestorePoint.
@@ -50849,15 +50389,14 @@ class DiskRestorePointOperations:
         :type vm_restore_point_name: str
         :param disk_restore_point_name: The name of the DiskRestorePoint. Required.
         :type disk_restore_point_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-02"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -50909,27 +50448,20 @@ class SoftDeletedResourceOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`soft_deleted_resource` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def list_by_artifact_name(
-        self,
-        resource_group_name: str,
-        gallery_name: str,
-        artifact_type: str,
-        artifact_name: str,
-        *,
-        api_version: str,
-        **kwargs: Any
+        self, resource_group_name: str, gallery_name: str, artifact_type: str, artifact_name: str, **kwargs: Any
     ) -> ItemPaged["_models.GallerySoftDeletedResource"]:
         """List soft-deleted resources of an artifact in the gallery, such as soft-deleted gallery image
         version of an image.
@@ -50945,15 +50477,14 @@ class SoftDeletedResourceOperations:
         :param artifact_name: The artifact name to be listed. If artifact type is Images, then the
          artifact name should be the gallery image name. Required.
         :type artifact_name: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An iterator like instance of GallerySoftDeletedResource
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.GallerySoftDeletedResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[List[_models.GallerySoftDeletedResource]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -51033,14 +50564,14 @@ class GallerySharingProfileOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :class:`~azure.mgmt.compute.ComputeManagementClient`'s
         :attr:`gallery_sharing_profile` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -51049,8 +50580,6 @@ class GallerySharingProfileOperations:
         resource_group_name: str,
         gallery_name: str,
         sharing_update: Union[_models.SharingUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -51062,8 +50591,9 @@ class GallerySharingProfileOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -51128,7 +50658,6 @@ class GallerySharingProfileOperations:
         gallery_name: str,
         sharing_update: _models.SharingUpdate,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.SharingUpdate]:
@@ -51141,8 +50670,6 @@ class GallerySharingProfileOperations:
         :type gallery_name: str
         :param sharing_update: Parameters supplied to the update gallery sharing profile. Required.
         :type sharing_update: ~azure.mgmt.compute.models.SharingUpdate
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -51159,7 +50686,6 @@ class GallerySharingProfileOperations:
         gallery_name: str,
         sharing_update: JSON,
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.SharingUpdate]:
@@ -51172,8 +50698,6 @@ class GallerySharingProfileOperations:
         :type gallery_name: str
         :param sharing_update: Parameters supplied to the update gallery sharing profile. Required.
         :type sharing_update: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -51190,7 +50714,6 @@ class GallerySharingProfileOperations:
         gallery_name: str,
         sharing_update: IO[bytes],
         *,
-        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.SharingUpdate]:
@@ -51203,8 +50726,6 @@ class GallerySharingProfileOperations:
         :type gallery_name: str
         :param sharing_update: Parameters supplied to the update gallery sharing profile. Required.
         :type sharing_update: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -51220,8 +50741,6 @@ class GallerySharingProfileOperations:
         resource_group_name: str,
         gallery_name: str,
         sharing_update: Union[_models.SharingUpdate, JSON, IO[bytes]],
-        *,
-        api_version: str,
         **kwargs: Any
     ) -> LROPoller[_models.SharingUpdate]:
         """Update sharing profile of a gallery.
@@ -51234,16 +50753,15 @@ class GallerySharingProfileOperations:
         :param sharing_update: Parameters supplied to the update gallery sharing profile. Is one of the
          following types: SharingUpdate, JSON, IO[bytes] Required.
         :type sharing_update: ~azure.mgmt.compute.models.SharingUpdate or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :return: An instance of LROPoller that returns SharingUpdate. The SharingUpdate is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.SharingUpdate]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SharingUpdate] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)

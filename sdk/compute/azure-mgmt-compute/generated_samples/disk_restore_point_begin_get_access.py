@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.compute import ComputeClient
+from azure.mgmt.compute import ComputeManagementClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.compute import ComputeClient
 
 
 def main():
-    client = ComputeClient(
+    client = ComputeManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
@@ -36,7 +36,6 @@ def main():
         vm_restore_point_name="vmrp",
         disk_restore_point_name="TestDisk45ceb03433006d1baee0_b70cd924-3362-4a80-93c2-9415eaa12745",
         grant_access_data={"access": "Read", "durationInSeconds": 300, "fileFormat": "VHDX"},
-        api_version="2025-01-02",
     ).result()
     print(response)
 

@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.compute import ComputeClient
+from azure.mgmt.compute import ComputeManagementClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.compute import ComputeClient
 
 
 def main():
-    client = ComputeClient(
+    client = ComputeManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
@@ -33,7 +33,6 @@ def main():
     response = client.community_galleries.get(
         location="myLocation",
         public_gallery_name="publicGalleryName",
-        api_version="2025-03-03",
     )
     print(response)
 

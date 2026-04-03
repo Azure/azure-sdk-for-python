@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.compute import ComputeClient
+from azure.mgmt.compute import ComputeManagementClient
 
 """
 # PREREQUISITES
@@ -25,14 +25,13 @@ from azure.mgmt.compute import ComputeClient
 
 
 def main():
-    client = ComputeClient(
+    client = ComputeManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
     response = client.disk_encryption_sets.list_by_resource_group(
         resource_group_name="myResourceGroup",
-        api_version="2025-01-02",
     )
     for item in response:
         print(item)

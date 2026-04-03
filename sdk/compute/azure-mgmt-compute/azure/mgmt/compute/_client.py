@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import ComputeClientConfiguration
+from ._configuration import ComputeManagementClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     AvailabilitySetsOperations,
@@ -76,7 +76,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ComputeClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Compute Client.
 
     :ivar operations: Operations operations
@@ -230,7 +230,7 @@ class ComputeClient:  # pylint: disable=client-accepts-api-version-keyword,too-m
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = ComputeClientConfiguration(
+        self._config = ComputeManagementClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),
