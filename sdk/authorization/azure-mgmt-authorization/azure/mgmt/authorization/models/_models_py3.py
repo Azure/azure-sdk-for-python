@@ -9,7 +9,7 @@
 
 from collections.abc import MutableMapping
 import datetime
-from typing import Any, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
@@ -83,7 +83,7 @@ class AccessReviewContactedReviewerListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.AccessReviewContactedReviewer"]] = None,
+        value: Optional[list["_models.AccessReviewContactedReviewer"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -242,14 +242,14 @@ class AccessReviewDecision(_serialization.Model):
         "display_name_properties_principal_display_name": {"key": "properties.principal.displayName", "type": "str"},
     }
 
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
         decision: Optional[Union[str, "_models.AccessReviewResult"]] = None,
         justification: Optional[str] = None,
-        insights: Optional[List["_models.AccessReviewDecisionInsight"]] = None,
+        insights: Optional[list["_models.AccessReviewDecisionInsight"]] = None,
         membership_types: Optional[
-            List[Union[str, "_models.AccessReviewDecisionPrincipalResourceMembershipType"]]
+            list[Union[str, "_models.AccessReviewDecisionPrincipalResourceMembershipType"]]
         ] = None,
         type_properties_resource_type: Optional[Union[str, "_models.DecisionResourceType"]] = None,
         **kwargs: Any
@@ -445,7 +445,7 @@ class AccessReviewDecisionListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.AccessReviewDecision"]] = None,
+        value: Optional[list["_models.AccessReviewDecision"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -575,9 +575,9 @@ class AccessReviewDecisionProperties(_serialization.Model):
         *,
         decision: Optional[Union[str, "_models.AccessReviewResult"]] = None,
         justification: Optional[str] = None,
-        insights: Optional[List["_models.AccessReviewDecisionInsight"]] = None,
+        insights: Optional[list["_models.AccessReviewDecisionInsight"]] = None,
         membership_types: Optional[
-            List[Union[str, "_models.AccessReviewDecisionPrincipalResourceMembershipType"]]
+            list[Union[str, "_models.AccessReviewDecisionPrincipalResourceMembershipType"]]
         ] = None,
         type_resource_type: Optional[Union[str, "_models.DecisionResourceType"]] = None,
         **kwargs: Any
@@ -1041,9 +1041,9 @@ class AccessReviewHistoryDefinition(_serialization.Model):
         self,
         *,
         display_name: Optional[str] = None,
-        decisions: Optional[List[Union[str, "_models.AccessReviewResult"]]] = None,
-        scopes: Optional[List["_models.AccessReviewScope"]] = None,
-        instances: Optional[List["_models.AccessReviewHistoryInstance"]] = None,
+        decisions: Optional[list[Union[str, "_models.AccessReviewResult"]]] = None,
+        scopes: Optional[list["_models.AccessReviewScope"]] = None,
+        instances: Optional[list["_models.AccessReviewHistoryInstance"]] = None,
         type_properties_settings_range_type: Optional[Union[str, "_models.AccessReviewRecurrenceRangeType"]] = None,
         number_of_occurrences: Optional[int] = None,
         start_date: Optional[datetime.datetime] = None,
@@ -1125,7 +1125,7 @@ class AccessReviewHistoryDefinitionInstanceListResult(_serialization.Model):  # 
     def __init__(
         self,
         *,
-        value: Optional[List["_models.AccessReviewHistoryInstance"]] = None,
+        value: Optional[list["_models.AccessReviewHistoryInstance"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1157,7 +1157,7 @@ class AccessReviewHistoryDefinitionListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.AccessReviewHistoryDefinition"]] = None,
+        value: Optional[list["_models.AccessReviewHistoryDefinition"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1267,9 +1267,9 @@ class AccessReviewHistoryDefinitionProperties(_serialization.Model):
         self,
         *,
         display_name: Optional[str] = None,
-        decisions: Optional[List[Union[str, "_models.AccessReviewResult"]]] = None,
-        scopes: Optional[List["_models.AccessReviewScope"]] = None,
-        instances: Optional[List["_models.AccessReviewHistoryInstance"]] = None,
+        decisions: Optional[list[Union[str, "_models.AccessReviewResult"]]] = None,
+        scopes: Optional[list["_models.AccessReviewScope"]] = None,
+        instances: Optional[list["_models.AccessReviewHistoryInstance"]] = None,
         type_settings_range_type: Optional[Union[str, "_models.AccessReviewRecurrenceRangeType"]] = None,
         number_of_occurrences: Optional[int] = None,
         start_date: Optional[datetime.datetime] = None,
@@ -1496,8 +1496,8 @@ class AccessReviewInstance(_serialization.Model):
         *,
         start_date_time: Optional[datetime.datetime] = None,
         end_date_time: Optional[datetime.datetime] = None,
-        reviewers: Optional[List["_models.AccessReviewReviewer"]] = None,
-        backup_reviewers: Optional[List["_models.AccessReviewReviewer"]] = None,
+        reviewers: Optional[list["_models.AccessReviewReviewer"]] = None,
+        backup_reviewers: Optional[list["_models.AccessReviewReviewer"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1539,7 +1539,7 @@ class AccessReviewInstanceListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.AccessReviewInstance"]] = None,
+        value: Optional[list["_models.AccessReviewInstance"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1598,8 +1598,8 @@ class AccessReviewInstanceProperties(_serialization.Model):
         *,
         start_date_time: Optional[datetime.datetime] = None,
         end_date_time: Optional[datetime.datetime] = None,
-        reviewers: Optional[List["_models.AccessReviewReviewer"]] = None,
-        backup_reviewers: Optional[List["_models.AccessReviewReviewer"]] = None,
+        reviewers: Optional[list["_models.AccessReviewReviewer"]] = None,
+        backup_reviewers: Optional[list["_models.AccessReviewReviewer"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1860,9 +1860,9 @@ class AccessReviewScheduleDefinition(_serialization.Model):
         display_name: Optional[str] = None,
         description_for_admins: Optional[str] = None,
         description_for_reviewers: Optional[str] = None,
-        reviewers: Optional[List["_models.AccessReviewReviewer"]] = None,
-        backup_reviewers: Optional[List["_models.AccessReviewReviewer"]] = None,
-        instances: Optional[List["_models.AccessReviewInstance"]] = None,
+        reviewers: Optional[list["_models.AccessReviewReviewer"]] = None,
+        backup_reviewers: Optional[list["_models.AccessReviewReviewer"]] = None,
+        instances: Optional[list["_models.AccessReviewInstance"]] = None,
         inactive_duration: Optional[datetime.timedelta] = None,
         expand_nested_memberships: Optional[bool] = None,
         include_inherited_access: Optional[bool] = None,
@@ -2042,7 +2042,7 @@ class AccessReviewScheduleDefinitionListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.AccessReviewScheduleDefinition"]] = None,
+        value: Optional[list["_models.AccessReviewScheduleDefinition"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -2238,9 +2238,9 @@ class AccessReviewScheduleDefinitionProperties(_serialization.Model):
         display_name: Optional[str] = None,
         description_for_admins: Optional[str] = None,
         description_for_reviewers: Optional[str] = None,
-        reviewers: Optional[List["_models.AccessReviewReviewer"]] = None,
-        backup_reviewers: Optional[List["_models.AccessReviewReviewer"]] = None,
-        instances: Optional[List["_models.AccessReviewInstance"]] = None,
+        reviewers: Optional[list["_models.AccessReviewReviewer"]] = None,
+        backup_reviewers: Optional[list["_models.AccessReviewReviewer"]] = None,
+        instances: Optional[list["_models.AccessReviewInstance"]] = None,
         inactive_duration: Optional[datetime.timedelta] = None,
         expand_nested_memberships: Optional[bool] = None,
         include_inherited_access: Optional[bool] = None,
@@ -2731,7 +2731,7 @@ class Alert(_serialization.Model):
         self.last_modified_date_time: Optional[datetime.datetime] = None
         self.last_scanned_date_time: Optional[datetime.datetime] = None
         self.alert_definition: Optional["_models.AlertDefinition"] = None
-        self.alert_incidents: Optional[List["_models.AlertIncident"]] = None
+        self.alert_incidents: Optional[list["_models.AlertIncident"]] = None
         self.alert_configuration: Optional["_models.AlertConfiguration"] = None
 
 
@@ -2813,7 +2813,7 @@ class AlertConfigurationListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.AlertConfiguration"]] = None,
+        value: Optional[list["_models.AlertConfiguration"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -2986,7 +2986,7 @@ class AlertDefinitionListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.AlertDefinition"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.AlertDefinition"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Alert definition list.
@@ -3051,7 +3051,7 @@ class AlertIncidentListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.AlertIncident"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.AlertIncident"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Alert incident list.
@@ -3117,7 +3117,7 @@ class AlertListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Alert"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Alert"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Alert list.
@@ -3211,7 +3211,7 @@ class ApprovalSettings(_serialization.Model):
         is_approval_required_for_extension: Optional[bool] = None,
         is_requestor_justification_required: Optional[bool] = None,
         approval_mode: Optional[Union[str, "_models.ApprovalMode"]] = None,
-        approval_stages: Optional[List["_models.ApprovalStage"]] = None,
+        approval_stages: Optional[list["_models.ApprovalStage"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3272,9 +3272,9 @@ class ApprovalStage(_serialization.Model):
         approval_stage_time_out_in_days: Optional[int] = None,
         is_approver_justification_required: Optional[bool] = None,
         escalation_time_in_minutes: Optional[int] = None,
-        primary_approvers: Optional[List["_models.UserSet"]] = None,
+        primary_approvers: Optional[list["_models.UserSet"]] = None,
         is_escalation_enabled: Optional[bool] = None,
-        escalation_approvers: Optional[List["_models.UserSet"]] = None,
+        escalation_approvers: Optional[list["_models.UserSet"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3301,6 +3301,66 @@ class ApprovalStage(_serialization.Model):
         self.primary_approvers = primary_approvers
         self.is_escalation_enabled = is_escalation_enabled
         self.escalation_approvers = escalation_approvers
+
+
+class AttributeNamespace(_serialization.Model):
+    """An attribute namespace resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The fully qualified resource ID of the attribute namespace. For example,
+     /providers/Microsoft.Authorization/attributeNamespaces/{attributeNamespace}.
+    :vartype id: str
+    :ivar name: The name of the attribute namespace.
+    :vartype name: str
+    :ivar type: The type of the resource. For example, Microsoft.Authorization/attributeNamespaces.
+    :vartype type: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+
+
+class AttributeNamespaceCreateRequest(_serialization.Model):
+    """Request body for creating an attribute namespace.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar namespace_owner_principal_id: The principal ID of the namespace owner. Required.
+    :vartype namespace_owner_principal_id: str
+    """
+
+    _validation = {
+        "namespace_owner_principal_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "namespace_owner_principal_id": {"key": "namespaceOwnerPrincipalId", "type": "str"},
+    }
+
+    def __init__(self, *, namespace_owner_principal_id: str, **kwargs: Any) -> None:
+        """
+        :keyword namespace_owner_principal_id: The principal ID of the namespace owner. Required.
+        :paramtype namespace_owner_principal_id: str
+        """
+        super().__init__(**kwargs)
+        self.namespace_owner_principal_id = namespace_owner_principal_id
 
 
 class AzureRolesAssignedOutsidePimAlertConfigurationProperties(
@@ -3495,7 +3555,7 @@ class ClassicAdministratorListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.ClassicAdministrator"]] = None,
+        value: Optional[list["_models.ClassicAdministrator"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -3551,6 +3611,9 @@ class DenyAssignment(_serialization.Model):
     :vartype name: str
     :ivar type: The deny assignment type.
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.authorization.models.SystemData
     :ivar deny_assignment_name: The display name of the deny assignment.
     :vartype deny_assignment_name: str
     :ivar description: The description of the deny assignment.
@@ -3563,12 +3626,15 @@ class DenyAssignment(_serialization.Model):
      Default value is false.
     :vartype do_not_apply_to_child_scopes: bool
     :ivar principals: Array of principals to which the deny assignment applies.
-    :vartype principals: list[~azure.mgmt.authorization.models.Principal]
+    :vartype principals: list[~azure.mgmt.authorization.models.DenyAssignmentPrincipal]
     :ivar exclude_principals: Array of principals to which the deny assignment does not apply.
-    :vartype exclude_principals: list[~azure.mgmt.authorization.models.Principal]
+    :vartype exclude_principals: list[~azure.mgmt.authorization.models.DenyAssignmentPrincipal]
     :ivar is_system_protected: Specifies whether this deny assignment was created by Azure and
      cannot be edited or deleted.
     :vartype is_system_protected: bool
+    :ivar deny_assignment_effect: The effect of the deny assignment. 'enforced' blocks access,
+     'audit' logs without blocking. Known values are: "enforced" and "audit".
+    :vartype deny_assignment_effect: str or ~azure.mgmt.authorization.models.DenyAssignmentEffect
     :ivar condition: The conditions on the deny assignment. This limits the resources it can be
      assigned to. e.g.:
      @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName]
@@ -3590,6 +3656,8 @@ class DenyAssignment(_serialization.Model):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "scope": {"readonly": True},
         "created_on": {"readonly": True},
         "updated_on": {"readonly": True},
         "created_by": {"readonly": True},
@@ -3600,14 +3668,16 @@ class DenyAssignment(_serialization.Model):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "deny_assignment_name": {"key": "properties.denyAssignmentName", "type": "str"},
         "description": {"key": "properties.description", "type": "str"},
         "permissions": {"key": "properties.permissions", "type": "[DenyAssignmentPermission]"},
         "scope": {"key": "properties.scope", "type": "str"},
         "do_not_apply_to_child_scopes": {"key": "properties.doNotApplyToChildScopes", "type": "bool"},
-        "principals": {"key": "properties.principals", "type": "[Principal]"},
-        "exclude_principals": {"key": "properties.excludePrincipals", "type": "[Principal]"},
+        "principals": {"key": "properties.principals", "type": "[DenyAssignmentPrincipal]"},
+        "exclude_principals": {"key": "properties.excludePrincipals", "type": "[DenyAssignmentPrincipal]"},
         "is_system_protected": {"key": "properties.isSystemProtected", "type": "bool"},
+        "deny_assignment_effect": {"key": "properties.denyAssignmentEffect", "type": "str"},
         "condition": {"key": "properties.condition", "type": "str"},
         "condition_version": {"key": "properties.conditionVersion", "type": "str"},
         "created_on": {"key": "properties.createdOn", "type": "iso-8601"},
@@ -3621,12 +3691,12 @@ class DenyAssignment(_serialization.Model):
         *,
         deny_assignment_name: Optional[str] = None,
         description: Optional[str] = None,
-        permissions: Optional[List["_models.DenyAssignmentPermission"]] = None,
-        scope: Optional[str] = None,
+        permissions: Optional[list["_models.DenyAssignmentPermission"]] = None,
         do_not_apply_to_child_scopes: Optional[bool] = None,
-        principals: Optional[List["_models.Principal"]] = None,
-        exclude_principals: Optional[List["_models.Principal"]] = None,
+        principals: Optional[list["_models.DenyAssignmentPrincipal"]] = None,
+        exclude_principals: Optional[list["_models.DenyAssignmentPrincipal"]] = None,
         is_system_protected: Optional[bool] = None,
+        deny_assignment_effect: Optional[Union[str, "_models.DenyAssignmentEffect"]] = None,
         condition: Optional[str] = None,
         condition_version: Optional[str] = None,
         **kwargs: Any
@@ -3638,18 +3708,19 @@ class DenyAssignment(_serialization.Model):
         :paramtype description: str
         :keyword permissions: An array of permissions that are denied by the deny assignment.
         :paramtype permissions: list[~azure.mgmt.authorization.models.DenyAssignmentPermission]
-        :keyword scope: The deny assignment scope.
-        :paramtype scope: str
         :keyword do_not_apply_to_child_scopes: Determines if the deny assignment applies to child
          scopes. Default value is false.
         :paramtype do_not_apply_to_child_scopes: bool
         :keyword principals: Array of principals to which the deny assignment applies.
-        :paramtype principals: list[~azure.mgmt.authorization.models.Principal]
+        :paramtype principals: list[~azure.mgmt.authorization.models.DenyAssignmentPrincipal]
         :keyword exclude_principals: Array of principals to which the deny assignment does not apply.
-        :paramtype exclude_principals: list[~azure.mgmt.authorization.models.Principal]
+        :paramtype exclude_principals: list[~azure.mgmt.authorization.models.DenyAssignmentPrincipal]
         :keyword is_system_protected: Specifies whether this deny assignment was created by Azure and
          cannot be edited or deleted.
         :paramtype is_system_protected: bool
+        :keyword deny_assignment_effect: The effect of the deny assignment. 'enforced' blocks access,
+         'audit' logs without blocking. Known values are: "enforced" and "audit".
+        :paramtype deny_assignment_effect: str or ~azure.mgmt.authorization.models.DenyAssignmentEffect
         :keyword condition: The conditions on the deny assignment. This limits the resources it can be
          assigned to. e.g.:
          @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName]
@@ -3662,14 +3733,16 @@ class DenyAssignment(_serialization.Model):
         self.id: Optional[str] = None
         self.name: Optional[str] = None
         self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
         self.deny_assignment_name = deny_assignment_name
         self.description = description
         self.permissions = permissions
-        self.scope = scope
+        self.scope: Optional[str] = None
         self.do_not_apply_to_child_scopes = do_not_apply_to_child_scopes
         self.principals = principals
         self.exclude_principals = exclude_principals
         self.is_system_protected = is_system_protected
+        self.deny_assignment_effect = deny_assignment_effect
         self.condition = condition
         self.condition_version = condition_version
         self.created_on: Optional[datetime.datetime] = None
@@ -3736,7 +3809,7 @@ class DenyAssignmentListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.DenyAssignment"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.DenyAssignment"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Deny assignment list.
@@ -3780,10 +3853,10 @@ class DenyAssignmentPermission(_serialization.Model):
     def __init__(
         self,
         *,
-        actions: Optional[List[str]] = None,
-        not_actions: Optional[List[str]] = None,
-        data_actions: Optional[List[str]] = None,
-        not_data_actions: Optional[List[str]] = None,
+        actions: Optional[list[str]] = None,
+        not_actions: Optional[list[str]] = None,
+        data_actions: Optional[list[str]] = None,
+        not_data_actions: Optional[list[str]] = None,
         condition: Optional[str] = None,
         condition_version: Optional[str] = None,
         **kwargs: Any
@@ -3811,6 +3884,38 @@ class DenyAssignmentPermission(_serialization.Model):
         self.not_data_actions = not_data_actions
         self.condition = condition
         self.condition_version = condition_version
+
+
+class DenyAssignmentPrincipal(_serialization.Model):
+    """Deny assignment principal.
+
+    :ivar id: The object ID of the principal.
+    :vartype id: str
+    :ivar type: The type of the principal such as user, group, servicePrincipal, etc.
+    :vartype type: str or ~azure.mgmt.authorization.models.DenyAssignmentPrincipalType
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        type: Optional[Union[str, "_models.DenyAssignmentPrincipalType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: The object ID of the principal.
+        :paramtype id: str
+        :keyword type: The type of the principal such as user, group, servicePrincipal, etc.
+        :paramtype type: str or ~azure.mgmt.authorization.models.DenyAssignmentPrincipalType
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.type = type
 
 
 class DuplicateRoleCreatedAlertConfigurationProperties(AlertConfigurationProperties):  # pylint: disable=name-too-long
@@ -3948,7 +4053,7 @@ class EligibleChildResourcesListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.EligibleChildResource"]] = None,
+        value: Optional[list["_models.EligibleChildResource"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -4080,8 +4185,51 @@ class ErrorDetail(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorDetail"]] = None
-        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class ErrorDetailAutoGenerated(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.authorization.models.ErrorDetailAutoGenerated]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.authorization.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetailAutoGenerated]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.ErrorDetailAutoGenerated"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -4100,6 +4248,27 @@ class ErrorResponse(_serialization.Model):
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.authorization.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
+class ErrorResponseAutoGenerated(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.authorization.models.ErrorDetailAutoGenerated
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetailAutoGenerated"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetailAutoGenerated"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.authorization.models.ErrorDetailAutoGenerated
         """
         super().__init__(**kwargs)
         self.error = error
@@ -4367,7 +4536,7 @@ class OperationListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The collection value.
@@ -4419,10 +4588,10 @@ class Permission(_serialization.Model):
     def __init__(
         self,
         *,
-        actions: Optional[List[str]] = None,
-        not_actions: Optional[List[str]] = None,
-        data_actions: Optional[List[str]] = None,
-        not_data_actions: Optional[List[str]] = None,
+        actions: Optional[list[str]] = None,
+        not_actions: Optional[list[str]] = None,
+        data_actions: Optional[list[str]] = None,
+        not_data_actions: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4459,7 +4628,7 @@ class PermissionGetResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Permission"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Permission"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: An array of permissions.
@@ -4495,8 +4664,8 @@ class PIMOnlyModeSettings(_serialization.Model):
         self,
         *,
         mode: Optional[Union[str, "_models.PIMOnlyMode"]] = None,
-        excludes: Optional[List["_models.UsersOrServicePrincipalSet"]] = None,
-        excluded_assignment_types: Optional[List[Union[str, "_models.ExcludedPrincipalTypes"]]] = None,
+        excludes: Optional[list["_models.UsersOrServicePrincipalSet"]] = None,
+        excluded_assignment_types: Optional[list[Union[str, "_models.ExcludedPrincipalTypes"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4877,8 +5046,8 @@ class ProviderOperationsMetadata(_serialization.Model):
         name: Optional[str] = None,
         type: Optional[str] = None,
         display_name: Optional[str] = None,
-        resource_types: Optional[List["_models.ResourceType"]] = None,
-        operations: Optional[List["_models.ProviderOperation"]] = None,
+        resource_types: Optional[list["_models.ResourceType"]] = None,
+        operations: Optional[list["_models.ProviderOperation"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4921,7 +5090,7 @@ class ProviderOperationsMetadataListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.ProviderOperationsMetadata"]] = None,
+        value: Optional[list["_models.ProviderOperationsMetadata"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -5007,7 +5176,7 @@ class ResourceType(_serialization.Model):
         *,
         name: Optional[str] = None,
         display_name: Optional[str] = None,
-        operations: Optional[List["_models.ProviderOperation"]] = None,
+        operations: Optional[list["_models.ProviderOperation"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5301,7 +5470,7 @@ class RoleAssignmentListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.RoleAssignment"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.RoleAssignment"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Role assignment list.
         :paramtype value: list[~azure.mgmt.authorization.models.RoleAssignment]
@@ -5777,7 +5946,7 @@ class RoleAssignmentScheduleInstanceListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.RoleAssignmentScheduleInstance"]] = None,
+        value: Optional[list["_models.RoleAssignmentScheduleInstance"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -5809,7 +5978,7 @@ class RoleAssignmentScheduleListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.RoleAssignmentSchedule"]] = None,
+        value: Optional[list["_models.RoleAssignmentSchedule"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -6069,7 +6238,7 @@ class RoleAssignmentScheduleRequestListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.RoleAssignmentScheduleRequest"]] = None,
+        value: Optional[list["_models.RoleAssignmentScheduleRequest"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -6251,8 +6420,8 @@ class RoleDefinition(_serialization.Model):
         role_name: Optional[str] = None,
         description: Optional[str] = None,
         role_type: Optional[str] = None,
-        permissions: Optional[List["_models.Permission"]] = None,
-        assignable_scopes: Optional[List[str]] = None,
+        permissions: Optional[list["_models.Permission"]] = None,
+        assignable_scopes: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6323,7 +6492,7 @@ class RoleDefinitionListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.RoleDefinition"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.RoleDefinition"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Role definition list.
@@ -6749,7 +6918,7 @@ class RoleEligibilityScheduleInstanceListResult(_serialization.Model):  # pylint
     def __init__(
         self,
         *,
-        value: Optional[List["_models.RoleEligibilityScheduleInstance"]] = None,
+        value: Optional[list["_models.RoleEligibilityScheduleInstance"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -6781,7 +6950,7 @@ class RoleEligibilityScheduleListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.RoleEligibilitySchedule"]] = None,
+        value: Optional[list["_models.RoleEligibilitySchedule"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -7032,7 +7201,7 @@ class RoleEligibilityScheduleRequestListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.RoleEligibilityScheduleRequest"]] = None,
+        value: Optional[list["_models.RoleEligibilityScheduleRequest"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -7215,7 +7384,7 @@ class RoleManagementPolicy(_serialization.Model):
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         is_organization_default: Optional[bool] = None,
-        rules: Optional[List["_models.RoleManagementPolicyRule"]] = None,
+        rules: Optional[list["_models.RoleManagementPolicyRule"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7241,7 +7410,7 @@ class RoleManagementPolicy(_serialization.Model):
         self.last_modified_by: Optional["_models.Principal"] = None
         self.last_modified_date_time: Optional[datetime.datetime] = None
         self.rules = rules
-        self.effective_rules: Optional[List["_models.RoleManagementPolicyRule"]] = None
+        self.effective_rules: Optional[list["_models.RoleManagementPolicyRule"]] = None
         self.policy_properties: Optional["_models.PolicyProperties"] = None
 
 
@@ -7425,7 +7594,7 @@ class RoleManagementPolicyAssignment(_serialization.Model):
         self.scope = scope
         self.role_definition_id = role_definition_id
         self.policy_id = policy_id
-        self.effective_rules: Optional[List["_models.RoleManagementPolicyRule"]] = None
+        self.effective_rules: Optional[list["_models.RoleManagementPolicyRule"]] = None
         self.policy_assignment_properties: Optional["_models.PolicyAssignmentProperties"] = None
 
 
@@ -7446,7 +7615,7 @@ class RoleManagementPolicyAssignmentListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.RoleManagementPolicyAssignment"]] = None,
+        value: Optional[list["_models.RoleManagementPolicyAssignment"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -7552,7 +7721,7 @@ class RoleManagementPolicyEnablementRule(RoleManagementPolicyRule):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         target: Optional["_models.RoleManagementPolicyRuleTarget"] = None,
-        enabled_rules: Optional[List[Union[str, "_models.EnablementRules"]]] = None,
+        enabled_rules: Optional[list[Union[str, "_models.EnablementRules"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7610,7 +7779,7 @@ class RoleManagementPolicyExpirationRule(RoleManagementPolicyRule):
         target: Optional["_models.RoleManagementPolicyRuleTarget"] = None,
         is_expiration_required: Optional[bool] = None,
         maximum_duration: Optional[str] = None,
-        exception_members: Optional[List["_models.UserSet"]] = None,
+        exception_members: Optional[list["_models.UserSet"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7649,7 +7818,7 @@ class RoleManagementPolicyListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.RoleManagementPolicy"]] = None,
+        value: Optional[list["_models.RoleManagementPolicy"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -7717,7 +7886,7 @@ class RoleManagementPolicyNotificationRule(RoleManagementPolicyRule):
         notification_type: Optional[Union[str, "_models.NotificationDeliveryMechanism"]] = None,
         notification_level: Optional[Union[str, "_models.NotificationLevel"]] = None,
         recipient_type: Optional[Union[str, "_models.RecipientType"]] = None,
-        notification_recipients: Optional[List[str]] = None,
+        notification_recipients: Optional[list[str]] = None,
         is_default_recipients_enabled: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
@@ -7830,11 +7999,11 @@ class RoleManagementPolicyRuleTarget(_serialization.Model):
         self,
         *,
         caller: Optional[str] = None,
-        operations: Optional[List[str]] = None,
+        operations: Optional[list[str]] = None,
         level: Optional[str] = None,
-        target_objects: Optional[List[str]] = None,
-        inheritable_settings: Optional[List[str]] = None,
-        enforced_settings: Optional[List[str]] = None,
+        target_objects: Optional[list[str]] = None,
+        inheritable_settings: Optional[list[str]] = None,
+        enforced_settings: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7858,6 +8027,70 @@ class RoleManagementPolicyRuleTarget(_serialization.Model):
         self.target_objects = target_objects
         self.inheritable_settings = inheritable_settings
         self.enforced_settings = enforced_settings
+
+
+class SystemData(_serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.authorization.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.authorization.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.authorization.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.authorization.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
 
 
 class TooManyOwnersAssignedToResourceAlertConfigurationProperties(

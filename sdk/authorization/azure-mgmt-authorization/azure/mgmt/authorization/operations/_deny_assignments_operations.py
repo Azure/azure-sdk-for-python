@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, Optional, TypeVar
+from io import IOBase
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -30,7 +31,8 @@ from .._configuration import AuthorizationManagementClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -50,13 +52,13 @@ def build_list_for_resource_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/denyAssignments",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/denyAssignments",
     )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
@@ -68,7 +70,7 @@ def build_list_for_resource_request(
         ),
         "parentResourcePath": _SERIALIZER.url("parent_resource_path", parent_resource_path, "str", skip_quote=True),
         "resourceType": _SERIALIZER.url("resource_type", resource_type, "str", skip_quote=True),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str", pattern=r"^[a-zA-Z0-9._-]+$"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -90,7 +92,7 @@ def build_list_for_resource_group_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -122,7 +124,7 @@ def build_list_request(subscription_id: str, *, filter: Optional[str] = None, **
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -150,13 +152,13 @@ def build_get_request(scope: str, deny_assignment_id: str, **kwargs: Any) -> Htt
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/{scope}/providers/Microsoft.Authorization/denyAssignments/{denyAssignmentId}")
     path_format_arguments = {
-        "scope": _SERIALIZER.url("scope", scope, "str", skip_quote=True),
+        "scope": _SERIALIZER.url("scope", scope, "str", skip_quote=True, min_length=1),
         "denyAssignmentId": _SERIALIZER.url("deny_assignment_id", deny_assignment_id, "str"),
     }
 
@@ -171,11 +173,64 @@ def build_get_request(scope: str, deny_assignment_id: str, **kwargs: Any) -> Htt
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_create_or_update_request(scope: str, deny_assignment_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "/{scope}/providers/Microsoft.Authorization/denyAssignments/{denyAssignmentId}")
+    path_format_arguments = {
+        "scope": _SERIALIZER.url("scope", scope, "str", skip_quote=True, min_length=1),
+        "denyAssignmentId": _SERIALIZER.url("deny_assignment_id", deny_assignment_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_delete_request(scope: str, deny_assignment_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "/{scope}/providers/Microsoft.Authorization/denyAssignments/{denyAssignmentId}")
+    path_format_arguments = {
+        "scope": _SERIALIZER.url("scope", scope, "str", skip_quote=True, min_length=1),
+        "denyAssignmentId": _SERIALIZER.url("deny_assignment_id", deny_assignment_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_get_by_id_request(deny_assignment_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -199,13 +254,13 @@ def build_list_for_scope_request(scope: str, *, filter: Optional[str] = None, **
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/{scope}/providers/Microsoft.Authorization/denyAssignments")
     path_format_arguments = {
-        "scope": _SERIALIZER.url("scope", scope, "str", skip_quote=True),
+        "scope": _SERIALIZER.url("scope", scope, "str", skip_quote=True, min_length=1),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -284,7 +339,7 @@ class DenyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
         cls: ClsType[_models.DenyAssignmentListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -336,7 +391,10 @@ class DenyAssignmentsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponseAutoGenerated,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -370,7 +428,7 @@ class DenyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
         cls: ClsType[_models.DenyAssignmentListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -418,7 +476,10 @@ class DenyAssignmentsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponseAutoGenerated,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -447,7 +508,7 @@ class DenyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
         cls: ClsType[_models.DenyAssignmentListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -494,7 +555,10 @@ class DenyAssignmentsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponseAutoGenerated,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -505,7 +569,7 @@ class DenyAssignmentsOperations:
     def get(self, scope: str, deny_assignment_id: str, **kwargs: Any) -> _models.DenyAssignment:
         """Get the specified deny assignment.
 
-        :param scope: The scope of the deny assignment. Required.
+        :param scope: The scope at which the operation is performed. Required.
         :type scope: str
         :param deny_assignment_id: The ID of the deny assignment to get. Required.
         :type deny_assignment_id: str
@@ -524,7 +588,7 @@ class DenyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
         cls: ClsType[_models.DenyAssignment] = kwargs.pop("cls", None)
 
         _request = build_get_request(
@@ -545,7 +609,10 @@ class DenyAssignmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("DenyAssignment", pipeline_response.http_response)
@@ -554,6 +621,190 @@ class DenyAssignmentsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+    @overload
+    def create_or_update(
+        self,
+        scope: str,
+        deny_assignment_id: str,
+        parameters: _models.DenyAssignment,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.DenyAssignment:
+        """Create or update a deny assignment by scope and name.
+
+        :param scope: The scope at which the operation is performed. Required.
+        :type scope: str
+        :param deny_assignment_id: The ID of the deny assignment to create. A new GUID should be used
+         for each new deny assignment. Required.
+        :type deny_assignment_id: str
+        :param parameters: Parameters for the deny assignment. Required.
+        :type parameters: ~azure.mgmt.authorization.models.DenyAssignment
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DenyAssignment or the result of cls(response)
+        :rtype: ~azure.mgmt.authorization.models.DenyAssignment
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self,
+        scope: str,
+        deny_assignment_id: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.DenyAssignment:
+        """Create or update a deny assignment by scope and name.
+
+        :param scope: The scope at which the operation is performed. Required.
+        :type scope: str
+        :param deny_assignment_id: The ID of the deny assignment to create. A new GUID should be used
+         for each new deny assignment. Required.
+        :type deny_assignment_id: str
+        :param parameters: Parameters for the deny assignment. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DenyAssignment or the result of cls(response)
+        :rtype: ~azure.mgmt.authorization.models.DenyAssignment
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create_or_update(
+        self, scope: str, deny_assignment_id: str, parameters: Union[_models.DenyAssignment, IO[bytes]], **kwargs: Any
+    ) -> _models.DenyAssignment:
+        """Create or update a deny assignment by scope and name.
+
+        :param scope: The scope at which the operation is performed. Required.
+        :type scope: str
+        :param deny_assignment_id: The ID of the deny assignment to create. A new GUID should be used
+         for each new deny assignment. Required.
+        :type deny_assignment_id: str
+        :param parameters: Parameters for the deny assignment. Is either a DenyAssignment type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.authorization.models.DenyAssignment or IO[bytes]
+        :return: DenyAssignment or the result of cls(response)
+        :rtype: ~azure.mgmt.authorization.models.DenyAssignment
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DenyAssignment] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "DenyAssignment")
+
+        _request = build_create_or_update_request(
+            scope=scope,
+            deny_assignment_id=deny_assignment_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("DenyAssignment", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def delete(  # pylint: disable=inconsistent-return-statements
+        self, scope: str, deny_assignment_id: str, **kwargs: Any
+    ) -> None:
+        """Delete a deny assignment by scope and name.
+
+        :param scope: The scope at which the operation is performed. Required.
+        :type scope: str
+        :param deny_assignment_id: The ID of the deny assignment to delete. Required.
+        :type deny_assignment_id: str
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_delete_request(
+            scope=scope,
+            deny_assignment_id=deny_assignment_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def get_by_id(self, deny_assignment_id: str, **kwargs: Any) -> _models.DenyAssignment:
@@ -580,7 +831,7 @@ class DenyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
         cls: ClsType[_models.DenyAssignment] = kwargs.pop("cls", None)
 
         _request = build_get_by_id_request(
@@ -600,7 +851,10 @@ class DenyAssignmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("DenyAssignment", pipeline_response.http_response)
@@ -616,7 +870,7 @@ class DenyAssignmentsOperations:
     ) -> ItemPaged["_models.DenyAssignment"]:
         """Gets deny assignments for a scope.
 
-        :param scope: The scope of the deny assignments. Required.
+        :param scope: The scope at which the operation is performed. Required.
         :type scope: str
         :param filter: The filter to apply on the operation. Use $filter=atScope() to return all deny
          assignments at or above the scope. Use $filter=denyAssignmentName eq '{name}' to search deny
@@ -636,7 +890,7 @@ class DenyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
         cls: ClsType[_models.DenyAssignmentListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -683,7 +937,10 @@ class DenyAssignmentsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponseAutoGenerated,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response

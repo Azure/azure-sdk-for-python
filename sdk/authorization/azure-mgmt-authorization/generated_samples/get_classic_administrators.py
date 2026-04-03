@@ -36,6 +36,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/authorization/resource-manager/Microsoft.Authorization/stable/2015-07-01/examples/GetClassicAdministrators.json
+# x-ms-original-file: specification/authorization/resource-manager/Microsoft.Authorization/Authorization/stable/2015-07-01/examples/GetClassicAdministrators.json
 if __name__ == "__main__":
     main()

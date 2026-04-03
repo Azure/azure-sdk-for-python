@@ -42,7 +42,9 @@ class AccessReviewDecisionInsightType(str, Enum, metaclass=CaseInsensitiveEnumMe
     USER_SIGN_IN_INSIGHT = "userSignInInsight"
 
 
-class AccessReviewDecisionPrincipalResourceMembershipType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class AccessReviewDecisionPrincipalResourceMembershipType(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """AccessReviewDecisionPrincipalResourceMembershipType."""
 
     DIRECT = "direct"
@@ -119,7 +121,9 @@ class AccessReviewReviewerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SERVICE_PRINCIPAL = "servicePrincipal"
 
 
-class AccessReviewScheduleDefinitionReviewersType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class AccessReviewScheduleDefinitionReviewersType(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """This field specifies the type of reviewers for a review. Usually for a review, reviewers are
     explicitly assigned. However, in some cases, the reviewers may not be assigned and instead be
     chosen dynamically. For example managers review or self review.
@@ -179,6 +183,15 @@ class AssignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ASSIGNED = "Assigned"
 
 
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+
 class DecisionResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of resource."""
 
@@ -198,6 +211,17 @@ class DefaultDecisionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     APPROVE = "Approve"
     DENY = "Deny"
     RECOMMENDATION = "Recommendation"
+
+
+class DenyAssignmentEffect(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The effect of the deny assignment. 'enforced' blocks access, 'audit' logs without blocking."""
+
+    ENFORCED = "enforced"
+    AUDIT = "audit"
+
+
+class DenyAssignmentPrincipalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the principal such as user, group, servicePrincipal, etc."""
 
 
 class EnablementRules(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -59,6 +59,7 @@ from ._alert_configurations_operations import AlertConfigurationsOperations  # t
 from ._alert_definitions_operations import AlertDefinitionsOperations  # type: ignore
 from ._alert_incidents_operations import AlertIncidentsOperations  # type: ignore
 from ._alert_operation_operations import AlertOperationOperations  # type: ignore
+from ._attribute_namespaces_operations import AttributeNamespacesOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -111,6 +112,7 @@ __all__ = [
     "AlertDefinitionsOperations",
     "AlertIncidentsOperations",
     "AlertOperationOperations",
+    "AttributeNamespacesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

@@ -40,6 +40,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/authorization/resource-manager/Microsoft.Authorization/preview/2021-12-01-preview/examples/GetAccessReviewInstanceDecisions.json
+# x-ms-original-file: specification/authorization/resource-manager/Microsoft.Authorization/Authorization/preview/2021-12-01-preview/examples/GetAccessReviewInstanceDecisions.json
 if __name__ == "__main__":
     main()

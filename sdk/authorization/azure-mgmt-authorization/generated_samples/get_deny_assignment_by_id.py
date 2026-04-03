@@ -32,11 +32,11 @@ def main():
     )
 
     response = client.deny_assignments.get_by_id(
-        deny_assignment_id="subscriptions/subId/resourcegroups/rgname/providers/Microsoft.Authorization/denyAssignments/daId",
+        deny_assignment_id="subscriptions/a925f2f7-5c63-4b7b-8799-25a5f97bc3b2/resourceGroups/rgname/providers/Microsoft.Authorization/denyAssignments/denyAssignmentId",
     )
     print(response)
 
 
-# x-ms-original-file: specification/authorization/resource-manager/Microsoft.Authorization/stable/2022-04-01/examples/GetDenyAssignmentById.json
+# x-ms-original-file: specification/authorization/resource-manager/Microsoft.Authorization/Authorization/preview/2024-07-01-preview/examples/GetDenyAssignmentById.json
 if __name__ == "__main__":
     main()

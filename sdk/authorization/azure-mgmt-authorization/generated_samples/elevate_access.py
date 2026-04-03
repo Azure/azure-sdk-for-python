@@ -34,6 +34,6 @@ def main():
     client.global_administrator.elevate_access()
 
 
-# x-ms-original-file: specification/authorization/resource-manager/Microsoft.Authorization/stable/2015-07-01/examples/ElevateAccess.json
+# x-ms-original-file: specification/authorization/resource-manager/Microsoft.Authorization/Authorization/stable/2015-07-01/examples/ElevateAccess.json
 if __name__ == "__main__":
     main()
