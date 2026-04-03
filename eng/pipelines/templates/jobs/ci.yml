@@ -64,9 +64,6 @@ parameters:
   - name: EnvVars
     type: object
     default: {}
-  - name: PythonVersionForAnalyze
-    type: string
-    default: ''
 
 jobs:
   - job: 'Build_Linux'
@@ -212,10 +209,10 @@ jobs:
 
     steps:
     - task: UsePythonVersion@0
-      displayName: "Use Python ${{ coalesce(parameters.PythonVersionForAnalyze, '$(PythonVersion)') }}"
+      displayName: "Use Python $(PythonVersion)"
       condition: succeededOrFailed()
       inputs:
-        versionSpec: ${{ coalesce(parameters.PythonVersionForAnalyze, '$(PythonVersion)') }}
+        versionSpec: $(PythonVersion)
     - template: /eng/pipelines/templates/steps/use-venv.yml
 
     - template: /eng/common/pipelines/templates/steps/check-spelling.yml
