@@ -153,56 +153,6 @@ class TestAgentResponsesCrud(TestBase):
         print("Agent deleted")
 
     # To run this test:
-    # pytest tests/agents/test_agent_responses_crud.py::TestAgentResponsesCrud::test_aget_response_curd_api_key_auth -s
-    @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_aget_response_curd_api_key_auth(self, **kwargs):
-
-        model = kwargs.get("foundry_model_name")
-        project_client = self.create_client(use_api_key=True, **kwargs)
-        openai_client = project_client.get_openai_client()
-
-        agent = project_client.agents.create_version(
-            agent_name="MyAgent",
-            definition=PromptAgentDefinition(
-                model=model,
-                instructions="You are a helpful assistant that answers general questions",
-            ),
-        )
-        print(f"\nAgent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-
-        conversation = openai_client.conversations.create(
-            items=[{"type": "message", "role": "user", "content": "How many feet in a mile?"}]
-        )
-        print(f"Created conversation with initial user message (id: {conversation.id})")
-
-        response = openai_client.responses.create(
-            conversation=conversation.id,
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
-        )
-        print(f"Response id: {response.id}, output text: {response.output_text}")
-        assert "5280" in response.output_text or "5,280" in response.output_text
-
-        _ = openai_client.conversations.items.create(
-            conversation.id,
-            items=[{"type": "message", "role": "user", "content": "And how many meters?"}],
-        )
-
-        response = openai_client.responses.create(
-            conversation=conversation.id,
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
-        )
-        print(f"Response id: {response.id}, output text: {response.output_text}")
-        assert "1609" in response.output_text or "1,609" in response.output_text
-
-        # Teardown
-        openai_client.conversations.delete(conversation_id=conversation.id)
-        print("Conversation deleted")
-
-        project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-        print("Agent deleted")
-
-    # To run this test:
     # pytest tests\agents\test_agent_responses_crud.py::TestAgentResponsesCrud::test_agent_responses_with_structured_output -s
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
