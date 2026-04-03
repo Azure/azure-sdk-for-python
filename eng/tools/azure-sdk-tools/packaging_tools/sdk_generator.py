@@ -186,7 +186,9 @@ def main(generate_input, generate_output):
                     package_entry["path"] = [folder_name]
                     package_entry[spec_word] = [readme_or_tsp]
                     package_entry["tagIsStable"] = (
-                        sdk_release_type == "stable" if is_tsp else (not judge_tag_preview(sdk_code_path, package_name))
+                        sdk_release_type == "stable"
+                        if (is_tsp and sdk_release_type is not None)
+                        else (not judge_tag_preview(sdk_code_path, package_name))
                     )
                     package_entry["targetReleaseDate"] = data.get("targetReleaseDate", "")
                     result[package_name] = package_entry
