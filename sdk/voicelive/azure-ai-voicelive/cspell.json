@@ -11,7 +11,9 @@
     "webrtc",
     "WEBRTC",
     "xhigh",
-    "XHIGH"
+    "XHIGH",
+    "genai",
+    "GENAI"
   ],
     "ignorePaths": [
         "*.csv",
