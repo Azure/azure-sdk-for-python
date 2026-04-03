@@ -7,3 +7,9 @@ The folder structure is the following
 - [dev](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev) : contains advanced documentation for _developers_ of SDK (not _consumers_ of SDK)
 
 The file [eng_sys_checks](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md) is a read up as to what a standard `ci.yml` will actually execute.
+
+## Quick Links for Common Tasks
+
+- **Troubleshooting CI Failures**: See [Using Copilot Agents to Fix CI Issues](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/agents.md) for guidance on using GitHub Copilot to fix common PR issues
+- **Understanding CI Checks**: See [Engineering System Checks](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md)
+- **Developer Setup**: See [Developer Documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/README.md)
