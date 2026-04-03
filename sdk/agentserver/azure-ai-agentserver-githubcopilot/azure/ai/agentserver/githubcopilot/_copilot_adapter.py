@@ -362,7 +362,24 @@ class CopilotAdapter:
     async def _handle_create(self, request, context, cancellation_signal):
         """Handle POST /responses — bridge Copilot SDK events to RAPI stream."""
         input_text = _extract_input_with_attachments(request)
+
+        # Resolve conversation identity for multi-turn session reuse.
+        # Prefer conversation_id from the context (set when the request includes
+        # a "conversation" field).  Fall back to session_id from the parsed
+        # request so that callers who only pass session_id still get multi-turn.
         conversation_id = getattr(context, "conversation_id", None)
+        if not conversation_id:
+            # Try session_id from the parsed request object
+            parsed = getattr(context, "request", None) or getattr(context, "parsed", None)
+            if parsed is not None:
+                conversation_id = getattr(parsed, "session_id", None)
+            # Last resort: check the raw request
+            if not conversation_id:
+                if isinstance(request, dict):
+                    conversation_id = request.get("session_id")
+                else:
+                    conversation_id = getattr(request, "session_id", None)
+
         response_id = getattr(context, "response_id", None) or "unknown"
 
         logger.info(f"Request: input={input_text[:100]!r} conversation_id={conversation_id}")
