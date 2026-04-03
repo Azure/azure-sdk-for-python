@@ -305,9 +305,11 @@ class TestPartitionSplitQuery(unittest.TestCase):
 
             # Verify initial state: Both have 1 partition
             provider = container_a.client_connection._routing_map_provider
+            collection_id_a = _base.GetResourceIdOrFullNameFromLink(container_a.container_link)
+            collection_id_b = _base.GetResourceIdOrFullNameFromLink(container_b.container_link)
 
-            map_a_before = provider._collection_routing_map_by_item.get(container_a.container_link)
-            map_b_before = provider._collection_routing_map_by_item.get(container_b.container_link)
+            map_a_before = provider._collection_routing_map_by_item.get(collection_id_a)
+            map_b_before = provider._collection_routing_map_by_item.get(collection_id_b)
 
             assert map_a_before is not None, "Container A should have cached routing map"
             assert map_b_before is not None, "Container B should have cached routing map"
@@ -334,15 +336,45 @@ class TestPartitionSplitQuery(unittest.TestCase):
                 if pending:
                     time.sleep(5)
 
-            # Trigger routing map refresh for container A
-            run_queries(container_a, 1)
+            # Wait for physical partition ranges to reflect the split.
+            split_convergence_deadline = time.time() + 300
+            physical_count = 0
+            while time.time() < split_convergence_deadline:
+                physical_ranges = list(container_a.client_connection._ReadPartitionKeyRanges(
+                    container_a.container_link
+                ))
+                physical_count = len(physical_ranges)
+                if physical_count == 2:
+                    break
+                time.sleep(5)
+
+            assert physical_count == 2, \
+                f"Container A physical partitions did not converge to 2 after split, got {physical_count}"
+
+            # Trigger and wait for routing-map cache refresh for container A.
+            cached_count = 0
+            current_map = map_a_before
+            while time.time() < split_convergence_deadline:
+                provider = container_a.client_connection._routing_map_provider
+                refreshed_map = provider.get_routing_map(
+                    collection_link=container_a.container_link,
+                    feed_options={},
+                    force_refresh=True,
+                    previous_routing_map=current_map,
+                )
+                current_map = refreshed_map or current_map
+                cached_count = len(list(current_map._orderedPartitionKeyRanges)) if current_map else 0
+                if cached_count == 2:
+                    break
+                time.sleep(5)
 
             # Also run queries on container B to verify cache wasn't invalidated
             run_queries(container_b, 1)
 
             # Verify post-split state
-            map_a_after = provider._collection_routing_map_by_item.get(container_a.container_link)
-            map_b_after = provider._collection_routing_map_by_item.get(container_b.container_link)
+            provider = container_a.client_connection._routing_map_provider
+            map_a_after = provider._collection_routing_map_by_item.get(collection_id_a)
+            map_b_after = provider._collection_routing_map_by_item.get(collection_id_b)
 
             assert map_a_after is not None, "Container A should still have cached routing map"
             assert map_b_after is not None, "Container B should still have cached routing map"
@@ -355,7 +387,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
 
             # Validate container A was updated
             assert len(ranges_a_after) == 2, \
-                f"Container A should have 2 partitions after split, got {len(ranges_a_after)}"
+                f"Container A should have 2 partitions after split, got {len(ranges_a_after)} (physical={physical_count}, cached={cached_count})"
 
             # Validate container B remained unchanged
             assert len(ranges_b_after) == 1, \
