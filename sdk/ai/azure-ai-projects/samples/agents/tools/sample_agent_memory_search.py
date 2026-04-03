@@ -43,7 +43,6 @@ from azure.ai.projects.models import (
     MemoryStoreDefaultDefinition,
     MemorySearchPreviewTool,
     PromptAgentDefinition,
-    MemoryStoreDefaultOptions,
 )
 
 load_dotenv()
@@ -68,9 +67,6 @@ with (
     definition = MemoryStoreDefaultDefinition(
         chat_model=os.environ["MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME"],
         embedding_model=os.environ["MEMORY_STORE_EMBEDDING_MODEL_DEPLOYMENT_NAME"],
-        options=MemoryStoreDefaultOptions(
-            user_profile_enabled=True, chat_summary_enabled=True
-        ),  # Note: This line will not be needed once the service is fixed to use correct defaults
     )
     memory_store = project_client.beta.memory_stores.create(
         name=memory_store_name,
