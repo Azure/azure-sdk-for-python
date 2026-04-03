@@ -932,6 +932,34 @@ class GitHubCopilotAdapter(CopilotAdapter):
 
         return await super().agent_run(context)
 
+    def get_model(self) -> Optional[str]:
+        """Get the currently configured model.
+
+        :return: The model name, or None if not configured.
+        """
+        return self._session_config.get("model")
+
+    def clear_default_model(self):
+        """Clear the default model from session config and cache.
+
+        Forces the adapter to re-discover and select a model on the next
+        ``initialize()`` call.  The model cache is also cleared for the
+        current Foundry resource URL.
+        """
+        # Clear from session config
+        self._session_config.pop("model", None)
+
+        # Clear from cache if using Foundry
+        resource_url = self._session_config.get("_foundry_resource_url")
+        if resource_url:
+            try:
+                from ._model_cache import ModelCache
+                cache = ModelCache()
+                cache.invalidate(resource_url)
+                logger.info(f"Cleared model cache for resource: {resource_url}")
+            except Exception:
+                logger.warning("Failed to clear model cache", exc_info=True)
+
 
 # ---------------------------------------------------------------------------
 # Copilot event iterator
