@@ -46,4 +46,5 @@ def add_sanitizers(test_proxy):
     remove_batch_sanitizers(["AZSDK3493"])
 
     add_remove_header_sanitizer(headers="Accept")
+    add_remove_header_sanitizer(headers="Content-Type")
     set_custom_default_matcher(ignore_query_ordering=True)
