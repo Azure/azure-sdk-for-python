@@ -2600,8 +2600,15 @@ def _extract_metric_values(
     properties = None
 
     for metric_key, metric_value in metrics.items():
-        if metric_key == "properties" and isinstance(metric_value, dict):
-            properties = metric_value
+        if metric_key == "properties":
+            if isinstance(metric_value, dict):
+                properties = metric_value
+            else:
+                logger.warning(
+                    "Evaluator '%s' returned 'properties' as %s instead of dict; ignoring.",
+                    criteria_name,
+                    type(metric_value).__name__,
+                )
             continue
         metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
         temp_result_per_metric = {}
@@ -2870,7 +2877,8 @@ def _create_result_object(
             "score": 4.5,
             "reason": "Good logical flow",
             "threshold": 3.0,
-            "sample": {"input": "...", "output": "..."}
+            "sample": {"input": "...", "output": "..."},
+            "properties": {"explanation": "...", "confidence": 0.95}
         }
         criteria_type = "quality"
 
