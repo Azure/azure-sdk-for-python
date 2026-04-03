@@ -2,9 +2,8 @@
 
 
 class AnswerLengthEvaluator:
-    def __init__(self, *, config: str, threshold, **kwargs):
-        self.config = config
-        self.threshold = threshold
+    def __init__(self, **kwargs):
+        pass
 
     def __call__(self, *args, **kwargs):
         return {

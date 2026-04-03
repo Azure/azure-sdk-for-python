@@ -81,11 +81,8 @@ with (
             entry_point="answer_length_evaluator:AnswerLengthEvaluator",
             init_parameters={
                 "type": "object",
-                "properties": {
-                    "config": {"type": "string"}, 
-                    "threshold": {"type": "number"}
-                },
-                "required": ["config", "threshold"],
+                "properties": {},
+                "required": [],
             },
             data_schema={
                 "type": "object",
@@ -140,10 +137,7 @@ with (
             "type": "azure_ai_evaluator",
             "name": evaluator_name,
             "evaluator_name": evaluator_name,
-            "initialization_parameters": {
-                "config": "example config value",
-                "threshold": 3,
-            },
+            "initialization_parameters": {},
         }
     ]
 
