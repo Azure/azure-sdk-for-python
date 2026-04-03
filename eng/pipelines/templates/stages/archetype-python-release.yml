@@ -280,6 +280,10 @@ stages:
                   inputs:
                     versionSpec: '3.11'
 
+                - pwsh: |
+                    Write-Host "##vso[task.setvariable variable=PIP_NO_BUILD_ISOLATION]1"
+                  displayName: 'Set PIP_NO_BUILD_ISOLATION=1 for py2docfx'
+
                 - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
 
                 - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
