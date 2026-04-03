@@ -106,7 +106,7 @@ Tracing is enabled automatically when an Application Insights connection string 
 
 ```python
 app = AgentServerHost(
-    application_insights_connection_string="InstrumentationKey=...",
+    applicationinsights_connection_string="InstrumentationKey=...",
 )
 ```
 

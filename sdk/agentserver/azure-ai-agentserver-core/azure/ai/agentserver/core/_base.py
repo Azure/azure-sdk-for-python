@@ -70,12 +70,12 @@ class AgentServerHost(Starlette):
 
         app = MyHost()
 
-    :param application_insights_connection_string: Application Insights
+    :param applicationinsights_connection_string: Application Insights
         connection string for exporting traces and logs to Azure Monitor.
         When *None* (default) the ``APPLICATIONINSIGHTS_CONNECTION_STRING``
         env var is consulted.  Tracing is automatically enabled when a
         connection string is available.
-    :type application_insights_connection_string: Optional[str]
+    :type applicationinsights_connection_string: Optional[str]
     :param graceful_shutdown_timeout: Seconds to wait for in-flight requests to
         complete after receiving SIGTERM / shutdown signal.  When *None* (default)
         the default is 30 seconds.  Set to ``0`` to disable the drain period.
@@ -107,7 +107,7 @@ class AgentServerHost(Starlette):
             logger.addHandler(_console)
 
         # Tracing — enabled when App Insights or OTLP endpoint is configured
-        _conn_str = _config.resolve_appinsights_connection_string(application_insights_connection_string)
+        _conn_str = _config.resolve_appinsights_connection_string(applicationinsights_connection_string)
         _otlp_endpoint = _config.resolve_otlp_endpoint()
         _tracing_on = bool(_conn_str or _otlp_endpoint)
         self._tracing: Optional[TracingHelper] = None

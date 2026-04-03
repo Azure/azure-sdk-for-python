@@ -54,7 +54,7 @@ class TestTracingToggle:
             "azure.ai.agentserver.core._tracing.TracingHelper.__init__",
             return_value=None,
         ):
-            agent = AgentServerHost(application_insights_connection_string="InstrumentationKey=ctor")
+            agent = AgentServerHost(applicationinsights_connection_string="InstrumentationKey=ctor")
             assert agent.tracing is not None
 
 
@@ -151,7 +151,7 @@ class TestConstructorConnectionString:
             return_value=None,
         ) as mock_init:
             AgentServerHost(
-                application_insights_connection_string="InstrumentationKey=ctor",
+                applicationinsights_connection_string="InstrumentationKey=ctor",
             )
             mock_init.assert_called_once_with(connection_string="InstrumentationKey=ctor")
 
