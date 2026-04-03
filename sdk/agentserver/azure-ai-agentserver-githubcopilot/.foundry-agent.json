@@ -1,8 +1,10 @@
 {
   "sessions": {
-    "replat-pkg-test": "rmfogf3new6ja3jqm5dr0a3ow"
+    "replat-pkg-test": "rmfogf3new6ja3jqm5dr0a3ow",
+    "replat-pkg-v2": "a71y6obhjjvhvmqeuueu0m5fl"
   },
   "conversations": {
-    "replat-pkg-test": "conv_1c87456bd775d3b900ss91DkAbwpNSKsNFYTTsX8Bt3clhJ3ID"
+    "replat-pkg-test": "conv_1c87456bd775d3b900ss91DkAbwpNSKsNFYTTsX8Bt3clhJ3ID",
+    "replat-pkg-v2": "conv_9c88b7a3f3ddc759007SZkhNwsnJ6INxwubbER4ZsVEPtcmTKG"
   }
 }

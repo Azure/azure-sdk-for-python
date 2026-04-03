@@ -5,18 +5,18 @@ WORKDIR /app
 # Install git (needed for some pip dependencies)
 RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 
-# Install new agentserver packages from pre-downloaded wheels
-COPY _wheels/ /tmp/wheels/
-RUN pip install --no-cache-dir /tmp/wheels/*.whl && rm -rf /tmp/wheels
-
 # Copy the package source for local install (not on PyPI yet)
 COPY _package/ /tmp/azure-ai-agentserver-githubcopilot/
 
 # Copy the test agent
 COPY . /app/
 
-# Install the package from local source + agent deps
-RUN pip install --no-cache-dir --pre /tmp/azure-ai-agentserver-githubcopilot/ -r requirements.txt && \
+# Install the package from local source + agent deps.
+# --no-input prevents pip from prompting for auth on the Azure DevOps feed.
+# --extra-index-url in requirements.txt provides access to Ravi's new base packages.
+RUN pip install --no-cache-dir --no-input --pre \
+    /tmp/azure-ai-agentserver-githubcopilot/ \
+    -r requirements.txt && \
     rm -rf /tmp/azure-ai-agentserver-githubcopilot/
 
 EXPOSE 8088

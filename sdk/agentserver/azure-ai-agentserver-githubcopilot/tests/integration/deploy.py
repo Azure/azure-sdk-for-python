@@ -48,7 +48,7 @@ def get_access_token(resource: str = "https://ai.azure.com") -> str:
 
 
 def stage_build_context(staging_dir: Path) -> None:
-    """Assemble staging directory with test agent + package source + wheels."""
+    """Assemble staging directory with test agent + package source."""
     # Copy test agent files
     shutil.copytree(TEST_AGENT_DIR, staging_dir, dirs_exist_ok=True)
 
@@ -63,21 +63,6 @@ def stage_build_context(staging_dir: Path) -> None:
         elif src.is_file():
             dst.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(src, dst)
-
-    # Download agentserver wheels from dev feed (ACR can't reach the feed directly)
-    wheels_dest = staging_dir / "_wheels"
-    wheels_dest.mkdir(exist_ok=True)
-    feed_url = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
-    for pkg in ["azure-ai-agentserver-core[tracing]==2.0.0a20260331006",
-                "azure-ai-agentserver-responses==1.0.0a20260331006"]:
-        result = subprocess.run(
-            [sys.executable, "-m", "pip", "download", "--no-deps",
-             "--dest", str(wheels_dest),
-             "--extra-index-url", feed_url, pkg],
-            capture_output=True, text=True,
-        )
-        if result.returncode != 0:
-            print(f"Warning: failed to download {pkg}: {result.stderr}", file=sys.stderr)
 
 
 def build_image(staging_dir: Path, acr: str, name: str, tag: str) -> str:
