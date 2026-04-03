@@ -12,13 +12,13 @@ class FriendlyEvaluator:
     and a detailed explanation.
 
     :param api_key: The OpenAI API key.
-    :param model: The model to use for evaluation (e.g. "gpt-4o").
+    :param model_name: The model_name to use for evaluation (e.g. "gpt-4o").
     :param threshold: The minimum score (1-5) to be considered "Pass" (default: 3).
     """
 
-    def __init__(self, *, api_key: str, model: str, threshold: int = 3, **kwargs):
+    def __init__(self, *, api_key: str, model_name: str, threshold: int = 3, **kwargs):
         self.client = OpenAI(api_key=api_key)
-        self.model = model
+        self.model_name = model_name
         self.threshold = threshold
 
     def __call__(self, *, query: str, response: str, **kwargs) -> dict:
@@ -29,7 +29,7 @@ class FriendlyEvaluator:
         :return: A dict with score, label, reason, threshold, passed, and properties.
         """
         result = self.client.responses.create(
-            model=self.model,
+            model=self.model_name,
             instructions=build_evaluation_instructions(),
             input=build_evaluation_input(query, response),
             temperature=0.0,

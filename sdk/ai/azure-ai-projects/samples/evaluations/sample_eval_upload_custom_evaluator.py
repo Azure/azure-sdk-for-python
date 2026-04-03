@@ -215,13 +215,13 @@ with (
         print("Waiting for evaluation run to complete...")
 
     # ---------------------------------------------------------------
-    # 5. Cleanup (uncomment to delete)
+    # 5. Cleanup 
     # ---------------------------------------------------------------
-    # print("\nCleaning up...")
-    # project_client.beta.evaluators.delete_version(
-    #     name=code_evaluator.name,
-    #     version=code_evaluator.version,
-    # )
-    # client.evals.delete(eval_id=eval_object.id)
-    # print("Cleanup done.")
+    print("\nCleaning up...")
+    project_client.beta.evaluators.delete_version(
+        name=code_evaluator.name,
+        version=code_evaluator.version,
+    )
+    client.evals.delete(eval_id=eval_object.id)
+    print("Cleanup done.")
     print("\nDone - upload, eval creation, and eval run verified successfully.")
