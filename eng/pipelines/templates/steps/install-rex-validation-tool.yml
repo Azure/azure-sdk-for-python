@@ -14,10 +14,7 @@ steps:
       Write-Host "Patching py2docfx pip_utils.py at: $pipUtilsPath"
       $content = Get-Content -Raw $pipUtilsPath
       $original = '        download_param.append("--no-binary=:all:")'
-      $patched = @"
-        download_param.append("--no-binary=:all:")
-        download_param.append("--no-build-isolation")
-      "@
+      $patched = $original + "`n" + '        download_param.append("--no-build-isolation")'
       if ($content.Contains($original)) {
         $content = $content.Replace($original, $patched)
         Set-Content -Path $pipUtilsPath -Value $content -NoNewline
