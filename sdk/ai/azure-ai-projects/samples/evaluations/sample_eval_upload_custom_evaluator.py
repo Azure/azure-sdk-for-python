@@ -96,7 +96,7 @@ with (
                 "required": ["query", "response"],
             },
             metrics={
-                "result": EvaluatorMetric(
+                "score": EvaluatorMetric(
                     type=EvaluatorMetricType.ORDINAL,
                     desirable_direction=EvaluatorMetricDirection.INCREASE,
                     min_value=1,

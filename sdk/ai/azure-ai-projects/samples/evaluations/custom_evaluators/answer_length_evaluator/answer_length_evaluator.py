@@ -8,7 +8,7 @@ class AnswerLengthEvaluator:
 
     def __call__(self, *args, **kwargs):
         return {
-            "result": evaluate_answer_length(kwargs.get("response")), 
+            "score": evaluate_answer_length(kwargs.get("response")), 
         }
 
 
