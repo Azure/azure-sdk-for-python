@@ -17,11 +17,11 @@ DESCRIPTION:
     of a response and returns score, label, reason, and explanation.
 
 USAGE:
-    python sample_eval_upload_friendly_evaluator.py
+    python sample_custom_eval_upload_advanced.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b4" azure-storage-blob python-dotenv azure-identity openai
+    pip install "azure-ai-projects>=2.0.0" azure-storage-blob python-dotenv azure-identity openai
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint.

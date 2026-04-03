@@ -13,11 +13,11 @@ DESCRIPTION:
       3. Run the evaluation with inline data and poll for results.
 
 USAGE:
-    python sample_eval_upload_custom_evaluator.py
+    python sample_custom_eval_upload_simple.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b4" azure-storage-blob python-dotenv azure-identity openai
+    pip install "azure-ai-projects>=2.0.0" azure-storage-blob python-dotenv azure-identity openai
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your

@@ -46,12 +46,13 @@ def parse_evaluation_result(raw_result: str, threshold: int = 3) -> dict:
     """Parse the LLM's JSON response into a structured evaluation result.
 
     The return dict has the standard top-level keys (score, label, reason,
-    threshold, passed) and a ``properties`` dict for any extra output fields
-    the evaluator wants to surface.
+    threshold) and a ``properties`` dict for any extra output fields the
+    evaluator wants to surface. Note: ``passed`` can also be calculated
+    and provided based on the score and threshold if needed.
 
     :param raw_result: The raw string output from the LLM.
     :param threshold: The minimum score to be considered "Pass".
-    :return: A dict with score, label, reason, threshold, passed, and properties.
+    :return: A dict with score, label, reason, threshold, and properties.
     """
     import json
 
@@ -66,24 +67,21 @@ def parse_evaluation_result(raw_result: str, threshold: int = 3) -> dict:
             text = text.rsplit("```", 1)[0]
         result = json.loads(text.strip())
         score = max(1, min(5, int(result.get("score", threshold))))
-        passed = score >= threshold
 
         # Collect any extra fields returned by the LLM into properties
         properties = {k: v for k, v in result.items() if k not in top_level_keys}
 
         return {
             "score": score,
-            "label": "Pass" if passed else "Fail",
+            "label": "Pass" if score >= threshold else "Fail",
             "reason": result.get("reason", "No reason provided"),
             "threshold": threshold,
-            "passed": passed,
             "properties": properties,  # extra metadata surfaced in the evaluation results
         }
     except (json.JSONDecodeError, ValueError, KeyError):
         return {
-            "score": threshold,
+            "score": 0,
             "label": "Fail",
             "reason": "Could not parse LLM response",
             "threshold": threshold,
-            "passed": False,
         }

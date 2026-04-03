@@ -6,8 +6,10 @@ class AnswerLengthEvaluator:
         pass
 
     def __call__(self, *args, **kwargs):
+        length = evaluate_answer_length(kwargs.get("response"))
         return {
-            "score": evaluate_answer_length(kwargs.get("response")), 
+            "score": length,
+            "label": "Pass" if length > 50 else "Fail",
         }
 
 

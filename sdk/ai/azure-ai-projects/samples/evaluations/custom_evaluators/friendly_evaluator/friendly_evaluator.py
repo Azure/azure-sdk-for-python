@@ -26,7 +26,7 @@ class FriendlyEvaluator:
 
         :param query: The original user query.
         :param response: The response to evaluate.
-        :return: A dict with score, label, reason, threshold, passed, and properties.
+        :return: A dict with score, label, reason, threshold, and properties.
         """
         result = self.client.responses.create(
             model=self.model_name,
