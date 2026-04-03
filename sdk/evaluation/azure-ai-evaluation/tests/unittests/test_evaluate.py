@@ -1402,6 +1402,48 @@ class TestEvaluate:
         }
         assert "explanation" not in property_result
 
+        # Test that non-dict properties logs a warning and is omitted
+        non_dict_property_results = {
+            "metrics": {},
+            "rows": [
+                {
+                    "inputs.query": "test query",
+                    "outputs.friendly_eval.score": 3.0,
+                    "outputs.friendly_eval.score_threshold": 3,
+                    "outputs.friendly_eval.score_result": "Pass",
+                    "outputs.friendly_eval.score_reason": "Acceptable",
+                    "outputs.friendly_eval.properties": "not_a_dict",
+                }
+            ],
+            "studio_url": None,
+        }
+
+        with patch.object(logger, "info") as mock_info:
+            _convert_results_to_aoai_evaluation_results(
+                results=non_dict_property_results,
+                logger=logger,
+                eval_run_id=eval_run_id,
+                eval_id=eval_id,
+                evaluators={"friendly_eval": lambda **kwargs: {"score": 1}},
+                eval_meta_data={
+                    "testing_criteria": [
+                        {
+                            "name": "friendly_eval",
+                            "type": "quality",
+                            "metrics": ["score"],
+                        }
+                    ]
+                },
+            )
+
+        non_dict_result = non_dict_property_results["_evaluation_results_list"][0]["results"][0]
+        assert "properties" not in non_dict_result
+        mock_info.assert_any_call(
+            "Evaluator '%s' returned 'properties' as %s instead of dict; ignoring.",
+            "friendly_eval",
+            "str",
+        )
+
     @patch(
         "azure.ai.evaluation._evaluate._evaluate._map_names_to_builtins",
         return_value={},

@@ -2604,7 +2604,7 @@ def _extract_metric_values(
             if isinstance(metric_value, dict):
                 properties = metric_value
             else:
-                logger.warning(
+                logger.info(
                     "Evaluator '%s' returned 'properties' as %s instead of dict; ignoring.",
                     criteria_name,
                     type(metric_value).__name__,
@@ -2632,7 +2632,7 @@ def _extract_metric_values(
     if properties is not None:
         for metric_dict in result_per_metric.values():
             if metric_dict is not None and len(metric_dict) > 0:
-                metric_dict["properties"] = properties
+                metric_dict["properties"] = properties.copy()
 
     empty_metrics = []
     empty_metrics.extend(
