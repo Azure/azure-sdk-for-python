@@ -63,13 +63,7 @@ async def _generate_tokens(
 
 @app.invoke_handler
 async def handle_invoke(request: Request) -> Response:
-    """Stream code-generation tokens back to the caller via SSE.
-
-    :param request: The raw Starlette request.
-    :type request: starlette.requests.Request
-    :return: Streaming SSE response.
-    :rtype: starlette.responses.StreamingResponse
-    """
+    """Stream code-generation tokens back to the caller via SSE."""
     data = await request.json()
     invocation_id = request.state.invocation_id
     prompt = data.get("prompt", "")
