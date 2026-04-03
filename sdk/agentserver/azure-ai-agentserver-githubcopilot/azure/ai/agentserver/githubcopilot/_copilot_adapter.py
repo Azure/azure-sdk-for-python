@@ -41,6 +41,10 @@ from ._tool_acl import ToolAcl
 
 logger = logging.getLogger("azure.ai.agentserver.githubcopilot")
 
+# Version canary — proves which code is deployed. Change this string with every deploy-affecting commit.
+_BUILD_TAG = "replat-v2-multiturn-rawbody-fix"
+logger.info(f"Adapter loaded: {_BUILD_TAG}")
+
 
 def _extract_input_with_attachments(request) -> str:
     """Extract text from a RAPI request, including any file/image attachments.
@@ -365,20 +369,16 @@ class CopilotAdapter:
 
         # Resolve conversation identity for multi-turn session reuse.
         # Prefer conversation_id from the context (set when the request includes
-        # a "conversation" field).  Fall back to session_id from the parsed
-        # request so that callers who only pass session_id still get multi-turn.
+        # a "conversation" field).  Fall back to session_id from the raw request
+        # body so callers who only pass session_id still get multi-turn.
         conversation_id = getattr(context, "conversation_id", None)
         if not conversation_id:
-            # Try session_id from the parsed request object
-            parsed = getattr(context, "request", None) or getattr(context, "parsed", None)
-            if parsed is not None:
-                conversation_id = getattr(parsed, "session_id", None)
-            # Last resort: check the raw request
-            if not conversation_id:
-                if isinstance(request, dict):
-                    conversation_id = request.get("session_id")
-                else:
-                    conversation_id = getattr(request, "session_id", None)
+            raw_body = getattr(context, "raw_body", None)
+            if isinstance(raw_body, dict):
+                conversation_id = raw_body.get("session_id")
+            if conversation_id:
+                # Also set on context so downstream code (e.g. history bootstrap) sees it
+                context.conversation_id = conversation_id
 
         response_id = getattr(context, "response_id", None) or "unknown"
 
