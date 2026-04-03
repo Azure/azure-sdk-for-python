@@ -280,6 +280,8 @@ stages:
                   inputs:
                     versionSpec: '3.11'
 
+                - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+
                 - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
 
                 - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
