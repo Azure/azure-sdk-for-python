@@ -526,8 +526,8 @@ class FileSystemItem(_Model):
     :vartype name: str
     :ivar last_modified: The last modified time.
     :vartype last_modified: str
-    :ivar e_tag: The entity tag.
-    :vartype e_tag: str
+    :ivar etag: The entity tag.
+    :vartype etag: str
     """
 
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -536,7 +536,7 @@ class FileSystemItem(_Model):
         name="lastModified", visibility=["read", "create", "update", "delete", "query"]
     )
     """The last modified time."""
-    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read", "create", "update", "delete", "query"])
+    etag: Optional[str] = rest_field(name="eTag", visibility=["read", "create", "update", "delete", "query"])
     """The entity tag."""
 
     @overload
@@ -545,7 +545,7 @@ class FileSystemItem(_Model):
         *,
         name: Optional[str] = None,
         last_modified: Optional[str] = None,
-        e_tag: Optional[str] = None,
+        etag: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -682,7 +682,7 @@ class ListBlobsHierarchySegmentResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PathItem(_Model):
+class Path(_Model):
     """Represents a path in a filesystem.
 
     :ivar name: The path name.
@@ -691,8 +691,8 @@ class PathItem(_Model):
     :vartype is_directory: bool
     :ivar last_modified: The last modified time.
     :vartype last_modified: str
-    :ivar e_tag: The entity tag.
-    :vartype e_tag: str
+    :ivar etag: The entity tag.
+    :vartype etag: str
     :ivar content_length: The content length.
     :vartype content_length: int
     :ivar owner: The owner of the path.
@@ -721,7 +721,7 @@ class PathItem(_Model):
         name="lastModified", visibility=["read", "create", "update", "delete", "query"]
     )
     """The last modified time."""
-    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read", "create", "update", "delete", "query"])
+    etag: Optional[str] = rest_field(name="eTag", visibility=["read", "create", "update", "delete", "query"])
     """The entity tag."""
     content_length: Optional[int] = rest_field(
         name="contentLength", visibility=["read", "create", "update", "delete", "query"]
@@ -757,7 +757,7 @@ class PathItem(_Model):
         name: Optional[str] = None,
         is_directory: Optional[bool] = None,
         last_modified: Optional[str] = None,
-        e_tag: Optional[str] = None,
+        etag: Optional[str] = None,
         content_length: Optional[int] = None,
         owner: Optional[str] = None,
         group: Optional[str] = None,
@@ -783,17 +783,17 @@ class PathList(_Model):
     """A list of paths.
 
     :ivar paths: The list of paths.
-    :vartype paths: list[~azure.storage.filedatalake._generated.models.PathItem]
+    :vartype paths: list[~azure.storage.filedatalake._generated.models.Path]
     """
 
-    paths: Optional[list["_models.PathItem"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    paths: Optional[list["_models.Path"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of paths."""
 
     @overload
     def __init__(
         self,
         *,
-        paths: Optional[list["_models.PathItem"]] = None,
+        paths: Optional[list["_models.Path"]] = None,
     ) -> None: ...
 
     @overload

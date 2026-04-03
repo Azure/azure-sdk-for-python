@@ -993,7 +993,7 @@ class PathProperties(DictMixin):
         path_prop.permissions = generated.permissions
         path_prop.last_modified = _rfc_1123_to_datetime(generated.last_modified)
         path_prop.is_directory = bool(generated.is_directory)
-        path_prop.etag = generated.e_tag
+        path_prop.etag = generated.etag
         path_prop.content_length = generated.content_length
         path_prop.creation_time = _filetime_to_datetime(generated.creation_time)
         path_prop.expiry_time = _filetime_to_datetime(generated.expiry_time)
