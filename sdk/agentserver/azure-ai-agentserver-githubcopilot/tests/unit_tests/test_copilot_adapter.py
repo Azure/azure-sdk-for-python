@@ -8,9 +8,9 @@ Tests cover get_model() and clear_default_model() functionality.
 """
 
 import os
-import pytest
 from unittest.mock import MagicMock, patch
-from pathlib import Path
+
+import pytest
 
 from azure.ai.agentserver.githubcopilot._copilot_adapter import GitHubCopilotAdapter
 
