@@ -64,7 +64,7 @@ async def _do_work(invocation_id: str, data: dict) -> bytes:
     :return: JSON result bytes.
     :rtype: bytes
     """
-    await asyncio.sleep(10)
+    await asyncio.sleep(5)
     result = json.dumps({
         "invocation_id": invocation_id,
         "status": "completed",
