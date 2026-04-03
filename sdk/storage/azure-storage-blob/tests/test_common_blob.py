@@ -3353,7 +3353,11 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             if self.is_live:
                 mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
 
-        return variables(self, **kwargs):
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_versioning_immutability_policy_and_legal_hold(self, **kwargs):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
         storage_resource_group_name = kwargs.pop("storage_resource_group_name")
