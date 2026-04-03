@@ -5,7 +5,7 @@
 
 import functools
 import inspect
-from typing import Any, Awaitable, Callable, Mapping, Optional, TypeVar, cast
+from typing import Any, Awaitable, Callable, Mapping, Optional, cast
 
 from .._cosmos_span_attributes import (
     _add_cosmos_error_telemetry,
@@ -14,8 +14,6 @@ from .._cosmos_span_attributes import (
 )
 
 __all__ = ["cosmos_span_attributes_async", "sanitize_query"]
-
-F = TypeVar("F", bound=Callable[..., Any])
 
 
 def _build_telemetry_kwargs(func_kwargs: Mapping[str, Any]) -> dict[str, Any]:
@@ -125,24 +123,17 @@ def cosmos_span_attributes_async(
     """
     del name_of_span, kind, tracing_attributes, kwargs
 
-    def decorator(func: F) -> F:
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         method_name = func.__name__
 
         if inspect.iscoroutinefunction(func):
             coroutine_func = cast(Callable[..., Awaitable[Any]], func)
 
             @functools.wraps(func)
-            async def async_wrapper(*args: Any, **func_kwargs: Any) -> Any:
-                """Wrap coroutine methods and enrich the active span after invocation.
-
-                :param args: Positional arguments passed to the decorated method.
-                :type args: Any
-                :return: The wrapped coroutine result.
-                :rtype: Any
-                """
+            async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
                 try:
-                    result = await coroutine_func(*args, **func_kwargs)
-                    _add_success_telemetry(method_name, operation_type, args, func_kwargs, result)
+                    result = await coroutine_func(*args, **kwargs)
+                    _add_success_telemetry(method_name, operation_type, args, kwargs, result)
                     return result
                 except Exception as error:
                     _add_error_telemetry(error)
@@ -151,17 +142,10 @@ def cosmos_span_attributes_async(
             return async_wrapper
 
         @functools.wraps(func)
-        def sync_wrapper(*args: Any, **func_kwargs: Any) -> Any:
-            """Wrap pager-factory methods and enrich the active span after invocation.
-
-            :param args: Positional arguments passed to the decorated method.
-            :type args: Any
-            :return: The wrapped method result.
-            :rtype: Any
-            """
+        def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
             try:
-                result = func(*args, **func_kwargs)
-                _add_success_telemetry(method_name, operation_type, args, func_kwargs, result)
+                result = func(*args, **kwargs)
+                _add_success_telemetry(method_name, operation_type, args, kwargs, result)
                 return result
             except Exception as error:
                 _add_error_telemetry(error)
