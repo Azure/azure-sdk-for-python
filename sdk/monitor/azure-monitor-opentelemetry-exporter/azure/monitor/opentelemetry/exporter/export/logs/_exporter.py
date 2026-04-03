@@ -186,7 +186,6 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
         instrumentation_scope = readable_log_record.instrumentation_scope
         if hasattr(instrumentation_scope, "name"):
             properties["logger_name"] = str(instrumentation_scope.name)
-            
 
     # Exception telemetry
     if exc_type is not None or exc_message is not None:

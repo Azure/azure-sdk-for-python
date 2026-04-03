@@ -580,7 +580,6 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.exceptions[0].stack, "")
         self.assertEqual(envelope.data.base_data.properties.get("logger_name"), "blank_exception_logger")
 
-
     def test_log_to_envelope_event(self):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._log_data_event)
