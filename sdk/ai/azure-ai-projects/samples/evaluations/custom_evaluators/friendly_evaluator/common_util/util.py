@@ -72,9 +72,7 @@ def parse_evaluation_result(raw_result: str, threshold: int = 3) -> dict:
         properties = {k: v for k, v in result.items() if k not in top_level_keys}
 
         return {
-            # --- Required field (must be present for the evaluation service) ---
             "score": score,
-            # --- Optional fields ---
             "label": "Pass" if passed else "Fail",
             "reason": result.get("reason", "No reason provided"),
             "threshold": threshold,
