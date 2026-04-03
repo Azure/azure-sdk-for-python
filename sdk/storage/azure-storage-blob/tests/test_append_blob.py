@@ -1546,29 +1546,30 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
             mgmt_client.blob_containers.create(storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property)
 
-        # Act
-        blob_name = self.get_resource_name('vlwblob')
-        blob = bsc.get_blob_client(container_name, blob_name)
+        try:
+            # Act
+            blob_name = self.get_resource_name('vlwblob')
+            blob = bsc.get_blob_client(container_name, blob_name)
 
-        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=10))
-        immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time, policy_mode=BlobImmutabilityPolicyMode.Unlocked)
-        blob.create_append_blob(immutability_policy=immutability_policy,
-                                legal_hold=True)
+            expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=10))
+            immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time, policy_mode=BlobImmutabilityPolicyMode.Unlocked)
+            blob.create_append_blob(immutability_policy=immutability_policy,
+                                    legal_hold=True)
 
-        props = blob.get_blob_properties()
+            props = blob.get_blob_properties()
 
-        with pytest.raises(HttpResponseError):
-            blob.delete_blob()
+            with pytest.raises(HttpResponseError):
+                blob.delete_blob()
 
-        assert props['has_legal_hold']
-        assert props['immutability_policy']['expiry_time'] is not None
-        assert props['immutability_policy']['policy_mode'] is not None
-
-        if self.is_live:
-            blob.delete_immutability_policy()
-            blob.set_legal_hold(False)
-            blob.delete_blob()
-            mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
+            assert props['has_legal_hold']
+            assert props['immutability_policy']['expiry_time'] is not None
+            assert props['immutability_policy']['policy_mode'] is not None
+        finally:
+            if self.is_live:
+                blob.delete_immutability_policy()
+                blob.set_legal_hold(False)
+                blob.delete_blob()
+                mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
 
         return variables
 

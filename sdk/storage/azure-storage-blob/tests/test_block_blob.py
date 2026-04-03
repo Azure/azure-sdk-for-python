@@ -750,36 +750,37 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
             mgmt_client.blob_containers.create(storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property)
 
-        blob_name = self._get_blob_reference()
-        blob = self.bsc.get_blob_client(container_name, blob_name)
-        blob.stage_block('1', b'AAA')
-        blob.stage_block('2', b'BBB')
-        blob.stage_block('3', b'CCC')
+        try:
+            blob_name = self._get_blob_reference()
+            blob = self.bsc.get_blob_client(container_name, blob_name)
+            blob.stage_block('1', b'AAA')
+            blob.stage_block('2', b'BBB')
+            blob.stage_block('3', b'CCC')
 
-        # Act
-        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(seconds=5))
-        block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
-        immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time,
-                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
-        put_block_list_resp = blob.commit_block_list(block_list,
-                                                     immutability_policy=immutability_policy,
-                                                     legal_hold=True,
-                                                     )
+            # Act
+            expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(seconds=5))
+            block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
+            immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time,
+                                                     policy_mode=BlobImmutabilityPolicyMode.Unlocked)
+            put_block_list_resp = blob.commit_block_list(block_list,
+                                                         immutability_policy=immutability_policy,
+                                                         legal_hold=True,
+                                                         )
 
-        # Assert
-        download_resp = blob.download_blob()
-        assert download_resp.readall() == b'AAABBBCCC'
-        assert download_resp.properties.etag == put_block_list_resp.get('etag')
-        assert download_resp.properties.last_modified == put_block_list_resp.get('last_modified')
-        assert download_resp.properties['has_legal_hold']
-        assert download_resp.properties['immutability_policy']['expiry_time'] is not None
-        assert download_resp.properties['immutability_policy']['policy_mode'] is not None
-
-        if self.is_live:
-            blob.delete_immutability_policy()
-            blob.set_legal_hold(False)
-            blob.delete_blob()
-            mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
+            # Assert
+            download_resp = blob.download_blob()
+            assert download_resp.readall() == b'AAABBBCCC'
+            assert download_resp.properties.etag == put_block_list_resp.get('etag')
+            assert download_resp.properties.last_modified == put_block_list_resp.get('last_modified')
+            assert download_resp.properties['has_legal_hold']
+            assert download_resp.properties['immutability_policy']['expiry_time'] is not None
+            assert download_resp.properties['immutability_policy']['policy_mode'] is not None
+        finally:
+            if self.is_live:
+                blob.delete_immutability_policy()
+                blob.set_legal_hold(False)
+                blob.delete_blob()
+                mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
 
         return variables
 

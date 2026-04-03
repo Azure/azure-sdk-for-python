@@ -151,29 +151,30 @@ class TestStoragePageBlob(StorageRecordedTestCase):
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
             mgmt_client.blob_containers.create(storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property)
 
-        blob_name = self.get_resource_name("vlwblob")
-        blob = bsc.get_blob_client(container_name, blob_name)
+        try:
+            blob_name = self.get_resource_name("vlwblob")
+            blob = bsc.get_blob_client(container_name, blob_name)
 
-        # Act
-        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=5))
-        immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time,
-                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
-        resp = blob.create_page_blob(1024, immutability_policy=immutability_policy,
-                                     legal_hold=True)
-        props = blob.get_blob_properties()
+            # Act
+            expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=5))
+            immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time,
+                                                     policy_mode=BlobImmutabilityPolicyMode.Unlocked)
+            resp = blob.create_page_blob(1024, immutability_policy=immutability_policy,
+                                         legal_hold=True)
+            props = blob.get_blob_properties()
 
-        # Assert
-        assert resp.get('etag') is not None
-        assert resp.get('last_modified') is not None
-        assert props['has_legal_hold']
-        assert props['immutability_policy']['expiry_time'] is not None
-        assert props['immutability_policy']['policy_mode'] is not None
-
-        if self.is_live:
-            blob.delete_immutability_policy()
-            blob.set_legal_hold(False)
-            blob.delete_blob()
-            mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
+            # Assert
+            assert resp.get('etag') is not None
+            assert resp.get('last_modified') is not None
+            assert props['has_legal_hold']
+            assert props['immutability_policy']['expiry_time'] is not None
+            assert props['immutability_policy']['policy_mode'] is not None
+        finally:
+            if self.is_live:
+                blob.delete_immutability_policy()
+                blob.set_legal_hold(False)
+                blob.delete_blob()
+                mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
 
         return variables
 
