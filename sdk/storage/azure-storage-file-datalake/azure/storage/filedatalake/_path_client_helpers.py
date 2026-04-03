@@ -53,10 +53,10 @@ def _create_path_options(
     metadata: Optional[Dict[str, str]] = None,
     **kwargs: Any,
 ) -> Dict[str, Any]:
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_access_conditions(kwargs.pop("lease", None))
     mod_conditions = get_mod_conditions(kwargs)
 
-    path_http_headers = None
+    path_http_headers = {}
     if content_settings:
         path_http_headers = get_path_http_headers(content_settings)
 
@@ -83,29 +83,32 @@ def _create_path_options(
         "lease_duration": kwargs.pop("lease_duration", None),
         "expiry_options": kwargs.pop("expiry_options", None),
         "expires_on": expires_on,
-        "path_http_headers": path_http_headers,
-        "lease_access_conditions": access_conditions,
-        "modified_access_conditions": mod_conditions,
-        "cpk_info": cpk_info,
         "timeout": kwargs.pop("timeout", None),
         "encryption_context": kwargs.pop("encryption_context", None),
         "cls": return_response_headers,
     }
+    if lease_id:
+        options["lease_id"] = lease_id
+    options.update(path_http_headers)
+    options.update(mod_conditions)
+    if cpk_info:
+        options.update(cpk_info)
     options.update(kwargs)
     return options
 
 
 def _delete_path_options(paginated: Optional[bool], **kwargs) -> Dict[str, Any]:
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_access_conditions(kwargs.pop("lease", None))
     mod_conditions = get_mod_conditions(kwargs)
 
     options = {
         "paginated": paginated,
-        "lease_access_conditions": access_conditions,
-        "modified_access_conditions": mod_conditions,
         "cls": return_response_headers,
         "timeout": kwargs.pop("timeout", None),
     }
+    if lease_id:
+        options["lease_id"] = lease_id
+    options.update(mod_conditions)
     options.update(kwargs)
     return options
 
@@ -117,7 +120,7 @@ def _set_access_control_options(
     acl: Optional[str] = None,
     **kwargs: Any,
 ) -> Dict[str, Any]:
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_access_conditions(kwargs.pop("lease", None))
     mod_conditions = get_mod_conditions(kwargs)
 
     options = {
@@ -125,27 +128,29 @@ def _set_access_control_options(
         "group": group,
         "permissions": permissions,
         "acl": acl,
-        "lease_access_conditions": access_conditions,
-        "modified_access_conditions": mod_conditions,
         "timeout": kwargs.pop("timeout", None),
         "cls": return_response_headers,
     }
+    if lease_id:
+        options["lease_id"] = lease_id
+    options.update(mod_conditions)
     options.update(kwargs)
     return options
 
 
 def _get_access_control_options(upn: Optional[bool] = None, **kwargs: Any) -> Dict[str, Any]:
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_access_conditions(kwargs.pop("lease", None))
     mod_conditions = get_mod_conditions(kwargs)
 
     options = {
         "action": "getAccessControl",
         "upn": upn if upn else False,
-        "lease_access_conditions": access_conditions,
-        "modified_access_conditions": mod_conditions,
         "timeout": kwargs.pop("timeout", None),
         "cls": return_response_headers,
     }
+    if lease_id:
+        options["lease_id"] = lease_id
+    options.update(mod_conditions)
     options.update(kwargs)
     return options
 
@@ -173,26 +178,27 @@ def _rename_path_options(
     if metadata or kwargs.pop("permissions", None) or kwargs.pop("umask", None):
         raise ValueError("metadata, permissions, umask is not supported for this operation")
 
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_access_conditions(kwargs.pop("lease", None))
     source_lease_id = get_lease_id(kwargs.pop("source_lease", None))
     mod_conditions = get_mod_conditions(kwargs)
     source_mod_conditions = get_source_mod_conditions(kwargs)
 
-    path_http_headers = None
+    path_http_headers = {}
     if content_settings:
         path_http_headers = get_path_http_headers(content_settings)
 
     options = {
         "rename_source": rename_source,
-        "path_http_headers": path_http_headers,
-        "lease_access_conditions": access_conditions,
         "source_lease_id": source_lease_id,
-        "modified_access_conditions": mod_conditions,
-        "source_modified_access_conditions": source_mod_conditions,
         "timeout": kwargs.pop("timeout", None),
         "mode": "legacy",
         "cls": return_response_headers,
     }
+    if lease_id:
+        options["lease_id"] = lease_id
+    options.update(path_http_headers)
+    options.update(mod_conditions)
+    options.update(source_mod_conditions)
     options.update(kwargs)
     return options
 

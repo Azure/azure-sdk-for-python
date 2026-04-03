@@ -7,13 +7,8 @@
 from typing import Any, cast, Dict, Literal, Optional, Union, TYPE_CHECKING
 
 from azure.storage.blob._serialize import _get_match_headers
-from ._generated.models import (
-    CpkInfo,
-    LeaseAccessConditions,
-    ModifiedAccessConditions,
-    PathHTTPHeaders,
-    SourceModifiedAccessConditions,
-)
+from azure.core import MatchConditions
+
 from ._shared import encode_base64
 
 if TYPE_CHECKING:
@@ -103,48 +98,75 @@ def add_metadata_headers(metadata: Optional[Dict[str, str]] = None) -> Optional[
     return "".join(headers)
 
 
-def get_mod_conditions(kwargs: Dict[str, Any]) -> ModifiedAccessConditions:
+def get_mod_conditions(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     if_match, if_none_match = _get_match_headers(kwargs, "match_condition", "etag")
-    return ModifiedAccessConditions(
-        if_modified_since=kwargs.pop("if_modified_since", None),
-        if_unmodified_since=kwargs.pop("if_unmodified_since", None),
-        if_match=if_match or kwargs.pop("if_match", None),
-        if_none_match=if_none_match or kwargs.pop("if_none_match", None),
-    )
+    result: Dict[str, Any] = {}
+    if_modified_since = kwargs.pop("if_modified_since", None)
+    if_unmodified_since = kwargs.pop("if_unmodified_since", None)
+    # Also handle direct if_match/if_none_match kwargs
+    if_match = if_match or kwargs.pop("if_match", None)
+    if_none_match = if_none_match or kwargs.pop("if_none_match", None)
+
+    if if_modified_since is not None:
+        result["if_modified_since"] = if_modified_since
+    if if_unmodified_since is not None:
+        result["if_unmodified_since"] = if_unmodified_since
+    # Convert if_match/if_none_match to etag/match_condition for generated ops
+    if if_match:
+        result["etag"] = if_match
+        result["match_condition"] = MatchConditions.IfNotModified
+    elif if_none_match == "*":
+        result["match_condition"] = MatchConditions.IfMissing
+    elif if_none_match:
+        result["etag"] = if_none_match
+        result["match_condition"] = MatchConditions.IfModified
+    return result
 
 
-def get_source_mod_conditions(kwargs: Dict[str, Any]) -> SourceModifiedAccessConditions:
+def get_source_mod_conditions(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     if_match, if_none_match = _get_match_headers(kwargs, "source_match_condition", "source_etag")
-    return SourceModifiedAccessConditions(
-        source_if_modified_since=kwargs.pop("source_if_modified_since", None),
-        source_if_unmodified_since=kwargs.pop("source_if_unmodified_since", None),
-        source_if_match=if_match or kwargs.pop("source_if_match", None),
-        source_if_none_match=if_none_match or kwargs.pop("source_if_none_match", None),
-    )
+    result: Dict[str, Any] = {}
+    source_if_modified_since = kwargs.pop("source_if_modified_since", None)
+    source_if_unmodified_since = kwargs.pop("source_if_unmodified_since", None)
+    source_if_match = if_match or kwargs.pop("source_if_match", None)
+    source_if_none_match = if_none_match or kwargs.pop("source_if_none_match", None)
+
+    if source_if_modified_since is not None:
+        result["source_if_modified_since"] = source_if_modified_since
+    if source_if_unmodified_since is not None:
+        result["source_if_unmodified_since"] = source_if_unmodified_since
+    if source_if_match is not None:
+        result["source_if_match"] = source_if_match
+    if source_if_none_match is not None:
+        result["source_if_none_match"] = source_if_none_match
+    return result
 
 
-def get_path_http_headers(content_settings: "ContentSettings") -> PathHTTPHeaders:
-    path_headers = PathHTTPHeaders(
-        cache_control=content_settings.cache_control,
-        content_type=content_settings.content_type,
-        content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
-        content_encoding=content_settings.content_encoding,
-        content_language=content_settings.content_language,
-        content_disposition=content_settings.content_disposition,
-    )
-    return path_headers
+def get_path_http_headers(content_settings: "ContentSettings") -> Dict[str, Any]:
+    result: Dict[str, Any] = {}
+    if content_settings.cache_control is not None:
+        result["cache_control"] = content_settings.cache_control
+    if content_settings.content_type is not None:
+        result["content_type"] = content_settings.content_type
+    if content_settings.content_md5 is not None:
+        result["content_md5"] = bytearray(content_settings.content_md5)
+    if content_settings.content_encoding is not None:
+        result["content_encoding"] = content_settings.content_encoding
+    if content_settings.content_language is not None:
+        result["content_language"] = content_settings.content_language
+    if content_settings.content_disposition is not None:
+        result["content_disposition"] = content_settings.content_disposition
+    return result
 
 
 def get_access_conditions(
     lease: Optional[Union["BlobLeaseClient", "BlobLeaseClientAsync", str]]
-) -> Optional[LeaseAccessConditions]:
+) -> Optional[str]:
     if not lease:
         return None
     if hasattr(lease, "id"):
-        lease_id = lease.id
-    else:
-        lease_id = lease
-    return LeaseAccessConditions(lease_id=lease_id)
+        return lease.id
+    return lease
 
 
 def get_lease_id(lease: Optional[Union["BlobLeaseClient", "BlobLeaseClientAsync", str]]) -> str:
@@ -167,7 +189,6 @@ def get_lease_action_properties(kwargs: Dict[str, Any]) -> Dict[str, Any]:
         lease_id = lease
 
     proposed_lease_id = None
-    access_conditions = None
 
     # Acquiring a new lease
     if lease_action in ["acquire", "acquire-release"]:
@@ -175,27 +196,28 @@ def get_lease_action_properties(kwargs: Dict[str, Any]) -> Dict[str, Any]:
         proposed_lease_id = lease_id
         # Assign a default lease duration if not provided
         lease_duration = lease_duration or -1
-    else:
-        # Use lease id as access conditions
-        access_conditions = LeaseAccessConditions(lease_id=lease_id) if lease_id else None
+    # else: Use lease id as access conditions (flat lease_id param)
 
-    return {
+    result: Dict[str, Any] = {
         "lease_action": lease_action,
         "lease_duration": lease_duration,
         "proposed_lease_id": proposed_lease_id,
-        "lease_access_conditions": access_conditions,
     }
+    # Only set lease_id if not acquiring (for access conditions)
+    if lease_action not in ["acquire", "acquire-release"] and lease_id:
+        result["lease_id"] = lease_id
+    return result
 
 
-def get_cpk_info(scheme: str, kwargs: Dict[str, Any]) -> Optional[CpkInfo]:
+def get_cpk_info(scheme: str, kwargs: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     cpk: Optional[CustomerProvidedEncryptionKey] = kwargs.pop("cpk", None)
     if cpk:
         if scheme.lower() != "https":
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
-        return CpkInfo(
-            encryption_key=cpk.key_value,
-            encryption_key_sha256=cpk.key_hash,
-            encryption_algorithm=cast(EncryptionAlgorithmType, cpk.algorithm),
-        )
+        return {
+            "encryption_key": cpk.key_value,
+            "encryption_key_sha256": cpk.key_hash,
+            "encryption_algorithm": cast(EncryptionAlgorithmType, cpk.algorithm),
+        }
 
     return None

@@ -6,6 +6,7 @@
 
 from typing import Any, cast, Dict, IO, Optional, TYPE_CHECKING
 
+from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
 
 from ._deserialize import process_storage_error
@@ -17,13 +18,13 @@ if TYPE_CHECKING:
     from ._shared.models import StorageConfiguration
 
 
-def _any_conditions(modified_access_conditions=None, **kwargs):  # pylint: disable=unused-argument
+def _any_conditions(**kwargs):
     return any(
         [
-            modified_access_conditions.if_modified_since,
-            modified_access_conditions.if_unmodified_since,
-            modified_access_conditions.if_none_match,
-            modified_access_conditions.if_match,
+            kwargs.get("if_modified_since"),
+            kwargs.get("if_unmodified_since"),
+            kwargs.get("etag"),
+            kwargs.get("match_condition"),
         ]
     )
 
@@ -44,16 +45,29 @@ def upload_datalake_file(
         properties = kwargs.pop("properties", None)
         umask = kwargs.pop("umask", None)
         permissions = kwargs.pop("permissions", None)
-        path_http_headers = kwargs.pop("path_http_headers", None)
-        modified_access_conditions = kwargs.pop("modified_access_conditions", None)
         chunk_size = kwargs.pop("chunk_size", 100 * 1024 * 1024)
         encryption_context = kwargs.pop("encryption_context", None)
         progress_hook = kwargs.pop("progress_hook", None)
 
+        # Extract the flat access condition params from kwargs
+        access_kwargs: Dict[str, Any] = {}
+        for key in ("if_modified_since", "if_unmodified_since", "etag", "match_condition"):
+            val = kwargs.pop(key, None)
+            if val is not None:
+                access_kwargs[key] = val
+
+        # Extract path HTTP headers from kwargs
+        path_http_header_kwargs: Dict[str, Any] = {}
+        for key in ("cache_control", "content_type", "content_md5", "content_encoding",
+                     "content_language", "content_disposition"):
+            val = kwargs.pop(key, None)
+            if val is not None:
+                path_http_header_kwargs[key] = val
+
         if not overwrite:
             # if customers didn't specify access conditions, they cannot flush data to existing file
-            if not _any_conditions(modified_access_conditions):
-                modified_access_conditions.if_none_match = "*"
+            if not _any_conditions(**access_kwargs):
+                access_kwargs["match_condition"] = MatchConditions.IfMissing
             if properties or umask or permissions:
                 raise ValueError("metadata, umask and permissions can be set only when overwrite is enabled")
 
@@ -62,23 +76,22 @@ def upload_datalake_file(
                 Dict[str, Any],
                 client.create(
                     resource="file",
-                    path_http_headers=path_http_headers,
                     properties=properties,
-                    modified_access_conditions=modified_access_conditions,
                     umask=umask,
                     permissions=permissions,
                     encryption_context=encryption_context,
                     cls=return_response_headers,
+                    **path_http_header_kwargs,
+                    **access_kwargs,
                     **kwargs
                 ),
             )
 
-            # this modified_access_conditions will be applied to flush_data to make sure
-            # no other flush between create and the current flush
-            modified_access_conditions.if_match = response["etag"]
-            modified_access_conditions.if_none_match = None
-            modified_access_conditions.if_modified_since = None
-            modified_access_conditions.if_unmodified_since = None
+            # Set etag-based conditions to ensure no other flush between create and the current flush
+            access_kwargs = {
+                "etag": response["etag"],
+                "match_condition": MatchConditions.IfNotModified,
+            }
 
         use_original_upload_path = (
             file_settings.use_byte_buffer
@@ -119,10 +132,10 @@ def upload_datalake_file(
             Dict[str, Any],
             client.flush_data(
                 position=length,
-                path_http_headers=path_http_headers,
-                modified_access_conditions=modified_access_conditions,
                 close=True,
                 cls=return_response_headers,
+                **path_http_header_kwargs,
+                **access_kwargs,
                 **kwargs
             ),
         )

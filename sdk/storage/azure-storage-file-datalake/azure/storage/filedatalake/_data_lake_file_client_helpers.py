@@ -63,10 +63,11 @@ def _append_data_options(
         "position": offset,
         "content_length": length,
         "validate_content": kwargs.pop("validate_content", False),
-        "cpk_info": cpk_info,
         "timeout": kwargs.pop("timeout", None),
         "cls": return_response_headers,
     }
+    if cpk_info:
+        options.update(cpk_info)
     options.update(kwargs)
     return options
 
@@ -80,7 +81,7 @@ def _flush_data_options(
 ) -> Dict[str, Any]:
     mod_conditions = get_mod_conditions(kwargs)
 
-    path_http_headers = None
+    path_http_headers = {}
     if content_settings:
         path_http_headers = get_path_http_headers(content_settings)
 
@@ -90,14 +91,15 @@ def _flush_data_options(
     options = {
         "position": offset,
         "content_length": 0,
-        "path_http_headers": path_http_headers,
         "retain_uncommitted_data": retain_uncommitted_data,
         "close": kwargs.pop("close", False),
-        "modified_access_conditions": mod_conditions,
-        "cpk_info": cpk_info,
         "timeout": kwargs.pop("timeout", None),
         "cls": return_response_headers,
     }
+    options.update(path_http_headers)
+    options.update(mod_conditions)
+    if cpk_info:
+        options.update(cpk_info)
     options.update(kwargs)
     return options
 
@@ -138,12 +140,17 @@ def _upload_options(
         max_concurrency = DEFAULT_MAX_CONCURRENCY
 
     kwargs["properties"] = add_metadata_headers(metadata)
-    kwargs["lease_access_conditions"] = get_access_conditions(kwargs.pop("lease", None))
-    kwargs["modified_access_conditions"] = get_mod_conditions(kwargs)
-    kwargs["cpk_info"] = get_cpk_info(scheme, kwargs)
+    lease_id = get_access_conditions(kwargs.pop("lease", None))
+    if lease_id:
+        kwargs["lease_id"] = lease_id
+    mod_conditions = get_mod_conditions(kwargs)
+    kwargs.update(mod_conditions)
+    cpk_info = get_cpk_info(scheme, kwargs)
+    if cpk_info:
+        kwargs.update(cpk_info)
 
     if content_settings:
-        kwargs["path_http_headers"] = get_path_http_headers(content_settings)
+        kwargs.update(get_path_http_headers(content_settings))
 
     kwargs["stream"] = stream
     kwargs["length"] = length
