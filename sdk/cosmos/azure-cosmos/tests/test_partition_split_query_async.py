@@ -751,8 +751,11 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
     async def test_if_none_match_header_cleanup_on_fallback_async(self):
         """
         Validates that stale IfNoneMatch headers are removed when falling back
-        from incremental to full load. Without this cleanup, the full load would
-        receive only a delta, causing infinite recursion (Issue 1).
+        from incremental to full load.
+
+        Current behavior includes one incremental retry before full refresh.
+        This test forces both incremental attempts to be incomplete, then
+        verifies the final full-load call drops IfNoneMatch.
         """
         container = await self.created_database.create_container(
             id='test_etag_cleanup_async_' + str(uuid.uuid4()),
@@ -786,11 +789,12 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
                 headers = kwargs.get('headers', {})
                 captured_headers_list.append(headers.copy())
 
-                if call_count['count'] == 1:
-                    # First call (incremental): return a child with a missing parent
-                    # to trigger fallback
+                if call_count['count'] <= 2:
+                    # First two calls are incremental attempts; return a child
+                    # with a missing parent so merge is incomplete and fallback
+                    # path is exercised.
                     fake_child = {
-                        'id': 'child_99',
+                        'id': f'child_{call_count["count"]}',
                         'minInclusive': '',
                         'maxExclusive': 'FF',
                         'parents': ['nonexistent_parent']
@@ -798,16 +802,15 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
                     async def gen():
                         yield fake_child
                     return gen()
-                else:
-                    # Second call (full load fallback): return real data
-                    return original_read(*args, **kwargs)
+                # Third call should be full-load fallback.
+                return original_read(*args, **kwargs)
 
             with patch.object(
                     container.client_connection,
                     '_ReadPartitionKeyRanges',
                     side_effect=spy_read_ranges
             ):
-                # Force refresh with the stale map to trigger incremental path
+                # Force refresh with the stale map to trigger incremental path.
                 result = await provider.get_routing_map(
                     collection_link=collection_link,
                     feed_options={},
@@ -817,19 +820,23 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
 
                 assert result is not None
 
-                # Verify we made 2 calls: incremental (failed) + full load (fallback)
-                assert call_count['count'] == 2, \
-                    f"Expected 2 calls to _ReadPartitionKeyRanges, got {call_count['count']}"
+                # Verify 3 calls: incremental + incremental retry + full fallback.
+                assert call_count['count'] == 3, \
+                    f"Expected 3 calls to _ReadPartitionKeyRanges, got {call_count['count']}"
 
-                # First call should have IfNoneMatch (incremental)
+                # First two calls should be incremental and include IfNoneMatch.
                 first_headers = captured_headers_list[0]
                 assert http_constants.HttpHeaders.IfNoneMatch in first_headers, \
                     "First call (incremental) should have IfNoneMatch header"
 
-                # Second call (full load) should NOT have IfNoneMatch
                 second_headers = captured_headers_list[1]
-                assert http_constants.HttpHeaders.IfNoneMatch not in second_headers, \
-                    "Second call (full load fallback) should NOT have IfNoneMatch header"
+                assert http_constants.HttpHeaders.IfNoneMatch in second_headers, \
+                    "Second call (incremental retry) should have IfNoneMatch header"
+
+                # Third call is full-load fallback and should drop IfNoneMatch.
+                third_headers = captured_headers_list[2]
+                assert http_constants.HttpHeaders.IfNoneMatch not in third_headers, \
+                    "Third call (full load fallback) should NOT have IfNoneMatch header"
 
             print("Validated: IfNoneMatch header is correctly cleaned up on fallback")
 
