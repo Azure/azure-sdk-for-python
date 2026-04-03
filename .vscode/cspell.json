@@ -2196,7 +2196,7 @@
       "words": ["envml", "paginators"]
     },
     {
-      "filename": "sdk/agentserver/azure-ai-agentserver-github/**",
+      "filename": "sdk/agentserver/azure-ai-agentserver-githubcopilot/**",
       "words": ["RAPI", "BYOK", "byok", "NCUS", "ncusacr", "fstring", "ename", "valeriepham", "coreai", "Vnext", "PYTHONIOENCODING"]
     }
   ],
