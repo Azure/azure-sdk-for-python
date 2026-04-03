@@ -6,9 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING
 
-from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 
 from ._version import VERSION
@@ -29,10 +28,8 @@ class AIProjectClientConfiguration:  # pylint: disable=too-many-instance-attribu
      the form "https://{ai-services-account-name}.services.ai.azure.com/api/projects/_project".
      Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a key
-     credential type or a token credential type. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials.TokenCredential
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials.TokenCredential
     :param allow_preview: Whether to enable preview features. Must be specified and set to True to
      enable preview features. Default value is None.
     :type allow_preview: bool
@@ -42,11 +39,7 @@ class AIProjectClientConfiguration:  # pylint: disable=too-many-instance-attribu
     """
 
     def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AzureKeyCredential, "TokenCredential"],
-        allow_preview: Optional[bool] = None,
-        **kwargs: Any,
+        self, endpoint: str, credential: "TokenCredential", allow_preview: Optional[bool] = None, **kwargs: Any
     ) -> None:
         api_version: str = kwargs.pop("api_version", "v1")
 
@@ -64,13 +57,6 @@ class AIProjectClientConfiguration:  # pylint: disable=too-many-instance-attribu
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
-    def _infer_policy(self, **kwargs):
-        if isinstance(self.credential, AzureKeyCredential):
-            return policies.AzureKeyCredentialPolicy(self.credential, "api-key", **kwargs)
-        if hasattr(self.credential, "get_token"):
-            return policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
-        raise TypeError(f"Unsupported credential: {self.credential}")
-
     def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
@@ -82,4 +68,6 @@ class AIProjectClientConfiguration:  # pylint: disable=too-many-instance-attribu
         self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = self._infer_policy(**kwargs)
+            self.authentication_policy = policies.BearerTokenCredentialPolicy(
+                self.credential, *self.credential_scopes, **kwargs
+            )

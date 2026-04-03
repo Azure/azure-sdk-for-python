@@ -17,11 +17,15 @@ class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HOSTED_AGENTS_V1_PREVIEW."""
     WORKFLOW_AGENTS_V1_PREVIEW = "WorkflowAgents=V1Preview"
     """WORKFLOW_AGENTS_V1_PREVIEW."""
+    CONTAINER_AGENTS_V1_PREVIEW = "ContainerAgents=V1Preview"
+    """CONTAINER_AGENTS_V1_PREVIEW."""
 
 
 class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of _FoundryFeaturesOptInKeys."""
 
+    SKILLS_V1_PREVIEW = "Skills=V1Preview"
+    """SKILLS_V1_PREVIEW."""
     EVALUATIONS_V1_PREVIEW = "Evaluations=V1Preview"
     """EVALUATIONS_V1_PREVIEW."""
     SCHEDULES_V1_PREVIEW = "Schedules=V1Preview"
@@ -32,6 +36,8 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """INSIGHTS_V1_PREVIEW."""
     MEMORY_STORES_V1_PREVIEW = "MemoryStores=V1Preview"
     """MEMORY_STORES_V1_PREVIEW."""
+    TOOLBOXES_V1_PREVIEW = "Toolboxes=V1Preview"
+    """TOOLBOXES_V1_PREVIEW."""
 
 
 class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -67,6 +73,8 @@ class AgentProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ACTIVITY_PROTOCOL."""
     RESPONSES = "responses"
     """RESPONSES."""
+    INVOCATIONS = "invocations"
+    """INVOCATIONS."""
 
 
 class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -709,6 +717,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SHAREPOINT_GROUNDING_PREVIEW."""
     MEMORY_SEARCH_PREVIEW = "memory_search_preview"
     """MEMORY_SEARCH_PREVIEW."""
+    WORK_IQ_PREVIEW = "work_iq_preview"
+    """WORK_IQ_PREVIEW."""
     AZURE_AI_SEARCH = "azure_ai_search"
     """AZURE_AI_SEARCH."""
     AZURE_FUNCTION = "azure_function"
