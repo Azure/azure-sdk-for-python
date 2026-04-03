@@ -2562,7 +2562,7 @@ class CommandJob(JobProperties, discriminator="Command"):
     :vartype job_type: str
     :ivar command: The command to execute on startup of the job. Required.
     :vartype command: str
-    :ivar environment_image_reference: ACR path of environment. Required.
+    :ivar environment_image_reference: ACR path or ID of environment. Required.
     :vartype environment_image_reference: str
     :ivar display_name: Display name of job.
     :vartype display_name: str
@@ -2604,9 +2604,9 @@ class CommandJob(JobProperties, discriminator="Command"):
     command: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The command to execute on startup of the job. Required."""
     environment_image_reference: str = rest_field(
-        name="environmentImageReference", visibility=["read", "create", "update", "delete", "query"]
+        name="environmentId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """ACR path of environment. Required."""
+    """ACR path or ID of environment. Required."""
     display_name: Optional[str] = rest_field(
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2617,9 +2617,9 @@ class CommandJob(JobProperties, discriminator="Command"):
     """Tag dictionary. Tags can be added, removed, and updated."""
     properties: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The asset property dictionary."""
-    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    code: Optional[str] = rest_field(name="codeId", visibility=["read", "create", "update", "delete", "query"])
     """Code asset reference."""
-    compute: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    compute: str = rest_field(name="computeId", visibility=["read", "create", "update", "delete", "query"])
     """Compute resource ID. Required."""
     inputs: Optional[dict[str, "_models.Input"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -5769,8 +5769,6 @@ class Input(_Model):
     :vartype mode: str or ~azure.ai.projects.models.InputOutputModes
     :ivar value: Literal value. Required for literal type.
     :vartype value: str
-    :ivar description: Description for the input.
-    :vartype description: str
     """
 
     type: Union[str, "_models.AssetTypes"] = rest_field(
@@ -5787,8 +5785,6 @@ class Input(_Model):
      \"ReadWriteMount\", \"Download\", \"Direct\", and \"Upload\"."""
     value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Literal value. Required for literal type."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Description for the input."""
 
     @overload
     def __init__(
@@ -5798,7 +5794,6 @@ class Input(_Model):
         path: Optional[str] = None,
         mode: Optional[Union[str, "_models.InputOutputModes"]] = None,
         value: Optional[str] = None,
-        description: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -7825,8 +7820,6 @@ class Output(_Model):
     :ivar type: Specifies the type of job output. Required. Known values are: "uri_file",
      "uri_folder", "safetensors_model", and "literal".
     :vartype type: str or ~azure.ai.projects.models.AssetTypes
-    :ivar path: Output Asset URI.
-    :vartype path: str
     :ivar mode: Output Asset Delivery Mode. Known values are: "ReadOnlyMount", "ReadWriteMount",
      "Download", "Direct", and "Upload".
     :vartype mode: str or ~azure.ai.projects.models.InputOutputModes
@@ -7841,8 +7834,6 @@ class Output(_Model):
     )
     """Specifies the type of job output. Required. Known values are: \"uri_file\", \"uri_folder\",
      \"safetensors_model\", and \"literal\"."""
-    path: Optional[str] = rest_field(name="uri", visibility=["read", "create", "update", "delete", "query"])
-    """Output Asset URI."""
     mode: Optional[Union[str, "_models.InputOutputModes"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7858,7 +7849,6 @@ class Output(_Model):
         self,
         *,
         type: Union[str, "_models.AssetTypes"],
-        path: Optional[str] = None,
         mode: Optional[Union[str, "_models.InputOutputModes"]] = None,
         asset_name: Optional[str] = None,
         description: Optional[str] = None,

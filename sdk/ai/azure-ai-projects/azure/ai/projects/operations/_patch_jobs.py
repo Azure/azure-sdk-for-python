@@ -7,6 +7,7 @@
 
 import logging
 from datetime import datetime, timezone
+from os import PathLike
 from pathlib import Path
 from typing import Any, List, Optional, Union
 
@@ -66,7 +67,9 @@ class TrainingJobsOperations(_GeneratedTrainingJobsOps):
                 "'code' cannot be an empty string. Omit it or provide a valid local path or datastore URI."
             )
 
-    def _resolve_asset_uri(self, uri: str, dataset_name: str) -> str:
+    def _resolve_asset_uri(
+        self, uri: str, dataset_name: str, base_path: Optional[Union[str, PathLike[str]]] = None
+    ) -> str:
         """Resolve a single URI to a dataset asset URI.
 
         Three forms are accepted:
@@ -80,26 +83,40 @@ class TrainingJobsOperations(_GeneratedTrainingJobsOps):
         :type uri: str
         :param dataset_name: Dataset name to use when uploading a new local asset.
         :type dataset_name: str
+        :param base_path: Base directory for resolving relative paths (e.g. the YAML file's parent
+            directory). When supplied and ``uri`` is a relative path that does not exist relative to
+            the current working directory, it is re-evaluated against this directory.
+        :type base_path: str or os.PathLike or None
         :return: A datastore URI suitable for use in an :class:`~azure.ai.projects.models.Input`.
         :rtype: str
         """
         local_path = Path(uri)
+        if not local_path.is_absolute() and base_path and not local_path.exists():
+            resolved = (Path(base_path) / local_path).resolve()
+            if resolved.exists():
+                local_path = resolved
         if local_path.exists():
             version = "1"
             if local_path.is_dir():
                 _logger.debug(
-                    "[TrainingJobsOperations] Uploading folder '%s' as dataset '%s' v%s.", uri, dataset_name, version
+                    "[TrainingJobsOperations] Uploading folder '%s' as dataset '%s' v%s.",
+                    local_path,
+                    dataset_name,
+                    version,
                 )
-                result = self._datasets.upload_folder(name=dataset_name, version=version, folder=uri)
+                result = self._datasets.upload_folder(name=dataset_name, version=version, folder=str(local_path))
             else:
                 _logger.debug(
-                    "[TrainingJobsOperations] Uploading file '%s' as dataset '%s' v%s.", uri, dataset_name, version
+                    "[TrainingJobsOperations] Uploading file '%s' as dataset '%s' v%s.",
+                    local_path,
+                    dataset_name,
+                    version,
                 )
-                result = self._datasets.upload_file(name=dataset_name, version=version, file_path=uri)
-            if not result.data_uri:
-                raise ValueError(f"Dataset upload succeeded but the service did not return a URI for '{uri}'.")
+                result = self._datasets.upload_file(name=dataset_name, version=version, file_path=str(local_path))
+            if not result.id:
+                raise ValueError(f"Dataset upload succeeded but the service did not return a URI for '{local_path}'.")
             _logger.debug("[TrainingJobsOperations] Resolved '%s' → '%s'.", uri, result.data_uri)
-            return result.data_uri
+            return result.id
 
         if ":" in uri and "://" not in uri:
             # name:version short form, optionally prefixed with "azureai:"
@@ -107,55 +124,56 @@ class TrainingJobsOperations(_GeneratedTrainingJobsOps):
             ds_name, ds_version = raw.split(":", 1)
             _logger.debug("[TrainingJobsOperations] Resolving name:version '%s' to dataset URI.", uri)
             result = self._datasets.get(name=ds_name, version=ds_version)
-            if not result.data_uri:
+            if not result.id:
                 raise ValueError(f"Dataset '{uri}' was fetched but the service did not return a URI.")
             _logger.debug("[TrainingJobsOperations] Resolved '%s' → '%s'.", uri, result.data_uri)
-            return result.data_uri
+            return result.id
 
         # Already a datastore / remote URI — pass through unchanged.
         return uri
 
-    def _resolve_code(self, name: str, body: CommandJob) -> None:
+    def _resolve_code(self, name: str, job: CommandJob) -> None:
         """Resolve ``code`` on the job body to a datastore URI if it is a local path.
 
         :param name: The job name (used to derive a unique dataset name).
         :type name: str
-        :param body: The command job body to mutate in-place.
-        :type body: ~azure.ai.projects.models.CommandJob
+        :param job: The command job body to mutate in-place.
+        :type job: ~azure.ai.projects.models.CommandJob
         """
-        if not isinstance(body.code, str):
+        if not isinstance(job.code, str):
             return
         dataset_name = f"{name}-code-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}"
-        body.code = self._resolve_asset_uri(body.code, dataset_name)
+        job.code = self._resolve_asset_uri(job.code, dataset_name, base_path=job._base_path)
 
-    def _resolve_input_paths(self, name: str, body: CommandJob) -> None:
+    def _resolve_input_paths(self, name: str, job: CommandJob) -> None:
         """Resolve local paths in ``inputs`` to datastore URIs.
 
         :param name: The job name (used to derive unique dataset names).
         :type name: str
-        :param body: The command job body to mutate in-place.
-        :type body: ~azure.ai.projects.models.CommandJob
+        :param job: The command job body to mutate in-place.
+        :type job: ~azure.ai.projects.models.CommandJob
         """
-        if not body.inputs:
+        if not job.inputs:
             return
-        for input_key, job_input in body.inputs.items():
+        base_path = job._base_path
+        for input_key, job_input in job.inputs.items():
             if not isinstance(job_input, _Input):
                 continue
             if not isinstance(job_input.path, str):
                 continue
             dataset_name = f"{name}-input-{input_key}-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}"
-            job_input.path = self._resolve_asset_uri(job_input.path, dataset_name)
+            job_input.path = self._resolve_asset_uri(job_input.path, dataset_name, base_path=base_path)
 
-    def _resolve_local_paths(self, name: str, body: CommandJob) -> None:
+    def _resolve_local_paths(self, name: str, job: CommandJob) -> None:
         """Resolve all local paths in the job body to datastore URIs.
 
         :param name: The job name.
         :type name: str
-        :param body: The command job body to mutate in-place.
-        :type body: ~azure.ai.projects.models.CommandJob
+        :param job: The command job job to mutate in-place.
+        :type job: ~azure.ai.projects.models.CommandJob
         """
-        self._resolve_code(name, body)
-        self._resolve_input_paths(name, body)
+        self._resolve_code(name, job)
+        self._resolve_input_paths(name, job)
 
     def _inject_preview_header(self, kwargs: dict) -> None:
         """Add the Jobs preview feature header if not already present."""

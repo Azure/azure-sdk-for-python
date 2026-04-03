@@ -20,6 +20,7 @@ from azure.core.credentials import TokenCredential
 from azure.identity import get_bearer_token_provider
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
+from .models._patch_jobs import load_job
 
 logger = logging.getLogger(__name__)
 
@@ -318,6 +319,7 @@ class OpenAILoggingTransport(httpx.HTTPTransport):
 
 __all__: List[str] = [
     "AIProjectClient",
+    "load_job",
 ]  # Add all objects you want publicly available to users at this package level
 
 

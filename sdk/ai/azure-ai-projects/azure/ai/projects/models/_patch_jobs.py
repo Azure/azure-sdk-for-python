@@ -6,12 +6,21 @@
 """Customized job models."""
 
 import datetime
-from typing import Any, Mapping, Optional, Union
+import yaml
+from os import PathLike
+from pathlib import Path
+from typing import IO, Any, AnyStr, Optional, Union
 from ._models import (
     CommandJob as _RestCommandJob,
     CommandJobLimits as _RestCommandJobLimits,
+    Input,
     Job as _RestJob,
+    JobResourceConfiguration,
+    MpiDistribution,
+    PyTorchDistribution,
+    QueueSettings,
     SystemData,
+    TensorFlowDistribution,
 )
 
 
@@ -31,6 +40,7 @@ class CommandJob(_RestCommandJob):
         self._name: Optional[str] = None
         self._id: Optional[str] = None
         self._system_data: Optional[SystemData] = None
+        self._base_path: Optional[Union[str, PathLike[str]]] = None
 
     @property
     def name(self) -> Optional[str]:
@@ -101,3 +111,68 @@ class CommandJobLimits(_RestCommandJobLimits):
         return int(val)
 
 
+def _load_command_job(data: dict, base_dir: Optional[Path] = None) -> CommandJob:
+    limits_data = data.pop("limits", None)
+    if isinstance(limits_data, dict):
+        data["limits"] = CommandJobLimits(**limits_data)
+
+    resources_data = data.pop("resources", None)
+    if isinstance(resources_data, dict):
+        data["resources"] = JobResourceConfiguration(**resources_data)
+
+    queue_data = data.pop("queue_settings", None)
+    if isinstance(queue_data, dict):
+        data["queue_settings"] = QueueSettings(**queue_data)
+
+    dist_data = data.pop("distribution", None)
+    if isinstance(dist_data, dict):
+        dist_type = dist_data.pop("type", "").lower()
+        if dist_type == "pytorch":
+            data["distribution"] = PyTorchDistribution(**dist_data)
+        elif dist_type == "mpi":
+            data["distribution"] = MpiDistribution(**dist_data)
+        elif dist_type == "tensorflow":
+            data["distribution"] = TensorFlowDistribution(**dist_data)
+
+    inputs_data = data.pop("inputs", None)
+    if isinstance(inputs_data, dict):
+        data["inputs"] = {
+            key: Input(**val) if isinstance(val, dict) else val for key, val in inputs_data.items()
+        }
+
+    job = CommandJob(**data)
+    job._base_path = base_dir
+    return job
+
+
+def load_job(source: Union[str, "PathLike[str]", IO[AnyStr]]) -> CommandJob:
+    """Load a job object from a YAML file.
+
+    The YAML ``type`` field determines which job class is returned.
+    Currently supported types: ``command`` (default).
+
+    :param source: Path to a YAML file or an already-open file object.
+    :type source: str or os.PathLike or IO
+    :returns: A job object populated from the YAML content.
+    :rtype: ~azure.ai.projects.models.CommandJob
+    :raises ValueError: If the ``type`` field specifies an unsupported job type.
+    """
+    if hasattr(source, "read"):
+        data: dict = yaml.safe_load(source)  # type: ignore[arg-type]
+        source_name = getattr(source, "name", None)
+        base_dir: Optional[Path] = Path(source_name).resolve().parent if source_name else None
+    else:
+        source_path = Path(source)  # type: ignore[arg-type]
+        base_dir = source_path.resolve().parent
+        with open(source_path, "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+
+    data.pop("$schema", None)
+
+    job_type_str = data.pop("type", "command")
+    if isinstance(job_type_str, str):
+        job_type_str = job_type_str.lower()
+
+    if job_type_str == "command":
+        return _load_command_job(data, base_dir=base_dir)
+    raise ValueError(f"Unsupported job type: '{job_type_str}'. Supported types: ['command']")
