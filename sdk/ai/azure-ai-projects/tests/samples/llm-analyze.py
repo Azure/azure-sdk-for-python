@@ -109,11 +109,14 @@ class _CliSampleExecutor(SyncSampleExecutor):
         instructions = self._resolve_validation_instructions(instructions)
         response = None
         uploaded_file_ids: list[str] = []
-        with AIProjectClient(
-            endpoint=endpoint,
-            credential=self.tokenCredential,
-            logging_enable=True,
-        ) as project_client, project_client.get_openai_client() as openai_client:
+        with (
+            AIProjectClient(
+                endpoint=endpoint,
+                credential=self.tokenCredential,
+                logging_enable=True,
+            ) as project_client,
+            project_client.get_openai_client() as openai_client,
+        ):
             try:
                 validation_text_file = BytesIO(self._build_validation_txt_bytes(self._build_validation_text()))
                 validation_text_file.name = "sample_validation_log.txt"  # type: ignore[attr-defined]
@@ -128,7 +131,9 @@ class _CliSampleExecutor(SyncSampleExecutor):
                     uploaded_file_ids.append(uploaded.id)
                     file_ids.append(uploaded.id)
 
-                request_params["tools"] = [{"type": "code_interpreter", "container": {"type": "auto", "file_ids": file_ids}}]
+                request_params["tools"] = [
+                    {"type": "code_interpreter", "container": {"type": "auto", "file_ids": file_ids}}
+                ]
                 response = openai_client.responses.create(**request_params)
                 report = json.loads(response.output_text)
             except Exception as ex:  # pylint: disable=broad-exception-caught
@@ -199,7 +204,9 @@ class _CliAsyncSampleExecutor(AsyncSampleExecutor):
                     uploaded_file_ids.append(uploaded.id)
                     file_ids.append(uploaded.id)
 
-                request_params["tools"] = [{"type": "code_interpreter", "container": {"type": "auto", "file_ids": file_ids}}]
+                request_params["tools"] = [
+                    {"type": "code_interpreter", "container": {"type": "auto", "file_ids": file_ids}}
+                ]
                 response = await openai_client.responses.create(**request_params)
                 report = json.loads(response.output_text)
             except Exception as ex:  # pylint: disable=broad-exception-caught
@@ -307,7 +314,9 @@ def _run_sync_sample(sample_path: str, args: argparse.Namespace, env_vars: dict[
     return _build_result(report, log_file=executor.log_file_path, start_time=start_time)
 
 
-async def _run_async_sample(sample_path: str, args: argparse.Namespace, env_vars: dict[str, str], start_time: float) -> dict:
+async def _run_async_sample(
+    sample_path: str, args: argparse.Namespace, env_vars: dict[str, str], start_time: float
+) -> dict:
     async with AsyncDefaultAzureCredential() as credential:
         executor = _CliAsyncSampleExecutor(
             _AsyncCredentialProvider(credential),
@@ -328,7 +337,9 @@ async def _run_async_sample(sample_path: str, args: argparse.Namespace, env_vars
 
 def main() -> int:
     args, env_vars = _parse_args()
-    sample_path = str((PROJECT_ROOT / args.sample_path).resolve()) if not os.path.isabs(args.sample_path) else args.sample_path
+    sample_path = (
+        str((PROJECT_ROOT / args.sample_path).resolve()) if not os.path.isabs(args.sample_path) else args.sample_path
+    )
     start_time = time.perf_counter()
     with _temporary_env(LOG_FILE_PATTERNS):
         result = (
