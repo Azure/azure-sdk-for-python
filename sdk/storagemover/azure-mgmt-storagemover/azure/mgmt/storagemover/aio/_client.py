@@ -21,6 +21,7 @@ from .._utils.serialization import Deserializer, Serializer
 from ._configuration import StorageMoverMgmtClientConfiguration
 from .operations import (
     AgentsOperations,
+    ConnectionsOperations,
     EndpointsOperations,
     JobDefinitionsOperations,
     JobRunsOperations,
@@ -49,6 +50,8 @@ class StorageMoverMgmtClient:  # pylint: disable=too-many-instance-attributes
     :vartype projects: azure.mgmt.storagemover.aio.operations.ProjectsOperations
     :ivar job_definitions: JobDefinitionsOperations operations
     :vartype job_definitions: azure.mgmt.storagemover.aio.operations.JobDefinitionsOperations
+    :ivar connections: ConnectionsOperations operations
+    :vartype connections: azure.mgmt.storagemover.aio.operations.ConnectionsOperations
     :ivar job_runs: JobRunsOperations operations
     :vartype job_runs: azure.mgmt.storagemover.aio.operations.JobRunsOperations
     :param credential: Credential used to authenticate requests to the service. Required.
@@ -60,8 +63,9 @@ class StorageMoverMgmtClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Default value is "2025-07-01".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2025-12-01"
+     and None. Default value is "2025-12-01". Note that overriding this default value may result in
+     unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -122,6 +126,7 @@ class StorageMoverMgmtClient:  # pylint: disable=too-many-instance-attributes
         self.endpoints = EndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.projects = ProjectsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.job_definitions = JobDefinitionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.job_runs = JobRunsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
