@@ -41,17 +41,10 @@ _GEN_AI_PROVIDER_NAME_VALUE = "AzureAI Hosted Agents"
 
 logger = logging.getLogger("azure.ai.agentserver")
 
-_HAS_OTEL = False
-try:
-    from opentelemetry import trace
-    from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
+from opentelemetry import trace
+from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 
-    _HAS_OTEL = True
-except ImportError:
-    pass
-
-# Module-level propagator (created once when OTel is available)
-_propagator = TraceContextTextMapPropagator() if _HAS_OTEL else None
+_propagator = TraceContextTextMapPropagator()
 
 
 # ======================================================================
@@ -70,13 +63,6 @@ def configure_tracing(connection_string: Optional[str] = None) -> None:
         When provided, traces and logs are exported to Azure Monitor.
     :type connection_string: str or None
     """
-    if not _HAS_OTEL:
-        logger.warning(
-            "Tracing was requested but opentelemetry-api is not installed. "
-            "Install it with: pip install azure-ai-agentserver-core[tracing]"
-        )
-        return
-
     resource = _create_resource()
     provider = _ensure_trace_provider(resource)
 
@@ -133,12 +119,8 @@ def request_span(
     :param operation_name: Optional ``gen_ai.operation.name`` value.
     :param session_id: Session ID (empty string if absent).
     :param end_on_exit: Whether to end the span when the context exits.
-    :return: Context manager yielding the OTel span or ``None``.
+    :return: Context manager yielding the OTel span.
     """
-    if not _HAS_OTEL:
-        yield None
-        return
-
     tracer = trace.get_tracer("azure.ai.agentserver")
 
     # Build span name
@@ -165,7 +147,7 @@ def request_span(
 
     # Extract W3C trace context
     carrier = _extract_w3c_carrier(headers)
-    ctx = _propagator.extract(carrier=carrier) if carrier and _propagator else None
+    ctx = _propagator.extract(carrier=carrier) if carrier else None
 
     with tracer.start_as_current_span(
         name=name,
@@ -200,7 +182,7 @@ def record_error(span: Any, exc: BaseException) -> None:
     :param span: The OTel span, or ``None``.
     :param exc: The exception to record.
     """
-    if span is not None and _HAS_OTEL:
+    if span is not None:
         span.set_status(trace.StatusCode.ERROR, str(exc))
         span.record_exception(exc)
 
@@ -280,7 +262,7 @@ def _create_resource() -> Any:
     try:
         from opentelemetry.sdk.resources import Resource
     except ImportError:
-        logger.warning("OTel SDK not installed. pip install azure-ai-agentserver-core[tracing]")
+        logger.warning("OTel SDK not installed — tracing resource creation failed.")
         return None
     return Resource.create({_ATTR_SERVICE_NAME: _SERVICE_NAME_VALUE})
 

@@ -10,11 +10,7 @@ The `azure-ai-agentserver-core` package provides the foundation host framework f
 pip install azure-ai-agentserver-core
 ```
 
-To enable OpenTelemetry tracing with Azure Monitor and OTLP exporters:
-
-```bash
-pip install azure-ai-agentserver-core[tracing]
-```
+OpenTelemetry tracing with Azure Monitor and OTLP exporters is included by default.
 
 ### Prerequisites
 

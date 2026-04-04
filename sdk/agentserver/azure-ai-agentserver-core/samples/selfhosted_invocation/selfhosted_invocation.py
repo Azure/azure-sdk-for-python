@@ -13,7 +13,7 @@ This pattern is useful when:
 
 Usage::
 
-    pip install azure-ai-agentserver-core[tracing]
+    pip install azure-ai-agentserver-core
 
     # Enable tracing via App Insights connection string
     export APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=..."

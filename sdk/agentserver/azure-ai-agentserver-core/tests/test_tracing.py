@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 """Tests for tracing configuration — not invocation spans (those live in the invocations package)."""
-import contextlib
 import os
 from unittest import mock
 
@@ -98,43 +97,27 @@ class TestAppInsightsConnectionString:
 
 
 class TestSetupAzureMonitor:
-    """Verify _setup_azure_monitor calls the right helpers."""
-
-    @staticmethod
-    def _tracing_mocks() -> contextlib.ExitStack:
-        """Enter the common set of mocks needed to instantiate TracingHelper."""
-        stack = contextlib.ExitStack()
-        stack.enter_context(mock.patch("azure.ai.agentserver.core._tracing._HAS_OTEL", True))
-        stack.enter_context(mock.patch("azure.ai.agentserver.core._tracing.trace", create=True))
-        stack.enter_context(
-            mock.patch("azure.ai.agentserver.core._tracing.TraceContextTextMapPropagator", create=True)
-        )
-        stack.enter_context(
-            mock.patch("azure.ai.agentserver.core._tracing._ensure_trace_provider", return_value=mock.MagicMock())
-        )
-        return stack
+    """Verify configure_tracing calls the right exporter setup functions."""
 
     def test_setup_azure_monitor_called_when_conn_str_provided(self) -> None:
-        with self._tracing_mocks():
-            with mock.patch("azure.ai.agentserver.core._tracing._setup_trace_export") as mock_trace:
-                with mock.patch("azure.ai.agentserver.core._tracing._setup_log_export"):
-                    with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_trace_export"):
-                        with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_log_export"):
-                            from azure.ai.agentserver.core import _tracing
-                            _tracing.configure_tracing(connection_string="InstrumentationKey=test")
-                            mock_trace.assert_called_once()
-                            args = mock_trace.call_args[0]
-                            assert args[1] == "InstrumentationKey=test"
+        with mock.patch("azure.ai.agentserver.core._tracing._setup_trace_export") as mock_trace:
+            with mock.patch("azure.ai.agentserver.core._tracing._setup_log_export"):
+                with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_trace_export"):
+                    with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_log_export"):
+                        from azure.ai.agentserver.core import _tracing
+                        _tracing.configure_tracing(connection_string="InstrumentationKey=test")
+                        mock_trace.assert_called_once()
+                        args = mock_trace.call_args[0]
+                        assert args[1] == "InstrumentationKey=test"
 
     def test_setup_azure_monitor_not_called_when_no_conn_str(self) -> None:
-        with self._tracing_mocks():
-            with mock.patch("azure.ai.agentserver.core._tracing._setup_trace_export") as mock_trace:
-                with mock.patch("azure.ai.agentserver.core._tracing._setup_log_export"):
-                    with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_trace_export"):
-                        with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_log_export"):
-                            from azure.ai.agentserver.core import _tracing
-                            _tracing.configure_tracing(connection_string=None)
-                            mock_trace.assert_not_called()
+        with mock.patch("azure.ai.agentserver.core._tracing._setup_trace_export") as mock_trace:
+            with mock.patch("azure.ai.agentserver.core._tracing._setup_log_export"):
+                with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_trace_export"):
+                    with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_log_export"):
+                        from azure.ai.agentserver.core import _tracing
+                        _tracing.configure_tracing(connection_string=None)
+                        mock_trace.assert_not_called()
 
 
 # ------------------------------------------------------------------ #
