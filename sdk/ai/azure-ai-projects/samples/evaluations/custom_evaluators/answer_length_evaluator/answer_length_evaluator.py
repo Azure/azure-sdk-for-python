@@ -9,7 +9,7 @@ class AnswerLengthEvaluator:
         length = evaluate_answer_length(kwargs.get("response"))
         return {
             "score": length,
-            "label": "Pass" if length > 50 else "Fail",
+            "label": "Short" if length > 50 else "Long",
         }
 
 
