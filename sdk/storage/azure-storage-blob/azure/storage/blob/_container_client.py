@@ -8,6 +8,7 @@
 import functools
 import warnings
 from datetime import datetime
+from types import SimpleNamespace
 from typing import (
     Any, AnyStr, cast, Dict, List, IO, Iterable, Iterator, Optional, overload, Union,
     TYPE_CHECKING
@@ -51,6 +52,7 @@ from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
     process_storage_error,
     return_headers_and_deserialized,
+    return_context_and_deserialized,
     return_response_headers
 )
 
@@ -794,9 +796,14 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :keyword int results_per_page:
             Controls the maximum number of Blobs that will be included in each page of results if using
             `ItemPaged.by_page()`.
+        :keyword bool use_arrow:
+            Specifies the ability to return and parse the response in Apache Arrow format.
         :keyword str start_from:
             Specifies the full path (inclusive) to list paths from.
             Only one entity level is supported.
+        :keyword str end_before:
+            Specifies the relative path (exclusive) to end before list paths.
+            This may be used if use_arrow is set to True.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -824,15 +831,98 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
         results_per_page = kwargs.pop('results_per_page', None)
         timeout = kwargs.pop('timeout', None)
-        command = functools.partial(
-            self._client.container.list_blob_flat_segment,
-            include=include,
-            timeout=timeout,
-            **kwargs
-        )
-        return ItemPaged(
-            command, prefix=name_starts_with, results_per_page=results_per_page, container=self.container_name,
-           page_iterator_class=BlobPropertiesPaged)
+        use_arrow = kwargs.pop('use_arrow', None)
+        if use_arrow:
+            try:
+                import pyarrow as pa
+            except ImportError as e:
+                raise ImportError(
+                    "The 'pyarrow' package is required to use Apache Arrow deserialization. "
+                    "Install it with: pip install pyarrow"
+                ) from e
+
+            def _arrow_cls(pipeline_response, deserialized, response_headers):
+                content_type = response_headers.get("Content-Type", "")
+                if "application/xml" in content_type:
+                    # TODO FIX
+                    pass
+
+                stream = b"".join(deserialized)
+                reader = pa.ipc.open_stream(stream)
+                schema = reader.schema
+
+                blob_items = []
+                for batch in reader:
+                    for row_cursor in range(batch.num_rows):
+                        columns = {schema.field(i).name: batch.column(i) for i in range(batch.num_columns)}
+
+                        def get(col_name, default=None):
+                            col = columns.get(col_name)
+                            if col is None:
+                                return default
+                            val = col[row_cursor].as_py()
+                            return val if val is not None else default
+
+                        blob_props = BlobProperties(
+                            name=get("Name"),
+                            **{col_name: columns[col_name][row_cursor].as_py() for col_name in schema.names}
+                        )
+                        blob_items.append(blob_props)
+
+                        # TODO FIX
+                        response = SimpleNamespace(
+                            service_endpoint=pipeline_response.http_response.url,
+                            prefix=None,
+                            marker=None,
+                            max_results=None,
+                            container_name=self.container_name,
+                            next_marker=response_headers.get("x-ms-next-marker") or None,
+                            segment=SimpleNamespace(blob_items=blob_items)
+                        )
+                        return return_context_and_deserialized(pipeline_response, response, response_headers)
+
+            # TODO FIX
+            class ArrowBlobPropertiesPaged(BlobPropertiesPaged):
+                def _get_next_cb(self, continuation_token):
+                    try:
+                        return self._command(
+                            prefix=self.prefix,
+                            marker=continuation_token or None,
+                            maxresults=self.results_per_page,
+                            cls=_arrow_cls,
+                            use_location=self.location_mode
+                        )
+                    except HttpResponseError as error:
+                        process_storage_error(error)
+
+            command = functools.partial(
+                self._client.container.list_blob_flat_segment_apache_arrow,
+                include=include,
+                timeout=timeout,
+                cls=_arrow_cls,
+                **kwargs
+            )
+            return ItemPaged(
+                command,
+                prefix=name_starts_with,
+                results_per_page=results_per_page,
+                container=self.container_name,
+                page_iterator_class=ArrowBlobPropertiesPaged
+            )
+        else:
+            command = functools.partial(
+                self._client.container.list_blob_flat_segment,
+                include=include,
+                timeout=timeout,
+                **kwargs
+            )
+            return ItemPaged(
+                command,
+                prefix=name_starts_with,
+                results_per_page=results_per_page,
+                container=self.container_name,
+                page_iterator_class=BlobPropertiesPaged
+            )
 
     @distributed_trace
     def list_blob_names(self, **kwargs: Any) -> ItemPaged[str]:
