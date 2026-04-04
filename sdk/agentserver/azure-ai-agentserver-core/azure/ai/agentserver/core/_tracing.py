@@ -62,6 +62,14 @@ class TracingHelper:
     """
 
     def __init__(self, connection_string: Optional[str] = None) -> None:
+        """Initialize tracing with optional Azure Monitor export.
+
+        :param connection_string: Application Insights connection string.
+            When provided, traces and logs are exported to Azure Monitor.
+            When *None*, the ``APPLICATIONINSIGHTS_CONNECTION_STRING`` env
+            var is consulted by the caller (``AgentServerHost``).
+        :type connection_string: Optional[str]
+        """
         self._enabled = _HAS_OTEL
         self._tracer: Any = None
         self._propagator: Any = None
@@ -87,16 +95,19 @@ class TracingHelper:
         resource = _create_resource()
         trace_provider = _ensure_trace_provider(resource)
 
+        # Add enrichment processor once (guarded by module-level flag)
         if trace_provider is not None:
-            trace_provider.add_span_processor(_FoundryEnrichmentSpanProcessor(
+            _register_enrichment_processor(
+                trace_provider,
                 agent_name=self._agent_name or None,
                 agent_version=self._agent_version or None,
                 agent_id=self._agent_id or None,
                 project_id=self._project_id or None,
-            ))
+            )
 
         if connection_string:
-            self._setup_azure_monitor(connection_string, resource, trace_provider)
+            self._setup_azure_monitor(
+                connection_string, resource, trace_provider)
 
         otlp_endpoint = _config.resolve_otlp_endpoint()
         if otlp_endpoint:
@@ -309,7 +320,8 @@ def _create_resource() -> Any:
     try:
         from opentelemetry.sdk.resources import Resource
     except ImportError:
-        logger.warning("OTel SDK not installed. pip install azure-ai-agentserver-core[tracing]")
+        logger.warning(
+            "OTel SDK not installed. pip install azure-ai-agentserver-core[tracing]")
         return None
     return Resource.create({_ATTR_SERVICE_NAME: _SERVICE_NAME_VALUE})
 
@@ -329,10 +341,31 @@ def _ensure_trace_provider(resource: Any) -> Any:
     return provider
 
 
+_enrichment_configured = False
 _az_trace_configured = False
 _az_log_configured = False
 _otlp_trace_configured = False
 _otlp_log_configured = False
+
+
+def _register_enrichment_processor(
+    provider: Any,
+    agent_name: Optional[str],
+    agent_version: Optional[str],
+    agent_id: Optional[str],
+    project_id: Optional[str],
+) -> None:
+    """Register enrichment processor once on the global TracerProvider."""
+    global _enrichment_configured  # pylint: disable=global-statement
+    if _enrichment_configured:
+        return
+    provider.add_span_processor(_FoundryEnrichmentSpanProcessor(
+        agent_name=agent_name,
+        agent_version=agent_version,
+        agent_id=agent_id,
+        project_id=project_id,
+    ))
+    _enrichment_configured = True
 
 
 def _setup_trace_export(provider: Any, connection_string: str) -> None:
@@ -341,9 +374,11 @@ def _setup_trace_export(provider: Any, connection_string: str) -> None:
         return
     try:
         from opentelemetry.sdk.trace.export import BatchSpanProcessor
-        from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter  # type: ignore[import-untyped]
+        # type: ignore[import-untyped]
+        from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
     except ImportError:
-        logger.warning("Trace export requires azure-monitor-opentelemetry-exporter.")
+        logger.warning(
+            "Trace export requires azure-monitor-opentelemetry-exporter.")
         return
     provider.add_span_processor(BatchSpanProcessor(
         AzureMonitorTraceExporter(connection_string=connection_string)))
@@ -359,9 +394,11 @@ def _setup_log_export(resource: Any, connection_string: str) -> None:
         from opentelemetry._logs import set_logger_provider
         from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
         from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
-        from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter  # type: ignore[import-untyped]
+        # type: ignore[import-untyped]
+        from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
     except ImportError:
-        logger.warning("Log export requires azure-monitor-opentelemetry-exporter.")
+        logger.warning(
+            "Log export requires azure-monitor-opentelemetry-exporter.")
         return
     log_provider = LoggerProvider(resource=resource)
     set_logger_provider(log_provider)
@@ -380,9 +417,11 @@ def _setup_otlp_trace_export(provider: Any, endpoint: str) -> None:
         from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
         from opentelemetry.sdk.trace.export import BatchSpanProcessor
     except ImportError:
-        logger.warning("OTLP trace export requires opentelemetry-exporter-otlp-proto-grpc.")
+        logger.warning(
+            "OTLP trace export requires opentelemetry-exporter-otlp-proto-grpc.")
         return
-    provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter(endpoint=endpoint)))
+    provider.add_span_processor(BatchSpanProcessor(
+        OTLPSpanExporter(endpoint=endpoint)))
     _otlp_trace_configured = True
     logger.info("OTLP trace exporter configured (endpoint=%s).", endpoint)
 
@@ -394,10 +433,11 @@ def _setup_otlp_log_export(resource: Any, endpoint: str) -> None:
     try:
         from opentelemetry._logs import get_logger_provider
         from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter
-        from opentelemetry.sdk._logs import LoggerProvider
+        from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
         from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
     except ImportError:
-        logger.warning("OTLP log export requires opentelemetry-exporter-otlp-proto-grpc.")
+        logger.warning(
+            "OTLP log export requires opentelemetry-exporter-otlp-proto-grpc.")
         return
     current = get_logger_provider()
     if hasattr(current, "add_log_record_processor"):
@@ -408,6 +448,7 @@ def _setup_otlp_log_export(resource: Any, endpoint: str) -> None:
         set_logger_provider(log_provider)
     log_provider.add_log_record_processor(BatchLogRecordProcessor(
         OTLPLogExporter(endpoint=endpoint)))  # type: ignore[union-attr]
+    logging.getLogger().addHandler(LoggingHandler(logger_provider=log_provider))
     _otlp_log_configured = True
     logger.info("OTLP log exporter configured (endpoint=%s).", endpoint)
 

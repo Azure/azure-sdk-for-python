@@ -30,10 +30,17 @@ except ImportError:
     _HAS_OTEL = False
 
 if _HAS_OTEL:
+    # Reuse the global provider if already set by another test module,
+    # otherwise create one. This avoids overriding the provider when
+    # multiple test files run in the same process.
+    _existing = trace.get_tracer_provider()
+    if hasattr(_existing, "add_span_processor"):
+        _PROVIDER = _existing
+    else:
+        _PROVIDER = SdkTracerProvider()
+        trace.set_tracer_provider(_PROVIDER)
     _EXPORTER = InMemorySpanExporter()
-    _PROVIDER = SdkTracerProvider()
     _PROVIDER.add_span_processor(SimpleSpanProcessor(_EXPORTER))
-    trace.set_tracer_provider(_PROVIDER)
 else:
     _EXPORTER = None
 
