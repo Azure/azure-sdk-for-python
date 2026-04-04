@@ -14,9 +14,8 @@ from starlette.requests import Request
 from starlette.responses import Response
 from starlette.routing import Route
 
-from . import _config
+from . import _config, _tracing
 from ._logger import get_logger
-from ._tracing import TracingHelper
 
 logger = get_logger()
 
@@ -91,6 +90,7 @@ class AgentServerHost(Starlette):
         applicationinsights_connection_string: Optional[str] = None,
         graceful_shutdown_timeout: Optional[int] = None,
         log_level: Optional[str] = None,
+        configure_tracing: Optional[Callable[..., None]] = _tracing.configure_tracing,
         routes: Optional[list[Route]] = None,
         **kwargs: Any,
     ) -> None:
@@ -106,17 +106,26 @@ class AgentServerHost(Starlette):
             setattr(_console, _CONSOLE_HANDLER_ATTR, True)
             logger.addHandler(_console)
 
-        # Tracing — enabled when App Insights or OTLP endpoint is configured
+        # Agent identity (used by request_span for span attributes)
+        self._agent_name = _config.resolve_agent_name()
+        self._agent_version = _config.resolve_agent_version()
+        self._project_id = _config.resolve_project_id()
+        if self._agent_name and self._agent_version:
+            self._agent_id = f"{self._agent_name}:{self._agent_version}"
+        elif self._agent_name:
+            self._agent_id = self._agent_name
+        else:
+            self._agent_id = ""
+
+        # Tracing — overridable setup function
         _conn_str = _config.resolve_appinsights_connection_string(applicationinsights_connection_string)
-        _otlp_endpoint = _config.resolve_otlp_endpoint()
-        _tracing_on = bool(_conn_str or _otlp_endpoint)
-        self._tracing: Optional[TracingHelper] = None
-        if _tracing_on:
-            try:
-                self._tracing = TracingHelper(connection_string=_conn_str)
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning("Failed to initialize tracing; continuing without tracing.", exc_info=True)
-                self._tracing = None
+        if configure_tracing is not None:
+            _tracing_on = bool(_conn_str or _config.resolve_otlp_endpoint())
+            if _tracing_on:
+                try:
+                    configure_tracing(connection_string=_conn_str)
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.warning("Failed to initialize tracing; continuing without tracing.", exc_info=True)
 
         # Timeouts ---------------------------------------------------------
         self._graceful_shutdown_timeout = _config.resolve_graceful_shutdown_timeout(
@@ -165,17 +174,47 @@ class AgentServerHost(Starlette):
         )
 
     # ------------------------------------------------------------------
-    # Tracing accessor (for protocol subclasses)
+    # Tracing (for protocol subclasses)
     # ------------------------------------------------------------------
 
-    @property
-    def tracing(self) -> Optional[TracingHelper]:
-        """Return the tracing helper, or *None* when tracing is disabled.
+    @contextlib.contextmanager
+    def request_span(
+        self,
+        headers: Any,
+        request_id: str,
+        operation: str,
+        *,
+        operation_name: Optional[str] = None,
+        session_id: str = "",
+        end_on_exit: bool = True,
+    ) -> Any:
+        """Create a request-scoped span with this host's identity attributes.
 
-        :return: The tracing helper instance.
-        :rtype: Optional[TracingHelper]
+        Delegates to :func:`_tracing.request_span` with pre-populated
+        agent identity from environment variables.  No-op when OTel is
+        not installed — yields ``None``.
+
+        :param headers: HTTP request headers.
+        :param request_id: The request/invocation ID.
+        :param operation: Span operation (e.g. ``"invoke_agent"``).
+        :param operation_name: Optional ``gen_ai.operation.name`` value.
+        :param session_id: Session ID.
+        :param end_on_exit: Whether to end the span when the context exits.
+        :return: Context manager yielding the OTel span or ``None``.
         """
-        return self._tracing
+        with _tracing.request_span(
+            headers,
+            request_id,
+            operation,
+            agent_id=self._agent_id,
+            agent_name=self._agent_name,
+            agent_version=self._agent_version,
+            project_id=self._project_id,
+            operation_name=operation_name,
+            session_id=session_id,
+            end_on_exit=end_on_exit,
+        ) as span:
+            yield span
 
     # ------------------------------------------------------------------
     # Shutdown handler (server-level lifecycle)

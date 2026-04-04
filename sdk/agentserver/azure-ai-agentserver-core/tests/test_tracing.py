@@ -21,41 +21,42 @@ from azure.ai.agentserver.core._constants import Constants
 
 
 class TestTracingToggle:
-    """Tracing is enabled when App Insights or OTLP endpoint is configured."""
+    """Tracing is configured when App Insights or OTLP endpoint is available."""
 
     def test_tracing_disabled_when_no_endpoints(self) -> None:
         env = os.environ.copy()
         env.pop(Constants.APPLICATIONINSIGHTS_CONNECTION_STRING, None)
         env.pop(Constants.OTEL_EXPORTER_OTLP_ENDPOINT, None)
         with mock.patch.dict(os.environ, env, clear=True):
-            agent = AgentServerHost()
-            assert agent.tracing is None
+            mock_configure = mock.MagicMock()
+            AgentServerHost(configure_tracing=mock_configure)
+            mock_configure.assert_not_called()
 
     def test_tracing_enabled_via_appinsights_env_var(self) -> None:
         with mock.patch.dict(os.environ, {Constants.APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=test"}):
-            with mock.patch(
-                "azure.ai.agentserver.core._tracing.TracingHelper.__init__",
-                return_value=None,
-            ):
-                agent = AgentServerHost()
-                assert agent.tracing is not None
+            mock_configure = mock.MagicMock()
+            AgentServerHost(configure_tracing=mock_configure)
+            mock_configure.assert_called_once()
 
     def test_tracing_enabled_via_otlp_env_var(self) -> None:
         with mock.patch.dict(os.environ, {Constants.OTEL_EXPORTER_OTLP_ENDPOINT: "http://localhost:4318"}):
-            with mock.patch(
-                "azure.ai.agentserver.core._tracing.TracingHelper.__init__",
-                return_value=None,
-            ):
-                agent = AgentServerHost()
-                assert agent.tracing is not None
+            mock_configure = mock.MagicMock()
+            AgentServerHost(configure_tracing=mock_configure)
+            mock_configure.assert_called_once()
 
     def test_tracing_enabled_via_constructor_connection_string(self) -> None:
-        with mock.patch(
-            "azure.ai.agentserver.core._tracing.TracingHelper.__init__",
-            return_value=None,
-        ):
-            agent = AgentServerHost(applicationinsights_connection_string="InstrumentationKey=ctor")
-            assert agent.tracing is not None
+        mock_configure = mock.MagicMock()
+        AgentServerHost(
+            applicationinsights_connection_string="InstrumentationKey=ctor",
+            configure_tracing=mock_configure,
+        )
+        mock_configure.assert_called_once_with(connection_string="InstrumentationKey=ctor")
+
+    def test_tracing_disabled_when_configure_tracing_is_none(self) -> None:
+        """Passing configure_tracing=None disables tracing entirely."""
+        with mock.patch.dict(os.environ, {Constants.APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=test"}):
+            # Should not raise even with App Insights configured
+            AgentServerHost(configure_tracing=None)
 
 
 # ------------------------------------------------------------------ #
@@ -115,26 +116,25 @@ class TestSetupAzureMonitor:
 
     def test_setup_azure_monitor_called_when_conn_str_provided(self) -> None:
         with self._tracing_mocks():
-            with mock.patch(
-                "azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"
-            ) as mock_setup:
-                with mock.patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_otlp_export"):
-                    from azure.ai.agentserver.core._tracing import TracingHelper
-                    TracingHelper(connection_string="InstrumentationKey=test")
-                    # _setup_azure_monitor receives (connection_string, resource, trace_provider)
-                    mock_setup.assert_called_once()
-                    args = mock_setup.call_args[0]
-                    assert args[0] == "InstrumentationKey=test"
+            with mock.patch("azure.ai.agentserver.core._tracing._setup_trace_export") as mock_trace:
+                with mock.patch("azure.ai.agentserver.core._tracing._setup_log_export"):
+                    with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_trace_export"):
+                        with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_log_export"):
+                            from azure.ai.agentserver.core import _tracing
+                            _tracing.configure_tracing(connection_string="InstrumentationKey=test")
+                            mock_trace.assert_called_once()
+                            args = mock_trace.call_args[0]
+                            assert args[1] == "InstrumentationKey=test"
 
     def test_setup_azure_monitor_not_called_when_no_conn_str(self) -> None:
         with self._tracing_mocks():
-            with mock.patch(
-                "azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"
-            ) as mock_setup:
-                with mock.patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_otlp_export"):
-                    from azure.ai.agentserver.core._tracing import TracingHelper
-                    TracingHelper(connection_string=None)
-                    mock_setup.assert_not_called()
+            with mock.patch("azure.ai.agentserver.core._tracing._setup_trace_export") as mock_trace:
+                with mock.patch("azure.ai.agentserver.core._tracing._setup_log_export"):
+                    with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_trace_export"):
+                        with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_log_export"):
+                            from azure.ai.agentserver.core import _tracing
+                            _tracing.configure_tracing(connection_string=None)
+                            mock_trace.assert_not_called()
 
 
 # ------------------------------------------------------------------ #
@@ -143,17 +143,15 @@ class TestSetupAzureMonitor:
 
 
 class TestConstructorConnectionString:
-    """Verify AgentServerHost forwards the connection string to TracingHelper."""
+    """Verify AgentServerHost forwards the connection string to configure_tracing."""
 
     def test_constructor_passes_connection_string(self) -> None:
-        with mock.patch(
-            "azure.ai.agentserver.core._tracing.TracingHelper.__init__",
-            return_value=None,
-        ) as mock_init:
-            AgentServerHost(
-                applicationinsights_connection_string="InstrumentationKey=ctor",
-            )
-            mock_init.assert_called_once_with(connection_string="InstrumentationKey=ctor")
+        mock_configure = mock.MagicMock()
+        AgentServerHost(
+            applicationinsights_connection_string="InstrumentationKey=ctor",
+            configure_tracing=mock_configure,
+        )
+        mock_configure.assert_called_once_with(connection_string="InstrumentationKey=ctor")
 
 
 # ------------------------------------------------------------------ #

@@ -67,7 +67,7 @@ def _get_spans():
 def _make_tracing_server(**kwargs):
     """Create an InvocationAgentServerHost with tracing enabled."""
     with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
-        with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
+        with patch("azure.ai.agentserver.core._tracing._setup_trace_export"):
             server = InvocationAgentServerHost(**kwargs)
 
     @server.invoke_handler
@@ -81,7 +81,7 @@ def _make_tracing_server(**kwargs):
 def _make_tracing_server_with_get_cancel(**kwargs):
     """Create a tracing-enabled server with get/cancel handlers."""
     with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
-        with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
+        with patch("azure.ai.agentserver.core._tracing._setup_trace_export"):
             server = InvocationAgentServerHost(**kwargs)
 
     store: dict[str, bytes] = {}
@@ -113,7 +113,7 @@ def _make_tracing_server_with_get_cancel(**kwargs):
 def _make_failing_tracing_server(**kwargs):
     """Create a tracing-enabled server whose handler raises."""
     with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
-        with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
+        with patch("azure.ai.agentserver.core._tracing._setup_trace_export"):
             server = InvocationAgentServerHost(**kwargs)
 
     @server.invoke_handler
@@ -126,7 +126,7 @@ def _make_failing_tracing_server(**kwargs):
 def _make_streaming_tracing_server(**kwargs):
     """Create a tracing-enabled server with streaming response."""
     with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
-        with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
+        with patch("azure.ai.agentserver.core._tracing._setup_trace_export"):
             server = InvocationAgentServerHost(**kwargs)
 
     @server.invoke_handler
@@ -158,12 +158,12 @@ def test_tracing_disabled_by_default():
     client = TestClient(app)
     client.post("/invocations", content=b"test")
 
-    # No spans should be created (server has no tracing helper)
-    # The module-level provider may capture unrelated spans,
-    # but none should be from our server
+    # With the function-based tracing design, spans are always created
+    # when OTel is installed (via the global tracer). The difference is
+    # whether exporters are configured. Verify a span IS created.
     spans = _get_spans()
     invoke_spans = [s for s in spans if "invoke_agent" in s.name]
-    assert len(invoke_spans) == 0
+    assert len(invoke_spans) >= 1
 
 
 # ---------------------------------------------------------------------------
@@ -238,7 +238,7 @@ def test_cancel_invocation_creates_span():
 def test_tracing_via_appinsights_env_var():
     """Tracing is enabled when APPLICATIONINSIGHTS_CONNECTION_STRING is set."""
     with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
-        with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
+        with patch("azure.ai.agentserver.core._tracing._setup_trace_export"):
             app = InvocationAgentServerHost()
 
     @app.invoke_handler
@@ -258,7 +258,8 @@ def test_tracing_via_appinsights_env_var():
 # ---------------------------------------------------------------------------
 
 def test_no_tracing_when_no_endpoints():
-    """Tracing is disabled when no connection string or OTLP endpoint is set."""
+    """When no connection string or OTLP endpoint is set, configure_tracing is not called,
+    but spans are still created (they're just not exported)."""
     env = os.environ.copy()
     env.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
     env.pop("OTEL_EXPORTER_OTLP_ENDPOINT", None)
@@ -275,9 +276,11 @@ def test_no_tracing_when_no_endpoints():
     client = TestClient(app)
     client.post("/invocations", content=b"test")
 
+    # Spans are still created via the global tracer — the difference
+    # is no exporters are configured to send them anywhere.
     spans = _get_spans()
     invoke_spans = [s for s in spans if "invoke_agent" in s.name]
-    assert len(invoke_spans) == 0
+    assert len(invoke_spans) >= 1
 
 
 # ---------------------------------------------------------------------------
