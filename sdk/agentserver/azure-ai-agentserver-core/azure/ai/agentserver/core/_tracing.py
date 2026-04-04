@@ -18,7 +18,6 @@ from contextlib import contextmanager
 from typing import Any, Iterator, Optional, Union
 
 from . import _config
-import logging
 
 _Content = Union[str, bytes, memoryview]
 _W3C_HEADERS = ("traceparent", "tracestate")
