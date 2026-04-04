@@ -298,9 +298,9 @@ def test_traceparent_propagation():
 
     client = TestClient(server)
     client.post(
-    "/invocations",
-    content=b"test",
-    headers={"traceparent": traceparent},
+        "/invocations",
+        content=b"test",
+        headers={"traceparent": traceparent},
     )
 
     spans = _get_spans()
