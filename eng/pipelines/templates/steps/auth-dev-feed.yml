@@ -27,9 +27,10 @@ steps:
 
   - pwsh: |
       if ($env:PIP_INDEX_URL) {
-        # uv resolves credentials by index URL (astral-sh/uv#12651). The authenticated
-        # URL from PipAuthenticate is passed directly as UV_INDEX_URL.
-        Write-Host "##vso[task.setvariable variable=UV_INDEX_URL;issecret=true]$($env:PIP_INDEX_URL)"
+        # UV_DEFAULT_INDEX is the canonical replacement for the deprecated UV_INDEX_URL (uv 0.4.23+).
+        # PIP_INDEX_URL is set by PipAuthenticate@1 and contains embedded credentials, which uv
+        # will use for Basic auth against the ADO feed (and its PyPI upstream) per astral-sh/uv#12651.
+        Write-Host "##vso[task.setvariable variable=UV_DEFAULT_INDEX]$($env:PIP_INDEX_URL)"
         # Disable keyring so uv uses the URL-embedded credentials directly.
         Write-Host "##vso[task.setvariable variable=UV_KEYRING_PROVIDER]disabled"
       } else {
