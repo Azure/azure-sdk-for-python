@@ -145,7 +145,7 @@ def _make_streaming_tracing_server(**kwargs):
 # ---------------------------------------------------------------------------
 
 def test_tracing_disabled_by_default():
-    """No spans are created when tracing is not enabled."""
+    """Invoke spans are still created by the global tracer when tracing is not explicitly configured."""
     if _MODULE_EXPORTER:
         _MODULE_EXPORTER.clear()
 

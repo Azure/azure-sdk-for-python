@@ -37,8 +37,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 from starlette.routing import Route
 
-from azure.ai.agentserver.core import AgentServerHost
-from azure.ai.agentserver.core import _tracing
+from azure.ai.agentserver.core import AgentServerHost, record_error
 
 logger = logging.getLogger("azure.ai.agentserver")
 
@@ -73,7 +72,7 @@ class SelfHostedInvocationHost(AgentServerHost):
                 name = data.get("name", "World")
                 result = {"greeting": f"Hello, {name}!"}
             except Exception as exc:
-                _tracing.record_error(otel_span, exc)
+                record_error(otel_span, exc)
                 logger.error("Invocation %s failed: %s", invocation_id, exc)
                 raise
 

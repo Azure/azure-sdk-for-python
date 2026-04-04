@@ -38,7 +38,9 @@ except ImportError:
         ProviderConfig = dict
 
 from azure.ai.agentserver.core.constants import Constants
-from azure.ai.agentserver.core.logger import get_logger
+import logging
+
+logger = logging.getLogger("azure.ai.agentserver")
 from azure.ai.agentserver.core.models import Response as OpenAIResponse
 from azure.ai.agentserver.core.models.projects import (
     ResponseCompletedEvent,
@@ -59,7 +61,6 @@ from ._copilot_request_converter import ConvertedAttachments, CopilotRequestConv
 from ._copilot_response_converter import CopilotResponseConverter, CopilotStreamingResponseConverter
 from ._tool_acl import ToolAcl
 
-logger = get_logger()
 
 # Suppress noisy OTel detach warnings from async generator context switches.
 _logging.getLogger("opentelemetry.context").setLevel(_logging.CRITICAL)

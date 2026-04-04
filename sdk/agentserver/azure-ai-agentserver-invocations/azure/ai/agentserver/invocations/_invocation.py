@@ -21,8 +21,10 @@ from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     AgentServerHost,
     Constants,
     create_error_response,
+    end_span,
+    record_error,
+    trace_stream,
 )
-from azure.ai.agentserver.core import _tracing
 
 from ._constants import InvocationConstants
 
@@ -253,7 +255,9 @@ class InvocationAgentServerHost(AgentServerHost):
         :return: The same response object, with its body_iterator replaced.
         :rtype: ~starlette.responses.StreamingResponse
         """
-        response.body_iterator = _tracing.trace_stream(response.body_iterator, otel_span)
+        if otel_span is None:
+            return response
+        response.body_iterator = trace_stream(response.body_iterator, otel_span)
         return response
 
     # ------------------------------------------------------------------
@@ -300,7 +304,7 @@ class InvocationAgentServerHost(AgentServerHost):
                     InvocationConstants.ATTR_SPAN_ERROR_CODE: "not_implemented",
                     InvocationConstants.ATTR_SPAN_ERROR_MESSAGE: str(exc),
                 })
-                _tracing.end_span(otel_span, exc=exc)
+                end_span(otel_span, exc=exc)
                 logger.error("Invocation %s failed: %s", invocation_id, exc)
                 return create_error_response(
                     "not_implemented",
@@ -316,7 +320,7 @@ class InvocationAgentServerHost(AgentServerHost):
                     InvocationConstants.ATTR_SPAN_ERROR_CODE: "internal_error",
                     InvocationConstants.ATTR_SPAN_ERROR_MESSAGE: str(exc),
                 })
-                _tracing.end_span(otel_span, exc=exc)
+                end_span(otel_span, exc=exc)
                 logger.error("Error processing invocation %s: %s", invocation_id, exc, exc_info=True)
                 return create_error_response(
                     "internal_error",
@@ -331,7 +335,7 @@ class InvocationAgentServerHost(AgentServerHost):
             if isinstance(response, StreamingResponse):
                 return self._wrap_streaming_response(response, otel_span)
 
-            _tracing.end_span(otel_span)
+            end_span(otel_span)
             return response
 
     async def _traced_invocation_endpoint(
@@ -360,7 +364,7 @@ class InvocationAgentServerHost(AgentServerHost):
                     InvocationConstants.ATTR_SPAN_ERROR_CODE: "internal_error",
                     InvocationConstants.ATTR_SPAN_ERROR_MESSAGE: str(exc),
                 })
-                _tracing.record_error(_otel_span, exc)
+                record_error(_otel_span, exc)
                 logger.error("Error in %s %s: %s", span_operation, invocation_id, exc, exc_info=True)
                 return create_error_response(
                     "internal_error",
