@@ -246,8 +246,11 @@ class InvocationAgentServerHost(AgentServerHost):
         the full streaming duration and is ended when iteration completes.
 
         :param response: The ``StreamingResponse`` returned by the user handler.
+        :type response: ~starlette.responses.StreamingResponse
         :param otel_span: The OTel span (or *None* when tracing is disabled).
+        :type otel_span: any
         :return: The same response object, with its body_iterator replaced.
+        :rtype: ~starlette.responses.StreamingResponse
         """
         if self._tracing is None:
             return response
@@ -346,7 +349,21 @@ class InvocationAgentServerHost(AgentServerHost):
         operation_name: Optional[str] = None,
         session_id: str = "",
     ) -> Any:
-        """Create a request span — returns a no-op context manager when tracing is off."""
+        """Create a request span — returns a no-op context manager when tracing is off.
+
+        :param headers: HTTP request headers.
+        :type headers: any
+        :param invocation_id: The request/invocation ID.
+        :type invocation_id: str
+        :param span_operation: Span operation name.
+        :type span_operation: str
+        :param operation_name: Optional ``gen_ai.operation.name`` value.
+        :type operation_name: str or None
+        :param session_id: Session ID (empty string if absent).
+        :type session_id: str
+        :return: Context manager yielding the OTel span or *None*.
+        :rtype: any
+        """
         if self._tracing is not None:
             return self._tracing.request_span(
                 headers, invocation_id, span_operation,

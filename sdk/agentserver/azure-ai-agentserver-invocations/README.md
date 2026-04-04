@@ -197,8 +197,8 @@ Visit the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
 
 | Sample | Description |
 |---|---|
-| [simple_invoke_agent](samples/simple_invoke_agent/) | Minimal synchronous request-response |
-| [async_invoke_agent](samples/async_invoke_agent/) | Long-running operations with polling and cancellation |
+| [simple_invoke_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/simple_invoke_agent/) | Minimal synchronous request-response |
+| [async_invoke_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/async_invoke_agent/) | Long-running operations with polling and cancellation |
 
 ## Contributing
 

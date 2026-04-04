@@ -147,12 +147,19 @@ class TracingHelper:
         span via :meth:`trace_stream`.
 
         :param headers: HTTP request headers.
+        :type headers: ~collections.abc.Mapping[str, str]
         :param invocation_id: The request/invocation ID.
+        :type invocation_id: str
         :param span_operation: Span operation name (e.g. ``"invoke_agent"``).
+        :type span_operation: str
         :param operation_name: Optional ``gen_ai.operation.name`` value.
+        :type operation_name: str or None
         :param session_id: Session ID (empty string if absent).
+        :type session_id: str
         :param end_on_exit: Whether to end the span when the context exits.
+        :type end_on_exit: bool
         :return: Context manager yielding the OTel span or *None*.
+        :rtype: ~typing.Iterator
         """
         if not self._enabled or self._tracer is None:
             yield None
@@ -198,7 +205,13 @@ class TracingHelper:
     # ------------------------------------------------------------------
 
     def end_span(self, span: Any, exc: Optional[BaseException] = None) -> None:
-        """End a span, optionally recording an error first."""
+        """End a span, optionally recording an error first.
+
+        :param span: The OTel span to end, or None.
+        :type span: any
+        :param exc: Optional exception to record on the span.
+        :type exc: ~BaseException or None
+        """
         if span is None:
             return
         if exc is not None:
@@ -207,7 +220,13 @@ class TracingHelper:
 
     @staticmethod
     def record_error(span: Any, exc: BaseException) -> None:
-        """Record an exception and ERROR status on a span."""
+        """Record an exception and ERROR status on a span.
+
+        :param span: The OTel span to record the error on.
+        :type span: any
+        :param exc: The exception to record.
+        :type exc: ~BaseException
+        """
         if span is not None and _HAS_OTEL:
             span.set_status(trace.StatusCode.ERROR, str(exc))
             span.record_exception(exc)
@@ -219,6 +238,13 @@ class TracingHelper:
 
         Yields chunks unchanged.  Ends the span when the iterator is
         exhausted or raises an exception.
+
+        :param iterator: The async iterable to wrap.
+        :type iterator: ~collections.abc.AsyncIterable
+        :param span: The OTel span to end when the stream completes.
+        :type span: any
+        :return: An async iterator yielding chunks unchanged.
+        :rtype: ~collections.abc.AsyncIterator
         """
         error: Optional[BaseException] = None
         try:
