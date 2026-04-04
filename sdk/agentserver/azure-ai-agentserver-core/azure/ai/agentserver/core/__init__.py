@@ -29,6 +29,7 @@ __all__ = [
     "AgentServerHost",
     "Constants",
     "create_error_response",
+    "get_logger",
     "TracingHelper",
 ]
 __version__ = VERSION
