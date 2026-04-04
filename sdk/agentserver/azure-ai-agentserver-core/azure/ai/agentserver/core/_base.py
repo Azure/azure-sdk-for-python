@@ -4,8 +4,10 @@
 import asyncio  # pylint: disable=do-not-import-asyncio
 import contextlib
 import logging
-from collections.abc import AsyncGenerator, Awaitable, Callable  # pylint: disable=import-error
-from typing import Any, Optional
+import os
+import signal
+from collections.abc import AsyncGenerator, AsyncIterable, AsyncIterator, Awaitable, Callable  # pylint: disable=import-error
+from typing import Any, Optional, Union
 
 from starlette.applications import Starlette
 from starlette.middleware import Middleware
@@ -281,6 +283,20 @@ class AgentServerHost(Starlette):
         resolved_port = _config.resolve_port(port)
         logger.info("AgentServerHost starting on %s:%s", host, resolved_port)
         config = self._build_hypercorn_config(host, resolved_port)
+
+        # Register SIGTERM handler to forward the signal to child processes
+        # before Hypercorn's own graceful shutdown kicks in.
+        original_sigterm = signal.getsignal(signal.SIGTERM)
+
+        def _handle_sigterm(signum: int, frame: Any) -> None:
+            logger.info("SIGTERM received, initiating graceful shutdown")
+            # Restore the original handler so the re-raised signal is not
+            # caught by this handler again (avoids infinite recursion).
+            signal.signal(signal.SIGTERM, original_sigterm)
+            os.kill(os.getpid(), signal.SIGTERM)
+
+        signal.signal(signal.SIGTERM, _handle_sigterm)
+
         asyncio.run(_hypercorn_serve(self, config))  # type: ignore[arg-type]
 
     async def run_async(self, host: str = "0.0.0.0", port: Optional[int] = None) -> None:
@@ -311,3 +327,34 @@ class AgentServerHost(Starlette):
         :rtype: Response
         """
         return Response(_HEALTHY_BODY, media_type="application/json")
+
+    # ------------------------------------------------------------------
+    # Streaming utilities
+    # ------------------------------------------------------------------
+
+    _Content = Union[str, bytes, memoryview]
+
+    @staticmethod
+    async def sse_keepalive_stream(
+        iterator: "AsyncIterable[AgentServerHost._Content]",
+        interval: int,
+    ) -> "AsyncIterator[AgentServerHost._Content]":
+        """Interleave SSE keep-alive comment frames into a streaming body.
+
+        Emits ``b": keep-alive\\n\\n"`` whenever the upstream iterator has not
+        produced a chunk within *interval* seconds.  This prevents
+        proxies/load-balancers from closing idle connections.
+
+        :param iterator: The async iterable to wrap.
+        :param interval: Seconds between keep-alive frames. Must be > 0.
+        :return: An async iterator with interleaved keep-alive frames.
+        """
+        ait = iterator.__aiter__()
+        while True:
+            try:
+                chunk = await asyncio.wait_for(ait.__anext__(), timeout=interval)
+                yield chunk
+            except asyncio.TimeoutError:
+                yield b": keep-alive\n\n"
+            except StopAsyncIteration:
+                break

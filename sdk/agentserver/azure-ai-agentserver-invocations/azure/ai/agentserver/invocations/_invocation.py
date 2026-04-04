@@ -26,6 +26,8 @@ from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     trace_stream,
 )
 
+from opentelemetry import baggage as _otel_baggage, context as _otel_context
+
 from ._constants import InvocationConstants
 
 import logging
@@ -35,6 +37,20 @@ logger = logging.getLogger("azure.ai.agentserver")
 # Maximum length and allowed characters for user-provided IDs (defense in depth).
 _MAX_ID_LENGTH = 256
 _VALID_ID_RE = re.compile(r"^[a-zA-Z0-9\-_.:]+$")
+
+
+class _InvocationLogFilter(logging.Filter):
+    """Attach invocation and session IDs to every log record during handler execution."""
+
+    def __init__(self, invocation_id: str, session_id: str) -> None:
+        super().__init__()
+        self.invocation_id = invocation_id
+        self.session_id = session_id
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        record.invocation_id = self.invocation_id  # type: ignore[attr-defined]
+        record.session_id = self.session_id  # type: ignore[attr-defined]
+        return True
 
 
 def _sanitize_id(value: str, fallback: str) -> str:
@@ -301,6 +317,19 @@ class InvocationAgentServerHost(AgentServerHost):
                 InvocationConstants.ATTR_SPAN_SESSION_ID: session_id,
             })
 
+            # Propagate invocation/session IDs as W3C baggage so downstream
+            # services receive them automatically via the baggage header.
+            ctx = _otel_context.get_current()
+            ctx = _otel_baggage.set_baggage(
+                "azure.ai.agentserver.invocation_id", invocation_id, context=ctx,
+            )
+            ctx = _otel_baggage.set_baggage(
+                "azure.ai.agentserver.session_id", session_id, context=ctx,
+            )
+            baggage_token = _otel_context.attach(ctx)
+
+            log_filter = _InvocationLogFilter(invocation_id, session_id)
+            logger.addFilter(log_filter)
             try:
                 response = await self._dispatch_invoke(request)
                 response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
@@ -337,6 +366,12 @@ class InvocationAgentServerHost(AgentServerHost):
                         InvocationConstants.SESSION_ID_HEADER: session_id,
                     },
                 )
+            finally:
+                logger.removeFilter(log_filter)
+                try:
+                    _otel_context.detach(baggage_token)
+                except ValueError:
+                    pass
 
             if isinstance(response, StreamingResponse):
                 return self._wrap_streaming_response(response, otel_span)
@@ -357,10 +392,13 @@ class InvocationAgentServerHost(AgentServerHost):
             request.headers, invocation_id, span_operation,
             session_id=request.query_params.get("agent_session_id", ""),
         ) as _otel_span:
+            session_id = request.query_params.get("agent_session_id", "")
             self._safe_set_attrs(_otel_span, {
                 InvocationConstants.ATTR_SPAN_INVOCATION_ID: invocation_id,
-                InvocationConstants.ATTR_SPAN_SESSION_ID: request.query_params.get("agent_session_id", ""),
+                InvocationConstants.ATTR_SPAN_SESSION_ID: session_id,
             })
+            log_filter = _InvocationLogFilter(invocation_id, session_id)
+            logger.addFilter(log_filter)
             try:
                 response = await dispatch(request)
                 response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
@@ -378,6 +416,8 @@ class InvocationAgentServerHost(AgentServerHost):
                     status_code=500,
                     headers={InvocationConstants.INVOCATION_ID_HEADER: invocation_id},
                 )
+            finally:
+                logger.removeFilter(log_filter)
 
     async def _get_invocation_endpoint(self, request: Request) -> Response:
         return await self._traced_invocation_endpoint(
