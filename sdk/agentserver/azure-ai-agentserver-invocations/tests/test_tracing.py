@@ -357,8 +357,8 @@ def test_session_id_in_conversation_id():
     server = _make_tracing_server()
     client = TestClient(server)
     client.post(
-            "/invocations?agent_session_id=test-session",
-            content=b"test",
+        "/invocations?agent_session_id=test-session",
+        content=b"test",
     )
 
     spans = _get_spans()
