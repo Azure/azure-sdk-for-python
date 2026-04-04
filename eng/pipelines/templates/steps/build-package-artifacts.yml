@@ -80,9 +80,7 @@ steps:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - pwsh: |
-      uv pip install pip
-      python -m pip --version
-      python -m pip install ruff==0.12.7 -v
+      uv pip install ruff==0.12.6 -vv
     displayName: "Try installing using pip directly"
     continueOnError: true
 
