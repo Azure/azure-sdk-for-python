@@ -9,7 +9,7 @@ import threading
 import warnings
 from io import BytesIO
 from typing import (
-    Any, Callable, Generator, IO, Iterator, Optional, Tuple,
+    Any, Callable, Generator, IO, Literal, Iterator, Optional, Tuple, Union,
     TYPE_CHECKING
 )
 
@@ -18,6 +18,7 @@ from azure.core.tracing.common import with_current_context
 from ._shared.request_handlers import validate_and_format_range_headers
 from ._shared.response_handlers import parse_length_from_content_range, process_storage_error
 from ._shared.constants import DEFAULT_MAX_CONCURRENCY
+from ._shared.validation import is_md5_validation
 
 if TYPE_CHECKING:
     from ._generated.operations import FileOperations
@@ -43,7 +44,7 @@ class _ChunkDownloader:  # pylint: disable=too-many-instance-attributes
         current_progress: int,
         start_range: int,
         end_range: int,
-        validate_content: bool,
+        validate_content: Optional[Union[bool, Literal['crc64', 'md5']]],
         etag: str,
         stream: Any = None,
         parallel: Optional[int] = None,
@@ -120,7 +121,9 @@ class _ChunkDownloader:  # pylint: disable=too-many-instance-attributes
 
     def _download_chunk(self, chunk_start: int, chunk_end: int) -> bytes:
         range_header, range_validation = validate_and_format_range_headers(
-            chunk_start, chunk_end, check_content_md5=self.validate_content
+            chunk_start,
+            chunk_end,
+            check_content_md5=is_md5_validation(self.validate_content)
         )
 
         try:
@@ -217,7 +220,7 @@ class StorageStreamDownloader:  # pylint: disable=too-many-instance-attributes
         config: "StorageConfiguration" = None,  # type: ignore [assignment]
         start_range: Optional[int] = None,
         end_range: Optional[int] = None,
-        validate_content: bool = None,  # type: ignore [assignment]
+        validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]] = None,
         max_concurrency: Optional[int] = None,
         name: str = None,  # type: ignore [assignment]
         path: str = None,  # type: ignore [assignment]
@@ -247,11 +250,12 @@ class StorageStreamDownloader:  # pylint: disable=too-many-instance-attributes
         self._etag = ""
 
         # The service only provides transactional MD5s for chunks under 4MB.
-        # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first
+        # If validate_content is using MD5, get only self.MAX_CHUNK_GET_SIZE for the first
         # chunk so a transactional MD5 can be retrieved.
         self._first_get_size = (
-            self._config.max_single_get_size if not self._validate_content else self._config.max_chunk_get_size
+            self._config.max_single_get_size if not is_md5_validation(self._validate_content) else self._config.max_chunk_get_size
         )
+
         initial_request_start = self._start_range or 0
         if self._end_range is not None and self._end_range - initial_request_start < self._first_get_size:
             initial_request_end = self._end_range
@@ -292,7 +296,7 @@ class StorageStreamDownloader:  # pylint: disable=too-many-instance-attributes
             self._initial_range[1],
             start_range_required=False,
             end_range_required=False,
-            check_content_md5=self._validate_content
+            check_content_md5=is_md5_validation(self._validate_content)
         )
 
         try:
