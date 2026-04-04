@@ -3,15 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from azure.appconfiguration.provider import load, WatchKey
+import os
+import time
+from sample_utilities import get_client_modifications
 from azure.appconfiguration import (  # type:ignore
     AzureAppConfigurationClient,
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
 )
-from sample_utilities import get_client_modifications
-import os
-import time
+from azure.appconfiguration.provider import load, WatchKey
 
 kwargs = get_client_modifications()
 connection_string = os.environ.get("APPCONFIGURATION_CONNECTION_STRING")
@@ -26,11 +26,12 @@ client.set_configuration_setting(configuration_setting=configuration_setting)
 client.set_configuration_setting(configuration_setting=feature_flag_setting)
 
 
-def my_callback_on_fail(error):
+def my_callback_on_fail(_):
     print("Refresh failed!")
 
 
-# Connecting to Azure App Configuration using connection string, and refreshing when the configuration setting message changes
+# Connecting to Azure App Configuration using connection string, and refreshing when the configuration setting message
+# changes
 config = load(
     connection_string=connection_string,
     refresh_on=[WatchKey("message")],

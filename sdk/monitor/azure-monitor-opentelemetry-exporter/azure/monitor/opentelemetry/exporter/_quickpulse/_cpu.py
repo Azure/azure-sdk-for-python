@@ -41,7 +41,7 @@ def _get_process_time_normalized_old(options: CallbackOptions) -> Iterable[Obser
         # total process time is user + system in s
         total_time_s = cpu_times.user + cpu_times.system
         process_time_s = total_time_s - _get_quickpulse_last_process_time()
-        _set_quickpulse_last_process_time(process_time_s)
+        _set_quickpulse_last_process_time(total_time_s)
         # Find elapsed time in s since last collection
         current_time = datetime.now()
         elapsed_time_s = (current_time - _get_quickpulse_process_elapsed_time()).total_seconds()
@@ -49,7 +49,9 @@ def _get_process_time_normalized_old(options: CallbackOptions) -> Iterable[Obser
         # Obtain cpu % by dividing by elapsed time
         cpu_percentage = process_time_s / elapsed_time_s
         # Normalize by dividing by amount of logical cpus
-        normalized_cpu_percentage = cpu_percentage / NUM_CPUS
+        normalized_cpu_percentage = (cpu_percentage / NUM_CPUS) * 100
+        # Cap at 100% to avoid edge cases where the CPU usage goes over 100%
+        normalized_cpu_percentage = min(normalized_cpu_percentage, 100)
         _set_quickpulse_last_process_cpu(normalized_cpu_percentage)
     except (psutil.NoSuchProcess, psutil.AccessDenied, ZeroDivisionError):
         pass

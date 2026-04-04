@@ -33,9 +33,7 @@ def facet_query():
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
-    results = search_client.search(
-        search_text="WiFi", facets=["Category,count:3", "ParkingIncluded"]
-    )
+    results = search_client.search(search_text="WiFi", facets=["Category,count:3", "ParkingIncluded"])
 
     facets = results.get_facets()
 

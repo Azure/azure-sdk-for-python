@@ -16,7 +16,7 @@ from typing_extensions import Literal
 from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
 from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
 from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
-from azure.ai.ml._restclient.v2022_10_01.models import DatastoreType
+from azure.ai.ml._restclient.arm_ml_service.models import DatastoreType
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils._arm_id_utils import (
     AMLNamedArmId,
@@ -42,6 +42,7 @@ from azure.ai.ml._utils.utils import is_mlflow_uri, is_url
 from azure.ai.ml.constants._common import SHORT_URI_FORMAT, STORAGE_ACCOUNT_URLS
 from azure.ai.ml.entities import Environment
 from azure.ai.ml.entities._assets._artifacts.artifact import Artifact, ArtifactStorageInfo
+from azure.ai.ml.entities._credentials import AadCredentialConfiguration, NoneCredentialConfiguration
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.exceptions import ErrorTarget, MlException, ValidationException
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
@@ -106,8 +107,12 @@ def get_datastore_info(
     )
 
     try:
-        credential = operations._list_secrets(name=name, expirable_secret=True)
-        datastore_info["credential"] = credential.sas_token
+        if isinstance(datastore.credentials, (NoneCredentialConfiguration, AadCredentialConfiguration)):
+            module_logger.debug("Identity-based datastore detected. Skipping _list_secrets call")
+            datastore_info["credential"] = operations._credential
+        else:
+            credential = operations._list_secrets(name=name, expirable_secret=True)
+            datastore_info["credential"] = getattr(credential, "sas_token", None) or getattr(credential, "key", None)
     except HttpResponseError:
         datastore_info["credential"] = operations._credential
 

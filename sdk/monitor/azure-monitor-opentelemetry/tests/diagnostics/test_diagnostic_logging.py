@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import logging
 import os
 from importlib import reload
 from json import loads
@@ -25,13 +24,13 @@ MESSAGE3 = "MESSAGE3"
 
 
 def clear_file(file_path):
-    with open(file_path, "w") as f:
+    with open(file_path, "w", encoding="utf-8") as f:
         f.seek(0)
         f.truncate()
 
 
 def check_file_for_messages(file_path, level, messages):
-    with open(file_path, "r") as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         f.seek(0)
         for message, message_id in messages:
             json = loads(f.readline())
@@ -51,7 +50,7 @@ def check_file_for_messages(file_path, level, messages):
 
 
 def check_file_is_empty(file_path):
-    with open(file_path, "r") as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         f.seek(0)
         assert not f.read()
 
@@ -205,7 +204,9 @@ class TestDiagnosticLogger:
         # Mock makedirs to raise FileExistsError (this should be handled gracefully)
         with patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging.makedirs") as mock_makedirs, patch(
             "azure.monitor.opentelemetry._diagnostics.diagnostic_logging.exists", return_value=False
-        ), patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging._logger") as mock_logger:
+        ), patch(
+            "azure.monitor.opentelemetry._diagnostics.diagnostic_logging._logger"
+        ) as mock_logger:  # pylint: disable=unused-variable
             mock_makedirs.side_effect = FileExistsError("Directory already exists")
             # Attempt to log, which will trigger initialization
             diagnostic_logger.AzureDiagnosticLogging.info(MESSAGE1, "4200")

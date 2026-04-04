@@ -5,7 +5,7 @@
 from datetime import datetime, timedelta
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2023_10_01.models import JobBase as RestJobBase
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase as RestJobBase
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
 

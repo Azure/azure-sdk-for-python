@@ -13,6 +13,7 @@ from ..._common.utils import reformat_conversation_history, reformat_agent_respo
 
 from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._validators import ConversationValidator, ValidatorInterface
 
 logger = logging.getLogger(__name__)
 
@@ -80,6 +81,8 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     _PROMPTY_FILE = "relevance.prompty"
     _RESULT_KEY = "relevance"
 
+    _validator: ValidatorInterface
+
     id = "azureai://built-in/evaluators/relevance"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
@@ -87,6 +90,10 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     def __init__(self, model_config, *, credential=None, threshold=3, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
+
+        # Initialize input validator
+        self._validator = ConversationValidator(error_target=ErrorTarget.RELEVANCE_EVALUATOR)
+
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
@@ -153,6 +160,20 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         """
         return super().__call__(*args, **kwargs)
 
+    @override
+    async def _real_call(self, **kwargs):
+        """The asynchronous call where real end-to-end evaluation logic is performed.
+
+        :keyword kwargs: The inputs to evaluate.
+        :type kwargs: Dict
+        :return: The evaluation result.
+        :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
+        """
+        # Validate input before processing
+        self._validator.validate_eval_input(kwargs)
+
+        return await super()._real_call(**kwargs)
+
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:  # type: ignore[override]
         """Do a relevance evaluation.
 
@@ -163,6 +184,12 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         :return: The evaluation result.
         :rtype: Dict
         """
+        # Import helper functions from base class module
+        from azure.ai.evaluation._evaluators._common._base_prompty_eval import (
+            _is_intermediate_response,
+            _preprocess_messages,
+        )
+
         if "query" not in eval_input and "response" not in eval_input:
             raise EvaluationException(
                 message="Only text conversation inputs are supported.",
@@ -171,12 +198,25 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.CONVERSATION,
             )
+
+        # Check for intermediate response
+        if _is_intermediate_response(eval_input.get("response")):
+            return self._not_applicable_result(
+                "Intermediate response. Please provide the agent's final response for evaluation.",
+                self._threshold,
+            )
+
+        # Preprocess messages if they are lists
+        if isinstance(eval_input.get("response"), list):
+            eval_input["response"] = _preprocess_messages(eval_input["response"])
+        if isinstance(eval_input.get("query"), list):
+            eval_input["query"] = _preprocess_messages(eval_input["query"])
         if not isinstance(eval_input["query"], str):
             eval_input["query"] = reformat_conversation_history(eval_input["query"], logger)
         if not isinstance(eval_input["response"], str):
             eval_input["response"] = reformat_agent_response(eval_input["response"], logger)
         result = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-        llm_output = result.get("llm_output")
+        llm_output = result.get("llm_output", result)
         score = math.nan
 
         if isinstance(llm_output, dict):
@@ -199,12 +239,9 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
                 f"{self._result_key}_sample_output": result.get("sample_output", ""),
             }
 
-        if logger:
-            logger.warning("LLM output is not a dictionary, returning NaN for the score.")
-
-        binary_result = self._get_binary_result(score)
-        return {
-            self._result_key: float(score),
-            f"{self._result_key}_result": binary_result,
-            f"{self._result_key}_threshold": self._threshold,
-        }
+        raise EvaluationException(
+            message="Evaluator returned invalid output.",
+            blame=ErrorBlame.SYSTEM_ERROR,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=ErrorTarget.EVALUATE,
+        )

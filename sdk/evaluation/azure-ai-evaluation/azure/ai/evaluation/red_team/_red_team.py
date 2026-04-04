@@ -9,11 +9,21 @@ import math
 import os
 from pathlib import Path
 import random
+import sys
 import time
 import uuid
 from datetime import datetime
 from typing import Callable, Dict, List, Optional, Union, cast, Any
 from tqdm import tqdm
+
+
+def _safe_tqdm_write(msg: str) -> None:
+    """Write a message via tqdm, falling back gracefully on encoding errors (e.g. Windows cp1252)."""
+    try:
+        tqdm.write(msg)
+    except UnicodeEncodeError:
+        tqdm.write(msg.encode(sys.stdout.encoding or "utf-8", errors="replace").decode(sys.stdout.encoding or "utf-8"))
+
 
 # Azure AI Evaluation imports
 from azure.ai.evaluation._constants import TokenScope
@@ -24,7 +34,9 @@ from azure.ai.evaluation._evaluate._evaluate import (
 )  # TODO: uncomment when app insights checked in
 from azure.ai.evaluation._model_configurations import EvaluationResult
 from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager
-from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
+from azure.ai.evaluation.simulator._model_tools._generated_rai_client import (
+    GeneratedRAIClient,
+)
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 from azure.ai.evaluation._model_configurations import (
     AzureOpenAIModelConfiguration,
@@ -55,11 +67,15 @@ from ._attack_objective_generator import (
 )
 
 # PyRIT imports
-from pyrit.common import initialize_pyrit, DUCK_DB
+from pyrit.memory import CentralMemory, SQLiteMemory
 from pyrit.prompt_target import PromptChatTarget
 
 # Local imports - constants and utilities
-from ._utils.constants import TASK_STATUS, MAX_SAMPLING_ITERATIONS_MULTIPLIER, RISK_TO_NUM_SUBTYPE_MAP
+from ._utils.constants import (
+    TASK_STATUS,
+    MAX_SAMPLING_ITERATIONS_MULTIPLIER,
+    RISK_TO_NUM_SUBTYPE_MAP,
+)
 from ._utils.logging_utils import (
     setup_logger,
     log_section_header,
@@ -78,10 +94,12 @@ from ._utils.file_utils import create_file_manager
 from ._utils.metric_mapping import get_attack_objective_from_risk_category
 from ._utils.objective_utils import extract_risk_subtype, get_objective_id
 
-from ._orchestrator_manager import OrchestratorManager
+from ._orchestrator_manager import OrchestratorManager, _ORCHESTRATOR_AVAILABLE
 from ._evaluation_processor import EvaluationProcessor
 from ._mlflow_integration import MLflowIntegration
 from ._result_processor import ResultProcessor
+from ._foundry import FoundryExecutionManager, StrategyMapper
+from ._utils._rai_service_target import AzureRAIServiceTarget
 
 
 @experimental
@@ -205,7 +223,8 @@ class RedTeam:
 
         # Initialize RAI client
         self.generated_rai_client = GeneratedRAIClient(
-            azure_ai_project=self.azure_ai_project, token_manager=self.token_manager.credential
+            azure_ai_project=self.azure_ai_project,
+            token_manager=self.token_manager.credential,
         )
 
         # Initialize a cache for attack objectives by risk category and strategy
@@ -220,8 +239,8 @@ class RedTeam:
         # keep track of prompt content to risk_sub_type mapping for evaluation
         self.prompt_to_risk_subtype = {}
 
-        # Initialize PyRIT
-        initialize_pyrit(memory_db_type=DUCK_DB)
+        # Initialize PyRIT memory
+        CentralMemory.set_memory_instance(SQLiteMemory())
 
         # Initialize attack objective generator
         self.attack_objective_generator = _AttackObjectiveGenerator(
@@ -386,7 +405,12 @@ class RedTeam:
             if custom_objectives:
                 # Use custom objectives for this risk category
                 return await self._get_custom_attack_objectives(
-                    risk_cat_value, num_objectives, num_objectives_with_subtypes, strategy, current_key, is_agent_target
+                    risk_cat_value,
+                    num_objectives,
+                    num_objectives_with_subtypes,
+                    strategy,
+                    current_key,
+                    is_agent_target,
                 )
             else:
                 # No custom objectives for this risk category, but risk_categories was specified
@@ -574,7 +598,13 @@ class RedTeam:
                         self.prompt_to_risk_subtype[content] = risk_subtype
 
         # Store in cache and return
-        self._cache_attack_objectives(current_key, risk_cat_value, strategy, selected_prompts, selected_cat_objectives)
+        self._cache_attack_objectives(
+            current_key,
+            risk_cat_value,
+            strategy,
+            selected_prompts,
+            selected_cat_objectives,
+        )
         return selected_prompts
 
     async def _get_rai_attack_objectives(
@@ -652,7 +682,6 @@ class RedTeam:
                         target="model",
                         client_id=client_id,
                     )
-
                     if isinstance(objectives_response, list):
                         self.logger.debug(f"Fallback API returned {len(objectives_response)} model-type objectives")
 
@@ -680,12 +709,22 @@ class RedTeam:
 
         # Filter and select objectives using num_objectives_with_subtypes
         selected_cat_objectives = self._filter_and_select_objectives(
-            objectives_response, strategy, baseline_objectives_exist, baseline_key, num_objectives_with_subtypes
+            objectives_response,
+            strategy,
+            baseline_objectives_exist,
+            baseline_key,
+            num_objectives_with_subtypes,
         )
 
         # Extract content and cache
         selected_prompts = self._extract_objective_content(selected_cat_objectives)
-        self._cache_attack_objectives(current_key, risk_cat_value, strategy, selected_prompts, selected_cat_objectives)
+        self._cache_attack_objectives(
+            current_key,
+            risk_cat_value,
+            strategy,
+            selected_prompts,
+            selected_cat_objectives,
+        )
 
         return selected_prompts
 
@@ -716,7 +755,16 @@ class RedTeam:
                     target=target_type_str,
                 )
 
-            xpia_prompts = await get_xpia_prompts_with_retry()
+            xpia_prompts = None
+            try:
+                xpia_prompts = await get_xpia_prompts_with_retry()
+            except Exception as agent_error:
+                if target_type_str == "agent":
+                    self.logger.warning(
+                        f"Agent-type XPIA prompt fetch failed ({agent_error}), falling back to model-type"
+                    )
+                else:
+                    raise
 
             # If no agent XPIA prompts and we're trying agent, fallback to model
             if (not xpia_prompts or len(xpia_prompts) == 0) and target_type_str == "agent":
@@ -820,7 +868,11 @@ class RedTeam:
 
                         # Build the contexts list: XPIA context + any baseline contexts with agent fields
                         contexts = [
-                            {"content": formatted_context, "context_type": context_type, "tool_name": tool_name}
+                            {
+                                "content": formatted_context,
+                                "context_type": context_type,
+                                "tool_name": tool_name,
+                            }
                         ]
 
                         # Add baseline contexts with agent fields as separate context entries
@@ -943,7 +995,7 @@ class RedTeam:
                 f"(available: {len(objectives_response)})"
             )
             self.logger.info(selection_msg)
-            tqdm.write(f"[INFO] {selection_msg}")
+            _safe_tqdm_write(f"[INFO] {selection_msg}")
 
         if len(selected_cat_objectives) < num_objectives:
             self.logger.warning(
@@ -1117,7 +1169,7 @@ class RedTeam:
 
         try:
             start_time = time.time()
-            tqdm.write(f"▶️ Starting task: {strategy_name} strategy for {risk_category.value} risk category")
+            _safe_tqdm_write(f"▶️ Starting task: {strategy_name} strategy for {risk_category.value} risk category")
 
             # Get converter and orchestrator function
             converter = get_converter_for_strategy(
@@ -1178,7 +1230,7 @@ class RedTeam:
                     f"Error during evaluation for {strategy_name}/{risk_category.value}",
                     e,
                 )
-                tqdm.write(f"⚠️ Evaluation error for {strategy_name}/{risk_category.value}: {str(e)}")
+                _safe_tqdm_write(f"⚠️ Evaluation error for {strategy_name}/{risk_category.value}: {str(e)}")
                 self.red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS["FAILED"]
 
             # Update progress
@@ -1194,12 +1246,12 @@ class RedTeam:
                     remaining_tasks = self.total_tasks - self.completed_tasks
                     est_remaining_time = avg_time_per_task * remaining_tasks if avg_time_per_task > 0 else 0
 
-                    tqdm.write(
+                    _safe_tqdm_write(
                         f"✅ Completed task {self.completed_tasks}/{self.total_tasks} ({completion_pct:.1f}%) - {strategy_name}/{risk_category.value} in {elapsed_time:.1f}s"
                     )
-                    tqdm.write(f"   Est. remaining: {est_remaining_time/60:.1f} minutes")
+                    _safe_tqdm_write(f"   Est. remaining: {est_remaining_time/60:.1f} minutes")
                 else:
-                    tqdm.write(
+                    _safe_tqdm_write(
                         f"✅ Completed task {self.completed_tasks}/{self.total_tasks} ({completion_pct:.1f}%) - {strategy_name}/{risk_category.value} in {elapsed_time:.1f}s"
                     )
 
@@ -1271,6 +1323,7 @@ class RedTeam:
         self.taxonomy_risk_categories = taxonomy_risk_categories or {}
         is_agent_target: Optional[bool] = kwargs.get("is_agent_target", False)
         client_id: Optional[str] = kwargs.get("client_id")
+        http_timeout: Optional[int] = kwargs.get("_http_timeout")
 
         with UserAgentSingleton().add_useragent_product(user_agent):
             # Initialize scan
@@ -1334,7 +1387,7 @@ class RedTeam:
                         )
 
             # Show risk categories to user
-            tqdm.write(f"📊 Risk categories: {[rc.value for rc in self.risk_categories]}")
+            _safe_tqdm_write(f"📊 Risk categories: {[rc.value for rc in self.risk_categories]}")
             self.logger.info(f"Risk categories to process: {[rc.value for rc in self.risk_categories]}")
 
             # Setup attack strategies
@@ -1346,43 +1399,68 @@ class RedTeam:
                 eval_run = {}
             else:
                 eval_run = self.mlflow_integration.start_redteam_mlflow_run(self.azure_ai_project, scan_name)
-                tqdm.write(f"🔗 Track your red team scan in AI Foundry: {self.mlflow_integration.ai_studio_url}")
+                _safe_tqdm_write(f"🔗 Track your red team scan in AI Foundry: {self.mlflow_integration.ai_studio_url}")
 
                 # Update result processor with the AI studio URL now that it's available
                 self.result_processor.ai_studio_url = self.mlflow_integration.ai_studio_url
 
             # Process strategies and execute scan
-            flattened_attack_strategies = get_flattened_attack_strategies(attack_strategies)
-            self._validate_strategies(flattened_attack_strategies)
+            try:
+                flattened_attack_strategies = get_flattened_attack_strategies(attack_strategies)
+                self._validate_strategies(flattened_attack_strategies)
 
-            # Calculate total tasks and initialize tracking
-            self.total_tasks = len(self.risk_categories) * len(flattened_attack_strategies)
-            tqdm.write(f"📋 Planning {self.total_tasks} total tasks")
-            self._initialize_tracking_dict(flattened_attack_strategies)
+                # Calculate total tasks and initialize tracking
+                self.total_tasks = len(self.risk_categories) * len(flattened_attack_strategies)
+                _safe_tqdm_write(f"📋 Planning {self.total_tasks} total tasks")
+                self._initialize_tracking_dict(flattened_attack_strategies)
 
-            # Fetch attack objectives
-            all_objectives = await self._fetch_all_objectives(
-                flattened_attack_strategies, application_scenario, is_agent_target, client_id
-            )
+                # Fetch attack objectives
+                all_objectives = await self._fetch_all_objectives(
+                    flattened_attack_strategies,
+                    application_scenario,
+                    is_agent_target,
+                    client_id,
+                )
 
-            chat_target = get_chat_target(target)
-            self.chat_target = chat_target
+                chat_target = get_chat_target(target, credential=self.credential, http_timeout=http_timeout)
+                self.chat_target = chat_target
 
-            # Execute attacks
-            await self._execute_attacks(
-                flattened_attack_strategies,
-                all_objectives,
-                scan_name,
-                skip_upload,
-                output_path,
-                timeout,
-                skip_evals,
-                parallel_execution,
-                max_parallel_tasks,
-            )
+                # Execute attacks - use Foundry if orchestrator is not available
+                if _ORCHESTRATOR_AVAILABLE:
+                    self.logger.info("Using orchestrator-based execution (legacy PyRIT path)")
+                    self.logger.info("Consider upgrading to PyRIT 0.11+ for improved Foundry-based execution")
+                    await self._execute_attacks(
+                        flattened_attack_strategies,
+                        all_objectives,
+                        scan_name,
+                        skip_upload,
+                        output_path,
+                        timeout,
+                        skip_evals,
+                        parallel_execution,
+                        max_parallel_tasks,
+                    )
+                else:
+                    self.logger.info("Using Foundry-based execution (orchestrator not available)")
+                    await self._execute_attacks_with_foundry(
+                        flattened_attack_strategies,
+                        all_objectives,
+                        chat_target,
+                        timeout,
+                        skip_evals,
+                    )
 
-            # Process and return results
-            return await self._finalize_results(skip_upload, skip_evals, eval_run, output_path, scan_name)
+                # Process and return results
+                return await self._finalize_results(skip_upload, skip_evals, eval_run, output_path, scan_name)
+            except Exception as e:
+                self.logger.error(
+                    f"Red team scan execution failed for run {getattr(eval_run, 'id', 'unknown')}: {str(e)}",
+                    exc_info=True,
+                )
+                # Ensure the run status is updated to Failed if an upload was started
+                if not skip_upload and self.mlflow_integration is not None:
+                    self.mlflow_integration.update_run_status(eval_run, "Failed")
+                raise
 
     def _initialize_scan(self, scan_name: Optional[str], application_scenario: Optional[str]):
         """Initialize scan-specific variables."""
@@ -1413,8 +1491,8 @@ class RedTeam:
         self._setup_logging_filters()
 
         log_section_header(self.logger, "Starting red team scan")
-        tqdm.write(f"🚀 STARTING RED TEAM SCAN")
-        tqdm.write(f"📂 Output directory: {self.scan_output_dir}")
+        _safe_tqdm_write(f"🚀 STARTING RED TEAM SCAN")
+        _safe_tqdm_write(f"📂 Output directory: {self.scan_output_dir}")
 
     def _setup_logging_filters(self):
         """Setup logging filters to suppress unwanted logs."""
@@ -1481,7 +1559,10 @@ class RedTeam:
 
         # Calculate and log num_objectives_with_subtypes once globally
         num_objectives = self.attack_objective_generator.num_objectives
-        max_num_subtypes = max((RISK_TO_NUM_SUBTYPE_MAP.get(rc, 0) for rc in self.risk_categories), default=0)
+        max_num_subtypes = max(
+            (RISK_TO_NUM_SUBTYPE_MAP.get(rc, 0) for rc in self.risk_categories),
+            default=0,
+        )
         num_objectives_with_subtypes = max(num_objectives, max_num_subtypes)
 
         if num_objectives_with_subtypes != num_objectives:
@@ -1490,7 +1571,7 @@ class RedTeam:
                 f"to ensure adequate coverage of {max_num_subtypes} subtypes"
             )
             self.logger.warning(warning_msg)
-            tqdm.write(f"[WARNING] {warning_msg}")
+            _safe_tqdm_write(f"[WARNING] {warning_msg}")
 
         # First fetch baseline objectives for all risk categories
         self.logger.info("Fetching baseline objectives for all risk categories")
@@ -1508,7 +1589,7 @@ class RedTeam:
             status_msg = f"📝 Fetched baseline objectives for {risk_category.value}: {len(baseline_objectives)}/{num_objectives_with_subtypes} objectives"
             if len(baseline_objectives) < num_objectives_with_subtypes:
                 status_msg += f" (⚠️ fewer than expected)"
-            tqdm.write(status_msg)
+            _safe_tqdm_write(status_msg)
 
         # Then fetch objectives for other strategies
         strategy_count = len(flattened_attack_strategies)
@@ -1517,7 +1598,7 @@ class RedTeam:
             if strategy_name == "baseline":
                 continue
 
-            tqdm.write(f"🔄 Fetching objectives for strategy {i+1}/{strategy_count}: {strategy_name}")
+            _safe_tqdm_write(f"🔄 Fetching objectives for strategy {i+1}/{strategy_count}: {strategy_name}")
             all_objectives[strategy_name] = {}
 
             for risk_category in self.risk_categories:
@@ -1568,7 +1649,7 @@ class RedTeam:
 
             if not objectives:
                 self.logger.warning(f"No objectives found for {strategy_name}+{risk_category.value}, skipping")
-                tqdm.write(f"⚠️ No objectives found for {strategy_name}/{risk_category.value}, skipping")
+                _safe_tqdm_write(f"⚠️ No objectives found for {strategy_name}/{risk_category.value}, skipping")
                 self.red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS["COMPLETED"]
                 async with progress_bar_lock:
                     progress_bar.update(1)
@@ -1594,11 +1675,17 @@ class RedTeam:
         progress_bar.close()
 
     async def _process_orchestrator_tasks(
-        self, orchestrator_tasks: List, parallel_execution: bool, max_parallel_tasks: int, timeout: int
+        self,
+        orchestrator_tasks: List,
+        parallel_execution: bool,
+        max_parallel_tasks: int,
+        timeout: int,
     ):
         """Process orchestrator tasks either in parallel or sequentially."""
         if parallel_execution and orchestrator_tasks:
-            tqdm.write(f"⚙️ Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)")
+            _safe_tqdm_write(
+                f"⚙️ Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)"
+            )
 
             # Process tasks in batches
             for i in range(0, len(orchestrator_tasks), max_parallel_tasks):
@@ -1609,27 +1696,323 @@ class RedTeam:
                     await asyncio.wait_for(asyncio.gather(*batch), timeout=timeout * 2)
                 except asyncio.TimeoutError:
                     self.logger.warning(f"Batch {i//max_parallel_tasks+1} timed out")
-                    tqdm.write(f"⚠️ Batch {i//max_parallel_tasks+1} timed out, continuing with next batch")
+                    _safe_tqdm_write(f"⚠️ Batch {i//max_parallel_tasks+1} timed out, continuing with next batch")
                     continue
                 except Exception as e:
                     self.logger.error(f"Error processing batch {i//max_parallel_tasks+1}: {str(e)}")
                     continue
         else:
             # Sequential execution
-            tqdm.write("⚙️ Processing tasks sequentially")
+            _safe_tqdm_write("⚙️ Processing tasks sequentially")
             for i, task in enumerate(orchestrator_tasks):
                 try:
                     await asyncio.wait_for(task, timeout=timeout)
                 except asyncio.TimeoutError:
                     self.logger.warning(f"Task {i+1} timed out")
-                    tqdm.write(f"⚠️ Task {i+1} timed out, continuing with next task")
+                    _safe_tqdm_write(f"⚠️ Task {i+1} timed out, continuing with next task")
                     continue
                 except Exception as e:
                     self.logger.error(f"Error processing task {i+1}: {str(e)}")
                     continue
 
+    async def _execute_attacks_with_foundry(
+        self,
+        flattened_attack_strategies: List,
+        all_objectives: Dict,
+        chat_target: PromptChatTarget,
+        timeout: int,
+        skip_evals: bool,
+    ):
+        """Execute attacks using Foundry scenario-based approach.
+
+        This method uses PyRIT's Foundry scenario system instead of the legacy
+        orchestrator approach. It batches all strategies per risk category into
+        a single Foundry scenario execution.
+
+        :param flattened_attack_strategies: List of attack strategies to execute
+        :param all_objectives: Dictionary mapping strategy -> risk_category -> objectives
+        :param chat_target: The target to attack
+        :param timeout: Timeout for operations
+        :param skip_evals: Whether to skip evaluations
+        """
+        log_section_header(self.logger, "Starting Foundry-based attack execution")
+
+        # Create progress bar
+        progress_bar = tqdm(
+            total=self.total_tasks,
+            desc="Scanning (Foundry): ",
+            ncols=100,
+            unit="scan",
+            bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]",
+        )
+        progress_bar.set_postfix({"current": "initializing"})
+
+        try:
+            # Create RAI service target for adversarial chat.
+            # This must NOT be the user's chat_target — PyRIT uses adversarial_chat
+            # as the converter_target for TenseConverter and for multi-turn attacks.
+            # Using the user's callback would cause the callback response to leak
+            # into converted prompts.
+            adversarial_template_key = self._get_adversarial_template_key(flattened_attack_strategies)
+            is_crescendo = adversarial_template_key == "orchestrators/crescendo/crescendo_variant_1.yaml"
+            adversarial_chat = AzureRAIServiceTarget(
+                client=self.generated_rai_client,
+                api_version=None,
+                model="gpt-4",
+                prompt_template_key=adversarial_template_key,
+                logger=self.logger,
+                is_one_dp_project=self._one_dp_project,
+                crescendo_format=is_crescendo,
+            )
+
+            foundry_manager = FoundryExecutionManager(
+                credential=self.credential,
+                azure_ai_project=self.azure_ai_project,
+                logger=self.logger,
+                output_dir=self.scan_output_dir,
+                adversarial_chat_target=adversarial_chat,
+            )
+
+            # Build objectives by risk category from cached attack_objectives
+            # This ensures we use the same objectives that were fetched, with proper context
+            objectives_by_risk: Dict[str, List[Dict]] = {}
+
+            for risk_category in self.risk_categories:
+                risk_value = risk_category.value
+                objectives_by_risk[risk_value] = []
+
+                # Get baseline objectives for this risk category from cache
+                baseline_key = ((get_attack_objective_from_risk_category(risk_category).lower(),), "baseline")
+                self.logger.debug(f"Looking for baseline_key: {baseline_key}")
+                self.logger.debug(f"Available keys in attack_objectives: {list(self.attack_objectives.keys())}")
+                if baseline_key in self.attack_objectives:
+                    cached_data = self.attack_objectives[baseline_key]
+                    selected_objectives = cached_data.get("selected_objectives", [])
+                    self.logger.debug(f"Found {len(selected_objectives)} cached objectives for {risk_value}")
+
+                    for obj in selected_objectives:
+                        # Build objective dict in the expected format
+                        obj_dict = self._build_objective_dict_from_cached(obj, risk_value)
+                        if obj_dict:
+                            objectives_by_risk[risk_value].append(obj_dict)
+                        else:
+                            self.logger.debug(
+                                f"_build_objective_dict_from_cached returned None for obj type: {type(obj)}"
+                            )
+                else:
+                    self.logger.debug(f"baseline_key {baseline_key} NOT found in attack_objectives")
+
+            # Log objectives count
+            for risk_value, objs in objectives_by_risk.items():
+                self.logger.info(f"Prepared {len(objs)} objectives for {risk_value}")
+
+            # Map strategies to Foundry strategies (filtering out special handling strategies)
+            foundry_strategies, special_strategies = StrategyMapper.filter_for_foundry(flattened_attack_strategies)
+            mapped_strategies = StrategyMapper.map_strategies(foundry_strategies)
+
+            self.logger.info(
+                f"Mapped {len(foundry_strategies)} strategies to {len(mapped_strategies)} Foundry strategies "
+                f"({len(special_strategies)} strategies require special handling)"
+            )
+
+            # Execute attacks via Foundry
+            # Pass flattened_attack_strategies (not foundry_strategies) so Baseline detection works
+            progress_bar.set_postfix({"current": "executing"})
+            foundry_results = await foundry_manager.execute_attacks(
+                objective_target=chat_target,
+                risk_categories=self.risk_categories,
+                attack_strategies=flattened_attack_strategies,
+                objectives_by_risk=objectives_by_risk,
+            )
+
+            # Update red_team_info with Foundry results.
+            # The RAIServiceScorer already evaluated each response during attack
+            # execution, so results (attack_success, score) are in the JSONL.
+            # No need for a second evaluation_processor.evaluate() call.
+            for strategy_name, risk_data in foundry_results.items():
+                if strategy_name not in self.red_team_info:
+                    self.red_team_info[strategy_name] = {}
+
+                for risk_value, result_data in risk_data.items():
+                    data_file = result_data.get("data_file", "")
+
+                    self.red_team_info[strategy_name][risk_value] = {
+                        "data_file": data_file,
+                        "evaluation_result_file": "",
+                        "evaluation_result": None,
+                        "status": (
+                            TASK_STATUS["COMPLETED"]
+                            if result_data.get("status") == "completed"
+                            else TASK_STATUS["FAILED"]
+                        ),
+                        "asr": result_data.get("asr", 0.0),
+                    }
+
+                    self.completed_tasks += 1
+                    progress_bar.update(1)
+
+            self.logger.info("Foundry-based attack execution completed")
+
+        except Exception as e:
+            self.logger.error(f"Error in Foundry execution: {str(e)}")
+            import traceback
+
+            self.logger.debug(traceback.format_exc())
+
+            # Mark all tasks as failed
+            for strategy in flattened_attack_strategies:
+                strategy_name = get_strategy_name(strategy)
+                for risk_category in self.risk_categories:
+                    if strategy_name in self.red_team_info and risk_category.value in self.red_team_info[strategy_name]:
+                        self.red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS["FAILED"]
+                    progress_bar.update(1)
+            raise
+
+        finally:
+            progress_bar.close()
+
+    @staticmethod
+    def _get_adversarial_template_key(flattened_attack_strategies: List) -> str:
+        """Select the appropriate RAI service template key for the adversarial chat target.
+
+        Different attack strategies require different prompt templates:
+        - Crescendo: uses the crescendo conversation template
+        - MultiTurn (RedTeaming): uses the red teaming text generation template
+        - Single-turn converters (e.g., Tense): uses the tense converter template
+
+        :param flattened_attack_strategies: List of attack strategies being executed
+        :type flattened_attack_strategies: List
+        :return: The prompt template key for the AzureRAIServiceTarget
+        :rtype: str
+        """
+        for strategy in flattened_attack_strategies:
+            if isinstance(strategy, list):
+                if AttackStrategy.Crescendo in strategy:
+                    return "orchestrators/crescendo/crescendo_variant_1.yaml"
+                if AttackStrategy.MultiTurn in strategy:
+                    return "orchestrators/red_teaming/text_generation.yaml"
+            else:
+                if strategy == AttackStrategy.Crescendo:
+                    return "orchestrators/crescendo/crescendo_variant_1.yaml"
+                if strategy == AttackStrategy.MultiTurn:
+                    return "orchestrators/red_teaming/text_generation.yaml"
+
+        return "prompt_converters/tense_converter.yaml"
+
+    def _build_objective_dict_from_cached(self, obj: Any, risk_value: str) -> Optional[Dict]:
+        """Build objective dictionary from cached objective data.
+
+        :param obj: Cached objective (can be dict or other format)
+        :type obj: Any
+        :param risk_value: Risk category value
+        :type risk_value: str
+        :return: Objective dictionary in the expected format
+        :rtype: Optional[Dict]
+        """
+        if not obj:
+            return None
+
+        # Handle AttackObjective objects (from OneDp API)
+        if hasattr(obj, "as_dict"):
+            obj_dict = obj.as_dict()
+        elif isinstance(obj, dict):
+            # Already in dict format
+            obj_dict = obj.copy()
+        else:
+            obj_dict = None
+
+        if obj_dict is None:
+            if isinstance(obj, str):
+                # String content - wrap in expected format
+                return {
+                    "messages": [{"content": obj}],
+                    "metadata": {"risk_category": risk_value},
+                }
+            return None
+
+        # Ensure messages format
+        if "messages" not in obj_dict and "content" in obj_dict:
+            content = obj_dict["content"]
+            context = obj_dict.get("context", "")
+
+            # Build context list if we have context
+            context_items = []
+            if context:
+                if isinstance(context, list):
+                    context_items = context
+                elif isinstance(context, dict):
+                    context_items = [context]
+                elif isinstance(context, str):
+                    context_items = [{"content": context}]
+
+            obj_dict["messages"] = [
+                {
+                    "content": content,
+                    "context": context_items,
+                }
+            ]
+
+        # Add metadata if not present
+        if "metadata" not in obj_dict:
+            obj_dict["metadata"] = {
+                "risk_category": risk_value,
+                "risk_subtype": obj_dict.get("risk_subtype", ""),
+            }
+
+        return obj_dict
+
+    async def _handle_baseline_with_foundry_results(
+        self,
+        objectives_by_risk: Dict[str, List[Dict]],
+        progress_bar: tqdm,
+        skip_evals: bool,
+    ):
+        """Handle Baseline strategy using Foundry-generated results.
+
+        Baseline attacks are essentially the objectives sent without any
+        converter/transformation. Since Foundry includes baseline in its
+        execution, we can extract baseline results from the JSONL files.
+
+        :param objectives_by_risk: Objectives organized by risk category
+        :param progress_bar: Progress bar to update
+        :param skip_evals: Whether to skip evaluations
+        """
+        strategy_name = "baseline"
+
+        if strategy_name not in self.red_team_info:
+            self.red_team_info[strategy_name] = {}
+
+        for risk_category in self.risk_categories:
+            risk_value = risk_category.value
+
+            # Check if we have existing data from Foundry for this risk
+            # Baseline should share the same data file as other strategies
+            existing_data_file = ""
+            for other_strategy, risk_data in self.red_team_info.items():
+                if other_strategy != strategy_name and risk_value in risk_data:
+                    data_file = risk_data[risk_value].get("data_file", "")
+                    if data_file and os.path.exists(data_file):
+                        existing_data_file = data_file
+                        break
+
+            self.red_team_info[strategy_name][risk_value] = {
+                "data_file": existing_data_file,
+                "evaluation_result_file": "",
+                "evaluation_result": None,
+                "status": (TASK_STATUS["COMPLETED"] if existing_data_file else TASK_STATUS["FAILED"]),
+                "asr": 0.0,  # Will be calculated from evaluation
+            }
+
+            self.completed_tasks += 1
+            progress_bar.update(1)
+
     async def _finalize_results(
-        self, skip_upload: bool, skip_evals: bool, eval_run, output_path: str, scan_name: str
+        self,
+        skip_upload: bool,
+        skip_evals: bool,
+        eval_run,
+        output_path: str,
+        scan_name: str,
     ) -> RedTeamResult:
         """Process and finalize scan results."""
         log_section_header(self.logger, "Processing results")
@@ -1698,18 +2081,18 @@ class RedTeam:
         # Display final scorecard and results
         if red_team_result.scan_result:
             scorecard = format_scorecard(red_team_result.scan_result)
-            tqdm.write(scorecard)
+            _safe_tqdm_write(scorecard)
 
             # Print URL for detailed results
             studio_url = red_team_result.scan_result.get("studio_url", "")
             if studio_url:
-                tqdm.write(f"\nDetailed results available at:\n{studio_url}")
+                _safe_tqdm_write(f"\nDetailed results available at:\n{studio_url}")
 
             # Print the output directory path
             if self.scan_output_dir:
-                tqdm.write(f"\n📂 All scan files saved to: {self.scan_output_dir}")
+                _safe_tqdm_write(f"\n📂 All scan files saved to: {self.scan_output_dir}")
 
-        tqdm.write(f"✅ Scan completed successfully!")
+        _safe_tqdm_write(f"✅ Scan completed successfully!")
         self.logger.info("Scan completed successfully")
 
         # Close file handlers

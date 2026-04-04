@@ -11,10 +11,8 @@ from opentelemetry._logs import (
     get_logger_provider,
     set_logger_provider,
 )
-from opentelemetry.sdk._logs import (
-    LoggerProvider,
-    LoggingHandler,
-)
+from opentelemetry.sdk._logs import LoggerProvider
+from opentelemetry.instrumentation.logging.handler import LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
@@ -35,7 +33,7 @@ try:
     val = 1 / 0
     print(val)
 except ZeroDivisionError:
-    logger.exception("Error: Division by zero")
+    logger.exception("Error: Division by zero")  # pylint: disable=do-not-use-logging-exception
 
 try:
     val = 1 / 0

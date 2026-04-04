@@ -319,15 +319,18 @@ async def examples_async():
         # gets all items within the feed range.
         # [START query_items_feed_range]
         async for feed_range in container.read_feed_ranges():
-            async for queried_item in container.query_items(
-                    query='SELECT * from c',
-                    feed_range=feed_range):
+            items_in_range = container.query_items(
+                query='SELECT * from c',
+                feed_range=feed_range
+            )
+            async for queried_item in items_in_range:
                 print(json.dumps(queried_item, indent=True))
-        # [END query_items_param]
+        # [END query_items_feed_range]
 
         # Get the feed ranges list from container.
         # [START read_feed_ranges]
-        feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
+        feed_ranges_iterable = container.read_feed_ranges()
+        feed_ranges = [feed_range async for feed_range in feed_ranges_iterable]
         # [END read_feed_ranges]
 
         # Get a feed range from a partition key.
@@ -366,22 +369,22 @@ async def examples_async():
         print("Sample done running!")
 
         # configure availability strategy config on request level
-        # [START read_item_with_availability_strategy_config]
+        # [START read_item_with_availability_strategy]
         strategy = {'threshold_ms':500, 'threshold_steps_ms':100}
         await container.read_item(
             item="id1",
             partition_key="pk1",
-            availability_strategy_config=strategy)
-        # [END read_item_with_availability_strategy_config]
+            availability_strategy=strategy)
+        # [END read_item_with_availability_strategy]
 
         # disable availability strategy config on request level
-        # [START read_item_with_disabled_availability_strategy_config]
+        # [START read_item_with_disabled_availability_strategy]
         await container.read_item(
             item="id1",
             partition_key="pk1",
-            availability_strategy_config=None
+            availability_strategy=None
         )
-        # [END read_item_with_disabled_availability_strategy_config]
+        # [END read_item_with_disabled_availability_strategy]
 
 if __name__ == "__main__":
     asyncio.run(examples_async())

@@ -32,7 +32,7 @@ def configure_logging(args: argparse.Namespace, fmt: str = "%(asctime)s [%(level
     logger.setLevel(numeric_level)
 
     # Propagate logger config globally if needed
-    logging.basicConfig(level=numeric_level, format=fmt)
+    logging.basicConfig(level=numeric_level, format=fmt, force=True)
 
 
 def now() -> str:

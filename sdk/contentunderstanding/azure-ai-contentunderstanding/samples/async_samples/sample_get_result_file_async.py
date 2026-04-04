@@ -36,12 +36,13 @@ USAGE:
 import asyncio
 import os
 from pathlib import Path
+from typing import cast
 
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
-    AnalyzeInput,
-    AnalyzeResult,
+    AnalysisInput,
+    AnalysisResult,
     AudioVisualContent,
 )
 from azure.core.credentials import AzureKeyCredential
@@ -55,7 +56,9 @@ async def main() -> None:
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client:
         # [START analyze_video_for_result_files]
         # Use a sample video URL to get keyframes for GetResultFile testing
         # You can replace this with your own video file URL
@@ -67,7 +70,7 @@ async def main() -> None:
         # Analyze and wait for completion
         analyze_operation = await client.begin_analyze(
             analyzer_id="prebuilt-videoSearch",
-            inputs=[AnalyzeInput(url=video_url)],
+            inputs=[AnalysisInput(url=video_url)],
         )
 
         # Get the operation ID - this is needed to retrieve result files later
@@ -75,7 +78,7 @@ async def main() -> None:
         print(f"  Operation ID: {operation_id}")
 
         print("  Waiting for analysis to complete...")
-        result: AnalyzeResult = await analyze_operation.result()
+        result: AnalysisResult = await analyze_operation.result()
         # [END analyze_video_for_result_files]
 
         # [START get_result_file]
@@ -84,11 +87,14 @@ async def main() -> None:
             return
 
         # For video analysis, keyframes would be found in AudioVisualContent.key_frame_times_ms
-        # Cast MediaContent to AudioVisualContent to access video-specific properties
-        video_content: AudioVisualContent = result.contents[0]  # type: ignore
+        # Cast AnalysisContent to AudioVisualContent to access video-specific properties
+        video_content = cast(AudioVisualContent, result.contents[0])
 
         # Print keyframe information
-        if video_content.key_frame_times_ms and len(video_content.key_frame_times_ms) > 0:
+        if (
+            video_content.key_frame_times_ms
+            and len(video_content.key_frame_times_ms) > 0
+        ):
             total_keyframes = len(video_content.key_frame_times_ms)
             first_frame_time_ms = video_content.key_frame_times_ms[0]
 
@@ -121,8 +127,12 @@ async def main() -> None:
             print(f"Keyframe image saved to: {output_path}")
         else:
             print("\nNote: This sample demonstrates GetResultFile API usage.")
-            print("      For video analysis with keyframes, use prebuilt-videoSearch analyzer.")
-            print("      Keyframes are available in AudioVisualContent.key_frame_times_ms.")
+            print(
+                "      For video analysis with keyframes, use prebuilt-videoSearch analyzer."
+            )
+            print(
+                "      Keyframes are available in AudioVisualContent.key_frame_times_ms."
+            )
         # [END get_result_file]
 
     if not isinstance(credential, AzureKeyCredential):

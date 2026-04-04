@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding: utf-8
 
 # -------------------------------------------------------------------------
@@ -51,17 +52,13 @@ class TestSampleUpdateDefaults(ContentUnderstandingClientTestBase):
 
         # Get deployment names from variables (playback) or environment (recording)
         # If not found, use defaults and record them
-        gpt_4_1_deployment = variables.setdefault(
-            "gpt_4_1_deployment",
-            os.getenv("GPT_4_1_DEPLOYMENT", "gpt-4.1")
-        )
+        gpt_4_1_deployment = variables.setdefault("gpt_4_1_deployment", os.getenv("GPT_4_1_DEPLOYMENT", "gpt-4.1"))
         gpt_4_1_mini_deployment = variables.setdefault(
-            "gpt_4_1_mini_deployment",
-            os.getenv("GPT_4_1_MINI_DEPLOYMENT", "gpt-4.1-mini")
+            "gpt_4_1_mini_deployment", os.getenv("GPT_4_1_MINI_DEPLOYMENT", "gpt-4.1-mini")
         )
         text_embedding_3_large_deployment = variables.setdefault(
             "text_embedding_3_large_deployment",
-            os.getenv("TEXT_EMBEDDING_3_LARGE_DEPLOYMENT", "text-embedding-3-large")
+            os.getenv("TEXT_EMBEDDING_3_LARGE_DEPLOYMENT", "text-embedding-3-large"),
         )
 
         client = self.create_client(endpoint=contentunderstanding_endpoint)

@@ -3,10 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-
-from azure.appconfiguration.provider import load, SettingSelector
-from sample_utilities import get_client_modifications
 import os
+from sample_utilities import get_client_modifications
+from azure.appconfiguration.provider import load, SettingSelector
 
 kwargs = get_client_modifications()
 connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]

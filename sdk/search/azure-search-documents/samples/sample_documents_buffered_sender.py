@@ -52,9 +52,7 @@ def sample_batching_client():
         "Location": {"type": "Point", "coordinates": [-122.131577, 47.678581]},
     }
 
-    with SearchIndexingBufferedSender(
-        service_endpoint, index_name, AzureKeyCredential(key)
-    ) as buffered_sender:
+    with SearchIndexingBufferedSender(service_endpoint, index_name, AzureKeyCredential(key)) as buffered_sender:
         # add upload actions
         buffered_sender.upload_documents(documents=[document])
         print(f"Uploaded: document {document['HotelId']}")

@@ -41,13 +41,17 @@ def main():
                 "fileSystemUser": {"nfsUser": {"groupId": 1000, "userId": 1001}},
                 "path": "/path",
                 "permissions": "ReadOnly",
-                "server": {"certificateObject": "<REDACTED>", "fqdn": "fullyqualified.domainname.com"},
+                "server": {
+                    "certificateObject": "<REDACTED>",
+                    "fqdn": "fullyqualified.domainname.com",
+                    "onCertificateConflictAction": "Update",
+                },
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-09-01-preview/Buckets_CreateOrUpdate.json
+# x-ms-original-file: 2025-12-15-preview/Buckets_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

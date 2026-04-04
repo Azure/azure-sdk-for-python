@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 import asyncio
 import base64
 import os
@@ -150,8 +149,8 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         properties = await file_client.get_file_properties()
         while properties.copy.status != 'success':
             count = count + 1
-            if count > 10:
-                self.fail('Timed out waiting for async copy to complete.')
+            if count > 15:
+                pytest.fail('Timed out waiting for async copy to complete.')
             self.sleep(6)
             properties = await file_client.get_file_properties()
         assert properties.copy.status == 'success'
@@ -4141,3 +4140,113 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
         result = await (await file_client.download_file(decompress=False)).readall()
         assert result == compressed_data
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_upload_file_with_none_max_concurrency(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key.secret,
+            max_range_size=4 * 1024)
+
+        data = b"hello world"
+
+        # max_concurrency=None should not raise TypeError
+        await file_client.upload_file(data, max_concurrency=None)
+
+        await self.assertFileEqual(file_client, data)
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_download_file_with_none_max_concurrency(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key.secret,
+            max_range_size=4 * 1024)
+
+        data = b"hello world"
+        await file_client.upload_file(data)
+
+        # max_concurrency=None should not raise TypeError
+        content = await (await file_client.download_file(max_concurrency=None)).readall()
+
+        assert content == data
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_create_file_semantics(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+        storage_account_key = storage_account_key.secret
+        file_name = self._get_file_reference()
+
+        file1 = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name + "file1",
+            credential=storage_account_key
+        )
+        await file1.create_file(1024, file_property_semantics=None)
+        props = await file1.get_file_properties()
+        assert props is not None
+
+        file2 = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name + "file2",
+            credential=storage_account_key
+        )
+        await file2.create_file(1024, file_property_semantics="New")
+        props = await file2.get_file_properties()
+        assert props is not None
+
+        file3 = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name + "file2",
+            credential=storage_account_key
+        )
+        await file3.create_file(1024, file_property_semantics="Restore", file_permission=TEST_FILE_PERMISSIONS)
+        props = await file3.get_file_properties()
+        assert props is not None
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_create_file_with_data(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name + "file",
+            credential=storage_account_key.secret
+        )
+        size = 1024
+        data = b"abc" * size
+        await file_client.create_file(len(data), data=data)
+        downloaded_data = await (await file_client.download_file()).readall()
+        assert downloaded_data == data

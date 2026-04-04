@@ -51,9 +51,7 @@ MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
 # We need to actively prevent ourselves from discovering the package in its old location. To do that we:
 #  - Add the path to this list, any entrypoints that use discover_targeted_packages should exclude these paths
 #  - This will also affect usage of get_package_properties.py (Save-Package-Properties stage of CI), so please be aware of this!
-PATHS_EXCLUDED_FROM_DISCOVERY = [
-    "sdk/textanalytics/azure-ai-textanalytics",
-]
+PATHS_EXCLUDED_FROM_DISCOVERY = []
 
 TEST_COMPATIBILITY_MAP = {"azure-ai-ml": ">=3.7"}
 TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
@@ -599,8 +597,9 @@ def run_pip_freeze(python_executable: Optional[str] = None) -> List[str]:
 
     pip_cmd = get_pip_command(exe)
 
+    # we use `freeze` because it is present on both pip and uv
     out = subprocess.Popen(
-        pip_cmd + ["list", "--disable-pip-version-check", "--format", "freeze"],
+        pip_cmd + ["freeze", "--disable-pip-version-check"],
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
     )
@@ -610,7 +609,7 @@ def run_pip_freeze(python_executable: Optional[str] = None) -> List[str]:
     collected_output = []
 
     if stdout and (stderr is None):
-        for line in stdout.decode("utf-8").split(os.linesep):
+        for line in stdout.decode("utf-8").splitlines():
             if line:
                 collected_output.append(line)
     else:

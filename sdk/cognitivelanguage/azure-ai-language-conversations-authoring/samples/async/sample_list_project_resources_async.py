@@ -33,7 +33,6 @@ import asyncio
 from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
-from azure.ai.language.conversations.authoring.models import AssignedProjectResource
 
 
 async def sample_list_project_resources_async():

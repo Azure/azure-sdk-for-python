@@ -63,3 +63,6 @@ pytyped = ["py.typed"]
 
 [packaging]
 auto_update = false
+
+[tool.azure-sdk-conda]
+in_bundle = false

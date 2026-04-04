@@ -13,7 +13,6 @@ from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overlo
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import (
-    FaultKind,
     PartitionScheme,
     ServiceKind,
     ServicePlacementPolicyType,
@@ -249,13 +248,12 @@ class ApplicationHealthPolicy(_Model):
      as errors. Required.
     :vartype consider_warning_as_error: bool
     :ivar max_percent_unhealthy_deployed_applications: The maximum allowed percentage of unhealthy
-     deployed applications. Allowed values are Byte values from zero to 100.
-     The percentage represents the maximum tolerated percentage of deployed applications that can be
-     unhealthy before the application is considered in error.
-     This is calculated by dividing the number of unhealthy deployed applications over the number of
-     nodes where the application is currently deployed on in the cluster.
-     The computation rounds up to tolerate one failure on small numbers of nodes. Default percentage
-     is zero. Required.
+     deployed applications. Allowed values are Byte values from zero to 100. The percentage
+     represents the maximum tolerated percentage of deployed applications that can be unhealthy
+     before the application is considered in error. This is calculated by dividing the number of
+     unhealthy deployed applications over the number of nodes where the application is currently
+     deployed on in the cluster. The computation rounds up to tolerate one failure on small numbers
+     of nodes. Default percentage is zero. Required.
     :vartype max_percent_unhealthy_deployed_applications: int
     :ivar default_service_type_health_policy: The health policy used by default to evaluate the
      health of a service type.
@@ -275,13 +273,11 @@ class ApplicationHealthPolicy(_Model):
         name="maxPercentUnhealthyDeployedApplications", visibility=["read", "create", "update", "delete", "query"]
     )
     """The maximum allowed percentage of unhealthy deployed applications. Allowed values are Byte
-     values from zero to 100.
-     The percentage represents the maximum tolerated percentage of deployed applications that can be
-     unhealthy before the application is considered in error.
-     This is calculated by dividing the number of unhealthy deployed applications over the number of
-     nodes where the application is currently deployed on in the cluster.
-     The computation rounds up to tolerate one failure on small numbers of nodes. Default percentage
-     is zero. Required."""
+     values from zero to 100. The percentage represents the maximum tolerated percentage of deployed
+     applications that can be unhealthy before the application is considered in error. This is
+     calculated by dividing the number of unhealthy deployed applications over the number of nodes
+     where the application is currently deployed on in the cluster. The computation rounds up to
+     tolerate one failure on small numbers of nodes. Default percentage is zero. Required."""
     default_service_type_health_policy: Optional["_models.ServiceTypeHealthPolicy"] = rest_field(
         name="defaultServiceTypeHealthPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -446,8 +442,8 @@ class ApplicationResourceProperties(_Model):
     :ivar provisioning_state: The current deployment or provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
-    :ivar version: The version of the application type as defined in the application manifest.
-     This name must be the full Arm Resource ID for the referenced application type version.
+    :ivar version: The version of the application type as defined in the application manifest. This
+     name must be the full Arm Resource ID for the referenced application type version.
     :vartype version: str
     :ivar parameters: List of application parameters with overridden values from their default
      values specified in the application manifest.
@@ -464,8 +460,8 @@ class ApplicationResourceProperties(_Model):
     provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
     """The current deployment or provisioning state, which only appears in the response."""
     version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The version of the application type as defined in the application manifest.
-     This name must be the full Arm Resource ID for the referenced application type version."""
+    """The version of the application type as defined in the application manifest. This name must be
+     the full Arm Resource ID for the referenced application type version."""
     parameters: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of application parameters with overridden values from their default values specified in
      the application manifest."""
@@ -1360,46 +1356,44 @@ class ClusterMonitoringPolicy(_Model):
     :ivar health_check_wait_duration: The length of time to wait after completing an upgrade domain
      before performing health checks. The duration can be in either hh:mm:ss or in d.hh:mm:ss.ms
      format. Required.
-    :vartype health_check_wait_duration: ~datetime.timedelta
+    :vartype health_check_wait_duration: str
     :ivar health_check_stable_duration: The amount of time that the application or cluster must
      remain healthy before the upgrade proceeds to the next upgrade domain. The duration can be in
      either hh:mm:ss or in d.hh:mm:ss.ms format. Required.
-    :vartype health_check_stable_duration: ~datetime.timedelta
+    :vartype health_check_stable_duration: str
     :ivar health_check_retry_timeout: The amount of time to retry health evaluation when the
      application or cluster is unhealthy before the upgrade rolls back. The timeout can be in either
      hh:mm:ss or in d.hh:mm:ss.ms format. Required.
-    :vartype health_check_retry_timeout: ~datetime.timedelta
+    :vartype health_check_retry_timeout: str
     :ivar upgrade_timeout: The amount of time the overall upgrade has to complete before the
      upgrade rolls back. The timeout can be in either hh:mm:ss or in d.hh:mm:ss.ms format. Required.
-    :vartype upgrade_timeout: ~datetime.timedelta
+    :vartype upgrade_timeout: str
     :ivar upgrade_domain_timeout: The amount of time each upgrade domain has to complete before the
      upgrade rolls back. The timeout can be in either hh:mm:ss or in d.hh:mm:ss.ms format. Required.
-    :vartype upgrade_domain_timeout: ~datetime.timedelta
+    :vartype upgrade_domain_timeout: str
     """
 
-    health_check_wait_duration: datetime.timedelta = rest_field(
+    health_check_wait_duration: str = rest_field(
         name="healthCheckWaitDuration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The length of time to wait after completing an upgrade domain before performing health checks.
      The duration can be in either hh:mm:ss or in d.hh:mm:ss.ms format. Required."""
-    health_check_stable_duration: datetime.timedelta = rest_field(
+    health_check_stable_duration: str = rest_field(
         name="healthCheckStableDuration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The amount of time that the application or cluster must remain healthy before the upgrade
      proceeds to the next upgrade domain. The duration can be in either hh:mm:ss or in d.hh:mm:ss.ms
      format. Required."""
-    health_check_retry_timeout: datetime.timedelta = rest_field(
+    health_check_retry_timeout: str = rest_field(
         name="healthCheckRetryTimeout", visibility=["read", "create", "update", "delete", "query"]
     )
     """The amount of time to retry health evaluation when the application or cluster is unhealthy
      before the upgrade rolls back. The timeout can be in either hh:mm:ss or in d.hh:mm:ss.ms
      format. Required."""
-    upgrade_timeout: datetime.timedelta = rest_field(
-        name="upgradeTimeout", visibility=["read", "create", "update", "delete", "query"]
-    )
+    upgrade_timeout: str = rest_field(name="upgradeTimeout", visibility=["read", "create", "update", "delete", "query"])
     """The amount of time the overall upgrade has to complete before the upgrade rolls back. The
      timeout can be in either hh:mm:ss or in d.hh:mm:ss.ms format. Required."""
-    upgrade_domain_timeout: datetime.timedelta = rest_field(
+    upgrade_domain_timeout: str = rest_field(
         name="upgradeDomainTimeout", visibility=["read", "create", "update", "delete", "query"]
     )
     """The amount of time each upgrade domain has to complete before the upgrade rolls back. The
@@ -1409,11 +1403,11 @@ class ClusterMonitoringPolicy(_Model):
     def __init__(
         self,
         *,
-        health_check_wait_duration: datetime.timedelta,
-        health_check_stable_duration: datetime.timedelta,
-        health_check_retry_timeout: datetime.timedelta,
-        upgrade_timeout: datetime.timedelta,
-        upgrade_domain_timeout: datetime.timedelta,
+        health_check_wait_duration: str,
+        health_check_stable_duration: str,
+        health_check_retry_timeout: str,
+        upgrade_timeout: str,
+        upgrade_domain_timeout: str,
     ) -> None: ...
 
     @overload
@@ -1431,26 +1425,24 @@ class ClusterUpgradeDeltaHealthPolicy(_Model):
     """Describes the delta health policies for the cluster upgrade.
 
     :ivar max_percent_delta_unhealthy_nodes: The maximum allowed percentage of nodes health
-     degradation allowed during cluster upgrades.
-     The delta is measured between the state of the nodes at the beginning of upgrade and the state
-     of the nodes at the time of the health evaluation.
-     The check is performed after every upgrade domain upgrade completion to make sure the global
-     state of the cluster is within tolerated limits. Required.
+     degradation allowed during cluster upgrades. The delta is measured between the state of the
+     nodes at the beginning of upgrade and the state of the nodes at the time of the health
+     evaluation. The check is performed after every upgrade domain upgrade completion to make sure
+     the global state of the cluster is within tolerated limits. Required.
     :vartype max_percent_delta_unhealthy_nodes: int
     :ivar max_percent_upgrade_domain_delta_unhealthy_nodes: The maximum allowed percentage of
-     upgrade domain nodes health degradation allowed during cluster upgrades.
-     The delta is measured between the state of the upgrade domain nodes at the beginning of upgrade
-     and the state of the upgrade domain nodes at the time of the health evaluation.
-     The check is performed after every upgrade domain upgrade completion for all completed upgrade
-     domains to make sure the state of the upgrade domains is within tolerated limits.
+     upgrade domain nodes health degradation allowed during cluster upgrades. The delta is measured
+     between the state of the upgrade domain nodes at the beginning of upgrade and the state of the
+     upgrade domain nodes at the time of the health evaluation. The check is performed after every
+     upgrade domain upgrade completion for all completed upgrade domains to make sure the state of
+     the upgrade domains is within tolerated limits.
     :vartype max_percent_upgrade_domain_delta_unhealthy_nodes: int
     :ivar max_percent_delta_unhealthy_applications: The maximum allowed percentage of applications
-     health degradation allowed during cluster upgrades.
-     The delta is measured between the state of the applications at the beginning of upgrade and the
-     state of the applications at the time of the health evaluation.
-     The check is performed after every upgrade domain upgrade completion to make sure the global
-     state of the cluster is within tolerated limits. System services are not included in this.
-     NOTE: This value will overwrite the value specified in
+     health degradation allowed during cluster upgrades. The delta is measured between the state of
+     the applications at the beginning of upgrade and the state of the applications at the time of
+     the health evaluation. The check is performed after every upgrade domain upgrade completion to
+     make sure the global state of the cluster is within tolerated limits. System services are not
+     included in this. NOTE: This value will overwrite the value specified in
      properties.UpgradeDescription.HealthPolicy.MaxPercentUnhealthyApplications.
     :vartype max_percent_delta_unhealthy_applications: int
     """
@@ -1458,30 +1450,29 @@ class ClusterUpgradeDeltaHealthPolicy(_Model):
     max_percent_delta_unhealthy_nodes: int = rest_field(
         name="maxPercentDeltaUnhealthyNodes", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The maximum allowed percentage of nodes health degradation allowed during cluster upgrades.
-     The delta is measured between the state of the nodes at the beginning of upgrade and the state
-     of the nodes at the time of the health evaluation.
-     The check is performed after every upgrade domain upgrade completion to make sure the global
-     state of the cluster is within tolerated limits. Required."""
+    """The maximum allowed percentage of nodes health degradation allowed during cluster upgrades. The
+     delta is measured between the state of the nodes at the beginning of upgrade and the state of
+     the nodes at the time of the health evaluation. The check is performed after every upgrade
+     domain upgrade completion to make sure the global state of the cluster is within tolerated
+     limits. Required."""
     max_percent_upgrade_domain_delta_unhealthy_nodes: Optional[int] = rest_field(
         name="maxPercentUpgradeDomainDeltaUnhealthyNodes", visibility=["read", "create", "update", "delete", "query"]
     )
     """The maximum allowed percentage of upgrade domain nodes health degradation allowed during
-     cluster upgrades.
-     The delta is measured between the state of the upgrade domain nodes at the beginning of upgrade
-     and the state of the upgrade domain nodes at the time of the health evaluation.
-     The check is performed after every upgrade domain upgrade completion for all completed upgrade
-     domains to make sure the state of the upgrade domains is within tolerated limits."""
+     cluster upgrades. The delta is measured between the state of the upgrade domain nodes at the
+     beginning of upgrade and the state of the upgrade domain nodes at the time of the health
+     evaluation. The check is performed after every upgrade domain upgrade completion for all
+     completed upgrade domains to make sure the state of the upgrade domains is within tolerated
+     limits."""
     max_percent_delta_unhealthy_applications: Optional[int] = rest_field(
         name="maxPercentDeltaUnhealthyApplications", visibility=["read", "create", "update", "delete", "query"]
     )
     """The maximum allowed percentage of applications health degradation allowed during cluster
-     upgrades.
-     The delta is measured between the state of the applications at the beginning of upgrade and the
-     state of the applications at the time of the health evaluation.
-     The check is performed after every upgrade domain upgrade completion to make sure the global
-     state of the cluster is within tolerated limits. System services are not included in this.
-     NOTE: This value will overwrite the value specified in
+     upgrades. The delta is measured between the state of the applications at the beginning of
+     upgrade and the state of the applications at the time of the health evaluation. The check is
+     performed after every upgrade domain upgrade completion to make sure the global state of the
+     cluster is within tolerated limits. System services are not included in this. NOTE: This value
+     will overwrite the value specified in
      properties.UpgradeDescription.HealthPolicy.MaxPercentUnhealthyApplications."""
 
     @overload
@@ -1522,12 +1513,11 @@ class ClusterUpgradePolicy(_Model):
     :vartype monitoring_policy:
      ~azure.mgmt.servicefabricmanagedclusters.models.ClusterMonitoringPolicy
     :ivar upgrade_replica_set_check_timeout: The maximum amount of time to block processing of an
-     upgrade domain and prevent loss of availability when there are unexpected issues.
-     When this timeout expires, processing of the upgrade domain will proceed regardless of
-     availability loss issues.
-     The timeout is reset at the start of each upgrade domain. The timeout can be in either hh:mm:ss
-     or in d.hh:mm:ss.ms format.
-     This value must be between 00:00:00 and 49710.06:28:15 (unsigned 32 bit integer for seconds).
+     upgrade domain and prevent loss of availability when there are unexpected issues. When this
+     timeout expires, processing of the upgrade domain will proceed regardless of availability loss
+     issues. The timeout is reset at the start of each upgrade domain. The timeout can be in either
+     hh:mm:ss or in d.hh:mm:ss.ms format. This value must be between 00:00:00 and 49710.06:28:15
+     (unsigned 32 bit integer for seconds).
     :vartype upgrade_replica_set_check_timeout: str
     """
 
@@ -1555,11 +1545,9 @@ class ClusterUpgradePolicy(_Model):
         name="upgradeReplicaSetCheckTimeout", visibility=["read", "create", "update", "delete", "query"]
     )
     """The maximum amount of time to block processing of an upgrade domain and prevent loss of
-     availability when there are unexpected issues.
-     When this timeout expires, processing of the upgrade domain will proceed regardless of
-     availability loss issues.
-     The timeout is reset at the start of each upgrade domain. The timeout can be in either hh:mm:ss
-     or in d.hh:mm:ss.ms format.
+     availability when there are unexpected issues. When this timeout expires, processing of the
+     upgrade domain will proceed regardless of availability loss issues. The timeout is reset at the
+     start of each upgrade domain. The timeout can be in either hh:mm:ss or in d.hh:mm:ss.ms format.
      This value must be between 00:00:00 and 49710.06:28:15 (unsigned 32 bit integer for seconds)."""
 
     @overload
@@ -1723,252 +1711,6 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FaultSimulation(_Model):
-    """Fault simulation object with status.
-
-    :ivar simulation_id: unique identifier for the fault simulation.
-    :vartype simulation_id: str
-    :ivar status: Fault simulation status. Known values are: "Starting", "Active", "Stopping",
-     "Done", "StartFailed", and "StopFailed".
-    :vartype status: str or ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationStatus
-    :ivar start_time: The start time of the fault simulation.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: The end time of the fault simulation.
-    :vartype end_time: ~datetime.datetime
-    :ivar details: Fault simulation details.
-    :vartype details: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationDetails
-    """
-
-    simulation_id: Optional[str] = rest_field(
-        name="simulationId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """unique identifier for the fault simulation."""
-    status: Optional[Union[str, "_models.FaultSimulationStatus"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Fault simulation status. Known values are: \"Starting\", \"Active\", \"Stopping\", \"Done\",
-     \"StartFailed\", and \"StopFailed\"."""
-    start_time: Optional[datetime.datetime] = rest_field(
-        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The start time of the fault simulation."""
-    end_time: Optional[datetime.datetime] = rest_field(
-        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The end time of the fault simulation."""
-    details: Optional["_models.FaultSimulationDetails"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Fault simulation details."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        simulation_id: Optional[str] = None,
-        status: Optional[Union[str, "_models.FaultSimulationStatus"]] = None,
-        start_time: Optional[datetime.datetime] = None,
-        end_time: Optional[datetime.datetime] = None,
-        details: Optional["_models.FaultSimulationDetails"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class FaultSimulationConstraints(_Model):
-    """Constraints for Fault Simulation action.
-
-    :ivar expiration_time: The absolute expiration timestamp (UTC) after which this fault
-     simulation should be stopped if it's still active.
-    :vartype expiration_time: ~datetime.datetime
-    """
-
-    expiration_time: Optional[datetime.datetime] = rest_field(
-        name="expirationTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The absolute expiration timestamp (UTC) after which this fault simulation should be stopped if
-     it's still active."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        expiration_time: Optional[datetime.datetime] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class FaultSimulationContent(_Model):
-    """Parameters for Fault Simulation action.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ZoneFaultSimulationContent
-
-    :ivar fault_kind: The kind of fault to be simulated. Required. "Zone"
-    :vartype fault_kind: str or ~azure.mgmt.servicefabricmanagedclusters.models.FaultKind
-    :ivar force: Force the action to go through without any check on the cluster.
-    :vartype force: bool
-    :ivar constraints: Constraints for Fault Simulation action.
-    :vartype constraints:
-     ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationConstraints
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    fault_kind: str = rest_discriminator(name="faultKind", visibility=["read", "create", "update", "delete", "query"])
-    """The kind of fault to be simulated. Required. \"Zone\""""
-    force: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Force the action to go through without any check on the cluster."""
-    constraints: Optional["_models.FaultSimulationConstraints"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Constraints for Fault Simulation action."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        fault_kind: str,
-        force: Optional[bool] = None,
-        constraints: Optional["_models.FaultSimulationConstraints"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class FaultSimulationContentWrapper(_Model):
-    """Fault Simulation Request for Start action.
-
-    :ivar parameters: Parameters for Fault Simulation start action. Required.
-    :vartype parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationContent
-    """
-
-    parameters: "_models.FaultSimulationContent" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Parameters for Fault Simulation start action. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        parameters: "_models.FaultSimulationContent",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class FaultSimulationDetails(_Model):
-    """Details for Fault Simulation.
-
-    :ivar cluster_id: unique identifier for the cluster resource.
-    :vartype cluster_id: str
-    :ivar operation_id: unique identifier for the operation associated with the fault simulation.
-    :vartype operation_id: str
-    :ivar node_type_fault_simulation: List of node type simulations associated with the cluster
-     fault simulation.
-    :vartype node_type_fault_simulation:
-     list[~azure.mgmt.servicefabricmanagedclusters.models.NodeTypeFaultSimulation]
-    :ivar parameters: Fault simulation parameters.
-    :vartype parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationContent
-    """
-
-    cluster_id: Optional[str] = rest_field(name="clusterId", visibility=["read", "create", "update", "delete", "query"])
-    """unique identifier for the cluster resource."""
-    operation_id: Optional[str] = rest_field(
-        name="operationId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """unique identifier for the operation associated with the fault simulation."""
-    node_type_fault_simulation: Optional[list["_models.NodeTypeFaultSimulation"]] = rest_field(
-        name="nodeTypeFaultSimulation", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """List of node type simulations associated with the cluster fault simulation."""
-    parameters: Optional["_models.FaultSimulationContent"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Fault simulation parameters."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        cluster_id: Optional[str] = None,
-        operation_id: Optional[str] = None,
-        node_type_fault_simulation: Optional[list["_models.NodeTypeFaultSimulation"]] = None,
-        parameters: Optional["_models.FaultSimulationContent"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class FaultSimulationIdContent(_Model):
-    """Parameters for Fault Simulation id.
-
-    :ivar simulation_id: unique identifier for the fault simulation. Required.
-    :vartype simulation_id: str
-    """
-
-    simulation_id: str = rest_field(name="simulationId", visibility=["read", "create", "update", "delete", "query"])
-    """unique identifier for the fault simulation. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        simulation_id: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class FrontendConfiguration(_Model):
     """Describes the frontend configurations for the node type.
 
@@ -2063,7 +1805,7 @@ class IpConfiguration(_Model):
     :ivar public_ip_address_configuration: The public IP address configuration of the network
      interface.
     :vartype public_ip_address_configuration:
-     ~azure.mgmt.servicefabricmanagedclusters.models.IPConfigurationPublicIPAddressConfiguration
+     ~azure.mgmt.servicefabricmanagedclusters.models.IpConfigurationPublicIPAddressConfiguration
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2093,7 +1835,7 @@ class IpConfiguration(_Model):
     )
     """Specifies whether the IP configuration's private IP is IPv4 or IPv6. Default is IPv4. Known
      values are: \"IPv4\" and \"IPv6\"."""
-    public_ip_address_configuration: Optional["_models.IPConfigurationPublicIPAddressConfiguration"] = rest_field(
+    public_ip_address_configuration: Optional["_models.IpConfigurationPublicIPAddressConfiguration"] = rest_field(
         name="publicIPAddressConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The public IP address configuration of the network interface."""
@@ -2108,7 +1850,7 @@ class IpConfiguration(_Model):
         load_balancer_inbound_nat_pools: Optional[list["_models.SubResource"]] = None,
         subnet: Optional["_models.SubResource"] = None,
         private_ip_address_version: Optional[Union[str, "_models.PrivateIPAddressVersion"]] = None,
-        public_ip_address_configuration: Optional["_models.IPConfigurationPublicIPAddressConfiguration"] = None,
+        public_ip_address_configuration: Optional["_models.IpConfigurationPublicIPAddressConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -2122,7 +1864,7 @@ class IpConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IPConfigurationPublicIPAddressConfiguration(_Model):  # pylint: disable=name-too-long
+class IpConfigurationPublicIPAddressConfiguration(_Model):  # pylint: disable=name-too-long
     """The public IP address configuration of the network interface.
 
     :ivar name: Name of the network interface. Required.
@@ -2497,6 +2239,7 @@ class ManagedCluster(TrackedResource):
         "allocated_outbound_ports",
         "vm_image",
         "enable_outbound_only_node_types",
+        "skip_managed_nsg_assignment",
     ]
 
     @overload
@@ -2748,6 +2491,10 @@ class ManagedClusterProperties(_Model):
      traffic enabled. If set, a separate load balancer backend pool will be created for node types
      with inbound traffic enabled. Can only be set at the time of cluster creation.
     :vartype enable_outbound_only_node_types: bool
+    :ivar skip_managed_nsg_assignment: Determines whether to skip the assignment of the managed
+     network security group (SF-NSG) to the cluster subnet when using a bring-your-own virtual
+     network (BYOVNET) configuration. The default value is false.
+    :vartype skip_managed_nsg_assignment: bool
     """
 
     dns_name: str = rest_field(name="dnsName", visibility=["read", "create", "update", "delete", "query"])
@@ -2938,6 +2685,12 @@ class ManagedClusterProperties(_Model):
     """Enable the creation of node types with only outbound traffic enabled. If set, a separate load
      balancer backend pool will be created for node types with inbound traffic enabled. Can only be
      set at the time of cluster creation."""
+    skip_managed_nsg_assignment: Optional[bool] = rest_field(
+        name="skipManagedNsgAssignment", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Determines whether to skip the assignment of the managed network security group (SF-NSG) to the
+     cluster subnet when using a bring-your-own virtual network (BYOVNET) configuration. The default
+     value is false."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -2981,6 +2734,7 @@ class ManagedClusterProperties(_Model):
         allocated_outbound_ports: Optional[int] = None,
         vm_image: Optional[str] = None,
         enable_outbound_only_node_types: Optional[bool] = None,
+        skip_managed_nsg_assignment: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -3475,6 +3229,7 @@ class NodeType(ProxyResource):
         "vm_applications",
         "zone_balance",
         "is_outbound_only",
+        "enable_resilient_ephemeral_os_disk",
     ]
 
     @overload
@@ -3577,62 +3332,6 @@ class NodeTypeAvailableSku(_Model):
     """The supported SKU for a for node type."""
     capacity: Optional["_models.NodeTypeSkuCapacity"] = rest_field(visibility=["read"])
     """Provides information about how the node count can be scaled."""
-
-
-class NodeTypeFaultSimulation(_Model):
-    """Node type fault simulation object with status.
-
-    :ivar node_type_name: Node type name.
-    :vartype node_type_name: str
-    :ivar status: Fault simulation status. Known values are: "Starting", "Active", "Stopping",
-     "Done", "StartFailed", and "StopFailed".
-    :vartype status: str or ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationStatus
-    :ivar operation_id: Current or latest asynchronous operation identifier on the node type.
-    :vartype operation_id: str
-    :ivar operation_status: Current or latest asynchronous operation status on the node type. Known
-     values are: "Created", "Started", "Succeeded", "Failed", "Aborted", and "Canceled".
-    :vartype operation_status: str or
-     ~azure.mgmt.servicefabricmanagedclusters.models.SfmcOperationStatus
-    """
-
-    node_type_name: Optional[str] = rest_field(
-        name="nodeTypeName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Node type name."""
-    status: Optional[Union[str, "_models.FaultSimulationStatus"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Fault simulation status. Known values are: \"Starting\", \"Active\", \"Stopping\", \"Done\",
-     \"StartFailed\", and \"StopFailed\"."""
-    operation_id: Optional[str] = rest_field(
-        name="operationId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Current or latest asynchronous operation identifier on the node type."""
-    operation_status: Optional[Union[str, "_models.SfmcOperationStatus"]] = rest_field(
-        name="operationStatus", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Current or latest asynchronous operation status on the node type. Known values are:
-     \"Created\", \"Started\", \"Succeeded\", \"Failed\", \"Aborted\", and \"Canceled\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        node_type_name: Optional[str] = None,
-        status: Optional[Union[str, "_models.FaultSimulationStatus"]] = None,
-        operation_id: Optional[str] = None,
-        operation_status: Optional[Union[str, "_models.SfmcOperationStatus"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class NodeTypeNatConfig(_Model):
@@ -3868,6 +3567,10 @@ class NodeTypeProperties(_Model):
     :ivar is_outbound_only: Specifies the node type should be configured for only outbound traffic
      and not inbound traffic.
     :vartype is_outbound_only: bool
+    :ivar enable_resilient_ephemeral_os_disk: Specifies whether the node type should use a
+     resilient ephemeral OS disk when using a supported SKU size. A resilient ephemeral OS disk
+     provides improved reliability for ephemeral OS disks by enabling full caching.
+    :vartype enable_resilient_ephemeral_os_disk: bool
     """
 
     is_primary: bool = rest_field(name="isPrimary", visibility=["read", "create", "update", "delete", "query"])
@@ -4126,6 +3829,12 @@ class NodeTypeProperties(_Model):
         name="isOutboundOnly", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the node type should be configured for only outbound traffic and not inbound traffic."""
+    enable_resilient_ephemeral_os_disk: Optional[bool] = rest_field(
+        name="enableResilientEphemeralOsDisk", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies whether the node type should use a resilient ephemeral OS disk when using a supported
+     SKU size. A resilient ephemeral OS disk provides improved reliability for ephemeral OS disks by
+     enabling full caching."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -4185,6 +3894,7 @@ class NodeTypeProperties(_Model):
         vm_applications: Optional[list["_models.VmApplication"]] = None,
         zone_balance: Optional[bool] = None,
         is_outbound_only: Optional[bool] = None,
+        enable_resilient_ephemeral_os_disk: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -4592,23 +4302,23 @@ class RollingUpgradeMonitoringPolicy(_Model):
     :ivar health_check_wait_duration: The amount of time to wait after completing an upgrade domain
      before applying health policies. It is interpreted as a string representing an ISO 8601
      duration with following format "hh:mm:ss.fff". Required.
-    :vartype health_check_wait_duration: ~datetime.timedelta
+    :vartype health_check_wait_duration: str
     :ivar health_check_stable_duration: The amount of time that the application or cluster must
      remain healthy before the upgrade proceeds to the next upgrade domain. It is interpreted as a
      string representing an ISO 8601 duration with following format "hh:mm:ss.fff". Required.
-    :vartype health_check_stable_duration: ~datetime.timedelta
+    :vartype health_check_stable_duration: str
     :ivar health_check_retry_timeout: The amount of time to retry health evaluation when the
      application or cluster is unhealthy before FailureAction is executed. It is interpreted as a
      string representing an ISO 8601 duration with following format "hh:mm:ss.fff". Required.
-    :vartype health_check_retry_timeout: ~datetime.timedelta
+    :vartype health_check_retry_timeout: str
     :ivar upgrade_timeout: The amount of time the overall upgrade has to complete before
      FailureAction is executed. Cannot be larger than 12 hours. It is interpreted as a string
      representing an ISO 8601 duration with following format "hh:mm:ss.fff". Required.
-    :vartype upgrade_timeout: ~datetime.timedelta
+    :vartype upgrade_timeout: str
     :ivar upgrade_domain_timeout: The amount of time each upgrade domain has to complete before
      FailureAction is executed. Cannot be larger than 12 hours. It is interpreted as a string
      representing an ISO 8601 duration with following format "hh:mm:ss.fff". Required.
-    :vartype upgrade_domain_timeout: ~datetime.timedelta
+    :vartype upgrade_domain_timeout: str
     """
 
     failure_action: Union[str, "_models.FailureAction"] = rest_field(
@@ -4619,31 +4329,29 @@ class RollingUpgradeMonitoringPolicy(_Model):
      that the upgrade will start rolling back automatically. Manual indicates that the upgrade will
      switch to UnmonitoredManual upgrade mode. Required. Known values are: \"Rollback\" and
      \"Manual\"."""
-    health_check_wait_duration: datetime.timedelta = rest_field(
+    health_check_wait_duration: str = rest_field(
         name="healthCheckWaitDuration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The amount of time to wait after completing an upgrade domain before applying health policies.
      It is interpreted as a string representing an ISO 8601 duration with following format
      \"hh:mm:ss.fff\". Required."""
-    health_check_stable_duration: datetime.timedelta = rest_field(
+    health_check_stable_duration: str = rest_field(
         name="healthCheckStableDuration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The amount of time that the application or cluster must remain healthy before the upgrade
      proceeds to the next upgrade domain. It is interpreted as a string representing an ISO 8601
      duration with following format \"hh:mm:ss.fff\". Required."""
-    health_check_retry_timeout: datetime.timedelta = rest_field(
+    health_check_retry_timeout: str = rest_field(
         name="healthCheckRetryTimeout", visibility=["read", "create", "update", "delete", "query"]
     )
     """The amount of time to retry health evaluation when the application or cluster is unhealthy
      before FailureAction is executed. It is interpreted as a string representing an ISO 8601
      duration with following format \"hh:mm:ss.fff\". Required."""
-    upgrade_timeout: datetime.timedelta = rest_field(
-        name="upgradeTimeout", visibility=["read", "create", "update", "delete", "query"]
-    )
+    upgrade_timeout: str = rest_field(name="upgradeTimeout", visibility=["read", "create", "update", "delete", "query"])
     """The amount of time the overall upgrade has to complete before FailureAction is executed. Cannot
      be larger than 12 hours. It is interpreted as a string representing an ISO 8601 duration with
      following format \"hh:mm:ss.fff\". Required."""
-    upgrade_domain_timeout: datetime.timedelta = rest_field(
+    upgrade_domain_timeout: str = rest_field(
         name="upgradeDomainTimeout", visibility=["read", "create", "update", "delete", "query"]
     )
     """The amount of time each upgrade domain has to complete before FailureAction is executed. Cannot
@@ -4655,11 +4363,11 @@ class RollingUpgradeMonitoringPolicy(_Model):
         self,
         *,
         failure_action: Union[str, "_models.FailureAction"],
-        health_check_wait_duration: datetime.timedelta,
-        health_check_stable_duration: datetime.timedelta,
-        health_check_retry_timeout: datetime.timedelta,
-        upgrade_timeout: datetime.timedelta,
-        upgrade_domain_timeout: datetime.timedelta,
+        health_check_wait_duration: str,
+        health_check_stable_duration: str,
+        health_check_retry_timeout: str,
+        upgrade_timeout: str,
+        upgrade_domain_timeout: str,
     ) -> None: ...
 
     @overload
@@ -4681,13 +4389,12 @@ class RuntimeApplicationHealthPolicy(_Model):
      as errors. Required.
     :vartype consider_warning_as_error: bool
     :ivar max_percent_unhealthy_deployed_applications: The maximum allowed percentage of unhealthy
-     deployed applications. Allowed values are Byte values from zero to 100.
-     The percentage represents the maximum tolerated percentage of deployed applications that can be
-     unhealthy before the application is considered in error.
-     This is calculated by dividing the number of unhealthy deployed applications over the number of
-     nodes where the application is currently deployed on in the cluster.
-     The computation rounds up to tolerate one failure on small numbers of nodes. Default percentage
-     is zero. Required.
+     deployed applications. Allowed values are Byte values from zero to 100. The percentage
+     represents the maximum tolerated percentage of deployed applications that can be unhealthy
+     before the application is considered in error. This is calculated by dividing the number of
+     unhealthy deployed applications over the number of nodes where the application is currently
+     deployed on in the cluster. The computation rounds up to tolerate one failure on small numbers
+     of nodes. Default percentage is zero. Required.
     :vartype max_percent_unhealthy_deployed_applications: int
     :ivar default_service_type_health_policy: The health policy used by default to evaluate the
      health of a service type.
@@ -4707,13 +4414,11 @@ class RuntimeApplicationHealthPolicy(_Model):
         name="maxPercentUnhealthyDeployedApplications", visibility=["read", "create", "update", "delete", "query"]
     )
     """The maximum allowed percentage of unhealthy deployed applications. Allowed values are Byte
-     values from zero to 100.
-     The percentage represents the maximum tolerated percentage of deployed applications that can be
-     unhealthy before the application is considered in error.
-     This is calculated by dividing the number of unhealthy deployed applications over the number of
-     nodes where the application is currently deployed on in the cluster.
-     The computation rounds up to tolerate one failure on small numbers of nodes. Default percentage
-     is zero. Required."""
+     values from zero to 100. The percentage represents the maximum tolerated percentage of deployed
+     applications that can be unhealthy before the application is considered in error. This is
+     calculated by dividing the number of unhealthy deployed applications over the number of nodes
+     where the application is currently deployed on in the cluster. The computation rounds up to
+     tolerate one failure on small numbers of nodes. Default percentage is zero. Required."""
     default_service_type_health_policy: Optional["_models.RuntimeServiceTypeHealthPolicy"] = rest_field(
         name="defaultServiceTypeHealthPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5699,11 +5404,9 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):
      ~azure.mgmt.servicefabricmanagedclusters.models.ServicePackageActivationMode
     :ivar service_dns_name: Dns name used for the service. If this is specified, then the DNS name
      can be used to return the IP addresses of service endpoints for application layer protocols
-     (e.g., HTTP).
-     When updating serviceDnsName, old name may be temporarily resolvable. However, rely on new
-     name.
-     When removing serviceDnsName, removed name may temporarily be resolvable. Do not rely on the
-     name being unresolvable.
+     (e.g., HTTP). When updating serviceDnsName, old name may be temporarily resolvable. However,
+     rely on new name. When removing serviceDnsName, removed name may temporarily be resolvable. Do
+     not rely on the name being unresolvable.
     :vartype service_dns_name: str
     """
 
@@ -5732,9 +5435,8 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):
         name="serviceDnsName", visibility=["read", "create", "update", "delete", "query"]
     )
     """Dns name used for the service. If this is specified, then the DNS name can be used to return
-     the IP addresses of service endpoints for application layer protocols (e.g., HTTP).
-     When updating serviceDnsName, old name may be temporarily resolvable. However, rely on new
-     name.
+     the IP addresses of service endpoints for application layer protocols (e.g., HTTP). When
+     updating serviceDnsName, old name may be temporarily resolvable. However, rely on new name.
      When removing serviceDnsName, removed name may temporarily be resolvable. Do not rely on the
      name being unresolvable."""
 
@@ -6053,11 +5755,9 @@ class StatefulServiceProperties(ServiceResourceProperties, discriminator="Statef
      ~azure.mgmt.servicefabricmanagedclusters.models.ServicePackageActivationMode
     :ivar service_dns_name: Dns name used for the service. If this is specified, then the DNS name
      can be used to return the IP addresses of service endpoints for application layer protocols
-     (e.g., HTTP).
-     When updating serviceDnsName, old name may be temporarily resolvable. However, rely on new
-     name.
-     When removing serviceDnsName, removed name may temporarily be resolvable. Do not rely on the
-     name being unresolvable.
+     (e.g., HTTP). When updating serviceDnsName, old name may be temporarily resolvable. However,
+     rely on new name. When removing serviceDnsName, removed name may temporarily be resolvable. Do
+     not rely on the name being unresolvable.
     :vartype service_dns_name: str
     :ivar has_persisted_state: A flag indicating whether this is a persistent service which stores
      states on the local disk. If it is then the value of this property is true, if not it is false.
@@ -6068,16 +5768,16 @@ class StatefulServiceProperties(ServiceResourceProperties, discriminator="Statef
     :vartype min_replica_set_size: int
     :ivar replica_restart_wait_duration: The duration between when a replica goes down and when a
      new replica is created, represented in ISO 8601 format "hh:mm:ss".
-    :vartype replica_restart_wait_duration: ~datetime.timedelta
+    :vartype replica_restart_wait_duration: str
     :ivar quorum_loss_wait_duration: The maximum duration for which a partition is allowed to be in
      a state of quorum loss, represented in ISO 8601 format "hh:mm:ss".
-    :vartype quorum_loss_wait_duration: ~datetime.timedelta
+    :vartype quorum_loss_wait_duration: str
     :ivar stand_by_replica_keep_duration: The definition on how long StandBy replicas should be
      maintained before being removed, represented in ISO 8601 format "hh:mm:ss".
-    :vartype stand_by_replica_keep_duration: ~datetime.timedelta
+    :vartype stand_by_replica_keep_duration: str
     :ivar service_placement_time_limit: The duration for which replicas can stay InBuild before
      reporting that build is stuck, represented in ISO 8601 format "hh:mm:ss".
-    :vartype service_placement_time_limit: ~datetime.timedelta
+    :vartype service_placement_time_limit: str
     :ivar service_kind: The kind of service (Stateless or Stateful). Required. Uses Service Fabric
      to make its state or part of its state highly available and reliable. The value is 1.
     :vartype service_kind: str or ~azure.mgmt.servicefabricmanagedclusters.models.STATEFUL
@@ -6096,22 +5796,22 @@ class StatefulServiceProperties(ServiceResourceProperties, discriminator="Statef
         name="minReplicaSetSize", visibility=["read", "create", "update", "delete", "query"]
     )
     """The minimum replica set size as a number."""
-    replica_restart_wait_duration: Optional[datetime.timedelta] = rest_field(
+    replica_restart_wait_duration: Optional[str] = rest_field(
         name="replicaRestartWaitDuration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The duration between when a replica goes down and when a new replica is created, represented in
      ISO 8601 format \"hh:mm:ss\"."""
-    quorum_loss_wait_duration: Optional[datetime.timedelta] = rest_field(
+    quorum_loss_wait_duration: Optional[str] = rest_field(
         name="quorumLossWaitDuration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The maximum duration for which a partition is allowed to be in a state of quorum loss,
      represented in ISO 8601 format \"hh:mm:ss\"."""
-    stand_by_replica_keep_duration: Optional[datetime.timedelta] = rest_field(
+    stand_by_replica_keep_duration: Optional[str] = rest_field(
         name="standByReplicaKeepDuration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The definition on how long StandBy replicas should be maintained before being removed,
      represented in ISO 8601 format \"hh:mm:ss\"."""
-    service_placement_time_limit: Optional[datetime.timedelta] = rest_field(
+    service_placement_time_limit: Optional[str] = rest_field(
         name="servicePlacementTimeLimit", visibility=["read", "create", "update", "delete", "query"]
     )
     """The duration for which replicas can stay InBuild before reporting that build is stuck,
@@ -6137,10 +5837,10 @@ class StatefulServiceProperties(ServiceResourceProperties, discriminator="Statef
         has_persisted_state: Optional[bool] = None,
         target_replica_set_size: Optional[int] = None,
         min_replica_set_size: Optional[int] = None,
-        replica_restart_wait_duration: Optional[datetime.timedelta] = None,
-        quorum_loss_wait_duration: Optional[datetime.timedelta] = None,
-        stand_by_replica_keep_duration: Optional[datetime.timedelta] = None,
-        service_placement_time_limit: Optional[datetime.timedelta] = None,
+        replica_restart_wait_duration: Optional[str] = None,
+        quorum_loss_wait_duration: Optional[str] = None,
+        stand_by_replica_keep_duration: Optional[str] = None,
+        service_placement_time_limit: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -6193,11 +5893,9 @@ class StatelessServiceProperties(ServiceResourceProperties, discriminator="State
      ~azure.mgmt.servicefabricmanagedclusters.models.ServicePackageActivationMode
     :ivar service_dns_name: Dns name used for the service. If this is specified, then the DNS name
      can be used to return the IP addresses of service endpoints for application layer protocols
-     (e.g., HTTP).
-     When updating serviceDnsName, old name may be temporarily resolvable. However, rely on new
-     name.
-     When removing serviceDnsName, removed name may temporarily be resolvable. Do not rely on the
-     name being unresolvable.
+     (e.g., HTTP). When updating serviceDnsName, old name may be temporarily resolvable. However,
+     rely on new name. When removing serviceDnsName, removed name may temporarily be resolvable. Do
+     not rely on the name being unresolvable.
     :vartype service_dns_name: str
     :ivar instance_count: The instance count. Required.
     :vartype instance_count: int
@@ -6441,11 +6139,11 @@ class UniformInt64RangePartitionScheme(Partition, discriminator="UniformInt64Ran
 
     :ivar count: The number of partitions. Required.
     :vartype count: int
-    :ivar low_key: The lower bound of the partition key range that
-     should be split between the partition ‘Count’. Required.
+    :ivar low_key: The lower bound of the partition key range that should be split between the
+     partition ‘Count’. Required.
     :vartype low_key: int
-    :ivar high_key: The upper bound of the partition key range that
-     should be split between the partition ‘Count’. Required.
+    :ivar high_key: The upper bound of the partition key range that should be split between the
+     partition ‘Count’. Required.
     :vartype high_key: int
     :ivar partition_scheme: Specifies how the service is partitioned. Required. Indicates that the
      partition is based on Int64 key ranges, and is a UniformInt64RangePartitionScheme object. The
@@ -6457,11 +6155,11 @@ class UniformInt64RangePartitionScheme(Partition, discriminator="UniformInt64Ran
     count: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of partitions. Required."""
     low_key: int = rest_field(name="lowKey", visibility=["read", "create", "update", "delete", "query"])
-    """The lower bound of the partition key range that
-     should be split between the partition ‘Count’. Required."""
+    """The lower bound of the partition key range that should be split between the partition ‘Count’.
+     Required."""
     high_key: int = rest_field(name="highKey", visibility=["read", "create", "update", "delete", "query"])
-    """The upper bound of the partition key range that
-     should be split between the partition ‘Count’. Required."""
+    """The upper bound of the partition key range that should be split between the partition ‘Count’.
+     Required."""
     partition_scheme: Literal[PartitionScheme.UNIFORM_INT64_RANGE] = rest_discriminator(name="partitionScheme", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Specifies how the service is partitioned. Required. Indicates that the partition is based on
      Int64 key ranges, and is a UniformInt64RangePartitionScheme object. The value is 1."""
@@ -6986,43 +6684,3 @@ class VMSSExtensionProperties(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class ZoneFaultSimulationContent(FaultSimulationContent, discriminator="Zone"):
-    """Parameters for Zone Fault Simulation action.
-
-    :ivar force: Force the action to go through without any check on the cluster.
-    :vartype force: bool
-    :ivar constraints: Constraints for Fault Simulation action.
-    :vartype constraints:
-     ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationConstraints
-    :ivar zones: Indicates the zones of the fault simulation.
-    :vartype zones: list[str]
-    :ivar fault_kind: The kind of fault simulation. Required. Simulates an availability zone down.
-    :vartype fault_kind: str or ~azure.mgmt.servicefabricmanagedclusters.models.ZONE
-    """
-
-    zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Indicates the zones of the fault simulation."""
-    fault_kind: Literal[FaultKind.ZONE] = rest_discriminator(name="faultKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind of fault simulation. Required. Simulates an availability zone down."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        force: Optional[bool] = None,
-        constraints: Optional["_models.FaultSimulationConstraints"] = None,
-        zones: Optional[list[str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.fault_kind = FaultKind.ZONE  # type: ignore

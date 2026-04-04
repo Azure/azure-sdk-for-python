@@ -6,7 +6,7 @@ import json
 import logging
 
 # mypy: disable-error-code="import-untyped"
-import requests
+import requests  # pylint: disable=networking-import-outside-azure-core-transport
 
 from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
@@ -88,6 +88,7 @@ class OneSettingsResponse:
         self.has_exception = has_exception
 
 
+# pylint: disable=do-not-log-exceptions-if-not-debug
 def make_onesettings_request(
     url: str, query_dict: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None
 ) -> OneSettingsResponse:

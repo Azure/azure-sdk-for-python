@@ -4,9 +4,14 @@ Utility functions for handling attack strategies and converters in Red Team Agen
 
 import random
 from typing import Dict, List, Union, Optional, Any, Callable, cast
+from urllib.parse import urlparse
 import logging
 
-from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
+import httpx
+
+from azure.ai.evaluation.simulator._model_tools._generated_rai_client import (
+    GeneratedRAIClient,
+)
 from .._attack_strategy import AttackStrategy
 from pyrit.prompt_converter import (
     PromptConverter,
@@ -18,7 +23,7 @@ from pyrit.prompt_converter import (
     BinaryConverter,
     CaesarConverter,
     CharacterSpaceConverter,
-    CharSwapGenerator,
+    CharSwapConverter,
     DiacriticConverter,
     FlipConverter,
     LeetspeakConverter,
@@ -35,11 +40,35 @@ from ._rai_service_target import AzureRAIServiceTarget
 from .._default_converter import _DefaultConverter
 from pyrit.prompt_target import OpenAIChatTarget, PromptChatTarget
 from .._callback_chat_target import _CallbackChatTarget
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.ai.evaluation._model_configurations import (
+    AzureOpenAIModelConfiguration,
+    OpenAIModelConfiguration,
+)
 
+# All known Azure OpenAI host suffixes (public + sovereign clouds).
+# Used to detect Azure endpoints that need /openai/v1 path normalization for PyRIT.
+_AZURE_OPENAI_HOST_SUFFIXES = (
+    ".openai.azure.com",
+    ".services.ai.azure.com",
+    ".cognitiveservices.azure.com",
+    ".openai.azure.us",
+    ".cognitiveservices.azure.us",
+    ".openai.azure.cn",
+    ".cognitiveservices.azure.cn",
+)
 
 # Azure OpenAI uses cognitive services scope for AAD authentication
 AZURE_OPENAI_SCOPE = "https://cognitiveservices.azure.com/.default"
+
+# Default timeouts for PyRIT's underlying httpx client (seconds).
+# Split timeouts keep connect/pool failures fast while allowing slow model responses.
+# Override the read timeout via RedTeam.scan(..., _http_timeout=<seconds>).
+DEFAULT_CONNECT_TIMEOUT = 10.0
+DEFAULT_READ_TIMEOUT = 180.0
+DEFAULT_WRITE_TIMEOUT = 30.0
+DEFAULT_POOL_TIMEOUT = 30.0
+# Backward-compatible alias used by validation and tests.
+PYRIT_HTTP_TIMEOUT = DEFAULT_READ_TIMEOUT
 
 
 def _create_token_provider(credential: Any) -> Callable[[], str]:
@@ -65,7 +94,9 @@ def _create_token_provider(credential: Any) -> Callable[[], str]:
 
 
 def create_tense_converter(
-    generated_rai_client: GeneratedRAIClient, is_one_dp_project: bool, logger: logging.Logger
+    generated_rai_client: GeneratedRAIClient,
+    is_one_dp_project: bool,
+    logger: logging.Logger,
 ) -> TenseConverter:
     """Factory function for creating TenseConverter with proper dependencies."""
     converter_target = AzureRAIServiceTarget(
@@ -97,7 +128,7 @@ def strategy_converter_map() -> Dict[Any, Union[PromptConverter, List[PromptConv
         AttackStrategy.Binary: BinaryConverter(),
         AttackStrategy.Caesar: CaesarConverter(caesar_offset=1),
         AttackStrategy.CharacterSpace: CharacterSpaceConverter(),
-        AttackStrategy.CharSwap: CharSwapGenerator(),
+        AttackStrategy.CharSwap: CharSwapConverter(),
         AttackStrategy.Diacritic: DiacriticConverter(),
         AttackStrategy.Flip: FlipConverter(),
         AttackStrategy.Leetspeak: LeetspeakConverter(),
@@ -141,19 +172,53 @@ def get_converter_for_strategy(
 
 
 def get_chat_target(
-    target: Union[PromptChatTarget, Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+    target: Union[
+        PromptChatTarget,
+        Callable,
+        AzureOpenAIModelConfiguration,
+        OpenAIModelConfiguration,
+    ],
+    credential: Optional[Any] = None,
+    http_timeout: Optional[int] = None,
 ) -> PromptChatTarget:
     """Convert various target types to a PromptChatTarget.
 
     :param target: The target to convert
     :type target: Union[PromptChatTarget, Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration]
+    :param credential: Optional credential object with get_token method for AAD authentication.
+        Used as a fallback when target doesn't have an api_key or credential field. This is useful
+        in ACA environments where DefaultAzureCredential is not available.
+    :type credential: Optional[Any]
+    :param http_timeout: Optional HTTP read timeout in seconds for the underlying httpx client.
+        Only overrides the read timeout; connect, write, and pool timeouts remain at their
+        fast defaults (10s, 30s, 30s). Defaults to DEFAULT_READ_TIMEOUT (180s) if not specified.
+    :type http_timeout: Optional[int]
     :return: A PromptChatTarget instance
     :rtype: PromptChatTarget
     """
     import inspect
 
+    read_timeout = http_timeout if http_timeout is not None else DEFAULT_READ_TIMEOUT
+    if not isinstance(read_timeout, (int, float)) or isinstance(read_timeout, bool):
+        raise ValueError(
+            "http_timeout must be a positive number of seconds (int or float). "
+            f"Received value: {read_timeout!r} of type {type(read_timeout).__name__}."
+        )
+    if read_timeout <= 0:
+        raise ValueError("http_timeout must be greater than 0 seconds. " f"Received value: {read_timeout!r}.")
+
+    timeout = httpx.Timeout(
+        connect=DEFAULT_CONNECT_TIMEOUT,
+        read=read_timeout,
+        write=DEFAULT_WRITE_TIMEOUT,
+        pool=DEFAULT_POOL_TIMEOUT,
+    )
+
     # Helper function for message conversion
     def _message_to_dict(message):
+        # Handle both dict and object formats
+        if isinstance(message, dict):
+            return message
         return {
             "role": message.role,
             "content": message.content,
@@ -165,42 +230,55 @@ def get_chat_target(
     chat_target = None
     if not isinstance(target, Callable):
         if "azure_deployment" in target and "azure_endpoint" in target:  # Azure OpenAI
-            api_key = target.get("api_key", None)
-            credential = target.get("credential", None)
-            api_version = target.get("api_version", "2024-06-01")
+            # Normalize Azure endpoint for PyRIT compatibility.
+            # PyRIT 0.11+ uses AsyncOpenAI(base_url=endpoint) which appends /chat/completions
+            # directly, so Azure endpoints need the /openai/v1 path prefix.
+            endpoint = target["azure_endpoint"].rstrip("/")
+            parsed = urlparse(endpoint)
+            hostname = (parsed.hostname or "").lower()
 
+            if any(hostname.endswith(sfx) for sfx in _AZURE_OPENAI_HOST_SUFFIXES):
+                if endpoint.endswith("/openai"):
+                    endpoint = endpoint + "/v1"
+                elif not endpoint.endswith("/openai/v1"):
+                    endpoint = endpoint + "/openai/v1"
+
+            api_key = target.get("api_key", None)
+            # Check for credential in target dict or use passed credential parameter
+            target_credential = target.get("credential", None) or credential
             if api_key:
                 # Use API key authentication
                 chat_target = OpenAIChatTarget(
                     model_name=target["azure_deployment"],
-                    endpoint=target["azure_endpoint"],
+                    endpoint=endpoint,
                     api_key=api_key,
-                    api_version=api_version,
+                    httpx_client_kwargs={"timeout": timeout},
                 )
-            elif credential:
+            elif target_credential:
                 # Use explicit TokenCredential for AAD auth (e.g., in ACA environments)
-                token_provider = _create_token_provider(credential)
+                token_provider = _create_token_provider(target_credential)
                 chat_target = OpenAIChatTarget(
                     model_name=target["azure_deployment"],
-                    endpoint=target["azure_endpoint"],
-                    api_key=token_provider,  # Callable that returns tokens
-                    api_version=api_version,
+                    endpoint=endpoint,
+                    api_key=token_provider,  # PyRIT accepts callable that returns token
+                    httpx_client_kwargs={"timeout": timeout},
                 )
             else:
-                # Fall back to DefaultAzureCredential via PyRIT's use_aad_auth
-                # This works in local dev environments where DefaultAzureCredential has access
+                # Fall back to DefaultAzureCredential via PyRIT's auth helpers
+                from pyrit.auth import get_azure_openai_auth
+
                 chat_target = OpenAIChatTarget(
                     model_name=target["azure_deployment"],
-                    endpoint=target["azure_endpoint"],
-                    use_aad_auth=True,
-                    api_version=api_version,
+                    endpoint=endpoint,
+                    api_key=get_azure_openai_auth(target["azure_endpoint"]),
+                    httpx_client_kwargs={"timeout": timeout},
                 )
         else:  # OpenAI
             chat_target = OpenAIChatTarget(
                 model_name=target["model"],
                 endpoint=target.get("base_url", None),
                 api_key=target["api_key"],
-                api_version=target.get("api_version", "2024-06-01"),
+                httpx_client_kwargs={"timeout": timeout},
             )
     else:
         # Target is callable
@@ -252,7 +330,12 @@ def get_chat_target(
                     "context": {},
                 }
                 messages_list.append(formatted_response)  # type: ignore
-                return {"messages": messages_list, "stream": stream, "session_state": session_state, "context": {}}
+                return {
+                    "messages": messages_list,
+                    "stream": stream,
+                    "session_state": session_state,
+                    "context": {},
+                }
 
             chat_target = _CallbackChatTarget(callback=callback_target)  # type: ignore
 

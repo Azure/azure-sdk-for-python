@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=name-too-long, line-too-long, useless-suppression
 # coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft.
@@ -29,7 +29,7 @@ OPTIONAL ENV VARS:
 # [START text_authoring_get_model_evaluation_summary_async]
 import os
 import asyncio
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.ai.textanalytics.authoring.aio import TextAuthoringClient
 from azure.ai.textanalytics.authoring.models import (
     CustomSingleLabelClassificationEvalSummary,

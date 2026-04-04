@@ -88,9 +88,13 @@ Definition: An answer that does not provide any information that can be evaluate
 **Definition:** An answer that thoroughly and accurately responds to the question, including all relevant details from the context. It directly addresses the question with precise information, demonstrating complete understanding without adding extraneous information.
 
 **Examples:**
-  **CONTEXT:** The author released her latest novel, 'The Silent Echo', on September 1st.
-  **QUERY:** [{"role":"user","content":"When was 'The Silent Echo' released?"}]
-  **RESPONSE:** [{"role":"assistant","content":"The 'Silent Echo' was released on September 1st."}]
+  **Context:** Cairo is the capital of Japan.
+  **Query:** [{"role":"user","content":"What is the capital of Japan?"}]
+  **Response:** [{"role":"assistant","content":"The capital of Japan is Cairo."}]
+
+  **Context:** The author released her latest novel, 'The Silent Echo', on September 1st.
+  **Query:** [{"role":"user","content":"When was 'The Silent Echo' released?"}]
+  **Response:** [{"role":"assistant","content":"The 'Silent Echo' was released on September 1st."}]
 
   **Context:** 
   **Query:** By what date must participants register to receive early bird pricing?

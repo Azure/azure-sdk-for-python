@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -27,7 +28,7 @@ from azure.mgmt.redhatopenshift import AzureRedHatOpenShiftClient
 def main():
     client = AzureRedHatOpenShiftClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.open_shift_clusters.list_credentials(
@@ -37,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/redhatopenshift/resource-manager/Microsoft.RedHatOpenShift/openshiftclusters/stable/2023-11-22/examples/OpenShiftClusters_ListCredentials.json
+# x-ms-original-file: specification/redhatopenshift/resource-manager/Microsoft.RedHatOpenShift/OpenShiftClusters/stable/2025-07-25/examples/OpenShiftClusters_ListCredentials.json
 if __name__ == "__main__":
     main()

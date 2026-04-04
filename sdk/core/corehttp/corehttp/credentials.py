@@ -68,7 +68,11 @@ class TokenCredential(Protocol, ContextManager["TokenCredential"]):
         ...
 
     def close(self) -> None:
-        pass
+        """Close the credential, releasing any resources it holds.
+
+        :return: None
+        :rtype: None
+        """
 
 
 class ServiceNamedKey(NamedTuple):
@@ -93,7 +97,7 @@ class ServiceKeyCredential:
     It provides the ability to update the key without creating a new client.
 
     :param str key: The key used to authenticate to a service
-    :raises: TypeError
+    :raises TypeError: If the key is not a string.
     """
 
     def __init__(self, key: str) -> None:
@@ -117,7 +121,8 @@ class ServiceKeyCredential:
         to update long-lived clients.
 
         :param str key: The key used to authenticate to a service
-        :raises: ValueError or TypeError
+        :raises ValueError: If the key is None or empty.
+        :raises TypeError: If the key is not a string.
         """
         if not key:
             raise ValueError("The key used for updating can not be None or empty")
@@ -132,7 +137,7 @@ class ServiceNamedKeyCredential:
 
     :param str name: The name of the credential used to authenticate to a service.
     :param str key: The key used to authenticate to a service.
-    :raises: TypeError
+    :raises TypeError: If the name or key is not a string.
     """
 
     def __init__(self, name: str, key: str) -> None:
@@ -180,7 +185,11 @@ class AsyncTokenCredential(Protocol, AsyncContextManager["AsyncTokenCredential"]
         ...
 
     async def close(self) -> None:
-        pass
+        """Close the credential, releasing any resources.
+
+        :return: None
+        :rtype: None
+        """
 
     async def __aexit__(
         self,

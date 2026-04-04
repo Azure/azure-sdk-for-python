@@ -46,10 +46,10 @@ if TYPE_CHECKING:
 
 
 # defaults
-RECORDING_START_URL = "{}/record/start".format(PROXY_URL)
-RECORDING_STOP_URL = "{}/record/stop".format(PROXY_URL)
-PLAYBACK_START_URL = "{}/playback/start".format(PROXY_URL)
-PLAYBACK_STOP_URL = "{}/playback/stop".format(PROXY_URL)
+RECORDING_START_URL = "{}/record/start".format(PROXY_URL())
+RECORDING_STOP_URL = "{}/record/stop".format(PROXY_URL())
+PLAYBACK_START_URL = "{}/playback/start".format(PROXY_URL())
+PLAYBACK_STOP_URL = "{}/playback/stop".format(PROXY_URL())
 
 
 class RecordedTransport(str, Enum):
@@ -159,7 +159,7 @@ def stop_record_or_playback(test_id: str, recording_id: str, test_variables: "Di
 
 
 def get_proxy_netloc() -> "Dict[str, str]":
-    parsed_result = url_parse.urlparse(PROXY_URL)
+    parsed_result = url_parse.urlparse(PROXY_URL())
     return {"scheme": parsed_result.scheme, "netloc": parsed_result.netloc}
 
 

@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
 import psycopg2
 from azure.monitor.opentelemetry import configure_azure_monitor
 

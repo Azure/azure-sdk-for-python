@@ -1,6 +1,6 @@
 # pylint: disable=line-too-long,useless-suppression
 import functools
-import pytest
+from typing import cast, List
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.ai.language.conversations import ConversationAnalysisClient, AnalyzeConversationLROPoller
@@ -18,7 +18,6 @@ from azure.ai.language.conversations.models import (
     SummarizationOperationResult,
     ConversationActions,
 )
-from typing import cast, List
 from azure.core.credentials import AzureKeyCredential
 
 ConversationsPreparer = functools.partial(
@@ -129,10 +128,6 @@ class TestConversationsCase(TestConversations):
                         for summary in conversation.summaries:
                             print(f"    Aspect: {summary.aspect}")
                             print(f"    Text: {summary.text}")
-                        if conversation.warnings:
-                            print("  Warnings:")
-                            for warning in conversation.warnings:
-                                print(f"    Code: {warning.code}, Message: {warning.message}")
                 else:
                     print("  [No supported results to display for this action type]")
 

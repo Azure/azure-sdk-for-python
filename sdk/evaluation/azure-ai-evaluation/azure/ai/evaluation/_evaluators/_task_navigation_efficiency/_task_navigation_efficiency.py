@@ -9,6 +9,7 @@ from typing_extensions import overload, override
 
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
+from azure.ai.evaluation._evaluators._common._validators import TaskNavigationEfficiencyValidator, ValidatorInterface
 from azure.ai.evaluation._exceptions import (
     ErrorCategory,
     ErrorTarget,
@@ -78,7 +79,7 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
                     {"role": "assistant", "content": [{"type": "tool_call", "tool_call_id": "call_3", "name": "call_tool_B", "arguments": {}}]},
                     {"role": "assistant", "content": [{"type": "tool_call", "tool_call_id": "call_4", "name": "response_synthesis", "arguments": {}}]}
                 ],
-                ground_truth=["identify_tools_to_call", ""call_tool_A", "call_tool_B", "response_synthesis"]
+                ground_truth=["identify_tools_to_call", "call_tool_A", "call_tool_B", "response_synthesis"]
             )
 
             # Example 2: Using tool names with parameters (exact parameter matching required)
@@ -102,6 +103,8 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
 
     matching_mode: _TaskNavigationEfficiencyMatchingMode
     """The matching mode to use."""
+
+    _validator: ValidatorInterface
 
     @override
     def __init__(
@@ -129,7 +132,24 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
                 category=ErrorCategory.INVALID_VALUE,
             )
 
+        # Initialize input validator
+        self._validator = TaskNavigationEfficiencyValidator(
+            error_target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR
+        )
+
         super().__init__()
+
+    @override
+    async def _real_call(self, **kwargs):
+        """The asynchronous call where real end-to-end evaluation logic is performed.
+
+        :keyword kwargs: The inputs to evaluate.
+        :type kwargs: Dict
+        :return: The evaluation result.
+        :rtype: Dict[str, Union[float, str, Dict[str, float]]]
+        """
+        self._validator.validate_eval_input(kwargs)
+        return await super()._real_call(**kwargs)
 
     def _prepare_steps_for_comparison(
         self,

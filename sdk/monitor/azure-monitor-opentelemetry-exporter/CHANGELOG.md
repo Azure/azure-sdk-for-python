@@ -1,6 +1,72 @@
 # Release History
 
-## 1.0.0b47 (Unreleased)
+## 1.0.0b51 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b50 (2026-04-03)
+
+### Bugs Fixed
+- Fix duplicate authentication policy in live metrics exporter causing Unauthorized errors
+  for authenticated Application Insights resources
+  ([#46024](https://github.com/Azure/azure-sdk-for-python/pull/46024))
+- Suppress internal sdkstats HTTP pipeline logs from appearing in user's logs
+  ([#45966](https://github.com/Azure/azure-sdk-for-python/pull/45966))
+- Kubernetes pod name takes precedence when populating `cloud_RoleInstance`
+  ([#45884](https://github.com/Azure/azure-sdk-for-python/pull/45884))
+
+### Other Changes
+- Revert custom properties limit to 8kb
+  ([#46066](https://github.com/Azure/azure-sdk-for-python/pull/46066))
+
+## 1.0.0b49 (2026-03-19)
+
+### Features Added
+- Added a 256kb custom properties truncation limit on specific GenAI attributes
+  ([#45749](https://github.com/Azure/azure-sdk-for-python/pull/45749))
+- Add Browser SDK loader SDK Stats feature bit
+  ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/42904))
+
+### Bugs Fixed
+- Exempt specific GenAI attributes values from custom properties truncation
+  ([#45596](https://github.com/Azure/azure-sdk-for-python/pull/45596))
+- Fix attributes override in Rate Limited Sampler
+  ([#45592](https://github.com/Azure/azure-sdk-for-python/pull/45592))
+- Add environment variable to disable/enable custom properties truncation
+  ([#45479](https://github.com/Azure/azure-sdk-for-python/pull/45479))
+- Fix io counters import issue in performance counters
+  ([#45286](https://github.com/Azure/azure-sdk-for-python/pull/45286))
+- Remove custom properties truncation
+  ([#45118](https://github.com/Azure/azure-sdk-for-python/pull/45118))
+- Fix fallback logic when connection string is provided only via environment variable
+  ([#45252](https://github.com/Azure/azure-sdk-for-python/pull/45252))
+
+### Other Changes
+- Change import path for `LoggingHandler` to accommodate upstream breaking changes -
+[core](https://github.com/open-telemetry/opentelemetry-python/pull/4919) and [contrib](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4210)
+  ([#45516](https://github.com/Azure/azure-sdk-for-python/pull/45516))
+- Generate exporter with TypeSpec
+  ([#44442](https://github.com/Azure/azure-sdk-for-python/pull/44442))
+- Generate LiveMetrics from TypeSpec
+  ([#44696](https://github.com/Azure/azure-sdk-for-python/pull/44696))
+
+## 1.0.0b48 (2026-02-05)
+
+### Bugs Fixed
+- Fix CPU usage calculation logic for live metrics
+  ([#45005](https://github.com/Azure/azure-sdk-for-python/pull/45005))
+
+### Other Changes
+- Fix Ingestion-Side Sampling Disk Persist Behavior
+  ([#44980](https://github.com/Azure/azure-sdk-for-python/pull/44980))
+
+## 1.0.0b47 (2026-02-03)
 
 ### Features Added
 - Rename metric names for customer sdk stats and set it on by default
@@ -8,9 +74,7 @@
 - Add auto detection for application ID from connection string if not set 
   ([#44644](https://github.com/Azure/azure-sdk-for-python/pull/44644))
 - Add support for user id and authId
-([#44662](https://github.com/Azure/azure-sdk-for-python/pull/44662))
-
-### Breaking Changes
+  ([#44662](https://github.com/Azure/azure-sdk-for-python/pull/44662))
 
 ### Bugs Fixed
 - Add custom metric mapping for customer sdkstats metric names to preserve casing
@@ -19,10 +83,12 @@
   ([#44852](https://github.com/Azure/azure-sdk-for-python/pull/44852))
 
 ### Other Changes
+- Feature tracking for when customer sdkstats is disabled by the user
+  ([#44888](https://github.com/Azure/azure-sdk-for-python/pull/44888))
 - Update maximum size of custom properties
-([#44684](https://github.com/Azure/azure-sdk-for-python/pull/44684))
+  ([#44684](https://github.com/Azure/azure-sdk-for-python/pull/44684))
 - Declare support for Python 3.13 and 3.14
-([#44550](https://github.com/Azure/azure-sdk-for-python/pull/44550))
+  ([#44550](https://github.com/Azure/azure-sdk-for-python/pull/44550))
 
 ## 1.0.0b46 (2025-12-04)
 

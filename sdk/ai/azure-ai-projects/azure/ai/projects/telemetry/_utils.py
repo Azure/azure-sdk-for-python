@@ -45,7 +45,7 @@ GEN_AI_TOOL_CALL_ID = "gen_ai.tool.call.id"
 GEN_AI_REQUEST_RESPONSE_FORMAT = "gen_ai.request.response_format"
 GEN_AI_USAGE_INPUT_TOKENS = "gen_ai.usage.input_tokens"
 GEN_AI_USAGE_OUTPUT_TOKENS = "gen_ai.usage.output_tokens"
-GEN_AI_SYSTEM_MESSAGE = "gen_ai.system.instructions"
+GEN_AI_SYSTEM_MESSAGE = "gen_ai.system_instructions"
 GEN_AI_EVENT_CONTENT = "gen_ai.event.content"
 GEN_AI_RUN_STEP_START_TIMESTAMP = "gen_ai.run_step.start.timestamp"
 GEN_AI_RUN_STEP_END_TIMESTAMP = "gen_ai.run_step.end.timestamp"
@@ -91,17 +91,82 @@ GEN_AI_CONVERSATION_ITEM_EVENT = "gen_ai.conversation.item"
 GEN_AI_SYSTEM_INSTRUCTION_EVENT = "gen_ai.system.instructions"
 GEN_AI_AGENT_WORKFLOW_EVENT = "gen_ai.agent.workflow"
 
+# Attribute names for messages (when USE_MESSAGE_EVENTS = False)
+GEN_AI_INPUT_MESSAGES = "gen_ai.input.messages"
+GEN_AI_OUTPUT_MESSAGES = "gen_ai.output.messages"
+
 # Metric names
 GEN_AI_CLIENT_OPERATION_DURATION = "gen_ai.client.operation.duration"
 GEN_AI_CLIENT_TOKEN_USAGE = "gen_ai.client.token.usage"
 
 # Constant attribute values
 AZURE_AI_AGENTS_SYSTEM = "az.ai.agents"
-AZURE_AI_AGENTS_PROVIDER = "azure.ai.agents"
+AGENTS_PROVIDER = "microsoft.foundry"
+RESPONSES_PROVIDER = "microsoft.foundry"
 AGENT_TYPE_PROMPT = "prompt"
 AGENT_TYPE_WORKFLOW = "workflow"
 AGENT_TYPE_HOSTED = "hosted"
 AGENT_TYPE_UNKNOWN = "unknown"
+
+# Span name prefixes for responses API operations
+SPAN_NAME_INVOKE_AGENT = "invoke_agent"
+SPAN_NAME_CHAT = "chat"
+
+# Operation names for gen_ai.operation.name attribute
+OPERATION_NAME_INVOKE_AGENT = "invoke_agent"
+OPERATION_NAME_CHAT = "chat"
+
+# Configuration: Controls whether input/output messages are emitted as events or attributes
+# Can be set at runtime for testing purposes (internal use only)
+# Set to True for event-based, False for attribute-based (default)
+_use_message_events = False
+
+# Configuration: Controls whether function tool calls use simplified OTEL-compliant format
+# When True (default), function_call and function_call_output use a simpler structure:
+#   tool_call: {"type": "tool_call", "id": "...", "name": "...", "arguments": {...}}
+#   tool_call_response: {"type": "tool_call_response", "id": "...", "result": "..."}
+# When False, the full nested structure is used
+_use_simple_tool_format = True
+
+
+def _get_use_simple_tool_format() -> bool:
+    """Get the current tool format mode (simple vs nested). Internal use only.
+
+    :return: True if using simple OTEL-compliant format, False if using nested format
+    :rtype: bool
+    """
+    return _use_simple_tool_format
+
+
+def _set_use_simple_tool_format(use_simple: bool) -> None:
+    """
+    Set the tool format mode at runtime. Internal use only.
+
+    :param use_simple: True to use simple OTEL-compliant format, False for nested format
+    :type use_simple: bool
+    """
+    global _use_simple_tool_format  # pylint: disable=global-statement
+    _use_simple_tool_format = use_simple
+
+
+def _get_use_message_events() -> bool:
+    """Get the current message tracing mode (events vs attributes). Internal use only.
+
+    :return: True if using events, False if using attributes
+    :rtype: bool
+    """
+    return _use_message_events
+
+
+def _set_use_message_events(use_events: bool) -> None:
+    """
+    Set the message tracing mode at runtime. Internal use only.
+
+    :param use_events: True to use events (default), False to use attributes
+    :type use_events: bool
+    """
+    global _use_message_events  # pylint: disable=global-statement
+    _use_message_events = use_events
 
 
 class OperationName(Enum):
@@ -139,7 +204,7 @@ def start_span(
     reasoning_summary: Optional[str] = None,
     structured_inputs: Optional[str] = None,
     gen_ai_system: Optional[str] = None,
-    gen_ai_provider: Optional[str] = AZURE_AI_AGENTS,
+    gen_ai_provider: Optional[str] = AGENTS_PROVIDER,
     kind: SpanKind = SpanKind.CLIENT,
 ) -> "Optional[AbstractSpan]":
     global _span_impl_type  # pylint: disable=global-statement
@@ -160,7 +225,7 @@ def start_span(
 
     if span and span.span_instance.is_recording:
         span.add_attribute(AZ_NAMESPACE, AZ_NAMESPACE_VALUE)
-        span.add_attribute(GEN_AI_PROVIDER_NAME, AZURE_AI_AGENTS)
+        span.add_attribute(GEN_AI_PROVIDER_NAME, AGENTS_PROVIDER)
 
         if gen_ai_provider:
             span.add_attribute(GEN_AI_PROVIDER_NAME, gen_ai_provider)

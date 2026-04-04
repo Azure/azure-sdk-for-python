@@ -141,22 +141,9 @@ stages:
                             Get-ChildItem $esrpDirectory
                           displayName: Isolate files for ESRP Publish
 
-                        - task: EsrpRelease@9
-                          displayName: 'Publish to ESRP'
-                          inputs:
-                            ConnectedServiceName: 'Azure SDK PME Managed Identity'
-                            ClientId: '5f81938c-2544-4f1f-9251-dd9de5b8a81b'
-                            DomainTenantId: '975f013f-7f24-47e8-a7d3-abc4752bf346'
-                            UseManagedIdentity: true
-                            KeyVaultName: 'kv-azuresdk-codesign'
-                            SignCertName: 'azure-sdk-esrp-release-certificate'
-                            Intent: 'PackageDistribution'
-                            ContentType: 'PyPI'
-                            FolderLocation: $(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}
-                            Owners: $(Build.RequestedForEmail)
-                            Approvers: $(Build.RequestedForEmail)
-                            ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
-                            MainPublisher: 'ESRPRELPACMANTEST'
+                        - template: /eng/pipelines/templates/steps/esrp-publish.yml
+                          parameters:
+                            targetFolder: "$(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}"
 
                       - ${{ if ne(parameters.PublicFeed, 'PyPi') }}:
                         - task: TwineAuthenticate@0
@@ -222,7 +209,12 @@ stages:
           - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - job: PublishGitHubIODocs
               displayName: Publish Docs to GitHubIO Blob Storage
-              condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
+              condition: >-
+                and(
+                  succeeded(), 
+                  ne(variables['Skip.PublishDocs'], 'true'), 
+                  ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr')
+                )
               dependsOn: PublishPackage
 
               pool:
@@ -260,7 +252,12 @@ stages:
           - ${{if ne(artifact.skipPublishDocMs, 'true')}}:
             - job: PublishDocs
               displayName: Docs.MS Release
-              condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
+              condition: >-
+                and(
+                  succeeded(), 
+                  ne(variables['Skip.PublishDocs'], 'true'), 
+                  ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr')
+                )
               dependsOn: PublishPackage
 
               pool:
@@ -312,7 +309,7 @@ stages:
               - checkout: self
               - task: UsePythonVersion@0
               - script: |
-                  python -m pip install "./eng/tools/azure-sdk-tools[build]"
+                  python -m pip install "./eng/tools/azure-sdk-tools"
                 displayName: Install versioning tool dependencies
 
               - pwsh: |
@@ -383,7 +380,18 @@ stages:
 
       - job: PublishDocsToNightlyBranch
         dependsOn: PublishPackages
-        condition: and(succeeded(), or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal'))))
+        condition: >-
+          and(
+            succeeded(), 
+            or(
+              eq(variables['SetDevVersion'], 'true'), 
+              and(
+                eq(variables['Build.Reason'],'Schedule'), 
+                eq(variables['System.TeamProject'], 'internal')
+              )
+            ), 
+            ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr')
+          )
         pool:
           image: ubuntu-24.04
           name: azsdk-pool

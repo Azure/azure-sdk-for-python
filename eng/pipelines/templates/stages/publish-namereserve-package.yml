@@ -1,6 +1,18 @@
+trigger: none
+pr: none
+
+schedules:
+  - cron: "0 22 * * *"
+    displayName: Daily Package Name Registration
+    branches:
+      include:
+        - main
+    always: true
+
 parameters:
   - name: NameForReservation
     type: string
+    default: 'auto'
   - name: VersionForReservation
     type: string
     default: '0.0.0'
@@ -20,6 +32,11 @@ extends:
     - stage: Publish
       displayName: 'Publish Name Reservation Package'
       dependsOn: Build
+      condition: >-
+        and(
+          succeeded(),
+          ne(dependencies.Build.outputs['generate_namereserve_package.generatePackages.HasPackages'], 'false')
+        )
       jobs:
         - deployment: PublishPackage
           displayName: "Publish to PyPI"
@@ -48,25 +65,12 @@ extends:
                   - pwsh: |
                       New-Item -ItemType Directory -Force -Path "$(PUBLISHDIRECTORY)"
 
-                      Get-ChildItem -Path "$(Pipeline.Workspace)/NameReservePackage/${{parameters.NameForReservation}}" `
+                      Get-ChildItem -Path "$(Pipeline.Workspace)/NameReservePackage" -Recurse `
                         | Where-Object { ($_.Name -like "*.tar.gz" -or $_.Name -like "*.whl") } `
                         | Copy-Item -Destination "$(PUBLISHDIRECTORY)"
                       Get-ChildItem "$(PUBLISHDIRECTORY)"
                     displayName: Isolate files for ESRP Publish
 
-                  - task: EsrpRelease@9
-                    displayName: 'Publish to ESRP'
-                    inputs:
-                      ConnectedServiceName: 'Azure SDK PME Managed Identity'
-                      ClientId: '5f81938c-2544-4f1f-9251-dd9de5b8a81b'
-                      DomainTenantId: '975f013f-7f24-47e8-a7d3-abc4752bf346'
-                      UseManagedIdentity: true
-                      KeyVaultName: 'kv-azuresdk-codesign'
-                      SignCertName: 'azure-sdk-esrp-release-certificate'
-                      Intent: 'PackageDistribution'
-                      ContentType: 'PyPI'
-                      FolderLocation: "$(PUBLISHDIRECTORY)"
-                      Owners: $(Build.RequestedForEmail)
-                      Approvers: $(Build.RequestedForEmail)
-                      ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
-                      MainPublisher: 'ESRPRELPACMANTEST'
+                  - template: /eng/pipelines/templates/steps/esrp-publish.yml
+                    parameters:
+                      targetFolder: "$(PUBLISHDIRECTORY)"

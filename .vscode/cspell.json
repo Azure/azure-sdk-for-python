@@ -260,6 +260,7 @@
     "engsys",
     "entra",
     "envname",
+    "esrp",
     "evals",
     "fastmcp",
     "fileno",
@@ -449,6 +450,7 @@
     "toxenv",
     "tzname",
     "tzutc",
+    "uami",
     "uamqp",
     "uksouth",
     "ukwest",
@@ -915,7 +917,7 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
-      "words": [ "qnas", "qnamaker", "ADTO", "tfidf", "ngram" ],
+      "words": [ "qnas", "qnamaker", "ADTO", "tfidf", "ngram", "kwoa" ],
       "caseSensitive": false
     },
     {
@@ -2189,6 +2191,14 @@
     {
       "filename": "sdk/ai/azure-ai-voicelive/**",
       "words": ["viseme","VISEME","ulaw","ULAW","logprobs","pyaudio","PyAudio","libasound","webrtc","WEBRTC"]
+    },
+    {
+      "filename": ".github/**/ml/**",
+      "words": ["envml", "paginators"]
+    },
+    {
+      "filename": "sdk/agentserver/azure-ai-agentserver-githubcopilot/**",
+      "words": ["RAPI", "BYOK", "byok", "NCUS", "ncusacr", "fstring", "ename", "valeriepham", "coreai", "Vnext", "PYTHONIOENCODING"]
     }
   ],
   "allowCompoundWords": true

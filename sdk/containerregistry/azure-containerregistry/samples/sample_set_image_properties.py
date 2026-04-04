@@ -18,7 +18,7 @@ USAGE:
 
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of your Container Registry account
-    
+
     This sample assumes your registry has a repository "library/hello-world" with image tagged "v1",
     run load_registry() if you don't have.
     Set the environment variables with your own values before running load_registry():
@@ -27,6 +27,7 @@ USAGE:
     3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
     4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
 """
+
 import os
 from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ContainerRegistryClient

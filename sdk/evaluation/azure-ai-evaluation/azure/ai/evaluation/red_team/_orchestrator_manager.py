@@ -16,11 +16,29 @@ from datetime import datetime
 from typing import Dict, List, Optional, Union, Callable
 from tqdm import tqdm
 
-# PyRIT imports
-from pyrit.orchestrator.single_turn.prompt_sending_orchestrator import PromptSendingOrchestrator
-from pyrit.orchestrator.multi_turn.red_teaming_orchestrator import RedTeamingOrchestrator
-from pyrit.orchestrator.multi_turn.crescendo_orchestrator import CrescendoOrchestrator
-from pyrit.orchestrator import Orchestrator
+# PyRIT imports - orchestrator module deprecated, use Foundry scenario instead
+# These imports are kept for backward compatibility but may not be available in newer PyRIT versions
+try:
+    from pyrit.orchestrator.single_turn.prompt_sending_orchestrator import (
+        PromptSendingOrchestrator,
+    )
+    from pyrit.orchestrator.multi_turn.red_teaming_orchestrator import (
+        RedTeamingOrchestrator,
+    )
+    from pyrit.orchestrator.multi_turn.crescendo_orchestrator import (
+        CrescendoOrchestrator,
+    )
+    from pyrit.orchestrator import Orchestrator
+
+    _ORCHESTRATOR_AVAILABLE = True
+except ImportError:
+    # Newer PyRIT versions use scenario-based approach instead of orchestrators
+    PromptSendingOrchestrator = None
+    RedTeamingOrchestrator = None
+    CrescendoOrchestrator = None
+    Orchestrator = None
+    _ORCHESTRATOR_AVAILABLE = False
+
 from pyrit.prompt_converter import PromptConverter
 from pyrit.prompt_target import PromptChatTarget
 
@@ -277,6 +295,11 @@ class OrchestratorManager:
 
         # Initialize orchestrator
         try:
+            if not _ORCHESTRATOR_AVAILABLE:
+                raise ImportError(
+                    "PyRIT orchestrator classes are not available. "
+                    "Please install a compatible version of pyrit with orchestrator support."
+                )
             orchestrator = PromptSendingOrchestrator(objective_target=chat_target, prompt_converters=converter_list)
 
             if not all_prompts:
@@ -340,7 +363,11 @@ class OrchestratorManager:
                 try:
                     # Create retry-enabled function using the reusable decorator
                     @network_retry_decorator(
-                        self.retry_config, self.logger, strategy_name, risk_category_name, prompt_idx + 1
+                        self.retry_config,
+                        self.logger,
+                        strategy_name,
+                        risk_category_name,
+                        prompt_idx + 1,
                     )
                     async def send_prompt_with_retry():
                         memory_labels = {
@@ -528,6 +555,11 @@ class OrchestratorManager:
                 )
 
             try:
+                if not _ORCHESTRATOR_AVAILABLE:
+                    raise ImportError(
+                        "PyRIT orchestrator classes are not available. "
+                        "Please install a compatible version of pyrit with orchestrator support."
+                    )
                 azure_rai_service_scorer = AzureRAIServiceTrueFalseScorer(
                     client=self.generated_rai_client,
                     api_version=None,
@@ -561,7 +593,11 @@ class OrchestratorManager:
                 try:
                     # Create retry-enabled function using the reusable decorator
                     @network_retry_decorator(
-                        self.retry_config, self.logger, strategy_name, risk_category_name, prompt_idx + 1
+                        self.retry_config,
+                        self.logger,
+                        strategy_name,
+                        risk_category_name,
+                        prompt_idx + 1,
                     )
                     async def send_prompt_with_retry():
                         memory_labels = {
@@ -738,6 +774,11 @@ class OrchestratorManager:
                 )
 
             try:
+                if not _ORCHESTRATOR_AVAILABLE:
+                    raise ImportError(
+                        "PyRIT orchestrator classes are not available. "
+                        "Please install a compatible version of pyrit with orchestrator support."
+                    )
                 red_llm_scoring_target = RAIServiceEvalChatTarget(
                     logger=self.logger,
                     credential=self.credential,
@@ -781,7 +822,11 @@ class OrchestratorManager:
                 try:
                     # Create retry-enabled function using the reusable decorator
                     @network_retry_decorator(
-                        self.retry_config, self.logger, strategy_name, risk_category_name, prompt_idx + 1
+                        self.retry_config,
+                        self.logger,
+                        strategy_name,
+                        risk_category_name,
+                        prompt_idx + 1,
                     )
                     async def send_prompt_with_retry():
                         memory_labels = {

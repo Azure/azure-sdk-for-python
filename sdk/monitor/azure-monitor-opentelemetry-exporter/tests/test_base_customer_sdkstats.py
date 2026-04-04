@@ -2,43 +2,31 @@
 # Licensed under the MIT License.
 
 import os
-import shutil
 import unittest
 from unittest import mock
 from datetime import datetime
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
-from requests.exceptions import ConnectionError
 from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
 )
-from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
-from azure.monitor.opentelemetry.exporter._generated.models import (
+from azure.monitor.opentelemetry.exporter._generated.exporter import AzureMonitorClient
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     TelemetryItem,
     TrackResponse,
     TelemetryErrorDetails,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat.customer._manager import (
-    CustomerSdkStatsManager,
-)
-from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
-    get_customer_stats_manager,
-)
 from azure.monitor.opentelemetry.exporter._constants import (
-    DropCode,
-    RetryCode,
     _exception_categories,
 )
 
 from azure.monitor.opentelemetry.exporter.statsbeat.customer._utils import (
-    track_successful_items,
-    track_dropped_items,
-    track_retry_items,
     track_dropped_items_from_storage,
 )
 
 
+# pylint: pylint: disable=unused-variable, unused-argument
 class MockResponse:
     """Mock response object for HTTP requests"""
 
@@ -59,7 +47,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Set up class-level resources including a single customer stats manager"""
-        from azure.monitor.opentelemetry.exporter._generated.models import TelemetryEventData, MonitorBase
+        from azure.monitor.opentelemetry.exporter._generated.exporter.models import TelemetryEventData, MonitorBase
 
         os.environ.pop("APPLICATIONINSIGHTS_SDKSTATS_DISABLED", None)
         os.environ["APPLICATIONINSIGHTS_SDKSTATS_DISABLED"] = "false"
@@ -168,8 +156,13 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
     def test_transmit_retryable_http_error_customer_sdkstats_track_retry_items(self, track_retry_mock):
         """Test that _track_retry_items is called on retryable HTTP errors (e.g., 408, 502, 503, 504)"""
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
-        with mock.patch("requests.Session.request") as request_mock:
-            request_mock.return_value = MockResponse(408, "{}")
+        error_response = mock.Mock()
+        error_response.status_code = 408
+        with mock.patch.object(
+            AzureMonitorClient,
+            "track",
+            side_effect=HttpResponseError("Retryable error", response=error_response),
+        ):
             result = exporter._transmit(self._envelopes_to_export)
 
         track_retry_mock.assert_called_once()
@@ -195,12 +188,17 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_dropped_items")
     def test_transmit_invalid_http_error_customer_sdkstats_track_dropped_items_and_shutdown(self, track_dropped_mock):
-        """Test that _track_dropped_items is called and customer sdkstats is shutdown on invalid HTTP errors (e.g., 400)"""
+        """Test that _track_dropped_items is called and customer sdkstats is shutdown on invalid HTTP errors (e.g., 400)"""  # pylint: disable=line-too-long
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
-        with mock.patch("requests.Session.request") as request_mock, mock.patch(
+        error_response = mock.Mock()
+        error_response.status_code = 400
+        with mock.patch.object(
+            AzureMonitorClient,
+            "track",
+            side_effect=HttpResponseError("Invalid error", response=error_response),
+        ), mock.patch(
             "azure.monitor.opentelemetry.exporter.statsbeat.customer.shutdown_customer_sdkstats_metrics"
         ) as shutdown_mock:
-            request_mock.return_value = MockResponse(400, "{}")
             result = exporter._transmit(self._envelopes_to_export)
 
         track_dropped_mock.assert_called_once()
@@ -255,8 +253,6 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
     def test_transmit_from_storage_customer_sdkstats_track_dropped_items_from_storage(
         self, track_dropped_storage_mock, track_dropped_items_mock
     ):
-        """Test that _track_dropped_items_from_storage is called during storage operations"""
-        from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
 
         exporter = self._create_exporter_with_customer_sdkstats_enabled(disable_offline_storage=False)
 

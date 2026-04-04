@@ -23,6 +23,12 @@ parameters:
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
+  # Authenticate to Azure Artifacts feed immediately after checkout to prevent 401 errors
+  # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org
+  - template: auth-dev-feed.yml
+    parameters:
+      DevFeedName: ${{ parameters.DevFeedName }}
+
   - task: UsePythonVersion@0
     displayName: 'Use Python 3.13'
     inputs:
@@ -36,11 +42,6 @@ steps:
         Write-Host "##vso[task.setvariable variable=ComponentDetection.SourcePath]$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}"
       }
     displayName: Set Component Governance Path
-
-  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
-    - template: auth-dev-feed.yml
-      parameters:
-        DevFeedName: ${{ parameters.DevFeedName }}
 
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
     parameters:

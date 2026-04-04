@@ -4,7 +4,6 @@
 # ------------------------------------
 import base64
 import functools
-import pickle
 from typing import Any, Callable, Optional, overload
 
 from typing_extensions import Literal
@@ -13,7 +12,7 @@ from azure.core.polling import AsyncLROPoller
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated.models import PreBackupOperationParameters, PreRestoreOperationParameters, SASTokenParameter
-from .._backup_client import _parse_status_url
+from .._backup_client import _get_continuation_token, _parse_status_url
 from .._internal import AsyncKeyVaultClientBase, parse_folder_url
 from .._internal.async_polling import KeyVaultAsyncBackupClientPollingMethod
 from .._internal.polling import KeyVaultBackupClientPolling
@@ -51,7 +50,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         )
         if "azure-asyncoperation" not in pipeline_response.http_response.headers:
             pipeline_response.http_response.headers["azure-asyncoperation"] = status_url
-        return base64.b64encode(pickle.dumps(pipeline_response)).decode("ascii")
+        return _get_continuation_token(pipeline_response)
 
     @overload
     async def begin_backup(

@@ -1,3 +1,6 @@
 {
-  "apiVersion": "2025-11-15-preview"
+  "apiVersion": "v1",
+  "apiVersions": {
+    "Azure.AI.Projects": "v1"
+  }
 }

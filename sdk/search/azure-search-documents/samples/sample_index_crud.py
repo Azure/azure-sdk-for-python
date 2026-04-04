@@ -43,17 +43,15 @@ def create_index():
 
     index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     fields = [
-        SimpleField(name="HotelId", type=SearchFieldDataType.String, key=True),
-        SimpleField(name="HotelName", type=SearchFieldDataType.String, searchable=True),
-        SimpleField(name="BaseRate", type=SearchFieldDataType.Double),
-        SearchableField(
-            name="Description", type=SearchFieldDataType.String, collection=True
-        ),
+        SimpleField(name="HotelId", type=SearchFieldDataType.STRING, key=True),
+        SimpleField(name="HotelName", type=SearchFieldDataType.STRING, searchable=True),
+        SimpleField(name="BaseRate", type=SearchFieldDataType.DOUBLE),
+        SearchableField(name="Description", type=SearchFieldDataType.STRING, collection=True),
         ComplexField(
             name="Address",
             fields=[
-                SimpleField(name="StreetAddress", type=SearchFieldDataType.String),
-                SimpleField(name="City", type=SearchFieldDataType.String),
+                SimpleField(name="StreetAddress", type=SearchFieldDataType.STRING),
+                SimpleField(name="City", type=SearchFieldDataType.STRING),
             ],
             collection=True,
         ),
@@ -99,18 +97,16 @@ def update_index():
 
     index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     fields = [
-        SimpleField(name="HotelId", type=SearchFieldDataType.String, key=True),
-        SimpleField(name="HotelName", type=SearchFieldDataType.String, searchable=True),
-        SimpleField(name="BaseRate", type=SearchFieldDataType.Double),
-        SearchableField(
-            name="Description", type=SearchFieldDataType.String, collection=True
-        ),
+        SimpleField(name="HotelId", type=SearchFieldDataType.STRING, key=True),
+        SimpleField(name="HotelName", type=SearchFieldDataType.STRING, searchable=True),
+        SimpleField(name="BaseRate", type=SearchFieldDataType.DOUBLE),
+        SearchableField(name="Description", type=SearchFieldDataType.STRING, collection=True),
         ComplexField(
             name="Address",
             fields=[
-                SimpleField(name="StreetAddress", type=SearchFieldDataType.String),
-                SimpleField(name="City", type=SearchFieldDataType.String),
-                SimpleField(name="State", type=SearchFieldDataType.String),
+                SimpleField(name="StreetAddress", type=SearchFieldDataType.STRING),
+                SimpleField(name="City", type=SearchFieldDataType.STRING),
+                SimpleField(name="State", type=SearchFieldDataType.STRING),
             ],
             collection=True,
         ),
@@ -131,6 +127,19 @@ def update_index():
     # [END update_index]
 
 
+def list_index_names():
+    # [START list_index_names]
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.indexes import SearchIndexClient
+
+    index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
+
+    print("Listing all index names:")
+    for name in index_client.list_index_names():
+        print(f"  - {name}")
+    # [END list_index_names]
+
+
 def delete_index():
     # [START delete_index]
     from azure.core.credentials import AzureKeyCredential
@@ -145,5 +154,6 @@ def delete_index():
 if __name__ == "__main__":
     create_index()
     get_index()
+    list_index_names()
     update_index()
     delete_index()

@@ -99,18 +99,18 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_03_list_collections(self, planetarycomputer_endpoint):
+    def test_03_list_collections(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """Test listing STAC collections."""
         logger.info("=" * 80)
         logger.info("TEST: List STAC Collections")
         logger.info("=" * 80)
 
-        collection_id = os.getenv("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
+        collection_id = planetarycomputer_collection_id
 
         assert collection_id is not None
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        collections = client.stac.list_collections()
+        collections = client.stac.get_collections()
 
         # Validate collections response
         assert collections is not None, "Collections should not be None"
@@ -158,10 +158,10 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_04_get_collection(self, planetarycomputer_endpoint):
+    def test_04_get_collection(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """Test getting a specific STAC collection."""
 
-        collection_id = os.getenv("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
+        collection_id = planetarycomputer_collection_id
         assert collection_id is not None
 
         logger.info("=" * 80)
@@ -169,7 +169,6 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
         logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
         collection = client.stac.get_collection(collection_id=collection_id)
 
         # Validate collection
@@ -225,14 +224,14 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_05_search_items_with_spatial_filter(self, planetarycomputer_endpoint):
+    def test_05_search_items_with_spatial_filter(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """Test searching STAC items with spatial filter."""
         logger.info("=" * 80)
         logger.info("TEST: Search STAC Items with Spatial Filter")
         logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
+        collection_id = planetarycomputer_collection_id
 
         # Create search with spatial filter
         search_params = StacSearchParameters(
@@ -303,14 +302,14 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_06_get_item_collection(self, planetarycomputer_endpoint):
+    def test_06_get_item_collection(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """Test listing items in a collection."""
         logger.info("=" * 80)
         logger.info("TEST: List Items in Collection")
         logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
+        collection_id = planetarycomputer_collection_id
         items_response = client.stac.get_item_collection(
             collection_id=collection_id, limit=10
         )
@@ -354,14 +353,14 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_07_get_collection_queryables(self, planetarycomputer_endpoint):
+    def test_07_get_collection_queryables(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """Test getting queryable properties for a collection."""
         logger.info("=" * 80)
         logger.info("TEST: List Collection Queryables")
         logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
+        collection_id = planetarycomputer_collection_id
         queryables = client.stac.get_collection_queryables(collection_id=collection_id)
 
         # Validate queryables
@@ -406,14 +405,14 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_08_search_items_with_temporal_filter(self, planetarycomputer_endpoint):
+    def test_08_search_items_with_temporal_filter(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """Test searching items with temporal filter."""
         logger.info("=" * 80)
         logger.info("TEST: Search Items with Temporal Filter")
         logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
+        collection_id = planetarycomputer_collection_id
 
         # Search with temporal range using date_time parameter
         search_params = StacSearchParameters(
@@ -459,14 +458,14 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_09_search_items_with_sorting(self, planetarycomputer_endpoint):
+    def test_09_search_items_with_sorting(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """Test searching items with sorting."""
         logger.info("=" * 80)
         logger.info("TEST: Search Items with Sorting")
         logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
+        collection_id = planetarycomputer_collection_id
 
         # Search with descending sort by datetime
         search_params_desc = StacSearchParameters(
@@ -537,14 +536,14 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_10_create_stac_item(self, planetarycomputer_endpoint):
+    def test_10_create_stac_item(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """Test creating a STAC item."""
         logger.info("=" * 80)
         logger.info("TEST: Create STAC Item")
         logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
+        collection_id = planetarycomputer_collection_id
         item_id = "ga_m_3308421_se_16_060_20211114_test"
 
         # Create sample STAC item
@@ -665,14 +664,14 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_11_update_stac_item(self, planetarycomputer_endpoint):
+    def test_11_update_stac_item(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """Test updating a STAC item."""
         logger.info("=" * 80)
         logger.info("TEST: Update STAC Item")
         logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
+        collection_id = planetarycomputer_collection_id
         item_id = "ga_m_3308421_se_16_060_20211114_test"
 
         try:
@@ -729,14 +728,14 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_12_get_item(self, planetarycomputer_endpoint):
+    def test_12_get_item(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """Test getting a specific STAC item."""
         logger.info("=" * 80)
         logger.info("TEST: Get STAC Item")
         logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
+        collection_id = planetarycomputer_collection_id
 
         # First, get an item ID from the collection
         items_response = client.stac.get_item_collection(
@@ -788,7 +787,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_13_replace_stac_item(self, planetarycomputer_endpoint):
+    def test_13_replace_stac_item(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """Test creating or replacing a STAC item (idempotent operation).
 
         This demonstrates using begin_create_or_replace_item which is idempotent:
@@ -801,7 +800,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
         logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
+        collection_id = planetarycomputer_collection_id
         item_id = "ga_m_3308421_se_16_060_20211114_replace_test"
 
         # Create sample STAC item
@@ -937,7 +936,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_14_delete_stac_item(self, planetarycomputer_endpoint):
+    def test_14_delete_stac_item(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """Test deleting a STAC item.
 
         This demonstrates using begin_delete_item to remove an item from a collection.
@@ -948,7 +947,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
         logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
+        collection_id = planetarycomputer_collection_id
         item_id = "ga_m_3308421_se_16_060_20211114_delete_test"
 
         # Create sample STAC item to delete

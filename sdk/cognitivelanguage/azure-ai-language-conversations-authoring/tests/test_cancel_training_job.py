@@ -1,10 +1,10 @@
 # pylint: disable=line-too-long,useless-suppression
 import functools
+import pytest
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
-from azure.ai.language.conversations.authoring.models import TrainingJobResult
 
 ConversationsPreparer = functools.partial(
     EnvironmentVariableLoader,
@@ -18,7 +18,7 @@ class TestConversations(AzureRecordedTestCase):
     def create_client(self, endpoint, key):
         return ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
 
-
+@pytest.mark.playback_test_only
 class TestConversationsCancelTrainingSync(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy
@@ -27,7 +27,7 @@ class TestConversationsCancelTrainingSync(TestConversations):
         client = self.create_client(authoring_endpoint, authoring_key)
 
         project_client = client.get_project_client("Test-data-labels")
-        job_id = "0f2fa6fe-c39c-48d5-a1e1-1e549a1c2299_638985888000000000"
+        job_id = "4867cb16-0d8b-4528-b097-c6c0ef4f507b_639059328000000000"
 
         poller = project_client.project.begin_cancel_training_job(
             job_id=job_id,

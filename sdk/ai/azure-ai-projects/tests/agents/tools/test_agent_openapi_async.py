@@ -20,6 +20,9 @@ from azure.ai.projects.models import (
 )
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAgentOpenApiAsync(TestBase):
 
     # To run this test:
@@ -74,7 +77,7 @@ class TestAgentOpenApiAsync(TestBase):
 
             response = await openai_client.responses.create(
                 input="Use the OpenAPI tool to print out, what is the weather in Seattle, WA today.",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
             self.validate_response(response)
 

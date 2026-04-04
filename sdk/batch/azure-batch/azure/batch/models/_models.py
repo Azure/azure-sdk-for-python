@@ -185,7 +185,7 @@ class AutoScaleRunError(_Model):
     """A message describing the autoscale error, intended to be suitable for display in a user
      interface."""
     values_property: Optional[list["_models.NameValuePair"]] = rest_field(
-        name="values", visibility=["read", "create", "update", "delete", "query"]
+        name="values", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="values"
     )
     """A list of additional error details related to the autoscale error."""
 
@@ -640,7 +640,7 @@ class BatchCreateTaskCollectionResult(_Model):
     """
 
     values_property: Optional[list["_models.BatchTaskCreateResult"]] = rest_field(
-        name="value", visibility=["read", "create", "update", "delete", "query"]
+        name="value", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="values"
     )
     """The results of the create Task collection operation."""
 
@@ -733,7 +733,7 @@ class BatchError(_Model):
     )
     """A message describing the error, intended to be suitable for display in a user interface."""
     values_property: Optional[list["_models.BatchErrorDetail"]] = rest_field(
-        name="values", visibility=["read", "create", "update", "delete", "query"]
+        name="values", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="values"
     )
     """A collection of key-value pairs containing additional details about the error."""
 
@@ -2929,12 +2929,12 @@ class BatchJobScheduleStatistics(_Model):
     :ivar write_iops: The total number of disk write operations made by all Tasks in all Jobs
      created under the schedule. Required.
     :vartype write_iops: int
-    :ivar read_io_gi_b: The total gibibytes read from disk by all Tasks in all Jobs created under
+    :ivar read_io_gib: The total gibibytes read from disk by all Tasks in all Jobs created under
      the schedule. Required.
-    :vartype read_io_gi_b: float
-    :ivar write_io_gi_b: The total gibibytes written to disk by all Tasks in all Jobs created under
+    :vartype read_io_gib: float
+    :ivar write_io_gib: The total gibibytes written to disk by all Tasks in all Jobs created under
      the schedule. Required.
-    :vartype write_io_gi_b: float
+    :vartype write_io_gib: float
     :ivar succeeded_tasks_count: The total number of Tasks successfully completed during the given
      time range in Jobs created under the schedule. A Task completes successfully if it returns exit
      code 0. Required.
@@ -2993,10 +2993,10 @@ class BatchJobScheduleStatistics(_Model):
     )
     """The total number of disk write operations made by all Tasks in all Jobs created under the
      schedule. Required."""
-    read_io_gi_b: float = rest_field(name="readIOGiB", visibility=["read", "create", "update", "delete", "query"])
+    read_io_gib: float = rest_field(name="readIOGiB", visibility=["read", "create", "update", "delete", "query"])
     """The total gibibytes read from disk by all Tasks in all Jobs created under the schedule.
      Required."""
-    write_io_gi_b: float = rest_field(name="writeIOGiB", visibility=["read", "create", "update", "delete", "query"])
+    write_io_gib: float = rest_field(name="writeIOGiB", visibility=["read", "create", "update", "delete", "query"])
     """The total gibibytes written to disk by all Tasks in all Jobs created under the schedule.
      Required."""
     succeeded_tasks_count: int = rest_field(
@@ -3036,8 +3036,8 @@ class BatchJobScheduleStatistics(_Model):
         wall_clock_time: datetime.timedelta,
         read_iops: int,
         write_iops: int,
-        read_io_gi_b: float,
-        write_io_gi_b: float,
+        read_io_gib: float,
+        write_io_gib: float,
         succeeded_tasks_count: int,
         failed_tasks_count: int,
         task_retries_count: int,
@@ -3400,12 +3400,12 @@ class BatchJobStatistics(_Model):
     :ivar write_iops: The total number of disk write operations made by all Tasks in the Job.
      Required.
     :vartype write_iops: int
-    :ivar read_io_gi_b: The total amount of data in GiB read from disk by all Tasks in the Job.
+    :ivar read_io_gib: The total amount of data in GiB read from disk by all Tasks in the Job.
      Required.
-    :vartype read_io_gi_b: float
-    :ivar write_io_gi_b: The total amount of data in GiB written to disk by all Tasks in the Job.
+    :vartype read_io_gib: float
+    :ivar write_io_gib: The total amount of data in GiB written to disk by all Tasks in the Job.
      Required.
-    :vartype write_io_gi_b: float
+    :vartype write_io_gib: float
     :ivar succeeded_tasks_count: The total number of Tasks successfully completed in the Job during
      the given time range. A Task completes successfully if it returns exit code 0. Required.
     :vartype succeeded_tasks_count: int
@@ -3460,9 +3460,9 @@ class BatchJobStatistics(_Model):
         name="writeIOps", visibility=["read", "create", "update", "delete", "query"], format="str"
     )
     """The total number of disk write operations made by all Tasks in the Job. Required."""
-    read_io_gi_b: float = rest_field(name="readIOGiB", visibility=["read", "create", "update", "delete", "query"])
+    read_io_gib: float = rest_field(name="readIOGiB", visibility=["read", "create", "update", "delete", "query"])
     """The total amount of data in GiB read from disk by all Tasks in the Job. Required."""
-    write_io_gi_b: float = rest_field(name="writeIOGiB", visibility=["read", "create", "update", "delete", "query"])
+    write_io_gib: float = rest_field(name="writeIOGiB", visibility=["read", "create", "update", "delete", "query"])
     """The total amount of data in GiB written to disk by all Tasks in the Job. Required."""
     succeeded_tasks_count: int = rest_field(
         name="numSucceededTasks", visibility=["read", "create", "update", "delete", "query"], format="str"
@@ -3499,8 +3499,8 @@ class BatchJobStatistics(_Model):
         wall_clock_time: datetime.timedelta,
         read_iops: int,
         write_iops: int,
-        read_io_gi_b: float,
-        write_io_gi_b: float,
+        read_io_gib: float,
+        write_io_gib: float,
         succeeded_tasks_count: int,
         failed_tasks_count: int,
         task_retries_count: int,
@@ -3787,7 +3787,7 @@ class BatchNode(_Model):
     :ivar endpoint_configuration: The endpoint configuration for the Compute Node.
     :vartype endpoint_configuration: ~azure.batch.models.BatchNodeEndpointConfiguration
     :ivar node_agent_info: Information about the Compute Node agent version and the time the
-     Compute Node upgraded to a new version. Required.
+     Compute Node upgraded to a new version.
     :vartype node_agent_info: ~azure.batch.models.BatchNodeAgentInfo
     :ivar virtual_machine_info: Info about the current state of the virtual machine. Required.
     :vartype virtual_machine_info: ~azure.batch.models.VirtualMachineInfo
@@ -3871,9 +3871,9 @@ class BatchNode(_Model):
         name="endpointConfiguration", visibility=["read"]
     )
     """The endpoint configuration for the Compute Node."""
-    node_agent_info: "_models.BatchNodeAgentInfo" = rest_field(name="nodeAgentInfo", visibility=["read"])
+    node_agent_info: Optional["_models.BatchNodeAgentInfo"] = rest_field(name="nodeAgentInfo", visibility=["read"])
     """Information about the Compute Node agent version and the time the Compute Node upgraded to a
-     new version. Required."""
+     new version."""
     virtual_machine_info: "_models.VirtualMachineInfo" = rest_field(name="virtualMachineInfo", visibility=["read"])
     """Info about the current state of the virtual machine. Required."""
 
@@ -8079,7 +8079,7 @@ class BatchTaskGroup(_Model):
     """
 
     values_property: list["_models.BatchTaskCreateOptions"] = rest_field(
-        name="value", visibility=["read", "create", "update", "delete", "query"]
+        name="value", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="values"
     )
     """The collection of Tasks to add. The maximum count of Tasks is 100. The total serialized size of
      this collection must be less than 1MB. If it is greater than 1MB (for example if each Task has
@@ -8311,10 +8311,10 @@ class BatchTaskStatistics(_Model):
     :vartype read_iops: int
     :ivar write_iops: The total number of disk write operations made by the Task. Required.
     :vartype write_iops: int
-    :ivar read_io_gi_b: The total gibibytes read from disk by the Task. Required.
-    :vartype read_io_gi_b: float
-    :ivar write_io_gi_b: The total gibibytes written to disk by the Task. Required.
-    :vartype write_io_gi_b: float
+    :ivar read_io_gib: The total gibibytes read from disk by the Task. Required.
+    :vartype read_io_gib: float
+    :ivar write_io_gib: The total gibibytes written to disk by the Task. Required.
+    :vartype write_io_gib: float
     :ivar wait_time: The total wait time of the Task. The wait time for a Task is defined as the
      elapsed time between the creation of the Task and the start of Task execution. (If the Task is
      retried due to failures, the wait time is the time to the most recent Task execution.).
@@ -8358,9 +8358,9 @@ class BatchTaskStatistics(_Model):
         name="writeIOps", visibility=["read", "create", "update", "delete", "query"], format="str"
     )
     """The total number of disk write operations made by the Task. Required."""
-    read_io_gi_b: float = rest_field(name="readIOGiB", visibility=["read", "create", "update", "delete", "query"])
+    read_io_gib: float = rest_field(name="readIOGiB", visibility=["read", "create", "update", "delete", "query"])
     """The total gibibytes read from disk by the Task. Required."""
-    write_io_gi_b: float = rest_field(name="writeIOGiB", visibility=["read", "create", "update", "delete", "query"])
+    write_io_gib: float = rest_field(name="writeIOGiB", visibility=["read", "create", "update", "delete", "query"])
     """The total gibibytes written to disk by the Task. Required."""
     wait_time: datetime.timedelta = rest_field(
         name="waitTime", visibility=["read", "create", "update", "delete", "query"]
@@ -8381,8 +8381,8 @@ class BatchTaskStatistics(_Model):
         wall_clock_time: datetime.timedelta,
         read_iops: int,
         write_iops: int,
-        read_io_gi_b: float,
-        write_io_gi_b: float,
+        read_io_gib: float,
+        write_io_gib: float,
         wait_time: datetime.timedelta,
     ) -> None: ...
 
@@ -8404,15 +8404,15 @@ class BatchUefiSettings(_Model):
     :ivar secure_boot_enabled: Specifies whether secure boot should be enabled on the virtual
      machine.
     :vartype secure_boot_enabled: bool
-    :ivar v_tpm_enabled: Specifies whether vTPM should be enabled on the virtual machine.
-    :vartype v_tpm_enabled: bool
+    :ivar vtpm_enabled: Specifies whether vTPM should be enabled on the virtual machine.
+    :vartype vtpm_enabled: bool
     """
 
     secure_boot_enabled: Optional[bool] = rest_field(
         name="secureBootEnabled", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies whether secure boot should be enabled on the virtual machine."""
-    v_tpm_enabled: Optional[bool] = rest_field(
+    vtpm_enabled: Optional[bool] = rest_field(
         name="vTpmEnabled", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies whether vTPM should be enabled on the virtual machine."""
@@ -8422,7 +8422,7 @@ class BatchUefiSettings(_Model):
         self,
         *,
         secure_boot_enabled: Optional[bool] = None,
-        v_tpm_enabled: Optional[bool] = None,
+        vtpm_enabled: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -8792,10 +8792,6 @@ class DataDisk(_Model):
     :vartype disk_size_gb: int
     :ivar managed_disk: The managed disk parameters.
     :vartype managed_disk: ~azure.batch.models.ManagedDisk
-    :ivar storage_account_type: The storage Account type to be used for the data disk. If omitted,
-     the default is "standard_lrs". Known values are: "standard_lrs", "premium_lrs", and
-     "standardssd_lrs".
-    :vartype storage_account_type: str or ~azure.batch.models.StorageAccountType
     """
 
     logical_unit_number: int = rest_field(name="lun", visibility=["read", "create", "update", "delete", "query"])
@@ -8816,11 +8812,6 @@ class DataDisk(_Model):
         name="managedDisk", visibility=["read", "create", "update", "delete", "query"]
     )
     """The managed disk parameters."""
-    storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = rest_field(
-        name="storageAccountType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The storage Account type to be used for the data disk. If omitted, the default is
-     \"standard_lrs\". Known values are: \"standard_lrs\", \"premium_lrs\", and \"standardssd_lrs\"."""
 
     @overload
     def __init__(
@@ -8830,7 +8821,6 @@ class DataDisk(_Model):
         disk_size_gb: int,
         caching: Optional[Union[str, "_models.CachingType"]] = None,
         managed_disk: Optional["_models.ManagedDisk"] = None,
-        storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
     ) -> None: ...
 
     @overload
@@ -9945,6 +9935,9 @@ class NfsMountConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
+# TODO: Open Sphinx issue that needs to be addressed through TypeSpec.
+# See: https://github.com/microsoft/typespec/issues/8654
+# Revert any changes made here with `*` and `\`.
 class OutputFile(_Model):
     """On every file uploads, Batch service writes two log files to the compute node,
     'fileuploadout.txt' and 'fileuploaderr.txt'. These log files are used to learn more about a
@@ -10284,7 +10277,7 @@ class ResizeError(_Model):
     """A message describing the Pool resize error, intended to be suitable for display in a user
      interface."""
     values_property: Optional[list["_models.NameValuePair"]] = rest_field(
-        name="values", visibility=["read", "create", "update", "delete", "query"]
+        name="values", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="values"
     )
     """A list of additional error details related to the Pool resize error."""
 
@@ -10951,9 +10944,8 @@ class VirtualMachineConfiguration(_Model):
      <https://learn.microsoft.com/azure/virtual-machines/windows/attach-disk-ps#add-an-empty-data-disk-to-a-virtual-machine>`_.
     :vartype data_disks: list[~azure.batch.models.DataDisk]
     :ivar license_type: This only applies to Images that contain the Windows operating system, and
-     should only be used when you hold valid on-premises licenses for the Compute
-     Nodes which will be deployed. If omitted, no on-premises licensing discount is
-     applied. Values are:
+     should only be used when you hold valid on-premises licenses for the Compute Nodes which will
+     be deployed. If omitted, no on-premises licensing discount is applied. Values are:
      Windows_Server - The on-premises license is for Windows Server.
      Windows_Client - The on-premises license is for Windows Client.
     :vartype license_type: str
@@ -11020,12 +11012,11 @@ class VirtualMachineConfiguration(_Model):
     license_type: Optional[str] = rest_field(
         name="licenseType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """This only applies to Images that contain the Windows operating system, and
-     should only be used when you hold valid on-premises licenses for the Compute
-     Nodes which will be deployed. If omitted, no on-premises licensing discount is
-     applied. Values are:
-     Windows_Server - The on-premises license is for Windows Server.
-     Windows_Client - The on-premises license is for Windows Client."""
+    """This only applies to Images that contain the Windows operating system, and should only be
+     used when you hold valid on-premises licenses for the Compute Nodes which will be deployed. If
+     omitted, no on-premises licensing discount is applied. Values are: Windows_Server - The
+     on-premises license is for Windows Server. Windows_Client - The on-premises license is for
+     Windows Client."""
     container_configuration: Optional["_models.BatchContainerConfiguration"] = rest_field(
         name="containerConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )

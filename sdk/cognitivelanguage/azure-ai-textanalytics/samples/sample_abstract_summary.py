@@ -134,9 +134,6 @@ def sample_text_abstractive_summarization():
                     print(f"\nDocument ID: {doc.id}")
                     for s in doc.summaries or []:
                         print(f"  Summary: {s.text}")
-                        if s.contexts:
-                            for c in s.contexts:
-                                print(f"    Context offset={c.offset}, length={c.length}")
             else:
                 # Other action kinds, if present
                 try:
@@ -144,8 +141,8 @@ def sample_text_abstractive_summarization():
                         f"\n[Non-abstractive action] name={op_result.task_name}, "
                         f"status={op_result.status}, kind={op_result.kind}"
                     )
-                except Exception:
-                    print("\n[Non-abstractive action present]")
+                except (AttributeError, TypeError) as e:
+                    print(f"\n[Non-abstractive action present] Error: {e}")
 
 
 # [END text_abstractive_summarization]

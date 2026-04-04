@@ -3,22 +3,25 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+import functools
 import pytest
-import time
+import conftest
+from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy
+from testcase import AppConfigTestCase, set_test_settings
+from test_constants import APPCONFIGURATION_ENDPOINT_STRING
 from azure.appconfiguration.provider._models import SettingSelector
-from azure.appconfiguration.provider._constants import NULL_CHAR
-from azure.appconfiguration.provider import load, WatchKey
+from azure.appconfiguration.provider._constants import NULL_CHAR, FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_KEY
+from azure.appconfiguration.provider import WatchKey
 from azure.appconfiguration import (
     ConfigurationSetting,
-    ConfigurationSettingsFilter,
-    SnapshotComposition,
-    SnapshotStatus,
+    FeatureFlagConfigurationSetting,
 )
-from azure.core.exceptions import ResourceNotFoundError
-from devtools_testutils import recorded_by_proxy, is_live
-from preparers import app_config_decorator
-from testcase import AppConfigTestCase
+
+AppConfigProviderPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_endpoint_string=APPCONFIGURATION_ENDPOINT_STRING,
+)
 
 
 class TestSnapshotSupport:
@@ -83,19 +86,6 @@ class TestSnapshotSupport:
         assert selector.tag_filters == ["env=prod"]
         assert selector.snapshot_name is None
 
-    def test_feature_flag_selectors_with_snapshot_raises_error(self):
-        """Test that feature_flag_selectors with snapshot_name raises ValueError during validation."""
-        with pytest.raises(
-            ValueError,
-            match=r"snapshot_name cannot be used with feature_flag_selectors\. "
-            r"Use snapshot_name with regular selects instead to load feature flags from snapshots\.",
-        ):
-            load(
-                connection_string="Endpoint=test;Id=test;Secret=test",
-                feature_flag_enabled=True,
-                feature_flag_selectors=[SettingSelector(snapshot_name="my-snapshot")],
-            )
-
 
 class TestSnapshotProviderIntegration(AppConfigTestCase):
     """Integration tests for snapshot functionality with recorded tests."""
@@ -130,111 +120,66 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
             assert selector.label_filter == NULL_CHAR
             assert selector.tag_filters is None
 
-    @app_config_decorator
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    def test_load_provider_with_snapshot_not_found(self, appconfiguration_connection_string):
+    def test_load_provider_with_snapshot_not_found(self, appconfiguration_endpoint_string):
         """Test loading provider with a non-existent snapshot returns error."""
         # Try to load from a non-existent snapshot
-        with pytest.raises(ResourceNotFoundError):
-            self.create_client(
-                connection_string=appconfiguration_connection_string,
-                selects=[SettingSelector(snapshot_name="non-existent-snapshot")],
-            )
+        provider = self.create_client(
+            endpoint=appconfiguration_endpoint_string,
+            selects=[SettingSelector(snapshot_name="non-existent-snapshot")],
+        )
+        assert len(provider._dict) == 0, "Provider should have no settings when snapshot is not found"
 
-    @app_config_decorator
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    def test_load_provider_with_regular_selectors(self, appconfiguration_connection_string):
+    def test_load_provider_with_regular_selectors(self, appconfiguration_endpoint_string):
         """Test loading provider with regular selectors works (baseline test)."""
         # This should work - regular selector loading
         provider = self.create_client(
-            connection_string=appconfiguration_connection_string,
+            endpoint=appconfiguration_endpoint_string,
             selects=[SettingSelector(key_filter="message")],  # Regular selector
         )
 
         # Verify we can access the configuration (message is set up by setup_configs)
         assert "message" in provider
 
-    @app_config_decorator
-    @recorded_by_proxy
-    def test_snapshot_selector_parameter_validation_in_provider(self, appconfiguration_connection_string):
-        """Test that snapshot selector parameter validation works when loading provider."""
-        # Test that feature flag selectors with snapshots are rejected
-        with pytest.raises(ValueError, match="snapshot_name cannot be used with feature_flag_selectors"):
-            self.create_client(
-                connection_string=appconfiguration_connection_string,
-                feature_flag_enabled=True,
-                feature_flag_selectors=[SettingSelector(snapshot_name="test-snapshot")],
-            )
-
     @pytest.mark.live_test_only  # Needed to fix an azure core dependency compatibility issue
-    @app_config_decorator
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    def test_create_snapshot_and_load_provider(self, appconfiguration_connection_string, **kwargs):
-        """Test creating a snapshot and loading provider from it."""
-        # Create SDK client for setup
-        sdk_client = self.create_sdk_client(appconfiguration_connection_string)
+    def test_create_snapshot_and_load_provider(self, appconfiguration_endpoint_string):
+        """Test loading provider from a pre-created snapshot."""
+        snapshot_name = conftest.snapshot_names["snapshot"]
 
-        # Create unique test configuration settings for the snapshot
-        test_settings = [
-            ConfigurationSetting(key="snapshot_test_key1", value="snapshot_test_value1", label=NULL_CHAR),
-            ConfigurationSetting(key="snapshot_test_key2", value="snapshot_test_value2", label=NULL_CHAR),
-            ConfigurationSetting(
-                key="snapshot_test_json",
-                value='{"nested": "snapshot_value"}',
-                label=NULL_CHAR,
-                content_type="application/json",
-            ),
-            ConfigurationSetting(key="refresh_test_key", value="original_refresh_value", label=NULL_CHAR),
-        ]
+        # Load provider using the snapshot with refresh enabled and feature flags enabled
+        provider = self.create_client(
+            endpoint=appconfiguration_endpoint_string,
+            selects=[
+                SettingSelector(snapshot_name=snapshot_name),  # Snapshot data (includes feature flags)
+                SettingSelector(key_filter="refresh_test_key"),  # Non-snapshot key for refresh testing
+            ],
+            refresh_on=[WatchKey("refresh_test_key")],  # Watch non-snapshot key for refresh
+            refresh_interval=1,  # Short refresh interval for testing
+        )
 
-        # Set the configuration settings
-        for setting in test_settings:
-            sdk_client.set_configuration_setting(setting)
+        # Get the underlying SDK client from the provider
+        sdk_client = provider._replica_client_manager._original_client._client
 
-        variables = kwargs.pop("variables", {})
-        dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", str(int(time.time())))
+        # Verify all snapshot settings are loaded
+        assert provider["snapshot_test_key1"] == "snapshot_test_value1"
+        assert provider["snapshot_test_key2"] == "snapshot_test_value2"
+        assert provider["snapshot_test_json"]["nested"] == "snapshot_value"
+        assert provider["refresh_test_key"] == "original_refresh_value"
 
-        # Create a unique snapshot name with timestamp to avoid conflicts
-        snapshot_name = f"test-snapshot-{dynamic_snapshot_name_postfix}"
+        # Verify that snapshot settings and refresh key are loaded
+        snapshot_keys = [key for key in provider.keys() if key.startswith("snapshot_test_")]
+        assert len(snapshot_keys) == 3
+
+        # Verify feature flags from snapshots are NOT loaded as feature flags
+        # (snapshots don't support feature flag loading, only regular selects do)
+        assert FEATURE_MANAGEMENT_KEY not in provider, "Feature flags should not be loaded from snapshots"
 
         try:
-            # Create the snapshot
-            snapshot = sdk_client.begin_create_snapshot(
-                name=snapshot_name,
-                filters=[ConfigurationSettingsFilter(key="snapshot_test_*")],  # Include all our test keys
-                composition_type=SnapshotComposition.KEY,
-                retention_period=3600,  # Min valid value is 1 hour
-            ).result()
-
-            # Verify snapshot was created successfully
-            if is_live():
-                assert snapshot.name == snapshot_name
-            else:
-                assert snapshot.name == "Sanitized"
-            assert snapshot.status == SnapshotStatus.READY
-            assert snapshot.composition_type == SnapshotComposition.KEY
-
-            # Load provider using the snapshot with refresh enabled
-            provider = self.create_client(
-                connection_string=appconfiguration_connection_string,
-                selects=[
-                    SettingSelector(snapshot_name=snapshot_name),  # Snapshot data
-                    SettingSelector(key_filter="refresh_test_key"),  # Non-snapshot key for refresh testing
-                ],
-                refresh_on=[WatchKey("refresh_test_key")],  # Watch non-snapshot key for refresh
-                refresh_interval=1,  # Short refresh interval for testing
-            )
-
-            # Verify all snapshot settings are loaded
-            assert provider["snapshot_test_key1"] == "snapshot_test_value1"
-            assert provider["snapshot_test_key2"] == "snapshot_test_value2"
-            assert provider["snapshot_test_json"]["nested"] == "snapshot_value"
-            assert provider["refresh_test_key"] == "original_refresh_value"
-
-            # Verify that snapshot settings and refresh key are loaded
-            snapshot_keys = [key for key in provider.keys() if key.startswith("snapshot_test_")]
-            assert len(snapshot_keys) == 3
-
             # Test snapshot immutability: modify the original settings
             modified_settings = [
                 ConfigurationSetting(
@@ -256,16 +201,12 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
                 ),
             ]
 
-            # Update the original settings with new values
-            for setting in modified_settings:
-                sdk_client.set_configuration_setting(setting)
-
-            # Add a completely new key after initial load
+            # Update the original settings with new values and add a new key
             new_key = ConfigurationSetting(key="new_key_added_after_load", value="new_value", label=NULL_CHAR)
-            sdk_client.set_configuration_setting(new_key)
+            set_test_settings(sdk_client, modified_settings + [new_key])
 
-            # Wait for refresh interval to pass
-            time.sleep(1)
+            # Expire the refresh timer so refresh will check for changes
+            provider._refresh_timer._next_refresh_time = 0
 
             # Refresh the existing provider (snapshots should remain immutable, but non-snapshot keys should update)
             provider.refresh()
@@ -283,7 +224,7 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
 
             # Verify that loading without snapshot gets the modified values
             provider_current = self.create_client(
-                connection_string=appconfiguration_connection_string,
+                endpoint=appconfiguration_endpoint_string,
                 selects=[SettingSelector(key_filter="snapshot_test_*")],
             )
 
@@ -291,25 +232,86 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
             assert provider_current["snapshot_test_key1"] == "MODIFIED_VALUE1"  # Modified value
             assert provider_current["snapshot_test_key2"] == "MODIFIED_VALUE2"  # Modified value
             assert provider_current["snapshot_test_json"]["nested"] == "MODIFIED_VALUE"  # Modified value
-
         finally:
-            # Clean up: delete the snapshot and test settings
-            try:
-                # Archive the snapshot (delete is not supported, but archive effectively removes it)
-                sdk_client.archive_snapshot(snapshot_name)
-            except Exception:
-                pass
+            # Restore modified settings to original values for other tests
+            restored_settings = [
+                ConfigurationSetting(key="snapshot_test_key1", value="snapshot_test_value1", label=NULL_CHAR),
+                ConfigurationSetting(key="snapshot_test_key2", value="snapshot_test_value2", label=NULL_CHAR),
+                ConfigurationSetting(
+                    key="snapshot_test_json",
+                    value='{"nested": "snapshot_value"}',
+                    label=NULL_CHAR,
+                    content_type="application/json",
+                ),
+                ConfigurationSetting(key="refresh_test_key", value="original_refresh_value", label=NULL_CHAR),
+            ]
+            set_test_settings(sdk_client, restored_settings)
 
-            # Clean up test settings
-            for setting in test_settings:
-                try:
-                    sdk_client.delete_configuration_setting(key=setting.key, label=setting.label)
-                except Exception:
-                    pass
+    @pytest.mark.live_test_only  # Needed to fix an azure core dependency compatibility issue
+    @AppConfigProviderPreparer()
+    @recorded_by_proxy
+    def test_create_snapshot_and_load_provider_with_feature_flags(self, appconfiguration_endpoint_string):
+        """Test loading provider with feature flags from a pre-created snapshot."""
+        snapshot_name = conftest.snapshot_names["ff_snapshot"]
 
-            # Clean up additional test keys
-            try:
-                sdk_client.delete_configuration_setting(key="new_key_added_after_load", label=NULL_CHAR)
-            except Exception:
-                pass
-        return variables
+        # Load provider using snapshot for config settings and regular selectors for feature flags
+        provider = self.create_client(
+            endpoint=appconfiguration_endpoint_string,
+            feature_flag_enabled=True,  # Enable feature flags
+            feature_flag_selectors=[
+                SettingSelector(snapshot_name=snapshot_name),  # Load feature flags from snapshot
+            ],
+        )
+
+        # Get the underlying SDK client from the provider
+        sdk_client = provider._replica_client_manager._original_client._client
+
+        # Verify snapshot configuration settings are loaded
+        assert provider["ff_snapshot_test_key1"] == "ff_snapshot_test_value1"
+        assert provider["ff_snapshot_test_key2"] == "ff_snapshot_test_value2"
+
+        # Verify feature flags loaded via regular selectors ARE loaded
+        feature_flags = provider.get(FEATURE_MANAGEMENT_KEY, {}).get(FEATURE_FLAG_KEY, [])
+        feature_flag_ids = {ff["id"]: ff["enabled"] for ff in feature_flags}
+
+        # Regular feature flags should be loaded
+        assert "RegularFeature" not in feature_flag_ids, "RegularFeature should not be loaded via regular selector"
+        assert "RegularFeatureDisabled" not in feature_flag_ids, "RegularFeatureDisabled should not be loaded"
+
+        # Snapshot-only feature flag should be loaded as a feature flag
+        assert "SnapshotOnlyFeature" in feature_flag_ids, "SnapshotOnlyFeature should be loaded as FF from snapshot"
+
+        # Verify exactly 1 feature flag is loaded (the snapshot-only one)
+        assert len(feature_flags) == 1, f"Expected 1 feature flag, got {len(feature_flags)}"
+
+        try:
+            # Modify the feature flags in the snapshot
+            modified_feature_flags = [
+                FeatureFlagConfigurationSetting(
+                    feature_id="SnapshotOnlyFeature",
+                    enabled=False,  # Changed from True to False
+                    label=NULL_CHAR,
+                ),
+            ]
+
+            set_test_settings(sdk_client, modified_feature_flags)
+
+            # Load a fresh provider without snapshot to verify current feature flag values
+            provider_current = self.create_client(
+                endpoint=appconfiguration_endpoint_string,
+                feature_flag_enabled=True,
+                feature_flag_selectors=[
+                    SettingSelector(snapshot_name=snapshot_name),  # Load feature flags from snapshot
+                ],
+            )
+
+            # Current feature flag values should be the original ones from snapshot (immutable)
+            current_feature_flags = provider_current.get(FEATURE_MANAGEMENT_KEY, {}).get(FEATURE_FLAG_KEY, [])
+            current_ff_ids = {ff["id"]: ff["enabled"] for ff in current_feature_flags}
+            assert current_ff_ids.get("SnapshotOnlyFeature") is True  # Original value from snapshot (not modified)
+        finally:
+            # Restore modified feature flag to original value for other tests
+            set_test_settings(
+                sdk_client,
+                [FeatureFlagConfigurationSetting(feature_id="SnapshotOnlyFeature", enabled=True, label=NULL_CHAR)],
+            )

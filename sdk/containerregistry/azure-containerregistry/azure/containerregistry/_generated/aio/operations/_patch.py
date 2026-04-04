@@ -1,12 +1,15 @@
-# ------------------------------------
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-# ------------------------------------
+# pylint: disable=line-too-long,useless-suppression
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Callable, Dict, Optional, TypeVar, Union
+
+from typing import Any, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -15,26 +18,24 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     map_error,
 )
-from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ._operations import AuthenticationOperations as AuthenticationOperationsGenerated
+from ...operations import AuthenticationOperations as AuthenticationOperationsGenerated
 from ...operations._patch import (
     build_exchange_aad_access_token_for_acr_refresh_token_request,
     build_exchange_acr_refresh_token_for_acr_access_token_request,
 )
 
+from ..._utils.model_base import _deserialize, _failsafe_deserialize
+
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
 class AuthenticationOperations(AuthenticationOperationsGenerated):
     @distributed_trace_async
-    async def exchange_aad_access_token_for_acr_refresh_token(
+    async def exchange_aad_access_token_for_acr_refresh_token(  # type: ignore[override]  # pylint: disable=name-too-long, docstring-keyword-should-match-keyword-only, invalid-overridden-method
         self,
         grant_type: Union[str, "_models.PostContentSchemaGrantType"],
         service: str,
@@ -44,25 +45,30 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
         **kwargs: Any
     ) -> _models.AcrRefreshToken:
         """Exchange AAD tokens for an ACR refresh Token.
+
         :param grant_type: Can take a value of access_token_refresh_token, or access_token, or
-         refresh_token.
+            refresh_token.
         :type grant_type: str or ~container_registry.models.PostContentSchemaGrantType
         :param service: Indicates the name of your Azure container registry.
         :type service: str
         :param tenant: AAD tenant associated to the AAD credentials. Default value is None.
         :type tenant: str
         :param refresh_token: AAD refresh token, mandatory when grant_type is
-         access_token_refresh_token or refresh_token. Default value is None.
+            access_token_refresh_token or refresh_token. Default value is None.
         :type refresh_token: str
         :param access_token: AAD access token, mandatory when grant_type is access_token_refresh_token
-         or access_token. Default value is None.
+            or access_token. Default value is None.
         :type access_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AcrRefreshToken, or the result of cls(response)
         :rtype: ~container_registry.models.AcrRefreshToken
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -70,9 +76,10 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
 
         api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01"))  # type: str
         content_type = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", "application/x-www-form-urlencoded")
+            "content_type",
+            _headers.pop("Content-Type", "application/x-www-form-urlencoded"),
         )  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AcrRefreshToken]
+        cls = kwargs.pop("cls", None)
 
         # Construct form data
         _data = {
@@ -91,7 +98,7 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
             params=_params,
         )
         path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -102,16 +109,16 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, pipeline_response)
+            error = _failsafe_deserialize(_models.AcrErrors, response.json())
             raise HttpResponseError(response=response, model=error)
-        deserialized = self._deserialize("AcrRefreshToken", pipeline_response)
+        deserialized = _deserialize(_models.AcrRefreshToken, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})
         return deserialized
 
     @distributed_trace_async
-    async def exchange_acr_refresh_token_for_acr_access_token(
+    async def exchange_acr_refresh_token_for_acr_access_token(  # type: ignore[override]  # pylint: disable=name-too-long, docstring-keyword-should-match-keyword-only, invalid-overridden-method
         self,
         service: str,
         scope: str,
@@ -120,23 +127,28 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
         **kwargs: Any
     ) -> _models.AcrAccessToken:
         """Exchange ACR Refresh token for an ACR Access Token.
+
         :param service: Indicates the name of your Azure container registry.
         :type service: str
         :param scope: Which is expected to be a valid scope, and can be specified more than once for
-         multiple scope requests. You obtained this from the Www-Authenticate response header from the
-         challenge.
+            multiple scope requests. You obtained this from the Www-Authenticate response header from the
+            challenge.
         :type scope: str
         :param refresh_token: Must be a valid ACR refresh token.
         :type refresh_token: str
         :param grant_type: Grant type is expected to be refresh_token. Default value is
-         "refresh_token".
+            "refresh_token".
         :type grant_type: str or ~container_registry.models.TokenGrantType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AcrAccessToken, or the result of cls(response)
         :rtype: ~container_registry.models.AcrAccessToken
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -144,9 +156,10 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
 
         api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01"))  # type: str
         content_type = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", "application/x-www-form-urlencoded")
+            "content_type",
+            _headers.pop("Content-Type", "application/x-www-form-urlencoded"),
         )  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AcrAccessToken]
+        cls = kwargs.pop("cls", None)
 
         # Construct form data
         _data = {
@@ -164,7 +177,7 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
             params=_params,
         )
         path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -175,18 +188,18 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, pipeline_response)
+            error = _failsafe_deserialize(_models.AcrErrors, response.json())
             raise HttpResponseError(response=response, model=error)
-        deserialized = self._deserialize("AcrAccessToken", pipeline_response)
+        deserialized = _deserialize(_models.AcrAccessToken, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})
         return deserialized
 
 
-__all__ = [
-    "AuthenticationOperations"
-]  # type: List[str]  # Add all objects you want publicly available to users at this package level
+__all__: list[str] = [
+    "AuthenticationOperations",
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

@@ -22,7 +22,7 @@ import os
 import pytest
 from devtools_testutils import recorded_by_proxy
 from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
-from azure.ai.contentunderstanding.models import AnalyzeInput, DocumentContent
+from azure.ai.contentunderstanding.models import AnalysisInput, DocumentContent
 
 
 class TestSampleAnalyzeInvoice(ContentUnderstandingClientTestBase):
@@ -50,7 +50,7 @@ class TestSampleAnalyzeInvoice(ContentUnderstandingClientTestBase):
             invoice_data = f.read()
 
         # Analyze the invoice
-        poller = client.begin_analyze(analyzer_id="prebuilt-invoice", inputs=[AnalyzeInput(data=invoice_data)])
+        poller = client.begin_analyze(analyzer_id="prebuilt-invoice", inputs=[AnalysisInput(data=invoice_data)])
 
         # Wait for analysis to complete
         result = poller.result()

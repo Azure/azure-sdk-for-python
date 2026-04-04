@@ -1,6 +1,6 @@
 # Release History
 
-## 1.8.6 (Unreleased)
+## 1.8.8 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,36 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Remove deprecated events packages.
+  ([#45684](https://github.com/Azure/azure-sdk-for-python/pull/45684))
+
+## 1.8.7 (2026-03-20)
+
+### Features Added
+- Add Browser SDK loader feature
+  ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/42904))
+
+### Other Changes
+- Change import path for `LoggingHandler` to accommodate upstream breaking changes
+  ([#45539](https://github.com/Azure/azure-sdk-for-python/pull/45539))
+- Remove internal import from sample file
+  ([#45619](https://github.com/Azure/azure-sdk-for-python/pull/45619))
+
+## 1.8.6 (2026-02-05)
+
+### Features Added
+
+- Enable live metrics by default
+  ([#44902](https://github.com/Azure/azure-sdk-for-python/pull/44902))
+
+### Breaking Changes
+
+- The default sampling behavior has been changed from ApplicationInsightsSampler with 100% sampling (all traces sampled) to RateLimitedSampler with 5.0 traces per second. This change significantly reduces telemetry volume for high-traffic applications and provides better cost optimization out of the box. Impact: Applications with more than 5 requests per second will see fewer traces exported by default.
+  ([#44925](https://github.com/Azure/azure-sdk-for-python/pull/44925))
+
+### Other Changes
+- Add missing copyright headers and ensure consistent formatting across files.
+  ([#44908](https://github.com/Azure/azure-sdk-for-python/pull/44908))
 
 ## 1.8.5 (2026-01-28)
 

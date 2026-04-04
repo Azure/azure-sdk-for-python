@@ -5,8 +5,8 @@ import unittest
 from unittest import mock
 
 from azure.monitor.opentelemetry.exporter._constants import (
-    _DEFAULT_EU_STATS_CONNECTION_STRING,
     _DEFAULT_NON_EU_STATS_CONNECTION_STRING,
+    _DEFAULT_EU_STATS_CONNECTION_STRING,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat import StatsbeatConfig, _statsbeat
 from azure.monitor.opentelemetry.exporter.statsbeat._manager import StatsbeatManager
@@ -25,7 +25,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
 # cSpell:disable
 
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access, unused-argument
 class TestStatsbeat(unittest.TestCase):
     def setUp(self):
         os.environ[_APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL] = "false"
@@ -102,7 +102,7 @@ class TestStatsbeat(unittest.TestCase):
         self.assertEqual(config.distro_version, exporter._distro_version)
 
         # Verify statsbeat metrics creation
-        metrics = manager._metrics
+        _metrics = manager._metrics
         mock_statsbeat_metrics.assert_called_once_with(
             mock_meter_provider_instance,
             exporter._instrumentation_key,
@@ -332,7 +332,7 @@ class TestStatsbeat(unittest.TestCase):
     def test_collect_statsbeat_metrics_exists(
         self, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics, mock_get_manager
     ):
-        """Test that collect_statsbeat_metrics reuses existing configuration when called multiple times with same config."""
+        """Test that collect_statsbeat_metrics reuses existing configuration when called multiple times with same config."""  # pylint: disable=line-too-long
         # Arrange
         exporter = mock.Mock()
         exporter._endpoint = "test endpoint"
@@ -435,7 +435,7 @@ class TestStatsbeat(unittest.TestCase):
         call_args = mock_exporter.call_args
         # The connection string should be the non-EU default since the endpoint is non-EU
         expected_connection_string = call_args[1]["connection_string"]
-        self.assertIn(_DEFAULT_NON_EU_STATS_CONNECTION_STRING.split(";")[0].split("=")[1], expected_connection_string)
+        self.assertIn(_DEFAULT_NON_EU_STATS_CONNECTION_STRING.split(";", maxsplit=1)[0], expected_connection_string)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
@@ -485,7 +485,7 @@ class TestStatsbeat(unittest.TestCase):
         call_args = mock_exporter.call_args
         # The connection string should be the EU default since the endpoint is EU
         expected_connection_string = call_args[1]["connection_string"]
-        self.assertIn(_DEFAULT_EU_STATS_CONNECTION_STRING.split(";")[0].split("=")[1], expected_connection_string)
+        self.assertIn(_DEFAULT_EU_STATS_CONNECTION_STRING.split(";", maxsplit=1)[0], expected_connection_string)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")

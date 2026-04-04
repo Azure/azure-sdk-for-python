@@ -5,10 +5,12 @@
 import logging
 from typing import List, Optional
 
-from pyrit.models import Score, PromptRequestPiece, UnvalidatedScore
+from pyrit.models import Score, MessagePiece, UnvalidatedScore
 from pyrit.score.scorer import Scorer
 
-from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
+from azure.ai.evaluation.simulator._model_tools._generated_rai_client import (
+    GeneratedRAIClient,
+)
 from ._rai_service_eval_chat_target import RAIServiceEvalChatTarget
 from .._attack_objective_generator import RiskCategory
 
@@ -68,7 +70,7 @@ class AzureRAIServiceTrueFalseScorer(Scorer):
 
     async def score_async(
         self,
-        request_response: PromptRequestPiece,
+        request_response: MessagePiece,
         *,
         task: Optional[str] = None,
     ) -> List[Score]:
