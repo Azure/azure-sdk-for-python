@@ -96,7 +96,7 @@ with (
                 "score": EvaluatorMetric(
                     type=EvaluatorMetricType.ORDINAL,
                     desirable_direction=EvaluatorMetricDirection.INCREASE,
-                    min_value=1,
+                    min_value=0,
                     max_value=5,
                 )
             },
