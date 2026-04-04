@@ -35,7 +35,8 @@ def get_known_versions(package_name: str) -> List[Version]:
 
 
 def report_should_skip_lib(lib_name: str) -> bool:
-    return "-nspkg" in lib_name
+    # Note: temporary exclusion of githubcopilot package until dependencies settle.
+    return "-nspkg" in lib_name or "-githubcopilot" in lib_name
 
 
 def dump_should_skip_lib(lib_name: str) -> bool:
