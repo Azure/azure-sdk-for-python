@@ -12,7 +12,6 @@ Public API::
         AgentServerHost,
         Constants,
         create_error_response,
-        get_logger,
     )
 """
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
@@ -20,13 +19,11 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 from ._base import AgentServerHost
 from ._constants import Constants
 from ._errors import create_error_response
-from ._logger import get_logger
 from ._version import VERSION
 
 __all__ = [
     "AgentServerHost",
     "Constants",
     "create_error_response",
-    "get_logger",
 ]
 __version__ = VERSION

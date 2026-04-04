@@ -18,7 +18,7 @@ from contextlib import contextmanager
 from typing import Any, Iterator, Optional, Union
 
 from . import _config
-from ._logger import get_logger
+import logging
 
 _Content = Union[str, bytes, memoryview]
 _W3C_HEADERS = ("traceparent", "tracestate")
@@ -39,7 +39,7 @@ _SERVICE_NAME_VALUE = "azure.ai.agentserver"
 _GEN_AI_SYSTEM_VALUE = "azure.ai.agentserver"
 _GEN_AI_PROVIDER_NAME_VALUE = "AzureAI Hosted Agents"
 
-logger = get_logger()
+logger = logging.getLogger("azure.ai.agentserver")
 
 _HAS_OTEL = False
 try:

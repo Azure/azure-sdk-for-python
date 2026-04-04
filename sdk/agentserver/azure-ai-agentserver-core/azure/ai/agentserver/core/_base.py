@@ -15,9 +15,8 @@ from starlette.responses import Response
 from starlette.routing import Route
 
 from . import _config, _tracing
-from ._logger import get_logger
 
-logger = get_logger()
+logger = logging.getLogger("azure.ai.agentserver")
 
 # Pre-built health-check response to avoid per-request allocation.
 _HEALTHY_BODY = b'{"status":"healthy"}'

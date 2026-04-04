@@ -19,7 +19,6 @@ from starlette.routing import Route
 
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     AgentServerHost,
-    get_logger,
     Constants,
     create_error_response,
 )
@@ -27,7 +26,9 @@ from azure.ai.agentserver.core import _tracing
 
 from ._constants import InvocationConstants
 
-logger = get_logger()
+import logging
+
+logger = logging.getLogger("azure.ai.agentserver")
 
 # Maximum length and allowed characters for user-provided IDs (defense in depth).
 _MAX_ID_LENGTH = 256

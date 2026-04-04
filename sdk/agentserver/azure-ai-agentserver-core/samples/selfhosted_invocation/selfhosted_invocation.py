@@ -28,6 +28,7 @@ Usage::
     curl http://localhost:8088/readiness
     # -> {"status": "healthy"}
 """
+import logging
 import os
 import uuid
 from typing import Any
@@ -36,10 +37,10 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 from starlette.routing import Route
 
-from azure.ai.agentserver.core import get_logger, AgentServerHost
+from azure.ai.agentserver.core import AgentServerHost
 from azure.ai.agentserver.core import _tracing
 
-logger = get_logger()
+logger = logging.getLogger("azure.ai.agentserver")
 
 
 class SelfHostedInvocationHost(AgentServerHost):
