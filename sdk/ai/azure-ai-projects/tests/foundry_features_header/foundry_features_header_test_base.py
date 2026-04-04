@@ -40,7 +40,7 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "memory_stores": "MemoryStores=V1Preview",
     "red_teams": "RedTeams=V1Preview",
     "schedules": "Schedules=V1Preview",
-    "toolsets": "Toolsets=V1Preview",
+    "toolboxes": "Toolboxes=V1Preview",
 }
 
 # Shared test cases for non-beta methods that optionally send the Foundry-Features header.

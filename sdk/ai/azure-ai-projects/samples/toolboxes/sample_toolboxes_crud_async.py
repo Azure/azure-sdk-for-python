@@ -6,14 +6,14 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to perform CRUD operations on Toolsets
+    This sample demonstrates how to perform CRUD operations on Toolboxes
     using the asynchronous AIProjectClient.
 
-    Toolsets are currently a preview feature. In the Python SDK, you access
-    these operations via `project_client.beta.toolsets`.
+    Toolboxes are currently a preview feature. In the Python SDK, you access
+    these operations via `project_client.beta.toolboxes`.
 
 USAGE:
-    python sample_toolsets_crud_async.py
+    python sample_toolboxes_crud_async.py
 
     Before running the sample:
 
@@ -47,11 +47,11 @@ async def main() -> None:
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     ):
 
-        toolset_name = "mcp"
+        toolbox_name = "mcp"
 
         try:
-            await project_client.beta.toolsets.delete(toolset_name)
-            print(f"Toolset `{toolset_name}` deleted")
+            await project_client.beta.toolboxes.delete(toolbox_name)
+            print(f"Toolbox `{toolbox_name}` deleted")
         except ResourceNotFoundError:
             pass
 
@@ -63,34 +63,34 @@ async def main() -> None:
             )
         ]
 
-        created = await project_client.beta.toolsets.create(
-            name=toolset_name,
-            description="Example toolset created by the azure-ai-projects sample.",
+        created = await project_client.beta.toolboxes.create(
+            name=toolbox_name,
+            description="Example toolbox created by the azure-ai-projects sample.",
             metadata={"status": "created"},
             tools=tools,
         )
         status = created.metadata.get("status", "unknown status") if created.metadata else "unknown status"
-        print(f"Toolset: {created.name} (tools: {len(created.tools)}) (status: {status})")
+        print(f"Toolbox: {created.name} (tools: {len(created.tools)}) (status: {status})")
 
-        fetched = await project_client.beta.toolsets.get(toolset_name)
-        print(f"Retrieved toolset: {fetched.name} ({fetched.id})")
+        fetched = await project_client.beta.toolboxes.get(toolbox_name)
+        print(f"Retrieved toolbox: {fetched.name} ({fetched.id})")
 
-        updated = await project_client.beta.toolsets.update(
-            toolset_name,
-            description="Updated description for the sample toolset.",
+        updated = await project_client.beta.toolboxes.update(
+            toolbox_name,
+            description="Updated description for the sample toolbox.",
             metadata={"status": "updated"},
             tools=tools,
         )
         status = updated.metadata.get("status", "unknown status") if updated.metadata else "unknown status"
-        print(f"Toolset: {updated.name} (tools: {len(updated.tools)}) (status: {status})")
+        print(f"Toolbox: {updated.name} (tools: {len(updated.tools)}) (status: {status})")
 
-        toolsets: list[str] = []
-        async for item in project_client.beta.toolsets.list(limit=10):
-            toolsets.append(item.name)
-        print(f"Found {len(toolsets)} toolsets")
+        toolboxes: list[str] = []
+        async for item in project_client.beta.toolboxes.list(limit=10):
+            toolboxes.append(item.name)
+        print(f"Found {len(toolboxes)} toolboxes")
 
-        await project_client.beta.toolsets.delete(toolset_name)
-        print("Toolset deleted")
+        await project_client.beta.toolboxes.delete(toolbox_name)
+        print("Toolbox deleted")
 
 
 if __name__ == "__main__":
