@@ -20,7 +20,7 @@ from typing import Any, Iterator, Optional, Union
 from . import _config
 
 _Content = Union[str, bytes, memoryview]
-_W3C_HEADERS = ("traceparent", "tracestate")
+_W3C_HEADERS = ("traceparent", "tracestate", "baggage")
 
 # GenAI semantic convention attribute keys
 _ATTR_SERVICE_NAME = "service.name"
@@ -97,6 +97,7 @@ def request_span(
     operation_name: Optional[str] = None,
     session_id: str = "",
     end_on_exit: bool = True,
+    instrumentation_scope: str = "Azure.AI.AgentServer",
 ) -> Iterator[Any]:
     """Create a request-scoped span with GenAI semantic convention attributes.
 
@@ -120,7 +121,7 @@ def request_span(
     :param end_on_exit: Whether to end the span when the context exits.
     :return: Context manager yielding the OTel span.
     """
-    tracer = trace.get_tracer("azure.ai.agentserver")
+    tracer = trace.get_tracer(instrumentation_scope)
 
     # Build span name
     name = f"{operation} {agent_id}" if agent_id else operation
@@ -143,6 +144,11 @@ def request_span(
         attrs[_ATTR_GEN_AI_CONVERSATION_ID] = session_id
     if project_id:
         attrs[_ATTR_FOUNDRY_PROJECT_ID] = project_id
+
+    # Propagate platform request correlation ID
+    x_request_id = headers.get("x-request-id")
+    if x_request_id:
+        attrs["x_request_id"] = x_request_id
 
     # Extract W3C trace context
     carrier = _extract_w3c_carrier(headers)
@@ -176,13 +182,15 @@ def end_span(span: Any, exc: Optional[BaseException] = None) -> None:
 def record_error(span: Any, exc: BaseException) -> None:
     """Record an exception and ERROR status on a span.
 
-    No-op when *span* is ``None`` or OTel is not installed.
+    Sets ``error.type`` and ``otel.status.description`` per OTel
+    semantic conventions.
 
     :param span: The OTel span, or ``None``.
     :param exc: The exception to record.
     """
     if span is not None:
         span.set_status(trace.StatusCode.ERROR, str(exc))
+        span.set_attribute("error.type", type(exc).__name__)
         span.record_exception(exc)
 
 

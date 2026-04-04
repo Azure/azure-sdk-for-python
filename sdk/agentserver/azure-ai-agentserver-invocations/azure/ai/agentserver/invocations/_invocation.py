@@ -85,6 +85,8 @@ class InvocationAgentServerHost(AgentServerHost):
     :type openapi_spec: Optional[dict[str, Any]]
     """
 
+    _INSTRUMENTATION_SCOPE = "Azure.AI.AgentServer.Invocations"
+
     def __init__(
         self,
         *,
@@ -284,6 +286,10 @@ class InvocationAgentServerHost(AgentServerHost):
         )
         session_id = _sanitize_id(raw_session_id, str(uuid.uuid4()))
         request.state.session_id = session_id
+
+        # Platform isolation headers — expose to handlers
+        request.state.user_isolation_key = request.headers.get("x-agent-user-isolation-key", "")
+        request.state.chat_isolation_key = request.headers.get("x-agent-chat-isolation-key", "")
 
         with self.request_span(
             request.headers, invocation_id, "invoke_agent",

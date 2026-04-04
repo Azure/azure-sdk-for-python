@@ -14,15 +14,21 @@ from starlette.requests import Request
 from starlette.responses import Response
 from starlette.routing import Route
 
+import sys
+
 from . import _config, _tracing
+from ._version import VERSION as _CORE_VERSION
 
 logger = logging.getLogger("azure.ai.agentserver")
 
 # Pre-built health-check response to avoid per-request allocation.
 _HEALTHY_BODY = b'{"status":"healthy"}'
 
-# Server identity header value (name only — no version to avoid information disclosure).
-_PLATFORM_SERVER_VALUE = "azure-ai-agentserver-core"
+# Server identity header per spec: {sdk}/{version} (python/{runtime})
+_PLATFORM_SERVER_VALUE = (
+    f"azure-ai-agentserver-core/{_CORE_VERSION} "
+    f"(python/{sys.version_info.major}.{sys.version_info.minor})"
+)
 
 # Sentinel attribute name set on the console handler to prevent adding duplicates
 # across multiple AgentServerHost instantiations.
@@ -176,6 +182,10 @@ class AgentServerHost(Starlette):
     # Tracing (for protocol subclasses)
     # ------------------------------------------------------------------
 
+    #: Default instrumentation scope for tracing spans.
+    #: Protocol subclasses should override this per the spec.
+    _INSTRUMENTATION_SCOPE = "Azure.AI.AgentServer"
+
     @contextlib.contextmanager
     def request_span(
         self,
@@ -190,8 +200,7 @@ class AgentServerHost(Starlette):
         """Create a request-scoped span with this host's identity attributes.
 
         Delegates to :func:`_tracing.request_span` with pre-populated
-        agent identity from environment variables.  No-op when OTel is
-        not installed — yields ``None``.
+        agent identity from environment variables.
 
         :param headers: HTTP request headers.
         :param request_id: The request/invocation ID.
@@ -199,7 +208,7 @@ class AgentServerHost(Starlette):
         :param operation_name: Optional ``gen_ai.operation.name`` value.
         :param session_id: Session ID.
         :param end_on_exit: Whether to end the span when the context exits.
-        :return: Context manager yielding the OTel span or ``None``.
+        :return: Context manager yielding the OTel span.
         """
         with _tracing.request_span(
             headers,
@@ -212,6 +221,7 @@ class AgentServerHost(Starlette):
             operation_name=operation_name,
             session_id=session_id,
             end_on_exit=end_on_exit,
+            instrumentation_scope=self._INSTRUMENTATION_SCOPE,
         ) as span:
             yield span
 
@@ -254,6 +264,8 @@ class AgentServerHost(Starlette):
         config = HypercornConfig()
         config.bind = [f"{host}:{port}"]
         config.graceful_timeout = float(self._graceful_shutdown_timeout)
+        # Spec requires HTTP/1.1 only — disable HTTP/2
+        config.h2_max_concurrent_streams = 0
         return config
 
     def run(self, host: str = "0.0.0.0", port: Optional[int] = None) -> None:
