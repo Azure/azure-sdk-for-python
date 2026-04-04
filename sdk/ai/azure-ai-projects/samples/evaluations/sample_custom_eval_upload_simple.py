@@ -209,7 +209,7 @@ with (
         print("Waiting for evaluation run to complete...")
 
     # ---------------------------------------------------------------
-    # 5. Cleanup 
+    # 5. Cleanup
     # ---------------------------------------------------------------
     print("\nCleaning up...")
     project_client.beta.evaluators.delete_version(
