@@ -389,12 +389,12 @@ class TestSecretClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", only_latest)
     @SecretsClientPreparer()
     @recorded_by_proxy
-    def test_get_secret_accepts_out_content_type(self, client, **kwargs):
+    def test_get_secret_accepts_secret_encoding(self, client, **kwargs):
         secret_name = self.get_resource_name("content-type")
         created = client.set_secret(secret_name, "secret-value")
 
         try:
-            result = client.get_secret(created.name, out_content_type=ContentType.PEM)
+            result = client.get_secret(created.name, secret_encoding=ContentType.PEM)
             assert result.name == created.name
         except HttpResponseError as error:
             assert error.status_code in (400, 404)
@@ -436,7 +436,7 @@ def test_key_vault_secret_maps_previous_version():
     assert secret.properties.previous_version == "previous-version"
 
 
-def test_get_secret_forwards_out_content_type_to_generated_client():
+def test_get_secret_forwards_secret_encoding_to_generated_client():
     generated_client = Mock()
     generated_client.get_secret.return_value = _generated_models.SecretBundle(
         id="https://vault.vault.azure.net/secrets/name/version",
@@ -451,7 +451,7 @@ def test_get_secret_forwards_out_content_type_to_generated_client():
         generated_models=_generated_models,
     )
 
-    client.get_secret("name", out_content_type=ContentType.PEM)
+    client.get_secret("name", secret_encoding=ContentType.PEM)
 
     generated_client.get_secret.assert_called_once_with(
         secret_name="name",

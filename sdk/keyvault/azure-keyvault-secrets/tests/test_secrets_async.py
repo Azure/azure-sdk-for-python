@@ -403,13 +403,13 @@ class TestKeyVaultSecret(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", only_latest)
     @AsyncSecretsClientPreparer()
     @recorded_by_proxy_async
-    async def test_get_secret_accepts_out_content_type(self, client, **kwargs):
+    async def test_get_secret_accepts_secret_encoding(self, client, **kwargs):
         secret_name = self.get_resource_name("content-type")
 
         async with client:
             created = await client.set_secret(secret_name, "secret-value")
             try:
-                result = await client.get_secret(created.name, out_content_type=ContentType.PEM)
+                result = await client.get_secret(created.name, secret_encoding=ContentType.PEM)
                 assert result.name == created.name
             except HttpResponseError as error:
                 assert error.status_code in (400, 404)
@@ -442,7 +442,7 @@ def test_custom_hook_policy():
 
 
 @pytest.mark.asyncio
-async def test_get_secret_forwards_out_content_type_to_generated_client():
+async def test_get_secret_forwards_secret_encoding_to_generated_client():
     generated_client = Mock()
     generated_client.get_secret = AsyncMock(
         return_value=_generated_models.SecretBundle(
@@ -459,7 +459,7 @@ async def test_get_secret_forwards_out_content_type_to_generated_client():
         generated_models=_generated_models,
     )
 
-    await client.get_secret("name", out_content_type=ContentType.PEM)
+    await client.get_secret("name", secret_encoding=ContentType.PEM)
 
     generated_client.get_secret.assert_awaited_once_with(
         "name",

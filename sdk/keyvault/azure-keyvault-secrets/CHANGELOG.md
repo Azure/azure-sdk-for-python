@@ -1,11 +1,17 @@
 # Release History
 
+## 4.11.1 (Unreleased)
+
+### Breaking Changes
+
+- Renamed the `out_content_type` keyword argument of `get_secret` to `secret_encoding` for improved usability
+
 ## 4.11.0 (2026-03-26)
 
 ### Features Added
 
 - Added support for service API version `2025-07-01`
-  - Added support for retrieving secrets with `out_content_type`
+  - Added support for retrieving secrets with `secret_encoding` (encoding format for certificate-backed secrets)
   - Added the `previous_version` property to `SecretProperties`
 
 ### Other Changes
