@@ -40,7 +40,6 @@ Usage::
     curl http://localhost:8088/readiness
 """
 
-from collections.abc import AsyncIterable
 from typing import Any
 
 from starlette.requests import Request
@@ -97,54 +96,16 @@ def echo_response_handler(
     request: Any,
     context: Any,
     cancellation_signal: Any,
-) -> AsyncIterable[dict[str, Any]]:
-    """Handle a response request by echoing the input as a streamed message.
-
-    Emits the full Responses API event lifecycle:
-    created -> in_progress -> output items -> completed
-
-    :param request: The parsed create-response request.
-    :param context: Runtime context with response_id and mode flags.
-    :param cancellation_signal: Event that signals cancellation.
-    :return: Async iterable of response events.
-    """
-    # Build the event stream helper
+):
+    """Handle a response request by echoing the input as a streamed message."""
     stream = ResponseEventStream(
         response_id=context.response_id,
         model=request.model,
     )
-
-    # Lifecycle: created -> in_progress
-    yield stream.emit_created()
-    yield stream.emit_in_progress()
-
-    # Extract input text
+    yield from stream.start()
     echo_text = get_input_text(request) or "hello!"
-
-    # Emit an output message with text content
-    message_item = stream.add_output_item_message()
-    yield message_item.emit_added()
-
-    text_content = message_item.add_text_content()
-    yield text_content.emit_added()
-
-    # Stream the echo text word-by-word for demonstration
-    words = f"[Response] Echo: {echo_text}".split()
-    for i, word in enumerate(words):
-        # Check for cancellation between chunks
-        if cancellation_signal.is_set():
-            yield stream.emit_incomplete(reason="cancelled")
-            return
-
-        delta = word if i == 0 else f" {word}"
-        yield text_content.emit_delta(delta)
-
-    yield text_content.emit_done()
-    yield message_item.emit_content_done(text_content)
-    yield message_item.emit_done()
-
-    # Lifecycle: completed
-    yield stream.emit_completed()
+    yield from stream.text_message(f"[Response] Echo: {echo_text}")
+    yield from stream.complete()
 
 
 

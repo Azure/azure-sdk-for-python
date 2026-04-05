@@ -33,25 +33,14 @@ server = ResponsesAgentServerHost(options=ResponsesServerOptions(default_fetch_h
 @server.create_handler
 async def create(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
     stream = ResponseEventStream(response_id=context.response_id, model=request.model)
-
-    yield stream.emit_created()
-    yield stream.emit_in_progress()
+    yield from stream.start()
 
     history = await context.get_history()
     current_input = get_input_text(request)
     reply = _build_reply(current_input, history)
 
-    message_item = stream.add_output_item_message()
-    yield message_item.emit_added()
-
-    text_content = message_item.add_text_content()
-    yield text_content.emit_added()
-    yield text_content.emit_delta(reply)
-    yield text_content.emit_done(reply)
-    yield message_item.emit_content_done(text_content)
-    yield message_item.emit_done()
-
-    yield stream.emit_completed()
+    yield from stream.text_message(reply)
+    yield from stream.complete()
 
 
 
