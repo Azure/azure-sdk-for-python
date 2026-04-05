@@ -5,9 +5,12 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
+from collections import defaultdict
 from copy import deepcopy
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, Iterable
+from typing import Any, AsyncIterator, Dict, Iterable
 
 from ..models._generated import ResponseObject
 from ..models._helpers import get_conversation_id
@@ -15,29 +18,18 @@ from ..models.runtime import ResponseExecution, ResponseModeFlags, ResponseStatu
 from ._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 
 
+@dataclass
 class _StoreEntry:
     """Container for one response execution and its replay state."""
 
-    def __init__(
-        self,
-        *,
-        execution: ResponseExecution,
-        replay: StreamReplayState,
-        expires_at: datetime | None = None,
-        response: ResponseObject | None = None,
-        input_item_ids: list[str] | None = None,
-        output_item_ids: list[str] | None = None,
-        history_item_ids: list[str] | None = None,
-        deleted: bool = False,
-    ) -> None:
-        self.execution = execution
-        self.replay = replay
-        self.expires_at = expires_at
-        self.response = response
-        self.input_item_ids = input_item_ids
-        self.output_item_ids = output_item_ids
-        self.history_item_ids = history_item_ids
-        self.deleted = deleted
+    execution: ResponseExecution
+    replay: StreamReplayState
+    response: ResponseObject | None = None
+    input_item_ids: list[str] | None = None
+    output_item_ids: list[str] | None = None
+    history_item_ids: list[str] | None = None
+    deleted: bool = False
+    expires_at: datetime | None = None
 
 
 class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderProtocol):
@@ -48,8 +40,15 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         self._entries: Dict[str, _StoreEntry] = {}
         self._lock = asyncio.Lock()
         self._item_store: Dict[str, Any] = {}
-        self._conversation_responses: Dict[str, list[str]] = {}
+        self._conversation_responses: defaultdict[str, list[str]] = defaultdict(list)
         self._stream_events: Dict[str, list[dict[str, Any]]] = {}
+
+    @contextlib.asynccontextmanager
+    async def _locked(self) -> AsyncIterator[None]:
+        """Acquire the lock and purge expired entries."""
+        async with self._lock:
+            self._purge_expired_unlocked()
+            yield
 
     async def create_response(
         self,
@@ -72,8 +71,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :raises ValueError: If a non-deleted response with the same ID already exists.
         """
         response_id = str(getattr(response, "id"))
-        async with self._lock:
-            self._purge_expired_unlocked()
+        async with self._locked():
 
             entry = self._entries.get(response_id)
             if entry is not None and not entry.deleted:
@@ -105,7 +103,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
 
             conversation_id = get_conversation_id(response)
             if conversation_id is not None:
-                self._conversation_responses.setdefault(conversation_id, []).append(response_id)
+                self._conversation_responses[conversation_id].append(response_id)
 
     async def get_response(self, response_id: str) -> ResponseObject:
         """Retrieve one response envelope by identifier.
@@ -116,8 +114,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :rtype: ~azure.ai.agentserver.responses.models._generated.Response
         :raises KeyError: If the response does not exist or has been deleted.
         """
-        async with self._lock:
-            self._purge_expired_unlocked()
+        async with self._locked():
             entry = self._entries.get(response_id)
             if entry is None or entry.deleted or entry.response is None:
                 raise KeyError(f"response '{response_id}' not found")
@@ -135,8 +132,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :raises KeyError: If the response does not exist or has been deleted.
         """
         response_id = str(getattr(response, "id"))
-        async with self._lock:
-            self._purge_expired_unlocked()
+        async with self._locked():
             entry = self._entries.get(response_id)
             if entry is None or entry.deleted:
                 raise KeyError(f"response '{response_id}' not found")
@@ -155,8 +151,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :rtype: None
         :raises KeyError: If the response does not exist or has already been deleted.
         """
-        async with self._lock:
-            self._purge_expired_unlocked()
+        async with self._locked():
             entry = self._entries.get(response_id)
             if entry is None or entry.deleted:
                 raise KeyError(f"response '{response_id}' not found")
@@ -191,8 +186,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :raises KeyError: If the response does not exist.
         :raises ValueError: If the response has been deleted.
         """
-        async with self._lock:
-            self._purge_expired_unlocked()
+        async with self._locked():
             entry = self._entries.get(response_id)
             if entry is None:
                 raise KeyError(f"response '{response_id}' not found")
@@ -229,7 +223,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :returns: A list of items in the same order as *item_ids*; missing items are ``None``.
         :rtype: list[Any | None]
         """
-        async with self._lock:
+        async with self._locked():
             return [deepcopy(self._item_store[item_id]) if item_id in self._item_store else None for item_id in item_ids]
 
     async def get_history_item_ids(
@@ -252,8 +246,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :returns: A list of history item IDs within the given scope.
         :rtype: list[str]
         """
-        async with self._lock:
-            self._purge_expired_unlocked()
+        async with self._locked():
             resolved: list[str] = []
 
             if previous_response_id is not None:
@@ -287,8 +280,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :rtype: None
         :raises ValueError: If an entry with the same response ID already exists.
         """
-        async with self._lock:
-            self._purge_expired_unlocked()
+        async with self._locked():
 
             if execution.response_id in self._entries:
                 raise ValueError(f"response '{execution.response_id}' already exists")
@@ -307,8 +299,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :returns: A deep copy of the execution state, or ``None`` if not found.
         :rtype: ~azure.ai.agentserver.responses.models.runtime.ResponseExecution | None
         """
-        async with self._lock:
-            self._purge_expired_unlocked()
+        async with self._locked():
             entry = self._entries.get(response_id)
             if entry is None:
                 return None
@@ -331,8 +322,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :returns: ``True`` if the entry was found and updated, ``False`` otherwise.
         :rtype: bool
         """
-        async with self._lock:
-            self._purge_expired_unlocked()
+        async with self._locked():
             entry = self._entries.get(response_id)
             if entry is None:
                 return False
@@ -358,8 +348,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :returns: ``True`` if the entry was found and transitioned, ``False`` otherwise.
         :rtype: bool
         """
-        async with self._lock:
-            self._purge_expired_unlocked()
+        async with self._locked():
             entry = self._entries.get(response_id)
             if entry is None:
                 return False
@@ -378,8 +367,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :rtype: bool
         :raises ValueError: If the execution is already terminal in a non-cancelled state.
         """
-        async with self._lock:
-            self._purge_expired_unlocked()
+        async with self._locked():
             entry = self._entries.get(response_id)
             if entry is None:
                 return False
@@ -433,8 +421,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :returns: ``True`` if the entry was found and the event was appended, ``False`` otherwise.
         :rtype: bool
         """
-        async with self._lock:
-            self._purge_expired_unlocked()
+        async with self._locked():
             entry = self._entries.get(response_id)
             if entry is None:
                 return False
@@ -443,7 +430,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
             self._apply_ttl_unlocked(entry, ttl_seconds)
             return True
 
-    async def get_stream_events(self, response_id: str) -> list[StreamEventRecord] | None:
+    async def get_replay_events(self, response_id: str) -> list[StreamEventRecord] | None:
         """Get defensive copies of all replay events for ``response_id``.
 
         :param response_id: The unique identifier of the response whose events to retrieve.
@@ -451,8 +438,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :returns: A list of deep-copied stream event records, or ``None`` if not found.
         :rtype: list[~azure.ai.agentserver.responses.models.runtime.StreamEventRecord] | None
         """
-        async with self._lock:
-            self._purge_expired_unlocked()
+        async with self._locked():
             entry = self._entries.get(response_id)
             if entry is None:
                 return None
@@ -469,8 +455,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :returns: ``True`` if an entry was found and removed, ``False`` otherwise.
         :rtype: bool
         """
-        async with self._lock:
-            self._purge_expired_unlocked()
+        async with self._locked():
             self._stream_events.pop(response_id, None)
             return self._entries.pop(response_id, None) is not None
 
@@ -487,7 +472,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :type events: list[dict[str, Any]]
         :rtype: None
         """
-        async with self._lock:
+        async with self._locked():
             self._stream_events[response_id] = deepcopy(events)
 
     async def get_stream_events(
@@ -501,7 +486,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :returns: A deep-copied list of normalised SSE event dicts, or ``None`` if not found.
         :rtype: list[dict[str, Any]] | None
         """
-        async with self._lock:
+        async with self._locked():
             events = self._stream_events.get(response_id)
             if events is None:
                 return None
@@ -514,7 +499,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :returns: The number of expired entries that were removed.
         :rtype: int
         """
-        async with self._lock:
+        async with self._locked():
             return self._purge_expired_unlocked(now=now)
 
     @staticmethod
