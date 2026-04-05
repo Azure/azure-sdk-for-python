@@ -188,6 +188,25 @@ def resolve_project_id() -> str:
     return os.environ.get(Constants.FOUNDRY_PROJECT_ARM_ID, "")
 
 
+def resolve_sse_keepalive_interval(interval: Optional[int] = None) -> int:
+    """Resolve the SSE keep-alive interval from argument, env var, or default.
+
+    Resolution order: explicit *interval* → ``SSE_KEEPALIVE_INTERVAL`` env var
+    → ``15`` (seconds).  A value of ``0`` disables keep-alive.
+
+    :param interval: Explicitly requested interval in seconds, or None.
+    :type interval: Optional[int]
+    :return: The resolved interval in seconds (0 means disabled).
+    :rtype: int
+    """
+    if interval is not None:
+        return max(0, _require_int("sse_keepalive_interval", interval))
+    env_val = _parse_int_env(Constants.SSE_KEEPALIVE_INTERVAL)
+    if env_val is not None:
+        return max(0, env_val)
+    return Constants.DEFAULT_SSE_KEEPALIVE_INTERVAL
+
+
 def resolve_otlp_endpoint() -> Optional[str]:
     """Resolve the OTLP exporter endpoint from the ``OTEL_EXPORTER_OTLP_ENDPOINT`` environment variable.
 
