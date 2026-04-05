@@ -353,40 +353,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         """
         return any(e["type"] in _ResponseOrchestrator._TERMINAL_SSE_TYPES for e in handler_events)
 
-    async def _cancel_terminal_sse(self, ctx: _ExecutionContext, state: _PipelineState) -> str:
-        """Build and record a ``response.failed`` cancel-terminal SSE string.
-
-        :param ctx: Current execution context (immutable inputs).
-        :type ctx: _ExecutionContext
-        :param state: Mutable pipeline state for this invocation.
-        :type state: _PipelineState
-        :return: Encoded SSE string for the cancel-terminal event.
-        :rtype: str
-        """
-        cancel_event: dict[str, Any] = {
-            "type": EVENT_TYPE.RESPONSE_FAILED.value,
-            "payload": _build_cancelled_response(ctx.response_id, ctx.agent_reference, ctx.model).as_dict(),
-        }
-        normalized = _apply_stream_event_defaults(
-            cancel_event,
-            response_id=ctx.response_id,
-            agent_reference=ctx.agent_reference,
-            model=ctx.model,
-            sequence_number=len(state.handler_events),
-            agent_session_id=ctx.agent_session_id,
-        )
-        state.handler_events.append(normalized)
-        if state.bg_record is not None:
-            state.bg_record.apply_event(normalized, state.handler_events)
-            if state.bg_record.subject is not None:
-                await state.bg_record.subject.publish(normalized)
-        return encode_sse_payload(normalized["type"], normalized["payload"])
-
     async def _cancel_terminal_sse_dict(self, ctx: _ExecutionContext, state: _PipelineState) -> dict[str, Any]:
         """Build, normalise, append, and return a cancel-terminal event dict.
 
-        Like :meth:`_cancel_terminal_sse` but returns the raw normalised event
-        dictionary instead of an SSE-encoded string, so that it can be consumed
+        Returns the raw normalised event dictionary so that it can be consumed
         by the shared :meth:`_process_handler_events` pipeline.
 
         :param ctx: Current execution context (immutable inputs).
@@ -598,143 +568,88 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         if not self._has_terminal_event(state.handler_events):
             yield await self._make_failed_event(ctx, state)
 
-    async def _finalize_bg_stream(self, ctx: _ExecutionContext, state: _PipelineState) -> None:
-        """Persist state and complete the subject for a background+stream response.
+    async def _finalize_stream(self, ctx: _ExecutionContext, state: _PipelineState) -> None:
+        """Persist state and complete the subject for a streaming response.
 
-        Called from the ``finally`` block of :meth:`_live_stream` when
-        ``ctx.background and ctx.store`` is True.  The execution record may
-        already exist (``state.bg_record``, created at ``response.created`` time)
-        or may be absent (empty handler — fallback events were synthesised by
-        :meth:`_process_handler_events`).  In the latter case the record is
-        created here from the accumulated ``state.handler_events``.
+        Unified finalizer for both background and non-background streaming
+        paths, called from the ``finally`` block of :meth:`_live_stream`.
+
+        When a background execution record already exists (``state.bg_record``,
+        created at ``response.created`` time by :meth:`_register_bg_execution`),
+        the record is updated in place and persisted via ``update_response``.
+        Otherwise — for non-background streams, or background streams where no
+        record was created (empty handler, pre-creation errors, first-event
+        contract violations) — a new record is created and persisted via
+        ``create_response``.
 
         :param ctx: Current execution context (immutable inputs).
         :type ctx: _ExecutionContext
         :param state: Mutable pipeline state for this invocation.
         :type state: _PipelineState
         """
-        # If the handler yielded nothing, _process_handler_events synthesised
-        # fallback events but never called _register_bg_execution, so
-        # state.bg_record is None.  Create the record here from the fallback events.
-        if state.bg_record is None:
-            events = state.handler_events if state.handler_events else _build_events(
-                ctx.response_id,
-                include_progress=True,
-                agent_reference=ctx.agent_reference,
-                model=ctx.model,
-            )
-            response_payload = _extract_response_snapshot_from_events(
-                events,
-                response_id=ctx.response_id,
-                agent_reference=ctx.agent_reference,
-                model=ctx.model,
-                agent_session_id=ctx.agent_session_id,
-            )
-            resolved_status = response_payload.get("status")
-            status = resolved_status if isinstance(resolved_status, str) else "completed"
+        # --- Path A: BG with pre-existing record (normal bg+stream completion) ---
+        if ctx.background and ctx.store and state.bg_record is not None:
+            record = state.bg_record
 
-            replay_subject = _ResponseEventSubject()
-            for _evt in events:
-                await replay_subject.publish(_evt)
-            await replay_subject.complete()
-
-            execution = ResponseExecution(
-                response_id=ctx.response_id,
-                mode_flags=ResponseModeFlags(stream=True, store=True, background=True),
-                status=status,
-                subject=replay_subject,
-                input_items=deepcopy(ctx.input_items),
-                previous_response_id=ctx.previous_response_id,
-                cancel_signal=ctx.cancellation_signal,
-            )
-            execution.set_response_snapshot(generated_models.ResponseObject(response_payload))
-            await self._runtime_state.add(execution)
-            if ctx.store:
-                try:
-                    _history_ids = (
-                        await self._provider.get_history_item_ids(ctx.previous_response_id, None, 10000)
-                        if ctx.previous_response_id
-                        else None
-                    )
-                    await self._provider.create_response(
-                        generated_models.ResponseObject(response_payload), ctx.input_items or None, _history_ids
-                    )
-                except Exception:  # pylint: disable=broad-exception-caught
-                    pass  # best effort
-            ctx.span.end(state.captured_error)
-            return
-
-        record = state.bg_record
-
-        if record.status != "cancelled":
-            events = state.handler_events if state.handler_events else _build_events(
-                ctx.response_id,
-                include_progress=True,
-                agent_reference=ctx.agent_reference,
-                model=ctx.model,
-            )
-            if state.captured_error is not None:
-                record.set_response_snapshot(
-                    _build_failed_response(
-                        ctx.response_id,
-                        ctx.agent_reference,
-                        ctx.model,
-                        created_at=ctx.context.created_at,
-                    )
-                )
-                record.transition_to("failed")
-            else:
-                response_payload = _extract_response_snapshot_from_events(
-                    events,
-                    response_id=ctx.response_id,
+            if record.status != "cancelled":
+                events = state.handler_events if state.handler_events else _build_events(
+                    ctx.response_id,
+                    include_progress=True,
                     agent_reference=ctx.agent_reference,
                     model=ctx.model,
-                    agent_session_id=ctx.agent_session_id,
                 )
-                resolved_status = response_payload.get("status")
-                status = resolved_status if isinstance(resolved_status, str) else "in_progress"
-                record.set_response_snapshot(generated_models.ResponseObject(response_payload))
-                record.transition_to(status)  # type: ignore[arg-type]
-
-            # Persist terminal state update via provider (bg+stream: initial create already done)
-            if record.mode_flags.store and record.response is not None:
-                try:
-                    await self._provider.update_response(record.response)
-                except Exception:  # pylint: disable=broad-exception-caught
-                    pass  # best effort
-                # Persist SSE events for replay after process restart
-                if self._stream_provider is not None and state.handler_events:
-                    try:
-                        await self._stream_provider.save_stream_events(
-                            ctx.response_id, state.handler_events
+                if state.captured_error is not None:
+                    record.set_response_snapshot(
+                        _build_failed_response(
+                            ctx.response_id,
+                            ctx.agent_reference,
+                            ctx.model,
+                            created_at=ctx.context.created_at,
                         )
+                    )
+                    record.transition_to("failed")
+                else:
+                    response_payload = _extract_response_snapshot_from_events(
+                        events,
+                        response_id=ctx.response_id,
+                        agent_reference=ctx.agent_reference,
+                        model=ctx.model,
+                        agent_session_id=ctx.agent_session_id,
+                    )
+                    resolved_status = response_payload.get("status")
+                    status = resolved_status if isinstance(resolved_status, str) else "in_progress"
+                    record.set_response_snapshot(generated_models.ResponseObject(response_payload))
+                    record.transition_to(status)  # type: ignore[arg-type]
+
+                # Persist terminal state update via provider (bg+stream: initial create already done)
+                if record.mode_flags.store and record.response is not None:
+                    try:
+                        await self._provider.update_response(record.response)
                     except Exception:  # pylint: disable=broad-exception-caught
                         pass  # best effort
+                    # Persist SSE events for replay after process restart
+                    if self._stream_provider is not None and state.handler_events:
+                        try:
+                            await self._stream_provider.save_stream_events(
+                                ctx.response_id, state.handler_events
+                            )
+                        except Exception:  # pylint: disable=broad-exception-caught
+                            pass  # best effort
 
-        ctx.span.end(state.captured_error)
-        # Complete the subject — signals all live SSE replay subscribers that the
-        # stream has ended, matching .NET's publisher.OnCompletedAsync() call.
-        if record.subject is not None:
-            try:
-                await record.subject.complete()
-            except Exception:  # pylint: disable=broad-exception-caught
-                pass  # best effort
+            ctx.span.end(state.captured_error)
+            # Complete the subject — signals all live SSE replay subscribers that
+            # the stream has ended.
+            if record.subject is not None:
+                try:
+                    await record.subject.complete()
+                except Exception:  # pylint: disable=broad-exception-caught
+                    pass  # best effort
+            return
 
-    async def _finalize_non_bg_stream(self, ctx: _ExecutionContext, state: _PipelineState) -> None:
-        """Persist the execution record for a non-background streaming response.
-
-        Called from the ``finally`` block of :meth:`_live_stream` when
-        ``ctx.background`` is False.  For ``store=True`` responses, this creates
-        a new execution record and provider entry at terminal state (the stream
-        is already complete).  A pre-filled replay subject is attached so that
-        ``GET ?stream=true`` replay has a subject to subscribe to, though replay
-        will be rejected (``replay_enabled=False``) because this is non-background.
-
-        :param ctx: Current execution context (immutable inputs).
-        :type ctx: _ExecutionContext
-        :param state: Mutable pipeline state for this invocation.
-        :type state: _PipelineState
-        """
+        # --- Path B: No pre-existing record ---
+        # Covers non-background streams and background streams where no record
+        # was created (empty handler fallback, pre-creation errors, first-event
+        # contract violations).
         events = state.handler_events if state.handler_events else _build_events(
             ctx.response_id,
             include_progress=True,
@@ -752,23 +667,22 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         status = resolved_status if isinstance(resolved_status, str) else "completed"
 
         if ctx.store:
-            # Pre-fill a completed subject so GET ?stream=true replay always has
-            # a subject to subscribe to (non-bg: stream already finished here).
             replay_subject = _ResponseEventSubject()
             for _evt in events:
                 await replay_subject.publish(_evt)
             await replay_subject.complete()
-            stream_record = ResponseExecution(
+
+            execution = ResponseExecution(
                 response_id=ctx.response_id,
-                mode_flags=ResponseModeFlags(stream=True, store=True, background=False),
+                mode_flags=ResponseModeFlags(stream=True, store=True, background=ctx.background),
                 status=status,
                 subject=replay_subject,
                 input_items=deepcopy(ctx.input_items),
                 previous_response_id=ctx.previous_response_id,
+                cancel_signal=ctx.cancellation_signal if ctx.background else None,
             )
-            stream_record.set_response_snapshot(generated_models.ResponseObject(response_payload))
-            await self._runtime_state.add(stream_record)
-            # Persist via provider (non-bg stream: single create at terminal state)
+            execution.set_response_snapshot(generated_models.ResponseObject(response_payload))
+            await self._runtime_state.add(execution)
             try:
                 _history_ids = (
                     await self._provider.get_history_item_ids(ctx.previous_response_id, None, 10000)
@@ -828,10 +742,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # events (fallback path in _process_handler_events); _finalize_bg_stream
         # handles that case by creating the record itself.
         async def _finalize() -> None:
-            if ctx.background and ctx.store:
-                await self._finalize_bg_stream(ctx, state)
-            else:
-                await self._finalize_non_bg_stream(ctx, state)
+            await self._finalize_stream(ctx, state)
 
         # --- Fast path: no keep-alive ---
         if not self._runtime_options.sse_keep_alive_enabled:
