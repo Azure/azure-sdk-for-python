@@ -32,8 +32,6 @@ from opentelemetry import baggage as _otel_baggage, context as _otel_context
 
 from ._constants import InvocationConstants
 
-import logging
-
 logger = logging.getLogger("azure.ai.agentserver")
 
 # Maximum length and allowed characters for user-provided IDs (defense in depth).
@@ -413,14 +411,17 @@ class InvocationAgentServerHost(AgentServerHost):
         span_operation: str,
         dispatch: Callable[[Request], Awaitable[Response]],
     ) -> Response:
-        invocation_id = request.path_params["invocation_id"]
+        raw_invocation_id = request.path_params["invocation_id"]
+        invocation_id = _sanitize_id(raw_invocation_id, raw_invocation_id)
         request.state.invocation_id = invocation_id
+
+        raw_session_id = request.query_params.get("agent_session_id", "")
+        session_id = _sanitize_id(raw_session_id, "") if raw_session_id else ""
 
         with self.request_span(
             request.headers, invocation_id, span_operation,
-            session_id=request.query_params.get("agent_session_id", ""),
+            session_id=session_id,
         ) as _otel_span:
-            session_id = request.query_params.get("agent_session_id", "")
             self._safe_set_attrs(_otel_span, {
                 InvocationConstants.ATTR_SPAN_INVOCATION_ID: invocation_id,
                 InvocationConstants.ATTR_SPAN_SESSION_ID: session_id,
