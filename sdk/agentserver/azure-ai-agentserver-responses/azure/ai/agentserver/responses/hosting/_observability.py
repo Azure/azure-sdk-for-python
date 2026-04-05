@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
 
@@ -251,23 +252,15 @@ def build_create_otel_attrs(
     return attrs
 
 
+@dataclass
 class RecordedSpan:
     """Recorded span event for tests and diagnostics."""
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        tags: dict[str, Any],
-        started_at: datetime,
-        ended_at: datetime | None = None,
-        error: Exception | None = None,
-    ) -> None:
-        self.name = name
-        self.tags = tags
-        self.started_at = started_at
-        self.ended_at = ended_at
-        self.error = error
+    name: str
+    tags: dict[str, Any]
+    started_at: datetime
+    ended_at: datetime | None = None
+    error: Exception | None = None
 
 
 class InMemoryCreateSpanHook:

@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Literal, Mapping
 
@@ -17,41 +18,27 @@ ResponseStatus = Literal["queued", "in_progress", "completed", "failed", "cancel
 TerminalResponseStatus = Literal["completed", "failed", "cancelled", "incomplete"]
 
 
+@dataclass(frozen=True, slots=True)
 class ResponseModeFlags:
     """Execution mode flags captured from the create request."""
 
-    def __init__(self, *, stream: bool, store: bool, background: bool) -> None:
-        self.stream = stream
-        self.store = store
-        self.background = background
+    stream: bool
+    store: bool
+    background: bool
 
 
+@dataclass(slots=True)
 class StreamEventRecord:
     """A persisted record for one emitted stream event."""
 
-    def __init__(
-        self,
-        *,
-        sequence_number: int,
-        event_type: str,
-        payload: Mapping[str, Any],
-        emitted_at: datetime | None = None,
-    ) -> None:
-        self.sequence_number = sequence_number
-        self.event_type = event_type
-        self.payload = payload
-        self.emitted_at = emitted_at if emitted_at is not None else datetime.now(timezone.utc)
+    sequence_number: int
+    event_type: str
+    payload: Mapping[str, Any]
+    emitted_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
     @property
     def terminal(self) -> bool:
-        """Return True when this event is one of the terminal response events.
-
-        Terminal events are ``response.completed``, ``response.failed``,
-        and ``response.incomplete``.
-
-        :returns: True if the event type is terminal, False otherwise.
-        :rtype: bool
-        """
+        """Return True when this event is one of the terminal response events."""
         return self.event_type in {
             EVENT_TYPE.RESPONSE_COMPLETED.value,
             EVENT_TYPE.RESPONSE_FAILED.value,
@@ -60,15 +47,7 @@ class StreamEventRecord:
 
     @classmethod
     def from_generated(cls, event: ResponseStreamEvent, payload: Mapping[str, Any]) -> "StreamEventRecord":
-        """Create a stream event record from a generated response stream event model.
-
-        :param event: The generated response stream event to convert.
-        :type event: ResponseStreamEvent
-        :param payload: The serialized payload mapping for the event.
-        :type payload: Mapping[str, Any]
-        :returns: A new ``StreamEventRecord`` populated from the generated event.
-        :rtype: StreamEventRecord
-        """
+        """Create a stream event record from a generated response stream event model."""
         return cls(sequence_number=event.sequence_number, event_type=event.type, payload=payload)
 
 
