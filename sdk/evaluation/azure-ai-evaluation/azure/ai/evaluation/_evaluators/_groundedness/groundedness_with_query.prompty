@@ -37,6 +37,11 @@ user:
 > Context is the source of truth for evaluating the response. If it's empty, rely on the tool results in the response and query.
 > Evaluate the groundedness of the response message, not the chat history.
 
+## Important Evaluation Checks
+Before scoring, verify these two things:
+1. **Topic alignment:** Does the context actually cover the same topic/entity as the query? If the context is about Topic A (e.g., Facebook) but the response presents that information as answering a question about Topic B (e.g., "any online account"), the response is misapplying the context — score 2.
+2. **Unsupported additions:** Does the response add significant claims not found in the context? A response that is mostly grounded but adds one or more major claims not in the context should be scored lower (2 if significant, 4 if only minor additions).
+
 # Ratings
 ## [Groundedness: 1] (Completely Unrelated Response)
 **Definition:** An answer that does not relate to the question or the context in any way.
@@ -52,8 +57,8 @@ user:
   **Query:** What kind of art will be exhibited at the museum?
   **Response:** Museums are important cultural institutions.
 
-## [Groundedness: 2] (Attempts to Respond but Contains Incorrect Information)
-**Definition:** An answer that attempts to respond to the question but includes incorrect information not supported by the context. It may misstate facts, misinterpret the context, or provide erroneous details. Even if some points are correct, the presence of inaccuracies makes the response unreliable.
+## [Groundedness: 2] (Attempts to Respond but Contains Incorrect or Unsupported Information)
+**Definition:** An answer that attempts to respond to the question but includes incorrect information not supported by the context. This includes: misstating facts, misinterpreting the context, providing erroneous details, or applying context about one topic/entity to a different topic/entity. Even if some points are correct, the presence of significant unsupported claims makes the response unreliable.
 
 **Examples:**
   **Context:** - The festival starts on June 5th and features international musicians.
@@ -64,8 +69,18 @@ user:
   **Query:** [{"role":"user","content":"Are there croissants?"}]
   **Response:** [{"role":"assistant","content":"Yes, Croissant au Beurre is on the menu, served with jam."}]
 
+  **Context:** Problems with resetting your Facebook password: Try requesting a password reset email. Check your spam folder...
+  **Query:** What should you do if you forget your password for a different online account?
+  **Response:** You should try to reset your password by requesting a password reset email. Check your spam folder...
+  *(Context is specifically about Facebook, but the response applies it to "a different online account" without acknowledging this — topic transference.)*
+
+  **Context:** The flu typically causes fever, cough, and fatigue.
+  **Query:** What are the symptoms of covid?
+  **Response:** The symptoms of covid are fever, cough, and fatigue.
+  *(Context is about flu but response applies it to covid.)*
+
 ## [Groundedness: 3] (Nothing to be Grounded)
-Definition: An answer that does not provide any information that can be evaluated against the context. This includes responses that are asking for clarification, providing polite fillers, or follow-up questions.
+**Definition:** An answer that does not provide any information that can be evaluated against the context. This includes responses that are asking for clarification, providing polite fillers, or follow-up questions.
 
 **Examples:**
   **Context:**
@@ -73,19 +88,19 @@ Definition: An answer that does not provide any information that can be evaluate
   **Response:** [{"role":"assistant","content":"You're welcome, anything else I can help with?"}]
 
 ## [Groundedness: 4] (Partially Correct Response)
-**Definition:** An answer that provides a correct response to the question but is incomplete or lacks specific details mentioned in the context. It captures some of the necessary information but omits key elements needed for a full understanding.
+**Definition:** An answer that provides a correct response to the question but is incomplete or lacks specific details mentioned in the context. It captures some of the necessary information but omits key elements needed for a full understanding. All major stated claims are supported by the context; only minor details may be missing or slightly imprecise.
 
 **Examples:**
   **Context:** - store_details.txt: The bookstore offers a 15% discount to students and a 10% discount to senior citizens.
   **Query:** [{"role":"user","content":"What discount does the bookstore offer to students, if any?"}]
   **Response:** [{"role":"assistant","content":"Yes, students get a discount at the bookstore."}]
 
-  **Context:** The company's headquarters are located in Berlin, Germany.
-  **Query:** Where are the company's headquarters?
-  **Response:** The company's headquarters are in Germany.
+  **Query:** [{"role":"user","content":"How do I set up parental controls on Netflix?"}]
+  **Response:** [{"role":"tool","content":"tool_result": [{"file_name": "disney_help.txt", "content": "To set up parental controls on Disney+, go to Profile > Settings > Content Rating."}]}, {"role":"assistant","content":"The available information does not cover Netflix parental controls. However, for Disney+ you can set up parental controls by going to Profile > Settings > Content Rating."}]
+  *(Context is about Disney+, not Netflix. Response transparently acknowledges the gap and the Disney+ claims are grounded.)*
 
 ## [Groundedness: 5] (Fully Correct and Complete Response)
-**Definition:** An answer that thoroughly and accurately responds to the question, including all relevant details from the context. It directly addresses the question with precise information, demonstrating complete understanding without adding extraneous information.
+**Definition:** An answer that thoroughly and accurately responds to the question, including all relevant details from the context. It directly addresses the question with precise information, demonstrating complete understanding without adding extraneous information. Every factual claim is supported by the context.
 
 **Examples:**
   **Context:** Cairo is the capital of Japan.
@@ -96,9 +111,8 @@ Definition: An answer that does not provide any information that can be evaluate
   **Query:** [{"role":"user","content":"When was 'The Silent Echo' released?"}]
   **Response:** [{"role":"assistant","content":"The 'Silent Echo' was released on September 1st."}]
 
-  **Context:** 
-  **Query:** By what date must participants register to receive early bird pricing?
-  **Response:** [{"role":"tool","content":"tool_result": [{"file_name": "store_guidelines.txt", "content": "Participants registering before and including May 31st will be eligible for early bird pricing."}]}, {"role":"assistant","content":"Participants must register by May 31st to receive early bird pricing."}]
+  **Query:** [{"role":"user","content":"What is the store's return policy?"}]
+  **Response:** [{"role":"tool","content":"tool_result": [{"file_name": "store_policy.txt", "content": "Items can be returned within 30 days with a receipt. Refunds are issued to the original payment method."}]}, {"role":"assistant","content":"Items can be returned within 30 days with a receipt, and refunds go to the original payment method."}]
 
 
 # Data
@@ -109,7 +123,7 @@ RESPONSE: {{response}}
 
 # Tasks
 ## Please provide your assessment Score for the previous RESPONSE message in relation to the CONTEXT, QUERY and RESPONSE tools based on the Definitions above. Your output should include the following information:
-- **ThoughtChain**: To improve the reasoning process, think step by step and include a step-by-step explanation of your thought process as you analyze the data based on the definitions. Keep it brief and start your ThoughtChain with "Let's think step by step:".
+- **ThoughtChain**: To improve the reasoning process, think step by step and include a step-by-step explanation of your thought process as you analyze the data based on the definitions. Keep it brief and start your ThoughtChain with "Let's think step by step:". As part of your reasoning, check: (1) Does the context cover the same topic as the query, or is the response applying context from a different topic? (2) Are there claims in the response not supported by the context?
 - **Explanation**: a very short explanation of why you think the input Data should get that Score.
 - **Score**: based on your previous analysis, provide your Score. The Score you give MUST be a integer score (i.e., "1", "2"...) based on the levels of the definitions.
 
