@@ -277,7 +277,7 @@ class _BaggageLogRecordProcessor:
     for end-to-end correlation.
     """
 
-    def emit(self, log_data: Any) -> None:  # pylint: disable=unused-argument
+    def on_emit(self, log_data: Any) -> None:  # pylint: disable=unused-argument
         """Copy baggage entries into the log record's attributes."""
         try:
             ctx = _otel_context.get_current()
