@@ -100,7 +100,7 @@ class ResponsesAgentServerHost(AgentServerHost):
                                 else None
         runtime_state = _RuntimeState()
         orchestrator = _ResponseOrchestrator(
-            create_async=self._dispatch_create,
+            create_fn=self._dispatch_create,
             runtime_state=runtime_state,
             runtime_options=runtime_options,
             provider=resolved_provider,

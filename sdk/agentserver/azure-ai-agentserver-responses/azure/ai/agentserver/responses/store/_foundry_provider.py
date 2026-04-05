@@ -98,7 +98,7 @@ class FoundryStorageProvider:
     # ResponseProviderProtocol implementation
     # ------------------------------------------------------------------
 
-    async def create_response_async(
+    async def create_response(
         self,
         response: ResponseObject,
         input_items: Iterable[Any] | None,
@@ -120,7 +120,7 @@ class FoundryStorageProvider:
         http_resp = await self._client.send_request(request)
         raise_for_storage_error(http_resp)
 
-    async def get_response_async(self, response_id: str) -> ResponseObject:
+    async def get_response(self, response_id: str) -> ResponseObject:
         """Retrieve a stored response by its ID.
 
         :param response_id: The response identifier.
@@ -136,7 +136,7 @@ class FoundryStorageProvider:
         raise_for_storage_error(http_resp)
         return deserialize_response(http_resp.text())
 
-    async def update_response_async(self, response: ResponseObject) -> None:
+    async def update_response(self, response: ResponseObject) -> None:
         """Persist an updated response snapshot.
 
         :param response: The updated response model.  Must contain a valid ``id`` field.
@@ -151,7 +151,7 @@ class FoundryStorageProvider:
         http_resp = await self._client.send_request(request)
         raise_for_storage_error(http_resp)
 
-    async def delete_response_async(self, response_id: str) -> None:
+    async def delete_response(self, response_id: str) -> None:
         """Delete a stored response and its associated data.
 
         :param response_id: The response identifier.
@@ -164,7 +164,7 @@ class FoundryStorageProvider:
         http_resp = await self._client.send_request(request)
         raise_for_storage_error(http_resp)
 
-    async def get_input_items_async(
+    async def get_input_items(
         self,
         response_id: str,
         limit: int = 20,
@@ -204,7 +204,7 @@ class FoundryStorageProvider:
         raise_for_storage_error(http_resp)
         return deserialize_paged_items(http_resp.text())
 
-    async def get_items_async(self, item_ids: Iterable[str]) -> list[Any | None]:
+    async def get_items(self, item_ids: Iterable[str]) -> list[Any | None]:
         """Retrieve multiple items by their IDs in a single batch request.
 
         Positions in the returned list correspond to positions in *item_ids*.
@@ -224,7 +224,7 @@ class FoundryStorageProvider:
         raise_for_storage_error(http_resp)
         return deserialize_items_array(http_resp.text())
 
-    async def get_history_item_ids_async(
+    async def get_history_item_ids(
         self,
         previous_response_id: str | None,
         conversation_id: str | None,

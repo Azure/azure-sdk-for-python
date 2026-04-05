@@ -23,10 +23,10 @@ def test_provider_parity__interface_name_is_responseproviderprotocol() -> None:
 def test_provider_parity__dotnet_surface_methods_exist() -> None:
     provider = InMemoryResponseProvider()
 
-    assert hasattr(provider, "create_response_async")
-    assert hasattr(provider, "get_response_async")
-    assert hasattr(provider, "update_response_async")
-    assert hasattr(provider, "delete_response_async")
-    assert hasattr(provider, "get_input_items_async")
-    assert hasattr(provider, "get_items_async")
-    assert hasattr(provider, "get_history_item_ids_async")
+    assert hasattr(provider, "create_response")
+    assert hasattr(provider, "get_response")
+    assert hasattr(provider, "update_response")
+    assert hasattr(provider, "delete_response")
+    assert hasattr(provider, "get_input_items")
+    assert hasattr(provider, "get_items")
+    assert hasattr(provider, "get_history_item_ids")

@@ -97,16 +97,16 @@ def settings() -> FoundryStorageSettings:
 
 
 # ===========================================================================
-# create_response_async
+# create_response
 # ===========================================================================
 
 @pytest.mark.asyncio
-async def test_create_response_async__posts_to_responses_endpoint(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_create_response__posts_to_responses_endpoint(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {}))
     from azure.ai.agentserver.responses.models._generated import ResponseObject
 
     response = ResponseObject(_RESPONSE_DICT)
-    await provider.create_response_async(response, None, None)
+    await provider.create_response(response, None, None)
 
     request = provider._client.send_request.call_args[0][0]
     assert request.method == "POST"
@@ -115,12 +115,12 @@ async def test_create_response_async__posts_to_responses_endpoint(credential: An
 
 
 @pytest.mark.asyncio
-async def test_create_response_async__sends_correct_envelope(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_create_response__sends_correct_envelope(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {}))
     from azure.ai.agentserver.responses.models._generated import ResponseObject
 
     response = ResponseObject(_RESPONSE_DICT)
-    await provider.create_response_async(response, [MagicMock(as_dict=lambda: _INPUT_ITEM_DICT)], ["prev_item_1"])
+    await provider.create_response(response, [MagicMock(as_dict=lambda: _INPUT_ITEM_DICT)], ["prev_item_1"])
 
     request = provider._client.send_request.call_args[0][0]
     payload = json.loads(request.content.decode("utf-8"))
@@ -130,26 +130,26 @@ async def test_create_response_async__sends_correct_envelope(credential: Any, se
 
 
 @pytest.mark.asyncio
-async def test_create_response_async__raises_foundry_api_error_on_500(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_create_response__raises_foundry_api_error_on_500(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(500, {"error": {"message": "server fault"}}))
     from azure.ai.agentserver.responses.models._generated import ResponseObject
 
     with pytest.raises(FoundryApiError) as exc_info:
-        await provider.create_response_async(ResponseObject(_RESPONSE_DICT), None, None)
+        await provider.create_response(ResponseObject(_RESPONSE_DICT), None, None)
 
     assert exc_info.value.status_code == 500
     assert "server fault" in exc_info.value.message
 
 
 # ===========================================================================
-# get_response_async
+# get_response
 # ===========================================================================
 
 @pytest.mark.asyncio
-async def test_get_response_async__gets_correct_url(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_response__gets_correct_url(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, _RESPONSE_DICT))
 
-    await provider.get_response_async("resp_abc123")
+    await provider.get_response("resp_abc123")
 
     request = provider._client.send_request.call_args[0][0]
     assert request.method == "GET"
@@ -158,30 +158,30 @@ async def test_get_response_async__gets_correct_url(credential: Any, settings: F
 
 
 @pytest.mark.asyncio
-async def test_get_response_async__returns_deserialized_response(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_response__returns_deserialized_response(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, _RESPONSE_DICT))
 
-    result = await provider.get_response_async("resp_abc123")
+    result = await provider.get_response("resp_abc123")
 
     assert result["id"] == "resp_abc123"
     assert result["status"] == "completed"
 
 
 @pytest.mark.asyncio
-async def test_get_response_async__raises_not_found_on_404(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_response__raises_not_found_on_404(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(404, {"error": {"message": "not found"}}))
 
     with pytest.raises(FoundryResourceNotFoundError) as exc_info:
-        await provider.get_response_async("missing_id")
+        await provider.get_response("missing_id")
 
     assert "not found" in exc_info.value.message
 
 
 @pytest.mark.asyncio
-async def test_get_response_async__url_encodes_special_characters(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_response__url_encodes_special_characters(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, _RESPONSE_DICT))
 
-    await provider.get_response_async("id with spaces/slash")
+    await provider.get_response("id with spaces/slash")
 
     request = provider._client.send_request.call_args[0][0]
     assert " " not in request.url
@@ -189,16 +189,16 @@ async def test_get_response_async__url_encodes_special_characters(credential: An
 
 
 # ===========================================================================
-# update_response_async
+# update_response
 # ===========================================================================
 
 @pytest.mark.asyncio
-async def test_update_response_async__posts_to_response_id_url(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_update_response__posts_to_response_id_url(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {}))
     from azure.ai.agentserver.responses.models._generated import ResponseObject
 
     response = ResponseObject(_RESPONSE_DICT)
-    await provider.update_response_async(response)
+    await provider.update_response(response)
 
     request = provider._client.send_request.call_args[0][0]
     assert request.method == "POST"
@@ -206,12 +206,12 @@ async def test_update_response_async__posts_to_response_id_url(credential: Any, 
 
 
 @pytest.mark.asyncio
-async def test_update_response_async__sends_serialized_response_body(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_update_response__sends_serialized_response_body(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {}))
     from azure.ai.agentserver.responses.models._generated import ResponseObject
 
     response = ResponseObject(_RESPONSE_DICT)
-    await provider.update_response_async(response)
+    await provider.update_response(response)
 
     request = provider._client.send_request.call_args[0][0]
     payload = json.loads(request.content.decode("utf-8"))
@@ -219,25 +219,25 @@ async def test_update_response_async__sends_serialized_response_body(credential:
 
 
 @pytest.mark.asyncio
-async def test_update_response_async__raises_bad_request_on_409(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_update_response__raises_bad_request_on_409(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(409, {"error": {"message": "conflict"}}))
     from azure.ai.agentserver.responses.models._generated import ResponseObject
 
     with pytest.raises(FoundryBadRequestError) as exc_info:
-        await provider.update_response_async(ResponseObject(_RESPONSE_DICT))
+        await provider.update_response(ResponseObject(_RESPONSE_DICT))
 
     assert "conflict" in exc_info.value.message
 
 
 # ===========================================================================
-# delete_response_async
+# delete_response
 # ===========================================================================
 
 @pytest.mark.asyncio
-async def test_delete_response_async__sends_delete_to_response_url(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_delete_response__sends_delete_to_response_url(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {}))
 
-    await provider.delete_response_async("resp_abc123")
+    await provider.delete_response("resp_abc123")
 
     request = provider._client.send_request.call_args[0][0]
     assert request.method == "DELETE"
@@ -246,22 +246,22 @@ async def test_delete_response_async__sends_delete_to_response_url(credential: A
 
 
 @pytest.mark.asyncio
-async def test_delete_response_async__raises_not_found_on_404(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_delete_response__raises_not_found_on_404(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(404, {}))
 
     with pytest.raises(FoundryResourceNotFoundError):
-        await provider.delete_response_async("ghost_id")
+        await provider.delete_response("ghost_id")
 
 
 # ===========================================================================
-# get_input_items_async
+# get_input_items
 # ===========================================================================
 
 @pytest.mark.asyncio
-async def test_get_input_items_async__default_params_in_url(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_input_items__default_params_in_url(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {"data": [_OUTPUT_ITEM_DICT], "object": "list"}))
 
-    await provider.get_input_items_async("resp_abc123")
+    await provider.get_input_items("resp_abc123")
 
     request = provider._client.send_request.call_args[0][0]
     assert "responses/resp_abc123/input_items" in request.url
@@ -270,10 +270,10 @@ async def test_get_input_items_async__default_params_in_url(credential: Any, set
 
 
 @pytest.mark.asyncio
-async def test_get_input_items_async__ascending_sets_order_asc(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_input_items__ascending_sets_order_asc(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {"data": []}))
 
-    await provider.get_input_items_async("resp_abc123", ascending=True, limit=5)
+    await provider.get_input_items("resp_abc123", ascending=True, limit=5)
 
     request = provider._client.send_request.call_args[0][0]
     assert "order=asc" in request.url
@@ -281,10 +281,10 @@ async def test_get_input_items_async__ascending_sets_order_asc(credential: Any, 
 
 
 @pytest.mark.asyncio
-async def test_get_input_items_async__cursor_params_appended(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_input_items__cursor_params_appended(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {"data": []}))
 
-    await provider.get_input_items_async("resp_abc123", after="item_cursor_1", before="item_cursor_2")
+    await provider.get_input_items("resp_abc123", after="item_cursor_1", before="item_cursor_2")
 
     request = provider._client.send_request.call_args[0][0]
     assert "after=item_cursor_1" in request.url
@@ -292,11 +292,11 @@ async def test_get_input_items_async__cursor_params_appended(credential: Any, se
 
 
 @pytest.mark.asyncio
-async def test_get_input_items_async__returns_deserialized_items(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_input_items__returns_deserialized_items(credential: Any, settings: FoundryStorageSettings) -> None:
     paged_body = {"data": [_OUTPUT_ITEM_DICT], "object": "list"}
     provider = _make_provider(credential, settings, _make_response(200, paged_body))
 
-    items = await provider.get_input_items_async("resp_abc123")
+    items = await provider.get_input_items("resp_abc123")
 
     assert len(items) == 1
     assert items[0]["id"] == "item_out_001"
@@ -304,19 +304,19 @@ async def test_get_input_items_async__returns_deserialized_items(credential: Any
 
 
 @pytest.mark.asyncio
-async def test_get_input_items_async__empty_data_returns_empty_list(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_input_items__empty_data_returns_empty_list(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {"data": [], "object": "list"}))
 
-    items = await provider.get_input_items_async("resp_abc123")
+    items = await provider.get_input_items("resp_abc123")
 
     assert items == []
 
 
 @pytest.mark.asyncio
-async def test_get_input_items_async__cursor_params_omitted_when_none(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_input_items__cursor_params_omitted_when_none(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {"data": []}))
 
-    await provider.get_input_items_async("resp_abc123", after=None, before=None)
+    await provider.get_input_items("resp_abc123", after=None, before=None)
 
     request = provider._client.send_request.call_args[0][0]
     assert "after=" not in request.url
@@ -324,14 +324,14 @@ async def test_get_input_items_async__cursor_params_omitted_when_none(credential
 
 
 # ===========================================================================
-# get_items_async
+# get_items
 # ===========================================================================
 
 @pytest.mark.asyncio
-async def test_get_items_async__posts_to_batch_retrieve_endpoint(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_items__posts_to_batch_retrieve_endpoint(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, [_OUTPUT_ITEM_DICT, None]))
 
-    await provider.get_items_async(["item_out_001", "missing_id"])
+    await provider.get_items(["item_out_001", "missing_id"])
 
     request = provider._client.send_request.call_args[0][0]
     assert request.method == "POST"
@@ -340,10 +340,10 @@ async def test_get_items_async__posts_to_batch_retrieve_endpoint(credential: Any
 
 
 @pytest.mark.asyncio
-async def test_get_items_async__sends_item_ids_in_body(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_items__sends_item_ids_in_body(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, [_OUTPUT_ITEM_DICT]))
 
-    await provider.get_items_async(["item_out_001"])
+    await provider.get_items(["item_out_001"])
 
     request = provider._client.send_request.call_args[0][0]
     payload = json.loads(request.content.decode("utf-8"))
@@ -351,10 +351,10 @@ async def test_get_items_async__sends_item_ids_in_body(credential: Any, settings
 
 
 @pytest.mark.asyncio
-async def test_get_items_async__returns_none_for_missing_items(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_items__returns_none_for_missing_items(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, [_OUTPUT_ITEM_DICT, None]))
 
-    items = await provider.get_items_async(["item_out_001", "missing_id"])
+    items = await provider.get_items(["item_out_001", "missing_id"])
 
     assert len(items) == 2
     assert items[0]["id"] == "item_out_001"
@@ -362,26 +362,26 @@ async def test_get_items_async__returns_none_for_missing_items(credential: Any, 
 
 
 @pytest.mark.asyncio
-async def test_get_items_async__preserves_input_order(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_items__preserves_input_order(credential: Any, settings: FoundryStorageSettings) -> None:
     item_a = {**_OUTPUT_ITEM_DICT, "id": "item_a"}
     item_b = {**_OUTPUT_ITEM_DICT, "id": "item_b"}
     provider = _make_provider(credential, settings, _make_response(200, [item_b, item_a]))
 
-    items = await provider.get_items_async(["id_b", "id_a"])
+    items = await provider.get_items(["id_b", "id_a"])
 
     assert items[0]["id"] == "item_b"
     assert items[1]["id"] == "item_a"
 
 
 # ===========================================================================
-# get_history_item_ids_async
+# get_history_item_ids
 # ===========================================================================
 
 @pytest.mark.asyncio
-async def test_get_history_item_ids_async__gets_to_history_endpoint(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_history_item_ids__gets_to_history_endpoint(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, ["item_h1", "item_h2"]))
 
-    await provider.get_history_item_ids_async(None, None, limit=10)
+    await provider.get_history_item_ids(None, None, limit=10)
 
     request = provider._client.send_request.call_args[0][0]
     assert request.method == "GET"
@@ -391,39 +391,39 @@ async def test_get_history_item_ids_async__gets_to_history_endpoint(credential: 
 
 
 @pytest.mark.asyncio
-async def test_get_history_item_ids_async__returns_list_of_strings(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_history_item_ids__returns_list_of_strings(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, ["item_h1", "item_h2"]))
 
-    ids = await provider.get_history_item_ids_async(None, None, limit=10)
+    ids = await provider.get_history_item_ids(None, None, limit=10)
 
     assert ids == ["item_h1", "item_h2"]
 
 
 @pytest.mark.asyncio
-async def test_get_history_item_ids_async__appends_previous_response_id(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_history_item_ids__appends_previous_response_id(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, ["item_h1"]))
 
-    await provider.get_history_item_ids_async("prev_resp_99", None, limit=5)
+    await provider.get_history_item_ids("prev_resp_99", None, limit=5)
 
     request = provider._client.send_request.call_args[0][0]
     assert "previous_response_id=prev_resp_99" in request.url
 
 
 @pytest.mark.asyncio
-async def test_get_history_item_ids_async__appends_conversation_id(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_history_item_ids__appends_conversation_id(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, []))
 
-    await provider.get_history_item_ids_async(None, "conv_42", limit=3)
+    await provider.get_history_item_ids(None, "conv_42", limit=3)
 
     request = provider._client.send_request.call_args[0][0]
     assert "conversation_id=conv_42" in request.url
 
 
 @pytest.mark.asyncio
-async def test_get_history_item_ids_async__omits_optional_params_when_none(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_history_item_ids__omits_optional_params_when_none(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, []))
 
-    await provider.get_history_item_ids_async(None, None, limit=10)
+    await provider.get_history_item_ids(None, None, limit=10)
 
     request = provider._client.send_request.call_args[0][0]
     assert "previous_response_id" not in request.url
@@ -439,7 +439,7 @@ async def test_error_mapping__400_raises_bad_request(credential: Any, settings: 
     provider = _make_provider(credential, settings, _make_response(400, {"error": {"message": "invalid input"}}))
 
     with pytest.raises(FoundryBadRequestError) as exc_info:
-        await provider.get_response_async("any_id")
+        await provider.get_response("any_id")
 
     assert "invalid input" in exc_info.value.message
 
@@ -449,7 +449,7 @@ async def test_error_mapping__generic_status_raises_foundry_api_error(credential
     provider = _make_provider(credential, settings, _make_response(503, {}))
 
     with pytest.raises(FoundryApiError) as exc_info:
-        await provider.get_response_async("any_id")
+        await provider.get_response("any_id")
 
     assert exc_info.value.status_code == 503
 
@@ -462,7 +462,7 @@ async def test_error_mapping__error_message_falls_back_for_non_json_body(credent
     provider = _make_provider(credential, settings, raw)
 
     with pytest.raises(FoundryApiError) as exc_info:
-        await provider.get_response_async("any_id")
+        await provider.get_response("any_id")
 
     assert "502" in exc_info.value.message
 

@@ -31,13 +31,13 @@ def _build_reply(current_input: str, history: Sequence[OutputItem]) -> str:
 server = ResponsesAgentServerHost(options=ResponsesServerOptions(default_fetch_history_count=20))
 
 @server.create_handler
-async def create_async(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
+async def create(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
     stream = ResponseEventStream(response_id=context.response_id, model=request.model)
 
     yield stream.emit_created()
     yield stream.emit_in_progress()
 
-    history = await context.get_history_async()
+    history = await context.get_history()
     current_input = get_input_text(request)
     reply = _build_reply(current_input, history)
 

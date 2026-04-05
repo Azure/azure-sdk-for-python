@@ -21,7 +21,7 @@ from ..streaming._helpers import (
 
 async def _run_background_non_stream(
     *,
-    create_async: Any,
+    create_fn: Any,
     parsed: Any,
     context: ResponseContext,
     cancellation_signal: asyncio.Event,
@@ -38,8 +38,8 @@ async def _run_background_non_stream(
     Collects handler events, builds the response payload, and transitions the
     record status to ``completed``, ``failed``, or ``cancelled``.
 
-    :keyword create_async: The handler's async generator callable.
-    :keyword type create_async: Any
+    :keyword create_fn: The handler's async generator callable.
+    :keyword type create_fn: Any
     :keyword parsed: Parsed ``CreateResponse`` model instance.
     :keyword type parsed: Any
     :keyword context: Runtime response context for this request.
@@ -55,7 +55,7 @@ async def _run_background_non_stream(
     :keyword model: Model name, or ``None``.
     :keyword type model: str | None
     :keyword provider: Optional persistence provider; when set and ``store`` is ``True``,
-        ``update_response_async`` is called after terminal state is reached.
+        ``update_response`` is called after terminal state is reached.
     :keyword type provider: Any
     :keyword store: Whether the response should be persisted via the provider.
     :keyword type store: bool
@@ -70,7 +70,7 @@ async def _run_background_non_stream(
     try:
         try:
             first_event_processed = False
-            async for handler_event in create_async(parsed, context, cancellation_signal):
+            async for handler_event in create_fn(parsed, context, cancellation_signal):
                 if cancellation_signal.is_set():
                     record.transition_to("cancelled")
                     return
@@ -150,7 +150,7 @@ async def _run_background_non_stream(
             and record.response is not None
         ):
             try:
-                await provider.update_response_async(record.response)
+                await provider.update_response(record.response)
             except Exception:  # pylint: disable=broad-exception-caught
                 pass  # best effort
 

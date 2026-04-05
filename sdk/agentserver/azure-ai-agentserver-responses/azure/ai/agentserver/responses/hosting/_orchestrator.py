@@ -116,7 +116,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         *,
-        create_async: Any,
+        create_fn: Any,
         runtime_state: _RuntimeState,
         runtime_options: ResponsesServerOptions,
         provider: ResponseProviderProtocol,
@@ -124,8 +124,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
     ) -> None:
         """Initialise the orchestrator.
 
-        :param create_async: The bound ``create_async`` method from the registered handler.
-        :type create_async: Any
+        :param create_fn: The bound ``create_fn`` method from the registered handler.
+        :type create_fn: Any
         :param runtime_state: In-memory execution record store.
         :type runtime_state: _RuntimeState
         :param runtime_options: Server runtime options (keep-alive, etc.).
@@ -135,7 +135,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         :param stream_provider: Optional provider for SSE stream event persistence and replay.
         :type stream_provider: ResponseStreamProviderProtocol | None
         """
-        self._create_async = create_async
+        self._create_fn = create_fn
         self._runtime_state = runtime_state
         self._runtime_options = runtime_options
         self._provider = provider
@@ -305,11 +305,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         if ctx.store:
             _initial_response_obj = generated_models.ResponseObject(initial_payload)
             _history_ids = (
-                await self._provider.get_history_item_ids_async(ctx.previous_response_id, None, 10000)
+                await self._provider.get_history_item_ids(ctx.previous_response_id, None, 10000)
                 if ctx.previous_response_id
                 else None
             )
-            await self._provider.create_response_async(
+            await self._provider.create_response(
                 _initial_response_obj, ctx.input_items or None, _history_ids
             )
 
@@ -345,7 +345,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         :param state: Mutable pipeline state for this invocation.
         :type state: _PipelineState
         :param handler_iterator: Async generator returned by the handler's
-            ``create_async`` factory.
+            ``create_fn`` factory.
         :type handler_iterator: Any
         :return: Async iterator of normalised event dictionaries.
         :rtype: AsyncIterator[dict[str, Any]]
@@ -487,11 +487,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             if ctx.store:
                 try:
                     _history_ids = (
-                        await self._provider.get_history_item_ids_async(ctx.previous_response_id, None, 10000)
+                        await self._provider.get_history_item_ids(ctx.previous_response_id, None, 10000)
                         if ctx.previous_response_id
                         else None
                     )
-                    await self._provider.create_response_async(
+                    await self._provider.create_response(
                         generated_models.ResponseObject(response_payload), ctx.input_items or None, _history_ids
                     )
                 except Exception:  # pylint: disable=broad-exception-caught
@@ -534,13 +534,13 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             # Persist terminal state update via provider (bg+stream: initial create already done)
             if record.mode_flags.store and record.response is not None:
                 try:
-                    await self._provider.update_response_async(record.response)
+                    await self._provider.update_response(record.response)
                 except Exception:  # pylint: disable=broad-exception-caught
                     pass  # best effort
                 # Persist SSE events for replay after process restart
                 if self._stream_provider is not None and state.handler_events:
                     try:
-                        await self._stream_provider.save_stream_events_async(
+                        await self._stream_provider.save_stream_events(
                             ctx.response_id, state.handler_events
                         )
                     except Exception:  # pylint: disable=broad-exception-caught
@@ -606,11 +606,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             # Persist via provider (non-bg stream: single create at terminal state)
             try:
                 _history_ids = (
-                    await self._provider.get_history_item_ids_async(ctx.previous_response_id, None, 10000)
+                    await self._provider.get_history_item_ids(ctx.previous_response_id, None, 10000)
                     if ctx.previous_response_id
                     else None
                 )
-                await self._provider.create_response_async(
+                await self._provider.create_response(
                     generated_models.ResponseObject(response_payload), ctx.input_items or None, _history_ids
                 )
             except Exception:  # pylint: disable=broad-exception-caught
@@ -655,7 +655,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         """
         new_stream_counter()
         state = _PipelineState()
-        handler_iterator = self._create_async(ctx.parsed, ctx.context, ctx.cancellation_signal)
+        handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
 
         # Helper: route to the right finalize method based on the request semantics
         # (bg+store → bg_stream path; everything else → non_bg_stream path).
@@ -789,7 +789,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         :raises _HandlerError: If the handler raises during iteration.
         """
         state = _PipelineState()
-        handler_iterator = self._create_async(ctx.parsed, ctx.context, ctx.cancellation_signal)
+        handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
         # _process_handler_events handles all error paths (B8, B-13, S-021, S-019).
         # run_sync only needs to exhaust the generator for state.handler_events side-effects.
         async for _ in self._process_handler_events(ctx, state, handler_iterator):
@@ -832,11 +832,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             try:
                 _response_obj = generated_models.ResponseObject(response_payload)
                 _history_ids = (
-                    await self._provider.get_history_item_ids_async(ctx.previous_response_id, None, 10000)
+                    await self._provider.get_history_item_ids(ctx.previous_response_id, None, 10000)
                     if ctx.previous_response_id
                     else None
                 )
-                await self._provider.create_response_async(_response_obj, ctx.input_items or None, _history_ids)
+                await self._provider.create_response(_response_obj, ctx.input_items or None, _history_ids)
             except Exception:  # pylint: disable=broad-exception-caught
                 pass  # best effort
 
@@ -876,11 +876,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 _initial_snapshot = _RuntimeState.to_snapshot(record)
                 _response_obj = generated_models.ResponseObject(_initial_snapshot)
                 _history_ids = (
-                    await self._provider.get_history_item_ids_async(ctx.previous_response_id, None, 10000)
+                    await self._provider.get_history_item_ids(ctx.previous_response_id, None, 10000)
                     if ctx.previous_response_id
                     else None
                 )
-                await self._provider.create_response_async(_response_obj, ctx.input_items or None, _history_ids)
+                await self._provider.create_response(_response_obj, ctx.input_items or None, _history_ids)
             except Exception:  # pylint: disable=broad-exception-caught
                 pass  # best effort
 
@@ -894,7 +894,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             try:
                 with anyio.CancelScope(shield=True):
                     await _run_background_non_stream(
-                        create_async=self._create_async,
+                        create_fn=self._create_fn,
                         parsed=ctx.parsed,
                         context=ctx.context,
                         cancellation_signal=ctx.cancellation_signal,

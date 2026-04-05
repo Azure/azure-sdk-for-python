@@ -47,7 +47,7 @@ def test_provider_input_items__supports_after_before_combination() -> None:
     provider = InMemoryResponseProvider()
 
     asyncio.run(
-        provider.create_response_async(
+        provider.create_response(
             _response("resp_combo"),
             [
                 _item("msg_001", "one"),
@@ -61,7 +61,7 @@ def test_provider_input_items__supports_after_before_combination() -> None:
     )
 
     items = asyncio.run(
-        provider.get_input_items_async(
+        provider.get_input_items(
             "resp_combo",
             ascending=True,
             after="msg_002",
@@ -76,7 +76,7 @@ def test_provider_input_items__returns_empty_page_after_last_cursor() -> None:
     provider = InMemoryResponseProvider()
 
     asyncio.run(
-        provider.create_response_async(
+        provider.create_response(
             _response("resp_empty"),
             [
                 _item("msg_001", "one"),
@@ -86,7 +86,7 @@ def test_provider_input_items__returns_empty_page_after_last_cursor() -> None:
         )
     )
 
-    items = asyncio.run(provider.get_input_items_async("resp_empty", ascending=True, after="msg_002"))
+    items = asyncio.run(provider.get_input_items("resp_empty", ascending=True, after="msg_002"))
 
     assert items == []
 
@@ -95,7 +95,7 @@ def test_provider_input_items__returns_history_only_items_when_current_input_is_
     provider = InMemoryResponseProvider()
 
     asyncio.run(
-        provider.create_response_async(
+        provider.create_response(
             _response("resp_base"),
             [
                 _item("msg_hist_001", "history-1"),
@@ -106,14 +106,14 @@ def test_provider_input_items__returns_history_only_items_when_current_input_is_
     )
 
     asyncio.run(
-        provider.create_response_async(
+        provider.create_response(
             _response("resp_history_only"),
             [],
             history_item_ids=["msg_hist_001", "msg_hist_002"],
         )
     )
 
-    items = asyncio.run(provider.get_input_items_async("resp_history_only", ascending=True))
+    items = asyncio.run(provider.get_input_items("resp_history_only", ascending=True))
 
     assert _ids(items) == ["msg_hist_001", "msg_hist_002"]
 
@@ -122,7 +122,7 @@ def test_provider_input_items__returns_current_only_items_when_no_history() -> N
     provider = InMemoryResponseProvider()
 
     asyncio.run(
-        provider.create_response_async(
+        provider.create_response(
             _response("resp_current_only"),
             [
                 _item("msg_curr_001", "current-1"),
@@ -132,7 +132,7 @@ def test_provider_input_items__returns_current_only_items_when_no_history() -> N
         )
     )
 
-    items = asyncio.run(provider.get_input_items_async("resp_current_only", ascending=True))
+    items = asyncio.run(provider.get_input_items("resp_current_only", ascending=True))
 
     assert _ids(items) == ["msg_curr_001", "msg_curr_002"]
 
@@ -141,15 +141,15 @@ def test_provider_input_items__respects_limit_boundaries_1_and_100() -> None:
     provider = InMemoryResponseProvider()
 
     asyncio.run(
-        provider.create_response_async(
+        provider.create_response(
             _response("resp_limits"),
             [_item(f"msg_{index:03d}", f"item-{index:03d}") for index in range(1, 151)],
             history_item_ids=None,
         )
     )
 
-    one_item = asyncio.run(provider.get_input_items_async("resp_limits", ascending=True, limit=1))
-    hundred_items = asyncio.run(provider.get_input_items_async("resp_limits", ascending=True, limit=100))
+    one_item = asyncio.run(provider.get_input_items("resp_limits", ascending=True, limit=1))
+    hundred_items = asyncio.run(provider.get_input_items("resp_limits", ascending=True, limit=100))
 
     assert len(one_item) == 1
     assert _ids(one_item) == ["msg_001"]
@@ -162,17 +162,17 @@ def test_provider_input_items__raises_for_deleted_and_missing_response() -> None
     provider = InMemoryResponseProvider()
 
     asyncio.run(
-        provider.create_response_async(
+        provider.create_response(
             _response("resp_deleted"),
             [_item("msg_001", "one")],
             history_item_ids=None,
         )
     )
 
-    asyncio.run(provider.delete_response_async("resp_deleted"))
+    asyncio.run(provider.delete_response("resp_deleted"))
 
     with pytest.raises(ValueError):
-        asyncio.run(provider.get_input_items_async("resp_deleted"))
+        asyncio.run(provider.get_input_items("resp_deleted"))
 
     with pytest.raises(KeyError):
-        asyncio.run(provider.get_input_items_async("resp_missing"))
+        asyncio.run(provider.get_input_items("resp_missing"))

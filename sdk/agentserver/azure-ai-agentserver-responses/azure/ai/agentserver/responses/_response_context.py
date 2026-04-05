@@ -57,7 +57,7 @@ class ResponseContext:
         self._input_items_cache: Sequence[OutputItem] | None = None
         self._history_cache: Sequence[OutputItem] | None = None
 
-    async def get_input_items_async(self) -> Sequence[InputParam]:
+    async def get_input_items(self) -> Sequence[InputParam]:
         """Return and cache request input items.
 
         :returns: A tuple of input items from the request.
@@ -68,7 +68,7 @@ class ResponseContext:
         self._input_items_cache = tuple(self._input_items)
         return self._input_items_cache
 
-    async def get_history_async(self) -> Sequence[OutputItem]:
+    async def get_history(self) -> Sequence[OutputItem]:
         """Resolve and cache conversation history items via the provider.
 
         :returns: A tuple of conversation history items.
@@ -81,13 +81,13 @@ class ResponseContext:
             self._history_cache = ()
             return self._history_cache
 
-        item_ids = await self._provider.get_history_item_ids_async(
+        item_ids = await self._provider.get_history_item_ids(
             self._previous_response_id, self.conversation_id, self._history_limit
         )
         if not item_ids:
             self._history_cache = ()
             return self._history_cache
 
-        items = await self._provider.get_items_async(item_ids)
+        items = await self._provider.get_items(item_ids)
         self._history_cache = tuple(item for item in items if item is not None)
         return self._history_cache

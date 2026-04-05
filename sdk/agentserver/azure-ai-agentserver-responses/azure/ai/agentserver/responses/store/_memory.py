@@ -51,7 +51,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         self._conversation_responses: Dict[str, list[str]] = {}
         self._stream_events: Dict[str, list[dict[str, Any]]] = {}
 
-    async def create_response_async(
+    async def create_response(
         self,
         response: ResponseObject,
         input_items: Iterable[Any] | None,
@@ -107,7 +107,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
             if conversation_id is not None:
                 self._conversation_responses.setdefault(conversation_id, []).append(response_id)
 
-    async def get_response_async(self, response_id: str) -> ResponseObject:
+    async def get_response(self, response_id: str) -> ResponseObject:
         """Retrieve one response envelope by identifier.
 
         :param response_id: The unique identifier of the response to retrieve.
@@ -123,7 +123,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
                 raise KeyError(f"response '{response_id}' not found")
             return deepcopy(entry.response)
 
-    async def update_response_async(self, response: ResponseObject) -> None:
+    async def update_response(self, response: ResponseObject) -> None:
         """Update a stored response envelope.
 
         Replaces the stored response with a deep copy and updates
@@ -145,7 +145,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
             entry.execution.set_response_snapshot(deepcopy(response))
             entry.output_item_ids = self._store_output_items_unlocked(response)
 
-    async def delete_response_async(self, response_id: str) -> None:
+    async def delete_response(self, response_id: str) -> None:
         """Delete a stored response envelope by identifier.
 
         Marks the entry as deleted and clears the response payload.
@@ -163,7 +163,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
             entry.deleted = True
             entry.response = None
 
-    async def get_input_items_async(
+    async def get_input_items(
         self,
         response_id: str,
         limit: int = 20,
@@ -219,7 +219,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
             safe_limit = max(1, min(100, int(limit)))
             return [deepcopy(self._item_store[item_id]) for item_id in ordered_ids[:safe_limit] if item_id in self._item_store]
 
-    async def get_items_async(self, item_ids: Iterable[str]) -> list[Any | None]:
+    async def get_items(self, item_ids: Iterable[str]) -> list[Any | None]:
         """Retrieve items by ID, preserving request order.
 
         Returns deep copies of stored items. Missing IDs produce ``None`` entries.
@@ -232,7 +232,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         async with self._lock:
             return [deepcopy(self._item_store[item_id]) if item_id in self._item_store else None for item_id in item_ids]
 
-    async def get_history_item_ids_async(
+    async def get_history_item_ids(
         self,
         previous_response_id: str | None,
         conversation_id: str | None,
@@ -461,7 +461,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
     async def delete(self, response_id: str) -> bool:
         """Delete all state for a response ID if present.
 
-        Removes the entry entirely from the store (unlike ``delete_response_async``
+        Removes the entry entirely from the store (unlike ``delete_response``
         which soft-deletes).
 
         :param response_id: The unique identifier of the response to remove.
@@ -474,7 +474,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
             self._stream_events.pop(response_id, None)
             return self._entries.pop(response_id, None) is not None
 
-    async def save_stream_events_async(
+    async def save_stream_events(
         self,
         response_id: str,
         events: list[dict[str, Any]],
@@ -490,7 +490,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         async with self._lock:
             self._stream_events[response_id] = deepcopy(events)
 
-    async def get_stream_events_async(
+    async def get_stream_events(
         self,
         response_id: str,
     ) -> list[dict[str, Any]] | None:

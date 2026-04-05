@@ -425,7 +425,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 # Provider fallback: serve completed responses that are no longer in runtime state
                 # (e.g., after a process restart).
                 try:
-                    response_obj = await self._provider.get_response_async(response_id)
+                    response_obj = await self._provider.get_response(response_id)
                     snapshot = response_obj.as_dict()
                     return JSONResponse(snapshot, status_code=200)
                 except Exception:  # pylint: disable=broad-exception-caught
@@ -504,7 +504,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if self._stream_provider is None:
             return None
         try:
-            replay_events = await self._stream_provider.get_stream_events_async(response_id)
+            replay_events = await self._stream_provider.get_stream_events(response_id)
             if replay_events is None:
                 return None
             parsed_cursor = self._parse_starting_after(request)
@@ -551,7 +551,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         if record.mode_flags.store:
             try:
-                await self._provider.delete_response_async(response_id)
+                await self._provider.delete_response(response_id)
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.warning("Best-effort provider delete failed for response_id=%s", response_id, exc_info=True)
 
@@ -650,7 +650,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         before = request.query_params.get("before")
 
         try:
-            items = await self._provider.get_input_items_async(
+            items = await self._provider.get_input_items(
                 response_id, limit=100, ascending=True
             )
         except ValueError:

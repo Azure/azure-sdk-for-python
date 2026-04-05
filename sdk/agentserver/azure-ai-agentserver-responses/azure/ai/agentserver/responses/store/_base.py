@@ -16,7 +16,7 @@ class ResponseProviderProtocol(Protocol):
     Implementations provide response envelope storage plus input/history item lookup.
     """
 
-    async def create_response_async(
+    async def create_response(
         self,
         response: ResponseObject,
         input_items: Iterable[Any] | None,
@@ -33,7 +33,7 @@ class ResponseProviderProtocol(Protocol):
         :rtype: None
         """
 
-    async def get_response_async(self, response_id: str) -> ResponseObject:
+    async def get_response(self, response_id: str) -> ResponseObject:
         """Load one response envelope by ID.
 
         :param response_id: The unique identifier of the response to retrieve.
@@ -43,7 +43,7 @@ class ResponseProviderProtocol(Protocol):
         :raises KeyError: If the response does not exist.
         """
 
-    async def update_response_async(self, response: ResponseObject) -> None:
+    async def update_response(self, response: ResponseObject) -> None:
         """Persist an updated response envelope.
 
         :param response: The response envelope with updated fields to persist.
@@ -51,7 +51,7 @@ class ResponseProviderProtocol(Protocol):
         :rtype: None
         """
 
-    async def delete_response_async(self, response_id: str) -> None:
+    async def delete_response(self, response_id: str) -> None:
         """Delete a response envelope by ID.
 
         :param response_id: The unique identifier of the response to delete.
@@ -60,7 +60,7 @@ class ResponseProviderProtocol(Protocol):
         :raises KeyError: If the response does not exist.
         """
 
-    async def get_input_items_async(
+    async def get_input_items(
         self,
         response_id: str,
         limit: int = 20,
@@ -84,7 +84,7 @@ class ResponseProviderProtocol(Protocol):
         :rtype: list[Any]
         """
 
-    async def get_items_async(self, item_ids: Iterable[str]) -> list[Any | None]:
+    async def get_items(self, item_ids: Iterable[str]) -> list[Any | None]:
         """Get items by ID (missing IDs produce ``None`` entries).
 
         :param item_ids: The item identifiers to look up.
@@ -93,7 +93,7 @@ class ResponseProviderProtocol(Protocol):
         :rtype: list[Any | None]
         """
 
-    async def get_history_item_ids_async(
+    async def get_history_item_ids(
         self,
         previous_response_id: str | None,
         conversation_id: str | None,
@@ -121,7 +121,7 @@ class ResponseStreamProviderProtocol(Protocol):
     state (for example, after a process restart).
     """
 
-    async def save_stream_events_async(
+    async def save_stream_events(
         self,
         response_id: str,
         events: list[dict[str, Any]],
@@ -139,7 +139,7 @@ class ResponseStreamProviderProtocol(Protocol):
         :rtype: None
         """
 
-    async def get_stream_events_async(
+    async def get_stream_events(
         self,
         response_id: str,
     ) -> list[dict[str, Any]] | None:
