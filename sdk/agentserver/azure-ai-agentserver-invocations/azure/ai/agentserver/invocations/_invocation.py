@@ -59,11 +59,12 @@ class _InvocationLogFilter(logging.Filter):
         return True
 
 
-# Install once at module load — no per-request add/remove needed.
+# Install once on first request — no per-request add/remove needed.
 _log_filter_installed = False
 
 
 def _ensure_log_filter() -> None:
+    """Install the log filter on first use (lazy initialization)."""
     global _log_filter_installed  # pylint: disable=global-statement
     if _log_filter_installed:
         return

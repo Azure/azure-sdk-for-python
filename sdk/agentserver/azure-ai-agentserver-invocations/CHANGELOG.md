@@ -11,5 +11,7 @@
 - `GET /invocations/docs/openapi.json` for OpenAPI spec serving.
 - Invocation ID tracking and session correlation via `agent_session_id` query parameter.
 - Distributed tracing with GenAI semantic convention span attributes.
+- W3C Baggage propagation of `invocation_id` and `session_id` for cross-service correlation.
+- Structured logging with `invocation_id` and `session_id` via `contextvars`.
 - Streaming response support with span lifecycle management.
 - Cooperative mixin inheritance for multi-protocol composition.

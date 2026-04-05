@@ -10,7 +10,8 @@ This module provides functions (not classes) for tracing:
 - :func:`end_span` / :func:`record_error` — span lifecycle helpers
 - :func:`trace_stream` — wrap streaming responses with span lifecycle
 
-All functions are no-ops when ``opentelemetry-api`` is not installed.
+OpenTelemetry is a required dependency — these functions always create
+real spans.  Azure Monitor export is optional (lazy-imported).
 """
 import logging
 from collections.abc import AsyncIterable, AsyncIterator, Mapping  # pylint: disable=import-error
