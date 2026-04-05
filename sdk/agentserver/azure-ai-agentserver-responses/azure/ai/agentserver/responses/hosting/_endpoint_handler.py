@@ -27,7 +27,7 @@ from ..models.runtime import ResponseModeFlags
 from ..streaming._helpers import _encode_sse
 from ..streaming._sse import encode_sse_payload
 from ..streaming._state_machine import LifecycleStateMachineError, normalize_lifecycle_events
-from ._background import _refresh_background_status
+from ._orchestrator import _refresh_background_status
 from ._execution_context import _ExecutionContext
 from ..models.runtime import build_cancelled_response
 from ._validation import (
@@ -162,6 +162,26 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
     # ------------------------------------------------------------------
     # Streaming response helpers
     # ------------------------------------------------------------------
+
+    async def _monitor_disconnect(
+        self, request: Request, cancellation_signal: asyncio.Event
+    ) -> None:
+        """Poll for client disconnect and set cancellation signal.
+
+        Used for non-background streaming requests so that handler
+        cancellation is triggered when the client drops the connection
+        (spec requirement B17).
+
+        :param request: The Starlette request to monitor.
+        :type request: Request
+        :param cancellation_signal: Event to set when disconnect is detected.
+        :type cancellation_signal: asyncio.Event
+        """
+        while not cancellation_signal.is_set():
+            if await request.is_disconnected():
+                cancellation_signal.set()
+                return
+            await asyncio.sleep(0.5)
 
     def _wrap_streaming_response(
         self,
@@ -396,10 +416,30 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             cid_token = _conversation_id_var.set(ctx.conversation_id or "")
             str_token = _streaming_var.set(str(ctx.stream).lower())
 
+            disconnect_task: asyncio.Task[None] | None = None
             try:
                 if ctx.stream:
+                    body_iter = self._orchestrator.run_stream(ctx)
+
+                    # B17: monitor client disconnect for non-background streams
+                    if not ctx.background:
+                        disconnect_task = asyncio.create_task(
+                            self._monitor_disconnect(request, ctx.cancellation_signal)
+                        )
+                        raw_iter = body_iter
+
+                        async def _iter_with_cleanup():  # type: ignore[return]
+                            try:
+                                async for chunk in raw_iter:
+                                    yield chunk
+                            finally:
+                                if disconnect_task and not disconnect_task.done():
+                                    disconnect_task.cancel()
+
+                        body_iter = _iter_with_cleanup()
+
                     sse_response = StreamingResponse(
-                        self._orchestrator.run_stream(ctx),
+                        body_iter,
                         media_type="text/event-stream",
                         headers=self._sse_headers,
                     )
