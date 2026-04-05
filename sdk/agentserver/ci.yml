@@ -47,3 +47,8 @@ extends:
       safeName: azureaiagentservercore
     - name: azure-ai-agentserver-githubcopilot
       safeName: azureaiagentservergithubcopilot
+    # azure-monitor-opentelemetry-exporter is a core dependency. It must be
+    # built here so the CI dev-feed has a compatible dev version — otherwise
+    # process_requires rewrites the version spec and resolution fails.
+    - name: azure-monitor-opentelemetry-exporter
+      safeName: azuremonitoropentelemetryexporter
