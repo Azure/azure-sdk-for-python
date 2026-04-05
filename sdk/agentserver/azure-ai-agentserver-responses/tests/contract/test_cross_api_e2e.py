@@ -573,11 +573,12 @@ class TestC3BgPollStored:
     def test_e13_bg_create_then_get_immediate_returns_queued_or_in_progress(self) -> None:
         """B5, B10 — background non-streaming returns immediately.
 
-        Note: The Starlette TestClient may process requests synchronously,
-        so the background execution might complete before the GET. We accept
-        completed as well in that case.
+        Background POST now returns before the handler starts, so the
+        initial status is always queued.  The Starlette TestClient may
+        process the background task before the subsequent GET, so we
+        accept queued, in_progress, or completed.
         """
-        client = _build_client(_delayed_handler)
+        client = _build_client()
 
         r = client.post(
             "/responses",
@@ -592,8 +593,7 @@ class TestC3BgPollStored:
         assert r.status_code == 200
         create_payload = r.json()
         response_id = create_payload["id"]
-        # Contract (C3): background POST must return immediately; with Phase 3 the handler
-        # runs right away so the response may be completed in the TestClient sync context.
+        # Contract: background POST returns immediately with queued snapshot
         assert create_payload["status"] in {"queued", "in_progress", "completed"}
 
         get_resp = client.get(f"/responses/{response_id}")

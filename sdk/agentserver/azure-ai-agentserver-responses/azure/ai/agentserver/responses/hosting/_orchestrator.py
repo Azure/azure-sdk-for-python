@@ -1011,16 +1011,14 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
     async def run_background(self, ctx: _ExecutionContext) -> dict[str, Any]:
         """Handle a background (non-stream) create-response request.
 
-        Immediately launches the handler as an asyncio task, waits up to 10 s
-        for the first ``response.created`` event, then returns the current
-        snapshot.  This ensures that the POST response body reflects the
-        handler's real ``response.created`` payload (S-003).
+        Launches the handler as an asyncio task and returns the initial
+        queued snapshot immediately without waiting for the handler to
+        emit its first event (S-003).
 
         :param ctx: Current execution context.
         :type ctx: _ExecutionContext
-        :return: Response snapshot dictionary (status: in_progress or queued on timeout).
+        :return: Response snapshot dictionary (status: queued).
         :rtype: dict[str, Any]
-        :raises _HandlerError: If the handler fails before emitting any event.
         """
         record = ResponseExecution(
             response_id=ctx.response_id,
@@ -1076,14 +1074,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
         record.execution_task = asyncio.create_task(_shielded_runner())
 
-        # Wait for first event signal (or 10 s timeout) before returning POST response
-        try:
-            await asyncio.wait_for(record.response_created_signal.wait(), timeout=10.0)
-        except asyncio.TimeoutError:
-            pass  # Return current snapshot anyway; handler is still running
-
-        if record.response_failed_before_events:
-            raise _HandlerError(RuntimeError("Handler failed before emitting response.created"))
-
+        # Return immediately with the queued snapshot (S-003: background POST
+        # must not block waiting for the handler to emit its first event).
         ctx.span.end(None)
         return _RuntimeState.to_snapshot(record)

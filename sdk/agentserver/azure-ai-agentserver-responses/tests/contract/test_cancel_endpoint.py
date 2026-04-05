@@ -235,9 +235,9 @@ def test_cancel__returns_400_for_completed_background_response() -> None:
     )
 
 
-def test_cancel__returns_400_for_failed_background_response() -> None:
-    """Phase 3: handler that raises before emitting any event causes POST to return 500.
-    A subsequent cancel on the non-existent record returns 404.
+def test_cancel__returns_queued_for_failed_background_response() -> None:
+    """Background POST returns immediately with queued status even when the
+    handler will subsequently fail.  The failure is observed via GET.
     """
     from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
@@ -253,8 +253,10 @@ def test_cancel__returns_400_for_failed_background_response() -> None:
         "/responses",
         json={"model": "gpt-4o-mini", "input": "hello", "stream": False, "store": True, "background": True},
     )
-    # Phase 3: handler failed before emitting response.created → HTTP 500
-    assert create_response.status_code == 500
+    # Background POST returns immediately with queued status
+    assert create_response.status_code == 200
+    payload = create_response.json()
+    assert payload.get("status") in {"queued", "in_progress"}
 
 
 @pytest.mark.skip(

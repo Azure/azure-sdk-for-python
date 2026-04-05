@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from datetime import datetime, timezone
-from typing import Any
+from typing import Any, Iterator
 
 from . import _internals
 from ._builders import (
@@ -473,6 +473,138 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self._events.append(candidate)
         validate_response_event_stream(self._events)
         return deepcopy(candidate)
+
+    # ---- Generator convenience methods ----
+
+    def start(self, *, status: str = "in_progress") -> Iterator[dict[str, Any]]:
+        """Yield the opening lifecycle events for a response stream.
+
+        Yields ``response.created`` followed by ``response.in_progress``.
+
+        :keyword status: Initial status for the created event. Defaults to ``"in_progress"``.
+        :keyword type status: str
+        :returns: An iterator of event dicts.
+        :rtype: Iterator[dict[str, Any]]
+        """
+        yield self.emit_created(status=status)
+        yield self.emit_in_progress()
+
+    def complete(self, **kwargs: Any) -> Iterator[dict[str, Any]]:
+        """Yield the ``response.completed`` terminal event.
+
+        :keyword usage: Optional usage statistics to attach.
+        :returns: An iterator of event dicts.
+        :rtype: Iterator[dict[str, Any]]
+        """
+        yield self.emit_completed(**kwargs)
+
+    def fail(
+        self,
+        code: str = "server_error",
+        message: str = "An internal server error occurred.",
+        **kwargs: Any,
+    ) -> Iterator[dict[str, Any]]:
+        """Yield the ``response.failed`` terminal event.
+
+        :param code: Error code describing the failure.
+        :type code: str
+        :param message: Human-readable error message.
+        :type message: str
+        :returns: An iterator of event dicts.
+        :rtype: Iterator[dict[str, Any]]
+        """
+        yield self.emit_failed(code=code, message=message, **kwargs)
+
+    def incomplete(self, reason: str | None = None, **kwargs: Any) -> Iterator[dict[str, Any]]:
+        """Yield the ``response.incomplete`` terminal event.
+
+        :param reason: Optional reason for incompleteness.
+        :type reason: str | None
+        :returns: An iterator of event dicts.
+        :rtype: Iterator[dict[str, Any]]
+        """
+        yield self.emit_incomplete(reason=reason, **kwargs)
+
+    def text_message(self, text: str) -> Iterator[dict[str, Any]]:
+        """Yield the full lifecycle for a text message output item.
+
+        Emits output_item.added, content_part.added, output_text.delta,
+        output_text.done, content_part.done, and output_item.done.
+
+        :param text: The text content of the message.
+        :type text: str
+        :returns: An iterator of event dicts.
+        :rtype: Iterator[dict[str, Any]]
+        """
+        message = self.add_output_item_message()
+        yield message.emit_added()
+        text_content = message.add_text_content()
+        yield text_content.emit_added()
+        yield text_content.emit_delta(text)
+        yield text_content.emit_done(text)
+        yield message.emit_content_done(text_content)
+        yield message.emit_done()
+
+    def function_call(self, name: str, call_id: str, arguments: str) -> Iterator[dict[str, Any]]:
+        """Yield the full lifecycle for a function call output item.
+
+        Emits output_item.added, function_call_arguments.delta,
+        function_call_arguments.done, and output_item.done.
+
+        :param name: The function name being called.
+        :type name: str
+        :param call_id: Unique identifier for this function call.
+        :type call_id: str
+        :param arguments: The function call arguments as a string.
+        :type arguments: str
+        :returns: An iterator of event dicts.
+        :rtype: Iterator[dict[str, Any]]
+        """
+        fc = self.add_output_item_function_call(name=name, call_id=call_id)
+        yield fc.emit_added()
+        yield fc.emit_arguments_delta(arguments)
+        yield fc.emit_arguments_done(arguments)
+        yield fc.emit_done()
+
+    def function_call_output(self, call_id: str, output: str) -> Iterator[dict[str, Any]]:
+        """Yield the full lifecycle for a function call output item.
+
+        Emits output_item.added and output_item.done.
+
+        :param call_id: The call ID of the function call this output belongs to.
+        :type call_id: str
+        :param output: The output value for the function call.
+        :type output: str
+        :returns: An iterator of event dicts.
+        :rtype: Iterator[dict[str, Any]]
+        """
+        fco = self.add_output_item_function_call_output(call_id=call_id)
+        yield fco.emit_added(output)
+        yield fco.emit_done(output)
+
+    def reasoning(self, summary_text: str) -> Iterator[dict[str, Any]]:
+        """Yield the full lifecycle for a reasoning output item.
+
+        Emits output_item.added, reasoning_summary_part.added,
+        reasoning_summary_text.delta, reasoning_summary_text.done,
+        reasoning_summary_part.done, and output_item.done.
+
+        :param summary_text: The reasoning summary text.
+        :type summary_text: str
+        :returns: An iterator of event dicts.
+        :rtype: Iterator[dict[str, Any]]
+        """
+        item = self.add_output_item_reasoning_item()
+        yield item.emit_added()
+        part = item.add_summary_part()
+        yield part.emit_added()
+        yield part.emit_text_delta(summary_text)
+        yield part.emit_text_done(summary_text)
+        yield part.emit_done()
+        item.emit_summary_part_done(part)
+        yield item.emit_done()
+
+    # ---- Private helpers ----
 
     def _response_payload(self) -> dict[str, Any]:
         """Serialize the current response envelope to a plain dict.
