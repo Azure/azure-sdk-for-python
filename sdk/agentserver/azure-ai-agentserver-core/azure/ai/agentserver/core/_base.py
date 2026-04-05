@@ -297,7 +297,10 @@ class AgentServerHost(Starlette):
 
         signal.signal(signal.SIGTERM, _handle_sigterm)
 
-        asyncio.run(_hypercorn_serve(self, config))  # type: ignore[arg-type]
+        try:
+            asyncio.run(_hypercorn_serve(self, config))  # type: ignore[arg-type]
+        finally:
+            signal.signal(signal.SIGTERM, original_sigterm)
 
     async def run_async(self, host: str = "0.0.0.0", port: Optional[int] = None) -> None:
         """Start the server asynchronously (awaitable).

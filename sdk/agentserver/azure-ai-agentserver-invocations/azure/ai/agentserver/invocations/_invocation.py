@@ -39,18 +39,36 @@ _MAX_ID_LENGTH = 256
 _VALID_ID_RE = re.compile(r"^[a-zA-Z0-9\-_.:]+$")
 
 
-class _InvocationLogFilter(logging.Filter):
-    """Attach invocation and session IDs to every log record during handler execution."""
+import contextvars
 
-    def __init__(self, invocation_id: str, session_id: str) -> None:
-        super().__init__()
-        self.invocation_id = invocation_id
-        self.session_id = session_id
+# Context variables for structured logging — concurrency-safe alternative to logger filters.
+_invocation_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("invocation_id", default="")
+_session_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("session_id", default="")
+
+
+class _InvocationLogFilter(logging.Filter):
+    """Attach invocation and session IDs to every log record from context vars.
+
+    Reads from ``contextvars`` rather than instance state, so a single
+    filter instance can be installed once on the logger (not per-request).
+    """
 
     def filter(self, record: logging.LogRecord) -> bool:
-        record.invocation_id = self.invocation_id  # type: ignore[attr-defined]
-        record.session_id = self.session_id  # type: ignore[attr-defined]
+        record.invocation_id = _invocation_id_var.get("")  # type: ignore[attr-defined]
+        record.session_id = _session_id_var.get("")  # type: ignore[attr-defined]
         return True
+
+
+# Install once at module load — no per-request add/remove needed.
+_log_filter_installed = False
+
+
+def _ensure_log_filter() -> None:
+    global _log_filter_installed  # pylint: disable=global-statement
+    if _log_filter_installed:
+        return
+    logger.addFilter(_InvocationLogFilter())
+    _log_filter_installed = True
 
 
 def _sanitize_id(value: str, fallback: str) -> str:
@@ -328,8 +346,10 @@ class InvocationAgentServerHost(AgentServerHost):
             )
             baggage_token = _otel_context.attach(ctx)
 
-            log_filter = _InvocationLogFilter(invocation_id, session_id)
-            logger.addFilter(log_filter)
+            # Set structured logging context (concurrency-safe via contextvars)
+            _ensure_log_filter()
+            inv_token = _invocation_id_var.set(invocation_id)
+            sess_token = _session_id_var.set(session_id)
             try:
                 response = await self._dispatch_invoke(request)
                 response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
@@ -367,7 +387,8 @@ class InvocationAgentServerHost(AgentServerHost):
                     },
                 )
             finally:
-                logger.removeFilter(log_filter)
+                _invocation_id_var.reset(inv_token)
+                _session_id_var.reset(sess_token)
                 try:
                     _otel_context.detach(baggage_token)
                 except ValueError:
@@ -397,8 +418,9 @@ class InvocationAgentServerHost(AgentServerHost):
                 InvocationConstants.ATTR_SPAN_INVOCATION_ID: invocation_id,
                 InvocationConstants.ATTR_SPAN_SESSION_ID: session_id,
             })
-            log_filter = _InvocationLogFilter(invocation_id, session_id)
-            logger.addFilter(log_filter)
+            _ensure_log_filter()
+            inv_token = _invocation_id_var.set(invocation_id)
+            sess_token = _session_id_var.set(session_id)
             try:
                 response = await dispatch(request)
                 response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
@@ -417,7 +439,8 @@ class InvocationAgentServerHost(AgentServerHost):
                     headers={InvocationConstants.INVOCATION_ID_HEADER: invocation_id},
                 )
             finally:
-                logger.removeFilter(log_filter)
+                _invocation_id_var.reset(inv_token)
+                _session_id_var.reset(sess_token)
 
     async def _get_invocation_endpoint(self, request: Request) -> Response:
         return await self._traced_invocation_endpoint(

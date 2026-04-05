@@ -413,8 +413,8 @@ def test_namespaced_invocation_id_attribute():
 def test_agent_name_in_span_name():
     """Agent name from env var appears in span name."""
     with patch.dict(os.environ, {
-    "FOUNDRY_AGENT_NAME": "my-agent",
-    "FOUNDRY_AGENT_VERSION": "2.0",
+        "FOUNDRY_AGENT_NAME": "my-agent",
+        "FOUNDRY_AGENT_VERSION": "2.0",
     }):
         server = _make_tracing_server()
 

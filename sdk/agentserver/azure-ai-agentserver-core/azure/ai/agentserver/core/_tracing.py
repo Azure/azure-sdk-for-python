@@ -391,7 +391,12 @@ def _setup_otlp_log_export(resource: Any, endpoint: str) -> None:
         set_logger_provider(log_provider)
     log_provider.add_log_record_processor(BatchLogRecordProcessor(
         OTLPLogExporter(endpoint=endpoint)))  # type: ignore[union-attr]
-    logging.getLogger().addHandler(LoggingHandler(logger_provider=log_provider))
+    # Note: LoggingHandler is NOT added here to avoid duplicating the
+    # handler already installed by _setup_log_export. The OTel LoggerProvider
+    # receives log records via the handler added there (or from direct OTel
+    # log API usage).  If OTLP is the only exporter, add a handler:
+    if not _az_log_configured:
+        logging.getLogger().addHandler(LoggingHandler(logger_provider=log_provider))
     _otlp_log_configured = True
     logger.info("OTLP log exporter configured (endpoint=%s).", endpoint)
 
