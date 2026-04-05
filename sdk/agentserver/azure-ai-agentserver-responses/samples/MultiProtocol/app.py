@@ -46,27 +46,26 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.invocations import InvocationHandler
-from azure.ai.agentserver.responses.hosting import ResponseHandler
-from azure.ai.agentserver.responses import ResponseEventStream, get_input_text
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
+from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponseEventStream, get_input_text
 
 
 # =====================================================================
-# 1. Create the server — single host for both protocols
+# 1. Create the server — multi-protocol via cooperative inheritance
 # =====================================================================
 
-server = AgentHost()
+class MyHost(InvocationAgentServerHost, ResponsesAgentServerHost):
+    pass
+
+server = MyHost()
 
 
 # =====================================================================
 # 2. Invocation protocol — simple echo agent
 # =====================================================================
 
-invocations = InvocationHandler(server)
 
-
-@invocations.invoke_handler
+@server.invoke_handler
 async def handle_invoke(request: Request) -> Response:
     """Process an invocation request by echoing the input.
 
@@ -90,7 +89,7 @@ async def handle_invoke(request: Request) -> Response:
 # 3. Responses protocol — streaming echo agent
 # =====================================================================
 
-responses = ResponseHandler(server)
+responses = server
 
 
 @responses.create_handler

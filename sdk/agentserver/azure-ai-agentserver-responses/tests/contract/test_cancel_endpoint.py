@@ -11,8 +11,7 @@ from typing import Any
 import pytest
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.responses.hosting import ResponseHandler
+from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from tests._helpers import EventGate, poll_until
 
@@ -129,10 +128,9 @@ def _make_blocking_sync_response_handler(
 
 
 def _build_client(handler: Any | None = None) -> TestClient:
-    server = AgentHost()
-    responses = ResponseHandler(server)
-    responses.create_handler(handler or _noop_response_handler)
-    return TestClient(server.app)
+    app = ResponsesAgentServerHost()
+    app.create_handler(handler or _noop_response_handler)
+    return TestClient(app)
 
 
 def _create_background_response(client: TestClient, *, response_id: str | None = None) -> str:

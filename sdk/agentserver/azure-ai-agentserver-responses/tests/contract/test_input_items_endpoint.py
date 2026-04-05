@@ -8,8 +8,7 @@ from typing import Any
 
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.responses.hosting import ResponseHandler
+from azure.ai.agentserver.responses import ResponsesAgentServerHost
 
 
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
@@ -22,10 +21,9 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
 
 
 def _build_client() -> TestClient:
-    server = AgentHost()
-    responses = ResponseHandler(server)
-    responses.create_handler(_noop_response_handler)
-    return TestClient(server.app)
+    app = ResponsesAgentServerHost()
+    app.create_handler(_noop_response_handler)
+    return TestClient(app)
 
 
 def _message_input(item_id: str, text: str) -> dict[str, Any]:
@@ -357,10 +355,9 @@ def test_input_items_in_flight_fallback_to_runtime() -> None:
 
         return _events()
 
-    _server = AgentHost()
-    _rhandler = ResponseHandler(_server)
-    _rhandler.create_handler(_slow_handler)
-    client = TestClient(_server.app, raise_server_exceptions=False)
+    _app = ResponsesAgentServerHost()
+    _app.create_handler(_slow_handler)
+    client = TestClient(_app, raise_server_exceptions=False)
 
     item = _message_input("inflight_msg_001", "in-flight-content")
     payload: Any = {

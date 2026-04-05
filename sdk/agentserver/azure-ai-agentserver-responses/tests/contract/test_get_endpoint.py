@@ -9,8 +9,7 @@ from typing import Any
 
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.responses.hosting import ResponseHandler
+from azure.ai.agentserver.responses import ResponsesAgentServerHost
 
 
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
@@ -23,10 +22,9 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
 
 
 def _build_client() -> TestClient:
-    server = AgentHost()
-    responses = ResponseHandler(server)
-    responses.create_handler(_noop_response_handler)
-    return TestClient(server.app)
+    app = ResponsesAgentServerHost()
+    app.create_handler(_noop_response_handler)
+    return TestClient(app)
 
 
 def _collect_replay_events(response: Any) -> list[dict[str, Any]]:
@@ -406,10 +404,9 @@ def test_bg_stream_cancelled_subject_completed() -> None:
     import asyncio
     import threading
 
-    _server = AgentHost()
-    _rh = ResponseHandler(_server)
-    _rh.create_handler(_blocking_bg_stream_handler)
-    app = _server.app
+    _app = ResponsesAgentServerHost()
+    _app.create_handler(_blocking_bg_stream_handler)
+    app = _app
 
     response_id = IdGenerator.new_response_id()
     stream_events_received: list[str] = []

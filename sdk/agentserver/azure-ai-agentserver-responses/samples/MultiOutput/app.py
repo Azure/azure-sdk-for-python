@@ -10,16 +10,13 @@ import asyncio
 from collections.abc import AsyncIterable
 from typing import Any
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.responses import ResponseContext, CreateResponse, ResponseEventStream
-from azure.ai.agentserver.responses.hosting import ResponseHandler
+from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponseContext, CreateResponse, ResponseEventStream
 
 
-server = AgentHost()
-responses = ResponseHandler(server)
+server = ResponsesAgentServerHost()
 
 
-@responses.create_handler
+@server.create_handler
 def multi_output_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event) -> AsyncIterable[dict[str, Any]]:
     """Produces reasoning plus final message output in one response."""
     stream = ResponseEventStream(response_id=context.response_id, model=request.model)

@@ -13,8 +13,7 @@ from typing import Any
 import pytest
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.responses.hosting import ResponseHandler
+from azure.ai.agentserver.responses import ResponsesAgentServerHost
 
 
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
@@ -47,10 +46,9 @@ class _CreateModeCase:
 
 
 def _build_client() -> TestClient:
-    server = AgentHost()
-    responses = ResponseHandler(server)
-    responses.create_handler(_noop_response_handler)
-    return TestClient(server.app)
+    app = ResponsesAgentServerHost()
+    app.create_handler(_noop_response_handler)
+    return TestClient(app)
 
 
 def _collect_sse_events(response: Any) -> list[dict[str, Any]]:

@@ -12,8 +12,7 @@ from typing import Any
 
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.responses.hosting import ResponseHandler
+from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses import ResponsesServerOptions
 from azure.ai.agentserver.responses.hosting._observability import InMemoryCreateSpanHook
 
@@ -27,11 +26,10 @@ def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
 
 
 def _build_client(hook: InMemoryCreateSpanHook | None = None) -> TestClient:
-    server = AgentHost()
     options = ResponsesServerOptions(create_span_hook=hook)
-    responses = ResponseHandler(server, options=options)
-    responses.create_handler(_noop_handler)
-    return TestClient(server.app)
+    app = ResponsesAgentServerHost(options=options)
+    app.create_handler(_noop_handler)
+    return TestClient(app)
 
 
 # ---------------------------------------------------------------------------

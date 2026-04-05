@@ -11,8 +11,7 @@ from starlette.testclient import TestClient
 
 from tests._helpers import poll_until
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.responses.hosting import ResponseHandler
+from azure.ai.agentserver.responses import ResponsesAgentServerHost
 
 
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
@@ -35,10 +34,9 @@ def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any
 
 
 def _build_client() -> TestClient:
-    server = AgentHost()
-    responses = ResponseHandler(server)
-    responses.create_handler(_noop_response_handler)
-    return TestClient(server.app)
+    app = ResponsesAgentServerHost()
+    app.create_handler(_noop_response_handler)
+    return TestClient(app)
 
 
 def test_store_lifecycle__create_read_and_cleanup_behavior() -> None:
@@ -103,10 +101,9 @@ def test_store_lifecycle__background_completion_is_observed_deterministically() 
 
 
 def test_store_lifecycle__background_cancel_transition_is_deterministic() -> None:
-    server = AgentHost()
-    _responses = ResponseHandler(server)
-    _responses.create_handler(_cancellable_bg_handler)
-    client = TestClient(server.app)
+    app = ResponsesAgentServerHost()
+    app.create_handler(_cancellable_bg_handler)
+    client = TestClient(app)
 
     create_response = client.post(
         "/responses",

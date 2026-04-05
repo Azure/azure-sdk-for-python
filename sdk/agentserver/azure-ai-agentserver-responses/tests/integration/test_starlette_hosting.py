@@ -12,8 +12,7 @@ import pytest
 
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.responses.hosting import ResponseHandler
+from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses.hosting._observability import InMemoryCreateSpanHook
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
 from tests._helpers import EventGate
@@ -29,10 +28,9 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
 
 
 def _build_client(*, prefix: str = "", options: ResponsesServerOptions | None = None) -> TestClient:
-    server = AgentHost()
-    responses = ResponseHandler(server, prefix=prefix, options=options)
-    responses.create_handler(_noop_response_handler)
-    return TestClient(server.app)
+    app = ResponsesAgentServerHost(prefix=prefix, options=options)
+    app.create_handler(_noop_response_handler)
+    return TestClient(app)
 
 
 def test_hosting__registers_create_get_cancel_routes_under_prefix() -> None:
@@ -161,10 +159,9 @@ def test_hosting__stream_mode_surfaces_handler_output_item_and_content_events() 
 
         return _events()
 
-    server = AgentHost()
-    responses = ResponseHandler(server)
-    responses.create_handler(_streaming_handler)
-    client = TestClient(server.app)
+    app = ResponsesAgentServerHost()
+    app.create_handler(_streaming_handler)
+    client = TestClient(app)
 
     with client.stream(
         "POST",
@@ -212,10 +209,9 @@ def test_hosting__non_stream_mode_returns_completed_response_with_output_items()
 
         return _events()
 
-    server = AgentHost()
-    responses = ResponseHandler(server)
-    responses.create_handler(_non_stream_handler)
-    client = TestClient(server.app)
+    app = ResponsesAgentServerHost()
+    app.create_handler(_non_stream_handler)
+    client = TestClient(app)
 
     response = client.post(
         "/responses",
@@ -241,10 +237,9 @@ def test_hosting__non_stream_mode_returns_completed_response_with_output_items()
 
 def test_hosting__health_endpoint_is_available() -> None:
     """Verify AgentHost provides health endpoint automatically."""
-    server = AgentHost()
-    responses = ResponseHandler(server)
-    responses.create_handler(_noop_response_handler)
-    client = TestClient(server.app)
+    app = ResponsesAgentServerHost()
+    app.create_handler(_noop_response_handler)
+    client = TestClient(app)
 
     response = client.get("/readiness")
     assert response.status_code == 200
@@ -253,10 +248,9 @@ def test_hosting__health_endpoint_is_available() -> None:
 
 def test_hosting__multi_protocol_composition() -> None:
     """Verify ResponseHandler can coexist with other protocol handlers on the same server."""
-    server = AgentHost()
-    responses = ResponseHandler(server)
-    responses.create_handler(_noop_response_handler)
-    client = TestClient(server.app)
+    app = ResponsesAgentServerHost()
+    app.create_handler(_noop_response_handler)
+    client = TestClient(app)
 
     # Responses endpoint works
     create_response = client.post(
@@ -303,17 +297,15 @@ def test_hosting__shutdown_signals_inflight_background_execution() -> None:
 
         return _events()
 
-    server = AgentHost()
-    responses = ResponseHandler(
-        server,
+    app = ResponsesAgentServerHost(
         options=ResponsesServerOptions(shutdown_grace_period_seconds=2),
     )
-    responses.create_handler(_shutdown_aware_handler)
+    app.create_handler(_shutdown_aware_handler)
 
     create_result: dict[str, Any] = {}
     get_result: dict[str, Any] = {}
 
-    with TestClient(server.app) as client:
+    with TestClient(app) as client:
         create_response = client.post(
             "/responses",
             json={
@@ -340,7 +332,7 @@ def test_hosting__shutdown_signals_inflight_background_execution() -> None:
         started, _ = started_gate.wait(timeout_s=2.0)
         assert started, "Expected background handler execution to start before shutdown"
         assert client.portal is not None
-        client.portal.call(server.app.router.shutdown)
+        client.portal.call(app.router.shutdown)
 
         cancelled, _ = cancelled_gate.wait(timeout_s=2.0)
         shutdown_seen, _ = shutdown_gate.wait(timeout_s=2.0)

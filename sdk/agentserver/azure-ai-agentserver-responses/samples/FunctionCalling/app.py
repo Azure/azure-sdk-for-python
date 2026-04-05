@@ -11,10 +11,8 @@ import json
 from collections.abc import AsyncIterable
 from typing import Any
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.responses import ResponseContext, ResponseEventStream, get_input_expanded
+from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponseContext, ResponseEventStream, get_input_expanded
 from azure.ai.agentserver.responses.models import CreateResponse, ItemType
-from azure.ai.agentserver.responses.hosting import ResponseHandler
 
 
 def _extract_function_call_output(request_payload: CreateResponse) -> str | None:
@@ -29,11 +27,10 @@ def _extract_function_call_output(request_payload: CreateResponse) -> str | None
     return None
 
 
-server = AgentHost(log_level="debug")
-responses = ResponseHandler(server)
+server = ResponsesAgentServerHost(log_level="debug")
 
 
-@responses.create_handler
+@server.create_handler
 def weather_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event) -> AsyncIterable[dict[str, Any]]:
     """Two-turn function-calling sample handler."""
     tool_output = _extract_function_call_output(request)

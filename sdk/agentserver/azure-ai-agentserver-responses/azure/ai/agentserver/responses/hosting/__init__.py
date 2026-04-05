@@ -2,7 +2,7 @@
 # Licensed under the MIT license.
 """HTTP hosting, routing, and request orchestration for the Responses server."""
 
-from ._routing import ResponseHandler
+from ._routing import ResponsesAgentServerHost
 from ._observability import (
     CreateSpan,
     CreateSpanHook,
@@ -23,7 +23,7 @@ from ._validation import (
 )
 
 __all__ = [
-    "ResponseHandler",
+    "ResponsesAgentServerHost",
     "CreateSpan",
     "CreateSpanHook",
     "InMemoryCreateSpanHook",

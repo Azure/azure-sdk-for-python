@@ -13,10 +13,12 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
 from typing import TYPE_CHECKING, Any
 
+import logging
+
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
-from azure.ai.agentserver.core import get_logger
+from azure.ai.agentserver.core import end_span, trace_stream
 from azure.ai.agentserver.responses.models._generated.sdk.models.models._models import CreateResponse
 
 from .._response_context import ResponseContext
@@ -38,7 +40,6 @@ from ._http_errors import (
 )
 from ._observability import (
     _initial_create_span_tags,
-    build_create_baggage,
     build_create_otel_attrs,
     build_create_span_tags,
     extract_request_id,
@@ -59,9 +60,9 @@ from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtoc
 from ..streaming._helpers import EVENT_TYPE
 
 if TYPE_CHECKING:
-    from azure.ai.agentserver.core import TracingHelper
+    from ._routing import ResponsesAgentServerHost
 
-logger = get_logger()
+logger = logging.getLogger("azure.ai.agentserver")
 
 
 class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
@@ -83,7 +84,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         runtime_options: ResponsesServerOptions,
         response_headers: dict[str, str],
         sse_headers: dict[str, str],
-        tracing: "TracingHelper | None" = None,
+        host: "ResponsesAgentServerHost",
         provider: ResponseProviderProtocol,
         stream_provider: ResponseStreamProviderProtocol | None = None,
     ) -> None:
@@ -99,8 +100,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :type response_headers: dict[str, str]
         :param sse_headers: SSE-specific headers (e.g. connection, cache-control).
         :type sse_headers: dict[str, str]
-        :param tracing: Optional tracing helper from hosting's AgentHost.
-        :type tracing: TracingHelper | None
+        :param host: The ``ResponsesAgentServerHost`` instance (provides ``request_span``).
+        :type host: ResponsesAgentServerHost
         :param provider: Persistence provider for response envelopes and input items.
         :type provider: ResponseProviderProtocol
         :param stream_provider: Optional provider for SSE stream event persistence and replay.
@@ -111,7 +112,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         self._runtime_options = runtime_options
         self._response_headers = response_headers
         self._sse_headers = sse_headers
-        self._tracing = tracing
+        self._host = host
         self._provider = provider
         self._stream_provider = stream_provider
         self._shutdown_requested: asyncio.Event = asyncio.Event()
@@ -159,50 +160,22 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         self,
         response: StreamingResponse,
         otel_span: Any,
-        baggage_token: Any,
-        span_context_token: Any = None,
     ) -> StreamingResponse:
-        """Wrap a streaming response's body iterator with tracing and baggage cleanup.
+        """Wrap a streaming response's body iterator with span lifecycle.
 
-        Two layers of wrapping are applied in order:
-
-        1. **Inner (tracing):** ``trace_stream`` wraps the body iterator so
-           the OTel span covers the full streaming duration and records any
-           errors that occur while yielding chunks.
-        2. **Outer (baggage cleanup):** A second async generator detaches the
-           W3C Baggage context *after* all chunks have been sent (or an
-           error occurs).
+        ``trace_stream`` wraps the body iterator so the OTel span covers
+        the full streaming duration and is ended when iteration completes.
 
         :param response: The ``StreamingResponse`` to wrap.
         :type response: StreamingResponse
         :param otel_span: The OTel span (or *None* when tracing is disabled).
         :type otel_span: Any
-        :param baggage_token: Token from ``set_baggage`` (or *None*).
-        :type baggage_token: Any
-        :param span_context_token: Token from ``set_current_span`` (or *None*).
-        :type span_context_token: Any
         :return: The same response object, with its body_iterator replaced.
         :rtype: StreamingResponse
         """
-        if self._tracing is None:
+        if otel_span is None:
             return response
-
-        # Inner wrap: trace_stream ends the span when iteration completes.
-        response.body_iterator = self._tracing.trace_stream(response.body_iterator, otel_span)
-
-        # Outer wrap: detach baggage after all chunks are sent.
-        original_iterator = response.body_iterator
-        tracing = self._tracing  # capture for the closure
-
-        async def _cleanup_iter():  # type: ignore[return-value]
-            try:
-                async for chunk in original_iterator:
-                    yield chunk
-            finally:
-                tracing.detach_baggage(baggage_token)
-                tracing.detach_context(span_context_token)
-
-        response.body_iterator = _cleanup_iter()
+        response.body_iterator = trace_stream(response.body_iterator, otel_span)
         return response
 
     # ------------------------------------------------------------------
@@ -343,12 +316,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if self._is_draining:
             return _service_unavailable("Server is shutting down.", {})
 
-        # Start tracing span using hosting's TracingHelper
-        otel_span = None
-        baggage_token = None
-        span_context_token = None
-        streaming_wrapped = False
-
         # Also maintain CreateSpanHook for backward compat (tests etc.)
         span = start_create_span(
             "create_response",
@@ -365,8 +332,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             logger.error("Failed to parse/validate create request", exc_info=exc)
             captured_error = exc
             span.end(captured_error)
-            if self._tracing is not None:
-                self._tracing.end_span(otel_span, exc=exc)
             return _error_response(exc, {})
 
         try:
@@ -377,8 +342,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             logger.error("Failed to resolve identity fields", exc_info=exc)
             captured_error = exc
             span.end(captured_error)
-            if self._tracing is not None:
-                self._tracing.end_span(otel_span, exc=exc)
             return _error_response(exc, {})
 
         # S-048: Resolve session ID
@@ -397,70 +360,48 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         # Extract X-Request-Id header for request ID propagation (truncated to 256 chars).
         request_id = extract_request_id(request.headers)
 
-        # Start OTel request span now that we have the response_id.
-        if self._tracing is not None:
-            otel_span = self._tracing.start_request_span(
-                request.headers,
-                response_id,
-                span_operation="invoke_agent",
-                operation_name="invoke_agent",
-            )
-            self._safe_set_attrs(otel_span, build_create_otel_attrs(ctx, request_id=request_id))
-            baggage_token = self._tracing.set_baggage(build_create_baggage(ctx, request_id=request_id))
-            # Set the OTel span as the current context so that child spans
-            # created by user handler code (e.g. Agent Framework) become
-            # children of this span rather than separate root spans.
-            span_context_token = self._tracing.set_current_span(otel_span)
-
         span.set_tags(build_create_span_tags(ctx, request_id=request_id))
 
-        try:
-            if ctx.stream:
-                sse_response = StreamingResponse(
-                    self._orchestrator.run_stream(ctx),
-                    media_type="text/event-stream",
-                    headers=self._sse_headers,
-                )
-                wrapped = self._wrap_streaming_response(sse_response, otel_span, baggage_token, span_context_token)
-                streaming_wrapped = True
-                return wrapped
+        # Start OTel request span using host's request_span context manager.
+        with self._host.request_span(
+            request.headers, response_id, "invoke_agent",
+            operation_name="invoke_agent",
+            session_id=agent_session_id or "",
+            end_on_exit=False,
+        ) as otel_span:
+            self._safe_set_attrs(otel_span, build_create_otel_attrs(ctx, request_id=request_id))
 
-            if not ctx.background:
-                try:
-                    snapshot = await self._orchestrator.run_sync(ctx)
-                    # End OTel span for non-streaming success
-                    if self._tracing is not None:
-                        self._tracing.end_span(otel_span)
-                    return JSONResponse(snapshot, status_code=200)
-                except _HandlerError as exc:
-                    logger.error("Handler error in sync create (response_id=%s)", ctx.response_id, exc_info=exc.original)
-                    if self._tracing is not None:
-                        self._tracing.end_span(otel_span, exc=exc.original)
-                    return _error_response(exc.original, {})
+            try:
+                if ctx.stream:
+                    sse_response = StreamingResponse(
+                        self._orchestrator.run_stream(ctx),
+                        media_type="text/event-stream",
+                        headers=self._sse_headers,
+                    )
+                    wrapped = self._wrap_streaming_response(sse_response, otel_span)
+                    return wrapped
 
-            snapshot = await self._orchestrator.run_background(ctx)
-            if self._tracing is not None:
-                self._tracing.end_span(otel_span)
-            return JSONResponse(snapshot, status_code=200, headers=self._response_headers)
-        except _HandlerError as exc:
-            logger.error("Handler error in create (response_id=%s)", ctx.response_id, exc_info=exc.original)
-            if self._tracing is not None:
-                self._tracing.end_span(otel_span, exc=exc)
-            return _error_response(exc.original, self._response_headers)
-        except Exception as exc:  # pylint: disable=broad-exception-caught
-            logger.error("Unexpected error in create (response_id=%s)", ctx.response_id, exc_info=exc)
-            if self._tracing is not None:
-                self._tracing.end_span(otel_span, exc=exc)
-            raise
-        finally:
-            # For non-streaming responses (or error paths that returned
-            # before reaching _wrap_streaming_response), detach baggage
-            # immediately.  Streaming responses handle this in
-            # _wrap_streaming_response's cleanup iterator instead.
-            if not streaming_wrapped:
-                if self._tracing is not None:
-                    self._tracing.detach_baggage(baggage_token)
-                    self._tracing.detach_context(span_context_token)
+                if not ctx.background:
+                    try:
+                        snapshot = await self._orchestrator.run_sync(ctx)
+                        end_span(otel_span)
+                        return JSONResponse(snapshot, status_code=200)
+                    except _HandlerError as exc:
+                        logger.error("Handler error in sync create (response_id=%s)", ctx.response_id, exc_info=exc.original)
+                        end_span(otel_span, exc=exc.original)
+                        return _error_response(exc.original, {})
+
+                snapshot = await self._orchestrator.run_background(ctx)
+                end_span(otel_span)
+                return JSONResponse(snapshot, status_code=200, headers=self._response_headers)
+            except _HandlerError as exc:
+                logger.error("Handler error in create (response_id=%s)", ctx.response_id, exc_info=exc.original)
+                end_span(otel_span, exc=exc)
+                return _error_response(exc.original, self._response_headers)
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                logger.error("Unexpected error in create (response_id=%s)", ctx.response_id, exc_info=exc)
+                end_span(otel_span, exc=exc)
+                raise
 
     async def handle_get(self, request: Request) -> Response:  # pylint: disable=too-many-return-statements
         """Route handler for ``GET /responses/{response_id}``.

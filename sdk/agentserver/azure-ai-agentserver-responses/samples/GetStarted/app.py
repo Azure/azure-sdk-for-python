@@ -10,17 +10,14 @@ import asyncio
 from collections.abc import AsyncIterable
 from typing import Any
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.responses import ResponseContext, ResponseEventStream, CreateResponse
+from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponseContext, ResponseEventStream, CreateResponse
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
-from azure.ai.agentserver.responses.hosting import ResponseHandler
 
 
-server = AgentHost()
-responses = ResponseHandler(server)
+app = ResponsesAgentServerHost()
 
 
-@responses.create_handler
+@app.create_handler
 def my_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     stream = ResponseEventStream(response_id=context.response_id, model=request.model)
 
@@ -42,7 +39,7 @@ def my_handler(request: CreateResponse, context: ResponseContext, cancellation_s
 
 
 def main() -> None:
-    server.run(host="127.0.0.1", port=5100)
+    app.run(host="127.0.0.1", port=5100)
 
 
 if __name__ == "__main__":

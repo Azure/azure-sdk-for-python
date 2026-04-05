@@ -10,8 +10,7 @@ from starlette.testclient import TestClient
 
 from tests._helpers import poll_until
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.responses.hosting import ResponseHandler
+from azure.ai.agentserver.responses import ResponsesAgentServerHost
 
 
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
@@ -24,10 +23,9 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
 
 
 def _build_client() -> TestClient:
-    server = AgentHost()
-    responses = ResponseHandler(server)
-    responses.create_handler(_noop_response_handler)
-    return TestClient(server.app)
+    app = ResponsesAgentServerHost()
+    app.create_handler(_noop_response_handler)
+    return TestClient(app)
 
 
 def test_create__returns_json_response_for_non_streaming_success() -> None:
@@ -233,10 +231,9 @@ def test_create__non_stream_returns_completed_response_with_output_items() -> No
 
         return _events()
 
-    server = AgentHost()
-    responses = ResponseHandler(server)
-    responses.create_handler(_output_producing_handler)
-    client = TestClient(server.app)
+    app = ResponsesAgentServerHost()
+    app.create_handler(_output_producing_handler)
+    client = TestClient(app)
 
     response = client.post(
         "/responses",
@@ -283,10 +280,9 @@ def test_create__background_non_stream_get_eventually_returns_output_items() -> 
 
         return _events()
 
-    server = AgentHost()
-    responses = ResponseHandler(server)
-    responses.create_handler(_output_producing_handler)
-    client = TestClient(server.app)
+    app = ResponsesAgentServerHost()
+    app.create_handler(_output_producing_handler)
+    client = TestClient(app)
 
     create_response = client.post(
         "/responses",
@@ -528,10 +524,9 @@ def test_sync_handler_exception_returns_500() -> None:
 
         return _events()
 
-    _server = AgentHost()
-    _rh = ResponseHandler(_server)
-    _rh.create_handler(_raising_handler)
-    client = TestClient(_server.app, raise_server_exceptions=False)
+    _app = ResponsesAgentServerHost()
+    _app.create_handler(_raising_handler)
+    client = TestClient(_app, raise_server_exceptions=False)
 
     response = client.post(
         "/responses",
@@ -561,10 +556,9 @@ def test_sync_no_terminal_event_still_completes() -> None:
 
         return _events()
 
-    _server = AgentHost()
-    _rh = ResponseHandler(_server)
-    _rh.create_handler(_no_terminal_handler)
-    client = TestClient(_server.app)
+    _app = ResponsesAgentServerHost()
+    _app.create_handler(_no_terminal_handler)
+    client = TestClient(_app)
 
     response = client.post(
         "/responses",
@@ -606,10 +600,9 @@ def test_s007_wrong_first_event_sync() -> None:
 
         return _events()
 
-    _server = AgentHost()
-    _rh = ResponseHandler(_server)
-    _rh.create_handler(_wrong_first_event_handler)
-    client = TestClient(_server.app, raise_server_exceptions=False)
+    _app = ResponsesAgentServerHost()
+    _app.create_handler(_wrong_first_event_handler)
+    client = TestClient(_app, raise_server_exceptions=False)
 
     response = client.post(
         "/responses",
@@ -639,10 +632,9 @@ def test_s007_wrong_first_event_stream() -> None:
 
         return _events()
 
-    _server = AgentHost()
-    _rh = ResponseHandler(_server)
-    _rh.create_handler(_wrong_first_event_handler)
-    client = TestClient(_server.app, raise_server_exceptions=False)
+    _app = ResponsesAgentServerHost()
+    _app.create_handler(_wrong_first_event_handler)
+    client = TestClient(_app, raise_server_exceptions=False)
 
     import json as _json
 
@@ -696,10 +688,9 @@ def test_s008_mismatched_id_stream() -> None:
 
         return _events()
 
-    _server = AgentHost()
-    _rh = ResponseHandler(_server)
-    _rh.create_handler(_mismatched_id_handler)
-    client = TestClient(_server.app, raise_server_exceptions=False)
+    _app = ResponsesAgentServerHost()
+    _app.create_handler(_mismatched_id_handler)
+    client = TestClient(_app, raise_server_exceptions=False)
 
     import json as _json
 
@@ -749,10 +740,9 @@ def test_s009_terminal_status_on_created_stream() -> None:
 
         return _events()
 
-    _server = AgentHost()
-    _rh = ResponseHandler(_server)
-    _rh.create_handler(_terminal_on_created_handler)
-    client = TestClient(_server.app, raise_server_exceptions=False)
+    _app = ResponsesAgentServerHost()
+    _app.create_handler(_terminal_on_created_handler)
+    client = TestClient(_app, raise_server_exceptions=False)
 
     import json as _json
 
@@ -802,10 +792,9 @@ def test_s007_valid_handler_not_affected() -> None:
 
         return _events()
 
-    _server = AgentHost()
-    _rh = ResponseHandler(_server)
-    _rh.create_handler(_compliant_handler)
-    client = TestClient(_server.app)
+    _app = ResponsesAgentServerHost()
+    _app.create_handler(_compliant_handler)
+    client = TestClient(_app)
 
     import json as _json
 

@@ -9,10 +9,8 @@ Run:
 from collections.abc import Sequence
 from typing import Any
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.responses import ResponseContext, ResponsesServerOptions, ResponseEventStream, get_input_text
+from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponseContext, ResponsesServerOptions, ResponseEventStream, get_input_text
 from azure.ai.agentserver.responses.models import CreateResponse, OutputItem
-from azure.ai.agentserver.responses.hosting import ResponseHandler
 
 
 def _build_reply(current_input: str, history: Sequence[OutputItem]) -> str:
@@ -30,10 +28,9 @@ def _build_reply(current_input: str, history: Sequence[OutputItem]) -> str:
         f"You said: \"{current_input}\""
     )
 
-server = AgentHost()
-responses = ResponseHandler(server, options=ResponsesServerOptions(default_fetch_history_count=20))
+server = ResponsesAgentServerHost(options=ResponsesServerOptions(default_fetch_history_count=20))
 
-@responses.create_handler
+@server.create_handler
 async def create_async(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
     stream = ResponseEventStream(response_id=context.response_id, model=request.model)
 

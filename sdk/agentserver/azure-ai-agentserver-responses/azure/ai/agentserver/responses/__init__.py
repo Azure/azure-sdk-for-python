@@ -6,6 +6,7 @@ from ._version import VERSION
 
 __version__ = VERSION
 
+from .hosting._routing import ResponsesAgentServerHost
 from .streaming._builders import (
     OutputItemCodeInterpreterCallBuilder,
     OutputItemBuilder,
@@ -43,6 +44,7 @@ from .models._helpers import (
 
 __all__ = [
     "__version__",
+    "ResponsesAgentServerHost",
     "ResponseContext",
     "ResponsesServerOptions",
     "ResponseProviderProtocol",

@@ -10,8 +10,7 @@ from typing import Any
 
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.responses.hosting import ResponseHandler
+from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
 
 
@@ -49,11 +48,10 @@ def _build_client(
     *,
     keep_alive_seconds: int | None = None,
 ) -> TestClient:
-    server = AgentHost()
     options = ResponsesServerOptions(sse_keep_alive_interval_seconds=keep_alive_seconds)
-    responses = ResponseHandler(server, options=options)
-    responses.create_handler(handler or _noop_handler)
-    return TestClient(server.app)
+    app = ResponsesAgentServerHost(options=options)
+    app.create_handler(handler or _noop_handler)
+    return TestClient(app)
 
 
 def _parse_raw_lines(response: Any) -> list[str]:

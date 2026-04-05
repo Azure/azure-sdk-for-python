@@ -251,37 +251,6 @@ def build_create_otel_attrs(
     return attrs
 
 
-def build_create_baggage(
-    ctx: "_ExecutionContext",
-    *,
-    request_id: str | None,
-) -> dict[str, str]:
-    """Build the W3C Baggage dict for ``POST /responses``.
-
-    :param ctx: Current execution context.
-    :type ctx: _ExecutionContext
-    :keyword request_id: Truncated ``X-Request-Id`` value, or ``None``.
-    :keyword type request_id: str | None
-    :return: Baggage key/value dict.
-    :rtype: dict[str, str]
-    """
-    agent_name, _, agent_id = _resolve_agent_fields(ctx.agent_reference)
-    baggage: dict[str, str] = {
-        "response.id": ctx.response_id,
-        "streaming": "true" if ctx.stream else "false",
-        "provider.name": _SERVICE_NAME,
-    }
-    if ctx.conversation_id:
-        baggage["conversation.id"] = ctx.conversation_id
-    if agent_name:
-        baggage["agent.name"] = agent_name
-    if agent_id:
-        baggage["agent.id"] = agent_id
-    if request_id:
-        baggage["request.id"] = request_id
-    return baggage
-
-
 class RecordedSpan:
     """Recorded span event for tests and diagnostics."""
 

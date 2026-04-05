@@ -1,20 +1,20 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Response handler for AgentHost.
+"""Responses protocol host for Azure AI Hosted Agents.
 
-Provides the Responses API endpoints and registers them with the
-``AgentHost`` on construction, following the same pattern as
-``InvocationHandler``.
+Provides the Responses API endpoints and handler decorators
+as a :class:`~azure.ai.agentserver.core.AgentServerHost` subclass.
 """
 
 from __future__ import annotations
 
+import logging
 import types
-from typing import TYPE_CHECKING, AsyncIterator, Callable, Optional
+from typing import Any, AsyncIterator, Callable, Optional
 
 from starlette.routing import Route
 
-from azure.ai.agentserver.core import get_logger
+from azure.ai.agentserver.core import AgentServerHost
 
 from ._endpoint_handler import _ResponseEndpointHandler
 from ._orchestrator import _ResponseOrchestrator
@@ -23,10 +23,7 @@ from .._options import ResponsesServerOptions
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ..store._memory import InMemoryResponseProvider
 
-if TYPE_CHECKING:
-    from azure.ai.agentserver.core import AgentHost, TracingHelper
-
-logger = get_logger()
+logger = logging.getLogger("azure.ai.agentserver")
 
 
 async def _sync_to_async_gen(sync_gen: types.GeneratorType) -> AsyncIterator:
@@ -35,34 +32,30 @@ async def _sync_to_async_gen(sync_gen: types.GeneratorType) -> AsyncIterator:
         yield item
 
 
-class ResponseHandler:
-    """Response protocol handler that plugs into an ``AgentHost``.
+class ResponsesAgentServerHost(AgentServerHost):
+    """Responses protocol host for Azure AI Hosted Agents.
 
-    Creates the Responses API endpoints and registers them with
-    the server.  Use the :meth:`create_handler` decorator to wire
-    a handler function to the create endpoint.
+    A :class:`~azure.ai.agentserver.core.AgentServerHost` subclass that adds
+    the Responses API endpoints.  Use the :meth:`create_handler` decorator
+    to wire a handler function to the create endpoint.
 
-    This design supports multi-protocol composition -- multiple protocol
-    handlers (e.g. ``InvocationHandler``, ``ResponseHandler``) can be
-    mounted onto the same ``AgentHost``.
+    For multi-protocol agents, compose via cooperative inheritance::
+
+        class MyHost(InvocationAgentServerHost, ResponsesAgentServerHost):
+            pass
 
     Usage::
 
-        from azure.ai.agentserver.core import AgentHost
-        from azure.ai.agentserver.responses.hosting import ResponseHandler
+        from azure.ai.agentserver.responses import ResponsesAgentServerHost
 
-        server = AgentHost()
-        responses = ResponseHandler(server)
+        app = ResponsesAgentServerHost()
 
-        @responses.create_handler
+        @app.create_handler
         def my_handler(request, context, cancellation_signal):
             yield event
 
-        server.run()
+        app.run()
 
-    :param server: The ``AgentHost`` to register response protocol
-        routes with.
-    :type server: AgentHost
     :param prefix: Optional URL prefix for all response routes
         (e.g. ``"/v1"``).
     :type prefix: str
@@ -73,18 +66,17 @@ class ResponseHandler:
     :type provider: ResponseProviderProtocol | None
     """
 
+    _INSTRUMENTATION_SCOPE = "Azure.AI.AgentServer.Responses"
+
     def __init__(
         self,
-        server: "AgentHost",
         *,
         prefix: str = "",
         options: ResponsesServerOptions | None = None,
         provider: ResponseProviderProtocol | None = None,
+        **kwargs: Any,
     ) -> None:
-        # Extract tracing from server
-        self._tracing: Optional["TracingHelper"] = server.tracing
-
-        # Handler slot — populated via @responses.create_handler decorator
+        # Handler slot — populated via @app.create_handler decorator
         self._create_fn: Optional[Callable] = None
 
         # Normalize prefix
@@ -120,13 +112,13 @@ class ResponseHandler:
             runtime_options=runtime_options,
             response_headers={},
             sse_headers=sse_headers,
-            tracing=self._tracing,
+            host=self,
             provider=resolved_provider,
             stream_provider=stream_provider,
         )
 
-        # Build and cache routes
-        self._routes: list[Route] = [
+        # Build response protocol routes
+        response_routes: list[Route] = [
             Route(
                 f"{normalized_prefix}/responses",
                 endpoint.handle_create,
@@ -159,11 +151,12 @@ class ResponseHandler:
             ),
         ]
 
-        # Register routes with the server
-        server.register_routes(self._routes)
+        # Merge with any routes from sibling mixins via cooperative init
+        existing = list(kwargs.pop("routes", None) or [])
+        super().__init__(routes=existing + response_routes, **kwargs)
 
-        # Register shutdown handler with the server
-        server.shutdown_handler(endpoint.handle_shutdown)
+        # Register shutdown handler on self (inherited from AgentServerHost)
+        self.shutdown_handler(endpoint.handle_shutdown)
 
     # ------------------------------------------------------------------
     # Handler decorator
@@ -178,7 +171,7 @@ class ResponseHandler:
 
         Usage::
 
-            @responses.create_handler
+            @app.create_handler
             def my_handler(request, context, cancellation_signal):
                 yield event
 
@@ -213,22 +206,9 @@ class ResponseHandler:
         """
         if self._create_fn is None:
             raise NotImplementedError(
-                "No create handler registered. Use the @responses.create_handler decorator."
+                "No create handler registered. Use the @app.create_handler decorator."
             )
         result = self._create_fn(request, context, cancellation_signal)
         if isinstance(result, types.GeneratorType):
             return _sync_to_async_gen(result)
         return result
-
-    # ------------------------------------------------------------------
-    # Routes
-    # ------------------------------------------------------------------
-
-    @property
-    def routes(self) -> list[Route]:
-        """Starlette routes for the response protocol.
-
-        :return: A list of Route objects for the response endpoints.
-        :rtype: list[Route]
-        """
-        return self._routes

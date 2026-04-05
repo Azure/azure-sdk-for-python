@@ -8,7 +8,6 @@ from types import SimpleNamespace
 
 from azure.ai.agentserver.responses.hosting._observability import (
     InMemoryCreateSpanHook,
-    build_create_baggage,
     build_create_otel_attrs,
     build_create_span_tags,
     build_platform_server_header,
@@ -195,43 +194,3 @@ def test_observability__build_create_otel_attrs_omits_optional_fields_when_absen
     assert "gen_ai.agent.version" not in attrs
     assert "request.id" not in attrs
     assert attrs["gen_ai.request.model"] == ""
-
-
-# ---------------------------------------------------------------------------
-# build_create_baggage
-# ---------------------------------------------------------------------------
-
-
-def test_observability__build_create_baggage_includes_all_fields() -> None:
-    ctx = SimpleNamespace(
-        response_id="resp_3",
-        model="gpt-4o",
-        agent_reference={"name": "svc", "version": "v3"},
-        conversation_id="conv_y",
-        stream=True,
-    )
-    baggage = build_create_baggage(ctx, request_id="req-2")
-
-    assert baggage["response.id"] == "resp_3"
-    assert baggage["streaming"] == "true"
-    assert baggage["provider.name"] == "azure.ai.responses"
-    assert baggage["conversation.id"] == "conv_y"
-    assert baggage["agent.name"] == "svc"
-    assert baggage["agent.id"] == "svc:v3"
-    assert baggage["request.id"] == "req-2"
-
-
-def test_observability__build_create_baggage_streaming_false() -> None:
-    ctx = SimpleNamespace(
-        response_id="resp_4",
-        model=None,
-        agent_reference=None,
-        conversation_id=None,
-        stream=False,
-    )
-    baggage = build_create_baggage(ctx, request_id=None)
-
-    assert baggage["streaming"] == "false"
-    assert "conversation.id" not in baggage
-    assert "agent.name" not in baggage
-    assert "request.id" not in baggage
