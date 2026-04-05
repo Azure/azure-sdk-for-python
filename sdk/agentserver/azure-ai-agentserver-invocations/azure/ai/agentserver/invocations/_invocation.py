@@ -6,6 +6,7 @@
 Provides the invocation protocol endpoints and handler decorators
 as a :class:`~azure.ai.agentserver.core.AgentServerHost` subclass.
 """
+import contextvars
 import inspect
 import logging
 import os
@@ -15,6 +16,7 @@ import uuid
 from collections.abc import Awaitable, Callable  # pylint: disable=import-error
 from typing import Any, Optional
 
+from opentelemetry import baggage as _otel_baggage, context as _otel_context
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 from starlette.routing import Route
@@ -28,8 +30,6 @@ from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     trace_stream,
 )
 
-from opentelemetry import baggage as _otel_baggage, context as _otel_context
-
 from ._constants import InvocationConstants
 
 logger = logging.getLogger("azure.ai.agentserver")
@@ -38,8 +38,6 @@ logger = logging.getLogger("azure.ai.agentserver")
 _MAX_ID_LENGTH = 256
 _VALID_ID_RE = re.compile(r"^[a-zA-Z0-9\-_.:]+$")
 
-
-import contextvars
 
 # Context variables for structured logging — concurrency-safe alternative to logger filters.
 _invocation_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("invocation_id", default="")

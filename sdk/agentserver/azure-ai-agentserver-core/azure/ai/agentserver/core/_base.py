@@ -6,6 +6,7 @@ import contextlib
 import logging
 import os
 import signal
+import sys
 from collections.abc import AsyncGenerator, AsyncIterable, AsyncIterator, Awaitable, Callable  # pylint: disable=import-error
 from typing import Any, Optional, Union
 
@@ -15,8 +16,6 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
 from starlette.routing import Route
-
-import sys
 
 from . import _config, _tracing
 from ._version import VERSION as _CORE_VERSION

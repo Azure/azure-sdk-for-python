@@ -18,6 +18,11 @@ from collections.abc import AsyncIterable, AsyncIterator, Mapping  # pylint: dis
 from contextlib import contextmanager
 from typing import Any, Iterator, Optional, Union
 
+from opentelemetry import baggage as _otel_baggage, context as _otel_context, trace
+from opentelemetry.baggage.propagation import W3CBaggagePropagator
+from opentelemetry.propagate import composite
+from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
+
 from . import _config
 
 _Content = Union[str, bytes, memoryview]
@@ -40,11 +45,6 @@ _GEN_AI_SYSTEM_VALUE = "azure.ai.agentserver"
 _GEN_AI_PROVIDER_NAME_VALUE = "AzureAI Hosted Agents"
 
 logger = logging.getLogger("azure.ai.agentserver")
-
-from opentelemetry import baggage as _otel_baggage, context as _otel_context, trace
-from opentelemetry.baggage.propagation import W3CBaggagePropagator
-from opentelemetry.propagate import composite
-from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 
 # Composite propagator handles both traceparent/tracestate AND baggage
 _propagator = composite.CompositePropagator([
