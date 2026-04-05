@@ -7,6 +7,7 @@ from ._helpers import (
 )
 from ._sse import encode_sse_event, encode_sse_payload, encode_keep_alive_comment
 from ._state_machine import (
+    EventStreamValidator,
     LifecycleStateMachineError,
     normalize_lifecycle_events,
     validate_response_event_stream,
@@ -14,6 +15,7 @@ from ._state_machine import (
 
 __all__ = [
     "EVENT_TYPE",
+    "EventStreamValidator",
     "LifecycleStateMachineError",
     "encode_sse_event",
     "encode_sse_payload",

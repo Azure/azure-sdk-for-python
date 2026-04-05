@@ -24,7 +24,7 @@ from ._builders import (
     OutputItemWebSearchCallBuilder,
 )
 from .._id_generator import IdGenerator
-from ._state_machine import validate_response_event_stream
+from ._state_machine import EventStreamValidator, validate_response_event_stream
 from ..models import _generated as generated_models
 
 EVENT_TYPE = generated_models.ResponseStreamEventType
@@ -109,6 +109,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self._agent_reference = _internals.extract_agent_reference(self._response)
         self._model = _internals.extract_model(self._response)
         self._events: list[dict[str, Any]] = []
+        self._validator = EventStreamValidator()
         self._output_index = 0
 
     @property
@@ -471,7 +472,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         candidate = _internals.coerce_event_with_generated_class(candidate)
 
         self._events.append(candidate)
-        validate_response_event_stream(self._events)
+        self._validator.validate_next(candidate)
         return deepcopy(candidate)
 
     # ---- Generator convenience methods ----

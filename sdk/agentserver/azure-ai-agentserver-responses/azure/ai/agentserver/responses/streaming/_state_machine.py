@@ -35,6 +35,80 @@ class LifecycleStateMachineError(ValueError):
     """Raised when lifecycle events violate ordering constraints."""
 
 
+class EventStreamValidator:
+    """Incremental validator that maintains state across calls.
+
+    Unlike :func:`validate_response_event_stream` which re-scans the full
+    event list each time, this class validates one event at a time in O(1).
+    """
+
+    def __init__(self) -> None:
+        self._last_stage: int = -1
+        self._terminal_count: int = 0
+        self._terminal_seen: bool = False
+        self._added_indexes: set[int] = set()
+        self._done_indexes: set[int] = set()
+        self._event_count: int = 0
+
+    def validate_next(self, event: Mapping[str, Any]) -> None:
+        """Validate one new event against accumulated state.
+
+        :param event: The event mapping to validate.
+        :type event: Mapping[str, Any]
+        :rtype: None
+        :raises LifecycleStateMachineError: If any ordering or structural constraint is violated.
+        """
+        event_type = event.get("type")
+        if not isinstance(event_type, str) or not event_type:
+            raise LifecycleStateMachineError("each lifecycle event must include a non-empty type")
+
+        if self._event_count == 0 and event_type != EVENT_TYPE.RESPONSE_CREATED.value:
+            raise LifecycleStateMachineError("first lifecycle event must be response.created")
+
+        self._event_count += 1
+
+        stage = _EVENT_STAGES.get(event_type)
+        if stage is not None:
+            if stage < self._last_stage:
+                raise LifecycleStateMachineError("lifecycle events are out of order")
+            if event_type in _TERMINAL_EVENT_TYPES:
+                self._terminal_count += 1
+                if self._terminal_count > 1:
+                    raise LifecycleStateMachineError("multiple terminal lifecycle events are not allowed")
+                self._terminal_seen = True
+            self._last_stage = stage
+            return
+
+        if event_type not in _OUTPUT_ITEM_EVENT_TYPES:
+            return
+
+        if self._last_stage < 0:
+            raise LifecycleStateMachineError("output item events cannot appear before response.created")
+        if self._terminal_seen:
+            raise LifecycleStateMachineError("output item events cannot appear after terminal lifecycle event")
+
+        payload = event.get("payload")
+        payload_mapping = payload if isinstance(payload, Mapping) else {}
+        output_index_raw = payload_mapping.get("output_index", 0)
+        output_index = output_index_raw if isinstance(output_index_raw, int) and output_index_raw >= 0 else 0
+
+        if event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value:
+            if output_index in self._done_indexes:
+                raise LifecycleStateMachineError("cannot add output item after it has been marked done")
+            self._added_indexes.add(output_index)
+            return
+
+        if output_index not in self._added_indexes:
+            raise LifecycleStateMachineError("output item delta/done requires a preceding output_item.added")
+
+        if event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value:
+            self._done_indexes.add(output_index)
+            return
+
+        if event_type == OUTPUT_ITEM_DELTA_EVENT_TYPE and output_index in self._done_indexes:
+            raise LifecycleStateMachineError("output item delta cannot appear after output_item.done")
+
+
 def validate_response_event_stream(events: Sequence[Mapping[str, Any]]) -> None:
     """Validate lifecycle and output-item event ordering for a response stream.
 
@@ -50,61 +124,9 @@ def validate_response_event_stream(events: Sequence[Mapping[str, Any]]) -> None:
     if not events:
         raise LifecycleStateMachineError("event stream cannot be empty")
 
-    first_type = events[0].get("type")
-    if first_type != EVENT_TYPE.RESPONSE_CREATED.value:
-        raise LifecycleStateMachineError("first lifecycle event must be response.created")
-
-    terminal_count = 0
-    last_stage = -1
-    terminal_seen = False
-    added_indexes: set[int] = set()
-    done_indexes: set[int] = set()
-
-    for raw_event in events:
-        event_type = raw_event.get("type")
-        if not isinstance(event_type, str) or not event_type:
-            raise LifecycleStateMachineError("each lifecycle event must include a non-empty type")
-
-        stage = _EVENT_STAGES.get(event_type)
-        if stage is not None:
-            if stage < last_stage:
-                raise LifecycleStateMachineError("lifecycle events are out of order")
-            if event_type in _TERMINAL_EVENT_TYPES:
-                terminal_count += 1
-                if terminal_count > 1:
-                    raise LifecycleStateMachineError("multiple terminal lifecycle events are not allowed")
-                terminal_seen = True
-            last_stage = stage
-            continue
-
-        if event_type not in _OUTPUT_ITEM_EVENT_TYPES:
-            continue
-
-        if last_stage < 0:
-            raise LifecycleStateMachineError("output item events cannot appear before response.created")
-        if terminal_seen:
-            raise LifecycleStateMachineError("output item events cannot appear after terminal lifecycle event")
-
-        payload = raw_event.get("payload")
-        payload_mapping = payload if isinstance(payload, Mapping) else {}
-        output_index_raw = payload_mapping.get("output_index", 0)
-        output_index = output_index_raw if isinstance(output_index_raw, int) and output_index_raw >= 0 else 0
-
-        if event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value:
-            if output_index in done_indexes:
-                raise LifecycleStateMachineError("cannot add output item after it has been marked done")
-            added_indexes.add(output_index)
-            continue
-
-        if output_index not in added_indexes:
-            raise LifecycleStateMachineError("output item delta/done requires a preceding output_item.added")
-
-        if event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value:
-            done_indexes.add(output_index)
-            continue
-
-        if event_type == OUTPUT_ITEM_DELTA_EVENT_TYPE and output_index in done_indexes:
-            raise LifecycleStateMachineError("output item delta cannot appear after output_item.done")
+    validator = EventStreamValidator()
+    for event in events:
+        validator.validate_next(event)
 
 
 def normalize_lifecycle_events(
