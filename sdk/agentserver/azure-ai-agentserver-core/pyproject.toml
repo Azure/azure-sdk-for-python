@@ -26,6 +26,14 @@ dependencies = [
     "opentelemetry-api>=1.20.0",
     "opentelemetry-sdk>=1.20.0",
     "opentelemetry-exporter-otlp-proto-grpc>=1.20.0",
+]
+
+[project.optional-dependencies]
+# azure-monitor-opentelemetry-exporter is kept as an optional dep because
+# the CI dev-build tool rewrites azure-* dependency version specs in a way
+# that makes the published beta version (>=1.0.0b21) unresolvable.
+# The exporter is imported lazily with try/except in _tracing.py.
+azure-monitor = [
     "azure-monitor-opentelemetry-exporter>=1.0.0b21",
 ]
 
