@@ -284,8 +284,8 @@ class AgentServerHost(Starlette):
         logger.info("AgentServerHost starting on %s:%s", host, resolved_port)
         config = self._build_hypercorn_config(host, resolved_port)
 
-        # Register SIGTERM handler to forward the signal to child processes
-        # before Hypercorn's own graceful shutdown kicks in.
+        # Register SIGTERM handler to log the signal and initiate
+        # Hypercorn's graceful shutdown.
         original_sigterm = signal.getsignal(signal.SIGTERM)
 
         def _handle_sigterm(signum: int, frame: Any) -> None:
@@ -353,9 +353,15 @@ class AgentServerHost(Starlette):
         :return: An async iterator with interleaved keep-alive frames.
         """
         ait = iterator.__aiter__()
+        # Reuse the same __anext__ task across timeouts to avoid cancelling
+        # the upstream iterator when wait_for expires.
+        pending: "Optional[asyncio.Task[AgentServerHost._Content]]" = None
         while True:
+            if pending is None:
+                pending = asyncio.ensure_future(ait.__anext__())
             try:
-                chunk = await asyncio.wait_for(ait.__anext__(), timeout=interval)
+                chunk = await asyncio.wait_for(asyncio.shield(pending), timeout=interval)
+                pending = None  # consumed — create new task next iteration
                 yield chunk
             except asyncio.TimeoutError:
                 yield b": keep-alive\n\n"

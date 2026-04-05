@@ -7,8 +7,10 @@ Provides the invocation protocol endpoints and handler decorators
 as a :class:`~azure.ai.agentserver.core.AgentServerHost` subclass.
 """
 import inspect
+import logging
 import os
 import re
+import threading
 import uuid
 from collections.abc import Awaitable, Callable  # pylint: disable=import-error
 from typing import Any, Optional
@@ -60,16 +62,20 @@ class _InvocationLogFilter(logging.Filter):
 
 
 # Install once on first request — no per-request add/remove needed.
+_log_filter_lock = threading.Lock()
 _log_filter_installed = False
 
 
 def _ensure_log_filter() -> None:
-    """Install the log filter on first use (lazy initialization)."""
+    """Install the log filter on first use (lazy, thread-safe)."""
     global _log_filter_installed  # pylint: disable=global-statement
     if _log_filter_installed:
         return
-    logger.addFilter(_InvocationLogFilter())
-    _log_filter_installed = True
+    with _log_filter_lock:
+        if _log_filter_installed:
+            return
+        logger.addFilter(_InvocationLogFilter())
+        _log_filter_installed = True
 
 
 def _sanitize_id(value: str, fallback: str) -> str:

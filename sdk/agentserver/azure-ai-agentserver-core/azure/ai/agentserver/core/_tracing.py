@@ -108,8 +108,6 @@ def request_span(
     For **non-streaming** requests use ``end_on_exit=True`` (default).
     For **streaming** use ``end_on_exit=False`` and end via :func:`trace_stream`.
 
-    No-op when ``opentelemetry-api`` is not installed — yields ``None``.
-
     :param headers: HTTP request headers.
     :param request_id: The request/invocation ID.
     :param operation: Span operation (e.g. ``"invoke_agent"``).
