@@ -151,13 +151,17 @@ def build_create_span_tags(
     agent_name, agent_version, agent_id = _resolve_agent_fields(ctx.agent_reference)
     tags: dict[str, Any] = {
         "service.name": _SERVICE_NAME,
-        "gen_ai.provider.name": _SERVICE_NAME,
+        "gen_ai.provider.name": _PROVIDER_NAME,
         "gen_ai.system": "responses",
         "gen_ai.operation.name": "invoke_agent",
         "gen_ai.response.id": ctx.response_id,
         "gen_ai.request.model": ctx.model,
         "gen_ai.agent.name": agent_name,
         "gen_ai.agent.id": agent_id,
+        # Namespaced tags per spec §7.2
+        "azure.ai.agentserver.responses.response_id": ctx.response_id,
+        "azure.ai.agentserver.responses.conversation_id": ctx.conversation_id or "",
+        "azure.ai.agentserver.responses.streaming": ctx.stream,
     }
     if agent_version is not None:
         tags["gen_ai.agent.version"] = agent_version
@@ -168,7 +172,8 @@ def build_create_span_tags(
     return tags
 
 
-_SERVICE_NAME = "azure.ai.responses"
+_SERVICE_NAME = "azure.ai.agentserver"
+_PROVIDER_NAME = "AzureAI Hosted Agents"
 _MAX_REQUEST_ID_LEN = 256
 
 
@@ -184,7 +189,7 @@ def _initial_create_span_tags() -> dict[str, Any]:
     """
     return {
         "service.name": _SERVICE_NAME,
-        "gen_ai.provider.name": _SERVICE_NAME,
+        "gen_ai.provider.name": _PROVIDER_NAME,
         "gen_ai.system": "responses",
         "gen_ai.operation.name": "invoke_agent",
     }
@@ -234,10 +239,14 @@ def build_create_otel_attrs(
     agent_name, agent_version, agent_id = _resolve_agent_fields(ctx.agent_reference)
     attrs: dict[str, str] = {
         "gen_ai.response.id": ctx.response_id,
-        "gen_ai.provider.name": _SERVICE_NAME,
+        "gen_ai.provider.name": _PROVIDER_NAME,
         "service.name": _SERVICE_NAME,
         "gen_ai.operation.name": "invoke_agent",
         "gen_ai.request.model": ctx.model or "",
+        # Namespaced tags per spec §7.2
+        "azure.ai.agentserver.responses.response_id": ctx.response_id,
+        "azure.ai.agentserver.responses.conversation_id": ctx.conversation_id or "",
+        "azure.ai.agentserver.responses.streaming": str(ctx.stream).lower(),
     }
     if ctx.conversation_id:
         attrs["gen_ai.conversation.id"] = ctx.conversation_id

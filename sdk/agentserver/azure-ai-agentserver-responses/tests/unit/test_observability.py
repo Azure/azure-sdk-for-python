@@ -55,9 +55,9 @@ def test_observability__build_create_span_tags_uses_agent_name_and_model() -> No
     )
     tags = build_create_span_tags(ctx)
 
-    assert tags["service.name"] == "azure.ai.responses"
+    assert tags["service.name"] == "azure.ai.agentserver"
     assert tags["gen_ai.operation.name"] == "invoke_agent"
-    assert tags["gen_ai.provider.name"] == "azure.ai.responses"
+    assert tags["gen_ai.provider.name"] == "AzureAI Hosted Agents"
     assert tags["gen_ai.response.id"] == "resp_abc"
     assert tags["gen_ai.request.model"] == "gpt-4o-mini"
     assert tags["gen_ai.agent.name"] == "agent-one"
@@ -168,8 +168,8 @@ def test_observability__build_create_otel_attrs_includes_all_fields() -> None:
     attrs = build_create_otel_attrs(ctx, request_id="req-1")
 
     assert attrs["gen_ai.response.id"] == "resp_1"
-    assert attrs["service.name"] == "azure.ai.responses"
-    assert attrs["gen_ai.provider.name"] == "azure.ai.responses"
+    assert attrs["service.name"] == "azure.ai.agentserver"
+    assert attrs["gen_ai.provider.name"] == "AzureAI Hosted Agents"
     assert attrs["gen_ai.operation.name"] == "invoke_agent"
     assert attrs["gen_ai.request.model"] == "gpt-4o"
     assert attrs["gen_ai.conversation.id"] == "conv_x"

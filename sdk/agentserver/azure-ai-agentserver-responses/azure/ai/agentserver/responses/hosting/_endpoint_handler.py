@@ -10,10 +10,10 @@ logic lives in :class:`_ResponseOrchestrator`.
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
+import contextvars
+import logging
 from copy import deepcopy
 from typing import TYPE_CHECKING, Any
-
-import logging
 
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
@@ -62,7 +62,14 @@ from ..streaming._helpers import EVENT_TYPE
 if TYPE_CHECKING:
     from ._routing import ResponsesAgentServerHost
 
+from opentelemetry import baggage as _otel_baggage, context as _otel_context
+
 logger = logging.getLogger("azure.ai.agentserver")
+
+# Structured log scope context variables (spec §7.4)
+_response_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("ResponseId", default="")
+_conversation_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("ConversationId", default="")
+_streaming_var: contextvars.ContextVar[str] = contextvars.ContextVar("Streaming", default="")
 
 
 class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
@@ -371,6 +378,24 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         ) as otel_span:
             self._safe_set_attrs(otel_span, build_create_otel_attrs(ctx, request_id=request_id))
 
+            # Set W3C baggage per spec §7.3
+            bag_ctx = _otel_context.get_current()
+            bag_ctx = _otel_baggage.set_baggage(
+                "azure.ai.agentserver.response_id", response_id, context=bag_ctx)
+            bag_ctx = _otel_baggage.set_baggage(
+                "azure.ai.agentserver.conversation_id", ctx.conversation_id or "", context=bag_ctx)
+            bag_ctx = _otel_baggage.set_baggage(
+                "azure.ai.agentserver.streaming", str(ctx.stream), context=bag_ctx)
+            if request_id:
+                bag_ctx = _otel_baggage.set_baggage(
+                    "azure.ai.agentserver.x-request-id", request_id, context=bag_ctx)
+            baggage_token = _otel_context.attach(bag_ctx)
+
+            # Set structured log scope per spec §7.4
+            rid_token = _response_id_var.set(response_id)
+            cid_token = _conversation_id_var.set(ctx.conversation_id or "")
+            str_token = _streaming_var.set(str(ctx.stream).lower())
+
             try:
                 if ctx.stream:
                     sse_response = StreamingResponse(
@@ -402,6 +427,14 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 logger.error("Unexpected error in create (response_id=%s)", ctx.response_id, exc_info=exc)
                 end_span(otel_span, exc=exc)
                 raise
+            finally:
+                _response_id_var.reset(rid_token)
+                _conversation_id_var.reset(cid_token)
+                _streaming_var.reset(str_token)
+                try:
+                    _otel_context.detach(baggage_token)
+                except ValueError:
+                    pass
 
     async def handle_get(self, request: Request) -> Response:  # pylint: disable=too-many-return-statements
         """Route handler for ``GET /responses/{response_id}``.

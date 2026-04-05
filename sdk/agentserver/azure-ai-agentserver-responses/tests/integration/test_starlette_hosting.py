@@ -129,7 +129,7 @@ def test_hosting__create_emits_single_root_span_with_key_tags_and_identity_heade
     assert span.name == "create_response"
     assert span.error is None
     assert span.ended_at is not None
-    assert span.tags["service.name"] == "azure.ai.responses"
+    assert span.tags["service.name"] == "azure.ai.agentserver"
     assert span.tags["gen_ai.operation.name"] == "invoke_agent"
     assert span.tags["gen_ai.system"] == "responses"
     assert span.tags["gen_ai.request.model"] == "gpt-4o-mini"
