@@ -30,13 +30,13 @@ from ..streaming._state_machine import LifecycleStateMachineError, normalize_lif
 from ._background import _refresh_background_status
 from ._execution_context import _ExecutionContext
 from ..models.runtime import build_cancelled_response
-from ._http_errors import (
-    _deleted_response,
-    _error_response,
-    _invalid_mode,
-    _invalid_request,
-    _not_found,
-    _service_unavailable,
+from ._validation import (
+    deleted_response as _deleted_response,
+    error_response as _error_response,
+    invalid_mode_response as _invalid_mode,
+    invalid_request_response as _invalid_request,
+    not_found_response as _not_found,
+    service_unavailable_response as _service_unavailable,
 )
 from ._observability import (
     _initial_create_span_tags,

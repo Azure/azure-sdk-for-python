@@ -6,6 +6,8 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
+from starlette.responses import JSONResponse
+
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
 from azure.ai.agentserver.responses.models._generated import ApiErrorResponse, CreateResponse, Error
 from azure.ai.agentserver.responses.models._generated._validators import validate_CreateResponse
@@ -248,4 +250,83 @@ def to_api_error_response(error: Exception) -> ApiErrorResponse:
         code="internal_error",
         error_type="server_error",
         debug_info={"exception_type": type(error).__name__},
+    )
+
+
+# ---------------------------------------------------------------------------
+# HTTP error response factories (moved from _http_errors.py)
+# ---------------------------------------------------------------------------
+
+
+def _json_payload(value: Any) -> Any:
+    """Convert a value to a JSON-serializable form."""
+    if hasattr(value, "as_dict"):
+        return value.as_dict()  # type: ignore[no-any-return]
+    return value
+
+
+def _api_error(
+    *,
+    message: str,
+    code: str,
+    param: str | None = None,
+    error_type: str = "invalid_request_error",
+    status_code: int,
+    headers: dict[str, str],
+) -> JSONResponse:
+    """Build a standard API error ``JSONResponse``."""
+    payload = _json_payload(
+        build_api_error_response(message=message, code=code, param=param, error_type=error_type)
+    )
+    return JSONResponse(payload, status_code=status_code, headers=headers)
+
+
+def error_response(error: Exception, headers: dict[str, str]) -> JSONResponse:
+    """Map an exception to an appropriate HTTP error ``JSONResponse``."""
+    envelope = to_api_error_response(error)
+    payload = _json_payload(envelope)
+    error_type = payload.get("error", {}).get("type") if isinstance(payload, dict) else None
+    status_code = 500
+    if error_type == "invalid_request_error":
+        status_code = 400
+    elif error_type == "not_found_error":
+        status_code = 404
+    return JSONResponse(payload, status_code=status_code, headers=headers)
+
+
+def not_found_response(response_id: str, headers: dict[str, str]) -> JSONResponse:
+    """Build a 404 Not Found error response."""
+    return _api_error(
+        message=f"Response with id '{response_id}' not found.",
+        code="invalid_request", param="response_id",
+        error_type="invalid_request_error", status_code=404, headers=headers,
+    )
+
+
+def invalid_request_response(message: str, headers: dict[str, str], *, param: str | None = None) -> JSONResponse:
+    """Build a 400 Bad Request error response."""
+    return _api_error(
+        message=message, code="invalid_request", param=param,
+        error_type="invalid_request_error", status_code=400, headers=headers,
+    )
+
+
+def invalid_mode_response(message: str, headers: dict[str, str], *, param: str | None = None) -> JSONResponse:
+    """Build a 400 Bad Request error response for an invalid mode combination."""
+    payload = _json_payload(build_invalid_mode_error_response(message, param=param))
+    return JSONResponse(payload, status_code=400, headers=headers)
+
+
+def service_unavailable_response(message: str, headers: dict[str, str]) -> JSONResponse:
+    """Build a 503 Service Unavailable error response."""
+    return _api_error(
+        message=message, code="service_unavailable", param=None,
+        error_type="server_error", status_code=503, headers=headers,
+    )
+
+
+def deleted_response(response_id: str, headers: dict[str, str]) -> JSONResponse:
+    """Build a 400 error response indicating the response has been deleted."""
+    return invalid_request_response(
+        f"Response with id '{response_id}' has been deleted.", headers, param="response_id",
     )
