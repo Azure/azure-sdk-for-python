@@ -1,10 +1,10 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Invocation protocol handler for AgentHost.
+"""Invocation protocol host for Azure AI Hosted Agents.
 
-Provides the invocation protocol endpoints and handler decorators.
-Registers routes with the ``AgentHost`` on construction.
+Provides the invocation protocol endpoints and handler decorators
+as a :class:`~azure.ai.agentserver.core.AgentServerHost` subclass.
 """
 import contextlib
 import inspect
@@ -12,20 +12,18 @@ import os
 import re
 import uuid
 from collections.abc import Awaitable, Callable  # pylint: disable=import-error
-from typing import TYPE_CHECKING, Any, Optional
+from typing import Any, Optional
 
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 from starlette.routing import Route
 
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
+    AgentServerHost,
     get_logger,
     Constants,
     create_error_response,
 )
-
-if TYPE_CHECKING:
-    from azure.ai.agentserver.core import AgentHost, TracingHelper
 
 from ._constants import InvocationConstants
 
@@ -55,34 +53,30 @@ def _sanitize_id(value: str, fallback: str) -> str:
     return value
 
 
-class InvocationHandler:
-    """Invocation protocol handler that plugs into an ``AgentHost``.
+class InvocationAgentServerHost(AgentServerHost):
+    """Invocation protocol host for Azure AI Hosted Agents.
 
-    Creates the invocation protocol endpoints and registers them with
-    the server.  Use the decorator methods to wire handler functions
-    to the endpoints.
+    A :class:`~azure.ai.agentserver.core.AgentServerHost` subclass that adds
+    the invocation protocol endpoints.  Use the decorator methods to wire
+    handler functions to the endpoints.
 
-    This design supports multi-protocol composition — multiple protocol
-    handlers (e.g. ``InvocationHandler``, ``ResponseHandler``) can be
-    mounted onto the same ``AgentHost``.
+    For multi-protocol agents, compose via cooperative inheritance::
+
+        class MyHost(InvocationAgentServerHost, ResponsesAgentServerHost):
+            pass
 
     Usage::
 
-        from azure.ai.agentserver.core import AgentHost
-        from azure.ai.agentserver.invocations import InvocationHandler
+        from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
-        server = AgentHost()
-        invocations = InvocationHandler(server)
+        app = InvocationAgentServerHost()
 
-        @invocations.invoke_handler
+        @app.invoke_handler
         async def handle(request):
             return JSONResponse({"ok": True})
 
-        server.run()
+        app.run()
 
-    :param server: The ``AgentHost`` to register invocation protocol
-        routes with.
-    :type server: AgentHost
     :param openapi_spec: Optional OpenAPI spec dict.  When provided, the spec
         is served at ``GET /invocations/docs/openapi.json``.
     :type openapi_spec: Optional[dict[str, Any]]
@@ -90,18 +84,17 @@ class InvocationHandler:
 
     def __init__(
         self,
-        server: "AgentHost",
         *,
         openapi_spec: Optional[dict[str, Any]] = None,
+        **kwargs: Any,
     ) -> None:
-        self._tracing: Optional["TracingHelper"] = server.tracing
         self._invoke_fn: Optional[Callable] = None
         self._get_invocation_fn: Optional[Callable] = None
         self._cancel_invocation_fn: Optional[Callable] = None
         self._openapi_spec = openapi_spec
 
-        # Build and cache routes once
-        self._routes: list[Route] = [
+        # Build invocation routes and pass to parent via routes kwarg
+        invocation_routes = [
             Route(
                 "/invocations/docs/openapi.json",
                 self._get_openapi_spec_endpoint,
@@ -128,21 +121,9 @@ class InvocationHandler:
             ),
         ]
 
-        # Register routes with the server
-        server.register_routes(self._routes)
-
-    # ------------------------------------------------------------------
-    # Routes
-    # ------------------------------------------------------------------
-
-    @property
-    def routes(self) -> list[Route]:
-        """Starlette routes for the invocation protocol.
-
-        :return: A list of Route objects for the invocation endpoints.
-        :rtype: list[Route]
-        """
-        return self._routes
+        # Merge with any routes from sibling mixins via cooperative init
+        existing = list(kwargs.pop("routes", None) or [])
+        super().__init__(routes=existing + invocation_routes, **kwargs)
 
     # ------------------------------------------------------------------
     # Handler decorators
@@ -258,49 +239,23 @@ class InvocationHandler:
         self,
         response: StreamingResponse,
         otel_span: Any,
-        baggage_token: Any,
-        span_token: Any,
     ) -> StreamingResponse:
-        """Wrap a streaming response's body iterator with tracing and context cleanup.
+        """Wrap a streaming response's body iterator with span lifecycle.
 
-        Two layers of wrapping are applied in order:
-
-        1. **Inner (tracing):** ``trace_stream`` wraps the body iterator so
-           the OTel span covers the full streaming duration and records any
-           errors that occur while yielding chunks.
-        2. **Outer (context cleanup):** A second async generator detaches the
-           span context and W3C Baggage context *after* all chunks have been
-           sent (or an error occurs).  This ordering ensures the span is
-           ended before the contexts are detached.
+        ``trace_stream`` wraps the body iterator so the OTel span covers
+        the full streaming duration and is ended when iteration completes.
 
         :param response: The ``StreamingResponse`` returned by the user handler.
+        :type response: ~starlette.responses.StreamingResponse
         :param otel_span: The OTel span (or *None* when tracing is disabled).
-        :param baggage_token: Token from ``set_baggage`` (or *None*).
-        :param span_token: Token from ``set_current_span`` (or *None*).
+        :type otel_span: any
         :return: The same response object, with its body_iterator replaced.
+        :rtype: ~starlette.responses.StreamingResponse
         """
-        # When tracing is disabled there is nothing to wrap — skip the
-        # extra async-generator layer to avoid unnecessary overhead on
-        # every streaming chunk.
         if self._tracing is None:
             return response
 
-        # Inner wrap: trace_stream ends the span when iteration completes.
         response.body_iterator = self._tracing.trace_stream(response.body_iterator, otel_span)
-
-        # Outer wrap: detach span context and baggage after all chunks are sent.
-        original_iterator = response.body_iterator
-        tracing = self._tracing  # capture for the closure
-
-        async def _cleanup_iter():  # type: ignore[return-value]
-            try:
-                async for chunk in original_iterator:
-                    yield chunk
-            finally:
-                tracing.detach_context(span_token)
-                tracing.detach_baggage(baggage_token)
-
-        response.body_iterator = _cleanup_iter()
         return response
 
     # ------------------------------------------------------------------
@@ -328,33 +283,14 @@ class InvocationHandler:
         session_id = _sanitize_id(raw_session_id, str(uuid.uuid4()))
         request.state.session_id = session_id
 
-        baggage_token = None
-        span_token = None
-        response: Optional[Response] = None
-        streaming_wrapped = False
-
-        try:
-            otel_span = None
-            if self._tracing is not None:
-                otel_span = self._tracing.start_request_span(
-                    request.headers,
-                    invocation_id,
-                    span_operation="invoke_agent",
-                    operation_name="invoke_agent",
-                    session_id=session_id,
-                )
-                # Make the span the current span in context so that
-                # child spans created by framework handlers are correctly
-                # parented under this span instead of appearing as siblings.
-                span_token = self._tracing.set_current_span(otel_span)
-                self._safe_set_attrs(otel_span, {
-                    InvocationConstants.ATTR_SPAN_INVOCATION_ID: invocation_id,
-                    InvocationConstants.ATTR_SPAN_SESSION_ID: session_id,
-                })
-                baggage_token = self._tracing.set_baggage({
-                    InvocationConstants.ATTR_BAGGAGE_INVOCATION_ID: invocation_id,
-                    InvocationConstants.ATTR_BAGGAGE_SESSION_ID: session_id,
-                })
+        with self._request_span(
+            request.headers, invocation_id, "invoke_agent",
+            operation_name="invoke_agent", session_id=session_id,
+        ) as otel_span:
+            self._safe_set_attrs(otel_span, {
+                InvocationConstants.ATTR_SPAN_INVOCATION_ID: invocation_id,
+                InvocationConstants.ATTR_SPAN_SESSION_ID: session_id,
+            })
 
             try:
                 response = await self._dispatch_invoke(request)
@@ -396,24 +332,45 @@ class InvocationHandler:
                 )
 
             if isinstance(response, StreamingResponse):
-                wrapped = self._wrap_streaming_response(response, otel_span, baggage_token, span_token)
-                streaming_wrapped = True
-                return wrapped
+                # trace_stream will end the span when streaming completes
+                return self._wrap_streaming_response(response, otel_span)
 
-            # Non-streaming: end the span immediately.
+            # Non-streaming: end span now
             if self._tracing is not None:
                 self._tracing.end_span(otel_span)
 
             return response
-        finally:
-            # For non-streaming responses (or error paths that returned
-            # before reaching _wrap_streaming_response), detach context
-            # and baggage immediately.  Streaming responses handle this in
-            # _wrap_streaming_response's cleanup iterator instead.
-            if not streaming_wrapped:
-                if self._tracing is not None:
-                    self._tracing.detach_context(span_token)
-                    self._tracing.detach_baggage(baggage_token)
+
+    def _request_span(
+        self,
+        headers: Any,
+        invocation_id: str,
+        span_operation: str,
+        operation_name: Optional[str] = None,
+        session_id: str = "",
+    ) -> Any:
+        """Create a request span — returns a no-op context manager when tracing is off.
+
+        :param headers: HTTP request headers.
+        :type headers: any
+        :param invocation_id: The request/invocation ID.
+        :type invocation_id: str
+        :param span_operation: Span operation name.
+        :type span_operation: str
+        :param operation_name: Optional ``gen_ai.operation.name`` value.
+        :type operation_name: str or None
+        :param session_id: Session ID (empty string if absent).
+        :type session_id: str
+        :return: Context manager yielding the OTel span or *None*.
+        :rtype: any
+        """
+        if self._tracing is not None:
+            return self._tracing.request_span(
+                headers, invocation_id, span_operation,
+                operation_name=operation_name, session_id=session_id,
+                end_on_exit=False,
+            )
+        return contextlib.nullcontext(None)
 
     async def _traced_invocation_endpoint(
         self,

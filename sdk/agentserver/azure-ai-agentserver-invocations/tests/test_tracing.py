@@ -11,8 +11,8 @@ from httpx import ASGITransport, AsyncClient
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.invocations import InvocationHandler
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
+
 
 # ---------------------------------------------------------------------------
 # Module-level OTel setup with in-memory exporter
@@ -61,12 +61,11 @@ def _get_spans():
 # ---------------------------------------------------------------------------
 
 def _make_tracing_server(**kwargs):
-    """Create an AgentHost with tracing enabled."""
+    """Create an InvocationAgentServerHost with tracing enabled."""
     with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
-        server = AgentHost(**kwargs)
-    invocations = InvocationHandler(server)
+        server = InvocationAgentServerHost(**kwargs)
 
-    @invocations.invoke_handler
+    @server.invoke_handler
     async def handle(request: Request) -> Response:
         body = await request.body()
         return Response(content=body, media_type="application/octet-stream")
@@ -77,25 +76,24 @@ def _make_tracing_server(**kwargs):
 def _make_tracing_server_with_get_cancel(**kwargs):
     """Create a tracing-enabled server with get/cancel handlers."""
     with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
-        server = AgentHost(**kwargs)
-    invocations = InvocationHandler(server)
+        server = InvocationAgentServerHost(**kwargs)
 
     store: dict[str, bytes] = {}
 
-    @invocations.invoke_handler
+    @server.invoke_handler
     async def handle(request: Request) -> Response:
         body = await request.body()
         store[request.state.invocation_id] = body
         return Response(content=body, media_type="application/octet-stream")
 
-    @invocations.get_invocation_handler
+    @server.get_invocation_handler
     async def get_handler(request: Request) -> Response:
         inv_id = request.path_params["invocation_id"]
         if inv_id in store:
             return Response(content=store[inv_id])
         return JSONResponse({"error": {"code": "not_found", "message": "Not found"}}, status_code=404)
 
-    @invocations.cancel_invocation_handler
+    @app.cancel_invocation_handler
     async def cancel_handler(request: Request) -> Response:
         inv_id = request.path_params["invocation_id"]
         if inv_id in store:
@@ -103,16 +101,15 @@ def _make_tracing_server_with_get_cancel(**kwargs):
             return JSONResponse({"status": "cancelled"})
         return JSONResponse({"error": {"code": "not_found", "message": "Not found"}}, status_code=404)
 
-    return server
+    return app
 
 
 def _make_failing_tracing_server(**kwargs):
     """Create a tracing-enabled server whose handler raises."""
     with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
-        server = AgentHost(**kwargs)
-    invocations = InvocationHandler(server)
+        server = InvocationAgentServerHost(**kwargs)
 
-    @invocations.invoke_handler
+    @server.invoke_handler
     async def handle(request: Request) -> Response:
         raise ValueError("tracing error test")
 
@@ -122,10 +119,9 @@ def _make_failing_tracing_server(**kwargs):
 def _make_streaming_tracing_server(**kwargs):
     """Create a tracing-enabled server with streaming response."""
     with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
-        server = AgentHost(**kwargs)
-    invocations = InvocationHandler(server)
+        server = InvocationAgentServerHost(**kwargs)
 
-    @invocations.invoke_handler
+    @server.invoke_handler
     async def handle(request: Request) -> StreamingResponse:
         async def generate():
             yield b"chunk1\n"
@@ -146,14 +142,13 @@ async def test_tracing_disabled_by_default():
     if _MODULE_EXPORTER:
         _MODULE_EXPORTER.clear()
 
-    server = AgentHost()
-    invocations = InvocationHandler(server)
+    app = InvocationAgentServerHost()
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> Response:
         return Response(content=b"ok")
 
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         await client.post("/invocations", content=b"test")
 
@@ -173,7 +168,7 @@ async def test_tracing_disabled_by_default():
 async def test_tracing_enabled_creates_invoke_span():
     """Tracing enabled creates a span named 'invoke_agent'."""
     server = _make_tracing_server()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         await client.post("/invocations", content=b"test")
 
@@ -191,7 +186,7 @@ async def test_tracing_enabled_creates_invoke_span():
 async def test_invoke_error_records_exception():
     """When handler raises, the span records the exception."""
     server = _make_failing_tracing_server()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations", content=b"test")
     assert resp.status_code == 500
@@ -212,7 +207,7 @@ async def test_invoke_error_records_exception():
 async def test_get_invocation_creates_span():
     """GET /invocations/{id} creates a span."""
     server = _make_tracing_server_with_get_cancel()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations", content=b"data")
         inv_id = resp.headers["x-agent-invocation-id"]
@@ -227,7 +222,7 @@ async def test_get_invocation_creates_span():
 async def test_cancel_invocation_creates_span():
     """POST /invocations/{id}/cancel creates a span."""
     server = _make_tracing_server_with_get_cancel()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations", content=b"data")
         inv_id = resp.headers["x-agent-invocation-id"]
@@ -247,14 +242,13 @@ async def test_tracing_via_appinsights_env_var():
     """Tracing is enabled when APPLICATIONINSIGHTS_CONNECTION_STRING is set."""
     with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
         with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
-            server = AgentHost()
-    invocations = InvocationHandler(server)
+            app = InvocationAgentServerHost()
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> Response:
         return Response(content=b"ok")
 
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         await client.post("/invocations", content=b"test")
 
@@ -274,17 +268,16 @@ async def test_no_tracing_when_no_endpoints():
     env.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
     env.pop("OTEL_EXPORTER_OTLP_ENDPOINT", None)
     with patch.dict(os.environ, env, clear=True):
-        server = AgentHost()
-    invocations = InvocationHandler(server)
+        app = InvocationAgentServerHost()
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> Response:
         return Response(content=b"ok")
 
     if _MODULE_EXPORTER:
         _MODULE_EXPORTER.clear()
 
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         await client.post("/invocations", content=b"test")
 
@@ -301,7 +294,7 @@ async def test_no_tracing_when_no_endpoints():
 async def test_traceparent_propagation():
     """Server propagates traceparent header into span context."""
     server = _make_tracing_server()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
 
     # Create a traceparent
     trace_id_hex = uuid.uuid4().hex
@@ -332,7 +325,7 @@ async def test_traceparent_propagation():
 async def test_streaming_creates_span():
     """Streaming response creates and completes a span."""
     server = _make_streaming_tracing_server()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations", content=b"test")
     assert resp.status_code == 200
@@ -350,7 +343,7 @@ async def test_streaming_creates_span():
 async def test_genai_attributes_on_invoke_span():
     """Invoke span has GenAI semantic convention attributes."""
     server = _make_tracing_server()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         await client.post("/invocations", content=b"test")
 
@@ -372,7 +365,7 @@ async def test_genai_attributes_on_invoke_span():
 async def test_session_id_in_conversation_id():
     """Session ID is set as gen_ai.conversation.id on invoke span."""
     server = _make_tracing_server()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         await client.post(
             "/invocations?agent_session_id=test-session",
@@ -394,7 +387,7 @@ async def test_session_id_in_conversation_id():
 async def test_genai_attributes_on_get_span():
     """GET invocation span has GenAI attributes."""
     server = _make_tracing_server_with_get_cancel()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations", content=b"data")
         inv_id = resp.headers["x-agent-invocation-id"]
@@ -416,7 +409,7 @@ async def test_genai_attributes_on_get_span():
 async def test_namespaced_invocation_id_attribute():
     """Invoke span has azure.ai.agentserver.invocations.invocation_id."""
     server = _make_tracing_server()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations", content=b"test")
         inv_id = resp.headers["x-agent-invocation-id"]
@@ -436,7 +429,7 @@ async def test_namespaced_invocation_id_attribute():
 async def test_baggage_leaf_customer_span_id():
     """Baggage leaf_customer_span_id overrides parent span ID."""
     server = _make_tracing_server()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
 
     trace_id_hex = uuid.uuid4().hex
     original_span_id = uuid.uuid4().hex[:16]
@@ -477,7 +470,7 @@ async def test_agent_name_in_span_name():
     }):
         server = _make_tracing_server()
 
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         await client.post("/invocations", content=b"test")
 
@@ -498,7 +491,7 @@ async def test_agent_name_only_in_span_name():
     with patch.dict(os.environ, env_copy, clear=True):
         server = _make_tracing_server()
 
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         await client.post("/invocations", content=b"test")
 

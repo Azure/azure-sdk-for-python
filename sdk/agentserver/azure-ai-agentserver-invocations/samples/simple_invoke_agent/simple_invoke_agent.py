@@ -14,27 +14,19 @@ Usage::
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.invocations import InvocationHandler
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 
-server = AgentHost()
-invocations = InvocationHandler(server)
+app = InvocationAgentServerHost()
 
 
-@invocations.invoke_handler
+@app.invoke_handler
 async def handle_invoke(request: Request) -> Response:
-    """Process the invocation by echoing a greeting.
-
-    :param request: The raw Starlette request.
-    :type request: starlette.requests.Request
-    :return: JSON greeting response.
-    :rtype: starlette.responses.JSONResponse
-    """
+    """Process the invocation by echoing a greeting."""
     data = await request.json()
     greeting = f"Hello, {data['name']}!"
     return JSONResponse({"greeting": greeting})
 
 
 if __name__ == "__main__":
-    server.run()
+    app.run()

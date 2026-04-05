@@ -6,14 +6,13 @@ import contextlib
 import os
 from unittest import mock
 
-from azure.ai.agentserver.core import AgentHost
+from azure.ai.agentserver.core import AgentServerHost
 from azure.ai.agentserver.core._config import (
     resolve_agent_name,
     resolve_agent_version,
     resolve_appinsights_connection_string,
 )
 from azure.ai.agentserver.core._constants import Constants
-from azure.ai.agentserver.core._tracing import _parse_baggage_key
 
 
 # ------------------------------------------------------------------ #
@@ -29,7 +28,7 @@ class TestTracingToggle:
         env.pop(Constants.APPLICATIONINSIGHTS_CONNECTION_STRING, None)
         env.pop(Constants.OTEL_EXPORTER_OTLP_ENDPOINT, None)
         with mock.patch.dict(os.environ, env, clear=True):
-            agent = AgentHost()
+            agent = AgentServerHost()
             assert agent.tracing is None
 
     def test_tracing_enabled_via_appinsights_env_var(self) -> None:
@@ -38,7 +37,7 @@ class TestTracingToggle:
                 "azure.ai.agentserver.core._tracing.TracingHelper.__init__",
                 return_value=None,
             ):
-                agent = AgentHost()
+                agent = AgentServerHost()
                 assert agent.tracing is not None
 
     def test_tracing_enabled_via_otlp_env_var(self) -> None:
@@ -47,7 +46,7 @@ class TestTracingToggle:
                 "azure.ai.agentserver.core._tracing.TracingHelper.__init__",
                 return_value=None,
             ):
-                agent = AgentHost()
+                agent = AgentServerHost()
                 assert agent.tracing is not None
 
     def test_tracing_enabled_via_constructor_connection_string(self) -> None:
@@ -55,7 +54,7 @@ class TestTracingToggle:
             "azure.ai.agentserver.core._tracing.TracingHelper.__init__",
             return_value=None,
         ):
-            agent = AgentHost(application_insights_connection_string="InstrumentationKey=ctor")
+            agent = AgentServerHost(applicationinsights_connection_string="InstrumentationKey=ctor")
             assert agent.tracing is not None
 
 
@@ -144,15 +143,15 @@ class TestSetupAzureMonitor:
 
 
 class TestConstructorConnectionString:
-    """Verify AgentHost forwards the connection string to TracingHelper."""
+    """Verify AgentServerHost forwards the connection string to TracingHelper."""
 
     def test_constructor_passes_connection_string(self) -> None:
         with mock.patch(
             "azure.ai.agentserver.core._tracing.TracingHelper.__init__",
             return_value=None,
         ) as mock_init:
-            AgentHost(
-                application_insights_connection_string="InstrumentationKey=ctor",
+            AgentServerHost(
+                applicationinsights_connection_string="InstrumentationKey=ctor",
             )
             mock_init.assert_called_once_with(connection_string="InstrumentationKey=ctor")
 
@@ -186,39 +185,4 @@ class TestAgentIdentityResolution:
             assert resolve_agent_version() == ""
 
 
-# ------------------------------------------------------------------ #
-# Baggage parsing (unit tests for _parse_baggage_key)
-# ------------------------------------------------------------------ #
 
-
-class TestParseBaggageKey:
-    """Unit tests for _parse_baggage_key()."""
-
-    def test_single_key(self) -> None:
-        assert _parse_baggage_key("leaf_customer_span_id=abc123", "leaf_customer_span_id") == "abc123"
-
-    def test_multiple_keys(self) -> None:
-        baggage = "key1=val1,leaf_customer_span_id=def456,key2=val2"
-        assert _parse_baggage_key(baggage, "leaf_customer_span_id") == "def456"
-
-    def test_key_not_found(self) -> None:
-        assert _parse_baggage_key("key1=val1,key2=val2", "leaf_customer_span_id") is None
-
-    def test_empty_baggage(self) -> None:
-        assert _parse_baggage_key("", "leaf_customer_span_id") is None
-
-    def test_key_with_properties(self) -> None:
-        baggage = "leaf_customer_span_id=abc123;prop1=x"
-        assert _parse_baggage_key(baggage, "leaf_customer_span_id") == "abc123"
-
-    def test_whitespace_handling(self) -> None:
-        baggage = " leaf_customer_span_id = abc123 , other = val "
-        assert _parse_baggage_key(baggage, "leaf_customer_span_id") == "abc123"
-
-    def test_value_with_equals(self) -> None:
-        baggage = "leaf_customer_span_id=abc=123"
-        assert _parse_baggage_key(baggage, "leaf_customer_span_id") == "abc=123"
-
-    def test_no_equals_in_member(self) -> None:
-        baggage = "malformed_entry,leaf_customer_span_id=good"
-        assert _parse_baggage_key(baggage, "leaf_customer_span_id") == "good"

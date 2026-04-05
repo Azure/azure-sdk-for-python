@@ -1,4 +1,4 @@
-# Azure AI AgentHost Invocations for Python
+# Azure AI AgentServerHost Invocations for Python
 
 The `azure-ai-agentserver-invocations` package provides the invocation protocol endpoints for Azure AI Hosted Agent containers. It plugs into the [`azure-ai-agentserver-core`](https://pypi.org/project/azure-ai-agentserver-core/) host framework and adds the full invocation lifecycle: `POST /invocations`, `GET /invocations/{id}`, `POST /invocations/{id}/cancel`, and `GET /invocations/docs/openapi.json`.
 
@@ -18,13 +18,13 @@ This automatically installs `azure-ai-agentserver-core` as a dependency.
 
 ## Key concepts
 
-### InvocationHandler
+### InvocationAgentServerHost
 
-`InvocationHandler` is the composable protocol handler that mounts invocation endpoints onto an `AgentHost`. It provides decorator methods for registering handler functions:
+`InvocationAgentServerHost` is an `AgentServerHost` subclass that adds invocation protocol endpoints. It provides decorator methods for registering handler functions:
 
-- `@invocations.invoke_handler` — **Required.** Handles `POST /invocations`.
-- `@invocations.get_invocation_handler` — Optional. Handles `GET /invocations/{id}`.
-- `@invocations.cancel_invocation_handler` — Optional. Handles `POST /invocations/{id}/cancel`.
+- `@app.invoke_handler` — **Required.** Handles `POST /invocations`.
+- `@app.get_invocation_handler` — Optional. Handles `GET /invocations/{id}`.
+- `@app.cancel_invocation_handler` — Optional. Handles `POST /invocations/{id}/cancel`.
 
 ### Protocol endpoints
 
@@ -63,7 +63,7 @@ Inside handler functions, the SDK sets these attributes on `request.state`:
 
 ### Distributed tracing
 
-When tracing is enabled on the `AgentHost`, invocation spans are automatically created with GenAI semantic conventions:
+When tracing is enabled on the `AgentServerHost`, invocation spans are automatically created with GenAI semantic conventions:
 
 - **Span name**: `invoke_agent {FOUNDRY_AGENT_NAME}:{FOUNDRY_AGENT_VERSION}`
 - **Span attributes**: `gen_ai.system`, `gen_ai.operation.name`, `gen_ai.response.id`, `gen_ai.conversation.id`, `gen_ai.agent.id`, `gen_ai.agent.name`, `gen_ai.agent.version`
@@ -75,20 +75,20 @@ When tracing is enabled on the `AgentHost`, invocation spans are automatically c
 ### Simple synchronous agent
 
 ```python
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.invocations import InvocationHandler
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-server = AgentHost()
-invocations = InvocationHandler(server)
+app = InvocationAgentServerHost()
 
-@invocations.invoke_handler
+
+@app.invoke_handler
 async def handle(request: Request) -> Response:
     data = await request.json()
     return JSONResponse({"greeting": f"Hello, {data['name']}!"})
 
-server.run()
+app.run()
 ```
 
 ### Long-running operations with polling
@@ -97,18 +97,18 @@ server.run()
 import asyncio
 import json
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.invocations import InvocationHandler
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
 _tasks: dict[str, asyncio.Task] = {}
 _results: dict[str, bytes] = {}
 
-server = AgentHost()
-invocations = InvocationHandler(server)
+app = InvocationAgentServerHost()
 
-@invocations.invoke_handler
+
+@app.invoke_handler
 async def handle(request: Request) -> Response:
     data = await request.json()
     invocation_id = request.state.invocation_id
@@ -116,14 +116,14 @@ async def handle(request: Request) -> Response:
     _tasks[invocation_id] = task
     return JSONResponse({"invocation_id": invocation_id, "status": "running"})
 
-@invocations.get_invocation_handler
+@app.get_invocation_handler
 async def get_invocation(request: Request) -> Response:
     invocation_id = request.state.invocation_id
     if invocation_id in _results:
         return Response(content=_results[invocation_id], media_type="application/json")
     return JSONResponse({"invocation_id": invocation_id, "status": "running"})
 
-@invocations.cancel_invocation_handler
+@app.cancel_invocation_handler
 async def cancel_invocation(request: Request) -> Response:
     invocation_id = request.state.invocation_id
     if invocation_id in _tasks:
@@ -138,15 +138,15 @@ async def cancel_invocation(request: Request) -> Response:
 ```python
 import json
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.invocations import InvocationHandler
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
 from starlette.requests import Request
 from starlette.responses import Response, StreamingResponse
 
-server = AgentHost()
-invocations = InvocationHandler(server)
+app = InvocationAgentServerHost()
 
-@invocations.invoke_handler
+
+@app.invoke_handler
 async def handle(request: Request) -> Response:
     async def generate():
         for word in ["Hello", " ", "world", "!"]:
@@ -178,8 +178,7 @@ The session ID is available in the handler via `request.state.session_id`.
 Pass an OpenAPI spec dict to enable the discovery endpoint at `GET /invocations/docs/openapi.json`:
 
 ```python
-server = AgentHost()
-invocations = InvocationHandler(server, openapi_spec={
+app = InvocationAgentServerHost(openapi_spec={
     "openapi": "3.0.3",
     "info": {"title": "My Agent", "version": "1.0.0"},
     "paths": { ... },
@@ -198,8 +197,8 @@ Visit the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
 
 | Sample | Description |
 |---|---|
-| [simple_invoke_agent](samples/simple_invoke_agent/) | Minimal synchronous request-response |
-| [async_invoke_agent](samples/async_invoke_agent/) | Long-running operations with polling and cancellation |
+| [simple_invoke_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/simple_invoke_agent/) | Minimal synchronous request-response |
+| [async_invoke_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/async_invoke_agent/) | Long-running operations with polling and cancellation |
 
 ## Contributing
 

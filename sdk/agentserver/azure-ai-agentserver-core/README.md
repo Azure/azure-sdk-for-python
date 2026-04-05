@@ -1,4 +1,4 @@
-# Azure AI AgentHost Core for Python
+# Azure AI AgentServerHost Core for Python
 
 The `azure-ai-agentserver-core` package provides the foundation host framework for building Azure AI Hosted Agent containers. It handles the protocol-agnostic infrastructure — health probes, graceful shutdown, OpenTelemetry tracing, and ASGI serving — so that protocol packages can focus on their endpoint logic.
 
@@ -22,16 +22,16 @@ pip install azure-ai-agentserver-core[tracing]
 
 ## Key concepts
 
-### AgentHost
+### AgentServerHost
 
-`AgentHost` is the host process for Azure AI Hosted Agent containers. It provides:
+`AgentServerHost` is the host process for Azure AI Hosted Agent containers. It provides:
 
 - **Health probe** — `GET /readiness` returns `200 OK` when the server is ready.
 - **Graceful shutdown** — On `SIGTERM` the server drains in-flight requests (default 30 s timeout) before exiting.
 - **OpenTelemetry tracing** — Automatic span creation with Azure Monitor and OTLP export when configured.
 - **Hypercorn ASGI server** — Serves on `0.0.0.0:${PORT:-8088}` with HTTP/1.1.
 
-Protocol packages (e.g. `azure-ai-agentserver-invocations`) plug into `AgentHost` by calling `register_routes()` to add their endpoints.
+Protocol packages (e.g. `azure-ai-agentserver-invocations`) subclass `AgentServerHost` and add their endpoints in `__init__`.
 
 ### Environment variables
 
@@ -48,40 +48,43 @@ Protocol packages (e.g. `azure-ai-agentserver-invocations`) plug into `AgentHost
 
 ## Examples
 
-`AgentHost` is typically used with a protocol package. The simplest setup with the invocations protocol:
+`AgentServerHost` is typically used via a protocol package. The simplest setup with the invocations protocol:
 
 ```python
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.invocations import InvocationHandler
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
 from starlette.responses import JSONResponse
 
-server = AgentHost()
-invocations = InvocationHandler(server)
+app = InvocationAgentServerHost()
 
-@invocations.invoke_handler
+@app.invoke_handler
 async def handle(request):
     body = await request.json()
     return JSONResponse({"greeting": f"Hello, {body['name']}!"})
 
-server.run()
+app.run()
 ```
 
-### Using AgentHost standalone
+### Subclassing AgentServerHost
 
-For custom protocol implementations, use `AgentHost` directly and register your own routes:
+For custom protocol implementations, subclass `AgentServerHost` and add routes:
 
 ```python
-from azure.ai.agentserver.core import AgentHost
+from azure.ai.agentserver.core import AgentServerHost
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.routing import Route
 
-async def my_endpoint(request: Request):
-    return JSONResponse({"status": "ok"})
+class MyAgentHost(AgentServerHost):
+    def __init__(self, **kwargs):
+        my_routes = [Route("/my-endpoint", self._handle, methods=["POST"])]
+        existing = list(kwargs.pop("routes", None) or [])
+        super().__init__(routes=existing + my_routes, **kwargs)
 
-server = AgentHost()
-server.register_routes([Route("/my-endpoint", my_endpoint, methods=["POST"])])
-server.run()
+    async def _handle(self, request: Request):
+        return JSONResponse({"status": "ok"})
+
+app = MyAgentHost()
+app.run()
 ```
 
 ### Shutdown handler
@@ -89,9 +92,9 @@ server.run()
 Register a cleanup function that runs during graceful shutdown:
 
 ```python
-server = AgentHost()
+app = AgentServerHost()
 
-@server.shutdown_handler
+@app.shutdown_handler
 async def on_shutdown():
     # Close database connections, flush buffers, etc.
     pass
@@ -102,8 +105,8 @@ async def on_shutdown():
 Tracing is enabled automatically when an Application Insights connection string is available:
 
 ```python
-server = AgentHost(
-    application_insights_connection_string="InstrumentationKey=...",
+app = AgentServerHost(
+    applicationinsights_connection_string="InstrumentationKey=...",
 )
 ```
 
@@ -121,7 +124,7 @@ python my_agent.py
 Set the log level to `DEBUG` for detailed diagnostics:
 
 ```python
-server = AgentHost(log_level="DEBUG")
+app = AgentServerHost(log_level="DEBUG")
 ```
 
 ### Reporting issues

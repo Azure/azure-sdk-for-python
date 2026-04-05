@@ -19,7 +19,3 @@ class InvocationConstants:
     ATTR_SPAN_SESSION_ID = "azure.ai.agentserver.invocations.session_id"
     ATTR_SPAN_ERROR_CODE = "azure.ai.agentserver.invocations.error.code"
     ATTR_SPAN_ERROR_MESSAGE = "azure.ai.agentserver.invocations.error.message"
-
-    # Baggage keys
-    ATTR_BAGGAGE_INVOCATION_ID = "azure.ai.agentserver.invocation_id"
-    ATTR_BAGGAGE_SESSION_ID = "azure.ai.agentserver.session_id"

@@ -50,23 +50,23 @@ class TestUtils(unittest.TestCase):
 
         self.assertEqual(len(filtered), 2)
         self.assertIn("valid_key", filtered)
-        self.assertEqual(len(filtered["valid_key"]), 9000)
+        self.assertEqual(len(filtered["valid_key"]), 8192)
         self.assertEqual(filtered["short"], "ok")
         self.assertNotIn("k" * 151, filtered)
 
-    def test_custom_properties_gen_ai_attributes_not_truncated_at_64kb(self):
-        # All values in _GEN_AI_ATTRIBUTES should not be truncated at > 64kb but at > 256kb
-        large_value = "x" * (64 * 1024 + 1000)
+    def test_custom_properties_gen_ai_attributes_not_truncated_at_8kb(self):
+        # All values in _GEN_AI_ATTRIBUTES should not be truncated at > 8kb but at > 256kb
+        large_value = "x" * (8 * 1024 + 1000)
         properties = {key: large_value for key in _GEN_AI_ATTRIBUTES}
         filtered = _utils._filter_custom_properties(properties)
         for key in _GEN_AI_ATTRIBUTES:
             with self.subTest(key=key):
                 self.assertIn(key, filtered)
-                self.assertEqual(len(filtered[key]), 64 * 1024 + 1000)
+                self.assertEqual(len(filtered[key]), 8 * 1024 + 1000)
 
-    def test_filter_custom_properties_non_gen_ai_truncated_at_64kb(self):
-        # Regular properties exceeding 64kb should be truncated
-        max_length = 64 * 1024
+    def test_filter_custom_properties_non_gen_ai_truncated_at_8kb(self):
+        # Regular properties exceeding 8kb should be truncated
+        max_length = 8 * 1024
         large_value = "y" * (max_length + 2000)
         properties = {
             "span_kind": large_value,
@@ -81,8 +81,8 @@ class TestUtils(unittest.TestCase):
                 self.assertEqual(len(filtered[key]), max_length)
 
     def test_filter_custom_properties_mixed_gen_ai_and_regular(self):
-        # Gen AI attributes truncated at 256kb, regular ones are truncated at 64kb
-        max_length = 64 * 1024
+        # Gen AI attributes truncated at 256kb, regular ones are truncated at 8kb
+        max_length = 8 * 1024
         max_length_for_gen_ai_attributes = 256 * 1024
         large_value = "z" * (1024 * 1024 + 3000)
         properties = {

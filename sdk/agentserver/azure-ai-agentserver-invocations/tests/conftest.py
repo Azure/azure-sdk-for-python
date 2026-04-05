@@ -10,8 +10,8 @@ from httpx import ASGITransport, AsyncClient
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.invocations import InvocationHandler
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
+
 
 # ---------------------------------------------------------------------------
 # Sample OpenAPI spec used by several tests
@@ -63,25 +63,23 @@ SAMPLE_OPENAPI_SPEC: dict[str, Any] = {
 # ---------------------------------------------------------------------------
 
 
-def _make_echo_agent(**kwargs: Any) -> AgentHost:
-    """Create an AgentHost whose invoke handler echoes the request body."""
-    server = AgentHost(**kwargs)
-    invocations = InvocationHandler(server)
+def _make_echo_agent(**kwargs: Any) -> InvocationAgentServerHost:
+    """Create an InvocationAgentServerHost whose invoke handler echoes the request body."""
+    app = InvocationAgentServerHost(**kwargs)
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> Response:
         body = await request.body()
         return Response(content=body, media_type="application/octet-stream")
 
-    return server
+    return app
 
 
-def _make_streaming_agent(**kwargs: Any) -> AgentHost:
-    """Create an AgentHost whose invoke handler returns 3 JSON chunks."""
-    server = AgentHost(**kwargs)
-    invocations = InvocationHandler(server)
+def _make_streaming_agent(**kwargs: Any) -> InvocationAgentServerHost:
+    """Create an InvocationAgentServerHost whose invoke handler returns 3 JSON chunks."""
+    app = InvocationAgentServerHost(**kwargs)
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> StreamingResponse:
         async def generate():
             for i in range(3):
@@ -89,23 +87,22 @@ def _make_streaming_agent(**kwargs: Any) -> AgentHost:
 
         return StreamingResponse(generate(), media_type="application/x-ndjson")
 
-    return server
+    return app
 
 
-def _make_async_storage_agent(**kwargs: Any) -> AgentHost:
-    """Create an AgentHost with get/cancel handlers and in-memory store."""
-    server = AgentHost(**kwargs)
-    invocations = InvocationHandler(server)
+def _make_async_storage_agent(**kwargs: Any) -> InvocationAgentServerHost:
+    """Create an InvocationAgentServerHost with get/cancel handlers and in-memory store."""
+    app = InvocationAgentServerHost(**kwargs)
     store: dict[str, Any] = {}
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> Response:
         inv_id = request.state.invocation_id
         body = await request.body()
         store[inv_id] = body
         return Response(content=body, media_type="application/octet-stream")
 
-    @invocations.get_invocation_handler
+    @app.get_invocation_handler
     async def get_handler(request: Request) -> Response:
         inv_id = request.path_params["invocation_id"]
         if inv_id not in store:
@@ -115,7 +112,7 @@ def _make_async_storage_agent(**kwargs: Any) -> AgentHost:
             )
         return Response(content=store[inv_id], media_type="application/octet-stream")
 
-    @invocations.cancel_invocation_handler
+    @app.cancel_invocation_handler
     async def cancel_handler(request: Request) -> Response:
         inv_id = request.path_params["invocation_id"]
         if inv_id not in store:
@@ -126,35 +123,30 @@ def _make_async_storage_agent(**kwargs: Any) -> AgentHost:
         del store[inv_id]
         return JSONResponse({"status": "cancelled"})
 
-    return server
+    return app
 
 
-def _make_validated_agent() -> AgentHost:
-    """Create an AgentHost with OpenAPI spec."""
-    server = AgentHost()
-    invocations = InvocationHandler(
-        server,
-        openapi_spec=SAMPLE_OPENAPI_SPEC,
-    )
+def _make_validated_agent() -> InvocationAgentServerHost:
+    """Create an InvocationAgentServerHost with OpenAPI spec."""
+    app = InvocationAgentServerHost(openapi_spec=SAMPLE_OPENAPI_SPEC)
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> Response:
         data = await request.json()
         return JSONResponse({"reply": f"echo: {data['message']}"})
 
-    return server
+    return app
 
 
-def _make_failing_agent(**kwargs: Any) -> AgentHost:
-    """Create an AgentHost whose handler raises ValueError."""
-    server = AgentHost(**kwargs)
-    invocations = InvocationHandler(server)
+def _make_failing_agent(**kwargs: Any) -> InvocationAgentServerHost:
+    """Create an InvocationAgentServerHost whose handler raises ValueError."""
+    app = InvocationAgentServerHost(**kwargs)
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> Response:
         raise ValueError("something went wrong")
 
-    return server
+    return app
 
 
 # ---------------------------------------------------------------------------
@@ -164,15 +156,15 @@ def _make_failing_agent(**kwargs: Any) -> AgentHost:
 
 @pytest.fixture()
 def echo_client():
-    server = _make_echo_agent()
-    transport = ASGITransport(app=server.app)
+    app = _make_echo_agent()
+    transport = ASGITransport(app=app)
     return AsyncClient(transport=transport, base_url="http://testserver")
 
 
 @pytest.fixture()
 def streaming_client():
-    server = _make_streaming_agent()
-    transport = ASGITransport(app=server.app)
+    app = _make_streaming_agent()
+    transport = ASGITransport(app=app)
     return AsyncClient(transport=transport, base_url="http://testserver")
 
 
@@ -183,26 +175,26 @@ def async_storage_server():
 
 @pytest.fixture()
 def async_storage_client(async_storage_server):
-    transport = ASGITransport(app=async_storage_server.app)
+    transport = ASGITransport(app=async_storage_server)
     return AsyncClient(transport=transport, base_url="http://testserver")
 
 
 @pytest.fixture()
 def validated_client():
-    server = _make_validated_agent()
-    transport = ASGITransport(app=server.app)
+    app = _make_validated_agent()
+    transport = ASGITransport(app=app)
     return AsyncClient(transport=transport, base_url="http://testserver")
 
 
 @pytest.fixture()
 def no_spec_client():
-    server = _make_echo_agent()
-    transport = ASGITransport(app=server.app)
+    app = _make_echo_agent()
+    transport = ASGITransport(app=app)
     return AsyncClient(transport=transport, base_url="http://testserver")
 
 
 @pytest.fixture()
 def failing_client():
-    server = _make_failing_agent()
-    transport = ASGITransport(app=server.app)
+    app = _make_failing_agent()
+    transport = ASGITransport(app=app)
     return AsyncClient(transport=transport, base_url="http://testserver")

@@ -7,7 +7,7 @@ import logging
 import pytest
 import httpx
 
-from azure.ai.agentserver.core import AgentHost
+from azure.ai.agentserver.core import AgentServerHost
 from azure.ai.agentserver.core._config import resolve_log_level
 
 
@@ -18,9 +18,9 @@ from azure.ai.agentserver.core._config import resolve_log_level
 
 @pytest.fixture()
 def client() -> httpx.AsyncClient:
-    agent = AgentHost()
+    agent = AgentServerHost()
     return httpx.AsyncClient(
-        transport=httpx.ASGITransport(app=agent.app),
+        transport=httpx.ASGITransport(app=agent),
         base_url="http://testserver",
     )
 
@@ -38,20 +38,20 @@ async def test_post_readiness_returns_405(client: httpx.AsyncClient) -> None:
 
 
 class TestLogLevelConstructor:
-    """Log-level configuration via the AgentHost constructor."""
+    """Log-level configuration via the AgentServerHost constructor."""
 
     def test_log_level_via_constructor(self) -> None:
-        AgentHost(log_level="DEBUG")  # side-effect: configures logger
+        AgentServerHost(log_level="DEBUG")  # side-effect: configures logger
         lib_logger = logging.getLogger("azure.ai.agentserver")
         assert lib_logger.level == logging.DEBUG
 
     def test_log_level_warning_via_constructor(self) -> None:
-        AgentHost(log_level="WARNING")  # side-effect: configures logger
+        AgentServerHost(log_level="WARNING")  # side-effect: configures logger
         lib_logger = logging.getLogger("azure.ai.agentserver")
         assert lib_logger.level == logging.WARNING
 
     def test_log_level_case_insensitive(self) -> None:
-        AgentHost(log_level="error")  # side-effect: configures logger
+        AgentServerHost(log_level="error")  # side-effect: configures logger
         lib_logger = logging.getLogger("azure.ai.agentserver")
         assert lib_logger.level == logging.ERROR
 
@@ -66,7 +66,7 @@ class TestInvalidLogLevel:
 
     def test_invalid_log_level_raises(self) -> None:
         with pytest.raises(ValueError, match="Invalid log level"):
-            AgentHost(log_level="TRACE")
+            AgentServerHost(log_level="TRACE")
 
 
 # ------------------------------------------------------------------ #

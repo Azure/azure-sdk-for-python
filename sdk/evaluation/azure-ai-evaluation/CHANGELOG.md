@@ -1,6 +1,12 @@
 # Release History
 
-## 1.16.3 (Unreleased)
+## 1.16.4 (2026-04-03)
+
+### Features Added
+
+- Added support for evaluator `properties` passthrough in AOAI evaluation results. When an evaluator returns a `properties` dict, it is included alongside `score`, `label`, `reason`, `threshold`, and `passed` in the result object.
+
+## 1.16.3 (2026-04-01)
 
 ### Features Added
 

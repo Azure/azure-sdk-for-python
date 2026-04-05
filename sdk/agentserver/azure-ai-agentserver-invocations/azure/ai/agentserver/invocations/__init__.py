@@ -3,28 +3,26 @@
 # ---------------------------------------------------------
 """Invocations protocol for Azure AI Hosted Agents.
 
-This package provides the invocation protocol endpoints and handler
-wiring for :class:`~azure.ai.agentserver.core.AgentHost`.
+This package provides an invocation protocol host as a subclass of
+:class:`~azure.ai.agentserver.core.AgentServerHost`.
 
 Quick start::
 
-    from azure.ai.agentserver.core import AgentHost
-    from azure.ai.agentserver.invocations import InvocationHandler
+    from azure.ai.agentserver.invocations import InvocationAgentServerHost
     from starlette.responses import JSONResponse
 
-    server = AgentHost()
-    invocations = InvocationHandler(server)
+    app = InvocationAgentServerHost()
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request):
         return JSONResponse({"ok": True})
 
-    server.run()
+    app.run()
 """
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-from ._invocation import InvocationHandler
+from ._invocation import InvocationAgentServerHost
 from ._version import VERSION
 
-__all__ = ["InvocationHandler"]
+__all__ = ["InvocationAgentServerHost"]
 __version__ = VERSION

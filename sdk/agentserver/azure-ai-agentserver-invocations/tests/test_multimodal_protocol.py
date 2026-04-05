@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests for multi-modality payloads with AgentHost + InvocationHandler."""
+"""Tests for multi-modality payloads with InvocationAgentServerHost + InvocationAgentServerHost."""
 import json
 
 import pytest
@@ -9,20 +9,19 @@ from httpx import ASGITransport, AsyncClient
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.invocations import InvocationHandler
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
+
 
 
 # ---------------------------------------------------------------------------
 # Helper: content-type echo agent
 # ---------------------------------------------------------------------------
 
-def _make_content_type_echo_agent() -> AgentHost:
+def _make_content_type_echo_agent() -> InvocationAgentServerHost:
     """Agent that echoes body and returns the content-type it received."""
-    server = AgentHost()
-    invocations = InvocationHandler(server)
+    app = InvocationAgentServerHost()
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> Response:
         body = await request.body()
         ct = request.headers.get("content-type", "unknown")
@@ -32,29 +31,27 @@ def _make_content_type_echo_agent() -> AgentHost:
             headers={"x-received-content-type": ct},
         )
 
-    return server
+    return app
 
 
-def _make_status_code_agent() -> AgentHost:
+def _make_status_code_agent() -> InvocationAgentServerHost:
     """Agent that returns a custom HTTP status code from query param."""
-    server = AgentHost()
-    invocations = InvocationHandler(server)
+    app = InvocationAgentServerHost()
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> Response:
         status = int(request.query_params.get("status", "200"))
         body = await request.body()
         return Response(content=body, status_code=status)
 
-    return server
+    return app
 
 
-def _make_sse_agent() -> AgentHost:
+def _make_sse_agent() -> InvocationAgentServerHost:
     """Agent that returns SSE-formatted streaming response."""
-    server = AgentHost()
-    invocations = InvocationHandler(server)
+    app = InvocationAgentServerHost()
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> StreamingResponse:
         async def generate():
             for i in range(3):
@@ -62,7 +59,7 @@ def _make_sse_agent() -> AgentHost:
 
         return StreamingResponse(generate(), media_type="text/event-stream")
 
-    return server
+    return app
 
 
 # ---------------------------------------------------------------------------
@@ -73,7 +70,7 @@ def _make_sse_agent() -> AgentHost:
 async def test_png_content_type():
     """PNG content type is accepted and echoed."""
     server = _make_content_type_echo_agent()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     fake_png = b"\x89PNG\r\n\x1a\n" + b"\x00" * 100
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(
@@ -90,7 +87,7 @@ async def test_png_content_type():
 async def test_jpeg_content_type():
     """JPEG content type is accepted."""
     server = _make_content_type_echo_agent()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     fake_jpeg = b"\xff\xd8\xff\xe0" + b"\x00" * 100
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(
@@ -106,7 +103,7 @@ async def test_jpeg_content_type():
 async def test_wav_content_type():
     """WAV audio content type is accepted."""
     server = _make_content_type_echo_agent()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     fake_wav = b"RIFF" + b"\x00" * 100
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(
@@ -122,7 +119,7 @@ async def test_wav_content_type():
 async def test_pdf_content_type():
     """PDF content type is accepted."""
     server = _make_content_type_echo_agent()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     fake_pdf = b"%PDF-1.4" + b"\x00" * 100
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(
@@ -138,7 +135,7 @@ async def test_pdf_content_type():
 async def test_octet_stream_content_type():
     """application/octet-stream is accepted."""
     server = _make_content_type_echo_agent()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     binary = bytes(range(256))
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(
@@ -154,7 +151,7 @@ async def test_octet_stream_content_type():
 async def test_text_plain_content_type():
     """text/plain content type is accepted."""
     server = _make_content_type_echo_agent()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(
             "/invocations",
@@ -173,7 +170,7 @@ async def test_text_plain_content_type():
 async def test_custom_status_200():
     """Handler returning 200."""
     server = _make_status_code_agent()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations?status=200", content=b"ok")
     assert resp.status_code == 200
@@ -183,7 +180,7 @@ async def test_custom_status_200():
 async def test_custom_status_201():
     """Handler returning 201."""
     server = _make_status_code_agent()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations?status=201", content=b"created")
     assert resp.status_code == 201
@@ -193,7 +190,7 @@ async def test_custom_status_201():
 async def test_custom_status_202():
     """Handler returning 202."""
     server = _make_status_code_agent()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations?status=202", content=b"accepted")
     assert resp.status_code == 202
@@ -206,15 +203,14 @@ async def test_custom_status_202():
 @pytest.mark.asyncio
 async def test_query_string_passed_to_handler():
     """Query string params are accessible in the handler."""
-    server = AgentHost()
-    invocations = InvocationHandler(server)
+    app = InvocationAgentServerHost()
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> Response:
         name = request.query_params.get("name", "unknown")
         return JSONResponse({"name": name})
 
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations?name=Alice", content=b"")
     assert resp.status_code == 200
@@ -229,7 +225,7 @@ async def test_query_string_passed_to_handler():
 async def test_sse_streaming():
     """SSE-formatted streaming response works."""
     server = _make_sse_agent()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations", content=b"")
     assert resp.status_code == 200
@@ -246,7 +242,7 @@ async def test_sse_streaming():
 async def test_large_binary_payload():
     """Large binary payload (512KB) is handled correctly."""
     server = _make_content_type_echo_agent()
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=server)
     payload = bytes(range(256)) * 2048  # 512KB
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(
@@ -265,14 +261,13 @@ async def test_large_binary_payload():
 @pytest.mark.asyncio
 async def test_health_endpoint_returns_200():
     """GET /readiness returns 200 with healthy status."""
-    server = AgentHost()
-    invocations = InvocationHandler(server)
+    app = InvocationAgentServerHost()
 
-    @invocations.invoke_handler
+    @app.invoke_handler
     async def handle(request: Request) -> Response:
         return Response(content=b"ok")
 
-    transport = ASGITransport(app=server.app)
+    transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.get("/readiness")
     assert resp.status_code == 200
