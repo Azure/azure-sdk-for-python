@@ -9,7 +9,7 @@ platform, translating between the Copilot SDK's event model and the
 Foundry Responses API (RAPI) protocol.
 
 Uses the new agentserver packages (core 2.0 + responses 1.0) with the
-AgentHost + ResponseHandler composition model.
+AgentServerHost + ResponsesAgentServerHost composition model.
 
 Usage::
 
