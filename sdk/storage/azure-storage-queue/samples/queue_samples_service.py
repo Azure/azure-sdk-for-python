@@ -99,7 +99,7 @@ class QueueServiceSamples(object):
         # [END set_queue_service_properties]
 
         # [START get_queue_service_properties]
-        properties = queue_service.get_service_properties()
+        _properties = queue_service.get_service_properties()
         # [END get_queue_service_properties]
 
     def queues_in_account(self):
@@ -140,13 +140,13 @@ class QueueServiceSamples(object):
             sys.exit(1)
 
         # Instantiate the QueueServiceClient from a connection string
-        from azure.storage.queue import QueueServiceClient, QueueClient
+        from azure.storage.queue import QueueServiceClient
 
         queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # [START get_queue_client]
         # Get the queue client to interact with a specific queue
-        queue = queue_service.get_queue_client(queue="myqueueservice2")
+        _queue = queue_service.get_queue_client(queue="myqueueservice2")
         # [END get_queue_client]
 
 

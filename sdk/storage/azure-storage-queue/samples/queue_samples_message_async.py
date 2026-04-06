@@ -84,7 +84,7 @@ class QueueMessageSamplesAsync(object):
                 # [END async_create_queue_client]
 
                 # Use the newly authenticated client to receive messages
-                my_messages = token_auth_queue.receive_messages()
+                _my_messages = token_auth_queue.receive_messages()
 
             finally:
                 # Delete the queue
@@ -111,7 +111,7 @@ class QueueMessageSamplesAsync(object):
                 # [END async_set_queue_metadata]
 
                 # [START async_get_queue_properties]
-                properties = await queue.get_queue_properties()
+                _properties = await queue.get_queue_properties()
                 # [END async_get_queue_properties]
 
             finally:
@@ -273,7 +273,7 @@ class QueueMessageSamplesAsync(object):
 
                 # [START async_peek_message]
                 # Peek at one message at the front of the queue
-                msg = await queue.peek_messages()
+                _msg = await queue.peek_messages()
 
                 # Peek at the last 5 messages
                 messages = await queue.peek_messages(max_messages=5)

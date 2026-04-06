@@ -6,11 +6,11 @@
 import unittest
 
 import pytest
-from azure.storage.queue import QueueServiceClient
-
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import QueuePreparer
+
+from azure.storage.queue import QueueServiceClient
 
 
 # --Test Class -----------------------------------------------------------------

@@ -8,6 +8,10 @@ import unittest
 from datetime import datetime, timedelta
 
 import pytest
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import QueuePreparer
+
 from azure.storage.queue import (
     AccountSasPermissions,
     generate_account_sas,
@@ -21,10 +25,6 @@ from azure.storage.queue._shared.parser import (
 )
 from azure.storage.queue.aio import QueueClient, QueueServiceClient
 
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from settings.testcase import QueuePreparer
-
 # ------------------------------------------------------------------------------
 SERVICES = {
     QueueServiceClient: "queue",
@@ -35,7 +35,7 @@ _CONNECTION_ENDPOINTS = {"queue": "QueueEndpoint"}
 _CONNECTION_ENDPOINTS_SECONDARY = {"queue": "QueueSecondaryEndpoint"}
 
 
-class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
+class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):  # pylint: disable=too-many-public-methods
     def setUp(self):
         self.sas_token = self.generate_fake_sas_token()
         self.token_credential = self.get_credential(QueueServiceClient, is_async=True)
@@ -111,7 +111,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
     @QueuePreparer()
     def test_create_service_with_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
+        _storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
 
@@ -212,8 +212,8 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
 
     @QueuePreparer()
     def test_create_service_empty_key(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
+        _storage_account_name = kwargs.pop("storage_account_name")
+        _storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
         QUEUE_SERVICES = [QueueServiceClient, QueueClient]
@@ -221,7 +221,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         for service_type in QUEUE_SERVICES:
             # Act
             with pytest.raises(ValueError) as e:
-                test_service = service_type("testaccount", credential="", queue_name="foo")
+                _test_service = service_type("testaccount", credential="", queue_name="foo")
 
             assert str(e.value) == "You need to provide either a SAS token or an account shared key to authenticate."
 
@@ -295,7 +295,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
 
         queue_name = "queue"
 
-        for service_type in SERVICES.keys():
+        for service_type in SERVICES:
             service = service_type(
                 account_url,
                 credential=storage_account_key.secret,
@@ -344,7 +344,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
 
         hostname = "github.com"
         account_url = f"https://{hostname}"
-        for service_type in SERVICES.keys():
+        for service_type in SERVICES:
             service = service_type(account_url, credential=token_credential, queue_name="foo")
             assert service is not None
             assert service.scheme == "https"
@@ -374,7 +374,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
     @QueuePreparer()
     def test_create_service_with_connection_string_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
+        _storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
         conn_string = f"AccountName={storage_account_name};" f"SharedAccessSignature={self.sas_token};"
@@ -534,7 +534,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
 
             # Fails if primary excluded
             with pytest.raises(ValueError):
-                service = service_type[0].from_connection_string(conn_string, queue_name="foo")
+                _service = service_type[0].from_connection_string(conn_string, queue_name="foo")
 
     @QueuePreparer()
     def test_create_service_with_cs_succeeds_if_sec_with_prim(self, **kwargs):
@@ -690,14 +690,14 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
 
         await service.get_service_properties(raw_response_hook=callback)
 
-        def callback(response):
+        def callback_v2(response):
             assert "User-Agent" in response.http_request.headers
             assert (
                 f"TestApp/v2.0 TestApp/v1.0 azsdk-python-storage-queue/{VERSION} "
                 f"Python/{platform.python_version()} ({platform.platform()})"
             ) in response.http_request.headers["User-Agent"]
 
-        await service.get_service_properties(raw_response_hook=callback, user_agent="TestApp/v2.0")
+        await service.get_service_properties(raw_response_hook=callback_v2, user_agent="TestApp/v2.0")
 
     @QueuePreparer()
     @recorded_by_proxy_async
@@ -725,7 +725,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        for client, url in SERVICES.items():
+        for client, _url in SERVICES.items():
             # Act
             service = client(
                 self.account_url(storage_account_name, "queue"),
@@ -744,7 +744,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        for client, url in SERVICES.items():
+        for client, _url in SERVICES.items():
             # Act
             service = client(
                 self.account_url(storage_account_name, "queue"),

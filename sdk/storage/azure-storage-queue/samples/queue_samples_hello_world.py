@@ -43,7 +43,7 @@ class QueueHelloWorldSamples(object):
         queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # Get queue service properties
-        properties = queue_service.get_service_properties()
+        _properties = queue_service.get_service_properties()
 
     def queue_and_messages_example(self):
         if self.connection_string is None:

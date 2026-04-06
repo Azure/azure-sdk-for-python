@@ -29,7 +29,7 @@ class QueueHelloWorldSamplesAsync(object):
 
     connection_string = os.getenv("STORAGE_CONNECTION_STRING")
 
-    async def create_client_with_connection_string_async(self):
+    async def create_client_with_connection_string_async(self):  # pylint: disable=name-too-long
         if self.connection_string is None:
             print(
                 "Missing required environment variable(s). Please see specific test for more details."
@@ -45,7 +45,7 @@ class QueueHelloWorldSamplesAsync(object):
 
         # Get queue service properties
         async with queue_service:
-            properties = await queue_service.get_service_properties()
+            _properties = await queue_service.get_service_properties()
 
     async def queue_and_messages_example_async(self):
         if self.connection_string is None:
