@@ -3873,8 +3873,8 @@ class ShareOperations:
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
         :paramtype file_request_intent: str or
          ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :keyword share_provisioned_iops: Optional. Specifies the provisioned number of input/output
-         operations per second (IOPS) of the share. Default value is None.
+        :keyword share_provisioned_iops: Optional. Specifies the provisioned IOPS of the share. Default
+         value is None.
         :paramtype share_provisioned_iops: int
         :keyword share_provisioned_bandwidth_mibps: Optional. Specifies the provisioned bandwidth of
          the share, in MiBps. Default value is None.
@@ -5660,8 +5660,9 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :keyword optional_content_length: Optional. Specifies the content length of the file. Default
          value is None.
         :paramtype optional_content_length: int
-        :keyword structured_body_type: Required if the request body is a structured message. Specifies
-         the message schema version and properties. Default value is None.
+        :keyword structured_body_type: Specifies the response content should be returned as a
+         structured message and specifies the message schema version and properties. Default value is
+         None.
         :paramtype structured_body_type: str
         :keyword structured_content_length: Required if the request body is a structured message.
          Specifies the length of the blob/file content inside the message body. Will always be smaller
@@ -5821,7 +5822,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
         :paramtype file_request_intent: str or
          ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :keyword structured_body_type: Optional. Used for structured get operations. Default value is
+        :keyword structured_body_type: Specifies the response content should be returned as a
+         structured message and specifies the message schema version and properties. Default value is
          None.
         :paramtype structured_body_type: str
         :return: Iterator[bytes]
@@ -5965,8 +5967,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         """Returns all user-defined metadata, standard HTTP properties, and system properties for the
         file.
 
-        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the share snapshot to query. Default value is None.
+        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
+         share snapshot. Default value is None.
         :paramtype sharesnapshot: str
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
@@ -6843,7 +6845,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword content_md5: An MD5 hash of the content. This hash is used to verify the integrity of
-         data during transport. Default value is None.
+         the data during transport. Default value is None.
         :paramtype content_md5: bytes
         :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
          value is None.
@@ -6858,11 +6860,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
         :paramtype file_request_intent: str or
          ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :keyword structured_body_type: Optional. Used for structured put operations. Default value is
+        :keyword structured_body_type: Specifies the response content should be returned as a
+         structured message and specifies the message schema version and properties. Default value is
          None.
         :paramtype structured_body_type: str
-        :keyword structured_content_length: Optional. Used for structured put operations to specify
-         content length. Default value is None.
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
         :paramtype structured_content_length: int
         :return: None
         :rtype: None
@@ -7107,8 +7111,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.ShareFileRangeList:
         """Returns the list of valid page ranges for a file or snapshot of a file.
 
-        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the share snapshot to query. Default value is None.
+        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
+         share snapshot. Default value is None.
         :paramtype sharesnapshot: str
         :keyword prevsharesnapshot: The previous snapshot parameter is an opaque DateTime value that
          specifies a previous file snapshot to compare against. Default value is None.
@@ -7492,8 +7496,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :paramtype maxresults: int
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
-        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the share snapshot to query. Default value is None.
+        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
+         share snapshot. Default value is None.
         :paramtype sharesnapshot: str
         :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
          file/directory path. Default value is None.
@@ -7596,8 +7600,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :keyword marker: A string value that identifies the portion of the list to be returned with the
          next listing operation. Default value is None.
         :paramtype marker: str
-        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the share snapshot to query. Default value is None.
+        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
+         share snapshot. Default value is None.
         :paramtype sharesnapshot: str
         :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
          file/directory path. Default value is None.
@@ -7712,8 +7716,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :keyword source_lease_id: Required if the source file has an active lease. Default value is
          None.
         :paramtype source_lease_id: str
-        :keyword destination_lease_id: Required if the destination file has an active lease. Default
-         value is None.
+        :keyword destination_lease_id: Required if the destination has an active lease. Default value
+         is None.
         :paramtype destination_lease_id: str
         :keyword file_attributes: If specified, the provided file attributes shall be set. Default
          value is None.
@@ -7856,8 +7860,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
     ) -> None:
         """Creates a symbolic link to a target file. NFS only.
 
-        :keyword link_text: NFS only. Required. The path to the original file, the symbolic link is
-         pointing to. Required.
+        :keyword link_text: NFS only. The path to the original file, the symbolic link is pointing to.
+         Required.
         :paramtype link_text: str
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
@@ -7970,8 +7974,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
-        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the share snapshot to query. Default value is None.
+        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
+         share snapshot. Default value is None.
         :paramtype sharesnapshot: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
         :paramtype file_request_intent: str or
