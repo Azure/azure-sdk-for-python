@@ -133,8 +133,6 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
 
         :param connection_string: Azure Monitor connection string
         :type connection_string: str
-        :param credential: Token credential for Azure Active Directory (AAD) authentication.
-        :type credential: ~azure.core.credentials.TokenCredential or None
         :return: True if initialization was successful, False otherwise
         :rtype: bool
         """
@@ -156,8 +154,6 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
 
         :param connection_string: Azure Monitor connection string
         :type connection_string: str
-        :param credential: Token credential for Azure Active Directory (AAD) authentication.
-        :type credential: ~azure.core.credentials.TokenCredential or None
         :return: True if initialization was successful, False otherwise
         :rtype: bool
         """
