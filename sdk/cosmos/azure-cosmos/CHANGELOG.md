@@ -1,10 +1,6 @@
 ## Release History
 
-### 4.16.0b2 (Unreleased)
-
-#### Features Added
-
-#### Breaking Changes
+### 4.16.0b2 (2026-04-04)
 
 #### Bugs Fixed
 * Fixed bug where container-focused requests using name-based addressing did not consistently populate the `x-ms-cosmos-intended-collection-rid` header. See [PR 44080](https://github.com/Azure/azure-sdk-for-python/pull/44080)
