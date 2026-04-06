@@ -129,7 +129,7 @@ def _apply_stream_event_defaults(
     :returns: A deep copy of the event with defaults applied.
     :rtype: dict[str, Any]
     """
-    normalized = deepcopy(event)
+    normalized = event  # caller (_coerce_handler_event) already deep-copied
     # Delegate lifecycle-event stamping to the canonical implementation in _internals.
     _internals.apply_common_defaults(
         [normalized],

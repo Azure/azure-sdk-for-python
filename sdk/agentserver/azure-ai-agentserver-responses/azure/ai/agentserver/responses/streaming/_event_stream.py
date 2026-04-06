@@ -106,8 +106,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         if agent_reference is not None:
             self._response.agent_reference = deepcopy(agent_reference)  # type: ignore[assignment]
 
-        self._agent_reference = _internals.extract_agent_reference(self._response)
-        self._model = _internals.extract_model(self._response)
+        self._agent_reference, self._model = _internals.extract_response_fields(self._response)
         self._events: list[dict[str, Any]] = []
         self._validator = EventStreamValidator()
         self._output_index = 0
@@ -468,8 +467,6 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         payload = candidate.get("payload")
         if isinstance(payload, dict):
             payload["sequence_number"] = len(self._events)
-
-        candidate = _internals.coerce_event_with_generated_class(candidate)
 
         self._events.append(candidate)
         self._validator.validate_next(candidate)

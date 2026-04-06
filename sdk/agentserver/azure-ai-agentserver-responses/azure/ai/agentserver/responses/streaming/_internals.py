@@ -220,22 +220,6 @@ def apply_common_defaults(
             payload["agent_session_id"] = agent_session_id
 
 
-def assign_sequence_numbers(events: list[dict[str, Any]]) -> None:
-    """Assign deterministic ``sequence_number`` to every payload.
-
-    Mutates each event's payload in-place, setting ``sequence_number``
-    to the event's zero-based index.
-
-    :param events: The list of event dicts to mutate.
-    :type events: list[dict[str, Any]]
-    :rtype: None
-    """
-    for index, event in enumerate(events):
-        payload = event.get("payload")
-        if isinstance(payload, dict):
-            payload["sequence_number"] = index
-
-
 def track_completed_output_item(
     response: generated_models.ResponseObject,
     event: dict[str, Any],
@@ -336,35 +320,19 @@ def compute_output_text(response: generated_models.ResponseObject) -> str | None
     return "".join(fragments)
 
 
-def extract_agent_reference(response: generated_models.ResponseObject) -> dict[str, Any] | None:
-    """Pull the ``agent_reference`` dict from a response, if present.
+def extract_response_fields(
+    response: generated_models.ResponseObject,
+) -> tuple[dict[str, Any] | None, str | None]:
+    """Pull ``agent_reference`` and ``model`` from a response in one pass.
 
     :param response: The response envelope to inspect.
-    :type response: ~azure.ai.agentserver.responses.models._generated.Response
-    :returns: The agent reference dict, or ``None`` if not present.
-    :rtype: dict[str, Any] | None
+    :returns: Tuple of (agent_reference dict or None, model string or None).
     """
     payload = coerce_model_mapping(response)
     if not isinstance(payload, dict):
-        return None
+        return None, None
     agent_reference = payload.get("agent_reference")
-    if isinstance(agent_reference, dict):
-        return agent_reference
-    return None
-
-
-def extract_model(response: generated_models.ResponseObject) -> str | None:
-    """Pull the ``model`` string from a response, if present.
-
-    :param response: The response envelope to inspect.
-    :type response: ~azure.ai.agentserver.responses.models._generated.Response
-    :returns: The model string, or ``None`` if not present.
-    :rtype: str | None
-    """
-    payload = coerce_model_mapping(response)
-    if not isinstance(payload, dict):
-        return None
+    agent_ref = agent_reference if isinstance(agent_reference, dict) else None
     model = payload.get("model")
-    if isinstance(model, str) and model:
-        return model
-    return None
+    model_str = model if isinstance(model, str) and model else None
+    return agent_ref, model_str
