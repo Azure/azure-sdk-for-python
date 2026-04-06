@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Added credential authentication support for customer sdkstats
 
 ### Other Changes
 
